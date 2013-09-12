@@ -1,0 +1,6 @@
+lpcms_footer:
+  footer1:
+    fichierImage:             'footer.png'
+    texte:                    |
+      Copyright © 2010 ---
+       All Rights Reserved.

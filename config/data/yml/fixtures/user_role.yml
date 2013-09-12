@@ -1,0 +1,7 @@
+lpcms_user_role:
+	gmail_assoc:
+		fk_id_user: gmail
+		fk_id_role: admin
+	hotmail_assoc:
+		fk_id_user: hotmail
+		fk_id_role: user

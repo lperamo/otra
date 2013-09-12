@@ -1,0 +1,15 @@
+# fonctionne à base de masque
+# 0 => lecture d'articles !
+# 1 => modification d'articles
+# 2 => suppression d'articles
+# 4 => création d'articles
+# 8 => création de modules, menus, éléments de menus ...
+lpcms_role:
+	admin:
+		role: 15
+	redacteur:
+		role: 7
+	moderateur:
+		role: 3
+	user:
+		role: 0

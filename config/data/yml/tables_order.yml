@@ -1,0 +1,10 @@
+- lpcms_header
+- lpcms_module
+- lpcms_footer
+- lpcms_mailing_list
+- lpcms_user
+- lpcms_role
+- lpcms_article
+- lpcms_elements_menu
+- lpcms_mailing_list_user
+- lpcms_user_role

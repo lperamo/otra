@@ -1,0 +1,24 @@
+<?
+$this->layout();
+self::title('Welcome to the LPCMS !');
+self::css(array(CMS_CSS_PATH . 'generic', CMS_CSS_PATH . 'main', CMS_CSS_PATH . 'form'));
+self::js(array('' => CMS_JS_PATH . 'jquery', CMS_JS_PATH . 'main'));
+?>
+<div id="backgroundspe"></div>
+<div id="mainFrame">
+<? require CMS_VIEWS_PATH . 'header.phtml'; ?>
+  <div id="bgMiddle">
+    <? for($i=0; $i<2; $i += 1)
+    {
+      echo '<div id="location' , $i , '">';
+      foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } ?>
+      </div><?
+    }?>
+
+    <article id="article1" class="fl"><?= $article ?></article>
+  <div class="clearBoth"></div>
+
+  <? require CMS_VIEWS_PATH . 'footer.phtml';  ?>
+  </div>
+  <p id="designby" class="center" data-tooltip="Main page">Designed by Péramo Lionel.</p>
+</div>

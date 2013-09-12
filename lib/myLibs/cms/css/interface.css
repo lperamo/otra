@@ -1,0 +1,138 @@
+/* Global generic rules */
+body{
+	background: #EAEAEA;
+	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif
+}
+
+.rightPad{ padding-right:5px }
+#content{	padding:0 15px }
+
+/* Menu generic rules */
+#menusContainer
+{
+	border-radius: 8px;
+	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.47);
+	margin:0 15px 15px 15px;
+}
+#menus{
+	border-radius: 8px;
+	box-shadow: 3px 3px 6px rgba(228, 139, 39, 0.47);
+	text-shadow: 1px 1px rgba(123, 123, 123, 0.32);
+	margin:0 15px 15px 15px;
+	white-space: nowrap;
+}
+.tab{
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#E8E1D4), to(#FCD484)) #EAEAEA;
+	background: -webkit-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
+	background: -moz-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
+	background: -o-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
+	background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
+	border-right: 1px solid rgba(0,0,0,0.2);
+	cursor: pointer;
+	display:inline-block;
+	-moz-box-sizing:border-box;
+	padding:5px 0px 5px 0;
+	width:25%
+ }
+
+.tab:hover{
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 182, 111, 0.14)), to(#F7C06F)) #EAEAEA;
+	background: -webkit-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;
+	background: -moz-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;/* FF3.6+ */
+	background: -o-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;
+	background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA
+ }
+
+ .tab:first-child{border-radius: 8px 0 0 8px }
+ .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
+
+
+ .tab:active, .activeTab{
+ 	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 182, 111, 0.14)), to(#F7924F)) #EAEAEA;
+ 	background: -webkit-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
+ 	background: -moz-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
+ 	background: -o-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
+ 	background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
+ }
+
+.activeTab{
+ 	cursor: default;
+ 	/*pointer-events: none*/
+ }
+
+/* Table generic rules */
+
+table{
+	background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 27%) no-repeat fixed 0 0 transparent;
+	border: 1px solid #CCF;
+	border-spacing: 0;
+	border-radius:10px;
+	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.47);
+	text-align: center;
+	width:100%;
+	white-space: normal
+}
+
+th{
+	font-weight: normal;
+	text-shadow: 1px 1px rgba(123, 123, 123, 0.32)
+}
+
+td:first-child, th:first-child {	border-left: 0}
+tr:last-child>td { border-bottom: 0 }
+
+td,th{
+	border: 1px solid #CCF;
+	border-width: 0 0 1px 1px;
+	padding:3px 6px;
+}
+
+tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
+tr>th:hover,tr>td:hover:not(.options){
+	background: rgba(15, 16, 17, 0.06);
+	border-radius:0;
+	text-shadow: 1px 1px #CCC
+}
+tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
+tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
+
+td .input{ margin:0 !important}
+
+.final{ background: rgba(15, 16, 17, 0.06) !important; border-top: 1px solid rgba(255, 255, 255, 0.54) }
+.options{ background: #E4E8EA; border-top: 1px double rgba(255, 255, 255, 0.54) }
+
+.field{ margin:0;	width:100% }
+
+.field input{
+	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
+	height:25px;
+	font-size:1em
+}
+
+.smallBtn{ width:18px }
+.softBtn{
+	box-shadow: 1px 1px 2px #7E7E7E;
+	cursor: pointer;
+	display: inline-block;
+	height: 20px;
+	margin: 3px 10px 3px 0;
+	padding: 3px 4px 3px 5px;
+	text-align: center
+}
+
+.softBtn:hover{ box-shadow: 1px 1px 2px #7E7E7E, 1px 1px 2px #7E7E7E inset }
+.softBtn:active{	box-shadow: 1px 1px 2px #7E7E7E inset, 0px 0px 1px #7E7E7E inset, 2px 2px 2px #7E7E7E inset }
+
+.edit{
+	color: #F1AC46;
+	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
+}
+
+.fontBtn{
+	color: #F1AC46;
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: 0.8em;
+	text-shadow: 1px 1px rgba(167, 121, 31, 0.5);
+	vertical-align: top
+}

@@ -1,0 +1,200 @@
+/* Generic overload properties ***********/
+body
+{
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjkiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2E1ZWJkNSIgc3RvcC1vcGFjaXR5PSIwLjc1Ii8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=) fixed, url("/images/bg.jpg");
+    background: -moz-linear-gradient(top,  rgba(0,0,0,0.9) 0%, rgba(165,235,213,0.75) 100%) fixed, url(/images/bg.jpg); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.9)), color-stop(100%,rgba(165,235,213,0.75))) fixed, url(/images/bg.jpg); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(0,0,0,0.9) 0%,rgba(165,235,213,0.75) 100%) fixed, url(/images/bg.jpg); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(0,0,0,0.9) 0%,rgba(165,235,213,0.75) 100%) fixed, url(/images/bg.jpg); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(0,0,0,0.9) 0%,rgba(165,235,213,0.75) 100%) fixed, url(/images/bg.jpg); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(0,0,0,0.9) 0%,rgba(165,235,213,0.75) 100%) fixed, url(/images/bg.jpg); /* W3C */
+/*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6000000', endColorstr='#bfa5ebd5',GradientType=0 );  IE6-8 */
+
+  background-size: cover, auto;
+/* The goal here is to have 1em = 10px; so 1.6em = 10px ... */
+/*    font-size: 62.5%;*/
+}
+
+.moduleStyle1
+{
+    margin:auto;
+    background: #e8e3d4; /* Old browsers */
+    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U4ZTNkNCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkMGMyOWIiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(left,  #e8e3d4 0%, #d0c29b 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e8e3d4), color-stop(100%,#d0c29b)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left,  #e8e3d4 0%,#d0c29b 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left,  #e8e3d4 0%,#d0c29b 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left,  #e8e3d4 0%,#d0c29b 100%); /* IE10+ */
+    background: linear-gradient(left,  #e8e3d4 0%,#d0c29b 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8e3d4', endColorstr='#d0c29b',GradientType=1 ); /* IE6-8 */
+}
+
+/* Menus properties ***********/
+
+.menuh { padding:4px 0 6px 0 }
+
+/* Just before the new 'menu vertical' category */
+.menuVPad { padding-bottom: 5px }
+
+.menuHLi {
+    color:#355F59;
+    font-family:"Bookman Old Style",Arial,Helvetica,Sans-Serif;
+    font-size:.825rem;
+    display:inline;
+    cursor:pointer;
+    margin:0 5px;
+    padding:4px 6px
+}
+
+.menuHLi:hover{
+    -khtml-border-top-right-radius: 10px;
+    -khtml-border-bottom-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+
+    background: #97bbc9; /* Old browsers */
+    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk3YmJjOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQ1JSIgc3RvcC1jb2xvcj0iI2JlZGNlOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5N2JiYzkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top,  #97bbc9 0%, #bedce8 45%, #97bbc9 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#97bbc9), color-stop(45%,#bedce8), color-stop(100%,#97bbc9)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #97bbc9 0%,#bedce8 45%,#97bbc9 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #97bbc9 0%,#bedce8 45%,#97bbc9 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #97bbc9 0%,#bedce8 45%,#97bbc9 100%); /* IE10+ */
+    background: linear-gradient(top,  #97bbc9 0%,#bedce8 45%,#97bbc9 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#97bbc9', endColorstr='#97bbc9',GradientType=0 ); /* IE6-8 */
+}
+
+.menusHUl{ display:inline }
+
+.menuv>ul:nth-child(2){ padding-top:5px }
+
+.menuVLi {
+    cursor: pointer;
+    display:inline; /* For horizontal purposes */
+    margin: 0 5px;
+    padding:4px 6px
+}
+
+.menuVLi:first-child{ padding:5px 0 }
+
+.menuVLink {
+    color:#355F59;
+    cursor: pointer;
+    font-family:Arial,Helvetica,Sans-Serif;
+    font-size:.825em
+}
+
+.menuVLink:hover{ color:#6CACA4 }
+
+.menuVLi:before {
+    color:#B3A582;
+    content:'> ';
+    font-family:"Bookman Old Style",Arial,Helvetica,Sans-Serif;
+    font-size:.825em
+}
+
+.menusVHeaderUl{ background:url(/images/blockheader.png) }
+
+.menusVHeaderLi {
+    padding:8px 10px;
+    color:#355F59;
+    font-family:Arial,Helvetica,Sans-Serif;
+    font-size:.875em;
+    font-style: italic;
+}
+
+/*
+.moduleType0
+{
+}
+
+.moduleType1
+{
+}
+
+.moduleType4
+{
+}
+
+.moduleType5
+{
+}
+*/
+
+.modulePadding{ padding:10px }
+
+/* Backgrounds ***********/
+
+#backgroundspe
+{
+    background:url(/images/page_gl.png) no-repeat;
+    height:523px;
+    position:absolute;
+    width:274px;
+    z-index:-1 /* Avoids that this image avoids the mouse events on the interesting elements (avoids bug with cursors etc.) */
+}
+
+#bgMiddle
+{
+    background: rgba(255,255,255,0.6);
+    -moz-border-radius:0 0 20px 20px;
+    -khtml-border-bottom-left-radius: 20px;
+    -khtml-border-bottom-right-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px
+}
+
+#location1
+{
+    float:left;
+    overflow:auto;
+    width:23%
+}
+
+#article1
+{
+    padding: 10px;
+    width:75%;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -o-hyphens: auto;
+    hyphens: auto;
+    word-wrap:break-word
+    /* overflow:word-wrap; bientÃ´t en css3 il faudra remplacer par cette valeur car ce sera la nouvelle norme */
+}
+
+#mainFrame
+{
+    left:15%;
+    margin: auto;
+    /*    position:fixed;*/
+    width: 70%
+}
+
+/* Title effect *****/
+
+/* @keyframes title */
+/* { */
+/* from { -webkit-transform:rotate(0deg); } to { -webkit-transform:rotate(360deg); } */
+/* } */
+
+/* @-moz-keyframes title */
+/* { */
+/* from { -moz-transform:rotate(0deg); } to { -moz-transform:rotate(360deg); } */
+/* } */
+
+/* @-webkit-keyframes title */
+/* { */
+/* from { -webkit-transform:rotate(0deg); } to { -webkit-transform:rotate(360deg); } */
+/* } */

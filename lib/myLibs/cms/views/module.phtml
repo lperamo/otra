@@ -1,0 +1,66 @@
+<?
+echo '<div class="' . ((2 == $type) ? '' : 'moduleStyle1 ') . 'moduleType' . $type . '">';
+
+  $hztl = false;
+  if(1 == $type)
+    echo '<nav class="menuv">';
+  else if(2 == $type)
+  {
+    echo '<nav class="menuh center">';
+    $hztl = true;
+  }
+
+  foreach($module as $moduleName => $moduleItems)
+  {
+    if(!$hztl)
+    { ?>
+      <ul class="menusVHeaderUl nodecoration">
+        <li class="menusVHeaderLi">
+          <?= $moduleName ?>
+      </ul><?
+    }
+
+    switch($type)
+    {
+      case 0:
+        $connCenter = false;
+        require CMS_VIEWS_PATH . 'connection.phtml';
+        break;
+
+      case 1:
+        $cptMenuItems = count($moduleItems) - 1;
+        foreach($moduleItems as $key => $menuItem)
+        {
+          if('' != $menuItem['em_contenu'])
+          {?>
+            <ul class="<? if($key == $cptMenuItems){ echo 'menuVPad ';}?>menusVUl nodecoration">
+                <li class="menuVLi">
+                  <a href="#" class="menuVLink" data-tooltip="<?= $menuItem['titre'] ?>"><?= $menuItem['em_contenu'] ?></a>
+            </ul><?
+          }
+        }
+        break;
+
+      case 2:
+        foreach($moduleItems as $menuItem)
+        {
+          if('' != $menuItem['em_contenu'])
+          {?>
+            <ul class="menusHUl nodecoration">
+                <li class="menuHLi" data-href="/<?= 'article/show/' , $menuItem['a_contenu'] ?>" data-tooltip="<?= $menuItem['titre'] ?>">
+                    <?= $menuItem['em_contenu'] ?>
+            </ul><?
+          }
+        }
+        break;
+
+      case 4:
+        require CMS_VIEWS_PATH . 'mailingList.phtml';
+        break;
+    }
+  }
+
+  if(1 == $type)
+    echo '</nav>';
+
+  echo '</div>'; ?>

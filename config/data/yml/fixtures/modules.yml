@@ -1,0 +1,50 @@
+# data/fixtures/modules.yml
+lpcms_module:
+  menu_horizontal:
+    type_module:              2
+    position:                 0
+    ordre:                    0
+    droit:                    2
+    contenu:                  Menu Horizontal
+  autre_module_hztl:
+    type_module:              2
+    position:                 0
+    ordre:                    1
+    droit:                    2
+    contenu:                  Autre module horizontal
+  menu_vertical:    
+    type_module:              1
+    position:                 1
+    ordre:                    0
+    droit:                    2
+    contenu:                  Documents
+  menu_vertical2:
+    type_module:              1
+    position:                 1
+    ordre:                    1
+    droit:                    2
+    contenu:                  Outils
+  module_connexion:
+    type_module:              0
+    position:                 1
+    ordre:                    2
+    droit:                    2
+    contenu:                  Connexion
+  article1:
+    type_module:              3
+    position:                 2
+    ordre:                    0
+    droit:                    2
+    contenu:                  
+  article2:
+    type_module:              3
+    position:                 2
+    ordre:                    1
+    droit:                    2
+    contenu:                  
+  article3:
+    type_module:              3
+    position:                 2
+    ordre:                    2
+    droit:                    2
+    contenu:                  

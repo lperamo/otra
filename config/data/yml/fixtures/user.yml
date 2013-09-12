@@ -1,0 +1,9 @@
+lpcms_user:
+  gmail:
+    mail: 'peramo.lionel@gmail.com'
+    pwd: 'lpcms'
+    pseudo: pgmail
+  hotmail:
+    mail: 'lionelperamo@hotmail.fr'
+    pwd: 'framework'
+    pseudo: photmail

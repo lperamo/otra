@@ -1,0 +1,7 @@
+lpcms_mailing_list:
+  ml1:
+    name: 'mailing list de test'
+    descr: 'Notre première mailing list'
+  ml2:
+    name: 'mailing list de test2'
+    descr: 'Notre deuxième mailing list'

@@ -1,0 +1,72 @@
+body { background: linear-gradient(to bottom, rgba(180, 187, 237, 0.12) 0%, rgba(2, 17, 27, 0.2) 79%) no-repeat fixed 0 0 transparent !important}
+#exception {
+ background: linear-gradient(to bottom, rgba(197, 204, 255, 0.23) 0%, rgba(0, 2, 3, 0.92) 13%) no-repeat fixed 0 0 transparent;
+ font: 16px solid #111;
+ padding: 5px 0;
+ width: 100%
+}
+#explications { font: 12px solid #136; padding-top:20px}
+.textCenter { text-align: center }
+.correctDisplay {
+	height:100%;
+ 	margin: auto;
+ 	overflow: none;
+ 	white-space:pre-wrap;
+ 	text-align: left;
+ 	width:70%;
+ 	-webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -o-hyphens: auto;
+    hyphens: auto;
+    word-wrap:break-word
+    /* overflow:word-wrap; bientôt en css3 il faudra remplacer par cette valeur car ce sera la nouvelle norme */
+}
+
+.radius{ border-radius:10px }
+
+table{
+	background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 100%) scroll;
+	border: 1px solid #CCF;
+	border-spacing: 0;
+	width:100%;
+	white-space: normal
+}
+.test{border:0}
+
+td:first-child, th:first-child {	border-left: 0}
+tr:last-child>td { border-bottom: 0 }
+
+table:not(.test) td:first-child{ width:150px}
+
+td,th{
+	border: 1px solid #CCF;
+	border-width: 0 0 1px 1px;
+	padding:3px 6px;
+}
+
+tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
+tr>td:hover{
+	background: rgba(15, 16, 17, 0.06);
+	border-radius:0;
+	text-shadow: 1px 1px #CCC
+}
+tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
+tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
+
+.foldable{
+	background-color: rgba(68, 68, 68, 0.35) !important;
+	cursor:pointer
+}
+
+.foldable:hover{ background-color: rgba(68, 68, 68, 0.5) !important }
+
+.deepContent{ display:none }
+
+.test td{
+	width:0;
+	white-space: nowrap
+}
+
+.dummy{	width: 100% !important }
+.showArgs{ cursor:pointer }

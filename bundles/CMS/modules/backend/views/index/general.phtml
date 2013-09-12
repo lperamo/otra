@@ -1,0 +1,9 @@
+<?
+self::layout();
+self::title('Backend administration - General options management');
+self::css(array(CMS_CSS_PATH . 'generic', CMS_CSS_PATH . 'interface', CMS_CSS_PATH . 'form'));
+self::js(array('' => CMS_JS_PATH . 'jquery', CMS_JS_PATH . 'backend'));
+$menu = 'General';
+require CMS_VIEWS_PATH . 'logout.phtml';
+require __DIR__ . '/menu.phtml';
+?>

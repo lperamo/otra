@@ -1,0 +1,33 @@
+@font-face
+{
+    /*AddType application/x-woff .woff*/
+/*  font-family: 'Lucida Handwriting';*/
+font-family: 'LucidaHandwritingItalic';
+  src: url('/../../assets/resources/lhandw-webfont.woff');
+}
+
+#headerTitle {
+    text-align:center;
+    color:#ABC8D4!important;
+    font-family:"LucidaHandwritingItalic";
+    font-size:3.5em;
+    font-style:italic;
+    font-weight:400;
+    line-height:100px;
+    cursor:pointer;
+    height:90px
+}
+
+/*
+#headerTitle:after
+{
+    content:'<div id="effect">plop</div>';
+}
+
+#effect
+{
+    animation: title 180s linear infinite;
+    -moz-animation: 180s linear infinite title;
+    -webkit-animation: title 180s linear infinite;
+}
+*/

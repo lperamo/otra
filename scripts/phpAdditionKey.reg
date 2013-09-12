@@ -1,0 +1,26 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\.php]
+@="phpfile"
+"Content Type"="application/php"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\phpfile]
+@="PHP Script"
+"EditFlags"=dword:00000000
+"BrowserFlags"=dword:00000008
+"AlwaysShowExt"=""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\phpfile\DefaultIcon]
+@="C:\\wamp\\bin\\php\\php5.3.10\\php-win.exe,0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\phpfile\shell]
+@="Open"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\phpfile\shell\Open]
+@="&Open"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\phpfile\shell\Open\command]
+@="\"C:\\wamp\\bin\\php\\php5.3.10\\php.exe\" -f \"%1\" -- %~2"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer]
+"InheritConsoleHandles"=dword:00000001
