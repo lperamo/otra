@@ -9,7 +9,12 @@ use lib\myLibs\core\Controller;
 class Router
 {
 	public static $routes = array(
-		'showArticle' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
+		'showArticle' => array(
+			'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
+			'resource' => array(
+				'js' => array('jquery', 'main'),
+				'css' => array(CMS_CSS_PATH . 'generic', CMS_CSS_PATH . 'main', CMS_CSS_PATH . 'form')
+			)),
 		'logout' => array('/logout', 'CMS', 'frontend', 'connection', 'logoutAction'),
 		'ajaxShowArticle' => array('/ajaxArticle/show', 'CMS', 'frontend', 'ajaxArticle', 'showAction'),
 		'ajaxConnection' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction'),
@@ -37,8 +42,7 @@ class Router
 	    'route' => 'showArticle'
 	  );
 
-	/**
-	 * Retrieve the controller's path that we want or launches the route !
+	/** Retrieve the controller's path that we want or launches the route !
 	 *
 	 * @param string 			 $route  The wanted route
 	 * @param string|array $params Additional params
@@ -51,11 +55,12 @@ class Router
 		if(!is_array($params))
 			$params = array($params);
 
-		$chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), self::$routes[$route]);
+		$chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), self::$routes['chunks'][$route]);
 		$chunks['route'] = $route;
 		extract($chunks);
 
     $controller = 'bundles\\' . $bundle . '\\modules\\' . $module . '\\controllers\\' . $controller . 'Controller';
+
 
 		if($launch)
 			new $controller($chunks, $params);
@@ -63,8 +68,7 @@ class Router
 			return self::$routes[$route] . 'Controller'; // not finished ...yet
 	}
 
-	/**
-	 * Check if the pattern is present among the routes
+	/** Check if the pattern is present among the routes
 	 *
 	 * @param string $pattern The pattern to check
 	 *
