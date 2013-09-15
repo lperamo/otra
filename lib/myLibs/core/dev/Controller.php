@@ -11,14 +11,6 @@ use config\All_Config,
 
 class Controller extends MasterController
 {
-  protected $bundle = '',
-    $module = '',
-    $controller = '',
-    $action = '',
-    $getParams = '',
-    $viewCSSPath = '/', // CSS path for module
-    $viewJSPath = '/'; // JS path for module
-
   public $viewPath = '/', // index/index/ for indexController and indexAction
     $route = '';
 
@@ -78,7 +70,7 @@ class Controller extends MasterController
       if (file_exists($templateFile))
         parent::$template = (All_Config::$cache) ? (parent::$template) ? parent::getCachedFile(parent::getCacheFileName($templateFile))
                                                                        : $this->buildCachedFile($templateFile, $variables, parent::getCacheFileName($templateFile), !$ajax)
-                                               : $this->buildCachedFile($templateFile, $variables);
+                                                 : $this->buildCachedFile($templateFile, $variables);
       else
         throw new Lionel_Exception('Erreur : Fichier non trouvé ! : ' , $templateFile);
     }

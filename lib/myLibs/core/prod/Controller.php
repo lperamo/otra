@@ -10,14 +10,6 @@ use config\All_Config,
 
 class Controller
 {
-  protected $bundle = '',
-    $module = '',
-    $controller = '',
-    $action = '',
-    $getParams = '',
-    $viewCSSPath = '/', // CSS path for module
-    $viewJSPath = '/'; // JS path for module
-
   public $viewPath = '/', // index/index/ for indexController and indexAction
     $route = '';
 
@@ -76,7 +68,7 @@ class Controller
     {
       $cachedFile = self::getCacheFileName($templateFile);
       parent::$template = (!self::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
-                                                            : self::getCachedFile(self::getCacheFileName($templateFile), true);
+                                                              : self::getCachedFile(self::getCacheFileName($templateFile), true);
     }
 
     return parent::$template;
@@ -137,8 +129,7 @@ class Controller
     array_splice(self::$css, count(self::$css), 0, $css);
   }
 
-  /**
-   * Puts the css into the template
+  /** Puts the css into the template
    *
    * @return string The links to the css files or the style markup with the css inside
    */
@@ -172,8 +163,7 @@ class Controller
     }
   }
 
-  /**
-   * Cleans the css (spaces and comments)
+  /** Cleans the css (spaces and comments)
    *
    * @param $content The css content
    *

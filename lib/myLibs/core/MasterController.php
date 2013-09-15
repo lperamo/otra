@@ -6,6 +6,13 @@
 namespace lib\myLibs\core;
 
 class MasterController{
+  protected $bundle = '',
+    $module = '',
+    $controller = '',
+    $action = '',
+    $getParams = '',
+    $viewCSSPath = '/', // CSS path for module
+    $viewJSPath = '/'; // JS path for module
   public static $path;
   protected static $id,
   /* @var string $template The actual template being processed */
