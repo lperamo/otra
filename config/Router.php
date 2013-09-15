@@ -12,25 +12,54 @@ class Router
 		'showArticle' => array(
 			'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
 			'resource' => array(
-				'js' => array('jquery', 'main'),
-				'css' => array(CMS_CSS_PATH . 'generic', CMS_CSS_PATH . 'main', CMS_CSS_PATH . 'form')
-			)),
-		'logout' => array('/logout', 'CMS', 'frontend', 'connection', 'logoutAction'),
-		'ajaxShowArticle' => array('/ajaxArticle/show', 'CMS', 'frontend', 'ajaxArticle', 'showAction'),
-		'ajaxConnection' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction'),
+				'js' => array(),
+				'cmsJs' => array('jquery', 'main'),
+				'css' => array(),
+				'cmsCss' => array('generic', 'main', 'form')
+			)
+			),
+		'logout' => array(
+			'chunks' => array('/logout', 'CMS', 'frontend', 'connection', 'logoutAction')
+		),
+		'ajaxShowArticle' => array(
+		  'chunks' => array('/ajaxArticle/show', 'CMS', 'frontend', 'ajaxArticle', 'showAction')
+		),
+		'ajaxConnection' => array(
+			'chunks' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction')
+		),
 
-		'backendModules' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction'),
-		'backendGeneral' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction'),
-		'backendStats' => array('/backend/stats', 'CMS', 'backend', 'index', 'statsAction'),
-		'backendUsers' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction'),
+		'backendModules' => array(
+			'chunks' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction')
+		),
+		'backendGeneral' => array(
+			'chunks' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction')
+		),
+		'backendStats' => array(
+			'chunks' => array('/backend/stats', 'CMS', 'backend', 'index', 'statsAction')
+		),
+		'backendUsers' => array(
+			'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction')
+		),
 
-		'backendAjaxModules' => array('/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction'),
-		'backendAjaxGeneral' => array('/backend/ajax/general', 'CMS', 'backend', 'ajaxGeneral', 'indexAction'),
-		'backendAjaxStats' => array('/backend/ajax/stats', 'CMS', 'backend', 'ajaxStats', 'indexAction'),
-		'backendAjaxUsers' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
+		'backendAjaxModules' => array(
+			'chunks' => array('/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction')
+		),
+		'backendAjaxGeneral' => array(
+			'chunks' => array('/backend/ajax/general', 'CMS', 'backend', 'ajaxGeneral', 'indexAction')
+		),
+		'backendAjaxStats' => array(
+			'chunks' => array('/backend/ajax/stats', 'CMS', 'backend', 'ajaxStats', 'indexAction')
+		),
+		'backendAjaxUsers' => array(
+			'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction')
+		),
 		// keep these routes in last position because it's too generic !!
-		'backend' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),
-		'index' => array('/', 'CMS', 'frontend', 'article', 'showAction')
+		'backend' => array(
+			'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction')
+		),
+		'index' => array(
+			'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction')
+		)
 	);
 
 	public static $defaultRoute = array(
@@ -55,15 +84,16 @@ class Router
 		if(!is_array($params))
 			$params = array($params);
 
-		$chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), self::$routes['chunks'][$route]);
+		//dump(All_Config::$CMS_CSS_PATH);die;
+
+		$chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), self::$routes[$route]['chunks']);
 		$chunks['route'] = $route;
 		extract($chunks);
 
     $controller = 'bundles\\' . $bundle . '\\modules\\' . $module . '\\controllers\\' . $controller . 'Controller';
 
-
 		if($launch)
-			new $controller($chunks, $params);
+			new $controller($chunks, isset(self::$routes[$route]['resources']) ? self::$routes[$route]['resources'] : array(), $params);
 		else
 			return self::$routes[$route] . 'Controller'; // not finished ...yet
 	}
@@ -78,7 +108,7 @@ class Router
 	{
 		foreach(self::$routes as $key => $route)
 		{
-			$route = $route[0];
+			$route = $route['chunks'][0];
 
 			if(0 === strpos($pattern, $route))
 			{

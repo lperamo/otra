@@ -21,61 +21,11 @@ class Controller
   public $viewPath = '/', // index/index/ for indexController and indexAction
     $route = '';
 
-  public static $path;
-  private static $id,
-    $cache_used,
-    /* @var string $template The actual template being processed */
-    $template,
-    $title,
-    $favicon,
+  private static $cache_used,
     $css = array(),
     $js = array(),
-    //  $css = '';
-    //  $js = '';
-    $body,
-    $bodyAttrs,
     $layout,
     $rendered = array();
-
-  /**
-   * @param array $baseParams [
-   *  'bundle' => $bundle,
-   *  'controller' => $controller,
-   *  'action' => $action]
-   *
-   * @param array $getParams The params passed by GET method
-   */
-  public function __construct(array $baseParams = array(), array $getParams = array())
-  {
-    header('Content-Type: text/html; charset=utf-8');
-    header("Vary: Accept-Encoding,Accept-Language");
-
-    // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
-    if(isset($baseParams['controller']))
-    {
-      // Stores the bundle, module, controller and action for later use
-      list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route) = array_values($baseParams);
-      $this->action = substr($baseParams['action'], 0, -6);
-
-      self::$id = $this->bundle . $this->module . $this->controller . $this->action;
-      $this->getParams = $getParams;
-
-      $mainPath = 'bundles/' . $this->bundle . '/modules/' . $this->module . '/';
-      // Stores the templates' path of the calling controller
-      $this->viewPath = BASE_PATH2 . $mainPath . 'views/' . $this->controller . '/';
-      $this->viewCSSPath = '/' . $mainPath .'media/css/';
-      $this->viewJSPath = '/'. $mainPath . 'media/js/';
-
-      self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-
-      // runs the preexecute function if exists and then the action
-      $this->preExecute();
-      call_user_func_array(array($this, $baseParams['action']), $getParams);
-    }
-  }
-
-  // To overload in the child class (e.g: in articleController)
-  public function preExecute(){}
 
   /**
    * If the files are in cache, put them directly in $rendered
@@ -109,7 +59,7 @@ class Controller
    * @param bool   $ajax      Is this an ajax partial ?
    * @param string $viewPath  Using the view path or not
    *
-   * return string self::$template Content of the template
+   * return string parent::$template Content of the template
    */
   public final function renderView($file, array $variables = array(), $ajax = false, $viewPath = true)
   {
@@ -121,56 +71,18 @@ class Controller
     self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
     if(self::$cache_used)
-      self::$template = self::$rendered[$templateFile];
+      parent::$template = self::$rendered[$templateFile];
     else
     {
       $cachedFile = self::getCacheFileName($templateFile);
-      self::$template = (!self::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
+      parent::$template = (!self::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
                                                             : self::getCachedFile(self::getCacheFileName($templateFile), true);
     }
 
-    return self::$template;
+    return parent::$template;
   }
 
-  /** Encodes the value passed as parameter in order to create a cache file name
-   *
-   * @param string $filename File name to modify
-   * @param string $path     File's path
-   * @param stirng $prefix   Prefix of the file name
-   * @return string The cache file name version of the file
-   */
-  private static function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache')
-  {
-    return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
-  }
-
-  /** If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE All_Config::$cache TO TRUE !!
-   *
-   * @param string  $cacheFile The cache file name version of the file
-   * @param bool    $exists    True if we know that the file exists.
-   *
-   * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
-   */
-  private static function getCachedFile($cachedFile, $exists = false)
-  {
-    if(($exists || file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
-      return file_get_contents ($cachedFile);
-
-    return false;
-  }
-
-  /** Checks if the cached file exists and if it's fresh
-   *
-   * @param string $cachedFile The cache file name version of the file
-   *
-   * @return bool True if it exists and it's fresh, false otherwise.
-   */
-  private static function isCachedFileFresh($cachedFile)
-  {
-    return (file_exists($cachedFile) && (filemtime($cachedFile) + CACHE_TIME) > time());
-  }
-
-  /** Parses the template file and updates self::$template
+  /** Parses the template file and updates parent::$template
    *
    * @param string $filename  The file name
    * @param array  $variables Variables to pass to the template
@@ -204,17 +116,6 @@ class Controller
     return $content;
   }
 
-  /** Replaces the layout body content by the template body content if the layout is set
-   *
-   * @param string $content Content of the template to process
-   */
-  private static function addLayout($content)
-  {
-    return (isset(self::$layout))
-      ? preg_replace('`(<body[^>]*>)(.*)`s', '$1' . str_replace('$','\\$', $content), self::$layout)
-      : $content;
-  }
-
   /** Includes the layout */
   private function layout()
   {
@@ -222,27 +123,6 @@ class Controller
     self::$layout = self::getCachedFile(LAYOUT, $cachedFile);
     if(!self::$layout) // if it was not in the cache or "fresh"...
       self::$layout = $this->buildCachedFile(LAYOUT, array(), $cachedFile, false);
-  }
-
-  /** Sets the title of the page
-   *
-   * @param string $title Title of the page
-   */
-  private static function title($title) {
-    self::$layout = (isset(self::$layout))
-      ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
-      : '<title>' . $title . '</title><body>';
-  }
-
-  /** Sets the favicons of the site
-   *
-   * @param string $favicon   Favicon file name
-   * @param string $faviconIE Favicon file name for IE
-   */
-  private static function favicon($favicon = '', $faviconIE = '')
-  {
-    echo '<link rel="icon" type="image/png" href="' , $favicon , '" />
-      <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $faviconIE . '" /><![endif]-->';
   }
 
   /** Adds a css script to the existing ones
@@ -311,19 +191,6 @@ class Controller
     return str_replace(': ', ':', $content);
   }
 
-  /**
-   * Sets the body attributes
-   *
-   * @param string $attrs Body attributes
-   */
-  public static function bodyAttrs($attrs = '') { self::$bodyAttrs = $attrs; }
-
-  /** Sets the body content
-   *
-   * @param string $content Body content
-   */
-  private static function body($content = '') { self::$body = $content; }
-
   /** Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
@@ -338,7 +205,7 @@ class Controller
     self::$js = array_merge(self::$js, $js);
   }
 
-  /** Puts the css into the template. Updates self::$template.
+  /** Puts the css into the template. Updates parent::$template.
    *
    * @return The links to the js files or the script markup with the js inside
    */
@@ -388,13 +255,5 @@ class Controller
 
     return $packer->pack();
   }
-
-  /** Suppress HTML comments but keeping conditional comments
-   *
-   * @param string $content The HTML to clean
-   *
-   * @return string
-   */
-  private function cleanHTML($content) { return preg_replace('#<!--[^\[\]]*-->#', '', $content); }
 }
 ?>
