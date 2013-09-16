@@ -11,6 +11,8 @@ require '../lib/myLibs/core/Debug_Tools.php';
 
 define('XMODE', 'prod');
 ini_set('html_errors', 1);
+ini_set('error_reporting', 1);
+error_reporting(-1);
 ob_get_clean();
 
 try{

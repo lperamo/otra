@@ -1,4 +1,6 @@
 <?php
+
+namespace lib\myLibs\core;
 require_once 'Tasks.php';
 
 /** The 'Desc' functions explains the functions "without 'Desc'"
@@ -15,7 +17,8 @@ class Tasks_Manager
   {
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL,
       str_pad('- no argument', 25, ' '), ': Shows the available commands.', PHP_EOL, PHP_EOL;
-    $methods = get_class_methods('Tasks');
+
+    $methods = get_class_methods('lib\myLibs\core\Tasks');
 
     foreach ($methods as $method)
     {

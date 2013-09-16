@@ -1,7 +1,9 @@
-<?php
+<?
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
  * @author Lionel Péramo */
+
+namespace lib\myLibs\core;
 
 use lib\myLibs\core\Database,
     config\All_Config;
@@ -9,19 +11,11 @@ use lib\myLibs\core\Database,
 class Tasks
 {
   /** Executes the sql script */
-  public static function sql()
-  {
-    exec('mysql ../sql/entire_script.sql');
-  }
+  public static function sql() { exec('mysql ../sql/entire_script.sql'); }
 
-  public static function sqlDesc()
-  {
-    return array('Executes the sql script');
-  }
+  public static function sqlDesc() { return array('Executes the sql script'); }
 
-  /**
-   * (sql_generate_basic) Database creation, tables creation.
-   */
+  /** (sql_generate_basic) Database creation, tables creation. */
   public static function sql_gb($argv)
   {
     Database::init();
@@ -45,9 +39,7 @@ class Tasks
     );
   }
 
-  /**
-   * (sql_generate_fixtures) Generates fixtures.
-   */
+  /** (sql_generate_fixtures) Generates fixtures. */
   public static function sql_gf($argv)
   {
     Database::init();
@@ -71,18 +63,15 @@ class Tasks
     );
   }
 
-  /**
-   * Clears the cache.
-   */
+  /** Clears the cache. */
   public static function cc()
   {
-    passthru('del ' . All_Config::$cache_path . '*');
+    array_map('unlink', glob(All_Config::$cache_path . '*'));
     echo('Cache cleared.' . PHP_EOL);
   }
 
-  public static function ccDesc()
-  {
-    return array('Clears the cache');
-  }
+  public static function ccDesc() { return array('Clears the cache'); }
+
+  //public static function
 }
 ?>

@@ -19,8 +19,7 @@ class Controller
     $layout,
     $rendered = array();
 
-  /**
-   * If the files are in cache, put them directly in $rendered
+  /** If the files are in cache, put them directly in $rendered
    *
    * @param array $filesToCheck Files to check in cache
    *
@@ -89,7 +88,7 @@ class Controller
 
     $content = ($layout) ? self::addLayout(ob_get_clean()) : ob_get_clean();
 
-    // /!\ We have put to put these functions in this order to put the css before ! (in order to optimize the loading)
+    // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><', str_replace(
       '/title>',
       '/title>'. self::addCss(),
@@ -206,16 +205,26 @@ class Controller
 
     $debugContent = $finalJs = '';
 
-    $tmp = ini_get('allow_url_include');
-    ini_set('allow_url_include', 1);
+    // $tmp = ini_get('allow_url_include');
+    // ini_set('allow_url_include', 1);
+    var_dump('plop');die;
     foreach(self::$js as $js)
     {
       $lastFile = $js . '.js';
       ob_start();
-      require $lastFile;
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $lastFile);
+      url_setopt($ch, CURLOPT_HEADER, false);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+      // $data = curl_exec($ch);
+      curl_exec($ch);
+      curl_close($ch);
+      // require $lastFile;
       $finalJs .= ob_get_clean();
+      var_dump('plop', $data, $finalJs);die;
     }
-    ini_set('allow_url_include', $tmp);
+    // ini_set('allow_url_include', $tmp);
 
     if(strlen($finalJs) < RESOURCE_FILE_MIN_SIZE)
       return '<script async defer>' . $finalJs . '</script>';

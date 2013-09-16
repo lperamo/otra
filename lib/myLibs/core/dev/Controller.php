@@ -97,7 +97,7 @@ class Controller extends MasterController
     $content = ($layout && !parent::$layoutOnce) ? parent::addLayout(ob_get_clean()) : ob_get_clean();
     Logger::logTo("\t" . 'File : ' . $filename, 'trace');
 
-    // /!\ We have put to put these functions in this order to put the css before ! (in order to optimize the loading)
+    // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = str_replace(
       '/title>',
       '/title>'. self::addCss(),
