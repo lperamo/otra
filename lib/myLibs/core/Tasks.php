@@ -72,6 +72,12 @@ class Tasks
 
   public static function ccDesc() { return array('Clears the cache'); }
 
-  //public static function
+  public static function genAssets(){
+    require 'GenAssets.php';
+  }
+
+  public static function genAssetsDesc(){
+    return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.');
+  }
 }
 ?>

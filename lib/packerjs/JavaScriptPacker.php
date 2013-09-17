@@ -1,23 +1,9 @@
 <?php
 
-/* 9 April 2008. version 1.1
- *
- * ParseMaster, version 1.0.2 (2005-08-19) Copyright 2005, Dean Edwards
- * a multi-pattern parser.
+/* By Dean Edwards then Nicolas Martin.
  * KNOWN BUG: erroneous behavior when using escapeChar with a replacement
  * value that is a function
  *
- * packer, version 2.0.2 (2005-08-19) Copyright 2004-2005, Dean Edwards
- *
- * License: http://creativecommons.org/licenses/LGPL/2.1/
- *
- * Ported to PHP by Nicolas Martin.
- *
- * The pack() method return the compressed JavasScript, as a string.
- *
- * see http://dean.edwards.name/packer/usage/ for more information.
- *
- * Notes :
  * # The packed result may be different than with the Dean Edwards
  *   version, but with the same length. The reason is that the PHP
  *   function usort to sort array don't necessarily preserve the
@@ -37,19 +23,19 @@ class JavaScriptPacker
   const IGNORE = '$1';
 
   // validate parameters
-  private $_script = '';
-  private $_encoding = 62;
-  private $_fastDecode = true;
-  private $_specialChars = false;
-  private $LITERAL_ENCODING = array(
-    'None' => 0,
-    'Numeric' => 10,
-    'Normal' => 62,
-    'High ASCII' => 95
-  );
+  private $_script = '',
+    $_encoding = 62,
+    $_fastDecode = true,
+    $_specialChars = false,
+    $LITERAL_ENCODING = array(
+      'None' => 0,
+      'Numeric' => 10,
+      'Normal' => 62,
+      'High ASCII' => 95
+    ),
   // keep a list of parsing functions, they'll be executed all at once
-  private $_parsers = array();
-  private $_count = array();
+    $_parsers = array(),
+    $_count = array();
 
   /**
    * Constructor
@@ -93,10 +79,7 @@ class JavaScriptPacker
     return $script;
   }
 
-  private function _addParser($parser)
-  {
-    $this->_parsers[] = $parser;
-  }
+  private function _addParser($parser) { $this->_parsers[] = $parser; }
 
   // zero encoding - just removal of white space and comments
   private function _basicCompression($script)
@@ -252,15 +235,11 @@ class JavaScriptPacker
   }
 
   /**
-   *
    * @param type $match1
    * @param type $match2
    * @return type
    */
-  private function _sortWords($match1, $match2)
-  {
-    return $this->_count[$match2] - $this->_count[$match1];
-  }
+  private function _sortWords($match1, $match2) { return $this->_count[$match2] - $this->_count[$match1]; }
 
   /**
    * Builds the boot function used for loading and decoding
@@ -362,7 +341,6 @@ class JavaScriptPacker
   private function _insertFastEncode($match) { return '{$encode=' . $this->buffer . ';'; }
 
   /**
-   *
    * @param int $ascii
    *
    * @return string
@@ -380,23 +358,17 @@ class JavaScriptPacker
    *
    * @return type
    */
-  private function _encode10($charCode)
-  {
-    return $charCode;
-  }
+  private function _encode10($charCode) { return $charCode; }
 
   /**
    * inherent base36 support
    * characters: 0123456789abcdefghijklmnopqrstuvwxyz
-
+   *
    * @param type $charCode
    *
    * @return type
    */
-  private function _encode36($charCode)
-  {
-    return base_convert($charCode, 10, 36);
-  }
+  private function _encode36($charCode) { return base_convert($charCode, 10, 36); }
 
   /**
    * Hitch a ride on base36 and add the upper case alpha characters
@@ -440,10 +412,7 @@ class JavaScriptPacker
    *
    * @return string
    */
-  private function _safeRegExp($string)
-  {
-    return '/' . preg_replace('/\$/', '\\\$', $string) . '/';
-  }
+  private function _safeRegExp($string) { return '/' . preg_replace('/\$/', '\\\$', $string) . '/'; }
 
   /**
    *
@@ -451,16 +420,10 @@ class JavaScriptPacker
    *
    * @return string The charCode preceded by '_'
    */
-  private function _encodePrivate($charCode)
-  {
-    return '_' . $charCode;
-  }
+  private function _encodePrivate($charCode) { return '_' . $charCode; }
 
   // protect characters used by the parser
-  private function _escape($script)
-  {
-    return preg_replace('/([\\\\\'])/', '\\\$1', $script);
-  }
+  private function _escape($script) { return preg_replace('/([\\\\\'])/', '\\\$1', $script); }
 
   // protect high-ascii characters already in the script
   private function _escape95($script)
@@ -470,10 +433,7 @@ class JavaScriptPacker
     );
   }
 
-  private function _escape95Bis($match)
-  {
-    return '\x' . ((string) dechex(ord($match)));
-  }
+  private function _escape95Bis($match) { return '\x' . ((string) dechex(ord($match))); }
 
   private function _getJSFunction($aName)
   {
@@ -548,25 +508,25 @@ class JavaScriptPacker
 
 class ParseMaster
 {
-  public $ignoreCase = false;
-  public $escapeChar = '';
+  public $ignoreCase = false,
+    $escapeChar = '';
 
   // constants
-  const EXPRESSION = 0;
-  const REPLACEMENT = 1;
-  const LENGTH = 2;
+  const EXPRESSION = 0,
+    REPLACEMENT = 1,
+    LENGTH = 2;
 
   // used to determine nesting levels
-  private $GROUPS = '/\\(/'; //g
-  private $SUB_REPLACE = '/\\$\\d/';
-  private $INDEXED = '/^\\$\\d+$/';
-  private $TRIM = '/([\'"])\\1\\.(.*)\\.\\1\\1$/';
-  private $ESCAPE = '/\\\./'; //g
-  private $QUOTE = '/\'/';
-  private $DELETED = '/\\x01[^\\x01]*\\x01/'; //g
-  private $_escaped = array();  // escaped characters
-  private $_patterns = array(); // patterns stored by index
-  private $buffer;
+  private $GROUPS = '/\\(/', //g
+    $SUB_REPLACE = '/\\$\\d/',
+    $INDEXED = '/^\\$\\d+$/',
+    $TRIM = '/([\'"])\\1\\.(.*)\\.\\1\\1$/',
+    $ESCAPE = '/\\\./', //g
+    $QUOTE = '/\'/',
+    $DELETED = '/\\x01[^\\x01]*\\x01/', //g
+    $_escaped = array(),  // escaped characters
+    $_patterns = array(), // patterns stored by index
+    $buffer;
 
   public function add($expression, $replacement = '')
   {
@@ -633,22 +593,17 @@ class ParseMaster
     return preg_replace($this->DELETED, '', $string);
   }
 
-  /**
-   * clear the patterns collection so that this object may be re-used
-   */
-  public function reset()
-  {
-    $this->_patterns = array();
-  }
+  /** clear the patterns collection so that this object may be re-used */
+  public function reset() { $this->_patterns = array(); }
 
-  // create and add a new pattern to the patterns collection
+  /** create and add a new pattern to the patterns collection */
   private function _add()
   {
     $arguments = func_get_args();
     $this->_patterns[] = $arguments;
   }
 
-  // this is the global replace function (it's quite complicated)
+  /** this is the global replace function (it's quite complicated) */
   private function _replacement($arguments)
   {
     if (empty($arguments))
@@ -684,7 +639,6 @@ class ParseMaster
   }
 
   /**
-   *
    * @param type $match
    * @param type $offset
    *
@@ -704,7 +658,6 @@ class ParseMaster
   }
 
   /**
-   *
    * @param type $match
    * @param type $offset
    *
@@ -719,16 +672,12 @@ class ParseMaster
   }
 
   /**
-   *
    * @param type $match
    * @param type $offset
    *
    * @return type
    */
-  private function _replace_encoded($match, $offset)
-  {
-    return $this->buffer[$match[$offset]];
-  }
+  private function _replace_encoded($match, $offset) { return $this->buffer[$match[$offset]]; }
 
   /* php : we cannot pass additional data to preg_replace_callback,
    * and we cannot use &$this in create_function, so let's go to lower level
@@ -749,7 +698,6 @@ class ParseMaster
   }
 
   /**
-   *
    * @param type $match
    *
    * @return type
@@ -794,7 +742,6 @@ class ParseMaster
   }
 
   /**
-   *
    * @param type $string
    *
    * @return type
@@ -803,6 +750,5 @@ class ParseMaster
   {
     return preg_replace($this->ESCAPE, '', $string);
   }
-
 }
 ?>

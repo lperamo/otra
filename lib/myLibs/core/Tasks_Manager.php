@@ -15,7 +15,7 @@ class Tasks_Manager
    */
   public static function showCommands($message)
   {
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL,
+    echo PHP_EOL, $message, PHP_EOL, PHP_EOL, 'The available commmands are : ', PHP_EOL . PHP_EOL,
       str_pad('- no argument', 25, ' '), ': Shows the available commands.', PHP_EOL, PHP_EOL;
 
     $methods = get_class_methods('lib\myLibs\core\Tasks');
@@ -39,7 +39,7 @@ class Tasks_Manager
             // + parameter : (required|optional) Description
             echo '   + ', str_pad($parameter, 20, ' '), ': (', $paramsDesc[2][$i], ') ',$paramDesc, PHP_EOL;
             ++$i;
-          }
+          }          
         }
         echo PHP_EOL;
       }

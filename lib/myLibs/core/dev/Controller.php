@@ -11,8 +11,7 @@ use config\All_Config,
 
 class Controller extends MasterController
 {
-  public $viewPath = '/', // index/index/ for indexController and indexAction
-    $route = '';
+  public $viewPath = '/'; // index/index/ for indexController and indexAction
 
   private static $cache_used,
     $css = array(),

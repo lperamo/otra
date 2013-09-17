@@ -55,4 +55,3 @@ final class Universal_Autoloader
 }
 spl_autoload_register(array('Universal_Autoloader', 'autoload'));
 ?>
-

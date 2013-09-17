@@ -11,11 +11,11 @@ class Router
 	public static $routes = array(
 		'showArticle' => array(
 			'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
-			'resource' => array(
+			'resources' => array(
 				'js' => array(),
 				'cmsJs' => array('jquery', 'main'),
 				'css' => array(),
-				'cmsCss' => array('generic', 'main', 'form')
+				'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
 			)
 			),
 		'logout' => array(
@@ -58,7 +58,13 @@ class Router
 			'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction')
 		),
 		'index' => array(
-			'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction')
+			'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
+      'resources' => array(
+        'js' => array(),
+        'cmsJs' => array('jquery', 'main'),
+        'css' => array(),
+        'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
+      )
 		)
 	);
 
@@ -92,6 +98,7 @@ class Router
 
     $controller = 'bundles\\' . $bundle . '\\modules\\' . $module . '\\controllers\\' . $controller . 'Controller';
 
+    // var_dump($controller);die;
 		if($launch)
 			new $controller($chunks, isset(self::$routes[$route]['resources']) ? self::$routes[$route]['resources'] : array(), $params);
 		else

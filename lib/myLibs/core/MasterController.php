@@ -10,6 +10,7 @@ class MasterController{
     $module = '',
     $controller = '',
     $action = '',
+    $route,
     $getParams = '',
     $viewCSSPath = '/', // CSS path for module
     $viewJSPath = '/'; // JS path for module
@@ -33,7 +34,6 @@ class MasterController{
    */
   public function __construct(array $baseParams = array(), array $resources = array(), array $getParams = array())
   {
-    // dump($baseParams);die;
     header('Content-Type: text/html; charset=utf-8');
     header("Vary: Accept-Encoding,Accept-Language");
 

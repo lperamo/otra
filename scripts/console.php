@@ -1,10 +1,8 @@
 #!/usr/bin/php
 <?
-
 define('XMODE', 'dev');
 require('../lib/myLibs/core/Tasks_Manager.php');
 
-echo PHP_EOL; // for more lisibility
 // If we didn't specify any command, list the available commands
 if ($argc < 2){
   lib\myLibs\core\Tasks_Manager::showCommands('No commands specified ! ');
@@ -12,7 +10,7 @@ if ($argc < 2){
 }
 
 // if the command exists, runs it
-if (method_exists('lib\myLibs\core\Tasks', $argv[1]))
+if (method_exists('lib\myLibs\core\Tasks', $argv[1]) && method_exists('lib\myLibs\core\Tasks', $argv[1] . 'Desc'))
 {
   $methodDesc = $argv[1] . 'Desc';
   $paramsDesc = lib\myLibs\core\Tasks::$methodDesc();
@@ -28,7 +26,8 @@ if (method_exists('lib\myLibs\core\Tasks', $argv[1]))
 
   if($argc > $total + 2)
     die('There are too much parameters ! The total number of existing parameters is : ' . $total . PHP_EOL);
-  elseif($argc < $required + 2)
+  
+  if($argc < $required + 2)
     die('Not enough parameters ! The total number of required parameters is : ' . $required . PHP_EOL);
 
   // And we runs the task if all is correct

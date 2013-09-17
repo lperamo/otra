@@ -6,17 +6,16 @@
 namespace lib\myLibs\core;
 
 use config\All_Config,
-    lib\packerjs\JavaScriptPacker;
+  lib\myLibs\core\Logger,
+  lib\myLibs\core\MasterController;
 
-class Controller
+class Controller extends MasterController
 {
-  public $viewPath = '/', // index/index/ for indexController and indexAction
-    $route = '';
+  public $viewPath = '/'; // index/index/ for indexController and indexAction
 
   private static $cache_used,
     $css = array(),
     $js = array(),
-    $layout,
     $rendered = array();
 
   /** If the files are in cache, put them directly in $rendered
@@ -31,10 +30,10 @@ class Controller
     {
       $templateFile = $this->viewPath . $fileToCheck;
 
-      $cachedFile = self::getCacheFileName($templateFile);
+      $cachedFile = parent::getCacheFileName($templateFile);
       if (file_exists($cachedFile))
       {
-        self::$rendered[$templateFile] = self::getCachedFile($cachedFile, true);
+        self::$rendered[$templateFile] = parent::getCachedFile($cachedFile, true);
         if(!self::$rendered[$templateFile])
           return false;
       }else
@@ -65,9 +64,9 @@ class Controller
       parent::$template = self::$rendered[$templateFile];
     else
     {
-      $cachedFile = self::getCacheFileName($templateFile);
-      parent::$template = (!self::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
-                                                              : self::getCachedFile(self::getCacheFileName($templateFile), true);
+      $cachedFile = parent::getCacheFileName($templateFile);
+      parent::$template = (!parent::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
+                                                              : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
     return parent::$template;
@@ -91,8 +90,8 @@ class Controller
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><', str_replace(
       '/title>',
-      '/title>'. self::addCss(),
-      $content . self::addJs())); // suppress useless spaces
+      '/title>'. $this->addCss($layout),
+      $content . $this->addJs($layout))); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = array();
@@ -110,10 +109,10 @@ class Controller
   /** Includes the layout */
   private function layout()
   {
-    $cachedFile = self::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
-    self::$layout = self::getCachedFile(LAYOUT, $cachedFile);
-    if(!self::$layout) // if it was not in the cache or "fresh"...
-      self::$layout = $this->buildCachedFile(LAYOUT, array(), $cachedFile, false);
+    $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
+    parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile);
+    if(!parent::$layout) // if it was not in the cache or "fresh"...
+      parent::$layout = $this->buildCachedFile(LAYOUT, array(), $cachedFile, false);
   }
 
   /** Adds a css script to the existing ones
@@ -130,15 +129,30 @@ class Controller
 
   /** Puts the css into the template
    *
+   * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
+   *
    * @return string The links to the css files or the style markup with the css inside
    */
-  private static function addCss()
+  private function addCss($firstTime)
   {
-    if(empty(self::$css))
-      return '';
+    Logger::log('prout');
+    if(empty(self::$css)){
+      if(!$firstTime)
+        return '';
+
+      $cachedFile = parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '', '.css');
+      ob_start();
+      require $cachedFile;
+      $css = ob_get_clean();
+
+      if(strlen($css) < RESOURCE_FILE_MIN_SIZE)
+        return '<style>' . $css . '</style>';
+
+      return '<link rel="stylesheet" href="' . $cachedFile . '" />';
+    }
 
     // Concatenates all the css
-    $debugContent = $finalCss = '';
+    $allCss = '';
 
     foreach(self::$css as $css)
     {
@@ -146,38 +160,26 @@ class Controller
 
       ob_start();
       require $lastFile;
-      $finalCss .= ob_get_clean();
+      $allCss .= ob_get_clean();
     }
 
-    if(strlen($finalCss) < RESOURCE_FILE_MIN_SIZE)
-      return '<style>' . $finalCss . '</style>';
-    else
+    if($firstTime)
     {
-      $lastFile .= VERSION;
-      $fp = fopen(self::getCacheFileName($lastFile, CACHE_PATH, self::$id, '.css'), 'w');
-      fwrite($fp, $finalCss);
-      fclose($fp);
-
-      return '<link rel="stylesheet" href="' . self::getCacheFileName($lastFile, '/cache/', self::$id, '.css') . '" />';
+      ob_start();
+      require parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '', '.css');
+      $allCss .= ob_get_clean();
     }
-  }
 
-  /** Cleans the css (spaces and comments)
-   *
-   * @param $content The css content
-   *
-   * @return string The cleaned css
-   */
-  private static function cleanCss($content)
-  {
-    $content = preg_replace('@/\*.*?\*/@s', '', $content);
-    $content = str_replace(array("\r\n", "\r", "\n", "\t", '  '), '', $content);
-    $content = str_replace(array('{ ',' {'), '{', $content);
-    $content = str_replace(array(' }','} '), '}', $content);
-    $content = str_replace(array('; ',' ;'), ';', $content);
-    $content = str_replace(array(', ',' ,'), ',', $content);
+    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
+      return '<style>' . $allCss . '</style>';
 
-    return str_replace(': ', ':', $content);
+    $lastFile .= VERSION;
+    log(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '_dyn', '.css'));
+    $fp = fopen(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '_dyn', '.css'), 'w');
+    fwrite($fp, $allCss);
+    fclose($fp);
+
+    return '<link rel="stylesheet" href="' . parent::getCacheFileName($this->route . VERSION, '/cache/css/', '_dyn', '.css') . '" />';
   }
 
   /** Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
@@ -200,21 +202,29 @@ class Controller
    */
   private function addJs()
   {
-    if(empty(self::$js))
-      return '';
 
-    $debugContent = $finalJs = '';
+    if(empty(self::$js)){
+      $cachedFile = parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '', '.js');
+      ob_start();
+      require $cachedFile;
+      $css = ob_get_clean();
 
+      if(strlen($css) < RESOURCE_FILE_MIN_SIZE)
+        return '<script async defer>' . $css . '</script>';
+
+      return '<script src="' . $cachedFile . '" async defer></script>';
+    }
+
+    $finalJs = '';
     // $tmp = ini_get('allow_url_include');
     // ini_set('allow_url_include', 1);
-    var_dump('plop');die;
     foreach(self::$js as $js)
     {
       $lastFile = $js . '.js';
       ob_start();
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $lastFile);
-      url_setopt($ch, CURLOPT_HEADER, false);
+      curl_setopt($ch, CURLOPT_HEADER, false);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
       // $data = curl_exec($ch);
@@ -222,7 +232,7 @@ class Controller
       curl_close($ch);
       // require $lastFile;
       $finalJs .= ob_get_clean();
-      var_dump('plop', $data, $finalJs);die;
+      // var_dump('plop', $data, $finalJs);die;
     }
     // ini_set('allow_url_include', $tmp);
 
@@ -232,27 +242,12 @@ class Controller
     {
       $lastFile .= VERSION;
       // Creates/erase the corresponding cleaned js file
-      $fp = fopen(self::getCacheFileName($lastFile, CACHE_PATH, self::$id, '.js'), 'w');
+      $fp = fopen(parent::getCacheFileName($lastFile, CACHE_PATH, self::$id, '.js'), 'w');
       fwrite($fp, $finalJs);
       fclose($fp);
 
-      return '<script src="' . self::getCacheFileName($lastFile, '/cache/', self::$id, '.js') . '" async defer></script>';
+      return '<script src="' . parent::getCacheFileName($lastFile, '/cache/', self::$id, '.js') . '" async defer></script>';
     }
-  }
-
-  /**
-   * Cleans the js (spaces and comments)
-   * TODO optimize with return new JavaScriptPacker($content)->pack();
-   *
-   * @param $content The js content
-   *
-   * @return string The cleaned js
-   */
-  private static function cleanJs($content)
-  {
-    $packer = new JavaScriptPacker($content);
-
-    return $packer->pack();
   }
 }
 ?>
