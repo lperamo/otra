@@ -7,7 +7,11 @@ require $basePath . '/lib/packerjs/JavaScriptPacker.php';
 $routes = \config\Router::$routes;
 $cptRoutes = count($routes);
 
-echo PHP_EOL, $cptRoutes , ' routes to process. Processing the routes ... ' . PHP_EOL;
+echo PHP_EOL, 'Cleaning the resources cache...' . PHP_EOL;
+array_map('unlink', glob(\Config\All_Config::$cache_path . '/css/*'));
+array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
+
+echo $cptRoutes , ' routes to process. Processing the routes ... ' . PHP_EOL;
 for($i = 0; $i < $cptRoutes; $i += 1){
   $route = current($routes);
   $nom = key($routes);

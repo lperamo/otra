@@ -66,7 +66,7 @@ class Tasks
   /** Clears the cache. */
   public static function cc()
   {
-    array_map('unlink', glob(All_Config::$cache_path . '*'));
+    array_map('unlink', glob(All_Config::$cache_path . '*.cache'));
     echo('Cache cleared.' . PHP_EOL);
   }
 

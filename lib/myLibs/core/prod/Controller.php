@@ -6,7 +6,6 @@
 namespace lib\myLibs\core;
 
 use config\All_Config,
-  lib\myLibs\core\Logger,
   lib\myLibs\core\MasterController;
 
 class Controller extends MasterController
@@ -135,7 +134,6 @@ class Controller extends MasterController
    */
   private function addCss($firstTime)
   {
-    Logger::log('prout');
     if(empty(self::$css)){
       if(!$firstTime)
         return '';
@@ -213,7 +211,7 @@ class Controller extends MasterController
       if(strlen($js) < RESOURCE_FILE_MIN_SIZE)
         return '<script async defer>' . $js . '</script>';
 
-      return '<script src="' . $cachedFile . '" async defer></script>';
+      return '<script src="' . parent::getCacheFileName($this->route . VERSION, '/cache/js/', '', '.js') . '" async defer></script>';
     }
 
     $allJs = '';
@@ -223,14 +221,18 @@ class Controller extends MasterController
     {
       $lastFile = $js . '.js';
       ob_start();
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $lastFile);
-      curl_setopt($ch, CURLOPT_HEADER, false);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-      // $data = curl_exec($ch);
-      curl_exec($ch);
-      curl_close($ch);
+      if(false === strpos($lastFile, ('http')))
+        require parent::$path . $lastFile;
+      else{
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $lastFile);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        // $data = curl_exec($ch);
+        curl_exec($ch);
+        curl_close($ch);
+      }
       // require $lastFile;
       $allJs .= ob_get_clean();
       // var_dump('plop', $data, $allJs);die;
@@ -251,7 +253,7 @@ class Controller extends MasterController
     fwrite($fp, $allJs);
     fclose($fp);
 
-    return '<script src="' .parent::getCacheFileName($this->route . VERSION, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
+    return '<script src="' . parent::getCacheFileName($this->route . VERSION, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
 ?>

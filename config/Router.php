@@ -13,7 +13,7 @@ class Router
 			'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
 			'resources' => array(
 				'js' => array(),
-				'cmsJs' => array('jquery', 'main'),
+				'cmsJs' => array('jquery', 'main', 'connection'),
 				'css' => array(),
 				'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
 			)
@@ -61,7 +61,7 @@ class Router
 			'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
         'js' => array(),
-        'cmsJs' => array('jquery', 'main'),
+        'cmsJs' => array('jquery', 'main', 'connection'),
         'css' => array(),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
