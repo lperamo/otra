@@ -174,7 +174,6 @@ class Controller extends MasterController
       return '<style>' . $allCss . '</style>';
 
     $lastFile .= VERSION;
-    log(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '_dyn', '.css'));
     $fp = fopen(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '_dyn', '.css'), 'w');
     fwrite($fp, $allCss);
     fclose($fp);
@@ -200,22 +199,24 @@ class Controller extends MasterController
    *
    * @return The links to the js files or the script markup with the js inside
    */
-  private function addJs()
+  private function addJs($firstTime)
   {
-
     if(empty(self::$js)){
+      if(!$firstTime)
+        return '';
+
       $cachedFile = parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '', '.js');
       ob_start();
       require $cachedFile;
-      $css = ob_get_clean();
+      $js = ob_get_clean();
 
-      if(strlen($css) < RESOURCE_FILE_MIN_SIZE)
-        return '<script async defer>' . $css . '</script>';
+      if(strlen($js) < RESOURCE_FILE_MIN_SIZE)
+        return '<script async defer>' . $js . '</script>';
 
       return '<script src="' . $cachedFile . '" async defer></script>';
     }
 
-    $finalJs = '';
+    $allJs = '';
     // $tmp = ini_get('allow_url_include');
     // ini_set('allow_url_include', 1);
     foreach(self::$js as $js)
@@ -231,23 +232,26 @@ class Controller extends MasterController
       curl_exec($ch);
       curl_close($ch);
       // require $lastFile;
-      $finalJs .= ob_get_clean();
-      // var_dump('plop', $data, $finalJs);die;
+      $allJs .= ob_get_clean();
+      // var_dump('plop', $data, $allJs);die;
     }
     // ini_set('allow_url_include', $tmp);
-
-    if(strlen($finalJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' . $finalJs . '</script>';
-    else
+    if($firstTime)
     {
-      $lastFile .= VERSION;
-      // Creates/erase the corresponding cleaned js file
-      $fp = fopen(parent::getCacheFileName($lastFile, CACHE_PATH, self::$id, '.js'), 'w');
-      fwrite($fp, $finalJs);
-      fclose($fp);
-
-      return '<script src="' . parent::getCacheFileName($lastFile, '/cache/', self::$id, '.js') . '" async defer></script>';
+      ob_start();
+      require parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '', '.js');
+      $allJs .= ob_get_clean();
     }
+
+    if(strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
+      return '<script async defer>' . $allJs . '</script>';
+    $lastFile .= VERSION;
+    // Creates/erase the corresponding cleaned js file
+    $fp = fopen(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '_dyn', '.js'), 'w');
+    fwrite($fp, $allJs);
+    fclose($fp);
+
+    return '<script src="' .parent::getCacheFileName($this->route . VERSION, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
 ?>
