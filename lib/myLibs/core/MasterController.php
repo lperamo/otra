@@ -29,10 +29,9 @@ class MasterController{
    *  'controller' => $controller,
    *  'action' => $action]
    *
-   * @param array $resources The js and css resources
    * @param array $getParams The params passed by GET method
    */
-  public function __construct(array $baseParams = array(), array $resources = array(), array $getParams = array())
+  public function __construct(array $baseParams = array(), array $getParams = array())
   {
     header('Content-Type: text/html; charset=utf-8');
     header("Vary: Accept-Encoding,Accept-Language");

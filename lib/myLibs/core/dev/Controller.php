@@ -7,6 +7,7 @@ namespace lib\myLibs\core;
 
 use config\All_Config,
     lib\myLibs\core\Logger,
+    config\Router,
     lib\myLibs\core\MasterController;
 
 class Controller extends MasterController
@@ -99,8 +100,8 @@ class Controller extends MasterController
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = str_replace(
       '/title>',
-      '/title>'. self::addCss(),
-      $content . self::addJs());
+      '/title>'. self::addCss($layout),
+      $content . self::addJs($layout));
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = array();
@@ -131,8 +132,8 @@ class Controller extends MasterController
 
     parent::$template = str_replace(
       '/title>',
-      '/title>'. self::addCss(),
-      parent::$template . self::addJs()); // suppress useless spaces
+      '/title>'. self::addCss(false),
+      parent::$template . self::addJs(false)); // suppress useless spaces
 
     // parent::$template = str_replace('/title>', '/title>' . self::addCss() . self::addJs(), parent::$template);
   }
@@ -165,25 +166,42 @@ class Controller extends MasterController
 
   /** Puts the css into the template
    *
+   * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
+   *
    * @return string The links to the css files or the style markup with the css inside
    */
-  private static function addCss()
+  private function addCss($firstTime)
   {
-    if(empty(self::$css))
-      return '';
+    $route = Router::$routes;
+    $debugContent = '';
 
-    // Concatenates all the css
-    $debugContent = $finalCss = '';
+    if($firstTime)
+    {
+      if(isset($route[$this->route])){
+        $route = Router::$routes[$this->route];
+        if(isset($route['resources']))
+        {
+          $resources = $route['resources'];
+          if(isset($resources['cmsCss'])) {
+            foreach($resources['cmsCss'] as $cmsCss) {
+              $debugContent .= "\n" . '<link rel="stylesheet" href="' . CMS_CSS_PATH . $cmsCss . '.css" />';
+            }
+          }
+          if(isset($resources['css'])) {
+            foreach($resources['css'] as $css) {
+              $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />';
+            }
+          }
+        }
+      }
+    }
+
+    if(empty(self::$css))
+      return $debugContent;
 
     foreach(self::$css as $css)
     {
-      $lastFile = self::$path . $css . '.css';
-
-      ob_start();
-      require $lastFile;
-      $finalCss .= ob_get_clean();
-
-      $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css' . '" />';
+      $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />';
     }
 
     return $debugContent;
@@ -205,21 +223,45 @@ class Controller extends MasterController
 
   /** Puts the css into the template. Updates parent::$template.
    *
+   * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
+   *
    * @return The links to the js files or the script markup with the js inside
    */
-  private function addJs()
+  private function addJs($firstTime)
   {
-    if(empty(self::$js))
-      return '';
-
+    $route = Router::$routes;
     $debugContent = '';
+
+    if($firstTime)
+    {
+      if(isset($route[$this->route])){
+        $route = Router::$routes[$this->route];
+        if(isset($route['resources']))
+        {
+          $resources = $route['resources'];
+          if(isset($resources['cmsJs'])) {
+            foreach($resources['cmsJs'] as $cmsJs) {
+              $debugContent .= "\n" . '<script src="' . CMS_JS_PATH . $cmsJs . '.js" ></script>';
+            }
+          }
+          if(isset($resources['js'])) {
+            foreach($resources['js'] as $js) {
+              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+            }
+          }
+        }
+      }
+    }
+
+    if(empty(self::$js))
+      return $debugContent;
 
     foreach(self::$js as $key => $js)
     {
       // If the key don't give info on async and defer then put them automatically
       if(is_int($key))
         $key = '';
-      $debugContent .= "\n" . '<script src="' . $js . '.js' . '" ' . $key . '></script>';
+      $debugContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
     }
 
     return $debugContent;

@@ -3,16 +3,13 @@ unset($_SESSION['debuglp_']);
 use config\Router;
 
 ob_start();
-// ini_set('display_errors', 0);
+ini_set('display_errors', 0);
 set_error_handler('errorHandler');
 define('DS', DIRECTORY_SEPARATOR);
 require '../lib/myLibs/core/Universal_Loader.php';
 require '../lib/myLibs/core/Debug_Tools.php';
 
 define('XMODE', 'prod');
-ini_set('html_errors', 1);
-ini_set('error_reporting', 1);
-error_reporting(-1);
 ob_get_clean();
 
 try{

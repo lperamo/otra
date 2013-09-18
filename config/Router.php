@@ -100,7 +100,7 @@ class Router
 
     // var_dump($controller);die;
 		if($launch)
-			new $controller($chunks, isset(self::$routes[$route]['resources']) ? self::$routes[$route]['resources'] : array(), $params);
+			new $controller($chunks, $params);
 		else
 			return self::$routes[$route] . 'Controller'; // not finished ...yet
 	}
