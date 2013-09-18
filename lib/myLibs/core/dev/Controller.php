@@ -14,8 +14,7 @@ class Controller extends MasterController
 {
   public $viewPath = '/'; // index/index/ for indexController and indexAction
 
-  private static $cache_used,
-    $css = array(),
+  private static $css = array(),
     $js = array(),
     $rendered = array();
 
