@@ -6,7 +6,8 @@ require '../lib/myLibs/core/Debug_Tools.php';
 if('out' == $_GET['d'])
 	unset($_SESSION['debuglp_']);
 
-use config\Router,
+use lib\myLibs\core\Router,
+    config\Routes,
     lib\myLibs\core\Lionel_Exception,
     config\All_Config;
 
@@ -27,7 +28,7 @@ try{
   // if the pattern is in the routes, launch the associated route
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
-    call_user_func('bundles\\' . Router::$defaultRoute['bundle'] . '\\Init::Init');
+    call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
     Router::get($route[0], $route[1]);
   }
 }catch(Exception $e){ echo $e->errorMessage(); return false;}

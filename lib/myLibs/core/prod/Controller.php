@@ -6,7 +6,7 @@
 namespace lib\myLibs\core;
 
 use config\All_Config,
-  lib\myLibs\core\MasterController;
+    lib\myLibs\core\MasterController;
 
 class Controller extends MasterController
 {

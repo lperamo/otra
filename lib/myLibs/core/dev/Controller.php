@@ -7,7 +7,7 @@ namespace lib\myLibs\core;
 
 use config\All_Config,
     lib\myLibs\core\Logger,
-    config\Router,
+    config\Routes,
     lib\myLibs\core\MasterController;
 
 class Controller extends MasterController
@@ -122,13 +122,13 @@ class Controller extends MasterController
    */
   private function addCss($firstTime)
   {
-    $route = Router::$routes;
+    $route = Routes::$_;
     $debugContent = '';
 
     if($firstTime)
     {
       if(isset($route[$this->route])){
-        $route = Router::$routes[$this->route];
+        $route = $route[$this->route];
         if(isset($route['resources']))
         {
           $resources = $route['resources'];
@@ -174,13 +174,13 @@ class Controller extends MasterController
    */
   private function addJs($firstTime)
   {
-    $route = Router::$routes;
+    $route = Routes::$_;
     $debugContent = '';
 
     if($firstTime)
     {
       if(isset($route[$this->route])){
-        $route = Router::$routes[$this->route];
+        $route = $route[$this->route];
         if(isset($route['resources']))
         {
           $resources = $route['resources'];

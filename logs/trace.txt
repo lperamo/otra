@@ -350,3 +350,40 @@
 	Ajax : false
 	File : ../lib/myLibs/core/views/layout.phtml
 	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:21:35+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+[2013-09-18T15:22:15+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+[2013-09-18T15:22:26+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:22:46+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:23:01+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:25:09+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:26:03+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:27:06+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:27:16+02:00] 
+	Route [index] Patt : /
