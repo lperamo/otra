@@ -25,26 +25,7 @@ class Controller extends MasterController
    *
    * @return bool True if ALL the files are in cache, false otherwise
    */
-  public function checkCache(array $filesToCheck)
-  {
-    if(!All_Config::$cache)
-      return false;
-
-    foreach($filesToCheck as $fileToCheck)
-    {
-      $templateFile = $this->viewPath . $fileToCheck;
-
-      $cachedFile = parent::getCacheFileName($templateFile);
-      if (file_exists($cachedFile))
-      {
-        self::$rendered[$templateFile] = parent::getCachedFile($cachedFile);
-        if(!self::$rendered[$templateFile])
-          return false;
-      }else
-        return false;
-    }
-    return true;
-  }
+  public function checkCache(array $filesToCheck) { return false; }
 
   /** Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
@@ -60,20 +41,10 @@ class Controller extends MasterController
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
     Logger::logTo("\t" . 'Ajax : ' . (($ajax) ? 'true' : 'false'), 'trace');
 
-    // If we already have the template in memory and that it's not empty then we show it
-    self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
-
-    if(self::$cache_used)
-      parent::$template = self::$rendered[$templateFile];
+    if (file_exists($templateFile))
+      parent::$template = $this->buildCachedFile($templateFile, $variables);
     else
-    {
-      if (file_exists($templateFile))
-        parent::$template = (All_Config::$cache) ? (parent::$template) ? parent::getCachedFile(parent::getCacheFileName($templateFile))
-                                                                       : $this->buildCachedFile($templateFile, $variables, parent::getCacheFileName($templateFile), !$ajax)
-                                                 : $this->buildCachedFile($templateFile, $variables);
-      else
-        throw new Lionel_Exception('Erreur : Fichier non trouvé ! : ' , $templateFile);
-    }
+      throw new Lionel_Exception('Erreur : Fichier non trouvé ! : ' , $templateFile);
 
     if(!$ajax)
       self::addDebugBar(CORE_VIEWS_PATH . DS . 'debugBar.phtml');
@@ -91,10 +62,11 @@ class Controller extends MasterController
   private function buildCachedFile($filename, array $variables, $cachedFile = null, $layout = true)
   {
     extract($variables);
+
     ob_start();
     require $filename;
-
     $content = ($layout && !parent::$layoutOnce) ? parent::addLayout(ob_get_clean()) : ob_get_clean();
+
     Logger::logTo("\t" . 'File : ' . $filename, 'trace');
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
@@ -106,13 +78,6 @@ class Controller extends MasterController
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = array();
 
-    if(null != $cachedFile)
-    {
-      $fp = fopen($cachedFile, 'w');
-      fwrite($fp, $content);
-      fclose($fp);
-    }
-
     return $content;
   }
 
@@ -122,7 +87,6 @@ class Controller extends MasterController
    */
   private function addDebugBar($debugBar)
   {
-    $cache = All_Config::$cache;
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
     require $debugBar;
@@ -134,23 +98,11 @@ class Controller extends MasterController
       '/title>',
       '/title>'. self::addCss(false),
       parent::$template . self::addJs(false)); // suppress useless spaces
-
-    // parent::$template = str_replace('/title>', '/title>' . self::addCss() . self::addJs(), parent::$template);
   }
 
 
   /** Includes the layout */
-  private function layout()
-  {
-    if(All_Config::$cache)
-    {
-      $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
-      parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile);
-      if(!parent::$layout) // if it was not in the cache or "fresh"...
-        parent::$layout = $this->buildCachedFile(LAYOUT, array(), $cachedFile, false);
-    }else
-      parent::$layout = $this->buildCachedFile(LAYOUT, array(), null, false);
-  }
+  private function layout() { parent::$layout = $this->buildCachedFile(LAYOUT, array(), null, false); }
 
   /** Adds a css script to the existing ones
    *
@@ -158,8 +110,7 @@ class Controller extends MasterController
    */
   protected static function css($css = array())
   {
-    if(!is_array($css))
-      $css = array($css);
+    if(!is_array($css)) $css = array($css);
 
     array_splice(self::$css, count(self::$css), 0, $css);
   }
@@ -196,13 +147,9 @@ class Controller extends MasterController
       }
     }
 
-    if(empty(self::$css))
-      return $debugContent;
+    if(empty(self::$css)) return $debugContent;
 
-    foreach(self::$css as $css)
-    {
-      $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />';
-    }
+    foreach(self::$css as $css) { $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />'; }
 
     return $debugContent;
   }
@@ -215,8 +162,7 @@ class Controller extends MasterController
    */
   protected static function js($js = array())
   {
-    if(!is_array($js))
-      $js = array($js);
+    if(!is_array($js)) $js = array($js);
 
     self::$js = array_merge(self::$js, $js);
   }
@@ -253,8 +199,7 @@ class Controller extends MasterController
       }
     }
 
-    if(empty(self::$js))
-      return $debugContent;
+    if(empty(self::$js)) return $debugContent;
 
     foreach(self::$js as $key => $js)
     {

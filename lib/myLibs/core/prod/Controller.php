@@ -120,8 +120,7 @@ class Controller extends MasterController
    */
   protected static function css($css = array())
   {
-    if(!is_array($css))
-      $css = array($css);
+    if(!is_array($css)) $css = array($css);
 
     array_splice(self::$css, count(self::$css), 0, $css);
   }
@@ -187,8 +186,7 @@ class Controller extends MasterController
    */
   protected static function js($js = array())
   {
-    if(!is_array($js))
-      $js = array($js);
+    if(!is_array($js)) $js = array($js);
 
     self::$js = array_merge(self::$js, $js);
   }
@@ -215,8 +213,7 @@ class Controller extends MasterController
     }
 
     $allJs = '';
-    // $tmp = ini_get('allow_url_include');
-    // ini_set('allow_url_include', 1);
+
     foreach(self::$js as $js)
     {
       $lastFile = $js . '.js';
@@ -237,7 +234,7 @@ class Controller extends MasterController
       $allJs .= ob_get_clean();
       // var_dump('plop', $data, $allJs);die;
     }
-    // ini_set('allow_url_include', $tmp);
+
     if($firstTime)
     {
       ob_start();
