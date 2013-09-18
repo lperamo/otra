@@ -224,15 +224,10 @@ class Controller extends MasterController
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $lastFile);
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        // $data = curl_exec($ch);
         curl_exec($ch);
         curl_close($ch);
       }
-      // require $lastFile;
       $allJs .= ob_get_clean();
-      // var_dump('plop', $data, $allJs);die;
     }
 
     if($firstTime)

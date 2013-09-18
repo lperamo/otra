@@ -184,6 +184,11 @@ class Controller extends MasterController
         if(isset($route['resources']))
         {
           $resources = $route['resources'];
+          if(isset($resources['firstJs'])) {
+            foreach($resources['firstJs'] as $js) {
+              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+            }
+          }
           if(isset($resources['cmsJs'])) {
             foreach($resources['cmsJs'] as $cmsJs) {
               $debugContent .= "\n" . '<script src="' . CMS_JS_PATH . $cmsJs . '.js" ></script>';

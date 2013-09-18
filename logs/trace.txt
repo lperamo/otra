@@ -387,3 +387,122 @@
 	Route [index] Patt : /
 [2013-09-18T15:27:16+02:00] 
 	Route [index] Patt : /
+[2013-09-18T15:28:54+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:28:55+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:28:57+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:28:58+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:11+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:13+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:15+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:16+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:18+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:19+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:29:28+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:34:27+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:42:14+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:42:26+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:43:19+02:00] 
+	Route [index] Patt : /
+[2013-09-18T15:43:36+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:43:44+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:44:28+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T15:44:30+02:00] 
+	Route [index] Patt : /
+[2013-09-18T16:27:51+02:00] 
+	Route [index] Patt : /
+[2013-09-18T16:27:53+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:37:32+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:39:32+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:39:38+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:52:49+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:52:52+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:53:36+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:53:49+02:00] 
+	Route [index] Patt : /
+[2013-09-18T17:53:54+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:05:06+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:05:20+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:05:21+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:05:36+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:09:54+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:22:17+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:22:36+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:23:09+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:23:48+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:25:59+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:26:03+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:26:08+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-18T18:26:09+02:00] 
+	Route [index] Patt : /
+[2013-09-18T18:26:11+02:00] 
+	Route [index] Patt : /

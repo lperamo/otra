@@ -3,16 +3,26 @@ namespace config;
 
 class Routes
 {
-  public static $_ = array(
+  public static $default = array(
+    'pattern' => '/frontend/index',
+    'bundle' => 'CMS',
+      'module' => 'frontend',
+      'controller' => 'index',
+      'action' => 'indexAction',
+      'route' => 'showArticle'
+  ),
+
+  $_ = array(
     'showArticle' => array(
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
+        'firstJs' => array('http://code.jquery.com/jquery-1.10.1.min'),
         'js' => array(),
-        'cmsJs' => array('jquery', 'main', 'connection'),
+        'cmsJs' => array('main', 'connection'),
         'css' => array(),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
-      ),
+    ),
     'logout' => array(
       'chunks' => array('/logout', 'CMS', 'frontend', 'connection', 'logoutAction')
     ),
@@ -55,21 +65,13 @@ class Routes
     'index' => array(
       'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
+        'firstJs' => array('http://code.jquery.com/jquery-1.10.1.min'),
         'js' => array(),
-        'cmsJs' => array('jquery', 'main', 'connection'),
+        'cmsJs' => array('main', 'connection'),
         'css' => array(),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
     )
   );
-
-  public static $default = array(
-    'pattern' => '/frontend/index',
-    'bundle' => 'CMS',
-      'module' => 'frontend',
-      'controller' => 'index',
-      'action' => 'indexAction',
-      'route' => 'showArticle'
-    );
 }
 ?>
