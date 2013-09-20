@@ -506,3 +506,131 @@
 	Route [index] Patt : /
 [2013-09-18T18:26:11+02:00] 
 	Route [index] Patt : /
+[2013-09-18T19:49:16+02:00] [2013-09-18T19:49:16+02:00] [192.187.96.94] 
+	Route [index] Patt : /
+[2013-09-18T21:08:30+02:00] [2013-09-18T21:08:30+02:00] [5.39.81.6] 
+	Route [index] Patt : /
+[2013-09-18T23:05:08+02:00] [2013-09-18T23:05:08+02:00] [66.249.66.22] [Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)] 
+	Route [index] Patt : /
+[2013-09-19T03:50:46+02:00] [2013-09-19T03:50:46+02:00] [50.18.93.66] [Mozilla/5.0 (Linux; U; en-us; KFTT Build/IML74K) AppleWebKit/535.19 (KHTML, like Gecko) Silk/3.4 Safari/535.19 Silk-Accelerated=true] 
+	Route [index] Patt : /
+[2013-09-19T09:42:16+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-19T09:42:21+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-19T12:52:57+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:53:13+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:53:19+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:53:25+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:53:27+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:53:28+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:54:18+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:54:23+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:54:25+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:54:30+02:00] 
+	Route [index] Patt : /
+[2013-09-19T12:54:32+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:31:44+02:00] [2013-09-19T18:31:44+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0] 
+	Route [index] Patt : /
+[2013-09-19T18:31:46+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:31:50+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:31:56+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:31:59+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:32:32+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:32:34+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:32:36+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:20+02:00] [2013-09-19T18:42:20+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0] 
+	Route [index] Patt : /
+[2013-09-19T18:42:26+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:28+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:51+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:54+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:56+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:42:58+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:44:00+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:44:03+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:44:06+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:44:11+02:00] 
+	Route [index] Patt : /
+[2013-09-19T18:44:12+02:00] 
+	Route [index] Patt : /
+[2013-09-19T22:24:26+02:00] [2013-09-19T22:24:26+02:00] [192.95.22.19] [Mozilla/5.0 (Windows; U; Windows NT 5.1; fr; rv:1.9.0.1) Gecko/2008070208 Firefox/3.0.1] 
+	Route [index] Patt : /
+[2013-09-20T05:27:56+02:00] [2013-09-20T05:27:56+02:00] [69.58.178.58] [Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:14.0; ips-agent) Gecko/20100101 Firefox/14.0.1] 
+	Route [index] Patt : /
+[2013-09-20T05:28:04+02:00] [2013-09-20T05:28:04+02:00] [69.58.178.58] [BlackBerry9000/4.6.0.167 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/102 ips-agent] 
+	Route [index] Patt : /
+[2013-09-20T06:05:48+02:00] [2013-09-20T06:05:48+02:00] [157.55.36.37] [Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)] 
+	Route [index] Patt : /
+[2013-09-20T10:20:49+02:00] [2013-09-20T10:20:49+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-20T10:21:11+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-20T12:01:33+02:00] [2013-09-20T12:01:33+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0] 
+	Route [index] Patt : /
+[2013-09-20T13:15:07+02:00] 
+	Route [index] Patt : /
+[2013-09-20T13:15:17+02:00] 
+	Route [index] Patt : /
+[2013-09-20T13:16:29+02:00] 
+	Route [index] Patt : /
+[2013-09-20T13:17:01+02:00] 
+	Route [index] Patt : /
+[2013-09-20T14:16:30+02:00] [2013-09-20T14:16:30+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0] 
+	Route [index] Patt : /
+[2013-09-20T14:26:30+02:00] [2013-09-20T14:26:30+02:00] [66.249.75.22] [Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)] 
+	Route [index] Patt : /
+[2013-09-20T18:08:57+02:00] [2013-09-20T18:08:57+02:00] [192.95.22.206] [Mozilla/5.0 (X11; Linux x86_64; rv:2.0.1) Gecko/20100101 Firefox/4.0.1] 
+	Route [index] Patt : /
+[2013-09-20T18:52:13+02:00] [2013-09-20T18:52:13+02:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-20T18:52:18+02:00] 
+	Route [index] Patt : /
+	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+[2013-09-20T20:24:30+02:00] 
+	Route [index] Patt : /
+[2013-09-20T20:47:15+02:00] [2013-09-20T20:47:15+02:00] [38.100.21.67] [Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)] 
+	Route [index] Patt : /

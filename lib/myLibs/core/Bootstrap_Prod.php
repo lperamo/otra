@@ -1,10 +1,11 @@
 <?
+// phpinfo();die;
+// echo apache_get_version();die;
 unset($_SESSION['debuglp_']);
 use lib\myLibs\core\Router,
     config\Routes;
 
 ob_start();
-ini_set('display_errors', 0);
 set_error_handler('errorHandler');
 define('DS', DIRECTORY_SEPARATOR);
 require '../lib/myLibs/core/Universal_Loader.php';

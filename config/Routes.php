@@ -16,10 +16,7 @@ class Routes
     'showArticle' => array(
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
-        'firstJs' => array('http://code.jquery.com/jquery-1.10.1.min'),
-        'js' => array(),
-        'cmsJs' => array('main', 'connection'),
-        'css' => array(),
+        'cmsJs' => array('jquery', 'main', 'connection'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
     ),
@@ -34,16 +31,32 @@ class Routes
     ),
 
     'backendModules' => array(
-      'chunks' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction')
+      'chunks' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction'),
+      'resources' => array(
+        'cmsJs' => array('jquery', 'backend'),
+        'cmsCss' => array('generic', 'interface', 'form')
+      )
     ),
     'backendGeneral' => array(
-      'chunks' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction')
+      'chunks' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction'),
+      'resources' => array(
+        'cmsJs' => array('jquery', 'backend'),
+        'cmsCss' => array('generic', 'interface', 'form')
+      )
     ),
     'backendStats' => array(
-      'chunks' => array('/backend/stats', 'CMS', 'backend', 'index', 'statsAction')
+      'chunks' => array('/backend/stats', 'CMS', 'backend', 'index', 'statsAction'),
+      'resources' => array(
+        'cmsJs' => array('jquery','backend'),
+        'cmsCss' => array('generic', 'interface', 'form')
+      )
     ),
     'backendUsers' => array(
-      'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction')
+      'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction'),
+      'resources' => array(
+        'cmsJs' => array('jquery', 'backend', 'form'),
+        'cmsCss' => array('generic', 'interface', 'form')
+      )
     ),
 
     'backendAjaxModules' => array(
@@ -60,15 +73,16 @@ class Routes
     ),
     // keep these routes in last position because it's too generic !!
     'backend' => array(
-      'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction')
+      'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),
+      'resources' => array(
+        'cmsJs' => array('jquery', 'main'),
+        'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
+      )
     ),
     'index' => array(
       'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
-        'firstJs' => array('http://code.jquery.com/jquery-1.10.1.min'),
-        'js' => array(),
-        'cmsJs' => array('main', 'connection'),
-        'css' => array(),
+        'cmsJs' => array('jquery', 'main', 'connection'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
     )

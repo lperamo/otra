@@ -1,0 +1,1 @@
+/opt/bin:/opt/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/syno/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/syno/bin:/usr/syno/sbin:/usr/local/bin:/usr/local/sbin:/usr/syno/mysql/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/syno/bin:/usr/syno/sbin:/usr/local/bin:/usr/local/sbin:/usr/syno/mysql/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/syno/bin:/usr/syno/sbin:/usr/local/bin:/usr/local/sbin

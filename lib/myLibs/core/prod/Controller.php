@@ -86,11 +86,13 @@ class Controller extends MasterController
 
     $content = ($layout) ? self::addLayout(ob_get_clean()) : ob_get_clean();
 
+    $routeV = $this->route . VERSION;
+
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><', str_replace(
       '/title>',
-      '/title>'. $this->addCss($layout),
-      $content . $this->addJs($layout))); // suppress useless spaces
+      '/title>'. $this->addCss($layout, $routeV),
+      $content . $this->addJs($layout, $routeV))); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = array();
@@ -127,17 +129,18 @@ class Controller extends MasterController
 
   /** Puts the css into the template
    *
-   * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
+   * @param string $routeV Route name plus the version
+   * @param bool   $firstTime If it's not the layout, often the first time we arrive at that function.
    *
    * @return string The links to the css files or the style markup with the css inside
    */
-  private function addCss($firstTime)
+  private function addCss($firstTime, $routeV)
   {
     if(empty(self::$css)){
       if(!$firstTime)
         return '';
 
-      $cachedFile = parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '', '.css');
+      $cachedFile = parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css');
       ob_start();
       require $cachedFile;
       $css = ob_get_clean();
@@ -163,7 +166,7 @@ class Controller extends MasterController
     if($firstTime)
     {
       ob_start();
-      require parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '', '.css');
+      require parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css');
       $allCss .= ob_get_clean();
     }
 
@@ -171,11 +174,11 @@ class Controller extends MasterController
       return '<style>' . $allCss . '</style>';
 
     $lastFile .= VERSION;
-    $fp = fopen(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'css/', '_dyn', '.css'), 'w');
+    $fp = fopen(parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '_dyn', '.css'), 'w');
     fwrite($fp, $allCss);
     fclose($fp);
 
-    return '<link rel="stylesheet" href="' . parent::getCacheFileName($this->route . VERSION, '/cache/css/', '_dyn', '.css') . '" />';
+    return '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '_dyn', '.css') . '" />';
   }
 
   /** Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
@@ -193,15 +196,18 @@ class Controller extends MasterController
 
   /** Puts the css into the template. Updates parent::$template.
    *
+   * @param string $routeV Route name plus the version
+   * @param bool   $firstTime If it's not the layout, often the first time we arrive at that function.
+   *
    * @return The links to the js files or the script markup with the js inside
    */
-  private function addJs($firstTime)
+  private function addJs($firstTime, $routeV)
   {
     if(empty(self::$js)){
       if(!$firstTime)
         return '';
 
-      $cachedFile = parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '', '.js');
+      $cachedFile = parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js.gz');
       ob_start();
       require $cachedFile;
       $js = ob_get_clean();
@@ -209,7 +215,7 @@ class Controller extends MasterController
       if(strlen($js) < RESOURCE_FILE_MIN_SIZE)
         return '<script async defer>' . $js . '</script>';
 
-      return '<script src="' . parent::getCacheFileName($this->route . VERSION, '/cache/js/', '', '.js') . '" async defer></script>';
+      return '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.js.gz') . '" async defer></script>';
     }
 
     $allJs = '';
@@ -233,7 +239,7 @@ class Controller extends MasterController
     if($firstTime)
     {
       ob_start();
-      require parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '', '.js');
+      require parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js');
       $allJs .= ob_get_clean();
     }
 
@@ -241,11 +247,11 @@ class Controller extends MasterController
       return '<script async defer>' . $allJs . '</script>';
     $lastFile .= VERSION;
     // Creates/erase the corresponding cleaned js file
-    $fp = fopen(parent::getCacheFileName($this->route . VERSION, CACHE_PATH . 'js/', '_dyn', '.js'), 'w');
+    $fp = fopen(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), 'w');
     fwrite($fp, $allJs);
     fclose($fp);
 
-    return '<script src="' . parent::getCacheFileName($this->route . VERSION, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
+    return '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
 ?>

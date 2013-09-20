@@ -41,7 +41,7 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   next($routes);
   echo $name;
   if(!isset($route['resources'])){
-    echo ' (no resources) => Done', PHP_EOL;
+    echo ' [No resources] => Done', PHP_EOL;
     continue;
   }
 
@@ -112,7 +112,7 @@ function css($basePath, $shaName, $resources){
   $allCss = ob_get_clean();
 
   if('' == $allCss)
-    echo ' (no CSS)';
+    echo ' [No CSS]';
   else
   {
     $allCss = cleanCss($allCss);
@@ -120,6 +120,7 @@ function css($basePath, $shaName, $resources){
     fwrite($fp, $allCss);
     fclose($fp);
   }
+  echo ' [CSS]';
 }
 
 /**
@@ -143,13 +144,16 @@ function js($basePath, $shaName, $resources){
   $allJs = ob_get_clean();
 
   if('' == $allJs){
-    echo ' (no JS)';
+    echo ' [No JS]';
   }else{
     // $allJs = cleanJs($allJs);
-    $fp = fopen(CACHE_PATH . 'js/' . $shaName . '.js', 'w');
+    $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
+    $fp = fopen($pathAndFile, 'w');
     fwrite($fp, $allJs);
     fclose($fp);
+    exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   }
+  echo ' [JS]';
 }
 
 function loadJs($resources, $key){

@@ -1,8 +1,6 @@
 <?
 self::layout();
 self::title('Backend administration - Users management');
-self::css(array(CMS_CSS_PATH . 'generic', CMS_CSS_PATH . 'interface', CMS_CSS_PATH . 'form'));
-self::js(array('' => 'http://code.jquery.com/jquery-1.10.1.min', CMS_JS_PATH . 'backend', CMS_JS_PATH . 'form'));
 $menu = 'Users';
 require CMS_VIEWS_PATH . 'logout.phtml';
 require __DIR__ . '/menu.phtml';
