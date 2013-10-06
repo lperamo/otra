@@ -14,8 +14,8 @@ use lib\myLibs\core\Router,
 
 ob_start();
 
-ini_set('display_errors', 1);
 define('DS', DIRECTORY_SEPARATOR);
+ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('error_reporting', 1);
 error_reporting(-1);

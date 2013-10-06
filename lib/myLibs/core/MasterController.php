@@ -38,7 +38,6 @@ class MasterController{
     {
       // Stores the bundle, module, controller and action for later use
       list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route) = array_values($baseParams);
-      Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, 'trace');
       $this->action = substr($baseParams['action'], 0, -6);
 
       self::$id = $this->bundle . $this->module . $this->controller . $this->action;

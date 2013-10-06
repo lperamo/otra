@@ -7,6 +7,8 @@ namespace lib\myLibs\core;
 use lib\myLibs\core\Controller,
     config\Routes;
 
+define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
+
 class Router
 {
 	/** Retrieve the controller's path that we want or launches the route !

@@ -47,7 +47,7 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   next($routes);
   echo $name;
   if(!isset($route['resources'])){
-    echo ' [No resources] => Done', PHP_EOL;
+    echo ' [Nothing to do] => Done', PHP_EOL;
     continue;
   }
 
@@ -191,16 +191,10 @@ function template($basePath, $shaName, $route, $chunks, $resources){
     return;
   }
 
-  $tmp = ini_get('error_reporting');
-
-  // ini_set('error_reporting', 0);
-
   ob_start();
   call_user_func('bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init');
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
-
-  ini_get('error_reporting', $tmp);
 
   $fp = fopen(CACHE_PATH . 'tpl/' . $shaName . '.html', 'w');
   fwrite($fp, preg_replace('/>\s+</', '><', $content));

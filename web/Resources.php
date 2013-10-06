@@ -14,14 +14,10 @@ if(false !== $posDot)
 
   if($css || $js || $woff)
   {
-    $BASE_PATH = substr(__DIR__, 0, -4);
-    $file = str_replace('/', DIRECTORY_SEPARATOR, $BASE_PATH . $uri);
-
-    if (file_exists($file))
+    if (file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, substr(__DIR__, 0, -4) . $uri)))
     {
-
       // Verify that we went from the site
-      if (isset($_SERVER['HTTP_REFERER'])) {
+      // if (isset($_SERVER['HTTP_REFERER'])) {
         if($css){
           header('Content-type: text/css');
           header('Content-Encoding: gzip');
@@ -30,12 +26,26 @@ if(false !== $posDot)
           header("Content-Encoding: gzip");
         }else
           header('Content-type: application/x-font-woff');
-        require($file);
+        require $file;
         die;
-      }
+      // }
     }
     header("HTTP/1.0 404 Not Found");
   }
+
+  if (file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, substr(__DIR__, 0, -4) . $uri)))
+  {
+    if('css' == $posDot){
+      header('Content-type: text/css');
+      require $file;
+      die;
+    }elseif('js' == $posDot){
+      header('Content-type: application/javascript');
+      require $file;
+      die;
+    }
+  }
+  header("HTTP/1.0 404 Not Found");
 }else
   require('index.php');
 ?>

@@ -18,6 +18,11 @@ class Controller extends MasterController
     $js = array(),
     $rendered = array();
 
+  public function __construct(array $baseParams = array(), array $getParams = array()){
+    parent::__construct($baseParams, $getParams);
+    Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, 'trace');
+  }
+
   /** If the files are in cache, put them directly in $rendered
    *
    * @param array $filesToCheck Files to check in cache
