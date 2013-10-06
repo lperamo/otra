@@ -1,29 +1,35 @@
 <?
 $basePath = __DIR__ . '/../../..';
 require $basePath . '/config/Routes.php';
+require $basePath . '/lib/myLibs/core/Router.php';
 require_once $basePath . '/config/All_Config.php';
 require $basePath . '/lib/packerjs/JavaScriptPacker.php';
 
 $routes = \config\Routes::$_;
 
 echo PHP_EOL, 'Cleaning the resources cache...' . PHP_EOL;
+$mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
 // If we ask just for only one route
-if(isset($argv[2]))
+if(isset($argv[3]))
 {
-  $theRoute = $argv[2];
+  $theRoute = $argv[3];
   if(isset($routes[$theRoute])){
     $routes = array($theRoute => $routes[$theRoute]);
     // Cleaning the files specific to the route passed in parameter
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
+    if(($mask & 2) >> 1)
     $file = CACHE_PATH . 'css/' . $shaName . '.css';
     if(file_exists($file))
       unlink($file);
 
-    $file = CACHE_PATH . 'js/' . $shaName . '.js';
-    if(file_exists($file))
-      unlink($file);
+    if(($mask & 4) >> 2)
+    {
+      $file = CACHE_PATH . 'js/' . $shaName . '.js';
+      if(file_exists($file))
+        unlink($file);
+    }
   } else
     die('This route doesn\'t exist');
 }else
@@ -47,8 +53,13 @@ for($i = 0; $i < $cptRoutes; $i += 1){
 
   $resources = $route['resources'];
   $shaName = sha1('ca' . $name . VERSION . 'che');
-  css($basePath, $shaName, $resources);
-  js($basePath, $shaName, $resources);
+
+  if(($mask & 2) >> 1)
+    css($basePath, $shaName, $resources);
+  if(($mask & 4) >> 2)
+    js($basePath, $shaName, $resources);
+  if($mask & 1)
+    template($basePath, $shaName, $name, $route['chunks'], $resources);
 
   echo ' => Done', PHP_EOL;
 }
@@ -116,9 +127,11 @@ function css($basePath, $shaName, $resources){
   else
   {
     $allCss = cleanCss($allCss);
-    $fp = fopen(CACHE_PATH . 'css/' . $shaName . '.css', 'w');
+    $pathAndFile = CACHE_PATH . 'css/' . $shaName . '.css';
+    $fp = fopen($pathAndFile, 'w');
     fwrite($fp, $allCss);
     fclose($fp);
+    exec('gzip -f -9 ' . $pathAndFile);
   }
   echo ' [CSS]';
 }
@@ -170,5 +183,29 @@ function loadJs($resources, $key){
       }
     }
   }
+}
+
+function template($basePath, $shaName, $route, $chunks, $resources){
+  if(!isset($resources['template'])){
+    echo ' [No TEMPLATE] ';
+    return;
+  }
+
+  $tmp = ini_get('error_reporting');
+
+  // ini_set('error_reporting', 0);
+
+  ob_start();
+  call_user_func('bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init');
+  \lib\myLibs\core\Router::get($route);
+  $content = ob_get_clean();
+
+  ini_get('error_reporting', $tmp);
+
+  $fp = fopen(CACHE_PATH . 'tpl/' . $shaName . '.html', 'w');
+  fwrite($fp, preg_replace('/>\s+</', '><', $content));
+  fclose($fp);
+
+  echo ' [TEMPLATE]';
 }
 ?>

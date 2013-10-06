@@ -31,7 +31,7 @@ class Router
 		if($launch)
 			new $controller($chunks, $params);
 		else
-			return Routes::$_[$route] . 'Controller'; // not finished ...yet
+			return Routes::$_[$route] . 'Controller'; // TODO
 	}
 
 	/** Check if the pattern is present among the routes

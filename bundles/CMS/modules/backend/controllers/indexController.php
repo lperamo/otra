@@ -14,6 +14,8 @@ use lib\myLibs\core\Controller,
 class indexController extends Controller
 {
   public function preExecute(){
+    // var_dump($controller, $chunks);die;
+    // var_dump($_SESSION['sid'], $this->action);die;
     if($this->action != 'index' && !isset($_SESSION['sid']))
     {
       Router::get('backend');

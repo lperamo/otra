@@ -140,15 +140,14 @@ class Controller extends MasterController
       if(!$firstTime)
         return '';
 
-      $cachedFile = parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css');
       ob_start();
-      require $cachedFile;
+      require parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css.gz');
       $css = ob_get_clean();
 
-      if(strlen($css) < RESOURCE_FILE_MIN_SIZE)
-        return '<style>' . $css . '</style>';
+      // if(strlen($css) < RESOURCE_FILE_MIN_SIZE)
+      //   return '<style>' . $css . '</style>';
 
-      return '<link rel="stylesheet" href="' . $cachedFile . '" />';
+      return '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.css.gz') . '" />';
     }
 
     // Concatenates all the css
@@ -166,7 +165,7 @@ class Controller extends MasterController
     if($firstTime)
     {
       ob_start();
-      require parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css');
+      require parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css.gz');
       $allCss .= ob_get_clean();
     }
 

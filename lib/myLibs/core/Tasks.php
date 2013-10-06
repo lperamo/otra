@@ -76,8 +76,10 @@ class Tasks
 
   public static function genAssetsDesc(){
     return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
-      array('route' => 'The route for which you want to generate resources.'),
-      array('optional')
+      array(
+        'mask' => '1 => templates, 2 => css; 4 => js, => 7 all',
+        'route' => 'The route for which you want to generate resources.'),
+      array('optional', 'optional')
     );
   }
 }

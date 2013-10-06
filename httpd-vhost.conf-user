@@ -1,0 +1,152 @@
+NameVirtualHost *:80
+<VirtualHost *:80>
+  ServerName www.save-our-space.com
+  ServerAlias www.saveourspace-thegame.com
+  DocumentRoot /var/services/web/saveourspace/web/
+ 
+  Options +MultiViews 
+  #Compress.. configuration
+  SetOutputFilter DEFLATE
+  DeflateCompressionLevel 9
+    
+  AddEncoding x-gzip .gz
+  AddEncoding gzip .gz
+  
+  <Directory "/var/services/web/saveourspace/web/">
+    DirectoryIndex index.php
+    Options -Indexes FollowSymLinks SymLinksifOwnerMatch
+    AllowOverride All
+    Allow from All
+    SetEnv PHP_VER 5
+    AddType font/woff .woff
+ 
+    <FilesMatch ".*\.css\.gz$">
+        ProxyPassReverse /
+        ForceType text/css
+        Header append Content-Encoding gzip
+    </FilesMatch>
+    
+    <FilesMatch ".*\.js\.gz$">
+        ProxyPassReverse /
+        ForceType text/js
+        Header append Content-Encoding gzip
+    </FilesMatch>
+    
+    #Compress.. configuration
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript
+    
+    # Pour les proxies
+    Header append Vary User-Agent env=!dont-vary
+    
+    AddType application/x-gzip .gz
+    
+    #Expires configuration
+    ExpiresActive On
+    
+    #after 1 year
+    ExpiresByType image/jpeg A31449600
+    ExpiresByType image/png A31449600
+    ExpiresByType image/gif A31449600
+    ExpiresByType font/woff A31449600
+    ExpiresByType x-font/woff A31449600
+    
+    <FilesMatch "\.(woff|ico|jpg|jpeg|gif|swf|png|flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav)$">
+    Header set Cache-Control "max-age=31449600, public"
+    </FilesMatch>
+    
+    #after 1 month
+    ExpiresByType text/css A2592000
+    ExpiresByType application/javascript A2592000
+   
+    #<FilesMatch "\.(css|js)$">
+    #Header set Cache-Control "max-age=2594000, public"
+    #Header append Vary: Accept-Encoding,Accept-Language
+    #</FilesMatch>
+
+    #no cache
+    #<FilesMatch "\.(html|phtml|php)$">
+    #Header set Cache-Control "max-age=0, private, no-store, no-cache, must-revalidate"
+    #Header append Vary: Accept-Encoding,Accept-Language
+    #</FilesMatch>
+
+    #Default... after 2 days
+    ExpiresDefault A172800
+    
+    #<FilesMatch "\.(js|css|xml|gz)$">
+    	#Header append Vary: Accept-Encoding,Accept-Language
+    #</FilesMatch>
+          
+    RewriteEngine On
+    RewriteBase /
+    #ErrorDocument 404 /Resource_File.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.)*$ /Resources.php [L]
+    #RewriteCond %{REQUEST_FILENAME} -f
+    #RewriteRule ^(.)* /Resources.php [L]
+  </Directory>
+                                                                                                                                                                                                      
+</VirtualHost>
+
+#<VirtualHost *:80>
+#  ServerName nasbra.save-our-space.com
+#  DocumentRoot /var/services/web/saveourspace-dev/web/
+#  <Directory "/var/services/web/saveourspace-dev/web/">
+#    DirectoryIndex index.php
+#    Options -Indexes FollowSymLinks SymLinksifOwnerMatch
+#    AllowOverride All
+#    Allow from All
+#    SetEnv PHP_VER 5
+#    AddType font/woff .woff
+#    
+#    #Expires configuration
+#    ExpiresActive On
+#    #after 1 year
+#    <FilesMatch "\.(woff|ico|jpg|jpeg|gif|swf|png|flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav)$">
+#    Header set Cache-Control "max-age=31449600, public"
+#    </FilesMatch>
+#    
+#    #after 1 month
+#    <FilesMatch "\.(css|js)$">
+#    Header set Cache-Control "max-age=2592000, public"
+#    </FilesMatch>
+#
+#    #no cache
+#    <FilesMatch "\.(html|phtml|php)$">
+#    Header set Cache-Control "max-age=0, private, no-store, no-cache, must-revalidate"
+#    </FilesMatch>
+
+    #Default... after 2 days
+    
+#    <FilesMatch "\.(js|css|xml|gz)$">
+#    	Header append Vary: Accept-Encoding,Accept-Language
+#    </FilesMatch>
+    
+#    RewriteEngine On
+#    RewriteBase /
+#    #ErrorDocument 404 /Resource_File.php
+#    RewriteCond %{REQUEST_FILENAME} !-f
+#    RewriteRule ^(.)*$ /Resources.php [L]
+#  </Directory>
+#</VirtualHost>
+
+#<VirtualHost *:80>
+#  ServerName filestation.save-our-space.com
+#  ProxyRequests Off
+#  ProxyVia Off
+#  <Proxy *>
+#    Order deny,allow
+#    Allow from all
+#  </Proxy>
+#  ProxyPass / https://192.168.1.2:5001/
+#  ProxyPassReverse / https://192.168.1.2:5001/
+#</VirtualHost>
+
+<VirtualHost *:80>
+  ServerName nasbra.save-our-space.com
+  DocumentRoot /var/services/web
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerName nasbra.save-our-space.com/phpMyAdmin
+  DocumentRoot /var/services/web/phpMyAdmin
+</VirtualHost>

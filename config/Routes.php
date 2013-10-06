@@ -16,6 +16,7 @@ class Routes
     'showArticle' => array(
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
+        'template' => true,
         'cmsJs' => array('jquery', 'main', 'connection'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
@@ -75,6 +76,7 @@ class Routes
     'backend' => array(
       'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),
       'resources' => array(
+        'template' => true,
         'cmsJs' => array('jquery', 'main'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
@@ -82,6 +84,7 @@ class Routes
     'index' => array(
       'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
+        'template' => true,
         'cmsJs' => array('jquery', 'main', 'connection'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )

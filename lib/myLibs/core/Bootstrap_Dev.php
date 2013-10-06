@@ -1,6 +1,7 @@
 <?
 $_SESSION['debuglp_'] = 'Dev';
 define ('BEFORE', microtime(true));
+define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
 require '../lib/myLibs/core/Debug_Tools.php';
 
 if('out' == $_GET['d'])
@@ -26,6 +27,9 @@ define('XMODE', 'dev');
 ob_get_clean();
 
 try{
+  header('Content-Type: text/html; charset=utf-8');
+  header("Vary: Accept-Encoding,Accept-Language");
+
   // if the pattern is in the routes, launch the associated route
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {

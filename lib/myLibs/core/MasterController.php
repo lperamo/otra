@@ -33,9 +33,6 @@ class MasterController{
    */
   public function __construct(array $baseParams = array(), array $getParams = array())
   {
-    header('Content-Type: text/html; charset=utf-8');
-    header("Vary: Accept-Encoding,Accept-Language");
-
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if(isset($baseParams['controller']))
     {

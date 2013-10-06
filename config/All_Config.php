@@ -5,7 +5,6 @@
 namespace config;
 use lib\myLibs\core\Session;
 
-define('BASE_PATH', substr(__DIR__, 0, -6)); // Finit avec /
 define('BASE_PATH2', str_replace(DS,'/', BASE_PATH));
 define('CACHE_PATH', BASE_PATH . 'cache' . DS);
 

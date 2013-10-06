@@ -1,25 +1,32 @@
 <?
-// phpinfo();die;
-// echo apache_get_version();die;
 unset($_SESSION['debuglp_']);
 use lib\myLibs\core\Router,
     config\Routes;
 
 ob_start();
-set_error_handler('errorHandler');
 define('DS', DIRECTORY_SEPARATOR);
-require '../lib/myLibs/core/Universal_Loader.php';
-require '../lib/myLibs/core/Debug_Tools.php';
+define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
+
+// ini_set('display_errors', 1);
+// ini_set('html_errors', 1);
+require  BASE_PATH . 'lib/myLibs/core/Universal_Loader.php';
 
 define('XMODE', 'prod');
 ob_get_clean();
 
-try{
-  // if the pattern is in the routes, launch the associated route
-  if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
-  {
-    call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
-    Router::get($route[0], $route[1]);
+// if the pattern is in the routes and not static, launch the associated route
+if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
+{
+  header('Content-Type: text/html; charset=utf-8');
+  header("Vary: Accept-Encoding,Accept-Language");
+  // if static
+  if('cli' != php_sapi_name() && isset(Routes::$_[$route[0]]['resources']['template'])){
+    require BASE_PATH . 'config/All_Config.php';
+    require BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.html';
+    die;
   }
-}catch(Exception $e){ echo $e->errorMessage(); return false;}
+
+  call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
+  Router::get($route[0], $route[1]);
+}
 ?>
