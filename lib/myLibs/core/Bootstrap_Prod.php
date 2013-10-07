@@ -21,8 +21,8 @@ if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   // if static
   if('cli' != php_sapi_name() && isset(Routes::$_[$route[0]]['resources']['template'])){
     require BASE_PATH . 'config/All_Config.php';
-    // var_dump('ca' . $route[0] . VERSION . 'che');die;
-    require BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.html';
+    header('Content-Encoding: gzip');
+    require BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.html.gz';
     die;
   }
 

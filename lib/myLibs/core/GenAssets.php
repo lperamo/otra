@@ -82,20 +82,6 @@ function cleanCss($content)
   return str_replace(': ', ':', $content);
 }
 
-/**
- * Cleans the js (spaces and comments)
- * TODO optimize with return new JavaScriptPacker($content)->pack();
- *
- * @param $content The js content
- *
- * @return string The cleaned js
- */
-function cleanJs($content)
-{
-  $packer = new \lib\packerjs\JavaScriptPacker($content);
-  return $packer->pack();
-}
-
 function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache')
 {
   return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
@@ -159,7 +145,6 @@ function js($basePath, $shaName, $resources){
   if('' == $allJs){
     echo ' [No JS]';
   }else{
-    // $allJs = cleanJs($allJs);
     $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
     $fp = fopen($pathAndFile, 'w');
     fwrite($fp, $allJs);
@@ -196,9 +181,11 @@ function template($basePath, $shaName, $route, $chunks, $resources){
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
 
-  $fp = fopen(CACHE_PATH . 'tpl/' . $shaName . '.html', 'w');
+  $pathAndFile = CACHE_PATH . 'tpl/' . $shaName . '.html';
+  $fp = fopen($pathAndFile, 'w');
   fwrite($fp, preg_replace('/>\s+</', '><', $content));
   fclose($fp);
+  exec('gzip -f -9 ' . $pathAndFile);
 
   echo ' [TEMPLATE]';
 }
