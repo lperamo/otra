@@ -27,7 +27,7 @@ class Tasks_Manager
       {
         $methodDesc = $method . 'Desc';
         $paramsDesc = Tasks::$methodDesc();
-        echo white(), str_pad('- ' . $method, 25, ' '), ': ', cyan(), $paramsDesc[0], PHP_EOL;
+        echo white(), str_pad('- ' . $method, 25, ' '), lightGray(), ': ', cyan(), $paramsDesc[0], PHP_EOL;
         // If we have parameters for this command, displays them
         if(isset($paramsDesc[1]))
         {
