@@ -77,7 +77,7 @@ class Routes
       'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),
       'resources' => array(
         'template' => true,
-        'cmsJs' => array('jquery', 'main'),
+        'cmsJs' => array('jquery', 'main', 'connection'),
         'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
       )
     ),

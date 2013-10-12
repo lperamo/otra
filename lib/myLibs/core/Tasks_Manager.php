@@ -15,8 +15,9 @@ class Tasks_Manager
    */
   public static function showCommands($message)
   {
-    echo PHP_EOL, $message, PHP_EOL, PHP_EOL, 'The available commmands are : ', PHP_EOL . PHP_EOL,
-      str_pad('- no argument', 25, ' '), ': Shows the available commands.', PHP_EOL, PHP_EOL;
+    echo PHP_EOL , lightRed() , $message, lightGray(), PHP_EOL, PHP_EOL;
+    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, white(),  str_pad('- no argument', 25, ' '), lightGray();
+    echo ': ', cyan(), 'Shows the available commands.', PHP_EOL, PHP_EOL;
 
     $methods = get_class_methods('lib\myLibs\core\Tasks');
 
@@ -25,11 +26,8 @@ class Tasks_Manager
       if (false === strpos($method, 'Desc'))
       {
         $methodDesc = $method . 'Desc';
-        // str_pad is for the layout
-        $methodAlign = str_pad('- ' . $method, 25, ' ');
         $paramsDesc = Tasks::$methodDesc();
-        echo $methodAlign, ': ', $paramsDesc[0], PHP_EOL;
-
+        echo white(), str_pad('- ' . $method, 25, ' '), ': ', cyan(), $paramsDesc[0], PHP_EOL;
         // If we have parameters for this command, displays them
         if(isset($paramsDesc[1]))
         {
@@ -37,13 +35,15 @@ class Tasks_Manager
           foreach($paramsDesc[1] as $parameter => $paramDesc)
           {
             // + parameter : (required|optional) Description
-            echo '   + ', str_pad($parameter, 20, ' '), ': (', $paramsDesc[2][$i], ') ',$paramDesc, PHP_EOL;
+            echo lightBlue(), '   + ', str_pad($parameter, 20, ' '), lightGray();
+            echo ': ', cyan(), '(', $paramsDesc[2][$i], ') ', $paramDesc, PHP_EOL;
             ++$i;
-          }          
+          }
         }
         echo PHP_EOL;
       }
     }
+    echo endColor();
   }
 
   /**

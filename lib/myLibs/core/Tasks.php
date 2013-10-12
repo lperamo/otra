@@ -82,5 +82,19 @@ class Tasks
       array('optional', 'optional')
     );
   }
+
+  public static function routes(){
+    require '../config/Routes.php';
+    $alt = 0;
+    foreach(\config\Routes::$_ as $route => $details){
+      $chunks = $details['chunks'];
+      echo ($alt % 2) ? lightGray() : white(), PHP_EOL, sprintf('%-20s', $route) , '- url  : ' , $chunks[0], PHP_EOL;
+      echo sprintf('%22s', ' '), 'path : ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL, PHP_EOL;
+      echo endColor();
+      $alt++;
+    }
+  }
+
+  public static function routesDesc(){ return array('Shows the routes'); }
 }
 ?>

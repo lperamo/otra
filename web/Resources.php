@@ -34,7 +34,7 @@ if(false !== $posDot)
         die;
       }
     }
-    header("HTTP/1.0 404 Not Found");
+    header('HTTP/1.0 404 Not Found');
   }
 
   if (file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH . $uri)))
@@ -49,9 +49,10 @@ if(false !== $posDot)
       die;
     }
   }
-  header("HTTP/1.0 404 Not Found");
+  header('HTTP/1.0 404 Not Found');
   die;
 }
+unset($smallUri, $posDot);
 session_start();
 require ('Dev' == $_SESSION['debuglp_'] || (isset($_GET['debuglp_']) && 'Dev' == $_GET['debuglp_'])) ? BASE_PATH . 'lib/myLibs/core/Bootstrap_Dev.php' : BASE_PATH . 'lib/myLibs/core/Bootstrap_Prod.php';
 ?>

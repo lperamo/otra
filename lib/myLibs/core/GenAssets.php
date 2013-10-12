@@ -1,20 +1,21 @@
 <?
-$basePath = __DIR__ . '/../../..';
-require $basePath . '/config/Routes.php';
-require $basePath . '/lib/myLibs/core/Router.php';
-require_once $basePath . '/config/All_Config.php';
-require $basePath . '/lib/packerjs/JavaScriptPacker.php';
+define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
+// BASE_PATH = __DIR__ . '/../../..';
+require BASE_PATH . '/config/Routes.php';
+require BASE_PATH . '/lib/myLibs/core/Router.php';
+require_once BASE_PATH . '/config/All_Config.php';
+require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
 
 $routes = \config\Routes::$_;
-
-echo PHP_EOL, 'Cleaning the resources cache...' . PHP_EOL;
-$mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
 // If we ask just for only one route
 if(isset($argv[3]))
 {
   $theRoute = $argv[3];
   if(isset($routes[$theRoute])){
+    echo PHP_EOL, 'Cleaning the resources cache...';
+    $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
+
     $routes = array($theRoute => $routes[$theRoute]);
     // Cleaning the files specific to the route passed in parameter
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
@@ -30,13 +31,21 @@ if(isset($argv[3]))
       if(file_exists($file))
         unlink($file);
     }
+    echo green(), ' OK', PHP_EOL, endColor();
   } else
-    die('This route doesn\'t exist');
+    dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
 }else
 {
+  echo PHP_EOL, 'Cleaning the resources cache...';
+  $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
+
   array_map('unlink', glob(\Config\All_Config::$cache_path . '/css/*'));
   array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
+
+  echo green(), ' OK', PHP_EOL, endColor();
 }
+
+function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
 
 $cptRoutes = count($routes);
 
@@ -45,9 +54,9 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   $route = current($routes);
   $name = key($routes);
   next($routes);
-  echo $name;
+  echo lightBlue(), str_pad($name, 25, ' '), lightGray();
   if(!isset($route['resources'])){
-    echo ' [Nothing to do] => Done', PHP_EOL;
+    echo status('Nothing to do', 'cyan'), ' =>', green(), ' OK', endColor(), PHP_EOL;
     continue;
   }
 
@@ -55,13 +64,13 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   $shaName = sha1('ca' . $name . VERSION . 'che');
 
   if(($mask & 2) >> 1)
-    css($basePath, $shaName, $resources);
+    css($shaName, $resources);
   if(($mask & 4) >> 2)
-    js($basePath, $shaName, $resources);
+    js($shaName, $resources);
   if($mask & 1)
-    template($basePath, $shaName, $name, $route['chunks'], $resources);
+    template($shaName, $name, $route['chunks'], $resources);
 
-  echo ' => Done', PHP_EOL;
+  echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
 
 /** Cleans the css (spaces and comments)
@@ -87,29 +96,29 @@ function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extensio
   return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
 }
 
-/**
-* @param string $basePath
+/** Generates the gzipped css files
+*
 * @param string $shaName   Name of the cached file
 * @param array  $resources Resources array from the defined routes of the site
 */
-function css($basePath, $shaName, $resources){
+function css($shaName, array $resources){
   ob_start();
 
   if(isset($resources['cmsCss'])) {
     foreach($resources['cmsCss'] as $cmsCss) {
-      require $basePath . CMS_CSS_PATH . $cmsCss . '.css';
+      require BASE_PATH . CMS_CSS_PATH . $cmsCss . '.css';
     }
   }
 
   if(isset($resources['css'])) {
     foreach($resources['css'] as $css) {
-      require $basePath . $css . '.css';
+      require BASE_PATH . $css . '.css';
     }
   }
   $allCss = ob_get_clean();
 
   if('' == $allCss)
-    echo ' [No CSS]';
+    echo status('No CSS', 'cyan');
   else
   {
     $allCss = cleanCss($allCss);
@@ -119,22 +128,22 @@ function css($basePath, $shaName, $resources){
     fclose($fp);
     exec('gzip -f -9 ' . $pathAndFile);
   }
-  echo ' [CSS]';
+  echo status('CSS');
 }
 
-/**
-* @param string $basePath
+/** Generates the gzipped js files
+*
 * @param string $shaName   Name of the cached file
 * @param array  $resources Resources array from the defined routes of the site
 */
-function js($basePath, $shaName, $resources){
+function js($shaName, array $resources){
   ob_start();
 
   loadJS($resources, 'firstJs');
 
   if(isset($resources['cmsJs'])) {
     foreach($resources['cmsJs'] as $cmsJs) {
-      require $basePath . CMS_JS_PATH . $cmsJs . '.js';
+      require BASE_PATH . CMS_JS_PATH . $cmsJs . '.js';
     }
   }
 
@@ -143,7 +152,7 @@ function js($basePath, $shaName, $resources){
   $allJs = ob_get_clean();
 
   if('' == $allJs){
-    echo ' [No JS]';
+    echo status('No JS', 'cyan');
   }else{
     $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
     $fp = fopen($pathAndFile, 'w');
@@ -151,14 +160,14 @@ function js($basePath, $shaName, $resources){
     fclose($fp);
     exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   }
-  echo ' [JS]';
+  echo status('JS');
 }
 
-function loadJs($resources, $key){
+function loadJs(array $resources, $key){
   if(isset($resources[$key])) {
     foreach($resources[$key] as $js) {
       if(false === strpos($js, 'http'))
-        require $basePath . $js . '.js';
+        require BASE_PATH . $js . '.js';
       else{
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $js . '.js');
@@ -170,9 +179,15 @@ function loadJs($resources, $key){
   }
 }
 
-function template($basePath, $shaName, $route, $chunks, $resources){
+/** Generates the gzipped css files
+ *
+ * @param string $shaName   Name of the cached file
+ * @param string $route
+ * @param array  $resources Resources array from the defined routes of the site
+ */
+function template($shaName, $route, array $resources){
   if(!isset($resources['template'])){
-    echo ' [No TEMPLATE] ';
+    echo status('No TEMPLATE', 'cyan');
     return;
   }
 
@@ -187,6 +202,6 @@ function template($basePath, $shaName, $route, $chunks, $resources){
   fclose($fp);
   exec('gzip -f -9 ' . $pathAndFile);
 
-  echo ' [TEMPLATE]';
+  echo status('TEMPLATE');
 }
 ?>

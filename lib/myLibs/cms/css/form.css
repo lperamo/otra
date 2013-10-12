@@ -18,11 +18,6 @@
 
 #logout:hover{ background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA }
 
-/*div < #connection
-{
-    width:23%;
-}*/
-
 #ML_form>.label { width:200px }
 
 .label {
@@ -89,8 +84,8 @@
 .email { width:200px }
 
 input[type=submit]{
-    background-color: inherit;    
-    border: none;
+    background-color: inherit;
+    border: 0;
     -moz-appearance:none;
 }
 

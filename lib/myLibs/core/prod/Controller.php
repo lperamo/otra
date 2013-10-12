@@ -52,6 +52,8 @@ class Controller extends MasterController
    */
   public final function renderView($file, array $variables = array(), $ajax = false, $viewPath = true)
   {
+    // ini_set('session.use_cookies', 0);
+    // echo ini_get('session.use_cookies');die;
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
     if(!file_exists($templateFile))
       die('Server problem : the file requested doesn\'t exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
@@ -65,7 +67,7 @@ class Controller extends MasterController
     {
       $cachedFile = parent::getCacheFileName($templateFile);
       parent::$template = (!parent::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
-                                                              : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
+                                                                : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
     return parent::$template;

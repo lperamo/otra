@@ -13,7 +13,8 @@ class MasterController{
     $route,
     $getParams = '',
     $viewCSSPath = '/', // CSS path for module
-    $viewJSPath = '/'; // JS path for module
+    $viewJSPath = '/', // JS path for module
+    $pattern = '';
   public static $path;
   protected static $id,
   /* @var string $template The actual template being processed */
@@ -133,12 +134,4 @@ class MasterController{
     echo '<link rel="icon" type="image/png" href="' , $favicon , '" />
       <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $faviconIE . '" /><![endif]-->';
   }
-
-  /** Suppress HTML comments but keeping conditional comments
-   *
-   * @param string $content The HTML to clean
-   *
-   * @return string
-   */
-  // private function cleanHTML($content) { return preg_replace('#<!--[^\[\]]*-->#', '', $content); }
 }
