@@ -54,6 +54,8 @@ class indexController extends Controller
   }
 
   public function modulesAction(){
+    // var_dump('sdfsdf');
+
     $db = Session::get('dbConn');
     $db->selectDb();
 

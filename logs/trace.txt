@@ -1650,3 +1650,28 @@
 	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
 
 	Route [index] Patt : /
+[2013-10-13T10:00:08+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+[2013-10-13T10:00:09+02:00] 	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-13T11:20:32+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+
+	Route [backendModules] Patt : /backend/modules
+[2013-10-13T11:26:47+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+
+	Route [backendModules] Patt : /backend/modules
+[2013-10-13T11:26:53+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+
+	Route [backendModules] Patt : /backend/modules
+[2013-10-13T14:33:15+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /

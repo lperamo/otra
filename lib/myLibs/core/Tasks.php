@@ -89,7 +89,7 @@ class Tasks
     foreach(\config\Routes::$_ as $route => $details){
       $chunks = $details['chunks'];
       echo ($alt % 2) ? cyan() : lightBlue(), PHP_EOL, sprintf('%-20s', $route), 'url  : ' , $chunks[0], PHP_EOL;
-      echo sprintf('%20s', ' '), 'path : ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL, PHP_EOL;
+      echo sprintf('%20s', ' '), 'path : ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL;
       echo endColor();
       $alt++;
     }

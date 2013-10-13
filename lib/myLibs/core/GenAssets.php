@@ -20,14 +20,22 @@ if(isset($argv[3]))
     // Cleaning the files specific to the route passed in parameter
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
+    if($mask & 1){
+      $file = CACHE_PATH . 'tpl/' . $shaName . '.html.gz';
+      if(file_exists($file))
+        unlink($file);
+    }
+
     if(($mask & 2) >> 1)
-    $file = CACHE_PATH . 'css/' . $shaName . '.css';
-    if(file_exists($file))
-      unlink($file);
+    {
+      $file = CACHE_PATH . 'css/' . $shaName . '.css.gz';
+      if(file_exists($file))
+        unlink($file);
+    }
 
     if(($mask & 4) >> 2)
     {
-      $file = CACHE_PATH . 'js/' . $shaName . '.js';
+      $file = CACHE_PATH . 'js/' . $shaName . '.js.gz';
       if(file_exists($file))
         unlink($file);
     }
@@ -39,8 +47,14 @@ if(isset($argv[3]))
   echo PHP_EOL, 'Cleaning the resources cache...';
   $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
-  array_map('unlink', glob(\Config\All_Config::$cache_path . '/css/*'));
-  array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
+  if($mask & 1)
+    array_map('unlink', glob(\Config\All_Config::$cache_path . '/tpl/*'));
+
+  if(($mask & 2) >> 1)
+    array_map('unlink', glob(\Config\All_Config::$cache_path . '/css/*'));
+
+  if(($mask & 4) >> 2)
+    array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
 
   echo green(), ' OK', PHP_EOL, endColor();
 }
@@ -68,7 +82,7 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   if(($mask & 4) >> 2)
     js($shaName, $resources);
   if($mask & 1)
-    template($shaName, $name, $route['chunks'], $resources);
+    template($shaName, $name, $resources);
 
   echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
@@ -159,6 +173,7 @@ function js($shaName, array $resources){
     fwrite($fp, $allJs);
     fclose($fp);
     exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+    // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   }
   echo status('JS');
 }

@@ -17,6 +17,7 @@ body{
 #menus{
 	border-radius: 8px;
 	box-shadow: 3px 3px 6px rgba(228, 139, 39, 0.47);
+	clear: both;
 	text-shadow: 1px 1px rgba(123, 123, 123, 0.32);
 	margin:0 15px 15px 15px;
 	white-space: nowrap;
