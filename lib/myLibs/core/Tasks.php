@@ -130,6 +130,12 @@ class Tasks
   }
 
   public static function routesDesc(){ return array('Shows the routes and their associated kind of resources in the case they have some. (green whether they exists, red otherwise)'); }
+
+  public static function genClassMap(){
+    var_dump('coucou');
+  }
+
+  public static function genClassMapDesc(){ return array('Generates a class mapping file that will be used to replace the autoloading method.'); }
 }
 ?>
 

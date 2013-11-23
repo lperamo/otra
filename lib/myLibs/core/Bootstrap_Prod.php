@@ -6,7 +6,7 @@ use lib\myLibs\core\Router,
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
 define('XMODE', 'prod');
-require '../lib/myLibs/core/Debug_Tools.php';
+// require '../lib/myLibs/core/Debug_Tools.php';
 
 require BASE_PATH . 'lib/myLibs/core/Universal_Loader.php';
 
