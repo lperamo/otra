@@ -1,6 +1,5 @@
 <?
-define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
-// BASE_PATH = __DIR__ . '/../../..';
+define('BASE_PATH', substr(__DIR__, 0, -16)); // Finit avec /
 require BASE_PATH . '/config/Routes.php';
 require BASE_PATH . '/lib/myLibs/core/Router.php';
 require_once BASE_PATH . '/config/All_Config.php';
@@ -59,8 +58,6 @@ if(isset($argv[3]))
   echo green(), ' OK', PHP_EOL, endColor();
 }
 
-function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
-
 $cptRoutes = count($routes);
 
 echo $cptRoutes , ' route(s) to process. Processing the route(s) ... ' . PHP_EOL;
@@ -75,17 +72,20 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   }
 
   $resources = $route['resources'];
+  $chunks = $route['chunks'];
   $shaName = sha1('ca' . $name . VERSION . 'che');
 
   if(($mask & 2) >> 1)
-    css($shaName, $resources);
+    css($shaName, $chunks, $resources);
   if(($mask & 4) >> 2)
-    js($shaName, $resources);
+    js($shaName, $chunks, $resources);
   if($mask & 1)
     template($shaName, $name, $resources);
 
   echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
+
+function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
 
 /** Cleans the css (spaces and comments)
  *
@@ -105,30 +105,23 @@ function cleanCss($content)
   return str_replace(': ', ':', $content);
 }
 
-function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache')
-{
-  return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
-}
-
 /** Generates the gzipped css files
 *
 * @param string $shaName   Name of the cached file
+* @param array  $chunks    Route site path
 * @param array  $resources Resources array from the defined routes of the site
 */
-function css($shaName, array $resources){
+function css($shaName, array $chunks, array $resources){
   ob_start();
 
   if(isset($resources['cmsCss'])) {
     foreach($resources['cmsCss'] as $cmsCss) {
-      require BASE_PATH . CMS_CSS_PATH . $cmsCss . '.css';
+      echo file_get_contents(BASE_PATH . CMS_CSS_PATH . $cmsCss . '.css');
     }
   }
 
-  if(isset($resources['css'])) {
-    foreach($resources['css'] as $css) {
-      require BASE_PATH . $css . '.css';
-    }
-  }
+  loadResource($chunks, $resources, 'css');
+
   $allCss = ob_get_clean();
 
   if('' == $allCss)
@@ -148,21 +141,20 @@ function css($shaName, array $resources){
 /** Generates the gzipped js files
 *
 * @param string $shaName   Name of the cached file
+* @param array  $chunks    Route site path
 * @param array  $resources Resources array from the defined routes of the site
 */
-function js($shaName, array $resources){
+function js($shaName, array $chunks, array $resources){
   ob_start();
-
-  loadJS($resources, 'firstJs');
+  loadResource($resources, $chunks, 'firstJs');
 
   if(isset($resources['cmsJs'])) {
     foreach($resources['cmsJs'] as $cmsJs) {
-      require BASE_PATH . CMS_JS_PATH . $cmsJs . '.js';
+      echo file_get_contents(BASE_PATH . CMS_JS_PATH . $cmsJs . '.js');
     }
   }
 
-  loadJS($resources, 'js');
-
+  loadResource($resources, $chunks, 'js');
   $allJs = ob_get_clean();
 
   if('' == $allJs){
@@ -172,17 +164,20 @@ function js($shaName, array $resources){
     $fp = fopen($pathAndFile, 'w');
     fwrite($fp, $allJs);
     fclose($fp);
-    exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+    exec('gzip -f -9 ' . $pathAndFile);
+    // exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
     // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+    echo status('JS');
   }
-  echo status('JS');
 }
 
-function loadJs(array $resources, $key){
+function loadResource(array $resources, $chunks, $key){
   if(isset($resources[$key])) {
+    $path = BASE_PATH . '/bundles/' . $chunks[1] . '/modules/' . $chunks[2] . '/media/' . (('js' == substr($key, -2)) ? 'js' : $key) . '/';
+
     foreach($resources[$key] as $js) {
       if(false === strpos($js, 'http'))
-        require BASE_PATH . $js . '.js';
+        echo file_get_contents($path . $js . '.js');
       else{
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $js . '.js');

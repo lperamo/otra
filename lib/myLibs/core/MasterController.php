@@ -38,17 +38,18 @@ class MasterController{
     if(isset($baseParams['controller']))
     {
       // Stores the bundle, module, controller and action for later use
-      list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route) = array_values($baseParams);
+      list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, $this->chkJs, $this->chkCss) = array_values($baseParams);
+
       $this->action = substr($baseParams['action'], 0, -6);
 
       self::$id = $this->bundle . $this->module . $this->controller . $this->action;
       $this->getParams = $getParams;
 
-      $mainPath = 'bundles/' . $this->bundle . '/modules/' . $this->module . '/';
+      $mainPath = '/bundles/' . $this->bundle . '/modules/' . $this->module . '/';
       // Stores the templates' path of the calling controller
-      $this->viewPath = BASE_PATH2 . $mainPath . 'views/' . $this->controller . '/';
-      $this->viewCSSPath = '/' . $mainPath .'media/css/';
-      $this->viewJSPath = '/'. $mainPath . 'media/js/';
+      $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
+      $this->viewCSSPath = $mainPath .'media/css/';
+      $this->viewJSPath = $mainPath . 'media/js/';
 
       self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 

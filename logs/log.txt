@@ -1,0 +1,1 @@
+[2013-11-20T21:40:11+01:00] Problem when loading the file : /volume1/web/saveourspacebundles/CMS/modules/frontend/views/article/show.phtml

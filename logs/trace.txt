@@ -1675,3 +1675,94 @@
 	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
 
 	Route [index] Patt : /
+[2013-10-13T22:06:06+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-14T21:53:29+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-15T22:06:43+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/index.phtml
+
+	Route [backend] Patt : /backend
+[2013-10-15T22:06:44+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/index.phtml
+
+	Route [backend] Patt : /backend
+[2013-10-15T22:06:47+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/index.phtml
+
+	Route [backend] Patt : /backend
+[2013-10-15T22:06:50+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/index.phtml
+
+	Route [backend] Patt : /backend
+[2013-10-15T22:06:54+02:00] 
+	Route [ajaxConnection] Patt : /ajaxConnection/ajaxLogin
+[2013-10-15T22:06:55+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+
+	Route [backendModules] Patt : /backend/modules
+[2013-10-15T22:07:01+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+
+	Route [backendModules] Patt : /backend/modules
+[2013-10-16T21:16:47+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-16T21:17:06+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+[2013-10-16T21:17:22+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/backend/views/index/modules.phtml
+[2013-10-17T21:31:41+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-20T11:37:55+02:00] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-22T19:04:07+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-24T19:13:07+02:00] 	Ajax : false
+	File : ../lib/myLibs/core/views/layout.phtml
+	File : /volume1/web/saveourspace/bundles/CMS/modules/frontend/views/article/show.phtml
+
+	Route [index] Patt : /
+[2013-10-26T19:00:31+02:00] 
+	Route [] Patt : 
+[2013-11-05T08:01:27+01:00] [2013-11-05T08:01:27+01:00] [128.79.17.225] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36] 
+	Route [] Patt : 
+[2013-11-09T21:41:33+01:00] [2013-11-09T21:41:33+01:00] [128.79.17.235] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36] 
+	Route [] Patt : 
+[2013-11-11T12:15:03+01:00] 
+	Route [] Patt : 
+[2013-11-12T20:22:40+01:00] 
+	Route [] Patt : 
+[2013-11-21T19:10:17+01:00] [Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36] 
+	Route [] Patt : 
+[2013-11-22T00:22:24+01:00] 
+	Route [] Patt : 
+[2013-11-22T18:56:43+01:00] 
+	Route [] Patt : 
+[2013-11-23T11:03:06+01:00] 
+	Route [] Patt : 

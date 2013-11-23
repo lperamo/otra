@@ -10,6 +10,38 @@ use lib\myLibs\core\Database,
 
 class Tasks
 {
+  /** Clears the cache. */
+  public static function cc()
+  {
+    array_map('unlink', glob(All_Config::$cache_path . '*.cache'));
+    echo('Cache cleared.' . PHP_EOL);
+  }
+
+  public static function ccDesc() { return array('Clears the cache'); }
+
+  public static function crypt(){
+    require '../config/All_Config.php';
+    echo crypt($pwd, FWK_HASH), PHP_EOL;
+  }
+
+  public static function cryptDesc(){
+    return array('Crypts a password and shows it.',
+      array('password' => 'The password to crypt.'),
+      array('required')
+    );
+  }
+
+  public static function genAssets($argv){ require 'GenAssets.php'; }
+
+  public static function genAssetsDesc(){
+    return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
+      array(
+        'mask' => '1 => templates, 2 => css; 4 => js, => 7 all',
+        'route' => 'The route for which you want to generate resources.'),
+      array('optional', 'optional')
+    );
+  }
+
   /** Executes the sql script */
   public static function sql() { exec('mysql ../sql/entire_script.sql'); }
 
@@ -63,38 +95,41 @@ class Tasks
     );
   }
 
-  /** Clears the cache. */
-  public static function cc()
-  {
-    array_map('unlink', glob(All_Config::$cache_path . '*.cache'));
-    echo('Cache cleared.' . PHP_EOL);
-  }
-
-  public static function ccDesc() { return array('Clears the cache'); }
-
-  public static function genAssets($argv){ require 'GenAssets.php'; }
-
-  public static function genAssetsDesc(){
-    return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
-      array(
-        'mask' => '1 => templates, 2 => css; 4 => js, => 7 all',
-        'route' => 'The route for which you want to generate resources.'),
-      array('optional', 'optional')
-    );
-  }
-
   public static function routes(){
     require '../config/Routes.php';
     $alt = 0;
     foreach(\config\Routes::$_ as $route => $details){
+      // Routes and paths management
       $chunks = $details['chunks'];
-      echo ($alt % 2) ? cyan() : lightBlue(), PHP_EOL, sprintf('%-20s', $route), 'url  : ' , $chunks[0], PHP_EOL;
-      echo sprintf('%20s', ' '), 'path : ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL;
-      echo endColor();
+      $altColor = ($alt % 2) ? cyan() : lightBlue();
+      echo $altColor, PHP_EOL, sprintf('%-25s', $route), str_pad('Url', 10, ' '), ': ' , $chunks[0], PHP_EOL;
+      echo str_pad(' ', 25, ' '), str_pad('Path', 10, ' '), ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL;
+
+      $shaName = sha1('ca' . $route . All_Config::$version . 'che');
+
+      // Resources management
+      if(isset($details['resources']))
+      {
+        $resources = $details['resources'];
+
+        $basePath = substr(__DIR__, 0, -15) . 'cache/';
+        echo str_pad(' ', 25, ' '), 'Resources : ';
+        if(isset($resources['css']) || isset($resources['cmsCss']))
+          echo (file_exists($basePath . 'css' . '/' . $shaName. '.' . 'css.gz')) ? green() : lightRed(), '[CSS]', $altColor;
+        if(isset($resources['js']) || isset($resources['cmsJs']))
+          echo (file_exists($basePath . 'js' . '/' . $shaName. '.' . 'js.gz')) ? green() : lightRed(), '[JS]', $altColor;
+        if(isset($resources['template']))
+          echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.' . 'html.gz')) ? green() : lightRed(), '[TEMPLATE]', $altColor;
+
+        echo '[', $shaName, ']', PHP_EOL, endColor();
+      }else
+        echo str_pad(' ', 25, ' '), 'Resources : No resources. ', '[', $shaName, ']', PHP_EOL, endColor();
+
       $alt++;
     }
   }
 
-  public static function routesDesc(){ return array('Shows the routes'); }
+  public static function routesDesc(){ return array('Shows the routes and their associated kind of resources in the case they have some. (green whether they exists, red otherwise)'); }
 }
 ?>
+

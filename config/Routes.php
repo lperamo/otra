@@ -70,7 +70,11 @@ class Routes
       'chunks' => array('/backend/ajax/stats', 'CMS', 'backend', 'ajaxStats', 'indexAction')
     ),
     'backendAjaxUsers' => array(
-      'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction')
+      'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
+      'resources' => array(
+        'js' => array('users'),
+        'cmsCss' => array('users')
+      )
     ),
     // keep these routes in last position because it's too generic !!
     'backend' => array(

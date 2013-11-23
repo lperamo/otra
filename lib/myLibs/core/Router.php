@@ -22,9 +22,14 @@ class Router
 		if(!is_array($params))
 			$params = array($params);
 
-		$chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), Routes::$_[$route]['chunks']);
+		extract($chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), Routes::$_[$route]['chunks']));
 		$chunks['route'] = $route;
-		extract($chunks);
+		$chunks['css'] = $chunks['js'] = false;
+		if(isset(Routes::$_[$route]['resources'])){
+			$resources = Routes::$_[$route]['resources'];
+			$chunks['js'] = (isset($resources['cmsJs']) || isset($resources['js']));
+			$chunks['css'] = (isset($resources['cmsCss']) || isset($resources['css']));
+		}
 
     $controller = 'bundles\\' . $bundle . '\\modules\\' . $module . '\\controllers\\' . $controller . 'Controller';
 
