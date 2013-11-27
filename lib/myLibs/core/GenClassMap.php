@@ -1,4 +1,7 @@
 <?
+/** Class mapping generation task
+ *
+ * @author Lionel Péramo */
 $dirs = array('../bundles', '../config', '../lib');
 $classes = array();
 $processedDir = 0;
@@ -34,12 +37,6 @@ function iterateCM($classes, $dir, $processedDir){
           continue;
 
         // We begin our work
-        // $posDir = strrpos($dir, '/');
-        // if(false !== $posDir)
-        //   $dir = substr($dir, $posDir + 1);
-
-        $lastDir = substr(strrchr($dir, '/'), 1);
-
         $classes[substr(str_replace('/', '\\', $dir), 3) . '\\' . substr($entry, 0, $posDot)] = $_entry;
       }
       closedir($handle);

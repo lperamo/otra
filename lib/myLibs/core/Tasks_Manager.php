@@ -60,7 +60,7 @@ class Tasks_Manager
     define('DS', DIRECTORY_SEPARATOR);
     define('AVT', '..' . DS);
     require_once '../lib/myLibs/core/ClassMap.php';
-    require_once '../lib/myLibs/core/Universal_Loader.php';
+  spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
     Tasks::$command($argv);
   }
 }
