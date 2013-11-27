@@ -59,6 +59,7 @@ class Tasks_Manager
 //      self::initDb();
     define('DS', DIRECTORY_SEPARATOR);
     define('AVT', '..' . DS);
+    require_once '../lib/myLibs/core/ClassMap.php';
     require_once '../lib/myLibs/core/Universal_Loader.php';
     Tasks::$command($argv);
   }

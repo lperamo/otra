@@ -19,7 +19,9 @@ ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('error_reporting', 1);
 error_reporting(-1);
-require '../lib/myLibs/core/Universal_Loader.php';
+// We load the class mapping
+spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
+
 function errorHandler($errno, $message, $file, $line, $context) { throw new Lionel_Exception($message, $errno, $file, $line, $context); }
 set_error_handler('errorHandler');
 define('XMODE', 'dev');

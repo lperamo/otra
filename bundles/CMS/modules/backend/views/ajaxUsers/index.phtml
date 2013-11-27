@@ -49,8 +49,8 @@
 <?
 if(!in_array('users', $_SESSION['js'])) {
 	// dump($this->viewJSPath . 'users');
-	self::js($this->viewJSPath . 'users');
-	self::css(CMS_CSS_PATH . 'users');
+	// self::js($this->viewJSPath . 'users');
+	// self::css(CMS_CSS_PATH . 'users');
 	$_SESSION['js'][] = 'users';
 	$_SESSION['css'][] = 'users';
 	echo '<script> window.roles = ' . json_encode($roles) . ';</script>';
