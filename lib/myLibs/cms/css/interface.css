@@ -18,9 +18,12 @@ body{
 	border-radius: 8px;
 	box-shadow: 3px 3px 6px rgba(228, 139, 39, 0.47);
 	clear: both;
+	display: inline-block;
+	float:left;
 	text-shadow: 1px 1px rgba(123, 123, 123, 0.32);
-	margin:0 15px 15px 15px;
+	margin:15px;
 	white-space: nowrap;
+	width:calc(100% - 30px);
 }
 .tab{
 	background: -webkit-gradient(linear, 0 0, 0 100%, from(#E8E1D4), to(#FCD484)) #EAEAEA;

@@ -151,20 +151,23 @@ body
     -moz-border-radius-bottomleft: 20px;
     -moz-border-radius-bottomright: 20px;
     border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px
+    border-bottom-right-radius: 20px;
+    -webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.37);
+    -moz-box-shadow:3px 3px 3px rgba(0, 0, 0, 0.37);
+    box-shadow:3px 3px 3px rgba(0, 0, 0, 0.37)
 }
 
 #location1
 {
     float:left;
     overflow:auto;
-    width:23%
+    /*width:23%*/
 }
 
 #article1
 {
     padding: 10px;
-    width:75%;
+    /*width:75%;*/
     -webkit-hyphens: auto;
     -moz-hyphens: auto;
     -ms-hyphens: auto;

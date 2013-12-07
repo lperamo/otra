@@ -37,6 +37,7 @@ class Sql
       if (null == self::$_instance)
       {
         self::$_instance = new Sql($sgbd);
+        dump('test');die;
         require($sgbd . '.php');
       }
 

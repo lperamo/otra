@@ -1,7 +1,7 @@
 <?php
 
 namespace lib\myLibs\core;
-require_once 'Tasks.php';
+require_once ROOTPATH . 'lib/myLibs/core/Tasks.php';
 
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
@@ -59,8 +59,8 @@ class Tasks_Manager
 //      self::initDb();
     define('DS', DIRECTORY_SEPARATOR);
     define('AVT', '..' . DS);
-    require_once '../lib/myLibs/core/ClassMap.php';
-  spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
+    require_once ROOTPATH . 'lib/myLibs/core/ClassMap.php';
+    spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
     Tasks::$command($argv);
   }
 }

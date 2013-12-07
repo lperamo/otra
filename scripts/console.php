@@ -1,7 +1,8 @@
 #!/usr/bin/php
 <?
 define('XMODE', 'dev');
-require('../lib/myLibs/core/Tasks_Manager.php');
+define('ROOTPATH', __DIR__ . '/../');
+require(ROOTPATH . 'lib/myLibs/core/Tasks_Manager.php');
 
 function brown(){ return "\033[0;33m"; }
 function lightBlue(){ return "\033[1;34m"; }

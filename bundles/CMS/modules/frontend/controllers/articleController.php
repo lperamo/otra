@@ -72,7 +72,7 @@ class articleController extends Controller
         require_once($article);
         $article = ob_get_clean();
       }else
-        $article = 'Cet article n\'existe pas';
+        $article = 'Cet article n\'existe pas. Cet article n\'existe pas.Cet article n\'existe pas.Cet article n\'existe pas.Cet article n\'existe pas';
 
       echo $this->renderView('show.phtml', array(
         'headers' => $_SESSION['headers'],

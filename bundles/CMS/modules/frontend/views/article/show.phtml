@@ -6,14 +6,15 @@ self::title('Save our space - Accueil !');
 <div id="mainFrame">
 <? require CMS_VIEWS_PATH . 'header.phtml'; ?>
   <div id="bgMiddle">
-    <? for($i=0; $i<2; $i += 1)
-    {
-      echo '<div id="location' , $i , '">';
-      foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } ?>
-      </div><?
-    }?>
-
-    <article id="article1" class="fl"><?= $article ?></article>
+    <div>
+      <? for($i=0; $i<2; $i += 1)
+      {
+        echo '<div id="location' , $i , '">';
+        foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } ?>
+        </div><?
+      }?>
+      <article id="article1" class="fl"><?= $article ?></article>
+    </div>
   <div class="clearBoth"></div>
 
   <? require CMS_VIEWS_PATH . 'footer.phtml';  ?>

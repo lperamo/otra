@@ -2,23 +2,23 @@
 /** Class mapping generation task
  *
  * @author Lionel Péramo */
-$dirs = array('../bundles', '../config', '../lib');
+$dirs = array('bundles', 'config', 'lib');
 $classes = array();
 $processedDir = 0;
 foreach ($dirs as $dir){
-  list($classes, $processedDir) = iterateCM($classes, $dir, $processedDir);
+  list($classes, $processedDir) = iterateCM($classes, ROOTPATH . $dir, $processedDir);
 }
 ob_start();
 var_export($classes);
 $classMap = ob_get_clean();
-$fp = fopen(__DIR__ . DS . 'ClassMap.php', 'w');
+$fp = fopen(ROOTPATH . 'lib/myLibs/core/ClassMap.php', 'w');
 fwrite($fp, '<?php $classMap = ' . str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap) . '; ?>');
 fclose($fp);
 
 echo PHP_EOL, green() , 'Class mapping finished.', endColor(), PHP_EOL;
 
-function iterateCM($classes, $dir, $processedDir){
-
+function iterateCM($classes, $dir, $processedDir)
+{
   if ($handle = opendir($dir)) {
       while (false !== ($entry = readdir($handle))) {
         // We check that we process interesting things
@@ -37,7 +37,7 @@ function iterateCM($classes, $dir, $processedDir){
           continue;
 
         // We begin our work
-        $classes[substr(str_replace('/', '\\', $dir), 3) . '\\' . substr($entry, 0, $posDot)] = $_entry;
+        $classes[substr(str_replace('/', '\\', $dir), strlen(ROOTPATH)) . '\\' . substr($entry, 0, $posDot)] = $_entry;
       }
       closedir($handle);
       $processedDir += 1;
