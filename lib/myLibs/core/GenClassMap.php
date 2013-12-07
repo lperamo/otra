@@ -12,7 +12,7 @@ ob_start();
 var_export($classes);
 $classMap = ob_get_clean();
 $fp = fopen(ROOTPATH . 'lib/myLibs/core/ClassMap.php', 'w');
-fwrite($fp, '<?php $classMap = ' . str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap) . '; ?>');
+fwrite($fp, '<?php $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . '); ?>');
 fclose($fp);
 
 echo PHP_EOL, green() , 'Class mapping finished.', endColor(), PHP_EOL;
@@ -36,7 +36,6 @@ function iterateCM($classes, $dir, $processedDir)
         if('.php' != (substr($entry, $posDot) ))
           continue;
 
-        // We begin our work
         $classes[substr(str_replace('/', '\\', $dir), strlen(ROOTPATH)) . '\\' . substr($entry, 0, $posDot)] = $_entry;
       }
       closedir($handle);

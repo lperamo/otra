@@ -20,7 +20,7 @@ class Sql
     $_db,
     $_link_identifier;
 
-  public function __construct($sgbd) { self::$_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
+  public function __construct($sgbd) { die; self::$_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
 
   /** Destructor that closes the connection */
   public function __destruct() { self::close(); }
@@ -36,8 +36,9 @@ class Sql
     {
       if (null == self::$_instance)
       {
+
         self::$_instance = new Sql($sgbd);
-        dump('test');die;
+        dump(__NAMESPACE__ . '\\' . $sgbd);die;
         require($sgbd . '.php');
       }
 
