@@ -23,7 +23,7 @@ if(file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri))
           header('Content-type:  text/css');
           header('Content-Encoding: gzip');
           break;
-        case 'js': header('Content-type: application/javascript');
+        case 'js': header('Content-type: application/javascript'); break;
         case 'js.gz':
           header('Content-type: application/javascript');
           header("Content-Encoding: gzip");

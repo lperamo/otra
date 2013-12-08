@@ -5,7 +5,6 @@
 namespace config;
 use lib\myLibs\core\Session;
 
-define('BASE_PATH2', str_replace(DS,'/', BASE_PATH));
 define('CACHE_PATH', BASE_PATH . '/cache' . DS);
 
 // CMS core resources
@@ -25,4 +24,3 @@ define('VERSION', 'v1'); // to use with the finger printing technique (if modifi
 define('FWK_HASH', '$2a$07$ThisoneIsanAwesomeframework$');
 
 require XMODE . DS . 'All_Config.php';
-?>

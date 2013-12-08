@@ -1,8 +1,7 @@
 <?
 /** A classic MVC development controller class
  *
- * @author Lionel Péramo
- */
+ * @author Lionel Péramo */
 namespace lib\myLibs\core;
 
 use config\All_Config,
@@ -221,4 +220,3 @@ class Controller extends MasterController
     return $debugContent;
   }
 }
-?>

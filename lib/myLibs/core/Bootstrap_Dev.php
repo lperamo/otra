@@ -39,5 +39,7 @@ try{
     call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
     Router::get($route[0], $route[1]);
   }
-}catch(Exception $e){ echo $e->errorMessage(); return false;}
-?>
+}catch(Exception $e){
+  echo $e->errorMessage();
+  return false;
+}

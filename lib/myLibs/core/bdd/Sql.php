@@ -1,4 +1,7 @@
 <?php
+/** Main sql management
+ *
+ * @author Lionel Péramo */
 
 namespace lib\myLibs\core\bdd;
 
@@ -7,11 +10,6 @@ use lib\myLibs\core\Lionel_Exception,
   lib\myLibs\core\bdd\Mysql,
   config\All_Config;
 
-/**
- * Main sql management
- *
- * @author Lionel Péramo
- */
 class Sql
 {
   private static $_instance,
@@ -20,7 +18,7 @@ class Sql
     $_db,
     $_link_identifier;
 
-  public function __construct($sgbd) { die; self::$_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
+  public function __construct($sgbd) { self::$_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
 
   /** Destructor that closes the connection */
   public function __destruct() { self::close(); }
@@ -36,9 +34,8 @@ class Sql
     {
       if (null == self::$_instance)
       {
-
         self::$_instance = new Sql($sgbd);
-        dump(__NAMESPACE__ . '\\' . $sgbd);die;
+        // dump(__NAMESPACE__ . '\\' . $sgbd);die;
         require($sgbd . '.php');
       }
 
@@ -46,7 +43,7 @@ class Sql
       self::$_db = $db;
       $server = ('' == $port) ? $host : $host . ':' . $port;
       self::$_link_identifier = self::connect($server, $login, $password);
-      //var_dump(self::$_link_identifier);die;
+
       return self::$_instance;
     }else
       throw new Lionel_Exception('This SGBD doesn\'t exist...yet !', 'E_CORE_ERROR');
@@ -188,4 +185,3 @@ class Sql
     return call_user_func(self::$_chosenSgbd . '::lastInsertId');
   }
 }
-?>

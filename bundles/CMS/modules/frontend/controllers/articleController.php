@@ -85,4 +85,3 @@ class articleController extends Controller
       echo $this->renderView('show.phtml', array());
 	}
 }
-?>

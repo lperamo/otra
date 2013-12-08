@@ -70,4 +70,3 @@ class Router
 		return false;
 	}
 }
-?>

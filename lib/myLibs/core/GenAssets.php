@@ -214,4 +214,3 @@ function template($shaName, $route, array $resources){
 
   echo status('TEMPLATE');
 }
-?>

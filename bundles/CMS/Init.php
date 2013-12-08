@@ -1,22 +1,18 @@
 <?php
-
+/** Initialisation class
+ *
+ * @author Lionel Péramo */
 namespace bundles\CMS;
 
 use lib\myLibs\core\Session,
-	lib\myLibs\core\bdd\Sql,
-	config\All_Config;
+	lib\myLibs\core\bdd\Sql;
 
-/**
- * Description of Init
- *
- * @author Lionel Péramo
- */
 class Init
 {
-  public static function Init()
-  {
-    Session::set('db', 'CMS');
-		Session::set('dbConn', Sql::getDB('Mysql'));
+  public static function Init() {
+    Session::sets(array(
+      'db' => 'CMS',
+      'dbConn' => Sql::getDB('Mysql')
+    ));
   }
 }
-?>
