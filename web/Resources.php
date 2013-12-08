@@ -6,10 +6,8 @@ $uri = $_SERVER['REQUEST_URI'];
 define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
 define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
 
-// echo '<pre>', print_r($_SERVER, true), '</pre>';die;
 if(file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)))
 {
-  // echo $uri;
   $smallUri = substr($uri, -7);
   $posDot = strpos($smallUri, '.');
   // Verify that we went from the site and whether the file have an extension or not
