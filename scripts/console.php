@@ -2,6 +2,7 @@
 <?
 define('XMODE', 'dev');
 define('ROOTPATH', __DIR__ . '/../');
+define('BASE_PATH', substr(__DIR__, 0, -7)); // Finit avec /
 require(ROOTPATH . 'lib/myLibs/core/Tasks_Manager.php');
 
 function brown(){ return "\033[0;33m"; }

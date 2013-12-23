@@ -13,4 +13,4 @@ $('body').on('click', '.select', function(e){
 		$('.selectChoice').off('click');
 	};
 	$(':not(.select, .selectChoices)').click(hideChoices);
-})
+});

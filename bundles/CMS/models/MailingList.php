@@ -1,6 +1,6 @@
 <?php
 
-namespace bundles\CMS\modules\models;
+namespace bundles\CMS\models;
 
 use lib\myLibs\core\Model;
 

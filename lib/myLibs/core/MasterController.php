@@ -1,21 +1,23 @@
 <?
-/** A classic MVC master controller class
+/** MVC master controller class
  *
  * @author Lionel Péramo
  */
 namespace lib\myLibs\core;
 
 class MasterController{
+  public static $path;
+
   protected $bundle = '',
     $module = '',
     $controller = '',
     $action = '',
     $route,
     $getParams = '',
-    $viewCSSPath = '/', // CSS path for module
-    $viewJSPath = '/', // JS path for module
+    $viewCSSPath = '/', // CSS path for this module
+    $viewJSPath = '/', // JS path for this module
     $pattern = '';
-  public static $path;
+
   protected static $id,
   /* @var string $template The actual template being processed */
     $template,
@@ -45,11 +47,11 @@ class MasterController{
       self::$id = $this->bundle . $this->module . $this->controller . $this->action;
       $this->getParams = $getParams;
 
-      $mainPath = '/bundles/' . $this->bundle . '/modules/' . $this->module . '/';
+      $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
       // Stores the templates' path of the calling controller
       $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
-      $this->viewCSSPath = $mainPath .'media/css/';
-      $this->viewJSPath = $mainPath . 'media/js/';
+      $this->viewCSSPath = $mainPath .'resources/css/';
+      $this->viewJSPath = $mainPath . 'resources/js/';
 
       self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
@@ -67,10 +69,10 @@ class MasterController{
    * @param string $filename File name to modify
    * @param string $path     File's path
    * @param stirng $prefix   Prefix of the file name
+   *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache')
-  {
+  protected static function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache') {
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
@@ -105,19 +107,19 @@ class MasterController{
 
   /** Sets the body attributes
   *
-  * @param string $attrs Body attributes
+  * @param string $attrs
   */
   public static function bodyAttrs($attrs = '') { self::$bodyAttrs = $attrs; }
 
   /** Sets the body content
    *
-   * @param string $content Body content
+   * @param string $content
    */
   private static function body($content = '') { self::$body = $content; }
 
   /** Sets the title of the page
    *
-   * @param string $title Title of the page
+   * @param string $title
    */
   protected static function title($title) {
     self::$layout = (isset(self::$layout))
@@ -127,12 +129,12 @@ class MasterController{
 
   /** Sets the favicons of the site
    *
-   * @param string $favicon   Favicon file name
-   * @param string $faviconIE Favicon file name for IE
+   * @param string $filename
+   * @param string $filenameIE
    */
-  protected static function favicon($favicon = '', $faviconIE = '')
+  protected static function favicon($filename = '', $filenameIE = '')
   {
-    echo '<link rel="icon" type="image/png" href="' , $favicon , '" />
-      <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $faviconIE . '" /><![endif]-->';
+    echo '<link rel="icon" type="image/png" href="' , $filename , '" />
+      <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
   }
 }

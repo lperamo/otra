@@ -4,7 +4,7 @@
  *
  * @author Lionel Péramo */
 
-namespace bundles\CMS\modules\backend\controllers;
+namespace bundles\CMS\backend\controllers;
 
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
@@ -14,13 +14,8 @@ use lib\myLibs\core\Controller,
 class indexController extends Controller
 {
   public function preExecute(){
-    // var_dump($controller, $chunks);die;
-    // var_dump($_SESSION['sid'], $this->action);die;
     if($this->action != 'index' && !isset($_SESSION['sid']))
-    {
       Router::get('backend');
-      die;
-    }
   }
 
   public function indexAction()
@@ -54,8 +49,6 @@ class indexController extends Controller
   }
 
   public function modulesAction(){
-    // var_dump('sdfsdf');
-
     $db = Session::get('dbConn');
     $db->selectDb();
 

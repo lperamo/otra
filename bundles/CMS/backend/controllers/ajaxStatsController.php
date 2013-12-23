@@ -3,14 +3,14 @@
  *
  * @author Lionel Péramo */
 
-namespace bundles\CMS\modules\backend\controllers;
+namespace bundles\CMS\backend\controllers;
 
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
     lib\myLibs\core\Session,
     config\Router;
 
-class ajaxModulesController extends Controller
+class ajaxStatsController extends Controller
 {
   public function preExecute(){
     if($this->action != 'index' && !isset($_SESSION['sid']))

@@ -1,7 +1,9 @@
 <?php
-/** Initialisation class
+/**
+ * Initialisation class
  *
  * @author Lionel Péramo */
+
 namespace bundles\CMS;
 
 use lib\myLibs\core\Session,
@@ -10,9 +12,7 @@ use lib\myLibs\core\Session,
 class Init
 {
   public static function Init() {
-    Session::sets(array(
-      'db' => 'CMS',
-      'dbConn' => Sql::getDB('Mysql')
-    ));
+    Session::set('db', 'CMS');
+    Session::set('dbConn', Sql::getDB('Mysql'));
   }
 }

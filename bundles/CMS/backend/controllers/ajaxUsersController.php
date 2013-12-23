@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo */
 
-namespace bundles\CMS\modules\backend\controllers;
+namespace bundles\CMS\backend\controllers;
 
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,

@@ -35,7 +35,6 @@ class Sql
       if (null == self::$_instance)
       {
         self::$_instance = new Sql($sgbd);
-        // dump(__NAMESPACE__ . '\\' . $sgbd);die;
         require($sgbd . '.php');
       }
 

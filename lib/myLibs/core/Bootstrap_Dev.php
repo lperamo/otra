@@ -21,6 +21,7 @@ ini_set('error_reporting', 1);
 error_reporting(-1);
 // We load the class mapping
 require BASE_PATH . 'lib/myLibs/core/ClassMap.php';
+//var_dump($classMap['bundles\CMS\backend\controllers\indexController']);die;
 spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
 
 function errorHandler($errno, $message, $file, $line, $context) { throw new Lionel_Exception($message, $errno, $file, $line, $context); }

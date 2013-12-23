@@ -1,14 +1,12 @@
-<?php
-
-namespace lib\myLibs\core\bdd;
-
-use lib\myLibs\core\Lionel_Exception;
-
+<?
 /**
  * Mysql management
  *
- * @author Lionel Péramo
- */
+ * @author Lionel Péramo */
+
+namespace lib\myLibs\core\bdd;
+use lib\myLibs\core\Lionel_Exception;
+
 class Mysql
 {
   static private $db;
@@ -23,13 +21,11 @@ class Mysql
    * @return bool|resource Returns a MySQL link identifier on success, or false on error
    * @link http://php.net/manual/en/function.mysql-connect.php
    */
-  public static function connect($server = 'localhost:3306', $username = 'root', $password = '')
-  {
+  public static function connect($server = 'localhost:3306', $username = 'root', $password = '') {
     return mysql_connect($server, $username, $password);
   }
 
-  /**
-   * Connects to a database
+  /** Connects to a database
    *
    * @param string   $database_name Database name
    * @param resource $link_identifier
@@ -37,8 +33,7 @@ class Mysql
    * @return bool True if successful
    * @link http://php.net/manual/en/function.mysql-select-db.php
    */
-  public static function selectDb($database_name, $link_identifier)
-  {
+  public static function selectDb($database_name, $link_identifier) {
     return mysql_select_db($database_name, $link_identifier);
   }
 
@@ -81,8 +76,7 @@ class Mysql
    * @return array The next result
    * @link http://php.net/manual/en/function.mysql-fetch-array.php
    */
-  public static function fetchArray($result, $result_type)
-  {
+  public static function fetchArray($result, $result_type) {
     return mysql_fetch_array($result, $result_type);
   }
 
@@ -109,8 +103,7 @@ class Mysql
    * @return array The next result
    * @link http://php.net/manual/en/function.mysql-fetch-object.php
    */
-  public static function fetchObject($result, $class_name = null, array $params = array())
-  {
+  public static function fetchObject($result, $class_name = null, array $params = array()) {
     return mysql_fetch_object(func_get_args());
   }
 
@@ -121,14 +114,12 @@ class Mysql
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function values($result)
-  {
+  public static function values($result) {
     if (0 == mysql_num_rows($result))
       return false;
 
-    while ($row = mysql_fetch_assoc($result))
-    {
-       $results[] = $row;
+    while ($row = mysql_fetch_assoc($result)) {
+      $results[] = $row;
     }
 
     return $results;

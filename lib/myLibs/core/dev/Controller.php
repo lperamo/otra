@@ -198,9 +198,15 @@ class Controller extends MasterController
               $debugContent .= "\n" . '<script src="' . CMS_JS_PATH . $cmsJs . '.js" ></script>';
             }
           }
+          if(isset($resources['extJs'])) {
+            foreach($resources['extJs'] as $js) {
+              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+            }
+          }
           if(isset($resources['js'])) {
             foreach($resources['js'] as $js) {
-              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+              // var_dump($this->viewJSPath);die;
+              $debugContent .= "\n" . '<script src="' . $this->viewJSPath . $js . '.js" ></script>';
             }
           }
         }

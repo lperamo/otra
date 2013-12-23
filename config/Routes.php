@@ -17,8 +17,8 @@ class Routes
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
         'template' => true,
-        'cmsJs' => array('jquery', 'main', 'connection'),
-        'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
+        'bundle_js' => array('jquery', 'main', 'connection'),
+        'bundle_css' => array('header', 'footer', 'generic', 'main', 'form')
       )
     ),
     'logout' => array(
@@ -34,29 +34,30 @@ class Routes
     'backendModules' => array(
       'chunks' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction'),
       'resources' => array(
-        'cmsJs' => array('jquery', 'backend'),
-        'cmsCss' => array('generic', 'interface', 'form')
+        'bundle_js' => array('jquery', 'backend'),
+        'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
     'backendGeneral' => array(
       'chunks' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction'),
       'resources' => array(
-        'cmsJs' => array('jquery', 'backend'),
-        'cmsCss' => array('generic', 'interface', 'form')
+        'bundle_js' => array('jquery', 'backend'),
+        'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
     'backendStats' => array(
       'chunks' => array('/backend/stats', 'CMS', 'backend', 'index', 'statsAction'),
       'resources' => array(
-        'cmsJs' => array('jquery','backend'),
-        'cmsCss' => array('generic', 'interface', 'form')
+        'bundle_js' => array('jquery','backend'),
+        'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
     'backendUsers' => array(
       'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction'),
       'resources' => array(
-        'cmsJs' => array('jquery', 'backend', 'form'),
-        'cmsCss' => array('generic', 'interface', 'form')
+        '_js' => array('users'),
+        'bundle_js' => array('jquery', 'backend', 'form'),
+        'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
 
@@ -73,7 +74,7 @@ class Routes
       'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
       'resources' => array(
         'js' => array('users'),
-        'cmsCss' => array('users')
+        'bundle_css' => array('users')
       )
     ),
     // keep these routes in last position because it's too generic !!
@@ -81,16 +82,16 @@ class Routes
       'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),
       'resources' => array(
         'template' => true,
-        'cmsJs' => array('jquery', 'main', 'connection'),
-        'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
+        'bundle_js' => array('jquery', 'main', 'connection'),
+        'bundle_css' => array('header', 'footer', 'generic', 'main', 'form')
       )
     ),
     'index' => array(
       'chunks' => array('/', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
         'template' => true,
-        'cmsJs' => array('jquery', 'main', 'connection'),
-        'cmsCss' => array('header', 'footer', 'generic', 'main', 'form')
+        'bundle_js' => array('jquery', 'main', 'connection'),
+        'bundle_css' => array('header', 'footer', 'generic', 'main', 'form')
       )
     )
   );

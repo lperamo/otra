@@ -1,5 +1,5 @@
 <?
-namespace bundles\CMS\modules\frontend\controllers;
+namespace bundles\CMS\frontend\controllers;
 
 use lib\myLibs\core\Controller,
     lib\myLibs\core\Lionel_Exception,

@@ -1,8 +1,8 @@
 <?
-namespace bundles\CMS\modules\frontend\controllers;
+namespace bundles\CMS\frontend\controllers;
 
 use lib\myLibs\core\Controller,
-		bundles\CMS\modules\models\MailingList;
+		bundles\CMS\models\MailingList;
 
 /**
  * LPCMS Mailing List management

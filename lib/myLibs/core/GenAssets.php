@@ -74,22 +74,24 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   $resources = $route['resources'];
   $chunks = $route['chunks'];
   $shaName = sha1('ca' . $name . VERSION . 'che');
+  $bundlePath = BASE_PATH . '/bundles/' . $chunks[1] . '/';
 
   if(($mask & 2) >> 1)
-    css($shaName, $chunks, $resources);
+    echo css($shaName, $chunks, $bundlePath, $resources);
   if(($mask & 4) >> 2)
-    js($shaName, $chunks, $resources);
+    echo js($shaName, $chunks, $bundlePath, $resources);
   if($mask & 1)
-    template($shaName, $name, $resources);
+    echo template($shaName, $name, $resources);
 
   echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
 
 function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
 
-/** Cleans the css (spaces and comments)
+/**
+ * Cleans the css (spaces and comments)
  *
- * @param $content The css content
+ * @param $content The css content to clean
  *
  * @return string The cleaned css
  */
@@ -107,80 +109,75 @@ function cleanCss($content)
 
 /** Generates the gzipped css files
 *
-* @param string $shaName   Name of the cached file
-* @param array  $chunks    Route site path
-* @param array  $resources Resources array from the defined routes of the site
+* @param string $shaName    Name of the cached file
+* @param array  $chunks     Route site path
+* @param string $bundlePath
+* @param array  $resources  Resources array from the defined routes of the site
 */
-function css($shaName, array $chunks, array $resources){
+function css($shaName, array $chunks, $bundlePath, array $resources){
   ob_start();
-
-  if(isset($resources['cmsCss'])) {
-    foreach($resources['cmsCss'] as $cmsCss) {
-      echo file_get_contents(BASE_PATH . CMS_CSS_PATH . $cmsCss . '.css');
-    }
-  }
-
-  loadResource($chunks, $resources, 'css');
-
+  loadResource($resources, $chunks, 'bundle_css', $bundlePath, '');
+  loadResource($resources, $chunks, 'module_css', $bundlePath, $chunks[2] . '/');
+  loadResource($resources, $chunks, '_css', $bundlePath);
   $allCss = ob_get_clean();
 
   if('' == $allCss)
-    echo status('No CSS', 'cyan');
-  else
-  {
-    $allCss = cleanCss($allCss);
-    $pathAndFile = CACHE_PATH . 'css/' . $shaName . '.css';
-    $fp = fopen($pathAndFile, 'w');
-    fwrite($fp, $allCss);
-    fclose($fp);
-    exec('gzip -f -9 ' . $pathAndFile);
-  }
-  echo status('CSS');
+    return status('No CSS', 'cyan');
+
+  $allCss = cleanCss($allCss);
+  $pathAndFile = CACHE_PATH . 'css/' . $shaName . '.css';
+  $fp = fopen($pathAndFile, 'w');
+  fwrite($fp, $allCss);
+  fclose($fp);
+  exec('gzip -f -9 ' . $pathAndFile);
+
+  return status('CSS');
 }
 
-/** Generates the gzipped js files
-*
-* @param string $shaName   Name of the cached file
-* @param array  $chunks    Route site path
-* @param array  $resources Resources array from the defined routes of the site
-*/
-function js($shaName, array $chunks, array $resources){
+/**
+ *  Generates the gzipped js files
+ *
+ * @param string $shaName   Name of the cached file
+ * @param array  $chunks    Route site path
+ * @param string $bundlePath
+ * @param array  $resources Resources array from the defined routes of the site
+ */
+function js($shaName, array $chunks, $bundlePath, array $resources){
   ob_start();
-  loadResource($resources, $chunks, 'firstJs');
-
-  if(isset($resources['cmsJs'])) {
-    foreach($resources['cmsJs'] as $cmsJs) {
-      echo file_get_contents(BASE_PATH . CMS_JS_PATH . $cmsJs . '.js');
-    }
-  }
-
-  loadResource($resources, $chunks, 'js');
+  loadResource($resources, $chunks, 'first_js', $bundlePath);
+  loadResource($resources, $chunks, 'bundle_js', $bundlePath, '');
+  loadResource($resources, $chunks, 'module_js', $bundlePath . $chunks[2] . '/');
+  loadResource($resources, $chunks, '_js', $bundlePath);
   $allJs = ob_get_clean();
 
-  if('' == $allJs){
-    echo status('No JS', 'cyan');
-  }else{
-    $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
-    $fp = fopen($pathAndFile, 'w');
-    fwrite($fp, $allJs);
-    fclose($fp);
-    exec('gzip -f -9 ' . $pathAndFile);
-    // exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
-    // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
-    echo status('JS');
-  }
+  if('' == $allJs)
+    return status('No JS', 'cyan');
+
+  $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
+  $fp = fopen($pathAndFile, 'w');
+  fwrite($fp, $allJs);
+  fclose($fp);
+  // exec('gzip -f -9 ' . $pathAndFile);
+  exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+  // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+  return status('JS');
 }
 
-function loadResource(array $resources, $chunks, $key){
-  if(isset($resources[$key])) {
-    $path = BASE_PATH . '/bundles/' . $chunks[1] . '/modules/' . $chunks[2] . '/media/' . (('js' == substr($key, -2)) ? 'js' : $key) . '/';
+function loadResource(array $resources, $chunks, $key, $bundlePath, $path = true){
+  if(isset($resources[$key]))
+  {
+    $type = substr(strrchr($key, '_'), 1);
+    $path = $bundlePath . (($path)
+      ?  $chunks[2] . '/resources/' . $type . '/'
+      : $path . 'resources/' . $type . '/');
 
-    foreach($resources[$key] as $js) {
-      if(false === strpos($js, 'http'))
-        echo file_get_contents($path . $js . '.js');
-      else{
+    foreach($resources[$key] as $resource)
+    {
+      if(false === strpos($resource, 'http'))
+        echo file_get_contents($path . $resource . '.' . $type);
+      else {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $js . '.js');
+        curl_setopt($ch, CURLOPT_URL, $resource . '.' . $type);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_exec($ch);
         curl_close($ch);
@@ -189,20 +186,20 @@ function loadResource(array $resources, $chunks, $key){
   }
 }
 
-/** Generates the gzipped css files
+/**
+ * Generates the gzipped css files
  *
  * @param string $shaName   Name of the cached file
  * @param string $route
  * @param array  $resources Resources array from the defined routes of the site
  */
 function template($shaName, $route, array $resources){
-  if(!isset($resources['template'])){
-    echo status('No TEMPLATE', 'cyan');
-    return;
-  }
+  if(!isset($resources['template']))
+    return status('No TEMPLATE', 'cyan');
 
   ob_start();
   call_user_func('bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init');
+
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
 
@@ -212,5 +209,5 @@ function template($shaName, $route, array $resources){
   fclose($fp);
   exec('gzip -f -9 ' . $pathAndFile);
 
-  echo status('TEMPLATE');
+  return status('TEMPLATE');
 }

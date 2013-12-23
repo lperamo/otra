@@ -114,9 +114,9 @@ class Tasks
 
         $basePath = substr(__DIR__, 0, -15) . 'cache/';
         echo str_pad(' ', 25, ' '), 'Resources : ';
-        if(isset($resources['css']) || isset($resources['cmsCss']))
+        if(isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
           echo (file_exists($basePath . 'css' . '/' . $shaName. '.' . 'css.gz')) ? green() : lightRed(), '[CSS]', $altColor;
-        if(isset($resources['js']) || isset($resources['cmsJs']))
+        if(isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
           echo (file_exists($basePath . 'js' . '/' . $shaName. '.' . 'js.gz')) ? green() : lightRed(), '[JS]', $altColor;
         if(isset($resources['template']))
           echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.' . 'html.gz')) ? green() : lightRed(), '[TEMPLATE]', $altColor;

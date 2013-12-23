@@ -1,18 +1,14 @@
 <?
-/**
- * LPCMS AJAX Articles management
+/** LPCMS AJAX Articles management
  *
- * @author Lionel Péramo
- */
+ * @author Lionel Péramo */
 
-namespace bundles\CMS\modules\frontend\controllers;
-
+namespace bundles\CMS\frontend\controllers;
 use lib\myLibs\core\Controller;
 
 class ajaxArticleController extends Controller
 {
-  public function showAction($article)
-  {
+  public function showAction($article) {
     require_once(BASE_PATH . 'bundles/' . $this->bundle . '/articles/' . $article . '.html');
   }
 }

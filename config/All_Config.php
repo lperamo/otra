@@ -1,16 +1,18 @@
 <?php
-/** THE framework global config
+/**
+ * THE framework global config
  *
  * @author Lionel Péramo */
+
 namespace config;
 use lib\myLibs\core\Session;
 
-define('CACHE_PATH', BASE_PATH . '/cache' . DS);
+define('CACHE_PATH', BASE_PATH . 'cache' . DS);
 
 // CMS core resources
-define('CMS_VIEWS_PATH', '../lib/myLibs/cms/views/');
-define('CMS_CSS_PATH', '/lib/myLibs/cms/css/');
-define('CMS_JS_PATH', '/lib/myLibs/cms/js/');
+define('CMS_VIEWS_PATH', '../bundles/CMS/views/');
+define('CMS_CSS_PATH', '/bundles/CMS/resources/css/');
+define('CMS_JS_PATH', '/bundles/CMS/resources/js/');
 
 // Framework core resources
 define('CORE_VIEWS_PATH', '../lib/myLibs/core/views');

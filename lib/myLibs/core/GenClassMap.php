@@ -12,10 +12,11 @@ ob_start();
 var_export($classes);
 $classMap = ob_get_clean();
 $fp = fopen(ROOTPATH . 'lib/myLibs/core/ClassMap.php', 'w');
-fwrite($fp, '<?php $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . ');');
+fwrite($fp, '<? $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . ');');
 fclose($fp);
 
 echo PHP_EOL, green() , 'Class mapping finished.', endColor(), PHP_EOL;
+var_dump($classMap); echo PHP_EOL;die;
 
 function iterateCM($classes, $dir, $processedDir)
 {
