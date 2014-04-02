@@ -14,17 +14,18 @@ body{
 	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.47);
 	margin:0 15px 15px 15px;
 }
+
 #menus{
 	border-radius: 8px;
 	box-shadow: 3px 3px 6px rgba(228, 139, 39, 0.47);
 	clear: both;
-	display: inline-block;
+	display: table;
 	float:left;
 	text-shadow: 1px 1px rgba(123, 123, 123, 0.32);
 	margin:15px;
-	white-space: nowrap;
 	width:calc(100% - 30px);
 }
+
 .tab{
 	background: -webkit-gradient(linear, 0 0, 0 100%, from(#E8E1D4), to(#FCD484)) #EAEAEA;
 	background: -webkit-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
@@ -32,11 +33,12 @@ body{
 	background: -o-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
 	background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
 	border-right: 1px solid rgba(0,0,0,0.2);
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	cursor: pointer;
-	display:inline-block;
-	-moz-box-sizing:border-box;
-	padding:5px 0px 5px 0;
-	width:25%
+	display: table-cell;
+	padding:5px 0 5px 0;
+	vertical-align: middle
  }
 
 .tab:hover{
@@ -49,7 +51,6 @@ body{
 
  .tab:first-child{border-radius: 8px 0 0 8px }
  .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
-
 
  .tab:active, .activeTab{
  	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 182, 111, 0.14)), to(#F7924F)) #EAEAEA;
@@ -118,7 +119,6 @@ td .input{ margin:0 !important}
 	box-shadow: 1px 1px 2px #7E7E7E;
 	cursor: pointer;
 	display: inline-block;
-	height: 20px;
 	margin: 3px 10px 3px 0;
 	padding: 3px 4px 3px 5px;
 	text-align: center
@@ -139,4 +139,14 @@ td .input{ margin:0 !important}
 	line-height: 0.8em;
 	text-shadow: 1px 1px rgba(167, 121, 31, 0.5);
 	vertical-align: top
+}
+
+.delete:before {
+  background: none repeat scroll 0 0 #F1AC46;
+  box-shadow: 1px 1px 3px rgba(167, 121, 31, 0.5);
+  content: "";
+  display: inherit;
+  height: 4px;
+  margin: 0 2px 3px 0;
+  width: 10px;
 }

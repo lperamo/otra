@@ -135,15 +135,29 @@ class Controller extends MasterController
         $route = $route[$this->route];
         if(isset($route['resources']))
         {
+          $chunks = $route['chunks'];
           $resources = $route['resources'];
-          if(isset($resources['cmsCss'])) {
-            foreach($resources['cmsCss'] as $cmsCss) {
-              $debugContent .= "\n" . '<link rel="stylesheet" href="' . CMS_CSS_PATH . $cmsCss . '.css" />';
+          $debLink = "\n" . '<link rel="stylesheet" href="';
+          $debLink2 = $debLink . '../bundles/';
+
+          if(isset($resources['first_css'])) {
+            foreach($resources['first_css'] as $first_css) {
+              $debugContent .= $debLink . $css . '.css" />';
             }
           }
-          if(isset($resources['css'])) {
-            foreach($resources['css'] as $css) {
-              $debugContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />';
+          if(isset($resources['bundle_css'])) {
+            foreach($resources['bundle_css'] as $bundle_css) {
+              $debugContent .= $debLink2 . $chunks[1] . '/resources/css/' . $bundle_css . '.css" />';
+            }
+          }
+          if(isset($resources['module_css'])) {
+            foreach($resources['module_css'] as $module_css) {
+              $debugContent .= $debLink2 . $chunks[2] . '/resources/css/' . $module_css . '.css" />';
+            }
+          }
+          if(isset($resources['_css'])) {
+            foreach($resources['_css'] as $css) {
+              $debugContent .= $debLink . $css . '.css" />';
             }
           }
         }
@@ -187,26 +201,30 @@ class Controller extends MasterController
         $route = $route[$this->route];
         if(isset($route['resources']))
         {
+          $chunks = $route['chunks'];
           $resources = $route['resources'];
-          if(isset($resources['firstJs'])) {
-            foreach($resources['firstJs'] as $js) {
-              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+          $debLink = "\n" . '<script src="';
+          $debLink2 = $debLink . '../bundles/';
+
+          if(isset($resources['first_js'])) {
+            foreach($resources['first_js'] as $first_js) {
+              $debugContent .= $debLink .  $first_js . '.js" ></script>';
             }
           }
-          if(isset($resources['cmsJs'])) {
-            foreach($resources['cmsJs'] as $cmsJs) {
-              $debugContent .= "\n" . '<script src="' . CMS_JS_PATH . $cmsJs . '.js" ></script>';
+          if(isset($resources['bundle_js'])) {
+            foreach($resources['bundle_js'] as $bundleJs) {
+              $debugContent .= $debLink2 . $chunks[1] . '/resources/js/' . $bundleJs . '.js" ></script>';
             }
           }
-          if(isset($resources['extJs'])) {
-            foreach($resources['extJs'] as $js) {
-              $debugContent .= "\n" . '<script src="' .  $js . '.js" ></script>';
+          if(isset($resources['module_js'])) {
+            foreach($resources['module_js'] as $module_js) {
+              $debugContent .= $debLink2 . $chunks[2] . '/resources/js/' . $module_js . '.js" ></script>';
             }
           }
-          if(isset($resources['js'])) {
-            foreach($resources['js'] as $js) {
+          if(isset($resources['_js'])) {
+            foreach($resources['_js'] as $js) {
               // var_dump($this->viewJSPath);die;
-              $debugContent .= "\n" . '<script src="' . $this->viewJSPath . $js . '.js" ></script>';
+              $debugContent .= $debLink . $this->viewJSPath . $js . '.js" ></script>';
             }
           }
         }

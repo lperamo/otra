@@ -26,8 +26,8 @@
 						<td>' + txtText + '/></td>\n\
 						<td>' + roleText + '</td>\n\
 						<td>\n\
-							<span class="softBtn validateButton"><a class="rightPad edit" data-tooltip="Validates the new user">Validate</a></span>\n\
-							<span class="softBtn" data-tooltip="Delete the user"><a class="fontBtn delete">-</a></span>\n\
+							<input type="submit" value="Validate" data-tooltip="Validates the new user" class="softBtn validateButton rightPad edit">\n\
+							<span class="softBtn delete" data-tooltip="Delete the user"></span>\n\
 						</td>\n\
 					</tr>');
 		},
@@ -60,9 +60,9 @@
 		},
 		events: function(){
 			thead.on('click','#all', U.selectAll);
-			tbody.on('click', '#addBtn', U.addUser);
-			tbody.on('click', 'tr.editable>td', U.focusSelect);
-			tbody.find('#delAllBtn').click(U.deleteAll);
+			tbody.on('click', '#addBtn', U.addUser)
+				.on('click', 'tr.editable>td', U.focusSelect)
+				.find('#delAllBtn').click(U.deleteAll);
 			tbody.find('.edit').click(U.edit);
 			tbody.find('.delete').click(U.del);
 		},

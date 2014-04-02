@@ -9,12 +9,12 @@
     background:linear-gradient(#B8CDFF 0%, #D6D6FF 45%, #B8BEFF 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafaff', endColorstr='#66f0f0ff',GradientType=0 ); /* IE6-8 */
 
-    font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
-    box-shadow: 0 0 11px #FFFFFF, 0 0 11px #645EEA, 0 0 11px #645EEA;
     border-top: solid #DDD 1px;
-    /*opacity:0.8;*/
+    box-shadow: 0 0 11px #FFFFFF, 0 0 11px #645EEA, 0 0 11px #645EEA;
+    font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
+    margin-bottom: 10px;
     padding:5px 5px 8px;
-    text-shadow: 1px 1px rgba(247, 247, 247, 0.38);
+    text-shadow: 1px 1px rgba(247, 247, 247, 0.38)
 }
 
 #debugBarSmall
@@ -33,7 +33,7 @@
     display:none;
     float:right;
     opacity:0.8;
-    padding:5px;
+    padding:5px
 }
 
 .dbg_on { color: #AFFFAE; text-shadow: 1px 1px #7B9F84 }
@@ -45,7 +45,7 @@
     float:right;
     height:0;
     margin-right:10px;
-    width:0;
+    width:0
 }
 
 .toggle:after{
@@ -53,19 +53,19 @@
     content: " ";
     display: block;
     position: relative;
-    z-index: -1;
+    z-index: -1
 }
 
 .activate { border-right:15px solid #89B !important }
 .activate:after {
    border-right:18px solid #568 !important;
    margin-left:-13px;
-   top: -10px;
+   top: -10px
 }
 
-.deactivate { border-left:15px solid #89B !important; }
+.deactivate { border-left:15px solid #89B !important }
 .deactivate:after {
    border-left:18px solid #568 !important;
    margin-left:-16px;
-   top: -9px;
+   top: -9px
 }

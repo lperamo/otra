@@ -116,6 +116,7 @@ function cleanCss($content)
 */
 function css($shaName, array $chunks, $bundlePath, array $resources){
   ob_start();
+  loadResource($resources, $chunks, 'first_css', $bundlePath);
   loadResource($resources, $chunks, 'bundle_css', $bundlePath, '');
   loadResource($resources, $chunks, 'module_css', $bundlePath, $chunks[2] . '/');
   loadResource($resources, $chunks, '_css', $bundlePath);
@@ -158,7 +159,7 @@ function js($shaName, array $chunks, $bundlePath, array $resources){
   fwrite($fp, $allJs);
   fclose($fp);
   // exec('gzip -f -9 ' . $pathAndFile);
-  exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+  // exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   return status('JS');
 }

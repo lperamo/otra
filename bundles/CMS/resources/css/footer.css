@@ -19,10 +19,30 @@
 }
 
 #designby {
-    margin-top:.625em;
+    color:#FFF !important;
     font-family:LucidaHandwritingItalic;
     font-size:.675em;
     text-shadow: 0.1em 0.1em #377;
-    /*color:#F4B627 !important;*/
-    color:#F4B627 !important
+    margin-top:.625em;
+    position: relative;
+    width: 16.5em
+}
+
+#designby:before {
+  /* box-shadow: 0 0 2px #FFFFFF, 0 0 2px #FFFFFF;
+  content: " ";
+  display: block;
+  height: 1px;
+  position: absolute;
+  top: 1.7em;
+  width: 16.5em */
+
+    border-radius: 80px / 10px;
+    box-shadow: 0 -7px 10px -4px rgba(255, 255, 255, 0.78);
+    content: " ";
+    display: block;
+    height: 34px;
+    position: absolute;
+    top: 2.1em;
+    width: 16.5em;
 }

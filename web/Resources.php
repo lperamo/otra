@@ -10,7 +10,7 @@ define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
 // $trueUri =
 if(file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)))
 {
-  $smallUri = substr($uri, -7);
+  $smallUri = substr($uri, -7); // Better short !
   $posDot = strpos($smallUri, '.');
 
   // Verify that we went from the site and whether the file have an extension or not
@@ -24,12 +24,10 @@ if(file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri))
           header('Content-type:  text/css');
           header('Content-Encoding: gzip');
           break;
-        case 'js': header('Content-type: application/javascript');
-
-         break;
+        case 'js': header('Content-type: application/javascript'); break;
         case 'js.gz':
           header('Content-type: application/javascript');
-          header("Content-Encoding: gzip");
+          header('Content-Encoding: gzip');
           break;
         case 'woff': header('Content-type: application/x-font-woff'); break;
         default:

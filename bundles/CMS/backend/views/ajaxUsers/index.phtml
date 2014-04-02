@@ -27,14 +27,14 @@
 				<td><?= $user['pseudo'] ?></td>
 				<td data-value="<?= $user['id_role'] ?>"><?= $user['nom'] ?></td>
 				<td>
-					<span class="softBtn" data-tooltip="Makes the line editable"><a class="rightPad edit">Edit</a></span>
-					<span class="softBtn" data-tooltip="Delete the user"><a class="fontBtn delete">-</a></span>
+					<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>
+					<span class="softBtn delete" data-tooltip="Delete the user"></span>
 				</td>
 			</tr>
 			<? } ?>
 			<tr id="trOptions">
 				<td colspan="6" class="options">
-					<span id="addBtn" class="softBtn smallBtn" data-tooltip="Add a new user"><a class="fontBtn rightPad">+</a></span>
+					<span id="addBtn" class="softBtn smallBtn fontBtn" data-tooltip="Add a new user">+</span>
 					<span id="delAllBtn" class="softBtn smallBtn" data-tooltip="Delete all the selected users !"><a id="deleteAll" class="fontBtn rightPad">-</a></span>
 					<span id="valAllBtn" class="softBtn smallBtn" data-tooltip="Validate all the selected users !"><a id="validateAll" class="fontBtn rightPad">V</a></span>
 				</tr>

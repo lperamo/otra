@@ -87,6 +87,8 @@ input[type=submit]{
     background-color: inherit;
     border: 0;
     -moz-appearance:none;
+    font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
+    font-size: 1em
 }
 
 .button{
