@@ -103,6 +103,9 @@ tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
 
 td .input{ margin:0 !important}
 
+#usersHeader th:nth-of-type(5){ width: 6.2em }
+#usersHeader th:nth-of-type(6){ width: 7.8em }
+
 .final{ background: rgba(15, 16, 17, 0.06) !important; border-top: 1px solid rgba(255, 255, 255, 0.54) }
 .options{ background: #E4E8EA; border-top: 1px double rgba(255, 255, 255, 0.54) }
 
@@ -117,20 +120,17 @@ td .input{ margin:0 !important}
 .smallBtn{ width:18px }
 .softBtn{
 	box-shadow: 1px 1px 2px #7E7E7E;
+	color: #F1AC46;
 	cursor: pointer;
 	display: inline-block;
 	margin: 3px 10px 3px 0;
 	padding: 3px 4px 3px 5px;
-	text-align: center
+	text-align: center;
+	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
 }
 
 .softBtn:hover{ box-shadow: 1px 1px 2px #7E7E7E, 1px 1px 2px #7E7E7E inset }
 .softBtn:active{	box-shadow: 1px 1px 2px #7E7E7E inset, 0px 0px 1px #7E7E7E inset, 2px 2px 2px #7E7E7E inset }
-
-.edit{
-	color: #F1AC46;
-	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
-}
 
 .fontBtn{
 	color: #F1AC46;
@@ -141,12 +141,32 @@ td .input{ margin:0 !important}
 	vertical-align: top
 }
 
-.delete:before {
+#add { padding: 3px 3px 3px 2px }
+
+#delAll, .delete {	height: 1.2em }
+#delAll:before, .delete:before {
   background: none repeat scroll 0 0 #F1AC46;
   box-shadow: 1px 1px 3px rgba(167, 121, 31, 0.5);
   content: "";
   display: inherit;
   height: 4px;
-  margin: 0 2px 3px 0;
-  width: 10px;
+  margin: 8px 2px 3px 0;
+  width: 10px
+}
+
+#valAll{
+	font-size: 1.5em;
+	line-height: 0.8em;
+	padding: 3px;
+	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
+}
+
+.paging {
+	height: 0.9em;
+	padding: 0 3px 3px 2px
+}
+
+#pageInd {
+  display: inline-block;
+  padding-top: 5px;
 }

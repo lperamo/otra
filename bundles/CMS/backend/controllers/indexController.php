@@ -14,8 +14,10 @@ use lib\myLibs\core\Controller,
 class indexController extends Controller
 {
   public function preExecute(){
-    if($this->action != 'index' && !isset($_SESSION['sid']))
+    if($this->action != 'index' && !isset($_SESSION['sid'])){
       Router::get('backend');
+      die;
+    }
   }
 
   public function indexAction()
@@ -48,7 +50,8 @@ class indexController extends Controller
     ));
   }
 
-  public function modulesAction(){
+  public function modulesAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
@@ -65,7 +68,8 @@ class indexController extends Controller
     ));
   }
 
-  public function generalAction(){
+  public function generalAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
@@ -83,7 +87,8 @@ class indexController extends Controller
     ));
   }
 
-  public function statsAction(){
+  public function statsAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
@@ -101,7 +106,8 @@ class indexController extends Controller
     ));
   }
 
-  public function usersAction(){
+  public function usersAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 

@@ -1,0 +1,61 @@
+.fl { float: left }
+.notifWrapper
+{
+  position: relative;
+  width: 100%;
+  z-index:1
+}
+
+.notification
+{
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-shadow: 5px 5px 4px #888;
+  color: #FFF;
+  font-size:14px;
+  left:0.2%; /* pour que la bordure avec :after ne dépasse pas */
+  padding: 5px 0;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  text-shadow: black 0.1em 0.1em 0.2em;
+  width: 99.8% /* pour que la bordure avec :after ne dépasse pas */
+}
+
+.orangeNotif{
+  background: #FF7D33;
+  border: 2px solid rgba(213, 201, 164, 0.25);
+  box-shadow: 5px 5px 4px #888;
+}
+
+.orangeNotif:before{
+  content: url(../images/error.png);
+  margin-right: 5px;
+  vertical-align: -2px
+}
+
+.vertNotif{
+  background: #97CF71;
+  border: 1px solid #79B198;
+  box-shadow: 5px 5px 4px #888;
+}
+
+.vertNotif:before{
+  content: url(../images/info.png);
+  margin-right: 5px;
+  vertical-align: -2px
+}
+.jauneNotif{
+  background: #FFB200;
+  border: 1px solid #EEA600;
+  box-shadow: 5px 5px 4px #888;
+}
+
+.jauneNotif:before{
+  content: url(../images/warning.png);
+  margin-right: 5px;
+  vertical-align: -2px
+}
+
+.marginBNeg { margin-top: 0px }

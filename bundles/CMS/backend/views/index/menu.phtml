@@ -1,7 +1,7 @@
 <ul id="menus">
-	<li class="tab <? if ('Modules' == $menu) echo 'activeTab '; ?>tcenter" data-tooltip="Modules management" data-href="/backend/modules">Modules
-	<li class="tab <? if ('General' == $menu) echo 'activeTab '; ?>tcenter" data-tooltip="General options management" data-href="/backend/general">General options
-	<li class="tab <? if ('Stats' == $menu) echo 'activeTab '; ?>tcenter" data-tooltip="Statistics management" data-href="/backend/stats">Stats
-	<li class="tab <? if ('Users' == $menu) echo 'activeTab '; ?> tcenter" data-tooltip="Users management" data-href="/backend/users">Users</ul>
+  <li class="tab <? if ('Modules' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/modules"><a data-tooltip="Modules management">Modules</a>
+  <li class="tab <? if ('General' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/general"><a data-tooltip="General options management">General options</a>
+  <li class="tab <? if ('Stats' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/stats"><a data-tooltip="Statistics management">Stats</a>
+  <li class="tab <? if ('Users' == $menu) echo 'activeTab '; ?> tcenter" data-href="/backend/users"><a data-tooltip="Users management">Users</a></ul>
 
 <div id="content"><? require __DIR__ . '/../ajax' . $menu .'/index.phtml'; ?>

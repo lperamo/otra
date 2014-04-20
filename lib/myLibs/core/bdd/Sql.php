@@ -171,7 +171,7 @@ class Sql
    */
   public static function freeResult($result)
   {
-    return call_user_func(self::$_chosenSgbd . '::freeResult');
+    return call_user_func(self::$_chosenSgbd . '::freeResult', $result);
   }
 
   /**
@@ -181,6 +181,6 @@ class Sql
    */
   public static function lastInsertedId()
   {
-    return call_user_func(self::$_chosenSgbd . '::lastInsertId');
+    return call_user_func(self::$_chosenSgbd . '::lastInsertedId', self::$_link_identifier);
   }
 }

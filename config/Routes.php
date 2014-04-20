@@ -56,9 +56,19 @@ class Routes
       'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction'),
       'resources' => array(
         '_js' => array('users'),
-        'bundle_js' => array('jquery', 'backend', 'form'),
-        'bundle_css' => array('generic', 'interface', 'form')
+        'bundle_js' => array('jquery', 'backend', 'form', 'notifications'),
+        'bundle_css' => array('generic', 'interface', 'form', 'notifications')
       )
+    ),
+
+    'addUser' => array(
+      'chunks' => array('/backend/ajax/users/add', 'CMS', 'backend', 'ajaxUsers', 'addAction')
+    ),
+    'editUser' => array(
+      'chunks' => array('/backend/ajax/users/edit', 'CMS', 'backend', 'ajaxUsers', 'editAction')
+    ),
+    'deleteUser' => array(
+      'chunks' => array('/backend/ajax/users/delete', 'CMS', 'backend', 'ajaxUsers', 'deleteAction')
     ),
 
     'backendAjaxModules' => array(
@@ -73,10 +83,11 @@ class Routes
     'backendAjaxUsers' => array(
       'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
       'resources' => array(
-        'js' => array('users'),
+        '_js' => array('users'),
         'bundle_css' => array('users')
       )
     ),
+
     // keep these routes in last position because it's too generic !!
     'backend' => array(
       'chunks' => array('/backend', 'CMS', 'backend', 'index', 'indexAction'),

@@ -12,7 +12,7 @@
     border-top: solid #DDD 1px;
     box-shadow: 0 0 11px #FFFFFF, 0 0 11px #645EEA, 0 0 11px #645EEA;
     font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     padding:5px 5px 8px;
     text-shadow: 1px 1px rgba(247, 247, 247, 0.38)
 }
@@ -68,4 +68,12 @@
    border-left:18px solid #568 !important;
    margin-left:-16px;
    top: -9px
+}
+
+.divError {
+    background:#FFF;
+    height:100%;
+    position:absolute;
+    top:0;
+    width:100%
 }

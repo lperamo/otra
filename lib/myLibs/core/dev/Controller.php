@@ -138,7 +138,7 @@ class Controller extends MasterController
           $chunks = $route['chunks'];
           $resources = $route['resources'];
           $debLink = "\n" . '<link rel="stylesheet" href="';
-          $debLink2 = $debLink . '../bundles/';
+          $debLink2 = $debLink . '/bundles/';
 
           if(isset($resources['first_css'])) {
             foreach($resources['first_css'] as $first_css) {
@@ -197,14 +197,14 @@ class Controller extends MasterController
 
     if($firstTime)
     {
-      if(isset($route[$this->route])){
+      if(isset($route[$this->route])) {
         $route = $route[$this->route];
         if(isset($route['resources']))
         {
           $chunks = $route['chunks'];
           $resources = $route['resources'];
           $debLink = "\n" . '<script src="';
-          $debLink2 = $debLink . '../bundles/';
+          $debLink2 = $debLink . '/bundles/';
 
           if(isset($resources['first_js'])) {
             foreach($resources['first_js'] as $first_js) {

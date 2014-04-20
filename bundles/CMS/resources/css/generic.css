@@ -14,6 +14,8 @@ body{ height: 100% }
 [data-tooltip]:after {
     content: attr(data-tooltip);
 
+    display:table;
+    width: inherit;
     height:18px;
     left:50%;
     top:25px;
@@ -23,7 +25,6 @@ body{ height: 100% }
     text-align: center;
 
     visibility: hidden;
-    white-space: nowrap;
     z-index:10000;
 
     background: #C6D8DF; /* Old browsers */

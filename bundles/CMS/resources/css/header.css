@@ -1,8 +1,5 @@
-@font-face
-{
-    /*AddType application/x-woff .woff*/
-/*  font-family: 'Lucida Handwriting';*/
-font-family: 'LucidaHandwritingItalic';
+@font-face {
+  font-family: 'LucidaHandwritingItalic';
   src: url('/../../assets/resources/lhandw-webfont.woff');
 }
 
@@ -17,18 +14,39 @@ font-family: 'LucidaHandwritingItalic';
     line-height:100px;
     text-align:center;
     text-shadow: 2px 2px 2px rgba(72, 72, 72, 0.75), 0 0 rgba(71, 71, 71, 0.75);
+    position: relative
 }
 
-/*
-#headerTitle:after
+#headerTitle:before
 {
-    content:'<div id="effect">plop</div>';
+  -webkit-animation:headerAnim 12s linear infinite; /* Chrome, Safari, Opera */
+  animation:headerAnim 12s linear infinite;
+  -moz-box-shadow: 0 0 9px 3px #444;
+  box-shadow: 0 0 9px 3px #444;
+  content: ' ';
+  height: 0;
+  left:17%;
+  position: absolute;
+  width: 70%;
+  border-top:1px groove rgba(0,0,0, 0.5)
 }
 
-#effect
+/* Chrome, Safari, Opera */
+@-webkit-keyframes headerAnim
 {
-    animation: title 180s linear infinite;
-    -moz-animation: 180s linear infinite title;
-    -webkit-animation: title 180s linear infinite;
+  0% { top:0;z-index:1;border:1px groove rgba(0,0,0, 0.25) }
+  3% { box-shadow: 0 0 9px 3px #444; top:calc(25% - 9px); width:72%; left:13%;}
+  6% {border-top:2px groove rgba(255,255,255, 0.7); box-shadow: 0 0 6px 3px #DDD; top:calc(50% - 9px); width:75%; left:10%;}
+  15% {border-top:1px solid rgba(100,100,100, 0);top:calc(100% - 9px); left:17%; width: 70%;z-index:-10000}
+  16%, 100% {border-top-width: 0; box-shadow: 0 0 0 transparent; top:calc(100% - 9px); }
 }
-*/
+
+ /*Standard syntax*/
+@keyframes headerAnim
+{
+  0% { top:0;z-index:1;border:1px groove rgba(0,0,0, 0.25) }
+  3% { box-shadow: 0 0 9px 3px #444; top:calc(25% - 9px); width:72%; left:13%;}
+  6% {border-top:2px groove rgba(255,255,255, 0.7); box-shadow: 0 0 6px 3px #DDD; top:calc(50% - 9px); width:75%; left:10%;}
+  15% {border-top:1px solid rgba(100,100,100, 0);top:calc(100% - 9px); left:17%; width: 70%;z-index:-10000}
+  16%, 100% {border-top-width: 0; box-shadow: 0 0 0 transparent; top:calc(100% - 9px)}
+}

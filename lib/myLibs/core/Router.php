@@ -47,6 +47,7 @@ class Router
 	 */
 	public static function getByPattern($pattern)
 	{
+
 		foreach(Routes::$_ as $key => $route)
 		{
 			$route = $route['chunks'][0];

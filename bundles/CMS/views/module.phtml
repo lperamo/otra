@@ -1,5 +1,5 @@
 <?
-echo '<div class="' . ((2 == $type) ? '' : 'moduleStyle1 ') . 'moduleType' . $type . '">';
+echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type . '">';
 
   $hztl = false;
   if(1 == $type)
@@ -14,10 +14,10 @@ echo '<div class="' . ((2 == $type) ? '' : 'moduleStyle1 ') . 'moduleType' . $ty
   {
     if(!$hztl)
     { ?>
-      <ul class="menusVHeaderUl nodecoration">
-        <li class="menusVHeaderLi">
+      <ul class="nodecoration shadowEffect">
+        <li class="menusVHeaderUl menusVHeaderLi">
           <?= $moduleName ?>
-      </ul><?
+        </li><?
     }
 
     switch($type)
@@ -32,13 +32,13 @@ echo '<div class="' . ((2 == $type) ? '' : 'moduleStyle1 ') . 'moduleType' . $ty
         foreach($moduleItems as $key => $menuItem)
         {
           if('' != $menuItem['em_contenu'])
-          {?>
-            <ul class="<? if($key == $cptMenuItems){ echo 'menuVPad ';}?>menusVUl nodecoration">
-                <li class="menuVLi">
-                  <a href="#" class="menuVLink" data-tooltip="<?= $menuItem['titre'] ?>"><?= $menuItem['em_contenu'] ?></a>
-            </ul><?
+          {
+            ?><li class="<? if($key == $cptMenuItems){ echo 'menuVPad ';}?>menuVLi">
+              <a href="#" class="menuVLink" data-tooltip="<?= $menuItem['titre'] ?>"><?= $menuItem['em_contenu'] ?></a>
+            <?
           }
         }
+        ?></ul><?
         break;
 
       case 2:

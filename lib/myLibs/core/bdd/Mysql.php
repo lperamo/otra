@@ -51,7 +51,7 @@ class Mysql
     if (!$result = mysql_query($query, $link_identifier))
     {
       echo(nl2br($query));
-      throw new Lionel_Exception('Requête invalide : ' . mysql_error());
+      throw new Lionel_Exception('Invalid request : ' . mysql_error());
     }else
       return $result;
   }
@@ -151,6 +151,12 @@ class Mysql
    */
   public static function close($link_identifier) { return mysql_close(); }
 
-  public static function lastInsertedId() { return mysql_insert_id(); }
+  /**
+   * Get the ID generated in the last query
+   *
+   * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
+   * @link http://php.net/manual/fr/function.mysql-insert-id.php
+   */
+  public static function lastInsertedId($link_identifier) { return mysql_insert_id($link_identifier); }
 }
 ?>

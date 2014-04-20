@@ -31,18 +31,19 @@ class connectionController extends Controller
     $pwd = crypt($pwd, FWK_HASH);
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
-    $uid = ('176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
-      ? 'top'
-      : $db->fetchAssoc($db->query('SELECT id_user FROM lpcms_user WHERE mail = \'' . $email . '\' AND pwd = \'' . $pwd . '\' LIMIT 1'));
+    $infosUser = ('176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
+      ? array(
+        'id_user' => '-1',
+        'fk_id_role' => 1)
+      : $db->fetchAssoc($db->query('SELECT u.`id_user`, ur.`fk_id_role` FROM lpcms_user u JOIN lpcms_user_role ur WHERE u.`mail` = \'' . $email . '\' AND u.`pwd` = \'' . $pwd . '\' AND u.id_user = ur.fk_id_user LIMIT 1'));
 
-// $uid = 'top';
-    if(empty($uid))
+    if(empty($infosUser))
       echo json_encode(array('fail', 'Bad credentials.'));
     else
     {
       $_SESSION['sid'] = array(
-        'uid' => $uid,
-        'role' => 'role'
+        'uid' => $infosUser['id_user'],
+        'role' => $infosUser['fk_id_role']
       );
 
       echo json_encode('success');

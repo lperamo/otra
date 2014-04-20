@@ -158,13 +158,22 @@ function js($shaName, array $chunks, $bundlePath, array $resources){
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, $allJs);
   fclose($fp);
-  // exec('gzip -f -9 ' . $pathAndFile);
+  exec('gzip -f -7 ' . $pathAndFile);
   // exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   return status('JS');
 }
 
-function loadResource(array $resources, $chunks, $key, $bundlePath, $path = true){
+/**
+ * Loads css or js resources
+ *
+ * @param array       $resources
+ * @param array       $chunks
+ * @param string      $key        first_js, module_css kind of ...
+ * @param string      $bundlePath
+ * @param string|bool $path
+ */
+function loadResource(array $resources, array $chunks, $key, $bundlePath, $path = true){
   if(isset($resources[$key]))
   {
     $type = substr(strrchr($key, '_'), 1);
