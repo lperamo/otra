@@ -13,14 +13,15 @@ class Routes
   ),
 
   $_ = array(
-    'profiler' => array(
-      'chunks' => array('/dbg', 'lib\\myLibs', 'core', 'profiler', 'indexAction'),
-      'core' => true
-    ),
     'clearSQLLogs' => array(
       'chunks' => array('/dbg/clearSQLLogs', 'lib\\myLibs', 'core', 'profiler', 'clearSQLLogsAction'),
       'core' => true
     ),
+    'profiler' => array(
+      'chunks' => array('/dbg', 'lib\\myLibs', 'core', 'profiler', 'indexAction'),
+      'core' => true
+    ),
+
     'showArticle' => array(
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(

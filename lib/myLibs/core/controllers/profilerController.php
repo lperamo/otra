@@ -1,5 +1,6 @@
 <?
-/** Backend of the LPCMS
+/**
+ * Backend of the LPCMS
  *
  * @author Lionel Péramo */
 
@@ -18,29 +19,33 @@ class profilerController extends Controller
   }
 
   public function indexAction(){
-    $file = BASE_PATH . '/logs/sql.txt';
+    $file = BASE_PATH . 'logs/sql.txt';
     echo '<div id="profiler">
       <a id="dbgHideProfiler" role="button" class="lbBtn dbg_marginR5">Hide the profiler</a>
       <a id="dbgClearSQLLogs" role="button" class="lbBtn dbg_marginR5">Clear SQL logs</a>
-      <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>';
+      <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>
+      <div id="dbgSQLLogs">';
 
-    if(file_exists($file))
+    if(file_exists($file) && '' != ($contents = file_get_contents($file)))
     {
-      $requests = json_decode(substr(file_get_contents($file), 0, -1) . ']', true);
+      $requests = json_decode(substr($contents, 0, -1) . ']', true);
       foreach($requests as $r)
       {
         echo '<div><div class="dbg_leftBlock dbg_fl">In file <span class="dbg_file">', $r['file'], '</span> at line <span class="dbg_line">', $r['line'], '</span>: <p>', $r['query'], '</p></div><a role="button" class="dbg_fr lbBtn">Copy</a></div>';
       }
     }else
-      echo 'There is no stored query.', $file, '.';
+      echo 'No stored queries in ', $file, '.';
 
-    echo '</div>';
+    echo '</div></div>';
   }
 
   public function clearSQLLogsAction(){
-    $handle = fopen(BASE_PATH . '/logs/sql.txt', 'r+');
-    ftruncate($handle, rand(1, filesize($filename)));
+    $file = BASE_PATH . 'logs/sql.txt';
+    $handle = fopen($file, 'r+');
+    ftruncate($handle, 0);
     fclose($handle);
+
+    echo 'No more stored queries in ' , $file , '.';
   }
 }
 ?>

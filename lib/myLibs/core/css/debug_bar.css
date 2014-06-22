@@ -76,7 +76,7 @@
 }
 
 #profiler { padding: 1em }
-#profiler > div {
+#dbgSQLLogs > div {
   background: #444;
   box-shadow: 0 0 2px 0 #AAA;
   clear:both;
@@ -85,7 +85,7 @@
   padding: 5px;
   width: calc(100% - 5px)
 }
-#profiler > div:hover { background: #3A3A3A }
+#dbgSQLLogs > div:hover { background: #3A3A3A }
 
 #profiler .dbg_leftBlock { width: calc(100% - 60px) }
 
