@@ -13,6 +13,11 @@ class Routes
   ),
 
   $_ = array(
+    'refreshSQLLogs' => array(
+      'chunks' => array('/dbg/refreshSQLLogs', 'lib\\myLibs', 'core', 'profiler', 'refreshSQLLogsAction'),
+      'core' => true
+    ),
+
     'clearSQLLogs' => array(
       'chunks' => array('/dbg/clearSQLLogs', 'lib\\myLibs', 'core', 'profiler', 'clearSQLLogsAction'),
       'core' => true

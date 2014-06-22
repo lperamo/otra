@@ -57,6 +57,7 @@ class MasterController{
 
       // runs the preexecute function if exists and then the action
       $this->preExecute();
+      // dump($getParams, $baseParams);die;
       call_user_func_array(array($this, $baseParams['action']), $getParams);
     }
   }

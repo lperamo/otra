@@ -1495,3 +1495,124 @@
 	Route [backendUsers] Patt : /backend/users
 [2014-06-22T17:09:27+02:00] [2014-06-22T17:09:27+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
 	Route [profiler] Patt : /dbg
+[2014-06-22T17:21:05+02:00] [2014-06-22T17:21:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	Ajax : false
+[2014-06-22T17:21:05+02:00] [2014-06-22T17:21:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:21:05+02:00] [2014-06-22T17:21:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:21:05+02:00] [2014-06-22T17:21:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:21:10+02:00] [2014-06-22T17:21:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:21:29+02:00] [2014-06-22T17:21:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	Ajax : false
+[2014-06-22T17:21:29+02:00] [2014-06-22T17:21:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:21:29+02:00] [2014-06-22T17:21:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:21:29+02:00] [2014-06-22T17:21:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:21:31+02:00] [2014-06-22T17:21:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:21:44+02:00] [2014-06-22T17:21:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	Ajax : false
+[2014-06-22T17:21:44+02:00] [2014-06-22T17:21:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:21:44+02:00] [2014-06-22T17:21:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:21:44+02:00] [2014-06-22T17:21:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:21:46+02:00] [2014-06-22T17:21:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:21:52+02:00] [2014-06-22T17:21:52+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-06-22T17:21:56+02:00] [2014-06-22T17:21:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:21:59+02:00] [2014-06-22T17:21:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	Ajax : false
+[2014-06-22T17:21:59+02:00] [2014-06-22T17:21:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:21:59+02:00] [2014-06-22T17:21:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:21:59+02:00] [2014-06-22T17:21:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:22:00+02:00] [2014-06-22T17:22:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:23:58+02:00] [2014-06-22T17:23:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:23:58+02:00] [2014-06-22T17:23:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:23:58+02:00] [2014-06-22T17:23:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:23:58+02:00] [2014-06-22T17:23:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:23:59+02:00] [2014-06-22T17:23:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:23:59+02:00] [2014-06-22T17:23:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:23:59+02:00] [2014-06-22T17:23:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:23:59+02:00] [2014-06-22T17:23:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:24:00+02:00] [2014-06-22T17:24:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:24:33+02:00] [2014-06-22T17:24:33+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:24:33+02:00] [2014-06-22T17:24:33+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:24:33+02:00] [2014-06-22T17:24:33+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:24:33+02:00] [2014-06-22T17:24:33+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:24:34+02:00] [2014-06-22T17:24:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:24:34+02:00] [2014-06-22T17:24:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:24:34+02:00] [2014-06-22T17:24:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:24:34+02:00] [2014-06-22T17:24:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:24:34+02:00] [2014-06-22T17:24:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:24:36+02:00] [2014-06-22T17:24:36+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-06-22T17:24:38+02:00] [2014-06-22T17:24:38+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:34:44+02:00] [2014-06-22T17:34:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:34:44+02:00] [2014-06-22T17:34:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:34:44+02:00] [2014-06-22T17:34:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:34:44+02:00] [2014-06-22T17:34:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:34:45+02:00] [2014-06-22T17:34:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:34:45+02:00] [2014-06-22T17:34:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:34:45+02:00] [2014-06-22T17:34:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:34:45+02:00] [2014-06-22T17:34:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:35:05+02:00] [2014-06-22T17:35:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:35:05+02:00] [2014-06-22T17:35:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:35:05+02:00] [2014-06-22T17:35:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:35:05+02:00] [2014-06-22T17:35:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:35:06+02:00] [2014-06-22T17:35:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:35:06+02:00] [2014-06-22T17:35:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:35:06+02:00] [2014-06-22T17:35:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:35:06+02:00] [2014-06-22T17:35:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:35:06+02:00] [2014-06-22T17:35:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:35:59+02:00] [2014-06-22T17:35:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:35:59+02:00] [2014-06-22T17:35:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:35:59+02:00] [2014-06-22T17:35:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:35:59+02:00] [2014-06-22T17:35:59+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:36:00+02:00] [2014-06-22T17:36:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:36:00+02:00] [2014-06-22T17:36:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:36:00+02:00] [2014-06-22T17:36:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:36:00+02:00] [2014-06-22T17:36:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:36:05+02:00] [2014-06-22T17:36:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:44:21+02:00] [2014-06-22T17:44:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:44:21+02:00] [2014-06-22T17:44:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:44:21+02:00] [2014-06-22T17:44:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:44:21+02:00] [2014-06-22T17:44:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:44:22+02:00] [2014-06-22T17:44:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-06-22T17:44:22+02:00] [2014-06-22T17:44:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:44:22+02:00] [2014-06-22T17:44:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:44:22+02:00] [2014-06-22T17:44:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:44:22+02:00] [2014-06-22T17:44:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-06-22T17:44:29+02:00] [2014-06-22T17:44:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [refreshSQLLogs] Patt : /dbg/refreshSQLLogs
+[2014-06-22T17:44:30+02:00] [2014-06-22T17:44:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-06-22T17:44:33+02:00] [2014-06-22T17:44:33+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [refreshSQLLogs] Patt : /dbg/refreshSQLLogs
+[2014-06-22T17:44:37+02:00] [2014-06-22T17:44:37+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-06-22T17:44:47+02:00] [2014-06-22T17:44:47+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	Ajax : false
+[2014-06-22T17:44:47+02:00] [2014-06-22T17:44:47+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-06-22T17:44:47+02:00] [2014-06-22T17:44:47+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-06-22T17:44:47+02:00] [2014-06-22T17:44:47+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko] 
+	Route [backendUsers] Patt : /backend/users
+[2014-06-22T17:44:51+02:00] [2014-06-22T17:44:51+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [refreshSQLLogs] Patt : /dbg/refreshSQLLogs

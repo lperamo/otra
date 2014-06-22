@@ -18,14 +18,21 @@ class profilerController extends Controller
       die('No hacks.');
   }
 
-  public function indexAction(){
-    $file = BASE_PATH . 'logs/sql.txt';
+  public function indexAction($refresh = false)
+  {
     echo '<div id="profiler">
       <a id="dbgHideProfiler" role="button" class="lbBtn dbg_marginR5">Hide the profiler</a>
       <a id="dbgClearSQLLogs" role="button" class="lbBtn dbg_marginR5">Clear SQL logs</a>
       <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>
       <div id="dbgSQLLogs">';
 
+    self::writeLogs(BASE_PATH . 'logs/sql.txt');
+
+    echo '</div></div>';
+  }
+
+  private static function writeLogs($file)
+  {
     if(file_exists($file) && '' != ($contents = file_get_contents($file)))
     {
       $requests = json_decode(substr($contents, 0, -1) . ']', true);
@@ -35,11 +42,10 @@ class profilerController extends Controller
       }
     }else
       echo 'No stored queries in ', $file, '.';
-
-    echo '</div></div>';
   }
 
-  public function clearSQLLogsAction(){
+  public function clearSQLLogsAction()
+  {
     $file = BASE_PATH . 'logs/sql.txt';
     $handle = fopen($file, 'r+');
     ftruncate($handle, 0);
@@ -47,5 +53,7 @@ class profilerController extends Controller
 
     echo 'No more stored queries in ' , $file , '.';
   }
+
+  public function refreshSQLLogsAction() { self::writeLogs(BASE_PATH . 'logs/sql.txt'); }
 }
 ?>
