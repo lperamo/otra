@@ -2,30 +2,32 @@
 $this->layout();
 self::title('Welcome to the LPCMS !');
 ?>
-<div id="backgroundspe"></div>
-<div id="mainFrame">
-<?php require CMS_VIEWS_PATH . 'header.phtml'; ?>
-  <div id="bgMiddle">
-    <?php for($i=0; $i<2; $i += 1)
-    {
-      echo '<div id="location' , $i , '">';
-      foreach($modules[$i] as $type => $module)
+<div id="mainBgd">
+  <div id="backgroundspe"></div>
+  <div id="mainFrame">
+  <?php require CMS_VIEWS_PATH . 'header.phtml'; ?>
+    <div id="bgMiddle">
+      <?php for($i=0; $i<2; $i += 1)
       {
-        require CMS_VIEWS_PATH . 'module.phtml';
+        echo '<div id="location' , $i , '">';
+        foreach($modules[$i] as $type => $module)
+        {
+          require CMS_VIEWS_PATH . 'module.phtml';
+        }?>
+        </div><?php
       }?>
-      </div><?php
-    }?>
 
-    <article id="article1" class="fl">
-      lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
-      lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
-      lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
-      lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
-      lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
-    </article>
-  <div class="clearBoth"></div>
+      <article id="article1" class="fl">
+        lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+        lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+        lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+        lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+        lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+      </article>
+    <div class="clearBoth"></div>
 
-  <?php require CMS_VIEWS_PATH . 'footer.phtml';  ?>
+    <?php require CMS_VIEWS_PATH . 'footer.phtml';  ?>
+    </div>
+    <p id="designby" class="center"  data-tooltip="Main page">Designed by Péramo Lionel.</p>
   </div>
-  <p id="designby" class="center"  data-tooltip="Main page">Designed by Péramo Lionel.</p>
 </div>

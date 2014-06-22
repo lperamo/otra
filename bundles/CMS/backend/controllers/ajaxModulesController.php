@@ -12,6 +12,20 @@ use lib\myLibs\core\Controller,
 
 class ajaxModulesController extends Controller
 {
+  public static $moduleTypes = array(
+    0 => 'Connection',
+    1 => 'Vertical menu',
+    2 => 'Horizontal menu',
+    3 => 'Article',
+    4 => 'Arbitrary'
+  );
+
+  public static $rights = array(
+    0 => 'Admin',
+    1 => 'Saved',
+    2 => 'Public'
+  );
+
   public function preExecute(){
     if($this->action != 'index' && !isset($_SESSION['sid']))
     {
@@ -24,16 +38,57 @@ class ajaxModulesController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
+    $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
 
-    // Retrieving the headers
-    // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
-    // dump($users);
-
-    echo $this->renderView('index.phtml', array(
-      'items' => array()
+    echo $this->renderView('modules.phtml', array(
+      'moduleTypes' => self::$moduleTypes,
+      'right' => self::$rights,
+      'items' => $modules
     ), true);
+  }
+
+  public function searchModuleAction(){
+    $db = Session::get('dbConn');
+    $db->selectDb();
+
+    echo $this->renderView('modules.phtml', array(
+      'moduleTypes' => self::$moduleTypes,
+      'right' => self::$rights,
+      'items' => $db->values($db->query('
+        SELECT id_module, type, position, ordre, droit, contenu
+        FROM lpcms_module WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+    ), true);
+  }
+
+  public function searchElementAction(){
+    $db = Session::get('dbConn');
+    $db->selectDb();
+
+    echo $this->renderView('elements.phtml', array(
+      'right' => self::$rights,
+      'moduleList' => $db->values($db->query('SELECT id_module, contenu FROM lpcms_module')),
+      'items' => $db->values($db->query('
+        SELECT id_elementsmenu, parent, aEnfants, droit, ordre, contenu
+        FROM lpcms_elements_menu
+        WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+    ), true);
+  }
+
+  public function searchArticleAction(){
+    $db = Session::get('dbConn');
+    $db->selectDb();
+
+    $article = $db->values($db->query('SELECT id_article, fk_id_module, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
+     FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
+    var_dump($article);die;
+  }
+
+  public function getElementsAction(){
+    $db = Session::get('dbConn');
+    $db->selectDb();
+
+    $element = $db->values($db->query('SELECT id_elementsmenu, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
+     FROM lpcms_elements_menu WHERE fk_id_module = ' . intval($_GET['id'])));
   }
 }
 ?>

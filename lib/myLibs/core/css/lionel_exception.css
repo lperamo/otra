@@ -1,9 +1,9 @@
 body { background: linear-gradient(to bottom, rgba(180, 187, 237, 0.12) 0%, rgba(2, 17, 27, 0.2) 79%) no-repeat fixed 0 0 transparent !important}
 #exception {
- background: linear-gradient(to bottom, rgba(197, 204, 255, 0.23) 0%, rgba(0, 2, 3, 0.92) 13%) no-repeat fixed 0 0 transparent;
- font: 16px solid #111;
- padding: 5px 0;
- width: 100%
+  background: linear-gradient(to bottom, rgba(197, 204, 255, 0.23) 0%, rgba(0, 2, 3, 0.5) 13%) no-repeat fixed 0 0 transparent;
+  padding: 5px 0;
+  text-shadow: 0 0 3px #FFF;
+  width: 100%
 }
 #explications { font: 12px solid #136; padding-top:20px}
 .textCenter { text-align: center }

@@ -20,21 +20,21 @@ if(isset($argv[3]))
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
     if($mask & 1){
-      $file = CACHE_PATH . 'tpl/' . $shaName . '.html.gz';
+      $file = CACHE_PATH . 'tpl/' . $shaName . '.gz';
       if(file_exists($file))
         unlink($file);
     }
 
     if(($mask & 2) >> 1)
     {
-      $file = CACHE_PATH . 'css/' . $shaName . '.css.gz';
+      $file = CACHE_PATH . 'css/' . $shaName . '.gz';
       if(file_exists($file))
         unlink($file);
     }
 
     if(($mask & 4) >> 2)
     {
-      $file = CACHE_PATH . 'js/' . $shaName . '.js.gz';
+      $file = CACHE_PATH . 'js/' . $shaName . '.gz';
       if(file_exists($file))
         unlink($file);
     }
@@ -126,7 +126,7 @@ function css($shaName, array $chunks, $bundlePath, array $resources){
     return status('No CSS', 'cyan');
 
   $allCss = cleanCss($allCss);
-  $pathAndFile = CACHE_PATH . 'css/' . $shaName . '.css';
+  $pathAndFile = CACHE_PATH . 'css/' . $shaName;
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, $allCss);
   fclose($fp);
@@ -154,12 +154,12 @@ function js($shaName, array $chunks, $bundlePath, array $resources){
   if('' == $allJs)
     return status('No JS', 'cyan');
 
-  $pathAndFile = CACHE_PATH . 'js/' . $shaName . '.js';
+  $pathAndFile = CACHE_PATH . 'js/' . $shaName;
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, $allJs);
   fclose($fp);
-  exec('gzip -f -7 ' . $pathAndFile);
-  // exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+  // exec('gzip -f -7 ' . $pathAndFile);
+  exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
   // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
   return status('JS');
 }
@@ -213,7 +213,9 @@ function template($shaName, $route, array $resources){
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
 
-  $pathAndFile = CACHE_PATH . 'tpl/' . $shaName . '.html';
+
+
+  $pathAndFile = CACHE_PATH . 'tpl/' . $shaName;
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, preg_replace('/>\s+</', '><', $content));
   fclose($fp);

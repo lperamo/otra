@@ -13,8 +13,7 @@ use lib\myLibs\core\Controller,
 class ajaxUsersController extends Controller
 {
   public function preExecute(){
-    if($this->action != 'index' && !isset($_SESSION['sid']))
-    {
+    if($this->action != 'index' && !isset($_SESSION['sid'])) {
       Router::get('backend');
       die;
     }
@@ -93,24 +92,30 @@ class ajaxUsersController extends Controller
 
     $dbUsers = $db->query(
       'SELECT mail FROM lpcms_user
-       WHERE `mail` = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
+       WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
     );
     $users = $db->values($dbUsers);
     $db->freeResult($dbUsers);
 
     if(is_array($users) && $oldMail != $users[0]['mail'])
-      die(json_encode(array('success' => false, 'msg' => 'This mail already exists !')));
+      die('{"success":false,"msg":"This mail already exists !"}');
 
     $pwd = crypt($pwd, FWK_HASH);
 
     if(false === $db->query(
       'UPDATE lpcms_user SET
-      `mail` = \'' . mysql_real_escape_string($mail) . '\',
-      `pwd` = \'' . mysql_real_escape_string($pwd) . '\',
-      `pseudo` = \'' . mysql_real_escape_string($pseudo) . '\' WHERE id_user = ' . intval($id_user)))
-      die(json_encode(array('success' => false, 'msg' => 'Database problem !')));
+      mail = \'' . mysql_real_escape_string($mail) . '\',
+      pwd = \'' . mysql_real_escape_string($pwd) . '\',
+      pseudo = \'' . mysql_real_escape_string($pseudo) . '\' WHERE id_user = ' . intval($id_user)))
+      die('{"success":false,"msg":"Database problem !"}');
 
-    die(json_encode(array('success' => true, 'oldMail' => $_POST['oldMail'], 'msg' => 'User edited.', 'pwd' => $pwd)));
+    if(false === $db->query(
+      'UPDATE lpcms_user_role SET
+      fk_id_role = ' . intval($role) . '
+      WHERE fk_id_user = ' . intval($id_user)))
+      die('{"success":false,"msg":"Database problem !"}');
+
+    die('{"success":true,"oldMail":' . $_POST['oldMail'] . ',"msg":"User edited.","pwd","' . $pwd . '"}');
   }
 
   public function deleteAction()
@@ -118,8 +123,8 @@ class ajaxUsersController extends Controller
     if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
       die('Deconnected or lack of rights.');
 
-    if(! isset($_POST['id_user']))  // TODO ip to ban
-      return false;
+    if(! isset($_POST['id_user']) || 1 < count($_POST))  // TODO ip to ban
+      die('Hack.');
 
     extract($_POST);
     $db = Session::get('dbConn');
@@ -127,13 +132,66 @@ class ajaxUsersController extends Controller
 
     if(false === $db->query(
       'DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user)))
-      die(json_encode(array('success' => false, 'msg' => 'Database problem !')));
+      die('{"success":false,"msg":"Database problem !"}');
 
     if(false === $db->query(
       'DELETE FROM lpcms_user_role WHERE fk_id_user = ' . intval($id_user)))
-      die(json_encode(array('success' => false, 'msg' => 'Database problem !')));
+      die('{"success":false,"msg":"Database problem !"}');
 
-    die(json_encode(array('success' => true, 'msg' => 'User deleted.')));
+    die('{"success":true,"msg":"User deleted."}');
+  }
+
+  public function searchAction()
+  {
+    if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
+      die('Deconnected or lack of rights.');
+
+    if(! isset($_POST['type'], $_POST['mail'], $_POST['pseudo'], $_POST['role'], $_POST['limit'], $_POST['prev'], $_POST['last']) || 7 < count($_POST))  // TODO ip to ban
+      die('Hack.');
+
+    extract($_POST);
+    $db = Session::get('dbConn');
+    $db->selectDb();
+
+    $limit = intval($limit);
+    $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
+      INNER JOIN lpcms_user_role ur ON ur.fk_id_user = u.id_user
+      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role
+      WHERE id_user ';
+
+    if('search' == $type)
+      $req .= '> ' . (intval($last) - $limit);
+    else
+      $req .= ('next' == $type)
+        ? '> ' . intval($last)
+        : '< ' . intval($prev);
+
+    if('' != $mail)
+      $req .= ' AND u.mail LIKE \'%' . mysql_real_escape_string($mail) . '%\'';
+
+    if('' != $pseudo)
+      $req .= ' AND u.pseudo LIKE \'%' . mysql_real_escape_string($pseudo) . '%\'';
+
+    if('' != $role)
+      $req .= ' AND r.nom LIKE \'%' . mysql_real_escape_string($role) . '%\'';
+
+    // die($req . ' ORDER BY u.id_user
+    //   LIMIT ' . $limit);
+
+    if(false === ($users = $db->query(
+      $req . ' ORDER BY u.id_user ' .
+      (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
+    )))
+      die('{"success":false,"msg":"Database problem !"}');
+
+    $users = $db->values($users);
+
+    // Fixes the bug where there is only one user
+    if(isset($users['id_user']))
+      $users = array($users);
+
+    end($users); $last = current($users); reset($users);
+    die('{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}');
   }
 }
 ?>

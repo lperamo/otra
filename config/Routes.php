@@ -13,6 +13,14 @@ class Routes
   ),
 
   $_ = array(
+    'profiler' => array(
+      'chunks' => array('/dbg', 'lib\\myLibs', 'core', 'profiler', 'indexAction'),
+      'core' => true
+    ),
+    'clearSQLLogs' => array(
+      'chunks' => array('/dbg/clearSQLLogs', 'lib\\myLibs', 'core', 'profiler', 'clearSQLLogsAction'),
+      'core' => true
+    ),
     'showArticle' => array(
       'chunks' => array('/article/show', 'CMS', 'frontend', 'article', 'showAction'),
       'resources' => array(
@@ -31,13 +39,34 @@ class Routes
       'chunks' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction')
     ),
 
+    // ---------
     'backendModules' => array(
       'chunks' => array('/backend/modules', 'CMS', 'backend', 'index', 'modulesAction'),
       'resources' => array(
+        '_js' => array('modules'),
         'bundle_js' => array('jquery', 'backend'),
         'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
+
+    'moduleSearch' => array(
+      'chunks' => array('/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction')
+    ),
+    'elementSearch' => array(
+      'chunks' => array('/backend/ajax/modules/search/element', 'CMS', 'backend', 'ajaxModules', 'searchElementAction')
+    ),
+    'articleSearch' => array(
+      'chunks' => array('/backend/ajax/modules/search/article', 'CMS', 'backend', 'ajaxModules', 'searchArticleAction')
+    ),
+    'getElements' => array(
+      'chunks' => array('/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction')
+    ),
+    'backendAjaxModules' => array(
+      'chunks' => array('/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction')
+    ),
+
+    // -----------
+
     'backendGeneral' => array(
       'chunks' => array('/backend/general', 'CMS', 'backend', 'index', 'generalAction'),
       'resources' => array(
@@ -52,6 +81,8 @@ class Routes
         'bundle_css' => array('generic', 'interface', 'form')
       )
     ),
+
+    // --------------
     'backendUsers' => array(
       'chunks' => array('/backend/users', 'CMS', 'backend', 'index', 'usersAction'),
       'resources' => array(
@@ -60,7 +91,6 @@ class Routes
         'bundle_css' => array('generic', 'interface', 'form', 'notifications')
       )
     ),
-
     'addUser' => array(
       'chunks' => array('/backend/ajax/users/add', 'CMS', 'backend', 'ajaxUsers', 'addAction')
     ),
@@ -69,6 +99,16 @@ class Routes
     ),
     'deleteUser' => array(
       'chunks' => array('/backend/ajax/users/delete', 'CMS', 'backend', 'ajaxUsers', 'deleteAction')
+    ),
+    'searchUser' => array(
+      'chunks' => array('/backend/ajax/users/search', 'CMS', 'backend', 'ajaxUsers', 'searchAction')
+    ),
+    'backendAjaxUsers' => array(
+      'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
+      'resources' => array(
+        '_js' => array('users'),
+        'bundle_css' => array('users')
+      )
     ),
 
     'backendAjaxModules' => array(
@@ -80,13 +120,7 @@ class Routes
     'backendAjaxStats' => array(
       'chunks' => array('/backend/ajax/stats', 'CMS', 'backend', 'ajaxStats', 'indexAction')
     ),
-    'backendAjaxUsers' => array(
-      'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),
-      'resources' => array(
-        '_js' => array('users'),
-        'bundle_css' => array('users')
-      )
-    ),
+
 
     // keep these routes in last position because it's too generic !!
     'backend' => array(

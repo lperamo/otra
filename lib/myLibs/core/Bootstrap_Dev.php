@@ -17,7 +17,7 @@ ob_start();
 define('DS', DIRECTORY_SEPARATOR);
 ini_set('display_errors', 1);
 ini_set('html_errors', 1);
-ini_set('error_reporting', 1);
+ini_set('error_reporting', -1);
 error_reporting(-1);
 // We load the class mapping
 require BASE_PATH . 'lib/myLibs/core/ClassMap.php';
@@ -29,6 +29,8 @@ set_error_handler('errorHandler');
 define('XMODE', 'dev');
 
 ob_get_clean();
+
+function t($texte){ echo $texte; }
 
 try{
   header('Content-Type: text/html; charset=utf-8');

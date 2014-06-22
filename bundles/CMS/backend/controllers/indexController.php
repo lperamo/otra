@@ -55,16 +55,12 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
-
-    // Retrieving the headers
     $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
 
-    $_SESSION['js'] = array();
-
     echo $this->renderView('modules.phtml', array(
-      'items' => array()
+      'moduleTypes' => ajaxModulesController::$moduleTypes,
+      'right' => ajaxModulesController::$rights,
+      'items' => $modules
     ));
   }
 
@@ -101,9 +97,7 @@ class indexController extends Controller
 
     $_SESSION['js'] = array();
 
-    echo $this->renderView('stats.phtml', array(
-      'items' => array()
-    ));
+    echo $this->renderView('stats.phtml', array('items' => array()));
   }
 
   public function usersAction()
@@ -111,25 +105,24 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
-
-    // Retrieving the headers
+    // Retrieving the users
     $users = $db->values($db->query(
       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
       INNER JOIN lpcms_user_role ur ON ur.fk_id_user = u.id_user
-      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role'
+      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role
+      ORDER BY id_user
+      LIMIT 3'
     ));
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
       $users = array($users);
 
-    $_SESSION['js'] = array();
-
     echo $this->renderView('users.phtml', array(
       'users' => $users,
-      'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC'))
+      'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
+      'count' => current($db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'))),
+      'limit' => 3
     ));
   }
 }

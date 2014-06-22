@@ -31,7 +31,7 @@ class Router
 			$chunks['css'] = (isset($resources['bundle_css']) || isset($resources['module_css']) || isset($resources['_css']));
 		}
 
-    $controller = 'bundles\\' . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
+    $controller = (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
 
 		if($launch)
 			new $controller($chunks, $params);

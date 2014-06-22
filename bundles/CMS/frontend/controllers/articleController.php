@@ -39,17 +39,19 @@ class articleController extends Controller
 
       // Retrieving the modules content
       $query = $db->query('SELECT
-          m.id_module, type_module, position, m.ordre as m_ordre, m.droit as m_droit, m.contenu as m_contenu,
-          id_article, a.fk_id_module as a_fk_id_module, titre, a.contenu as a_contenu, a.droit as a_droit, date_creation, cree_par
-            , derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication,
+          m.id, type, position, m.ordre as m_ordre, m.droit as m_droit, m.contenu as m_contenu,
+          bemm.fk_id_module as em_fk_id_module, bemm.ordre as em_ordre,
+          a.id, titre, a.contenu as a_contenu, a.droit as a_droit, date_creation, cree_par,
+            derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication,
             meta, rank_sum, rank_count,
-          id_elementsmenu, em.fk_id_module as em_fk_id_module, fk_id_article, parent, aEnfants, em.droit as em_droit,
-            em.ordre as em_ordre, em.contenu as em_contenu
+          em.id, fk_id_article, parent, aEnfants, em.droit as em_droit,
+            em.contenu as em_contenu
         FROM
           lpcms_module m
-          LEFT OUTER JOIN lpcms_elements_menu em ON m.id_module = em.fk_id_module
-          LEFT OUTER JOIN lpcms_article a ON em.fk_id_article = a.id_article
-        ORDER BY position, m.ordre, em_ordre
+          LEFT OUTER JOIN lpcms_bind_em_module bemm ON m.id = bemm.fk_id_module
+          LEFT OUTER JOIN lpcms_elements_menu em ON bemm.fk_id_elements_menu = em.id
+          LEFT OUTER JOIN lpcms_article a ON em.fk_id_article = a.id
+        ORDER BY m.position, m.ordre, em_ordre
         ');
       $result = $db->values($query);
       unset ($query);
@@ -58,10 +60,10 @@ class articleController extends Controller
       foreach($result as $module)
       {
         $position = $module['position'];
-        $typeModule = $module['type_module'];
+        $typeModule = $module['type'];
         $mContenu = $module['m_contenu'];
 
-        unset($module['position'], $module['type_module'], $module['m_contenu']);
+        unset($module['position'], $module['type'], $module['m_contenu']);
 
         $modules[$position][$typeModule][$mContenu][] = $module;
       }

@@ -1,0 +1,43 @@
+<div class="breadCrumb">Modules</div>
+
+<input type="search" id="moduleSearch" placeholder="<? t('Search by module') ?>" class="input">
+<input type="search" id="elementSearch" placeholder="<? t('Search by element') ?>" class="input">
+<input type="search" id="articleSearch" placeholder="<? t('Search by article') ?>" class="input">
+<div class="clearBoth"></div><br>
+
+<table id="table0">
+	<thead>
+		<tr>
+      <th><?= t('Détail') ?></th>
+			<th><?= t('Type') ?></th>
+			<th><?= t('Position') ?></th>
+			<th><?= t('Order') ?></th>
+			<th><?= t('Right') ?></th>
+			<th><?= t('Content') ?></th>
+		</tr>
+	</thead>
+	<tbody>
+		<? foreach($items as $item)
+		{?>
+		<tr>
+      <td><a class="softBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('Voir les éléments associés') ?></a>
+			<td><?= $moduleTypes[$item['type']] ?></td>
+			<td><?= $item['position'] ?></td>
+			<td><?= $item['ordre'] ?></td>
+			<td><?= $right[$item['droit']] ?></td>
+			<td><?= $item['contenu'] ?></td>
+		</tr>
+		<? } ?>
+	</tbody>
+</table>
+</div>
+
+
+<label for="test">sdfsdf</label>
+<input id="test" />
+
+<select name="">
+
+<option >option 1</option>
+<option selected="selected">option 2</option>
+</select>

@@ -8,7 +8,8 @@ namespace lib\myLibs\core\bdd;
 use lib\myLibs\core\Lionel_Exception,
   lib\myLibs\core\Session,
   lib\myLibs\core\bdd\Mysql,
-  config\All_Config;
+  config\All_Config,
+  lib\myLibs\core\Logger;
 
 class Sql
 {
@@ -71,7 +72,10 @@ class Sql
    */
   public function selectDb()
   {
-    return call_user_func(self::$_chosenSgbd . '::selectDb', self::$_db, self::$_link_identifier);
+    $retour = call_user_func(self::$_chosenSgbd . '::selectDb', self::$_db, self::$_link_identifier);
+    $this->query('SET NAMES UTF8');
+
+    return $retour;
   }
 
   /**
@@ -84,6 +88,16 @@ class Sql
    */
   public function query($query)
   {
+    if(isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_']){
+      $trace = debug_backtrace();
+
+      Logger::logSQLTo(
+        (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
+        (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
+        $query,
+        'sql');
+    }
+
     return call_user_func(self::$_chosenSgbd . '::query', $query, self::$_link_identifier);
   }
 
@@ -150,6 +164,17 @@ class Sql
   public static function values($result)
   {
     return call_user_func(self::$_chosenSgbd . '::values', $result);
+  }
+
+  /**
+   * Returns the only expected result.
+   *
+   * @param resource $result The query result
+   *
+   * @return bool|mixed The result. Returns false if there are no result.
+   */
+  public static function single($result){
+    return call_user_func(self::$_chosenSgbd . '::single', $result);
   }
 
   /**

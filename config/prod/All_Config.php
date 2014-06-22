@@ -22,5 +22,5 @@ class All_Config
         'password' => 'e94b8f58',
         'motor' => 'InnoDB'
       )
-    );
+    ); // 178.183.7.251 ip externe du nas
 }

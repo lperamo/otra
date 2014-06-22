@@ -42,16 +42,27 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
         break;
 
       case 2:
+      if(2 == $moduleItems[0]['id']) // TODO à gérer autrement
+        break;
+        ?><ul class="menusHUl nodecoration"><?
         foreach($moduleItems as $menuItem)
         {
           if('' != $menuItem['em_contenu'])
           {?>
-            <ul class="menusHUl nodecoration">
-                <li class="menuHLi" data-href="/<?= 'article/show/' , $menuItem['a_contenu'] ?>" data-tooltip="<?= $menuItem['titre'] ?>">
-                    <?= $menuItem['em_contenu'] ?>
-            </ul><?
-          }
+            <li class="menuHLi" data-href="/<?= 'article/show/' , $menuItem['a_contenu'] ?>" data-tooltip="<?= $menuItem['titre'] ?>">
+              <?= $menuItem['em_contenu'] ?>
+          <?}
         }
+        ?>
+        </li>
+        <div id="lightsContainer">
+          <div id="lightsRelativeContainer">
+            <div id="light1" class="light"></div>
+            <div id="light2" class="light"></div>
+            <div id="light3" class="light"></div>
+          </div>
+        </div>
+        </ul><?
         break;
 
       case 4:

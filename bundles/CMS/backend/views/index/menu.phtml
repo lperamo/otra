@@ -4,4 +4,4 @@
   <li class="tab <? if ('Stats' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/stats"><a data-tooltip="Statistics management">Stats</a>
   <li class="tab <? if ('Users' == $menu) echo 'activeTab '; ?> tcenter" data-href="/backend/users"><a data-tooltip="Users management">Users</a></ul>
 
-<div id="content"><? require __DIR__ . '/../ajax' . $menu .'/index.phtml'; ?>
+<div id="content" class="fl"><? require __DIR__ . '/../ajax' . $menu; ?>

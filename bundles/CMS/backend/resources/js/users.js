@@ -1,10 +1,14 @@
 (function(){
 	"use strict";
-	var body, tbody, thead, cpt,
+	var tbody, thead, cpt,
 		txtMail = '<input class="input field" type="email" required="required" title="" autocomplete="on" data-tooltip="Please complete this field."',
 		txtPwd = '<input type="password" class="input field" required="required" title="" data-tooltip="Please complete this field. (at least 8 characters)"',
 		txtPseudo = '<input class="input field" required="required" title="" data-tooltip="Please complete this field."',
-		options = '';
+		options = '',
+		prevSel = $('#prev'),
+		nextSel = $('#next'),
+		currentPageSel = $('#currentPage'),
+		lastPageSel = $('#lastPage');
 		// roles = window.roles;
 		for(var role in roles) { options += '<li class="selectChoice" data-value="' + roles[role].id_role + '">' + roles[role].nom + '</li>'; }
 		var roleText = '<div class="select">\n\
@@ -16,6 +20,7 @@
 					      <ul class="fl selectChoices">' + options + '</ul>\n\
 		    			</div>',
 		U = {
+		page: 1,
 		selectAll : function(){
 			tbody.find('input[type=checkbox]').prop('checked', $(this).prop('checked'))
 		},
@@ -55,10 +60,8 @@
 	        }
 	    	} catch (e) {
 	    		if(undef !== window.debug)
-	    		{
-	    			try { console.log(e) } catch (e2) { alert(e) }
-	        	window.debug.postLog(data)
-	        }
+	        	window.debug.postLog(data);
+
 	        return false
 	    	}
 
@@ -256,10 +259,8 @@
     	} catch (e) {
     		var undef;
     		if(undef !== window.debug)
-    		{
-    			try { console.log(e) } catch (e2) { alert(e) }
-        	window.debug.postLog(data)
-        }
+        	window.debug.postLog(e, data);
+
         return false
     	}
 		},
@@ -288,9 +289,71 @@
 			tds.last().next().html('<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>\n\
 			<span class="softBtn delete" data-tooltip="Delete the user"></span>');
 		},
+		search: function(e){
+			if(13 !== e.keyCode)
+				return false;
+
+			U.refresh('search')
+		},
+		refresh: function(type, undef){
+			var options = tbody.find('#trOptions'),
+				firstTr = tbody.find('tr:first'),
+				tds = firstTr.find('td'),
+				limit = $('#limit');
+
+			$.post(
+				'/backend/ajax/users/search',
+				{
+					mail: tds.eq(1).find('input').val().trim(),
+					pseudo: tds.eq(3).find('input').val().trim(),
+					role: tds.eq(4).find('input').val().trim(),
+					type: type,
+					limit: limit.find('.actualSelectValue>a').attr('data-value'),
+					prev: limit.attr('data-first'),
+					last: limit.attr('data-last')
+				},
+				function(data) {
+					try{
+						var data = JSON.parse(data);
+
+						if(true === data.success) {
+							tbody.find('tr:first').nextUntil('#trOptions').eq(0).after(data.msg).end().remove();
+							limit.attr({'data-first': data.first, 'data-last': data.last})
+						} else
+							window.notifications(content, data.msg, 'ERROR', window.ERROR, 10000)
+					}catch(e)
+					{
+						if(undef !== window.debug)
+	        		window.debug.postLog(e, data);
+
+	        	return false
+					}
+				}
+			)
+		},
+		prev: function(){
+			U.refresh('prev');
+			if(1 === --U.page)
+				prevSel.addClass('disabled');
+
+			if(U.page < lastPageSel.text())
+				nextSel.removeClass('disabled');
+
+			currentPageSel.text(U.page)
+		},
+		next: function(){
+			U.refresh('next');
+			if(1 < ++U.page)
+				prevSel.removeClass('disabled');
+
+			if(U.page == lastPageSel.text())
+				nextSel.addClass('disabled');
+
+			currentPageSel.text(U.page)
+		},
 		events: function(){
-			thead.on('click','#all', U.selectAll);
-			tbody.on('click', '#add', U.addUser)
+			tbody.on('click', '#all', U.selectAll)
+				.on('click', '#add', U.addUser)
 				.on('click', 'tr.editable>td', U.focusSelect)
 				.on('click', '.edit', U.edit)
 				.on('click', '.editEnd', U.editEnd)
@@ -299,6 +362,10 @@
 				.on('click', '.validate', U.validOne)
 				.on('click', '#valAll', U.validAll)
 				.on('click', '.cancel', U.cancel)
+				.on('click',  '#prev:not(.disabled)', U.prev)
+				.on('click',  '#next:not(.disabled)', U.next)
+				.on('keyup',  '.search', U.search)
+
 		},
 		focusSelect : function(){	$(this).find('input, select').focus() }
 	};

@@ -10,7 +10,9 @@
 #logout{
     background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
     border-radius: 8px;
+    box-shadow: 0 2px 4px -1px #333;
     color:#444;
+    font-size: 0.9em;
     margin: 10px 15px 0 0;
     padding:3px 8px;
     text-decoration: none
@@ -32,22 +34,21 @@
     margin: 0 10px 10px 0
 }
 
-.input{
+.input {
     background: transparent;
-    /*border: 1px groove #779ba9;*/
-    border: 0;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 5px;
-    box-shadow: 0 0 4px 0 #779ba9;
-    color: #333;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, .25);
+    color: rgba(0, 0, 0, 0.8);
     float:left;
     margin-right:10px;
-    padding:2px;
+    padding: 3px 5px;
     font-size: 0.875em
 }
 
 .input:-ms-input-placeholder {
     border-radius: 5px;
-    color: #599;
+    color: rgba(0, 0, 0, 0.4);
     font-family:Arial,Helvetica,Sans-Serif;
     opacity:1;
     padding:2px
@@ -55,15 +56,7 @@
 
 .input::-moz-placeholder{
     border-radius: 5px;
-    color: #599;
-    font-family:Arial,Helvetica,Sans-Serif;
-    opacity:1;
-    padding:2px
-}
-
-.input:-moz-placeholder{
-    border-radius: 5px;
-    color: #599;
+    color: rgba(0, 0, 0, 0.4);
     font-family:Arial,Helvetica,Sans-Serif;
     opacity:1;
     padding:2px
@@ -71,7 +64,7 @@
 
 .input::-webkit-input-placeholder{
     /*background:-webkit-gradient(left center , #E8E3D4 0%, #D0C29B 100%) repeat scroll 0 0 transparent;*/
-    color: #599;
+    color: rgba(0, 0, 0, 0.4);
     font-family:Arial,Helvetica,Sans-Serif;
     font-size: 0.875em
 }
@@ -92,7 +85,7 @@ input[type=submit]{
     font-size: 1em
 }
 
-.button{
+.btn{
     -moz-box-shadow: 0 0 3px #444 inset, 0 0 1px #444;
     box-shadow: 0 0 3px #444 inset, 0 0 1px #444;
     cursor: pointer;
@@ -120,8 +113,8 @@ input[type=submit]{
     z-index:-1
 }
 
-.button:hover { color:#92b7c4; border-color: #87abb9 }
-.button:active { border-style:inset; opacity:0.9 }
+.btn:hover { color:#92b7c4; border-color: #87abb9 }
+.btn:active { border-style:inset; opacity:0.9 }
 
 .selectChoices{
     background: rgba(242, 246, 255, 0.85);
@@ -131,6 +124,7 @@ input[type=submit]{
     cursor: pointer;
     display: none;
     list-style: none;
+    min-width: 100%; /* the choices must have at least the parent's width */
     position: absolute;
     z-index: 10
 }

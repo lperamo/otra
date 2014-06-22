@@ -5,7 +5,7 @@ body{
 }
 
 .rightPad{ padding-right:5px }
-#content{	padding:0 15px }
+#content{	padding:0 15px; width: calc(100% - 30px) }
 
 /* Menu generic rules */
 #menusContainer
@@ -27,38 +27,24 @@ body{
 }
 
 .tab{
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(#E8E1D4), to(#FCD484)) #EAEAEA;
-	background: -webkit-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
-	background: -moz-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
-	background: -o-linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
 	background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
 	border-right: 1px solid rgba(0,0,0,0.2);
+	color: #444;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: table-cell;
 	padding:5px 0 5px 0;
+	transition: .35s;
 	vertical-align: middle
  }
 
-.tab:hover{
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 182, 111, 0.14)), to(#F7C06F)) #EAEAEA;
-	background: -webkit-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;
-	background: -moz-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;/* FF3.6+ */
-	background: -o-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA;
-	background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7C06F 100%) #EAEAEA
- }
+.tab:hover{ box-shadow: 0 -6px 27px #F6B686 inset }
 
  .tab:first-child{border-radius: 8px 0 0 8px }
  .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
 
- .tab:active, .activeTab{
- 	background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 182, 111, 0.14)), to(#F7924F)) #EAEAEA;
- 	background: -webkit-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
- 	background: -moz-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
- 	background: -o-linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
- 	background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA;
- }
+ .tab:active, .activeTab{ background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA }
 
 .activeTab{
  	cursor: default;
@@ -68,7 +54,7 @@ body{
 /* Table generic rules */
 
 table{
-	background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 27%) no-repeat fixed 0 0 transparent;
+	/*background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 27%) no-repeat fixed 0 0 transparent;*/
 	border: 1px solid #CCF;
 	border-spacing: 0;
 	border-radius:10px;
@@ -118,15 +104,18 @@ td .input{ margin:0 !important}
 }
 
 .smallBtn{ width:18px }
-.softBtn{
-	box-shadow: 1px 1px 2px #7E7E7E;
-	color: #F1AC46;
-	cursor: pointer;
-	display: inline-block;
-	margin: 3px 10px 3px 0;
-	padding: 3px 4px 3px 5px;
-	text-align: center;
-	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
+.softBtn {
+  box-shadow: 1px 1px 2px #7E7E7E;
+  color: #F1AC46;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.1em;
+  letter-spacing: -0.05em;
+  margin: 3px 10px 3px 0;
+  padding: 3px 4px 3px 5px;
+  text-align: center;
+  text-shadow: 1px 1px rgba(84, 84, 84, 0.1);
+  transition: .25s;
 }
 
 .softBtn:hover{ box-shadow: 1px 1px 2px #7E7E7E, 1px 1px 2px #7E7E7E inset }
@@ -141,6 +130,7 @@ td .input{ margin:0 !important}
 	vertical-align: top
 }
 
+#usersBody > tr:first-child input { width: 100% }
 #add { padding: 3px 3px 3px 2px }
 
 #delAll, .delete {	height: 1.2em }
@@ -165,8 +155,11 @@ td .input{ margin:0 !important}
 	height: 0.9em;
 	padding: 0 3px 3px 2px
 }
+.paging.disabled { color: #888 }
 
 #pageInd {
   display: inline-block;
   padding-top: 5px;
 }
+
+#limit { margin: 0 0 -7px 5px }

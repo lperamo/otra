@@ -13,9 +13,10 @@ class Logger
 	 */
 	private static function logIpTest()
 	{
+		$_SESSION['_date'] = $_SESSION['_ip'] = $_SESSION['_browser'] = '';
 		if(!isset($_SESSION['_date']))
 			$_SESSION['_date'] = $_SESSION['_ip'] = $_SESSION['_browser'] = '';
-			
+
 		$infos = '';
 		$date = date(DATE_ATOM, time());
 		if($date != $_SESSION['_date'])
@@ -27,9 +28,10 @@ class Logger
 		if($_SERVER['HTTP_USER_AGENT'] != $_SESSION['_browser'])
 			return $infos . '[' .  ($_SESSION['_browser'] = $_SERVER['HTTP_USER_AGENT']) . '] ';
 
-		
+
 		return $infos;
 	}
+
 	/** Appends a message to the log file at logs/log.txt */
 	public static function log($message) {
 		error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . '/../../../logs/log.txt');
@@ -41,8 +43,14 @@ class Logger
 	}
 
 	/** Appends a message to the log file at the specified path into logo path */
-	public static function logTo($message, $path = '') {		
+	public static function logTo($message, $path = '') {
 		error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . '/../../../logs/' . $path . '.txt');
 	}
+
+  public static function logSQLTo($file, $line, $message, $path = '')
+  {
+    $path = __DIR__ . '/../../../logs/' . $path . '.txt';
+    error_log(((! ($content = file_get_contents($path)) || '' == $content) ? '[' : '') . '{"file":"' . $file . '","line":' . $line . ',"query":"' . preg_replace('/\s\s+/', ' ', str_replace(array("\r", "\r\n", "\n"), '', trim($message))) . '"},', 3, $path);
+  }
 }
 ?>

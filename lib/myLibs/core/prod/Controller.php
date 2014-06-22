@@ -137,7 +137,7 @@ class Controller extends MasterController
    */
   private function addCss($routeV)
   {
-    $content = ($this->chkCss) ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.css.gz') . '" />' : '';
+    $content = ($this->chkCss) ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
 
     if(empty(self::$css))
       return $content;
@@ -180,7 +180,7 @@ class Controller extends MasterController
    */
   private function addJs($routeV)
   {
-    $content = ($this->chkJs) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.js.gz') . '" async defer></script>' : '';
+    $content = ($this->chkJs) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
     if(empty(self::$js))
       return $content;
 

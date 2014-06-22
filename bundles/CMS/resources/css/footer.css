@@ -22,7 +22,7 @@
     color:#FFF !important;
     font-family:LucidaHandwritingItalic;
     font-size:.675em;
-    text-shadow: 0.1em 0.1em #377;
+    text-shadow: 0.1em 0.1em #377, 0.1em 0.1em 10px #333;
     margin-top:.625em;
     position: relative;
     width: 16.5em

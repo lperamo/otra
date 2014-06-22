@@ -126,6 +126,20 @@ class Mysql
   }
 
   /**
+   * Returns the only expected result.
+   *
+   * @param resource $result The query result
+   *
+   * @return bool|mixed The result. Returns false if there are no result.
+   */
+  public static function single($result){
+    if (0 == mysql_num_rows($result))
+      return false;
+
+    return mysql_fetch_assoc($result);
+  }
+
+  /**
    * Free result memory
    *
    * @param resource $result

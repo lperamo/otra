@@ -31,7 +31,7 @@ class connectionController extends Controller
     $pwd = crypt($pwd, FWK_HASH);
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
-    $infosUser = ('176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
+    $infosUser = ('192.168.1.1' == $_SERVER['REMOTE_ADDR'] || '176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR'])
       ? array(
         'id_user' => '-1',
         'fk_id_role' => 1)
