@@ -57,15 +57,17 @@ class articleController extends Controller
       unset ($query);
 
       $modules = array();
-      foreach($result as $module)
-      {
-        $position = $module['position'];
-        $typeModule = $module['type'];
-        $mContenu = $module['m_contenu'];
+      if(!empty($result)){
+        foreach($result as $module)
+        {
+          $position = $module['position'];
+          $typeModule = $module['type'];
+          $mContenu = $module['m_contenu'];
 
-        unset($module['position'], $module['type'], $module['m_contenu']);
+          unset($module['position'], $module['type'], $module['m_contenu']);
 
-        $modules[$position][$typeModule][$mContenu][] = $module;
+          $modules[$position][$typeModule][$mContenu][] = $module;
+        }
       }
 
       if(file_exists($article = BASE_PATH . 'bundles/' . $this->bundle . '/articles/' . $article . '.html'))
@@ -87,3 +89,4 @@ class articleController extends Controller
       echo $this->renderView('show.phtml', array());
 	}
 }
+?>

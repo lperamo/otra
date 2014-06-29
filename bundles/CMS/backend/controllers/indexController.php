@@ -16,7 +16,7 @@ class indexController extends Controller
   public function preExecute(){
     if($this->action != 'index' && !isset($_SESSION['sid'])){
       Router::get('backend');
-      die;
+      exit;
     }
   }
 
@@ -24,7 +24,7 @@ class indexController extends Controller
   {
     if(isset($_SESSION['sid'])){
       $this->modulesAction();
-      die;
+      return;
     }
 
     /** @var Sql $db */
@@ -118,10 +118,12 @@ class indexController extends Controller
     if(isset($users['id_user']))
       $users = array($users);
 
+    $count = $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
+
     echo $this->renderView('users.phtml', array(
       'users' => $users,
       'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
-      'count' => current($db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'))),
+      'count' => (!empty($count)) ? current() : '',
       'limit' => 3
     ));
   }

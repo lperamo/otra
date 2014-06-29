@@ -3,9 +3,6 @@
  *
  * @author Lionel Péramo */
 
-// ini_set('display_errors', 1);
-// ini_set('html_errors', 1);
-// ini_set('error_reporting', -1);
 $uri = $_SERVER['REDIRECT_URL'];
 define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
 define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
@@ -46,10 +43,6 @@ if(file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri))
     header('HTTP/1.0 404 Not Found');
     die;
   }
-
-  // if(isset($_SERVER['HTTP_REFERER']))
-  // {
-
 }
 
 // if the file has an extension but doesn't exist ...just die !

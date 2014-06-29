@@ -6,10 +6,10 @@ class Routes
   public static $default = array(
     'pattern' => '/frontend/index',
     'bundle' => 'CMS',
-      'module' => 'frontend',
-      'controller' => 'index',
-      'action' => 'indexAction',
-      'route' => 'showArticle'
+    'module' => 'frontend',
+    'controller' => 'index',
+    'action' => 'indexAction',
+    'route' => 'showArticle'
   ),
 
   $_ = array(
@@ -33,16 +33,18 @@ class Routes
         'template' => true,
         'bundle_js' => array('jquery', 'main', 'connection'),
         'bundle_css' => array('header', 'footer', 'generic', 'main', 'form')
-      )
+      ),
     ),
     'logout' => array(
       'chunks' => array('/logout', 'CMS', 'frontend', 'connection', 'logoutAction')
     ),
     'ajaxShowArticle' => array(
-      'chunks' => array('/ajaxArticle/show', 'CMS', 'frontend', 'ajaxArticle', 'showAction')
+      'chunks' => array('/ajaxArticle/show', 'CMS', 'frontend', 'ajaxArticle', 'showAction'),
+      'bootstrap' => array('article2')
     ),
     'ajaxConnection' => array(
-      'chunks' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction')
+      'chunks' => array('/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction'),
+      'post' => array('pwd' => ' ', 'email' => ' ')
     ),
 
     // ---------
@@ -52,7 +54,8 @@ class Routes
         '_js' => array('modules'),
         'bundle_js' => array('jquery', 'backend'),
         'bundle_css' => array('generic', 'interface', 'form')
-      )
+      ),
+      'session' => array('sid' => '1')
     ),
 
     'moduleSearch' => array(
@@ -98,16 +101,24 @@ class Routes
       )
     ),
     'addUser' => array(
-      'chunks' => array('/backend/ajax/users/add', 'CMS', 'backend', 'ajaxUsers', 'addAction')
+      'chunks' => array('/backend/ajax/users/add', 'CMS', 'backend', 'ajaxUsers', 'addAction'),
+      'post' => array('mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' '),
+      'session' => array('sid' => array('role' => 1))
     ),
     'editUser' => array(
-      'chunks' => array('/backend/ajax/users/edit', 'CMS', 'backend', 'ajaxUsers', 'editAction')
+      'chunks' => array('/backend/ajax/users/edit', 'CMS', 'backend', 'ajaxUsers', 'editAction'),
+      'post' => array('id_user' => 0, 'mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' ', 'oldMail' => ' '),
+      'session' => array('sid' => array('role' => 1))
     ),
     'deleteUser' => array(
-      'chunks' => array('/backend/ajax/users/delete', 'CMS', 'backend', 'ajaxUsers', 'deleteAction')
+      'chunks' => array('/backend/ajax/users/delete', 'CMS', 'backend', 'ajaxUsers', 'deleteAction'),
+      'post' => array('id_user' => 0),
+      'session' => array('sid' => array('role' => 1))
     ),
     'searchUser' => array(
-      'chunks' => array('/backend/ajax/users/search', 'CMS', 'backend', 'ajaxUsers', 'searchAction')
+      'chunks' => array('/backend/ajax/users/search', 'CMS', 'backend', 'ajaxUsers', 'searchAction'),
+      'post' => array('type' => ' ', 'mail' => ' ', 'pseudo' => ' ', 'role' => ' ', 'limit' => 0, 'prev' => 0, 'last' => 1),
+      'session' => array('sid' => array('role' => 1))
     ),
     'backendAjaxUsers' => array(
       'chunks' => array('/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'),

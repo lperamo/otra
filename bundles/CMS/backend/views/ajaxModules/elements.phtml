@@ -1,4 +1,3 @@
-<? dump($items); die; ?>
 <div id="modules">
   <div class="breadCrumb"><a>Modules</a> >> Elements</div>
 
@@ -18,16 +17,17 @@
       </tr>
     </thead>
     <tbody>
-      <? foreach($items as $item)
-      {?>
-      <tr>
-        <td><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('Voir les éléments associés') ?></a>
-        <td><?= $item['parent'] ?></td>
-        <td><?= $item['ordre'] ?></td>
-        <td><?= $right[$item['droit']] ?></td>
-        <td><?= $item['contenu'] ?></td>
-      </tr>
-      <? } ?>
+      <? if(!empty($items)) {
+          foreach($items as $item)
+          {?>
+          <tr>
+            <td><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('Voir les éléments associés') ?></a>
+            <td><?= $item['parent'] ?></td>
+            <td><?= $item['ordre'] ?></td>
+            <td><?= $right[$item['droit']] ?></td>
+            <td><?= $item['contenu'] ?></td>
+          </tr>
+          <? } } ?>
     </tbody>
   </table>
   </div>

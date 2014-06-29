@@ -19,7 +19,9 @@ self::title('Save our space - Accueil !');
         <? for($i=0; $i<2; $i += 1)
         {
           echo '<div id="location' , $i , '">';
-          foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } ?>
+          if(!empty($modules))
+          {
+            foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } } ?>
           </div><?
         }?>
         <article id="article1" class="fl"><?= $article ?></article>

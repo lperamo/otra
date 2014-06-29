@@ -133,6 +133,16 @@ class Tasks
 
   public static function genClassMap(){ require('GenClassMap.php'); }
   public static function genClassMapDesc(){ return array('Generates a class mapping file that will be used to replace the autoloading method.'); }
+
+  public static function genBootstrap($argv) { require('GenBootstrap.php'); }
+
+  public static function genBootstrapDesc(){
+    return array(
+      'Launch the genClassMap command and generates a file that contains all the necessary php files.',
+      array('genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.'),
+      array('optional')
+    );
+  }
 }
 ?>
 

@@ -21,9 +21,11 @@ class profilerController extends Controller
   public function indexAction($refresh = false)
   {
     echo '<div id="profiler">
-      <a id="dbgHideProfiler" role="button" class="lbBtn dbg_marginR5">Hide the profiler</a>
-      <a id="dbgClearSQLLogs" role="button" class="lbBtn dbg_marginR5">Clear SQL logs</a>
-      <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>
+      <div>
+        <a id="dbgHideProfiler" role="button" class="lbBtn dbg_marginR5">Hide the profiler</a>
+        <a id="dbgClearSQLLogs" role="button" class="lbBtn dbg_marginR5">Clear SQL logs</a>
+        <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>
+      </div>
       <div id="dbgSQLLogs">';
 
     self::writeLogs(BASE_PATH . 'logs/sql.txt');

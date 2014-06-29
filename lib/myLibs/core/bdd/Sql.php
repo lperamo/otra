@@ -88,6 +88,9 @@ class Sql
    */
   public function query($query)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     if(isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_']){
       $trace = debug_backtrace();
 
@@ -110,6 +113,9 @@ class Sql
    */
   public function fetchAssoc($result)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::fetchAssoc', $result);
   }
 
@@ -122,6 +128,9 @@ class Sql
    */
   public function fetchArray($result)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::fetchArray', $result);
   }
 
@@ -134,6 +143,9 @@ class Sql
    */
   public static function fetchField($result)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::fetchField', $result);
   }
 
@@ -151,6 +163,9 @@ class Sql
    */
   public static function fetchObject($result, $class_name = null, array $params = array() )
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::fetchObject', $result, $class_name, $params);
   }
 
@@ -163,6 +178,9 @@ class Sql
    */
   public static function values($result)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::values', $result);
   }
 
@@ -174,6 +192,9 @@ class Sql
    * @return bool|mixed The result. Returns false if there are no result.
    */
   public static function single($result){
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::single', $result);
   }
 
@@ -196,6 +217,9 @@ class Sql
    */
   public static function freeResult($result)
   {
+    if($_SESSION['bootstrap'])
+      return ;
+
     return call_user_func(self::$_chosenSgbd . '::freeResult', $result);
   }
 

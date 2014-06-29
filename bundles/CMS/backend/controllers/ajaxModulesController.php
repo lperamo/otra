@@ -55,7 +55,7 @@ class ajaxModulesController extends Controller
       'moduleTypes' => self::$moduleTypes,
       'right' => self::$rights,
       'items' => $db->values($db->query('
-        SELECT id_module, type, position, ordre, droit, contenu
+        SELECT id, type, position, ordre, droit, contenu
         FROM lpcms_module WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
     ), true);
   }
@@ -66,9 +66,9 @@ class ajaxModulesController extends Controller
 
     echo $this->renderView('elements.phtml', array(
       'right' => self::$rights,
-      'moduleList' => $db->values($db->query('SELECT id_module, contenu FROM lpcms_module')),
+      'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
       'items' => $db->values($db->query('
-        SELECT id_elementsmenu, parent, aEnfants, droit, ordre, contenu
+        SELECT id, parent, aEnfants, droit, contenu
         FROM lpcms_elements_menu
         WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
     ), true);
@@ -78,17 +78,17 @@ class ajaxModulesController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    $article = $db->values($db->query('SELECT id_article, fk_id_module, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
+    $article = $db->values($db->query('SELECT id, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
      FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
-    var_dump($article);die;
+    // var_dump($article);die;
   }
 
   public function getElementsAction(){
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    $element = $db->values($db->query('SELECT id_elementsmenu, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
-     FROM lpcms_elements_menu WHERE fk_id_module = ' . intval($_GET['id'])));
+    // $element = $db->values($db->query('SELECT id_elementsmenu, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
+    //  FROM lpcms_elements_menu WHERE fk_id_module = ' . intval($_GET['id'])));
   }
 }
 ?>

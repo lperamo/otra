@@ -72,10 +72,12 @@ class ajaxUsersController extends Controller
 
     $id = $db->lastInsertedId();
 
-    die(json_encode((false === $db->query(
+    echo json_encode((false === $db->query(
       'INSERT INTO lpcms_user_role (`fk_id_user`, `fk_id_role`) VALUES (' . $id . ', ' . $role . ');'))
     ? $dbError
-    : array('success' => true, 'msg' => 'User created.', 'pwd' => $pwd, 'id' => $id)));
+    : array('success' => true, 'msg' => 'User created.', 'pwd' => $pwd, 'id' => $id));
+
+    return;
   }
 
   public function editAction() // TODO roles association
@@ -115,7 +117,9 @@ class ajaxUsersController extends Controller
       WHERE fk_id_user = ' . intval($id_user)))
       die('{"success":false,"msg":"Database problem !"}');
 
-    die('{"success":true,"oldMail":' . $_POST['oldMail'] . ',"msg":"User edited.","pwd","' . $pwd . '"}');
+    echo '{"success":true,"oldMail":' . $_POST['oldMail'] . ',"msg":"User edited.","pwd","' . $pwd . '"}';
+
+    return;
   }
 
   public function deleteAction()
@@ -132,13 +136,18 @@ class ajaxUsersController extends Controller
 
     if(false === $db->query(
       'DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user)))
-      die('{"success":false,"msg":"Database problem !"}');
+    {
+      echo '{"success":false,"msg":"Database problem !"}';return;
+    }
+
 
     if(false === $db->query(
       'DELETE FROM lpcms_user_role WHERE fk_id_user = ' . intval($id_user)))
-      die('{"success":false,"msg":"Database problem !"}');
+    {
+      echo '{"success":false,"msg":"Database problem !"}';return;
+    }
 
-    die('{"success":true,"msg":"User deleted."}');
+    echo '{"success":true,"msg":"User deleted."}';return;
   }
 
   public function searchAction()
@@ -175,23 +184,27 @@ class ajaxUsersController extends Controller
     if('' != $role)
       $req .= ' AND r.nom LIKE \'%' . mysql_real_escape_string($role) . '%\'';
 
-    // die($req . ' ORDER BY u.id_user
-    //   LIMIT ' . $limit);
-
     if(false === ($users = $db->query(
       $req . ' ORDER BY u.id_user ' .
       (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
-    )))
-      die('{"success":false,"msg":"Database problem !"}');
+    ))) {
+      echo('{"success":false,"msg":"Database problem !"}');return;
+    }
 
-    $users = $db->values($users);
+    if(!empty($users)) {
+      $users = $db->values($users);
+      sort($users);
 
-    // Fixes the bug where there is only one user
-    if(isset($users['id_user']))
-      $users = array($users);
+      // Fixes the bug where there is only one user
+      if(isset($users['id_user']))
+        $users = array($users);
 
-    end($users); $last = current($users); reset($users);
-    die('{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}');
+      end($users); $last = current($users); reset($users);
+    } else
+      $users = array();
+
+
+    echo '{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}';return;
   }
 }
 ?>

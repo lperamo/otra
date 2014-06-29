@@ -59,6 +59,13 @@ class Tasks_Manager
 //      self::initDb();
     define('DS', DIRECTORY_SEPARATOR);
     define('AVT', '..' . DS);
+
+    if(!file_exists(ROOTPATH . 'lib/myLibs/core/ClassMap.php'))
+    {
+      echo yellow(), 'We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...', endColor(), PHP_EOL;
+      Tasks::genClassMap();
+    }
+
     require_once ROOTPATH . 'lib/myLibs/core/ClassMap.php';
     spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
     Tasks::$command($argv);
