@@ -3,6 +3,11 @@
  *
  * @author Lionel Péramo */
 
+ini_set('display_errors', 1);
+ini_set('html_errors', 1);
+ini_set('error_reporting', 1);
+error_reporting(-1);
+
 $uri = $_SERVER['REDIRECT_URL'];
 define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
 define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
@@ -60,19 +65,15 @@ else // old Bootstrap_Prod.php
   if(isset($_SESSION['debuglp_']))
     unset($_SESSION['debuglp_']);
 
-  require BASE_PATH . '/lib/myLibs/core/Router.php';
-  require BASE_PATH . '/config/Routes.php';
-  require BASE_PATH . 'lib/myLibs/core/ClassMap.php';
+  require BASE_PATH . '/cache/php/RouteManagement.php';
 
-  spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
-
-  if($route = \lib\myLibs\core\Router::getByPattern($uri))
+  if($route = \cache\php\Router::getByPattern($uri))
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');
 
     // if static
-    if('cli' != PHP_SAPI && isset(\config\Routes::$_[$route[0]]['resources']['template'])){
+    if('cli' != PHP_SAPI && isset(\cache\php\Routes::$_[$route[0]]['resources']['template'])){
       header('Content-Encoding: gzip');
       require BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . 'v1che') . '.gz'; // version to change
       die;
@@ -83,7 +84,8 @@ else // old Bootstrap_Prod.php
     function t($texte){ echo $texte; }
 
     // if the pattern is in the routes and not static, launch the associated route
-    call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
-    Router::get($route[0], $route[1]);
+    call_user_func('\\bundles\\' . \cache\php\Routes::$default['bundle'] . '\\Init::Init');
+    require BASE_PATH . 'cache/php/' . $route[0] . '.php';
+    \cache\php\Router::get($route[0], $route[1]);
   }
 }

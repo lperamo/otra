@@ -1,4 +1,4 @@
-<?php
+<?
 /** LPCMS Articles management
  *
  * @author Lionel Péramo */

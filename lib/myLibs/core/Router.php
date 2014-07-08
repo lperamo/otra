@@ -71,3 +71,4 @@ class Router
 		return false;
 	}
 }
+?>

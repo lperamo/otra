@@ -59,13 +59,16 @@ class Routes
     ),
 
     'moduleSearch' => array(
-      'chunks' => array('/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction')
+      'chunks' => array('/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction'),
+      'get' => array('search' => '')
     ),
     'elementSearch' => array(
-      'chunks' => array('/backend/ajax/modules/search/element', 'CMS', 'backend', 'ajaxModules', 'searchElementAction')
+      'chunks' => array('/backend/ajax/modules/search/element', 'CMS', 'backend', 'ajaxModules', 'searchElementAction'),
+      'get' => array('search' => '')
     ),
     'articleSearch' => array(
-      'chunks' => array('/backend/ajax/modules/search/article', 'CMS', 'backend', 'ajaxModules', 'searchArticleAction')
+      'chunks' => array('/backend/ajax/modules/search/article', 'CMS', 'backend', 'ajaxModules', 'searchArticleAction'),
+      'get' => array('search' => '')
     ),
     'getElements' => array(
       'chunks' => array('/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction')
@@ -158,3 +161,4 @@ class Routes
     )
   );
 }
+?>

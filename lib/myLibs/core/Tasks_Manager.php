@@ -60,13 +60,13 @@ class Tasks_Manager
     define('DS', DIRECTORY_SEPARATOR);
     define('AVT', '..' . DS);
 
-    if(!file_exists(ROOTPATH . 'lib/myLibs/core/ClassMap.php'))
+    if(!file_exists(ROOTPATH . 'cache/php/ClassMap.php'))
     {
       echo yellow(), 'We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...', endColor(), PHP_EOL;
       Tasks::genClassMap();
     }
 
-    require_once ROOTPATH . 'lib/myLibs/core/ClassMap.php';
+    require_once ROOTPATH . 'cache/php/ClassMap.php';
     spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
     Tasks::$command($argv);
   }

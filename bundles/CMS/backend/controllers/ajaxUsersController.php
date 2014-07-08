@@ -1,4 +1,4 @@
-<?php
+<?
 /** Backend of the LPCMS
  *
  * @author Lionel Péramo */
@@ -200,11 +200,11 @@ class ajaxUsersController extends Controller
         $users = array($users);
 
       end($users); $last = current($users); reset($users);
+      echo '{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}';
     } else
-      $users = array();
+      echo '{"success":true,"msg":""}';
 
-
-    echo '{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}';return;
+    return;
   }
 }
 ?>

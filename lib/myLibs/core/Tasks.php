@@ -107,23 +107,28 @@ class Tasks
 
       $shaName = sha1('ca' . $route . All_Config::$version . 'che');
 
+      $basePath = substr(__DIR__, 0, -15) . 'cache/';
+
+      echo str_pad(' ', 25, ' '), 'Resources : ';
+      echo (file_exists($basePath . 'php' . '/' . $route. '.php')) ? green() : lightRed(), '[PHP]', $altColor;
+
       // Resources management
       if(isset($details['resources']))
       {
         $resources = $details['resources'];
 
-        $basePath = substr(__DIR__, 0, -15) . 'cache/';
-        echo str_pad(' ', 25, ' '), 'Resources : ';
         if(isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
-          echo (file_exists($basePath . 'css' . '/' . $shaName. '.' . 'css.gz')) ? green() : lightRed(), '[CSS]', $altColor;
+          echo (file_exists($basePath . 'css' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[CSS]', $altColor;
+
         if(isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
-          echo (file_exists($basePath . 'js' . '/' . $shaName. '.' . 'js.gz')) ? green() : lightRed(), '[JS]', $altColor;
+          echo (file_exists($basePath . 'js' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[JS]', $altColor;
+
         if(isset($resources['template']))
-          echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.' . 'html.gz')) ? green() : lightRed(), '[TEMPLATE]', $altColor;
+          echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[TEMPLATE]', $altColor;
 
         echo '[', $shaName, ']', PHP_EOL, endColor();
       }else
-        echo str_pad(' ', 25, ' '), 'Resources : No resources. ', '[', $shaName, ']', PHP_EOL, endColor();
+        echo ' No other resources. ', '[', $shaName, ']', PHP_EOL, endColor();
 
       $alt++;
     }
@@ -139,8 +144,10 @@ class Tasks
   public static function genBootstrapDesc(){
     return array(
       'Launch the genClassMap command and generates a file that contains all the necessary php files.',
-      array('genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.'),
-      array('optional')
+      array(
+        'genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.',
+        'route' => 'The route for which you want to generate the micro bootstrap.'),
+      array('optional', 'optional')
     );
   }
 }

@@ -8,15 +8,20 @@ $processedDir = 0;
 foreach ($dirs as $dir){
   list($classes, $processedDir) = iterateCM($classes, ROOTPATH . $dir, $processedDir);
 }
+
+echo "\x0d\033[K", 'Processed directories : ', $processedDir, '.';
+
 ob_start();
 var_export($classes);
 $classMap = ob_get_clean();
-$fp = fopen(ROOTPATH . 'lib/myLibs/core/ClassMap.php', 'w');
-fwrite($fp, '<? $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . ');');
+
+$fp = fopen(ROOTPATH . 'cache/php/ClassMap.php', 'w');
+fwrite($fp, '<? $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . ');?>');
 fclose($fp);
 
-echo PHP_EOL, green() , 'Class mapping finished.', endColor(), PHP_EOL;
-var_dump($classMap); echo PHP_EOL;die;
+echo green() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;
+echo print_r($classMap, true), PHP_EOL;
+return;
 
 function iterateCM($classes, $dir, $processedDir)
 {
