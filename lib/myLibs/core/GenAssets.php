@@ -213,11 +213,9 @@ function template($shaName, $route, array $resources){
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
 
-
-
   $pathAndFile = CACHE_PATH . 'tpl/' . $shaName;
   $fp = fopen($pathAndFile, 'w');
-  fwrite($fp, preg_replace('/>\s+</', '><', $content));
+  fwrite($fp, preg_replace('@\s{2,}@', ' ', $content));
   fclose($fp);
   exec('gzip -f -9 ' . $pathAndFile);
 

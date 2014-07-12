@@ -1,4 +1,4 @@
-<?php
+<?
 /** Backend of the LPCMS
  *
  * @author Lionel Péramo */

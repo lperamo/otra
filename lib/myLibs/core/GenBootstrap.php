@@ -32,8 +32,6 @@ $splAutoloadFunctions = spl_autoload_functions ();
 spl_autoload_unregister($splAutoloadFunctions[0]);
 spl_autoload_register(function($className) use($classMap)
 {
-  /*ob_end_clean();
-  echo $classMap[$className];*/
   require $classMap[$className];
   $_SESSION['filesToConcat'][]= $classMap[$className];
 });
@@ -79,6 +77,7 @@ foreach($routes as $route => $params)
     }
   }
 
+  // We execute the route...
   ob_start();
 
   try
@@ -98,17 +97,18 @@ foreach($routes as $route => $params)
     continue;
   }
 
+  // ...and retrieve the PHP classes used and concatenate them
   $content = '';
   $filesToConcat = $_SESSION['filesToConcat'];
+  $_SESSION['filesToConcat'] = array();
 
   foreach($filesToConcat as $file) { $content .= file_get_contents($file); }
 
+  // We fix the created problems, check syntax errors and then minifies it
   $file = $bootstrapPath . '/' . $route;
   $file_ = $file . '_.php';
 
-  $content = fixUses($content);
-
-  contentToFile($content, $file_);
+  contentToFile(fixUses($content), $file_);
   unset($content);
 
   if(hasSyntaxErrors($file_))
@@ -123,7 +123,8 @@ echo 'Create the specific routes management file... ';
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
 contentToFile(
-  fixUses(file_get_contents(BASE_PATH . '/cache/php/ClassMap.php') .
+  fixUses(
+    //file_get_contents(BASE_PATH . '/cache/php/ClassMap.php') .
   file_get_contents(BASE_PATH . '/lib/myLibs/core/Router.php') .
   file_get_contents(BASE_PATH . '/config/Routes.php')),
    $routesManagementFile);
@@ -154,9 +155,11 @@ function hasSyntaxErrors($file_){
 
 function compressPHPFile($fileToCompress, $outputFile){
   $fp = fopen($outputFile . '.php', 'w');
-   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-  fwrite($fp, preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)));
+  //  // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
+  fwrite($fp, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
+  // fwrite($fp, php_strip_whitespace($fileToCompress));
   fclose($fp);
+  // rename($fileToCompress, $outputFile . '.php');
 
   unlink($fileToCompress);
 }

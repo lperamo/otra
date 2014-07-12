@@ -41,9 +41,8 @@ try{
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
     call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
-    require BASE_PATH . 'cache/php/' . $route[0] . '.php';
+    // require BASE_PATH . 'cache/php/' . $route[0] . '.php';
     Router::get($route[0], $route[1]);
-
   }
 }catch(Exception $e){
   echo $e->errorMessage();

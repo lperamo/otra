@@ -13,7 +13,8 @@ use lib\myLibs\core\Controller,
 
 class indexController extends Controller
 {
-  public function preExecute(){
+  public function preExecute()
+  {
     if($this->action != 'index' && !isset($_SESSION['sid'])){
       Router::get('backend');
       exit;
@@ -22,7 +23,8 @@ class indexController extends Controller
 
   public function indexAction()
   {
-    if(isset($_SESSION['sid'])){
+    if(isset($_SESSION['sid']))
+    {
       $this->modulesAction();
       return;
     }
@@ -32,16 +34,9 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
-
-    // Retrieving the headers
-    if((!isset($_SESSION['headers'])) )
-      $_SESSION['headers'] = $db->values($db->query('SELECT * FROM lpcms_header'));
-
-    // Retrieving the footers
-    if (!isset($_SESSION['footers']))
-      $_SESSION['footers'] = $db->values($db->query('SELECT * FROM lpcms_footer'));
+    // Retrieving headers and footers
+    $db->values($db->query('SELECT * FROM lpcms_header'));
+    $db->values($db->query('SELECT * FROM lpcms_footer'));
 
     echo $this->renderView('index.phtml', array(
       'headers' => $_SESSION['headers'],
@@ -69,9 +64,6 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
-
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
     // dump($users);
@@ -87,9 +79,6 @@ class indexController extends Controller
   {
     $db = Session::get('dbConn');
     $db->selectDb();
-
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
 
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
