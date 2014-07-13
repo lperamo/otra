@@ -49,10 +49,8 @@ class Mysql
   public static function query($query, $link_identifier)
   {
     if (!$result = mysql_query($query, $link_identifier))
-    {
-      echo(nl2br($query));
-      throw new Lionel_Exception('Invalid request : ' . mysql_error());
-    }else
+      throw new Lionel_Exception('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
+    else
       return $result;
   }
 

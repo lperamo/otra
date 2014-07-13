@@ -3,26 +3,16 @@
  *
  * @author Lionel Péramo */
 
-ini_set('display_errors', 1);
-ini_set('html_errors', 1);
-ini_set('error_reporting', 1);
-error_reporting(-1);
-
-
 $uri = $_SERVER['REDIRECT_URL'];
-define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
 define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
 
-if(false !== strpos($uri, 'cache') || file_exists($file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)))
+if(false !== ($posDot = strpos($uri, '.')))
 {
-  // $file = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri);
-  $file = BASE_PATH2. $uri;
   $uri = $_SERVER['REQUEST_URI'];
-  $smallUri = substr($uri, -7); // Better short !
 
   // Verifies that we went from the site and whether the file have an extension or not
-  $ext = substr($smallUri, strpos($smallUri, '.') + 1);
-  if(true || isset($_SERVER['HTTP_REFERER']))
+  $ext = substr($uri, $posDot + 1);
+  if(isset($_SERVER['HTTP_REFERER']))
   {
       if('gz' == $ext)
       {
@@ -35,13 +25,14 @@ if(false !== strpos($uri, 'cache') || file_exists($file = str_replace('/', DIREC
 
         header('Content-Encoding: gzip');
       } else {
-        switch($ext){
+        switch($ext) {
           case 'css': header('Content-type:  text/css'); break;
           case 'js': header('Content-type: application/javascript'); break;
-          case 'woff': header('Content-type: application/x-font-woff'); break;
+          case 'woff': header('Content-type: application/x-font-woff');
         }
       }
-      die(file_get_contents($file));
+
+      die(file_get_contents(str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)));
   }
 
   // User can't see a resource directly so => 404
@@ -49,6 +40,7 @@ if(false !== strpos($uri, 'cache') || file_exists($file = str_replace('/', DIREC
   die;
 }
 
+define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 session_start();
 

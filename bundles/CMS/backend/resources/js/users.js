@@ -10,10 +10,10 @@
 		currentPageSel = $('#currentPage'),
 		lastPageSel = $('#lastPage');
 		// roles = window.roles;
-		for(var role in roles) { options += '<li class="selectChoice" data-value="' + roles[role].id_role + '">' + roles[role].nom + '</li>'; }
+		for(var role in roles) { options += '<li class="selectChoice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>'; }
 		var roleText = '<div class="select">\n\
 					      <span class="fl input actualSelectValue">\n\
-					        <a data-value="' + roles[0].id_role + '">' + roles[0].nom + '</a>\n\
+					        <a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>\n\
 					        <span class="fr selectArrow"></span>\n\
 					      </span>\n\
 					      <div class="clearBoth"></div>\n\
@@ -102,7 +102,7 @@
 
 			for(var key in roles) {
 				if(roleTxt === roles[key].nom) {
-					roleId = roles[key].id_role;
+					roleId = roles[key].id;
 					break
 				}
 			}
@@ -213,7 +213,7 @@
 
 			for(var key in roles)
 			{
-				if(roleVal === roles[key].id_role) {
+				if(roleVal === roles[key].id) {
 					temp = true;
 					break
 				}

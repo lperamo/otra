@@ -2857,3 +2857,457 @@
 [2014-07-12T14:05:01+02:00] [2014-07-12T14:05:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/modules.phtml
 [2014-07-12T14:05:01+02:00] [2014-07-12T14:05:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
 	Route [backendModules] Patt : /backend/modules
+[2014-07-12T14:07:02+02:00] [2014-07-12T14:07:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : true
+[2014-07-12T14:07:02+02:00] [2014-07-12T14:07:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:07:02+02:00] [2014-07-12T14:07:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:07:02+02:00] [2014-07-12T14:07:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:07:02+02:00] [2014-07-12T14:07:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:07:05+02:00] [2014-07-12T14:07:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:07:05+02:00] [2014-07-12T14:07:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:07:05+02:00] [2014-07-12T14:07:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:07:06+02:00] [2014-07-12T14:07:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:07:09+02:00] [2014-07-12T14:07:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:07:09+02:00] [2014-07-12T14:07:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:07:09+02:00] [2014-07-12T14:07:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:07:09+02:00] [2014-07-12T14:07:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:11:25+02:00] [2014-07-12T14:11:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:11:25+02:00] [2014-07-12T14:11:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:12:42+02:00] [2014-07-12T14:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:12:42+02:00] [2014-07-12T14:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:12:42+02:00] [2014-07-12T14:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:12:42+02:00] [2014-07-12T14:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:12:54+02:00] [2014-07-12T14:12:54+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:12:54+02:00] [2014-07-12T14:12:54+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:12:54+02:00] [2014-07-12T14:12:54+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:12:54+02:00] [2014-07-12T14:12:54+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:13:15+02:00] [2014-07-12T14:13:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:13:18+02:00] [2014-07-12T14:13:18+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:13:18+02:00] [2014-07-12T14:13:18+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:13:18+02:00] [2014-07-12T14:13:18+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:13:18+02:00] [2014-07-12T14:13:18+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:13:22+02:00] [2014-07-12T14:13:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:13:22+02:00] [2014-07-12T14:13:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:13:22+02:00] [2014-07-12T14:13:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:13:22+02:00] [2014-07-12T14:13:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:13:32+02:00] [2014-07-12T14:13:32+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:15:11+02:00] [2014-07-12T14:15:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:15:11+02:00] [2014-07-12T14:15:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:15:11+02:00] [2014-07-12T14:15:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:15:11+02:00] [2014-07-12T14:15:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:15:37+02:00] [2014-07-12T14:15:37+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-12T14:15:45+02:00] [2014-07-12T14:15:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:15:56+02:00] [2014-07-12T14:15:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:15:58+02:00] [2014-07-12T14:15:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:15:58+02:00] [2014-07-12T14:15:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:15:58+02:00] [2014-07-12T14:15:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:15:58+02:00] [2014-07-12T14:15:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:16:02+02:00] [2014-07-12T14:16:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-12T14:19:38+02:00] [2014-07-12T14:19:38+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:20:00+02:00] [2014-07-12T14:20:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:20:00+02:00] [2014-07-12T14:20:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:20:00+02:00] [2014-07-12T14:20:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:20:00+02:00] [2014-07-12T14:20:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:20:00+02:00] [2014-07-12T14:20:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:20:09+02:00] [2014-07-12T14:20:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:20:09+02:00] [2014-07-12T14:20:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:20:09+02:00] [2014-07-12T14:20:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:20:09+02:00] [2014-07-12T14:20:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:27:12+02:00] [2014-07-12T14:27:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:27:12+02:00] [2014-07-12T14:27:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:27:12+02:00] [2014-07-12T14:27:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:27:12+02:00] [2014-07-12T14:27:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:27:17+02:00] [2014-07-12T14:27:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T14:27:22+02:00] [2014-07-12T14:27:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:27:22+02:00] [2014-07-12T14:27:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:27:22+02:00] [2014-07-12T14:27:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:27:22+02:00] [2014-07-12T14:27:22+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:27:54+02:00] [2014-07-12T14:27:54+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-12T14:28:03+02:00] [2014-07-12T14:28:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-07-12T14:28:07+02:00] [2014-07-12T14:28:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:28:07+02:00] [2014-07-12T14:28:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:28:07+02:00] [2014-07-12T14:28:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:28:07+02:00] [2014-07-12T14:28:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T14:28:09+02:00] [2014-07-12T14:28:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:28:09+02:00] [2014-07-12T14:28:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:28:09+02:00] [2014-07-12T14:28:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T14:28:09+02:00] [2014-07-12T14:28:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T14:28:11+02:00] [2014-07-12T14:28:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-12T14:28:45+02:00] [2014-07-12T14:28:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-07-12T14:28:50+02:00] [2014-07-12T14:28:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T14:28:50+02:00] [2014-07-12T14:28:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T14:28:50+02:00] [2014-07-12T14:28:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T14:28:50+02:00] [2014-07-12T14:28:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T15:05:03+02:00] [2014-07-12T15:05:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:05:03+02:00] [2014-07-12T15:05:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:05:03+02:00] [2014-07-12T15:05:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:05:03+02:00] [2014-07-12T15:05:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:05:08+02:00] [2014-07-12T15:05:08+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [deleteUser] Patt : /backend/ajax/users/delete
+[2014-07-12T15:05:10+02:00] [2014-07-12T15:05:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:05:10+02:00] [2014-07-12T15:05:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:05:10+02:00] [2014-07-12T15:05:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:05:10+02:00] [2014-07-12T15:05:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:05:12+02:00] [2014-07-12T15:05:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : true
+[2014-07-12T15:05:12+02:00] [2014-07-12T15:05:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/ajaxUsers/index.phtml
+[2014-07-12T15:05:12+02:00] [2014-07-12T15:05:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendAjaxUsers] Patt : /backend/ajax/users
+[2014-07-12T15:05:15+02:00] [2014-07-12T15:05:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : true
+[2014-07-12T15:05:15+02:00] [2014-07-12T15:05:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/ajaxStats/index.phtml
+[2014-07-12T15:05:15+02:00] [2014-07-12T15:05:15+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendAjaxStats] Patt : /backend/ajax/stats
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:07:30+02:00] [2014-07-12T15:07:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:10:01+02:00] [2014-07-12T15:10:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T15:10:56+02:00] [2014-07-12T15:10:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:10:56+02:00] [2014-07-12T15:10:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:10:56+02:00] [2014-07-12T15:10:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:10:56+02:00] [2014-07-12T15:10:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:12:42+02:00] [2014-07-12T15:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:12:42+02:00] [2014-07-12T15:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:12:42+02:00] [2014-07-12T15:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:12:42+02:00] [2014-07-12T15:12:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:12:46+02:00] [2014-07-12T15:12:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:12:46+02:00] [2014-07-12T15:12:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:12:46+02:00] [2014-07-12T15:12:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:12:46+02:00] [2014-07-12T15:12:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:14:26+02:00] [2014-07-12T15:14:26+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:14:26+02:00] [2014-07-12T15:14:26+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:14:26+02:00] [2014-07-12T15:14:26+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:14:26+02:00] [2014-07-12T15:14:26+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:14:28+02:00] [2014-07-12T15:14:28+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:14:28+02:00] [2014-07-12T15:14:28+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:14:28+02:00] [2014-07-12T15:14:28+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:14:28+02:00] [2014-07-12T15:14:28+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:15:50+02:00] [2014-07-12T15:15:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:15:50+02:00] [2014-07-12T15:15:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:15:50+02:00] [2014-07-12T15:15:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T15:15:50+02:00] [2014-07-12T15:15:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T15:17:01+02:00] [2014-07-12T15:17:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T15:17:01+02:00] [2014-07-12T15:17:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T15:17:01+02:00] [2014-07-12T15:17:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T15:17:01+02:00] [2014-07-12T15:17:01+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T17:49:43+02:00] [2014-07-12T17:49:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:49:43+02:00] [2014-07-12T17:49:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:49:43+02:00] [2014-07-12T17:49:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:49:43+02:00] [2014-07-12T17:49:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:49:45+02:00] [2014-07-12T17:49:45+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-12T17:49:46+02:00] [2014-07-12T17:49:46+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-07-12T17:49:50+02:00] [2014-07-12T17:49:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:49:50+02:00] [2014-07-12T17:49:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:49:50+02:00] [2014-07-12T17:49:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:49:50+02:00] [2014-07-12T17:49:50+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:50:21+02:00] [2014-07-12T17:50:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T17:50:21+02:00] [2014-07-12T17:50:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:50:21+02:00] [2014-07-12T17:50:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:50:21+02:00] [2014-07-12T17:50:21+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T17:52:55+02:00] [2014-07-12T17:52:55+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:52:55+02:00] [2014-07-12T17:52:55+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:52:55+02:00] [2014-07-12T17:52:55+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:52:55+02:00] [2014-07-12T17:52:55+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:53:16+02:00] [2014-07-12T17:53:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T17:53:16+02:00] [2014-07-12T17:53:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:53:16+02:00] [2014-07-12T17:53:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:53:16+02:00] [2014-07-12T17:53:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T17:54:14+02:00] [2014-07-12T17:54:14+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:54:14+02:00] [2014-07-12T17:54:14+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:54:14+02:00] [2014-07-12T17:54:14+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:54:14+02:00] [2014-07-12T17:54:14+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:57:30+02:00] [2014-07-12T17:57:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:57:31+02:00] [2014-07-12T17:57:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:57:31+02:00] [2014-07-12T17:57:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:57:31+02:00] [2014-07-12T17:57:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:58:02+02:00] [2014-07-12T17:58:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T17:58:02+02:00] [2014-07-12T17:58:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:58:02+02:00] [2014-07-12T17:58:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:58:02+02:00] [2014-07-12T17:58:02+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T17:58:29+02:00] [2014-07-12T17:58:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:58:29+02:00] [2014-07-12T17:58:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:58:29+02:00] [2014-07-12T17:58:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:58:29+02:00] [2014-07-12T17:58:29+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:58:42+02:00] [2014-07-12T17:58:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T17:58:42+02:00] [2014-07-12T17:58:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:58:42+02:00] [2014-07-12T17:58:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:58:42+02:00] [2014-07-12T17:58:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T17:59:20+02:00] [2014-07-12T17:59:20+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:59:20+02:00] [2014-07-12T17:59:20+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:59:20+02:00] [2014-07-12T17:59:20+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T17:59:20+02:00] [2014-07-12T17:59:20+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T17:59:35+02:00] [2014-07-12T17:59:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T17:59:35+02:00] [2014-07-12T17:59:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T17:59:35+02:00] [2014-07-12T17:59:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T17:59:35+02:00] [2014-07-12T17:59:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:00:13+02:00] [2014-07-12T18:00:13+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T18:00:13+02:00] [2014-07-12T18:00:13+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:00:13+02:00] [2014-07-12T18:00:13+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:00:13+02:00] [2014-07-12T18:00:13+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:01:30+02:00] [2014-07-12T18:01:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:01:30+02:00] [2014-07-12T18:01:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:01:30+02:00] [2014-07-12T18:01:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T18:01:30+02:00] [2014-07-12T18:01:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-12T18:01:49+02:00] [2014-07-12T18:01:49+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T18:01:49+02:00] [2014-07-12T18:01:49+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:01:49+02:00] [2014-07-12T18:01:49+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:01:49+02:00] [2014-07-12T18:01:49+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:04:56+02:00] [2014-07-12T18:04:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T18:04:56+02:00] [2014-07-12T18:04:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:04:56+02:00] [2014-07-12T18:04:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:04:56+02:00] [2014-07-12T18:04:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:05:24+02:00] [2014-07-12T18:05:24+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T18:05:24+02:00] [2014-07-12T18:05:24+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:05:25+02:00] [2014-07-12T18:05:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:05:25+02:00] [2014-07-12T18:05:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:47:00+02:00] [2014-07-12T18:47:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-12T18:47:00+02:00] [2014-07-12T18:47:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:47:00+02:00] [2014-07-12T18:47:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:47:00+02:00] [2014-07-12T18:47:00+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-12T18:49:11+02:00] [2014-07-12T18:49:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-12T18:49:11+02:00] [2014-07-12T18:49:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-12T18:49:11+02:00] [2014-07-12T18:49:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-12T18:49:11+02:00] [2014-07-12T18:49:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T11:58:26+02:00] [2014-07-13T11:58:26+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [profiler] Patt : /dbg
+[2014-07-13T11:58:30+02:00] [2014-07-13T11:58:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [clearSQLLogs] Patt : /dbg/clearSQLLogs
+[2014-07-13T14:13:27+02:00] [2014-07-13T14:13:27+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:13:27+02:00] [2014-07-13T14:13:27+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:13:27+02:00] [2014-07-13T14:13:27+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T14:13:27+02:00] [2014-07-13T14:13:27+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T14:19:16+02:00] [2014-07-13T14:19:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:19:16+02:00] [2014-07-13T14:19:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:19:16+02:00] [2014-07-13T14:19:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T14:19:16+02:00] [2014-07-13T14:19:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T14:19:34+02:00] [2014-07-13T14:19:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-13T14:19:34+02:00] [2014-07-13T14:19:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:19:34+02:00] [2014-07-13T14:19:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:19:34+02:00] [2014-07-13T14:19:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-13T14:20:11+02:00] [2014-07-13T14:20:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-13T14:20:11+02:00] [2014-07-13T14:20:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:20:11+02:00] [2014-07-13T14:20:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:20:11+02:00] [2014-07-13T14:20:11+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-13T14:48:40+02:00] [2014-07-13T14:48:40+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:48:40+02:00] [2014-07-13T14:48:40+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:48:41+02:00] [2014-07-13T14:48:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T14:48:41+02:00] [2014-07-13T14:48:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T14:48:56+02:00] [2014-07-13T14:48:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [addUser] Patt : /backend/ajax/users/add
+[2014-07-13T14:49:58+02:00] [2014-07-13T14:49:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:49:58+02:00] [2014-07-13T14:49:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:49:58+02:00] [2014-07-13T14:49:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T14:49:58+02:00] [2014-07-13T14:49:58+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T14:50:03+02:00] [2014-07-13T14:50:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T14:50:03+02:00] [2014-07-13T14:50:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T14:50:03+02:00] [2014-07-13T14:50:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T14:50:03+02:00] [2014-07-13T14:50:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T15:07:41+02:00] [2014-07-13T15:07:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-13T15:07:41+02:00] [2014-07-13T15:07:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:07:41+02:00] [2014-07-13T15:07:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:07:41+02:00] [2014-07-13T15:07:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-13T15:08:06+02:00] [2014-07-13T15:08:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-13T15:08:06+02:00] [2014-07-13T15:08:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:08:06+02:00] [2014-07-13T15:08:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:08:06+02:00] [2014-07-13T15:08:06+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-13T15:08:30+02:00] [2014-07-13T15:08:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:08:30+02:00] [2014-07-13T15:08:30+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:08:31+02:00] [2014-07-13T15:08:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T15:08:31+02:00] [2014-07-13T15:08:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T15:10:09+02:00] [2014-07-13T15:10:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:10:09+02:00] [2014-07-13T15:10:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:10:09+02:00] [2014-07-13T15:10:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T15:10:09+02:00] [2014-07-13T15:10:09+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T15:13:17+02:00] [2014-07-13T15:13:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:13:17+02:00] [2014-07-13T15:13:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:13:17+02:00] [2014-07-13T15:13:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T15:13:17+02:00] [2014-07-13T15:13:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T15:17:12+02:00] [2014-07-13T15:17:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:17:12+02:00] [2014-07-13T15:17:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:17:12+02:00] [2014-07-13T15:17:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T15:17:12+02:00] [2014-07-13T15:17:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T15:17:35+02:00] [2014-07-13T15:17:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T15:17:35+02:00] [2014-07-13T15:17:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T15:17:35+02:00] [2014-07-13T15:17:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T15:17:35+02:00] [2014-07-13T15:17:35+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:14:05+02:00] [2014-07-13T16:14:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:14:05+02:00] [2014-07-13T16:14:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:14:05+02:00] [2014-07-13T16:14:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:14:05+02:00] [2014-07-13T16:14:05+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:15:25+02:00] [2014-07-13T16:15:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:15:25+02:00] [2014-07-13T16:15:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:15:25+02:00] [2014-07-13T16:15:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:15:25+02:00] [2014-07-13T16:15:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:15:36+02:00] [2014-07-13T16:15:36+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [addUser] Patt : /backend/ajax/users/add
+[2014-07-13T16:18:16+02:00] [2014-07-13T16:18:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:18:16+02:00] [2014-07-13T16:18:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:18:16+02:00] [2014-07-13T16:18:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:18:16+02:00] [2014-07-13T16:18:16+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:20:12+02:00] [2014-07-13T16:20:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:20:12+02:00] [2014-07-13T16:20:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:20:12+02:00] [2014-07-13T16:20:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:20:12+02:00] [2014-07-13T16:20:12+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:20:34+02:00] [2014-07-13T16:20:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [] Patt : 
+[2014-07-13T16:20:34+02:00] [2014-07-13T16:20:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:20:34+02:00] [2014-07-13T16:20:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:20:34+02:00] [2014-07-13T16:20:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-07-13T16:22:07+02:00] [2014-07-13T16:22:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:22:07+02:00] [2014-07-13T16:22:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:22:07+02:00] [2014-07-13T16:22:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:22:07+02:00] [2014-07-13T16:22:07+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:22:41+02:00] [2014-07-13T16:22:41+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:22:42+02:00] [2014-07-13T16:22:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:22:42+02:00] [2014-07-13T16:22:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:22:42+02:00] [2014-07-13T16:22:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:22:56+02:00] [2014-07-13T16:22:56+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [addUser] Patt : /backend/ajax/users/add
+[2014-07-13T16:23:44+02:00] [2014-07-13T16:23:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:23:44+02:00] [2014-07-13T16:23:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:23:44+02:00] [2014-07-13T16:23:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/users.phtml
+[2014-07-13T16:23:44+02:00] [2014-07-13T16:23:44+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backendUsers] Patt : /backend/users
+[2014-07-13T16:24:03+02:00] [2014-07-13T16:24:03+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [addUser] Patt : /backend/ajax/users/add
+[2014-07-13T16:24:24+02:00] [2014-07-13T16:24:24+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:24:25+02:00] [2014-07-13T16:24:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:24:25+02:00] [2014-07-13T16:24:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/index.phtml
+[2014-07-13T16:24:25+02:00] [2014-07-13T16:24:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backend] Patt : /backend
+[2014-07-13T16:24:25+02:00] [2014-07-13T16:24:25+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [logout] Patt : /logout
+[2014-07-13T16:24:31+02:00] [2014-07-13T16:24:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:24:31+02:00] [2014-07-13T16:24:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:24:31+02:00] [2014-07-13T16:24:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/backend/views/index/index.phtml
+[2014-07-13T16:24:31+02:00] [2014-07-13T16:24:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [backend] Patt : /backend
+[2014-07-13T16:24:31+02:00] [2014-07-13T16:24:31+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [logout] Patt : /logout
+[2014-07-13T16:37:10+02:00] [2014-07-13T16:37:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:37:10+02:00] [2014-07-13T16:37:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:37:10+02:00] [2014-07-13T16:37:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/frontend/views/article/show.phtml
+[2014-07-13T16:37:10+02:00] [2014-07-13T16:37:10+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [index] Patt : /
+[2014-07-13T16:37:17+02:00] [2014-07-13T16:37:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T16:37:17+02:00] [2014-07-13T16:37:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T16:37:17+02:00] [2014-07-13T16:37:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/frontend/views/article/show.phtml
+[2014-07-13T16:37:17+02:00] [2014-07-13T16:37:17+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [index] Patt : /
+[2014-07-13T17:04:34+02:00] [2014-07-13T17:04:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T17:04:34+02:00] [2014-07-13T17:04:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T17:04:34+02:00] [2014-07-13T17:04:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/frontend/views/article/show.phtml
+[2014-07-13T17:04:34+02:00] [2014-07-13T17:04:34+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [index] Patt : /
+[2014-07-13T17:04:42+02:00] [2014-07-13T17:04:42+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	Ajax : false
+[2014-07-13T17:04:43+02:00] [2014-07-13T17:04:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-07-13T17:04:43+02:00] [2014-07-13T17:04:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 	File : /volume1/web/saveourspace//bundles/CMS/frontend/views/article/show.phtml
+[2014-07-13T17:04:43+02:00] [2014-07-13T17:04:43+02:00] [176.183.7.251] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0] 
+	Route [index] Patt : /

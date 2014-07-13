@@ -94,11 +94,17 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
+ // $db->query('ALTER TABLE `lpcms`.`lpcms_user_role`
+ //  ADD CONSTRAINT `fk_lpcms_user_role`
+ //  FOREIGN KEY (`fk_id_role`)
+ //  REFERENCES `lpcms`.`lpcms_role` (`id_role`)
+ //  ON DELETE NO ACTION
+ //  ON UPDATE NO ACTION;');
+
     // Retrieving the users
     $users = $db->values($db->query(
-      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_user_role ur ON ur.fk_id_user = u.id_user
-      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role
+      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
+      INNER JOIN lpcms_role r ON u.role_id = r.id
       ORDER BY id_user
       LIMIT 3'
     ));
@@ -106,13 +112,16 @@ class indexController extends Controller
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
       $users = array($users);
+    // elseif(empty($users))
+    //   $users = array();
 
     $count = $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
+    // var_dump($count);die;
 
     echo $this->renderView('users.phtml', array(
       'users' => $users,
-      'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
-      'count' => (!empty($count)) ? current() : '',
+      'roles' => $db->values($db->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC')),
+      'count' => (!empty($count)) ? current($count) : '',
       'limit' => 3
     ));
   }

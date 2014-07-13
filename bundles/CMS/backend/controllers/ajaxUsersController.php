@@ -25,9 +25,8 @@ class ajaxUsersController extends Controller
 
     // Retrieving the headers
     $users = $db->values($db->query(
-      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_user_role ur ON ur.fk_id_user = u.id_user
-      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role'
+      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
+      INNER JOIN lpcms_role r ON u.fk_id_role = r.id'
     ));
 
     // Fixes the bug where there is only one user
@@ -36,7 +35,7 @@ class ajaxUsersController extends Controller
 
     echo $this->renderView('index.phtml', array(
       'users' => $users,
-      'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC'))
+      'roles' => $db->values($db->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC'))
     ), true);
   }
 
@@ -52,6 +51,7 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
+    // We check whether the email exists
     $dbUsers = $db->query(
       'SELECT mail FROM lpcms_user
        WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
@@ -62,25 +62,22 @@ class ajaxUsersController extends Controller
     if(is_array($users))
       die(json_encode(array('success' => false, 'msg' => 'This mail already exists !')));
 
+    // We can now insert the new user
     $pwd = crypt($pwd, FWK_HASH);
     $dbError = array('error' => true, 'msg' => 'Database problem !');
 
     if(false === $db->query(
-      'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`) VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\');'
+      'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`) VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\', ' . intval($role) . ');'
     ))
       die(json_encode($dbError));
 
-    $id = $db->lastInsertedId();
-
-    echo json_encode((false === $db->query(
-      'INSERT INTO lpcms_user_role (`fk_id_user`, `fk_id_role`) VALUES (' . $id . ', ' . $role . ');'))
-    ? $dbError
-    : array('success' => true, 'msg' => 'User created.', 'pwd' => $pwd, 'id' => $id));
+    // array('success' => true, 'msg' => 'User created.', 'pwd' => $pwd, 'id' => $id));
+    echo '{"success":true, "msg":"User added.", "pwd":"' . $pwd . '", "id":"' . $db->lastInsertedId() . '"}';
 
     return;
   }
 
-  public function editAction() // TODO roles association
+  public function editAction()
   {
     if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
       die('Deconnected or lack of rights.');
@@ -92,6 +89,7 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
+    // We check whether the email exists
     $dbUsers = $db->query(
       'SELECT mail FROM lpcms_user
        WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
@@ -100,8 +98,9 @@ class ajaxUsersController extends Controller
     $db->freeResult($dbUsers);
 
     if(is_array($users) && $oldMail != $users[0]['mail'])
-      die('{"success":false,"msg":"This mail already exists !"}');
+      exit('{"success":false,"msg":"This mail already exists !"}');
 
+    // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
 
     if(false === $db->query(
@@ -111,6 +110,7 @@ class ajaxUsersController extends Controller
       pseudo = \'' . mysql_real_escape_string($pseudo) . '\' WHERE id_user = ' . intval($id_user)))
       die('{"success":false,"msg":"Database problem !"}');
 
+    // and his role
     if(false === $db->query(
       'UPDATE lpcms_user_role SET
       fk_id_role = ' . intval($role) . '
@@ -134,18 +134,17 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
+    // if(false === $db->query(
+    //   'DELETE FROM lpcms_mailing_list_user WHERE fk_id_user = ' . intval($id_user)))
+    //   echo '{"success":false,"msg":"Database problem !"}';return;
+
+    // if(false === $db->query(
+    //   'DELETE FROM lpcms_user_role WHERE fk_id_user = ' . intval($id_user)))
+    //   echo '{"success":false,"msg":"Database problem !"}';return;
+
     if(false === $db->query(
       'DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user)))
-    {
       echo '{"success":false,"msg":"Database problem !"}';return;
-    }
-
-
-    if(false === $db->query(
-      'DELETE FROM lpcms_user_role WHERE fk_id_user = ' . intval($id_user)))
-    {
-      echo '{"success":false,"msg":"Database problem !"}';return;
-    }
 
     echo '{"success":true,"msg":"User deleted."}';return;
   }
