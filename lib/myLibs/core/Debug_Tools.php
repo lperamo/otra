@@ -4,16 +4,38 @@ function lg($message){
   lib\myLibs\core\Logger::logTo($message, 'trace');
 };
 
-/* A nice dump function that takes as much parameters as we want to put */
+/**
+ * A nice dump function that takes as much parameters as we want to put. Somewhat disables XDebug.
+ */
 function dump()
 {
+  $oldXDebug = ini_get('xdebug.var_display_max_data');
+  ini_set('xdebug.var_display_max_data', -1);
+
 	echo '<pre>';
+
 	foreach (func_get_args() as $param)
 	{
     var_dump(is_string($param) ? htmlspecialchars($param) : $param);
     echo '<br />';
 	}
+
 	echo '</pre>';
+  ini_set('xdebug.var_display_max_data', $oldXDebug);
+}
+
+/**
+ * A nice dump function that takes as much parameters as we want to put.
+ */
+function dumpSmall()
+{
+  echo '<pre>';
+  foreach (func_get_args() as $param)
+  {
+    var_dump(is_string($param) ? htmlspecialchars($param) : $param);
+    echo '<br />';
+  }
+  echo '</pre>';
 }
 
 /**

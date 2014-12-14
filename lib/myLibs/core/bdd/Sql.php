@@ -185,6 +185,21 @@ class Sql
   }
 
   /**
+   * Returns all the results in an associative array (use it when the result set contains only one column)
+   *
+   * @param resource $result The query result
+   *
+   * @return bool|array The results. Returns false if there are no results.
+   */
+  public static function valuesOneCol($result)
+  {
+    if(isset($_SESSION['bootstrap']))
+      return;
+
+    return call_user_func(self::$_chosenSgbd . '::valuesOneCol', $result);
+  }
+
+  /**
    * Returns the only expected result.
    *
    * @param resource $result The query result

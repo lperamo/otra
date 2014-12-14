@@ -6,18 +6,19 @@
  */
 namespace lib\myLibs\core;
 
-use Symfony\Component\Yaml\Parser,
-    Symfony\Component\Yaml\Yaml,
-    config\All_Config;
+use lib\sf2_yaml\Parser,
+    lib\sf2_yaml\Yaml,
+    config\All_Config,
+    lib\myLibs\core\bdd\Sql;
 
 class Database
 {
   // Database connection
-  private static $host = 'localhost',
-    $user = 'root',
-    $pwd = 'e94b8f58',
-    $base = 'test',
-    $motor = 'InnoDB',
+  private static $host,
+    $user,
+    $pwd,
+    $base,
+    $motor,
 
     // commands beginning
     $command = '',
@@ -28,39 +29,83 @@ class Database
     $pathYml = '',
     $pathYmlFixtures = '',
     $databaseFile = 'database_schema',
+    $schemaFile = 'schema.yml',
     $fixturesFile = 'db_fixture',
     $fixturesFileIdentifiers = 'ids',
     $tablesOrderFile = 'tables_order.yml',
+    $fixtureFolder,
+    $frameworkName = 'lpframework',
 
-  // just in order to simplify the code
-  $attributeInfos = array();
+    // just in order to simplify the code
+    $attributeInfos = array();
 
+  /** Initalizes paths, commands and connections */
   public static function init()
   {
+    self::initBase();
     define('VERBOSE', All_Config::$verbose);
     $dbConn = All_Config::$dbConnections;
+
     if(isset($dbConn[key($dbConn)]))
     {
       $infosDb = $dbConn[key($dbConn)];
       self::$user = $infosDb['login'];
       self::$pwd = $infosDb['password'];
       self::$base = $infosDb['db'];
+
       if(isset($infosDb['motor']))
         self::$motor = $infosDb['motor'];
+      else {
+        echo 'You haven\'t specified the database engine in your configuration file.';
+        return false;
+      }
+    } else {
+      echo 'You haven\'t specified any database configuration in your configuration file.';
+      return false;
     }
 
-    self::$pathSql = __DIR__ . DS . AVT . AVT . AVT . 'config' . DS . 'data' . DS;
-    self::$pathYml = self::$pathSql . 'yml' . DS;
-    self::$pathYmlFixtures = self::$pathYml . 'fixtures' . DS;
-    self::$pathSql .= 'sql' . DS;
-    self::$tablesOrderFile = self::$pathYml . self::$tablesOrderFile;
 
-    self::$initCommand = 'mysql --show-warnings -h ' . self::$host . ' -u ' . self::$user . ' --password=' . self::$pwd;
+    self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
+    self::$initCommand = 'mysql --login-path=' . self::$frameworkName . (VERBOSE ? ' --show-warnings' : '');
     $finCommande = ' -e "source ' . self::$pathSql;
-    self::$command = (VERBOSE > 1) ? self::$initCommand . ' -D ' . self::$base . ' -v' . $finCommande
-                               : self::$initCommand . ' -D ' . self::$base . $finCommande;
-    self::$initCommand .= (VERBOSE > 1) ? ' -v -e "source ' . self::$pathSql
-                                        : ' -e "source ' . self::$pathSql;
+
+    self::$command =  self::$initCommand . ' -D ' . self::$base . ((VERBOSE > 1) ? ' -v' . $finCommande : $finCommande);
+
+    self::$initCommand .= ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ') . self::$pathSql;
+
+    self::$fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
+
+    if(!file_exists(self::$fixtureFolder))
+      mkdir(self::$fixtureFolder);
+
+    // If we haven't store the database identifiers yet, store them ... only asking for password.
+    if('' == Script_Functions::cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
+    {
+      echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
+      Script_Functions::cli('mysql_config_editor set --login-path=' . self::$frameworkName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
+    }
+  }
+
+  /** Initializes main paths */
+  public static function initBase()
+  {
+    self::$pathSql = _DIR_ . '/../config/data/';
+    self::$pathYml = self::$pathSql . 'yml/';
+    self::$pathSql .= 'sql/';
+    self::$schemaFile = self::$pathYml . self::$schemaFile;
+    self::$tablesOrderFile = self::$pathYml . self::$tablesOrderFile;
+  }
+
+  /** Cleans sql and yml files in the case where there are problems that had corrupted files. */
+  public static function clean($extensive = false)
+  {
+    self::initBase();
+    array_map('unlink', glob(self::$pathSql . '*'));
+
+    if($extensive && file_exists(self::$tablesOrderFile))
+      unlink(self::$tablesOrderFile);
+
+    echo ($extensive) ? 'Full cleaning done.' : 'Cleaning done.', PHP_EOL;
   }
 
   /**
@@ -115,7 +160,7 @@ class Database
    * @param array $theOtherTables Remaining tables to sort
    * @param array $tables         Final sorted tables array
    */
-  private static function _sortTableByForeignKeys(array $theOtherTables, &$tables)
+  private static function _sortTableByForeignKeys(array $theOtherTables, &$tables, $oldCountArrayToSort = 0)
   {
     $nextArrayToSort = $theOtherTables;
 
@@ -133,8 +178,17 @@ class Database
       }
     }
 
-    if(0 < count($nextArrayToSort))
-      self::_sortTableByForeignKeys ($nextArrayToSort, $tables);
+    $countArrayToSort = count($nextArrayToSort);
+
+    /* Fix for the "recursive" tables */
+    if($oldCountArrayToSort == $countArrayToSort)
+    {
+      $tables[] = $key;
+      return true;
+    }
+
+    if(0 < $countArrayToSort)
+      self::_sortTableByForeignKeys ($nextArrayToSort, $tables, $countArrayToSort);
   }
 
   /**
@@ -150,7 +204,7 @@ class Database
   public static function createFixture($databaseName, $file, array $schema, array $sortedTables, &$fixtureMemory = array(), $force = false)
   {
     // Gets the fixture data
-    $fixturesData = Yaml::parse($file);
+    $fixturesData = Yaml::parse(file_get_contents($file));
 
     $createdFiles = array();
     $first = true;
@@ -178,7 +232,7 @@ class Database
         {
           foreach(array_keys($schema[$table]['relations']) as $relation)
           {
-            $datas = Yaml::parse(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . DS . $databaseName . '_' . $relation . '.yml');
+            $datas = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
             foreach($datas as $key => $data) {
               $fixturesMemory[$key] = $data;
             }
@@ -203,8 +257,8 @@ class Database
             if ($first)
                 $theProperties .= (in_array($property, $sortedTables)) ? '`' . $schema[$table]['relations'][$property]['local'] . '`, '
                                                                        : '`' . $property . '`, ';
-
             $properties [] = $property;
+
             if (!in_array($property, $sortedTables))
             {
               // if the value is null
@@ -212,6 +266,7 @@ class Database
               {
                 $tmp = $schema[$table]['columns'][$property];
                 $tmpBool = isset($tmp['notnull']);
+
                 if(!$tmpBool || ($tmpBool && false === $tmp['notnull']))
                 {
                   if (false !== strpos($tmp['type'], 'string'))
@@ -220,16 +275,16 @@ class Database
                   switch($tmp['type'])
                   {
                     case 'timestamp' :
-                    case 'integer' : $value = 0;
-                                     break;
+                    case 'int' : $value = 0;
+                                 break;
                   }
                 }
-              }else if(is_bool($value))
-                  $value = ($value) ? 1 : 0;
-              else if(is_string($value) && 'integer' == $schema[$table]['columns'][$property]['type'])
+              } else if(is_bool($value))
+                  $value = $value ? 1 : 0;
+              else if(is_string($value) && 'int' == $schema[$table]['columns'][$property]['type'])
                 $value = $localMemory[$value];
 
-              $theValues .= (is_string($value)) ? '\''.addslashes($value) . '\', ' : $value . ', ';
+              $theValues .= (is_string($value)) ? '\'' . addslashes($value) . '\', ' : $value . ', ';
             } else
               $theValues .= $fixturesMemory[$property][$value] . ', ';
 
@@ -250,13 +305,13 @@ class Database
         fwrite($fp, $tableSql);
         fclose($fp);
 
-        echo 'File created : ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql', PHP_EOL;
+        echo 'Fixture file created : ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql', PHP_EOL;
 
-        $fp = fopen(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . DS . $databaseName . '_' . $table . '.yml', 'w' );
+        $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w' );
         fwrite($fp, $ymlIdentifiers);
         fclose($fp);
-      }else
-        echo 'Aborted : the file ' , self::$fixturesFile, '_' , $databaseName , '_' , $table, ',sql', ' already exists.', PHP_EOL;
+      } else
+        echo 'Fixture file creation aborted : the file ' , self::$fixturesFile, '_' , $databaseName , '_' , $table, '.sql', ' already exists.', PHP_EOL;
     }
   }
 
@@ -269,13 +324,27 @@ class Database
   public static function createFixtures($databaseName, $force = false)
   {
     $folder = '';
+
     // Looks for the fixtures file
     if ($folder = opendir(self::$pathYmlFixtures))
     {
       // Analyzes the database schema in order to guess the properties types
-      $schema = Yaml::parse(self::$pathYml . 'schema.yml');
+      if(!file_exists(self::$schemaFile))
+      {
+        echo cyan() , 'You have to create a database schema file in config/data/schema.yml before using fixtures.' , endColor();
+        die;
+      }
 
-      $tablesOrder = Yaml::parse(self::$tablesOrderFile);
+      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+
+
+      if(!file_exists(self::$tablesOrderFile))
+      {
+        echo cyan() , 'You must use the database generation task before using the fixtures !' , endColor();
+        die;
+      }
+
+      $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
       $tablesToCreate = array();
 
       // Browse all the fixtures files
@@ -297,8 +366,11 @@ class Database
         }
       }
 
+      $color = 0;
       foreach($tablesOrder as $table)
       {
+        echo $color % 2 ? cyan() : lightCyan();
+
         for ($i = 0, $cptTables = count($tablesToCreate[$databaseName]); $i < $cptTables; $i += 1)
         {
           if(isset($tablesToCreate[$databaseName][$table]))
@@ -309,8 +381,11 @@ class Database
             break;
           }
         }
+
+        ++$color;
       }
-      die;
+
+      echo endColor();
     }
   }
 
@@ -355,8 +430,8 @@ class Database
    */
   public static function generateSqlSchema($databaseName, $force = false)
   {
-    $dbFile = ($force) ? self::$pathSql.self::$databaseFile . '_force.sql'
-                       : self::$pathSql.self::$databaseFile . '.sql';
+    $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
+
     if (!file_exists($dbFile))
     {
       echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
@@ -367,12 +442,10 @@ class Database
 //      $sql .= 'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL . PHP_EOL;
 
       // Gets the database schema
-      $schema = Yaml::parse(self::$pathYml . 'schema.yml');
-
-      $theOtherTables = $sortedTables = array();
+      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+      $tableSql = $theOtherTables = $sortedTables = array();
       $constraints = '';
 
-      $tableSql = array();
       // For each table
       foreach($schema as $table => $properties)
       {
@@ -517,7 +590,7 @@ class Database
   private static function analyzeFixtures($file)
   {
     // Gets the fixture data
-    $fixturesData = Yaml::parse($file);
+    $fixturesData = Yaml::parse(file_get_contents($file));
 
     // For each table
     foreach (array_keys($fixturesData) as $table)
@@ -526,6 +599,89 @@ class Database
     }
 
     return $tablesToCreate;
+  }
+
+  /**
+   * Creates the database schema from a database.
+   *
+   * @param string $database (optional)
+   * @param string $confToUse (optional)
+  */
+  public static function importSchema($database = null, $confToUse = null)
+  {
+    error_reporting(0);
+
+    require(__DIR__ . '/../../../lib/myLibs/core/Debug_Tools.php');
+    if(null == $confToUse)
+      $confToUse = key(All_Config::$dbConnections);
+
+    if(null == $database)
+      $database = All_Config::$dbConnections[$confToUse]['db'];
+
+    Session::set('db', $confToUse);
+    $db = Sql::getDB('Mysql');
+    $db->selectDb();
+
+    // Checks if the database concerned exists
+    $schemaInfo = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
+    if(!in_array($database, $schemaInfo))
+    {
+      echo 'This database doesn\'t exist.';
+      return false;
+    }
+
+    $content = '';
+    foreach($db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\'')) as $table)
+    {
+      $content .= $table . ': ' . PHP_EOL;
+      $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
+
+      if(0 < count($cols))
+        $content .= '  columns:' . PHP_EOL;
+
+      foreach($cols as $col)
+      {
+        $content .= '    '  . $col['COLUMN_NAME'] . ':' . PHP_EOL;
+        $content .= '      type: '  . $col['COLUMN_TYPE'] . PHP_EOL;
+
+        if('NO' == $col['IS_NULLABLE'])
+          $content .= '      notnull: true' . PHP_EOL;
+
+        if(false !== strpos($col['EXTRA'], 'auto_increment'))
+          $content .= '      auto_increment: true' . PHP_EOL;
+
+        if('PRI' == $col['COLUMN_KEY'])
+          $content .= '      primary: true' . PHP_EOL;
+      }
+
+      $constraints = $db->values($db->query('SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
+        FROM information_schema.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = \'' . $database . '\'
+          AND TABLE_NAME = \'' . $table . '\'
+          AND CONSTRAINT_NAME <> \'PRIMARY\''));
+
+      if(0 < count($constraints))
+      {
+        $content .= '  relations:' . PHP_EOL;
+
+        foreach($constraints as $constraint)
+        {
+          if(!isset($constraint['REFERENCED_TABLE_NAME']))
+            echo 'There is no REFERENCED_TABLE_NAME on ' . (isset($constraint['CONSTRAINT_NAME']) ? $constraint['CONSTRAINT_NAME'] : '/NO CONSTRAINT NAME/');
+
+          $content .= '    ' . $constraint['REFERENCED_TABLE_NAME'] . ':' . PHP_EOL;
+          $content .= '      local: ' . $constraint['COLUMN_NAME'] . PHP_EOL;
+          $content .= '      foreign: ' . $constraint['REFERENCED_COLUMN_NAME'] . PHP_EOL;
+          $content .= '      constraint_name: ' . $constraint['CONSTRAINT_NAME'] . PHP_EOL;
+        }
+      }
+
+      $content .= PHP_EOL;
+    }
+
+    $fp = fopen(self::$schemaFile, 'w' );
+    fwrite($fp, $content);
+    fclose($fp);
   }
 }
 ?>

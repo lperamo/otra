@@ -7,7 +7,7 @@ namespace config;
 define('CACHE_TIME', 300); // 5 minutes(5*60)
 class All_Config
 {
-  public static $verbose = 0,
+  public static $verbose = 1,
     $debug = true,
     $cache = false,
     /* In order to not make new All_Config::$blabla before calling CACHE_PATH, use directly All_Config::$cache_path in this case

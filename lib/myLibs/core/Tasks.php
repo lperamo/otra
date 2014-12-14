@@ -24,7 +24,8 @@ class Tasks
     echo crypt($pwd, FWK_HASH), PHP_EOL;
   }
 
-  public static function cryptDesc(){
+  public static function cryptDesc()
+  {
     return array('Crypts a password and shows it.',
       array('password' => 'The password to crypt.'),
       array('required')
@@ -33,7 +34,8 @@ class Tasks
 
   public static function genAssets($argv){ require 'GenAssets.php'; }
 
-  public static function genAssetsDesc(){
+  public static function genAssetsDesc()
+  {
     return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
       array(
         'mask' => '1 => templates, 2 => css; 4 => js, => 7 all',
@@ -47,15 +49,25 @@ class Tasks
 
   public static function sqlDesc() { return array('Executes the sql script'); }
 
+  public static function sql_clean($argv) { Database::clean(isset($argv[2]) ? $argv[2] : false); }
+
+  public static function sql_cleanDesc()
+  {
+    return array(
+      'Cleans sql and yml files in the case where there are problems that had corrupted files.',
+      array('cleaningLevel' => 'Type 1 in order to also clean the file that describes the tables order.'),
+      array('optional')
+    );
+  }
+
   /** (sql_generate_basic) Database creation, tables creation. */
   public static function sql_gb($argv)
   {
     Database::init();
+
     if(isset($argv[3]))
-    {
-      $force = 'true' == $argv[3]; // Forces the value to be a boolean
-      Database::createDatabase($argv[2], $force);
-    }else
+      Database::createDatabase($argv[2], 'true' == $argv[3]); // Forces the value to be a boolean
+    else
       Database::createDatabase($argv[2]);
   }
 
@@ -75,11 +87,10 @@ class Tasks
   public static function sql_gf($argv)
   {
     Database::init();
+
     if(isset($argv[3]))
-    {
-      $force = 'true' == $argv[3]; // Forces the value to be a boolean
-      Database::createFixtures($argv[2], $force);
-    }else
+      Database::createFixtures($argv[2], 'true' == $argv[3]);// Forces the value to be a boolean
+    else
       Database::createFixtures($argv[2]);
   }
 
@@ -95,13 +106,34 @@ class Tasks
     );
   }
 
-  public static function routes(){
+  public static function sql_is($argv)
+  {
+    Database::init();
+    isset($argv[2])
+      ? (isset($argv[3]) ? Database::importSchema($argv[2], $argv[3]) : Database::importSchema($argv[2]))
+      : Database::importSchema();
+  }
+
+  public static function sql_isDesc()
+  {
+    return array(
+      'Creates the database schema from your database.',
+      array ('databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
+             'configuration' => 'The configuration that you want to use from your configuration file.'),
+      array('optional', 'optional')
+    );
+  }
+
+  public static function routes()
+  {
     require '../config/Routes.php';
     $alt = 0;
-    foreach(\config\Routes::$_ as $route => $details){
+
+    foreach(\config\Routes::$_ as $route => $details)
+    {
       // Routes and paths management
       $chunks = $details['chunks'];
-      $altColor = ($alt % 2) ? cyan() : lightBlue();
+      $altColor = ($alt % 2) ? cyan() : lightCyan();
       echo $altColor, PHP_EOL, sprintf('%-25s', $route), str_pad('Url', 10, ' '), ': ' , $chunks[0], PHP_EOL;
       echo str_pad(' ', 25, ' '), str_pad('Path', 10, ' '), ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL;
 
@@ -110,7 +142,7 @@ class Tasks
       $basePath = substr(__DIR__, 0, -15) . 'cache/';
 
       echo str_pad(' ', 25, ' '), 'Resources : ';
-      echo (file_exists($basePath . 'php' . '/' . $route. '.php')) ? green() : lightRed(), '[PHP]', $altColor;
+      echo (file_exists($basePath . 'php' . '/' . $route. '.php')) ? lightGreen() : lightRed(), '[PHP]', $altColor;
 
       // Resources management
       if(isset($details['resources']))
@@ -118,13 +150,13 @@ class Tasks
         $resources = $details['resources'];
 
         if(isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
-          echo (file_exists($basePath . 'css' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[CSS]', $altColor;
+          echo (file_exists($basePath . 'css' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[CSS]', $altColor;
 
         if(isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
-          echo (file_exists($basePath . 'js' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[JS]', $altColor;
+          echo (file_exists($basePath . 'js' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[JS]', $altColor;
 
         if(isset($resources['template']))
-          echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.gz')) ? green() : lightRed(), '[TEMPLATE]', $altColor;
+          echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[TEMPLATE]', $altColor;
 
         echo '[', $shaName, ']', PHP_EOL, endColor();
       }else
@@ -134,14 +166,15 @@ class Tasks
     }
   }
 
-  public static function routesDesc(){ return array('Shows the routes and their associated kind of resources in the case they have some. (green whether they exists, red otherwise)'); }
+  public static function routesDesc(){ return array('Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)'); }
 
   public static function genClassMap(){ require('GenClassMap.php'); }
   public static function genClassMapDesc(){ return array('Generates a class mapping file that will be used to replace the autoloading method.'); }
 
   public static function genBootstrap($argv) { require('GenBootstrap.php'); }
 
-  public static function genBootstrapDesc(){
+  public static function genBootstrapDesc()
+  {
     return array(
       'Launch the genClassMap command and generates a file that contains all the necessary php files.',
       array(

@@ -15,7 +15,7 @@ class Tasks_Manager
    */
   public static function showCommands($message)
   {
-    echo PHP_EOL , lightRed() , $message, lightGray(), PHP_EOL, PHP_EOL;
+    echo PHP_EOL, lightRed(), $message, lightGray(), PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '- ', white(), str_pad('no argument', 25, ' '), lightGray();
     echo ': ', cyan(), 'Shows the available commands.', PHP_EOL, PHP_EOL;
 
@@ -35,7 +35,7 @@ class Tasks_Manager
           foreach($paramsDesc[1] as $parameter => $paramDesc)
           {
             // + parameter : (required|optional) Description
-            echo lightBlue(), '   + ', str_pad($parameter, 22, ' '), lightGray();
+            echo lightCyan(), '   + ', str_pad($parameter, 22, ' '), lightGray();
             echo ': ', cyan(), '(', $paramsDesc[2][$i], ') ', $paramDesc, PHP_EOL;
             ++$i;
           }
@@ -54,12 +54,6 @@ class Tasks_Manager
    */
   public static function execute($command, array $argv)
   {
-    // We have to initialize the database before making any database operations...
-//    if (false !== strpos($command, 'sql'))
-//      self::initDb();
-    define('DS', DIRECTORY_SEPARATOR);
-    define('AVT', '..' . DS);
-
     if(!file_exists(ROOTPATH . 'cache/php/ClassMap.php'))
     {
       echo yellow(), 'We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...', endColor(), PHP_EOL;

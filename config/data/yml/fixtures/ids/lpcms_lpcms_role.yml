@@ -1,0 +1,5 @@
+lpcms_role: 
+  admin: 1
+  redacteur: 2
+  moderateur: 3
+  user: 4

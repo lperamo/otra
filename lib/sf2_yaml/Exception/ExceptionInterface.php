@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Yaml\Exception;
+namespace lib\sf2_yaml\Exception;
 
 /**
  * Exception interface for all exceptions thrown by the component.

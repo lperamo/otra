@@ -1,25 +1,28 @@
-#!/usr/bin/php
+#!/usr/bin/php -ddisplay_errors=E_ALL
 <?
+define('_DIR_', str_replace('\\', '/', __DIR__));  // Fixes windows awful __DIR__
 define('XMODE', 'dev');
-define('ROOTPATH', __DIR__ . '/../');
-define('BASE_PATH', substr(__DIR__, 0, -7)); // Finit avec /
+define('ROOTPATH', _DIR_ . '/../');
+define('BASE_PATH', substr(_DIR_, 0, -7)); // Finit avec /
+
 require(ROOTPATH . 'lib/myLibs/core/Tasks_Manager.php');
 
 function brown(){ return "\033[0;33m"; }
-function lightBlue(){ return "\033[1;34m"; }
-function lightRed(){ return "\033[1;31m"; }
 function cyan(){ return "\033[0;36m"; }
-function green(){ return "\033[0;32m"; }
+function lightBlue(){ return "\033[1;34m"; }
+function lightCyan(){ return "\033[1;36m"; }
 function lightGray(){ return "\033[0;37m"; }
+function lightGreen(){ return "\033[1;32m"; }
+function lightRed(){ return "\033[1;31m"; }
 function red(){ return "\033[0;31m"; }
+function green(){ return "\033[0;32m"; }
 function white(){ return "\033[1;37m"; }
 function yellow(){ return "\033[1;33m"; }
-
 function endColor(){ return "\033[0m"; }
 function dieC($color, $message){ die($color() . $message . endColor()); }
 
 // If we didn't specify any command, list the available commands
-if ($argc < 2){
+if ($argc < 2) {
   lib\myLibs\core\Tasks_Manager::showCommands('No commands specified ! ');
   die;
 }
@@ -35,8 +38,11 @@ if (method_exists('lib\myLibs\core\Tasks', $argv[1]) && method_exists('lib\myLib
   if(isset($paramsDesc[2]))
   {
     $result = array_count_values($paramsDesc[2]);
-    $required = $result['required'];
-    $total = $required + $result['optional'];
+
+    if(isset($result['required']))
+      $required = $result['required'];
+
+    $total = $required + (isset($result['optional']) ? $result['optional'] : 0);
   }
 
   if($argc > $total + 2)

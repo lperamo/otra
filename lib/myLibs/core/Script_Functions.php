@@ -18,9 +18,6 @@ class Script_Functions
    *
    * @return bool Status
    */
-  public static function cli($cmd, $verbose = 1)
-  {
-    return (0 < $verbose) ? passthru($cmd) : exec($cmd);
-  }
+  public static function cli($cmd, $verbose = 1) { return (0 < $verbose) ? passthru($cmd) : exec($cmd); }
 }
 ?>

@@ -2,9 +2,10 @@
 /** Bootstrap of the framework (redirection)
  *
  * @author Lionel Péramo */
-
 $uri = $_SERVER['REDIRECT_URL'];
-define('BASE_PATH2', substr(__DIR__, 0, -4)); // Finit sans /
+define('DS', '/'); // Fixes windows awful __DIR__
+$__DIR__ = str_replace('\\', '/', __DIR__);
+define('BASE_PATH2', substr($__DIR__, 0, -4)); // Finit sans /
 
 if(false !== ($posDot = strpos($uri, '.')))
 {
@@ -40,7 +41,7 @@ if(false !== ($posDot = strpos($uri, '.')))
   die;
 }
 
-define('BASE_PATH', substr(__DIR__, 0, -3)); // Finit avec /
+define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 session_start();
 

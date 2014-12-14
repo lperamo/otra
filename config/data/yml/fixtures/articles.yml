@@ -8,11 +8,11 @@ lpcms_article:
     cree_par:                 0
     derniere_modif:           '2010-12-31'
     der_modif_par:            0
-    derniere_visualisation:
-    der_visualise_par:
+    derniere_visualisation:   ~
+    der_visualise_par:        ~
     nb_vu:                    0
     date_publication:
-    meta:
+    meta:                     ~
     rank_sum:                 0
     rank_count:               0
   parchemins:
@@ -24,11 +24,11 @@ lpcms_article:
     cree_par:                 0
     derniere_modif:           '2010-12-31'
     der_modif_par:            0
-    derniere_visualisation:
-    der_visualise_par:
+    derniere_visualisation:   ~
+    der_visualise_par:        ~
     nb_vu:                    0
-    date_publication:
-    meta:
+    date_publication:         ~
+    meta:                     ~
     rank_sum:                 0
     rank_count:               0
   potions:
@@ -40,11 +40,11 @@ lpcms_article:
     cree_par:                 0
     derniere_modif:           '2010-12-31'
     der_modif_par:            0
-    derniere_visualisation:
-    der_visualise_par:
+    derniere_visualisation:   ~
+    der_visualise_par:        ~
     nb_vu:                    0
-    date_publication:
-    meta:
+    date_publication:         ~
+    meta:                     ~
     rank_sum:                 0
     rank_count:               0
   deuxieme_article:
@@ -56,11 +56,11 @@ lpcms_article:
     cree_par:                 0
     derniere_modif:           '2010-12-31'
     der_modif_par:            0
-    derniere_visualisation:
-    der_visualise_par:
+    derniere_visualisation:   ~
+    der_visualise_par:        ~
     nb_vu:                    0
-    date_publication:
-    meta:
+    date_publication:         ~
+    meta:                     ~
     rank_sum:                 0
     rank_count:               0
   troisieme_article:
@@ -72,10 +72,10 @@ lpcms_article:
     cree_par:                 0
     derniere_modif:           '2010-12-31'
     der_modif_par:            0
-    derniere_visualisation:
-    der_visualise_par:
+    derniere_visualisation:   ~
+    der_visualise_par:        ~
     nb_vu:                    0
-    date_publication:
-    meta:
+    date_publication:         ~
+    meta:                     ~
     rank_sum:                 0
     rank_count:               0

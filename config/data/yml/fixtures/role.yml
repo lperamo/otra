@@ -5,11 +5,15 @@
 # 4 => création d'articles
 # 8 => création de modules, menus, éléments de menus ...
 lpcms_role:
-	admin:
-		role: 15
-	redacteur:
-		role: 7
-	moderateur:
-		role: 3
-	user:
-		role: 0
+  admin:
+    mask: 15
+    nom: Administrator
+  redacteur:
+    mask: 7
+    nom: Writer
+  moderateur:
+    mask: 3
+    nom: Moderator
+  user:
+    mask: 0
+    nom: User

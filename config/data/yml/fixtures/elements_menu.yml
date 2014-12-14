@@ -43,7 +43,7 @@ lpcms_elements_menu:
   menu_vertical_1_01:
     lpcms_module:             menu_vertical
     lpcms_article:            parchemins
-    parent:                   menu_vertical_1_0
+    lpcms_elements_menu:      menu_vertical_1_0
     aEnfants:                 false
     droit:                    1
     ordre:                    0
@@ -51,7 +51,7 @@ lpcms_elements_menu:
   menu_vertical_1_02:
     lpcms_module:             menu_vertical
     lpcms_article:            potions
-    parent:                   menu_vertical_1_0
+    lpcms_elements_menu:      menu_vertical_1_0
     aEnfants:                 false
     droit:                    1
     ordre:                    0

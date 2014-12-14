@@ -7,7 +7,7 @@
 namespace config;
 use lib\myLibs\core\Session;
 
-define('CACHE_PATH', BASE_PATH . 'cache' . DS);
+define('CACHE_PATH', BASE_PATH . 'cache/');
 
 // CMS core resources
 define('CMS_VIEWS_PATH', '../bundles/CMS/views/');
@@ -19,10 +19,10 @@ define('CORE_VIEWS_PATH', '../lib/myLibs/core/views');
 define('CORE_CSS_PATH', '/lib/myLibs/core/css/');
 define('CORE_JS_PATH', '/lib/myLibs/core/js/');
 
-define('LAYOUT', CORE_VIEWS_PATH . DS . 'layout.phtml');
+define('LAYOUT', CORE_VIEWS_PATH . '/layout.phtml');
 
 define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2a$07$ThisoneIsanAwesomeframework$');
 
-require XMODE . DS . 'All_Config.php';
+require XMODE . '/All_Config.php';

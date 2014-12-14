@@ -112,13 +112,32 @@ class Mysql
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function values($result) {
+  public static function values($result)
+  {
+    if (0 == mysql_num_rows($result))
+      return array();
+
+    while ($row = mysql_fetch_assoc($result)) { $results[] = $row; }
+
+    return $results;
+  }
+
+  /**
+   * Returns all the results in an associative array
+   *
+   * @param resource $result The query result
+   *
+   * @return bool|array The results. Returns false if there are no results.
+   */
+  public static function valuesOneCol($result)
+  {
     if (0 == mysql_num_rows($result))
       return false;
 
-    while ($row = mysql_fetch_assoc($result)) {
-      $results[] = $row;
-    }
+    $row = mysql_fetch_assoc($result);
+    $results[] = $row[($key = key($row))];
+
+    while ($row = mysql_fetch_assoc($result)) { $results[] = $row[$key]; }
 
     return $results;
   }
@@ -130,7 +149,8 @@ class Mysql
    *
    * @return bool|mixed The result. Returns false if there are no result.
    */
-  public static function single($result){
+  public static function single($result)
+  {
     if (0 == mysql_num_rows($result))
       return false;
 

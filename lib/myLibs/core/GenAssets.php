@@ -1,5 +1,4 @@
 <?
-define('BASE_PATH', substr(__DIR__, 0, -16)); // Finit avec /
 require BASE_PATH . '/config/Routes.php';
 require BASE_PATH . '/lib/myLibs/core/Router.php';
 require_once BASE_PATH . '/config/All_Config.php';
@@ -11,7 +10,8 @@ $routes = \config\Routes::$_;
 if(isset($argv[3]))
 {
   $theRoute = $argv[3];
-  if(isset($routes[$theRoute])){
+  if(isset($routes[$theRoute]))
+  {
     echo PHP_EOL, 'Cleaning the resources cache...';
     $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
@@ -19,7 +19,8 @@ if(isset($argv[3]))
     // Cleaning the files specific to the route passed in parameter
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
-    if($mask & 1){
+    if($mask & 1)
+    {
       $file = CACHE_PATH . 'tpl/' . $shaName . '.gz';
       if(file_exists($file))
         unlink($file);
@@ -86,6 +87,9 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
 
+// helper function
+function checkShellCommand($command) { return !empty(shell_exec("$command")); }
+
 function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
 
 /**
@@ -114,7 +118,8 @@ function cleanCss($content)
 * @param string $bundlePath
 * @param array  $resources  Resources array from the defined routes of the site
 */
-function css($shaName, array $chunks, $bundlePath, array $resources){
+function css($shaName, array $chunks, $bundlePath, array $resources)
+{
   ob_start();
   loadResource($resources, $chunks, 'first_css', $bundlePath);
   loadResource($resources, $chunks, 'bundle_css', $bundlePath, '');
@@ -143,7 +148,8 @@ function css($shaName, array $chunks, $bundlePath, array $resources){
  * @param string $bundlePath
  * @param array  $resources Resources array from the defined routes of the site
  */
-function js($shaName, array $chunks, $bundlePath, array $resources){
+function js($shaName, array $chunks, $bundlePath, array $resources)
+{
   ob_start();
   loadResource($resources, $chunks, 'first_js', $bundlePath);
   loadResource($resources, $chunks, 'bundle_js', $bundlePath, '');
@@ -158,9 +164,26 @@ function js($shaName, array $chunks, $bundlePath, array $resources){
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, $allJs);
   fclose($fp);
-  // exec('gzip -f -7 ' . $pathAndFile);
-  exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
-  // exec('jamvm -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . '; gzip -f -9 ' . $pathAndFile);
+  // $pathAndFile = str_replace('/', DIRECTORY_SEPARATOR, $pathAndFile);
+  // exec('gzip -f -9 ' . $pathAndFile);
+
+  $linux = false === strpos(php_uname('s'), 'Windows');
+
+  if($linux) // If java exists use it otherwise use jamvm
+  {
+    if(empty(`which java`))
+      exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
+    else
+      exec('java -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' --type js > ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
+  }else
+  {
+    if(empty(`where java`)){echo 'TESTµµµ5555';
+      exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
+    }
+    else
+      // exec('java -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' --type js > ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile); // don't work on Windows ? I had problems with it
+    exec('java -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
+  }
   return status('JS');
 }
 
@@ -173,12 +196,13 @@ function js($shaName, array $chunks, $bundlePath, array $resources){
  * @param string      $bundlePath
  * @param string|bool $path
  */
-function loadResource(array $resources, array $chunks, $key, $bundlePath, $path = true){
+function loadResource(array $resources, array $chunks, $key, $bundlePath, $path = true)
+{
   if(isset($resources[$key]))
   {
     $type = substr(strrchr($key, '_'), 1);
     $path = $bundlePath . (($path)
-      ?  $chunks[2] . '/resources/' . $type . '/'
+      ? $chunks[2] . '/resources/' . $type . '/'
       : $path . 'resources/' . $type . '/');
 
     foreach($resources[$key] as $resource)
@@ -203,7 +227,8 @@ function loadResource(array $resources, array $chunks, $key, $bundlePath, $path 
  * @param string $route
  * @param array  $resources Resources array from the defined routes of the site
  */
-function template($shaName, $route, array $resources){
+function template($shaName, $route, array $resources)
+{
   if(!isset($resources['template']))
     return status('No TEMPLATE', 'cyan');
 

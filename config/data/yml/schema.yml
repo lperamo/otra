@@ -1,80 +1,18 @@
-# config/doctrine/schema.yml
-
-# Le type de module est comme suit:
-# 0: connexion
-# 1: menu vtcl
-# 2: menu hztl
-# 3: module article
-# 4: mailing list
-# 5: autre module
-
-# droit
-# 0: Admin
-# 1: Enregistré
-# 2: Public
-
-# dans articles
-# sum=>  la note; count => le nb de votes
-
-# parent => si c'est à -1 il n'y en a pas, sinon c'est le module concerné par l'id en question
-
-# rôle (voir la fixture pour connaître le principe du masque en détail)
-# 1: admin (peut créer des modules, menus, écrire, modifier, consulter... enfin tout quoi)
-# 2: rédacteur (peut écrire, modifier, consulter des articles)
-# 3: modérateur (peut modifier et consulter)
-# 4: utilisateur (peut juste consulter)
-
-lpcms_header:
-  columns:
-    id_header:
-      type: int
-      notnull: true
-      auto_increment: true
-      primary: true
-    fichierImage:
-      type: string(255)
-      notnull: true
-    titre:
-      type: string(255)
-      notnull: true
-
-lpcms_module:
-  columns:
-    id_module:
-      type: int
-      notnull: true
-      auto_increment: true
-      primary: true
-    type_module:
-      type: int
-      notnull: true
-    position:
-      type: int
-      notnull: true
-    ordre:
-      type: int
-      notnull: true
-    droit:
-      type: int(1)
-      notnull: true
-    contenu:
-      type: string(255)
-
-lpcms_article:
+lpcms_article: 
   columns:
     id_article:
-      type: int
+      type: int(11)
       notnull: true
       auto_increment: true
       primary: true
     fk_id_module:
-      type: int
+      type: int(11)
       notnull: true
     titre:
-      type: string(255)
+      type: varchar(255)
       notnull: true
     contenu:
-      type: string(255)
+      type: varchar(255)
       notnull: true
     droit:
       type: int(1)
@@ -83,167 +21,183 @@ lpcms_article:
       type: timestamp
       notnull: true
     cree_par:
-      type: int
+      type: int(11)
       notnull: true
     derniere_modif:
       type: timestamp
-    der_modif_par: { type: int }
-    derniere_visualisation: { type: timestamp }
-    der_visualise_par: { type: int }
+    der_modif_par:
+      type: int(11)
+    derniere_visualisation:
+      type: timestamp
+    der_visualise_par:
+      type: int(11)
     nb_vu:
-      type: int
+      type: int(11)
       notnull: true
-    date_publication: { type: timestamp }
-    meta: { type: int }
+    date_publication:
+      type: timestamp
+    meta:
+      type: int(11)
     rank_sum:
-      type: int
+      type: int(11)
       notnull: true
     rank_count:
-      type: int
+      type: int(11)
       notnull: true
-  relations:
-    lpcms_module:
-      onDelete: CASCADE
-      local: fk_id_module
-      foreign: id_module
-      constraint_name: lpcms_articles
 
-lpcms_elements_menu:
+lpcms_elements_menu: 
   columns:
     id_elementsmenu:
-      type: int
+      type: int(11)
       notnull: true
       auto_increment: true
       primary: true
     fk_id_module:
-      type: int
+      type: int(11)
       notnull: true
     fk_id_article:
-      type: int
+      type: int(11)
       notnull: true
     parent:
-      type: int
+      type: int(11)
       notnull: true
     aEnfants:
-      type: boolean
+      type: tinyint(1)
       notnull: true
     droit:
       type: int(1)
       notnull: true
     ordre:
-      type: int
+      type: int(11)
       notnull: true
     contenu:
-      type: string(255)
+      type: varchar(255)
       notnull: true
-  relations:
-    lpcms_module:
-      onDelete: CASCADE
-      local: fk_id_module
-      foreign: id_module
-      constraint_name: lpcms_elements_menus_to_module
-    lpcms_article:
-      onDelete: CASCADE
-      local: fk_id_article
-      foreign: id_article
-      constraint_name: lpcms_elements_menus_to_article
-  #default_character_set: utf8
 
-lpcms_footer:
+lpcms_footer: 
   columns:
     id_footer:
-      type: int
+      type: int(11)
       notnull: true
       auto_increment: true
       primary: true
     fichierImage:
-      type: string(255)
+      type: varchar(255)
+      notnull: true
       primary: true
     texte:
-      type: string(255)
+      type: varchar(255)
+      notnull: true
       primary: true
 
-lpcms_mailing_list:
+lpcms_header: 
+  columns:
+    id_header:
+      type: int(11)
+      notnull: true
+      auto_increment: true
+      primary: true
+    fichierImage:
+      type: varchar(255)
+      notnull: true
+    titre:
+      type: varchar(255)
+      notnull: true
+
+lpcms_mailing_list: 
   columns:
     id_mailing_list:
-      type: int
+      type: int(11)
       notnull: true
       auto_increment: true
       primary: true
     name:
-      type: string(60)
+      type: varchar(60)
       notnull: true
     descr:
-      type: string(255)
+      type: varchar(255)
 
-lpcms_mailing_list_user:
+lpcms_mailing_list_user: 
   columns:
     fk_id_mailing_list:
-      type: int
+      type: int(11)
       notnull: true
       primary: true
     fk_id_user:
-      type: int
+      type: int(11)
       notnull: true
       primary: true
-  relations:
-    lpcms_mailing_list:
-      onDelete: CASCADE
-      local: fk_id_mailing_list
-      foreign: id_mailing_list
-      constraint_name: lpcms_mailing_list_user_to_mailing_list
-    lpcms_user:
-      local: fk_id_user
-      foreign: id_user
-      constraint_name: lpcms_mailing_list_user_to_user
 
-lpcms_user:
+lpcms_module: 
+  columns:
+    id_module:
+      type: int(11)
+      notnull: true
+      auto_increment: true
+      primary: true
+    type_module:
+      type: int(11)
+      notnull: true
+    position:
+      type: int(11)
+      notnull: true
+    ordre:
+      type: int(11)
+      notnull: true
+    droit:
+      type: int(1)
+      notnull: true
+    contenu:
+      type: varchar(255)
+
+lpcms_role: 
+  columns:
+    id_role:
+      type: int(11)
+      notnull: true
+      auto_increment: true
+      primary: true
+    mask:
+      type: int(11)
+      notnull: true
+    nom:
+      type: varchar(255)
+      notnull: true
+
+lpcms_user: 
   columns:
     id_user:
-      type: int
+      type: int(11)
       notnull: true
-      primary: true
       auto_increment: true
+      primary: true
     mail:
-      type: string(255)
+      type: varchar(255)
       notnull: true
     pwd:
-      type: string(40)
+      type: varchar(40)
       notnull: true
     pseudo:
-      type: string(255)
+      type: varchar(255)
       notnull: true
 
-lpcms_user_role:
+lpcms_user_role: 
   columns:
     fk_id_user:
-      type: int
+      type: int(11)
       notnull: true
       primary: true
     fk_id_role:
-      type: int
+      type: int(11)
       notnull: true
       primary: true
   relations:
-    lpcms_user:
-      local: fk_id_user
-      foreign: id_user
-      constraint_name: lpcms_user_role_to_user
     lpcms_role:
       local: fk_id_role
       foreign: id_role
-      constraint_name: lpcms_user_role_to_role
+      constraint_name: fk_user_role_to_role
+    lpcms_user:
+      local: fk_id_user
+      foreign: id_user
+      constraint_name: fk_user_role_to_user
 
-lpcms_role:
-  columns:
-    id_role:
-      type: int
-      notnull: true
-      primary: true
-      auto_increment: true
-    mask:
-      type: int
-      notnull: true
-    nom:
-      type: string(255)
-      notnull: true

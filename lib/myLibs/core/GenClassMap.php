@@ -5,7 +5,8 @@
 $dirs = array('bundles', 'config', 'lib');
 $classes = array();
 $processedDir = 0;
-foreach ($dirs as $dir){
+
+foreach ($dirs as $dir) {
   list($classes, $processedDir) = iterateCM($classes, ROOTPATH . $dir, $processedDir);
 }
 
@@ -25,8 +26,10 @@ return;
 
 function iterateCM($classes, $dir, $processedDir)
 {
-  if ($handle = opendir($dir)) {
-      while (false !== ($entry = readdir($handle))) {
+  if ($handle = opendir($dir))
+  {
+      while (false !== ($entry = readdir($handle)))
+      {
         // We check that we process interesting things
         if('.' == $entry || '..' == $entry)
           continue;
