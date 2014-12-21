@@ -53,6 +53,6 @@ if (method_exists('lib\myLibs\core\Tasks', $argv[1]) && method_exists('lib\myLib
 
   // And we runs the task if all is correct
   lib\myLibs\core\Tasks_Manager::execute($argv[1], $argv);
-}else
+} else
   lib\myLibs\core\Tasks_Manager::showCommands('This command doesn\'t exist. ');
 ?>

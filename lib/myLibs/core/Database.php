@@ -173,7 +173,7 @@ class Database
 
       if($add)
       {
-        $tables[] = $key;
+        $tables[$key] = $key;
         unset($nextArrayToSort[$key]);
       }
     }
@@ -183,7 +183,7 @@ class Database
     /* Fix for the "recursive" tables */
     if($oldCountArrayToSort == $countArrayToSort)
     {
-      $tables[] = $key;
+      $tables[$key] = $key;
       return true;
     }
 
@@ -452,7 +452,7 @@ class Database
         $primaryKeys = array();
         $defaultCharacterSet = '';
 
-        /** TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
+        /** @TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
         $tableSql[$table] = 'DROP TABLE IF EXISTS `' . $table . '`;' . PHP_EOL . 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
 
         // For each kind of data (columns, indexes, etc.)
@@ -474,12 +474,13 @@ class Database
               if('' != self::getAttr('primary'))
                 $primaryKeys[] = $attribute;
             }
-          }else if('relations' == $property)
+          } else if('relations' == $property)
           {
             foreach ($attributes as $otherTable => $attribute)
             {
               // Management of 'ON DELETE XXXX'
               $onDelete = '';
+
               if(isset($attribute['onDelete']))
                 $onDelete = '  ON DELETE '.strtoupper ($attribute['onDelete']);
 
@@ -489,14 +490,13 @@ class Database
                 . $onDelete . ';' . PHP_EOL;
             }
 
-          }else if('indexes' == $property)
+          } else if('indexes' == $property)
           {
-
-          }else if('default_character_set' == $property)
-          {
+            /** @TODO Manage the indexes part */
+          } else if('default_character_set' == $property)
             $defaultCharacterSet = $attributes;
-          }
         }
+
         unset($property, $attributes, $informations, $otherTable, $attribute);
 
         if(empty($primaryKeys))
@@ -506,28 +506,53 @@ class Database
           $primaries = '`';
           foreach ($primaryKeys as $primaryKey)
           {
-            $primaries .= $primaryKey.'`, `';
+            $primaries .= $primaryKey . '`, `';
           }
 
-          $tableSql[$table] .= '  PRIMARY KEY(' . substr($primaries, 0, -3) . ') '. PHP_EOL;
+          $tableSql[$table] .= '  PRIMARY KEY(' . substr($primaries, 0, -3) . ')';
         }
+
         unset($primaries, $primaryKey);
-        $tableSql[$table] .= ('' == $defaultCharacterSet) ? ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet;
+
+        if($hasRelations = isset($properties['relations']))
+        {
+          foreach($properties['relations'] as $key => $relation)
+          {
+            if(!isset($relation['local']))
+            {
+              echo 'You don\'t have specified a local key for the constraint concerning table ' . $key;
+              die;
+            }
+
+            if(!isset($relation['foreign']))
+            {
+              echo 'You don\'t have specified a foreign key for the constraint concerning table ' . $key;
+              die;
+            }
+
+            $tableSql[$table] .= ',' . PHP_EOL .'  CONSTRAINT ' . (isset($relation['constraint_name']) ? $relation['constraint_name'] : $relation['local'] . '_to_' . $relation['foreign']) .
+             ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $key . '(' . $relation['foreign'] . ')';
+          }
+        }
+
+        $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
 
         $tableSql[$table] .= ';' . PHP_EOL . PHP_EOL;
 
         // Sort the tables by foreign keys associations
-        if(isset($properties['relations']))
+        if($hasRelations)
           $theOtherTables[$table] = $schema[$table];
         else
           $sortedTables[] = $table;
       }
+
       //$sql .= $constraints. PHP_EOL. 'SET FOREIGN_KEY_CHECKS = 1;' . PHP_EOL;
 
       self::_sortTableByForeignKeys($theOtherTables, $sortedTables);
 
       $tablesOrder = '';
       $storeSortedTables = ($force || !file_exists(self::$tablesOrderFile));
+
       foreach($sortedTables as $sortedTable)
       {
         // We store the names of the sorted tables into a file in order to use it later
@@ -543,7 +568,7 @@ class Database
         fwrite($fp, $tablesOrder);
         fclose($fp);
 
-        echo '\'Tables order\' file created.' , PHP_EOL;
+        echo '\'Tables order\' file created.', PHP_EOL;
       }
 
       $fp = fopen($dbFile, 'w');

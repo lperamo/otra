@@ -61,7 +61,7 @@ class Tasks
   }
 
   /** (sql_generate_basic) Database creation, tables creation. */
-  public static function sql_gb($argv)
+  public static function sql_gdb($argv)
   {
     Database::init();
 
@@ -71,7 +71,7 @@ class Tasks
       Database::createDatabase($argv[2]);
   }
 
-  public static function sql_gbDesc()
+  public static function sql_gdbDesc()
   {
     return array(
       'Database creation, tables creation.(sql_generate_basic)',
