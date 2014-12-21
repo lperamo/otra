@@ -41,6 +41,7 @@ if(false !== ($posDot = strpos($uri, '.')))
   die;
 }
 
+
 define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 session_start();
@@ -51,7 +52,7 @@ else // mode Prod
 {
   if(isset($_SESSION['debuglp_'])) unset($_SESSION['debuglp_']);
 
-  require BASE_PATH . '/cache/php/RouteManagement.php';
+  require BASE_PATH . 'cache/php/RouteManagement.php';
 
   if($route = \cache\php\Router::getByPattern($uri))
   {
