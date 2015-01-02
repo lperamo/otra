@@ -35,8 +35,8 @@ class indexController extends Controller
     $db->selectDb();
 
     // Retrieving headers and footers
-    $db->values($db->query('SELECT * FROM lpcms_header'));
-    $db->values($db->query('SELECT * FROM lpcms_footer'));
+    $_SESSION['headers'] = $db->values($db->query('SELECT * FROM lpcms_header'));
+    $_SESSION['footers'] = $db->values($db->query('SELECT * FROM lpcms_footer'));
 
     echo $this->renderView('index.phtml', array(
       'headers' => $_SESSION['headers'],

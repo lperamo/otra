@@ -4,7 +4,8 @@
     color: #355F59;
     display: inline-block;
     font-family:Arial,Helvetica,Sans-Serif;
-    font-size: 0.825em
+    font-size: 0.825em;
+    padding-right: 20px;
 }
 
 #logout{
@@ -42,8 +43,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     color: rgba(0, 0, 0, 0.8);
-    float:left;
-    margin-right:10px;
+    cursor: pointer;
     padding: 3px 5px;
     font-size: 0.875em
 }

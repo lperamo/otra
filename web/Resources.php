@@ -15,32 +15,31 @@ if(false !== ($posDot = strpos($uri, '.')))
   $ext = substr($uri, $posDot + 1);
   if(isset($_SERVER['HTTP_REFERER']))
   {
-      if('gz' == $ext)
-      {
-        if(false !== strpos($uri, 'css'))
-          header('Content-type:  text/css');
-        else if(false !== strpos($uri, 'js'))
-          header('Content-type: application/javascript');
-        else
-          header('Content-type: text/html; charset=utf-8');
+    if('gz' == $ext)
+    {
+      if(false !== strpos($uri, 'css'))
+        header('Content-type:  text/css');
+      else if(false !== strpos($uri, 'js'))
+        header('Content-type: application/javascript');
+      else
+        header('Content-type: text/html; charset=utf-8');
 
-        header('Content-Encoding: gzip');
-      } else {
-        switch($ext) {
-          case 'css': header('Content-type:  text/css'); break;
-          case 'js': header('Content-type: application/javascript'); break;
-          case 'woff': header('Content-type: application/x-font-woff');
-        }
+      header('Content-Encoding: gzip');
+    } else {
+      switch($ext) {
+        case 'css': header('Content-type:  text/css'); break;
+        case 'js': header('Content-type: application/javascript'); break;
+        case 'woff': header('Content-type: application/x-font-woff');
       }
+    }
 
-      die(file_get_contents(str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)));
+    die(file_get_contents(str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH2 . $uri)));
   }
 
   // User can't see a resource directly so => 404
   header('HTTP/1.0 404 Not Found');
   die;
 }
-
 
 define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
@@ -58,6 +57,7 @@ else // mode Prod
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');
+
     // if static
     if('cli' != PHP_SAPI && isset(\cache\php\Routes::$_[$route[0]]['resources']['template']))
     {
@@ -68,9 +68,9 @@ else // mode Prod
     define('XMODE', 'prod');
 
     function t($texte){ echo $texte; }
-
     // Init' the database and loads the found route
-    call_user_func('\\bundles\\' . \cache\php\Routes::$default['bundle'] . '\\Init::Init');
+    // call_user_func('bundles\\' . \cache\php\Routes::$default['bundle'] . '\\Init::Init');
+    call_user_func('\cache\php\Init::Init');
     require BASE_PATH . 'cache/php/' . $route[0] . '.php';
     \cache\php\Router::get($route[0], $route[1]);
   }

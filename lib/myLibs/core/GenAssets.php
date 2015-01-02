@@ -1,8 +1,7 @@
 <?
 require BASE_PATH . '/config/Routes.php';
-require BASE_PATH . '/lib/myLibs/core/Router.php';
 require_once BASE_PATH . '/config/All_Config.php';
-require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
+// require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
 
 $routes = \config\Routes::$_;
 
@@ -12,7 +11,7 @@ if(isset($argv[3]))
   $theRoute = $argv[3];
   if(isset($routes[$theRoute]))
   {
-    echo PHP_EOL, 'Cleaning the resources cache...';
+    echo 'Cleaning the resources cache...';
     $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
     $routes = array($theRoute => $routes[$theRoute]);
@@ -39,7 +38,7 @@ if(isset($argv[3]))
       if(file_exists($file))
         unlink($file);
     }
-    echo green(), ' OK', PHP_EOL, endColor();
+    echo lightGreen(), ' OK', PHP_EOL, endColor();
   } else
     dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
 }else
@@ -56,19 +55,22 @@ if(isset($argv[3]))
   if(($mask & 4) >> 2)
     array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
 
-  echo green(), ' OK', PHP_EOL, endColor();
+  echo lightGreen(), ' OK', PHP_EOL, endColor();
 }
 
 $cptRoutes = count($routes);
 
-echo $cptRoutes , ' route(s) to process. Processing the route(s) ... ' . PHP_EOL;
-for($i = 0; $i < $cptRoutes; $i += 1){
+echo $cptRoutes , ' route(s) to process. Processing the route(s) ... ' . PHP_EOL . PHP_EOL;
+
+for($i = 0; $i < $cptRoutes; $i += 1)
+{
   $route = current($routes);
   $name = key($routes);
   next($routes);
-  echo lightBlue(), str_pad($name, 25, ' '), lightGray();
-  if(!isset($route['resources'])){
-    echo status('Nothing to do', 'cyan'), ' =>', green(), ' OK', endColor(), PHP_EOL;
+  echo lightCyan(), str_pad($name, 25, ' '), lightGray();
+
+  if(!isset($route['resources'])) {
+    echo status('Nothing to do', 'cyan'), ' =>', lightGreen(), ' OK', endColor(), PHP_EOL;
     continue;
   }
 
@@ -84,13 +86,13 @@ for($i = 0; $i < $cptRoutes; $i += 1){
   if($mask & 1)
     echo template($shaName, $name, $resources);
 
-  echo ' => ', green(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
+  echo ' => ', lightGreen(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
 }
 
 // helper function
 function checkShellCommand($command) { return !empty(shell_exec("$command")); }
 
-function status($status, $color = 'green'){ return ' [' . $color() . $status . lightGray(). ']'; }
+function status($status, $color = 'lightGreen'){ return ' [' . $color() . $status . lightGray(). ']'; }
 
 /**
  * Cleans the css (spaces and comments)
@@ -164,27 +166,26 @@ function js($shaName, array $chunks, $bundlePath, array $resources)
   $fp = fopen($pathAndFile, 'w');
   fwrite($fp, $allJs);
   fclose($fp);
-  // $pathAndFile = str_replace('/', DIRECTORY_SEPARATOR, $pathAndFile);
-  // exec('gzip -f -9 ' . $pathAndFile);
 
-  $linux = false === strpos(php_uname('s'), 'Windows');
-
-  if($linux) // If java exists use it otherwise use jamvm
+  // Linux or Windows ? We have java or jamvm ?
+  if(false === strpos(php_uname('s'), 'Windows'))
   {
-    if(empty(`which java`))
+    if(empty(exec('which java')))
+    {
       exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
-    else
-      exec('java -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' --type js > ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
-  }else
-  {
-    if(empty(`where java`)){echo 'TESTµµµ5555';
-      exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
+      return status('JS');
     }
-    else
-      // exec('java -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' --type js > ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile); // don't work on Windows ? I had problems with it
-    exec('java -Xmx32m -jar ../lib/compiler.jar --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
+  } else
+  {
+    if(empty(exec('where java')))
+    {
+      exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
+      return status('JS');
+    }
   }
-  return status('JS');
+
+  /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
 }
 
 /**
@@ -232,11 +233,17 @@ function template($shaName, $route, array $resources)
   if(!isset($resources['template']))
     return status('No TEMPLATE', 'cyan');
 
+  // We don't allow errors shown on production !
+  $oldErrorReporting = error_reporting();
+  error_reporting(0);
+
   ob_start();
   call_user_func('bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init');
 
   \lib\myLibs\core\Router::get($route);
   $content = ob_get_clean();
+
+  error_reporting($oldErrorReporting);
 
   $pathAndFile = CACHE_PATH . 'tpl/' . $shaName;
   $fp = fopen($pathAndFile, 'w');

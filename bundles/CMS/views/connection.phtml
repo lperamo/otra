@@ -1,21 +1,21 @@
 <form id="connectionForm" <? if($connCenter){ ?>class="tcenter" data-href_redirect="/backend/modules/"<? } ?>data-href="/ajaxConnection/ajaxLogin">
   <div id="connection" class="modulePadding">
     <label for="email" class="label fl">Email</label>
-    <input id="email" type="email" class="input" autocomplete="on" placeholder="Type your email here" required="required" />
+    <input id="email" type="email" class="fl input" autocomplete="on" placeholder="Type your email here" required="required" />
     <div class="clearBoth"></div>
 
     <label for="password" class="label fl">Password</label>
-    <input type="password" id="pwd" class="input" required="required" placeholder="Type your password here" />
+    <input type="password" id="pwd" class="fl input" required="required" placeholder="Type your password here" />
     <div class="clearBoth"></div>
 
     <label for="souvenir" class="label2 fl">Memorizes the mail</label>
-    <input type="checkbox" id="souvenir" class="input" />
+    <input type="checkbox" id="souvenir" class="fl input" />
 
     <div class="clearBoth"></div>
     <p id="connection_info" class="fl">&nbsp;&nbsp;</p>
     <div class="clearBoth"></div>
 
-    <input id="connection_submit" type="submit" class="button fr" value="Send" />
+    <input id="connection_submit" type="submit" class="input button fr" value="Send" />
     <div class="clearBoth"></div>
   </div>
 </form>

@@ -8,7 +8,7 @@ namespace bundles\CMS\backend\controllers;
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
     lib\myLibs\core\Session,
-    config\Router;
+    lib\myLibs\core\Router;
 
 class ajaxModulesController extends Controller
 {

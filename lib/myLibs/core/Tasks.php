@@ -19,9 +19,9 @@ class Tasks
 
   public static function ccDesc() { return array('Clears the cache'); }
 
-  public static function crypt(){
+  public static function crypt($argv) {
     require '../config/All_Config.php';
-    echo crypt($pwd, FWK_HASH), PHP_EOL;
+    echo crypt($argv[2], FWK_HASH), PHP_EOL;
   }
 
   public static function cryptDesc()
@@ -179,8 +179,9 @@ class Tasks
       'Launch the genClassMap command and generates a file that contains all the necessary php files.',
       array(
         'genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.',
+        'verbose' => 'If set to 1, we print all the warnings when the task fails.',
         'route' => 'The route for which you want to generate the micro bootstrap.'),
-      array('optional', 'optional')
+      array('optional', 'optional', 'optional')
     );
   }
 }

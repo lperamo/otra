@@ -1,10 +1,11 @@
 - lpcms_article
-- lpcms_elements_menu
 - lpcms_footer
 - lpcms_header
 - lpcms_mailing_list
-- lpcms_mailing_list_user
 - lpcms_module
 - lpcms_role
+- lpcms_elements_menu
 - lpcms_user
 - lpcms_user_role
+- lpcms_bind_em_module
+- lpcms_mailing_list_user

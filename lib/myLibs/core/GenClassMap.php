@@ -20,7 +20,7 @@ $fp = fopen(ROOTPATH . 'cache/php/ClassMap.php', 'w');
 fwrite($fp, '<? $classMap = ' . substr(str_replace(array('\\\\', ' ', "\n"), array('\\', '', ''), $classMap), 0, -2) . ');?>');
 fclose($fp);
 
-echo green() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;
+echo lightGreen() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;
 echo print_r($classMap, true), PHP_EOL;
 return;
 
@@ -34,7 +34,7 @@ function iterateCM($classes, $dir, $processedDir)
         if('.' == $entry || '..' == $entry)
           continue;
 
-        $_entry = $dir . DS . $entry;
+        $_entry = $dir . '/' . $entry;
 
         // recursively...
         if(is_dir($_entry))
@@ -45,7 +45,8 @@ function iterateCM($classes, $dir, $processedDir)
         if('.php' != (substr($entry, $posDot) ))
           continue;
 
-        $classes[substr(str_replace('/', '\\', $dir), strlen(ROOTPATH)) . '\\' . substr($entry, 0, $posDot)] = $_entry;
+        // var_dump($_entry, ' * ', realpath($_entry) . PHP_EOL);
+        $classes[substr(str_replace('/', '\\', $dir), strlen(ROOTPATH)) . '\\' . substr($entry, 0, $posDot)] = str_replace('\\', '/',realpath($_entry)); // we calculate the shortest string of path with realpath and str_replace function
       }
       closedir($handle);
       $processedDir += 1;

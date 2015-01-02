@@ -4,8 +4,7 @@ USE lpcms;
 
 DROP TABLE IF EXISTS `lpcms_article`;
 CREATE TABLE `lpcms_article` (
-  `id_article` INT(11) NOT NULL AUTO_INCREMENT,
-  `fk_id_module` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `titre` VARCHAR(255) NOT NULL,
   `contenu` VARCHAR(255) NOT NULL,
   `droit` INT(1) NOT NULL,
@@ -20,20 +19,7 @@ CREATE TABLE `lpcms_article` (
   `meta` INT(11),
   `rank_sum` INT(11) NOT NULL,
   `rank_count` INT(11) NOT NULL,
-  PRIMARY KEY(`id_article`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
-
-DROP TABLE IF EXISTS `lpcms_elements_menu`;
-CREATE TABLE `lpcms_elements_menu` (
-  `id_elementsmenu` INT(11) NOT NULL AUTO_INCREMENT,
-  `fk_id_module` INT(11) NOT NULL,
-  `fk_id_article` INT(11) NOT NULL,
-  `parent` INT(11) NOT NULL,
-  `aEnfants` TINYINT(1) NOT NULL,
-  `droit` INT(1) NOT NULL,
-  `ordre` INT(11) NOT NULL,
-  `contenu` VARCHAR(255) NOT NULL,
-  PRIMARY KEY(`id_elementsmenu`)
+  PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 DROP TABLE IF EXISTS `lpcms_footer`;
@@ -60,22 +46,15 @@ CREATE TABLE `lpcms_mailing_list` (
   PRIMARY KEY(`id_mailing_list`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
-DROP TABLE IF EXISTS `lpcms_mailing_list_user`;
-CREATE TABLE `lpcms_mailing_list_user` (
-  `fk_id_mailing_list` INT(11) NOT NULL,
-  `fk_id_user` INT(11) NOT NULL,
-  PRIMARY KEY(`fk_id_mailing_list`, `fk_id_user`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
-
 DROP TABLE IF EXISTS `lpcms_module`;
 CREATE TABLE `lpcms_module` (
-  `id_module` INT(11) NOT NULL AUTO_INCREMENT,
-  `type_module` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `type` INT(11) NOT NULL,
   `position` INT(11) NOT NULL,
   `ordre` INT(11) NOT NULL,
   `droit` INT(1) NOT NULL,
   `contenu` VARCHAR(255),
-  PRIMARY KEY(`id_module`)
+  PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 DROP TABLE IF EXISTS `lpcms_role`;
@@ -86,13 +65,27 @@ CREATE TABLE `lpcms_role` (
   PRIMARY KEY(`id_role`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
+DROP TABLE IF EXISTS `lpcms_elements_menu`;
+CREATE TABLE `lpcms_elements_menu` (
+  `id` INT(11) NOT NULL,
+  `fk_id_article` INT(11) NOT NULL,
+  `parent` INT(11) NOT NULL,
+  `aEnfants` TINYINT(1) NOT NULL,
+  `droit` INT(1) NOT NULL,
+  `contenu` VARCHAR(255) NOT NULL,
+  PRIMARY KEY(`id`),
+  CONSTRAINT lpcms_elements_menu_ibfk_2 FOREIGN KEY (fk_id_article) REFERENCES lpcms_article(id)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
 DROP TABLE IF EXISTS `lpcms_user`;
 CREATE TABLE `lpcms_user` (
   `id_user` INT(11) NOT NULL AUTO_INCREMENT,
   `mail` VARCHAR(255) NOT NULL,
-  `pwd` VARCHAR(40) NOT NULL,
+  `pwd` VARCHAR(60) NOT NULL,
   `pseudo` VARCHAR(255) NOT NULL,
-  PRIMARY KEY(`id_user`)
+  `role_id` INT(11),
+  PRIMARY KEY(`id_user`),
+  CONSTRAINT lpcms_user_role FOREIGN KEY (role_id) REFERENCES lpcms_role(id_role)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 DROP TABLE IF EXISTS `lpcms_user_role`;
@@ -100,7 +93,25 @@ CREATE TABLE `lpcms_user_role` (
   `fk_id_user` INT(11) NOT NULL,
   `fk_id_role` INT(11) NOT NULL,
   PRIMARY KEY(`fk_id_user`, `fk_id_role`),
-  CONSTRAINT fk_user_role_to_role_dfgdfg FOREIGN KEY (fk_id_role) REFERENCES lpcms_role(id_role),
-  CONSTRAINT fk_user_role_to_user FOREIGN KEY (fk_id_user) REFERENCES lpcms_user(id_user)
+  CONSTRAINT lpcms_user_role_ibfk_1 FOREIGN KEY (fk_id_role) REFERENCES lpcms_role(id_role)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
+DROP TABLE IF EXISTS `lpcms_bind_em_module`;
+CREATE TABLE `lpcms_bind_em_module` (
+  `fk_id_module` INT(11) NOT NULL,
+  `fk_id_elements_menu` INT(11) NOT NULL,
+  `ordre` INT(11) NOT NULL,
+  PRIMARY KEY(`fk_id_module`, `fk_id_elements_menu`),
+  CONSTRAINT fk_bemm_module0 FOREIGN KEY (fk_id_module) REFERENCES lpcms_module(id),
+  CONSTRAINT fk_bemm_article0 FOREIGN KEY (fk_id_elements_menu) REFERENCES lpcms_elements_menu(id)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
+
+DROP TABLE IF EXISTS `lpcms_mailing_list_user`;
+CREATE TABLE `lpcms_mailing_list_user` (
+  `fk_id_mailing_list` INT(11) NOT NULL,
+  `fk_id_user` INT(11) NOT NULL,
+  PRIMARY KEY(`fk_id_mailing_list`, `fk_id_user`),
+  CONSTRAINT lpcms_mailing_list_user_ibfk_1 FOREIGN KEY (fk_id_mailing_list) REFERENCES lpcms_mailing_list(id_mailing_list),
+  CONSTRAINT lpcms_mailing_list_user_ibfk_2 FOREIGN KEY (fk_id_user) REFERENCES lpcms_user(id_user)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 

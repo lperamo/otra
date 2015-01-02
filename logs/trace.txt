@@ -1,0 +1,50 @@
+[2014-12-24T15:22:07+01:00] [2014-12-24T15:22:07+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:22:07+01:00] [2014-12-24T15:22:07+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:22:07+01:00] [2014-12-24T15:22:07+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:22:07+01:00] [2014-12-24T15:22:07+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:25:28+01:00] [2014-12-24T15:25:28+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:25:28+01:00] [2014-12-24T15:25:28+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:25:28+01:00] [2014-12-24T15:25:28+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:25:28+01:00] [2014-12-24T15:25:28+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:25:39+01:00] [2014-12-24T15:25:39+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:25:39+01:00] [2014-12-24T15:25:39+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:25:39+01:00] [2014-12-24T15:25:39+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:25:39+01:00] [2014-12-24T15:25:39+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:33:50+01:00] [2014-12-24T15:33:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:33:50+01:00] [2014-12-24T15:33:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:33:50+01:00] [2014-12-24T15:33:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:33:50+01:00] [2014-12-24T15:33:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:33:55+01:00] [2014-12-24T15:33:55+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:33:55+01:00] [2014-12-24T15:33:55+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:33:55+01:00] [2014-12-24T15:33:55+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:33:55+01:00] [2014-12-24T15:33:55+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:33:57+01:00] [2014-12-24T15:33:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [] Patt : 
+[2014-12-24T15:33:57+01:00] [2014-12-24T15:33:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:33:57+01:00] [2014-12-24T15:33:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:33:57+01:00] [2014-12-24T15:33:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/exception.phtml
+[2014-12-24T15:41:50+01:00] [2014-12-24T15:41:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:41:50+01:00] [2014-12-24T15:41:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:41:50+01:00] [2014-12-24T15:41:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : C:/wamp/www/SpaceHulk/framework-cms//bundles/CMS/backend/views/index/index.phtml
+[2014-12-24T15:41:50+01:00] [2014-12-24T15:41:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [backend] Patt : /backend
+[2014-12-24T15:41:50+01:00] [2014-12-24T15:41:50+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:41:51+01:00] [2014-12-24T15:41:51+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:41:51+01:00] [2014-12-24T15:41:51+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : C:/wamp/www/SpaceHulk/framework-cms//bundles/CMS/frontend/views/article/show.phtml
+[2014-12-24T15:41:51+01:00] [2014-12-24T15:41:51+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [index] Patt : /
+[2014-12-24T15:41:57+01:00] [2014-12-24T15:41:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:41:57+01:00] [2014-12-24T15:41:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:41:57+01:00] [2014-12-24T15:41:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : C:/wamp/www/SpaceHulk/framework-cms//bundles/CMS/backend/views/index/index.phtml
+[2014-12-24T15:41:57+01:00] [2014-12-24T15:41:57+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [backend] Patt : /backend
+[2014-12-24T15:44:34+01:00] [2014-12-24T15:44:34+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	Ajax : false
+[2014-12-24T15:44:34+01:00] [2014-12-24T15:44:34+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : ../lib/myLibs/core/views/layout.phtml
+[2014-12-24T15:44:34+01:00] [2014-12-24T15:44:34+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 	File : C:/wamp/www/SpaceHulk/framework-cms//bundles/CMS/backend/views/index/index.phtml
+[2014-12-24T15:44:34+01:00] [2014-12-24T15:44:34+01:00] [127.0.0.1] [Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0] 
+	Route [backend] Patt : /backend

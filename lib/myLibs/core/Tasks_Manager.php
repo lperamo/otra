@@ -15,6 +15,7 @@ class Tasks_Manager
    */
   public static function showCommands($message)
   {
+    echo file_get_contents('LICENSE2.txt'), endColor(), PHP_EOL;
     echo PHP_EOL, lightRed(), $message, lightGray(), PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '- ', white(), str_pad('no argument', 25, ' '), lightGray();
     echo ': ', cyan(), 'Shows the available commands.', PHP_EOL, PHP_EOL;
@@ -46,13 +47,7 @@ class Tasks_Manager
     echo endColor();
   }
 
-  /**
-   * Executes a function depending on the type of the command
-   *
-   * @param string $command The command name
-   * @param array  $argv    The arguments to pass
-   */
-  public static function execute($command, array $argv)
+  public static function execute($task, array $argv)
   {
     if(!file_exists(ROOTPATH . 'cache/php/ClassMap.php'))
     {
@@ -62,7 +57,7 @@ class Tasks_Manager
 
     require_once ROOTPATH . 'cache/php/ClassMap.php';
     spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
-    Tasks::$command($argv);
+    Tasks::$task($argv);
   }
 }
 ?>

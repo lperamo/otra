@@ -1,4 +1,4 @@
-<?php
+<?
 /**
  * Initialisation class
  *
@@ -7,7 +7,7 @@
 namespace bundles\CMS;
 
 use lib\myLibs\core\Session,
-	lib\myLibs\core\bdd\Sql;
+	  lib\myLibs\core\bdd\Sql;
 
 class Init
 {
@@ -16,3 +16,4 @@ class Init
     Session::set('dbConn', Sql::getDB('Mysql'));
   }
 }
+?>
