@@ -1,4 +1,8 @@
 <?
+$verbose = $argv[1];
+$route = $argv[2];
+echo $route;
+
 define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, -15)); // Fixes windows awful __DIR__, BASE_PATH ends with /
 define('XMODE', 'dev');
 
@@ -14,15 +18,10 @@ require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
 require BASE_PATH . 'lib/myLibs/core/Session.php';
 require BASE_PATH . 'lib/myLibs/core/bdd/Sql.php';
 
-$verbose = $argv[1];
-$route = $argv[2];
 $params = \config\Routes::$_[$route];
 
 $_SESSION['bootstrap'] = 1; // in order to not really make BDD requests !
-
-// We save the previous state of dev/prod mode
-$_SESSION['debuglp_'] = 'Dev';
-
+$_SESSION['debuglp_'] = 'Dev';// We save the previous state of dev/prod mode
 $_SESSION['filesToConcat'] = array();
 
 // Force to show all errors
@@ -38,8 +37,6 @@ spl_autoload_register(function($className) use($classMap)
 
 $_SESSION['filesToConcat'][] = BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
 $_SERVER['REMOTE_ADDR'] = 'console'; // in order to pass some conditions;
-
-echo $route;
 
 // Preparation of default parameters for the routes
 $chunks = $params['chunks'];

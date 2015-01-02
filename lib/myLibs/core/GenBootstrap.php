@@ -1,6 +1,7 @@
 <?
 // We generate the class mapping file if we need it.
-if(!(isset($argv[2]) && '0' == $argv[2])) {
+if(!(isset($argv[2]) && '0' == $argv[2]))
+{
   require('GenClassMap.php');
   echo PHP_EOL;
   require BASE_PATH . '/cache/php/ClassMap.php'; // on recharge la classmap que si elle a été modifiée.
@@ -32,7 +33,7 @@ if(isset($argv[4]))
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
-foreach($routes as $route => $params)
+foreach(array_keys($routes) as $route)
 {
   passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
 }

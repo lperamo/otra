@@ -20,7 +20,6 @@ function compressPHPFile($fileToCompress, $outputFile)
   $fp = fopen($outputFile . '.php', 'w');
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
   fwrite($fp, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
-  // fwrite($fp, file_get_contents($fileToCompress));
   fclose($fp);
   unlink($fileToCompress);
 }
