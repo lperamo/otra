@@ -9,7 +9,8 @@ namespace bundles\CMS\backend\controllers;
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
     lib\myLibs\core\Session,
-    lib\myLibs\core\Router;
+    lib\myLibs\core\Router,
+    bundles\CMS\services\userServices;
 
 class indexController extends Controller
 {
@@ -91,6 +92,7 @@ class indexController extends Controller
 
   public function usersAction()
   {
+    // list($users, $count) = userServices::getUsersTab();
     $db = Session::get('dbConn');
     $db->selectDb();
 

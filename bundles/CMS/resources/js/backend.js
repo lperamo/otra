@@ -38,7 +38,12 @@
             ajaxLink,
             function(response)
             {
-              $('#content').append(response);
+              try {
+                  response = JSON.parse(response);
+                  document.getElementsByTagName("html")[0].innerHTML = response.msg;
+              } catch (e) {
+                  $('#content').append(response);
+              }
               $('title').text(title);
               tabs += Math.pow(2, index);
               changeTab($this, index);

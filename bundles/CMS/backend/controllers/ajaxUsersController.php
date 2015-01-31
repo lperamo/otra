@@ -1,5 +1,6 @@
 <?
-/** Backend of the LPCMS
+/**
+* Backend of the LPCMS
  *
  * @author Lionel Péramo */
 
@@ -12,24 +13,27 @@ use lib\myLibs\core\Controller,
 
 class ajaxUsersController extends Controller
 {
-  public function preExecute(){
+  public function preExecute()
+  {
     if($this->action != 'index' && !isset($_SESSION['sid'])) {
       Router::get('backend');
       die;
     }
   }
 
-  public function indexAction(){
+  /** Called when we click on tab 'users', if it's not already loaded */
+  public function indexAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
     // Retrieving the users
-    $users = $db->values($db->query(
-      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.fk_id_role = r.id_role
-      ORDER BY id_user
-      LIMIT 3'
-    ));
+     $users = $db->values($db->query(
+       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
+       INNER JOIN lpcms_role r ON u.role_id = r.id_role
+       ORDER BY id_user
+       LIMIT 3'
+     ));
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
