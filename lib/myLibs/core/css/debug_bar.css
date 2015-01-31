@@ -5,7 +5,6 @@
 #dbgBar
 {
     background: rgba(51, 51, 51, 0.8);
-    border-top: solid #DDD 1px;
     box-shadow:  0 0 10px rgba(51, 51, 51, 0.8), 0 0 10px 0 #000;
     color: #eee;
     font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
@@ -35,9 +34,10 @@
     float:right;
     margin-right:10px;
     text-shadow: 0 0 1px #0B255E;
+    transition: .25s
 }
 
-#toggle:hover,#toggleSmall:hover { text-shadow: 0 0 1px #0B255E, 0 0 8px #FFF, 0 0 8px #FFF, 0 0 8px #FFF }
+#toggle:hover, #toggleSmall:hover { text-shadow: 0 0 1px #0B255E, 0 0 8px #FFF, 0 0 8px #FFF, 0 0 8px #FFF }
 
 .divError {
     background:#FFF;

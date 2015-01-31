@@ -82,13 +82,15 @@ tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
 tr>th:hover,tr>td:hover:not(.options){
 	background: rgba(15, 16, 17, 0.06);
 	border-radius:0;
-	text-shadow: 1px 1px #CCC
+	text-shadow: 1px 1px #CCC;
+  transition: .3s
 }
 tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
 tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
 
 td .input{ margin:0 !important}
 
+#breadCrumb { margin-bottom: 10px }
 #usersHeader th:nth-of-type(5){ width: 6.2em }
 #usersHeader th:nth-of-type(6){ width: 7.8em }
 
@@ -118,8 +120,18 @@ td .input{ margin:0 !important}
   transition: .25s;
 }
 
-.softBtn:hover{ box-shadow: 1px 1px 2px #7E7E7E, 1px 1px 2px #7E7E7E inset }
-.softBtn:active{	box-shadow: 1px 1px 2px #7E7E7E inset, 0px 0px 1px #7E7E7E inset, 2px 2px 2px #7E7E7E inset }
+.lightBtn { background: #F4F4F4 }
+
+.softBtn:hover {
+  transform: scale(1.05);
+  transition: all .25s ease 0s;
+}
+.softBtn:active {
+  box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
+  transform: scale(1);
+}
+
+.input { margin-right: 10px } /* Rajout pour les templates associés */
 
 .fontBtn{
 	color: #F1AC46;

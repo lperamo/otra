@@ -1,5 +1,6 @@
 <?
-/** Class mapping generation task
+/**
+ * Class mapping generation task
  *
  * @author Lionel Péramo */
 $dirs = array('bundles', 'config', 'lib');

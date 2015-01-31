@@ -1,5 +1,6 @@
-<?php
-/** Customized exception class
+<?
+/**
+ * Customized exception class
  *
  * @author Lionel Péramo */
 namespace lib\myLibs\core;
@@ -45,3 +46,4 @@ class Lionel_Exception extends \Exception
     );
   }
 }
+?>

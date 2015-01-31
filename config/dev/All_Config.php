@@ -1,4 +1,4 @@
-<?php
+<?
 /** THE framework development config
  *
  * @author Lionel Péramo */

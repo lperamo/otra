@@ -244,3 +244,4 @@ class Controller extends MasterController
     return $debugContent;
   }
 }
+?>

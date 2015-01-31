@@ -1,4 +1,4 @@
-<?php
+<?
 /**
  * THE framework global config
  *
@@ -26,3 +26,4 @@ define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2a$07$ThisoneIsanAwesomeframework$');
 
 require XMODE . '/All_Config.php';
+?>

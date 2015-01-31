@@ -33,14 +33,17 @@ ob_get_clean();
 
 function t($texte) { echo $texte; }
 
-try {
+try
+{
   header('Content-Type: text/html; charset=utf-8');
   header("Vary: Accept-Encoding,Accept-Language");
 
   // if the pattern is in the routes, launch the associated route
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
-    call_user_func('bundles\\' . Routes::$default['bundle'] . '\\Init::Init');
+    $defaultRoute = Routes::$default['bundle'];
+    require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
+    call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
     // require BASE_PATH . 'cache/php/' . $route[0] . '.php';
     Router::get($route[0], $route[1]);
   }

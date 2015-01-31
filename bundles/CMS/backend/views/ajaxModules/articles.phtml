@@ -1,0 +1,22 @@
+<thead>
+  <tr>
+    <th><?= t('Détail') ?></th>
+    <th><?= t('Parent') ?></th>
+    <th><?= t('Order') ?></th>
+    <th><?= t('Right') ?></th>
+    <th><?= t('Content') ?></th>
+  </tr>
+</thead>
+<tbody id="tbody">
+  <? if(!empty($items)) {
+      foreach($items as $item)
+      {?>
+      <tr>
+        <td><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('Voir les éléments associés') ?></a>
+        <td><?= $item['parent'] ?></td>
+        <td><?= $item['ordre'] ?></td>
+        <td><?= $right[$item['droit']] ?></td>
+        <td><?= $item['contenu'] ?></td>
+      </tr>
+      <? } } ?>
+</tbody>

@@ -1,4 +1,4 @@
-<?php
+<?
 /** THE framework production config
  *
  * @author Lionel Péramo */
@@ -24,3 +24,4 @@ class All_Config
       )
     ); // 178.183.7.251 ip externe du nas
 }
+?>

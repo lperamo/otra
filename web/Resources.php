@@ -68,10 +68,11 @@ else // mode Prod
     define('XMODE', 'prod');
 
     function t($texte){ echo $texte; }
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+
     // Init' the database and loads the found route
-    // call_user_func('bundles\\' . \cache\php\Routes::$default['bundle'] . '\\Init::Init');
-    call_user_func('\cache\php\Init::Init');
     require BASE_PATH . 'cache/php/' . $route[0] . '.php';
+    call_user_func('\cache\php\Init::Init');
     \cache\php\Router::get($route[0], $route[1]);
   }
 }

@@ -51,7 +51,7 @@ class ajaxModulesController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    echo $this->renderView('modules.phtml', array(
+    echo $this->renderView('modulesPartial.phtml', array(
       'moduleTypes' => self::$moduleTypes,
       'right' => self::$rights,
       'items' => $db->values($db->query('
@@ -66,7 +66,7 @@ class ajaxModulesController extends Controller
 
     echo $this->renderView('elements.phtml', array(
       'right' => self::$rights,
-      'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
+      'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')), // utile ?
       'items' => $db->values($db->query('
         SELECT id, parent, aEnfants, droit, contenu
         FROM lpcms_elements_menu
@@ -80,7 +80,16 @@ class ajaxModulesController extends Controller
 
     $article = $db->values($db->query('SELECT id, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
      FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
-    // var_dump($article);die;
+    var_dump($article);die;
+
+    echo $this->renderView('articles.phtml', array(
+      'right' => self::$rights,
+      // 'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
+      'items' => $db->values($db->query('
+        SELECT id, parent, aEnfants, droit, contenu
+        FROM lpcms_elements_menu
+        WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+    ), true);
   }
 
   public function getElementsAction(){

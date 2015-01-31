@@ -1,5 +1,6 @@
 <?
-/** THE framework router
+/**
+ * THE framework router
  *
  * @author Lionel Péramo */
 namespace lib\myLibs\core;
@@ -9,7 +10,8 @@ use lib\myLibs\core\Controller,
 
 class Router
 {
-	/** Retrieve the controller's path that we want or launches the route !
+	/**
+	 * Retrieve the controller's path that we want or launches the route !
 	 *
 	 * @param string 			 $route  The wanted route
 	 * @param string|array $params Additional params
@@ -25,13 +27,17 @@ class Router
 		extract($chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), Routes::$_[$route]['chunks']));
 		$chunks['route'] = $route;
 		$chunks['css'] = $chunks['js'] = false;
-		if(isset(Routes::$_[$route]['resources'])) {
+
+		if(isset(Routes::$_[$route]['resources']))
+		{
 			$resources = Routes::$_[$route]['resources'];
 			$chunks['js'] = (isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['_js']));
 			$chunks['css'] = (isset($resources['bundle_css']) || isset($resources['module_css']) || isset($resources['_css']));
 		}
 
-    $controller = (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
+    $controller = ('prod' == XMODE)
+     	? 'cache\\php\\' . $controller . 'Controller'
+	    : (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
 
 		if($launch)
 			new $controller($chunks, $params);
@@ -39,7 +45,8 @@ class Router
 			return Routes::$_[$route] . 'Controller'; // TODO
 	}
 
-	/** Check if the pattern is present among the routes
+	/**
+	 * Check if the pattern is present among the routes
 	 *
 	 * @param string $pattern The pattern to check
 	 *

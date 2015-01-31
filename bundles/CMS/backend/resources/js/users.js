@@ -21,10 +21,11 @@
 		    			</div>',
 		U = {
 		page: 1,
-		selectAll : function(){
-			tbody.find('input[type=checkbox]').prop('checked', $(this).prop('checked'))
-		},
-		addUser : function(){
+
+		selectAll() {	tbody.find('input[type=checkbox]').prop('checked', $(this).prop('checked')) },
+
+		addUser()
+		{
 			tbody.find('#trOptions').before('<tr id="_'+ cpt + '" class="editable">\n\
 						<td><input type="checkbox"/></td>\n\
 						<td class="mail">' + txtMail + ' /></td>\n\
@@ -34,7 +35,9 @@
 						<td><a data-tooltip="Validates the new user" class="softBtn validate rightPad">Validate</a><span class="softBtn delete" data-tooltip="Delete the user"></span></td>\n\
 					</tr>')
 		},
-		del : function(){
+
+		del()
+		{
 			if(confirm('Do you really want to delete this user ?'))
 			{
 				var content = $('#content').find('table')[0];
@@ -42,7 +45,9 @@
 			}
 			return false;
 		},
-		delFn: function(content, tr, undef){
+
+		delFn(content, tr, undef)
+		{
 			if('_' === tr.id.substr(0,1))
 			{
 				tr.parentNode.removeChild(tr);
@@ -68,7 +73,9 @@
 				tr.parentNode.removeChild(tr)
 			})
 		},
-		deleteAll : function(){
+
+		deleteAll()
+		{
 			var content = $('#content').find('table'),
 				checkboxesChecked = content.find('input[type=checkbox]:checked');
 
@@ -86,7 +93,9 @@
 
 			return false
 		},
-		edit : function(){
+
+		edit()
+		{
 			var $this = $(this),
 					tr = $this.parents('tr'),
 					tdBackup = tr.html(),
@@ -120,7 +129,9 @@
 			role.html(roleText).find('a').attr('data-value', roleId).text(roleTxt);
 			$('<a data-tooltip="Validates the new user" class="softBtn editEnd rightPad">Validate</a><span class="softBtn cancel" data-tooltip="Cancels changes">Cancel</span>').prependTo(endTd);
 		},
-		editEnd: function(){
+
+		editEnd()
+		{
 			var content = $('#content').find('table')[0],
 				tr = $(this).parents('tr'),
 				tds = tr.find('td:not(:first-child,:last-child)'),
@@ -131,7 +142,9 @@
 
 			return false
 		},
-		validOne : function(){
+
+		validOne()
+		{
 			var content = $('#content').find('table')[0],
 				tr = $(this).parents('tr'),
 				tds = tr.find('td:not(:first-child,:last-child)'),
@@ -142,7 +155,9 @@
 
 			return false
 		},
-		validAll: function(){
+
+		validAll()
+		{
 			var content = $('#content').find('table'),
 				checkboxesChecked = content.find('input[type=checkbox]:checked');
 
@@ -175,7 +190,9 @@
 			}
 			return false
 		},
-		cancel: function(){
+
+		cancel()
+		{
 			var $this = $(this),
 				tr = $this.parents('tr'),
 				trId = tr[0].id,
@@ -187,7 +204,8 @@
 			tr.find('.editEnd').remove();
 
 		},
-		checkin: function(tr, tds, roles, content, add)
+
+		checkin(tr, tds, roles, content, add)
 		{
 			var erreurs = '',
 				mail = tds[0].children[0],
@@ -243,7 +261,9 @@
 			}
 
 		},
-		formSuccess : function(data, content){
+
+		formSuccess(data, content)
+		{
 			try {
         var data = JSON.parse(data),
         	undef;
@@ -264,7 +284,8 @@
         return false
     	}
 		},
-		afterUpdate: function(data, content, tds, add, tr){
+
+		afterUpdate(data, content, tds, add, tr){
 			var data = U.formSuccess(data, content),
 				select = tds.find('.select'),
 				undef,
@@ -289,13 +310,17 @@
 			tds.last().next().html('<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>\n\
 			<span class="softBtn delete" data-tooltip="Delete the user"></span>');
 		},
-		search: function(e){
+
+		search(e)
+		{
 			if(13 !== e.keyCode)
 				return false;
 
 			U.refresh('search')
 		},
-		refresh: function(type, undef){
+
+		refresh(type, undef)
+		{
 			var options = tbody.find('#trOptions'),
 				firstTr = tbody.find('tr:first'),
 				tds = firstTr.find('td'),
@@ -331,7 +356,9 @@
 				}
 			)
 		},
-		prev: function(){
+
+		prev()
+		{
 			U.refresh('prev');
 			if(1 === --U.page)
 				prevSel.addClass('disabled');
@@ -341,7 +368,9 @@
 
 			currentPageSel.text(U.page)
 		},
-		next: function(){
+
+		next()
+		{
 			U.refresh('next');
 			if(1 < ++U.page)
 				prevSel.removeClass('disabled');
@@ -351,7 +380,9 @@
 
 			currentPageSel.text(U.page)
 		},
-		events: function(){
+
+		events()
+		{
 			tbody.on('click', '#all', U.selectAll)
 				.on('click', '#add', U.addUser)
 				.on('click', 'tr.editable>td', U.focusSelect)
@@ -365,12 +396,12 @@
 				.on('click',  '#prev:not(.disabled)', U.prev)
 				.on('click',  '#next:not(.disabled)', U.next)
 				.on('keyup',  '.search', U.search)
-
 		},
-		focusSelect : function(){	$(this).find('input, select').focus() }
+
+		focusSelect(){	$(this).find('input, select').focus() }
 	};
 
-	window.initUsers = function(){
+	window.initUsers = function() {
 		tbody = $('#usersBody'), thead = $('#usersHeader'), cpt = 0;
 		U.events()
 	};

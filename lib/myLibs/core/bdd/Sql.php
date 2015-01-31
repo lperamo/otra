@@ -1,4 +1,4 @@
-<?php
+<?
 /** Main sql management
  *
  * @author Lionel Péramo */
@@ -36,7 +36,7 @@ class Sql
       if (null == self::$_instance)
       {
         self::$_instance = new Sql($sgbd);
-        require($sgbd . '.php');
+        require $sgbd . '.php';
       }
 
       extract(All_Config::$dbConnections[Session::get('db')]);
@@ -248,3 +248,4 @@ class Sql
     return call_user_func(self::$_chosenSgbd . '::lastInsertedId', self::$_link_identifier);
   }
 }
+?>

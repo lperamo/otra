@@ -1,7 +1,7 @@
 <ul id="menus">
-  <li class="tab <? if ('Modules' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/modules"><a data-tooltip="Modules management">Modules</a>
-  <li class="tab <? if ('General' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/general"><a data-tooltip="General options management">General options</a>
-  <li class="tab <? if ('Stats' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/stats"><a data-tooltip="Statistics management">Stats</a>
-  <li class="tab <? if ('Users' == $menu) echo 'activeTab '; ?> tcenter" data-href="/backend/users"><a data-tooltip="Users management">Users</a></ul>
+  <li class="tab <? if ('Modules' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/modules" data-tooltip="Modules management"><a>Modules</a>
+  <li class="tab <? if ('General' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/general" data-tooltip="General options management"><a>General options</a>
+  <li class="tab <? if ('Stats' == $menu) echo 'activeTab '; ?>tcenter" data-href="/backend/stats" data-tooltip="Statistics management"><a>Stats</a>
+  <li class="tab <? if ('Users' == $menu) echo 'activeTab '; ?> tcenter" data-href="/backend/users" data-tooltip="Users management"><a>Users</a></ul>
 
-<div id="content" class="fl"><? require __DIR__ . '/../ajax' . $menu; ?>
+<div id="content" class="fl"><? require __DIR__ . '/../ajax' . $menuFile; ?>

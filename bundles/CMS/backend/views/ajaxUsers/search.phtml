@@ -1,14 +1,14 @@
-<? if(!empty($users)) {
-     foreach($users as $user) {?>
-      <tr id="<?= $user['id_user'] ?>">
-        <td><input type="checkbox"/></td>
-        <td class="mail"><?= $user['mail'] ?></td>
-        <td><?= $user['pwd'] ?></td>
-        <td><?= $user['pseudo'] ?></td>
-        <td data-value="<?= $user['id_role'] ?>"><?= $user['nom'] ?></td>
-        <td>
-          <span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>
-          <span class="softBtn delete" data-tooltip="Delete the user"></span>
-        </td>
-      </tr>
-    <? } }
+<?
+ foreach($users as $user) {?>
+  <tr id="<?= $user['id_user'] ?>">
+    <td><input type="checkbox"/></td>
+    <td class="mail"><?= $user['mail'] ?></td>
+    <td><?= $user['pwd'] ?></td>
+    <td><?= $user['pseudo'] ?></td>
+    <td data-value="<?= $user['id_role'] ?>"><?= $user['nom'] ?></td>
+    <td>
+      <span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>
+      <span class="softBtn delete" data-tooltip="Delete the user"></span>
+    </td>
+  </tr>
+<? }

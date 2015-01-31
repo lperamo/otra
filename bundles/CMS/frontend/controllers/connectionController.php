@@ -34,8 +34,8 @@ class connectionController extends Controller
     $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR'] || '176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR']
       ? array(
         'id_user' => '-1',
-        'fk_id_role' => 1)
-      : $db->fetchAssoc($db->query('SELECT u.`id_user`, ur.`fk_id_role` FROM lpcms_user u JOIN lpcms_user_role ur WHERE u.`mail` = \'' . $email . '\' AND u.`pwd` = \'' . $pwd . '\' AND u.id_user = ur.fk_id_user LIMIT 1'));
+        'role_id' => 1)
+      : $db->fetchAssoc($db->query('SELECT u.`id_user`, u.`role_id` FROM lpcms_user u WHERE u.`mail` = \'' . $email . '\' AND u.`pwd` = \'' . $pwd . '\' LIMIT 1'));
 
     if(empty($infosUser))
       echo json_encode(array('fail', 'Bad credentials.'));
@@ -43,7 +43,7 @@ class connectionController extends Controller
     {
       $_SESSION['sid'] = array(
         'uid' => $infosUser['id_user'],
-        'role' => $infosUser['fk_id_role']
+        'role' => $infosUser['role_id']
       );
 
       echo '"success"';
