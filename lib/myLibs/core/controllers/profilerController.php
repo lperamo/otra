@@ -37,7 +37,8 @@ class profilerController extends Controller
   {
     if(file_exists($file) && '' != ($contents = file_get_contents($file)))
     {
-      $requests = json_decode(substr($contents, 0, -1) . ']', true);
+      $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
+      // print_r(substr($contents, 0, -1) . ']');die;
       foreach($requests as $r)
       {
         echo '<div><div class="dbg_leftBlock dbg_fl">In file <span class="dbg_file">', $r['file'], '</span> at line <span class="dbg_line">', $r['line'], '</span>: <p>', $r['query'], '</p></div><a role="button" class="dbg_fr lbBtn">Copy</a></div>';
