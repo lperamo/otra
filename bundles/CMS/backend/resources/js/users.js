@@ -1,19 +1,23 @@
-(function(){
+(function()
+{
 	"use strict";
 	var tbody, thead, cpt,
 		txtMail = '<input class="input field" type="email" required="required" title="" autocomplete="on" data-tooltip="Please complete this field."',
 		txtPwd = '<input type="password" class="input field" required="required" title="" data-tooltip="Please complete this field. (at least 8 characters)"',
 		txtPseudo = '<input class="input field" required="required" title="" data-tooltip="Please complete this field."',
+		editBtn = '<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>',
+		validBtn = '<a data-tooltip="Validates the new user" class="softBtn validate rightPad">Validate</a>',
+		deleteBtn = '<span class="softBtn delete" data-tooltip="Delete the user"></span>',
 		options = '',
 		prevSel = $('#prev'),
 		nextSel = $('#next'),
 		currentPageSel = $('#currentPage'),
 		lastPageSel = $('#lastPage');
-		// roles = window.roles;
-		for(var role in roles) { options += '<li class="selectChoice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>'; }
+
+		for(var role in roles) { options += '<li class="selectChoice" data-value="' + roles[role].id_role + '">' + roles[role].nom + '</li>'; }
 		var roleText = '<div class="select">\n\
 					      <span class="fl input actualSelectValue">\n\
-					        <a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>\n\
+					        <a data-value="' + roles[0].id_role + '">' + roles[0].nom + '</a>\n\
 					        <span class="fr selectArrow"></span>\n\
 					      </span>\n\
 					      <div class="clearBoth"></div>\n\
@@ -32,7 +36,7 @@
 						<td>' + txtPwd + '/></td>\n\
 						<td>' + txtPseudo + '/></td>\n\
 						<td>' + roleText + '</td>\n\
-						<td><a data-tooltip="Validates the new user" class="softBtn validate rightPad">Validate</a><span class="softBtn delete" data-tooltip="Delete the user"></span></td>\n\
+						<td> ' + validBtn + deleteBtn + '</td>\n\
 					</tr>')
 		},
 
@@ -43,7 +47,7 @@
 				var content = $('#content').find('table')[0];
 				U.delFn(content, this.parentNode.parentNode)
 			}
-			return false;
+			return false
 		},
 
 		delFn(content, tr, undef)
@@ -86,8 +90,8 @@
 
 			if(confirm('Do you really want to delete those users ?'))
 			{
-				content.find('input[type=checkbox]:checked').parents('tr').each(function(){
-					U.delFn(content[0], $(this)[0]);
+				content.find('input[type=checkbox]:checked').parents('tr').each(function() {
+					U.delFn(content[0], $(this)[0])
 				})
 			}
 
@@ -127,7 +131,7 @@
 			pwd.html(txtPwd + '/>');
 			pseudo.html(txtPseudo + 'value="' + window.usersSaveData[trId][2] + '" />');
 			role.html(roleText).find('a').attr('data-value', roleId).text(roleTxt);
-			$('<a data-tooltip="Validates the new user" class="softBtn editEnd rightPad">Validate</a><span class="softBtn cancel" data-tooltip="Cancels changes">Cancel</span>').prependTo(endTd);
+			$(validBtn + '<span class="softBtn cancel" data-tooltip="Cancels changes">Cancel</span>').prependTo(endTd)
 		},
 
 		editEnd()
@@ -199,10 +203,9 @@
 				tds = tr.find('td');
 
 			for(var i=0; i < 4; ++i) { tds.eq(i + 1).text(window.usersSaveData[trId][i]) }
-			$this.after('<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>');
+			$this.after(editBtn);
 			$this.remove();
-			tr.find('.editEnd').remove();
-
+			tr.find('.editEnd').remove()
 		},
 
 		checkin(tr, tds, roles, content, add)
@@ -227,11 +230,11 @@
 				erreurs += 'Pseudo not specified !<br>';
 
 			var temp = false,
-				roleVal = tds[3].querySelectorAll('a[data-value]')[0].getAttribute('data-value');
+				roleVal = tds[3].querySelectorAll('a[data-value]')[0].dataset.value;
 
 			for(var key in roles)
 			{
-				if(roleVal === roles[key].id) {
+				if(roleVal === roles[key].id_role) {
 					temp = true;
 					break
 				}
@@ -242,14 +245,15 @@
 
 			if('' === erreurs)
 			{
-				var data = {
+				var data =
+				{
 					mail: mail.value,
 					pwd: pwd,
 					pseudo: pseudo,
 					role: roleVal
 				};
 
-				if(false === add){
+				if(false === add) {
 					data['oldMail'] = U.oldMail;
 					data['id_user'] = tr[0].id;
 				}
@@ -259,12 +263,12 @@
 				window.notifications(content, erreurs, 'ERROR', window.ERROR, 10000);
 				return true
 			}
-
 		},
 
 		formSuccess(data, content)
 		{
-			try {
+			try
+			{
         var data = JSON.parse(data),
         	undef;
 
@@ -285,7 +289,8 @@
     	}
 		},
 
-		afterUpdate(data, content, tds, add, tr){
+		afterUpdate(data, content, tds, add, tr)
+		{
 			var data = U.formSuccess(data, content),
 				select = tds.find('.select'),
 				undef,
@@ -301,14 +306,13 @@
 			if(undef === pwd)
 				return false;
 
-			tds.find('input').each(function(i){
+			tds.find('input').each(function(i) {
 				var $this = $(this);
 				$this.replaceWith(1 === i ? pwd : $this.val())
 			});
 
 			select.replaceWith(select.find('a').text());
-			tds.last().next().html('<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>\n\
-			<span class="softBtn delete" data-tooltip="Delete the user"></span>');
+			tds.last().next().html(editBtn + deleteBtn)
 		},
 
 		search(e)
@@ -333,9 +337,9 @@
 					pseudo: tds.eq(3).find('input').val().trim(),
 					role: tds.eq(4).find('input').val().trim(),
 					type: type,
-					limit: limit.find('.actualSelectValue>a').attr('data-value'),
-					prev: limit.attr('data-first'),
-					last: limit.attr('data-last')
+					limit: limit.find('.actualSelectValue>a')[0].dataset.value,
+					prev: limit[0].dataset.first,
+					last: limit[0].dataset.last
 				},
 				function(data) {
 					try{

@@ -5,7 +5,8 @@
  */
 namespace lib\myLibs\core;
 
-class MasterController{
+class MasterController
+{
   public static $path;
 
   protected $bundle = '',

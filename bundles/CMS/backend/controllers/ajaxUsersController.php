@@ -49,13 +49,21 @@ class ajaxUsersController extends Controller
     ), true);
   }
 
+  public static function securityCheck($params)
+  {
+    if(!isset($_SESSION['sid']['role']))
+      die('{"success": false, "msg": "Deconnected"}');
+
+    if('1' !== $_SESSION['sid']['role'])
+      die('{"success": false, "msg": "Lack of rights."}');
+  }
+
   public function addAction()
   {
-    if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
-      die('Deconnected or lack of rights.');
+    self::securityCheck();
 
     if(! isset($_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role']) || 4 < count($_POST))  // TODO ip to ban
-      die('Hack.');
+      die('{"success": false, "msg": "Hack."}');
 
     extract($_POST);
     $db = Session::get('dbConn');
@@ -66,22 +74,20 @@ class ajaxUsersController extends Controller
       'SELECT mail FROM lpcms_user
        WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
     );
-    $users = $db->values($dbUsers);
+    $users = $db->single($dbUsers);
     $db->freeResult($dbUsers);
 
-    if(is_array($users))
-      die(json_encode(array('success' => false, 'msg' => 'This mail already exists !')));
+    if($users)
+      die('{"success":false,"msg": "This mail already exists !"');
 
     // We can now insert the new user
     $pwd = crypt($pwd, FWK_HASH);
-    $dbError = array('error' => true, 'msg' => 'Database problem !');
 
     if(false === $db->query(
       'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`) VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\', ' . intval($role) . ');'
     ))
-      die(json_encode($dbError));
+      die('{"error": true, "msg": "Database problem"}');
 
-    // array('success' => true, 'msg' => 'User created.', 'pwd' => $pwd, 'id' => $id));
     echo '{"success":true, "msg":"User added.", "pwd":"' . $pwd . '", "id":"' . $db->lastInsertedId() . '"}';
 
     return;
@@ -89,11 +95,10 @@ class ajaxUsersController extends Controller
 
   public function editAction()
   {
-    if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
-      die('Deconnected or lack of rights.');
+    self::securityCheck();
 
     if(! isset($_POST['id_user'], $_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role'], $_POST['oldMail']) || 6 < count($_POST))  // TODO ip to ban
-      die('Hack.');
+      die('{"success": false, "msg": "Hack."}');
 
     extract($_POST);
     $db = Session::get('dbConn');
@@ -108,7 +113,7 @@ class ajaxUsersController extends Controller
     $db->freeResult($dbUsers);
 
     if(is_array($users) && $oldMail != $users[0]['mail'])
-      exit('{"success":false,"msg":"This mail already exists !"}');
+      exit('{"success": false, "msg": "This mail already exists !"}');
 
     // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
@@ -127,45 +132,35 @@ class ajaxUsersController extends Controller
       WHERE fk_id_user = ' . intval($id_user)))
       die('{"success":false,"msg":"Database problem !"}');
 
-    echo '{"success":true,"oldMail":' . $_POST['oldMail'] . ',"msg":"User edited.","pwd","' . $pwd . '"}';
+    echo '{"success":true, "oldMail":' . $_POST['oldMail'] . ', "msg": "User edited.","pwd","' . $pwd . '"}';
 
     return;
   }
 
   public function deleteAction()
   {
-    if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
-      die('Deconnected or lack of rights.');
+    self::securityCheck();
 
     if(! isset($_POST['id_user']) || 1 < count($_POST))  // TODO ip to ban
-      die('Hack.');
+      die('{"success": false, "msg": "Hack."}');
 
     extract($_POST);
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // if(false === $db->query(
-    //   'DELETE FROM lpcms_mailing_list_user WHERE fk_id_user = ' . intval($id_user)))
-    //   echo '{"success":false,"msg":"Database problem !"}';return;
-
-    // if(false === $db->query(
-    //   'DELETE FROM lpcms_user_role WHERE fk_id_user = ' . intval($id_user)))
-    //   echo '{"success":false,"msg":"Database problem !"}';return;
-
     if(false === $db->query(
       'DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user)))
       echo '{"success":false,"msg":"Database problem !"}';return;
 
-    echo '{"success":true,"msg":"User deleted."}';return;
+    echo '{"success":true, "msg": "User deleted."}';return;
   }
 
   public function searchAction()
   {
-    if(!isset($_SESSION['sid']['role']) || 1 !== $_SESSION['sid']['role'])
-      die('Deconnected or lack of rights.');
+    self::securityCheck();
 
     if(! isset($_POST['type'], $_POST['mail'], $_POST['pseudo'], $_POST['role'], $_POST['limit'], $_POST['prev'], $_POST['last']) || 7 < count($_POST))  // TODO ip to ban
-      die('Hack.');
+      die('{"success": false, "msg": "Hack."}');
 
     extract($_POST);
     $db = Session::get('dbConn');
@@ -197,7 +192,7 @@ class ajaxUsersController extends Controller
       $req . ' ORDER BY u.id_user ' .
       (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
     ))) {
-      echo('{"success":false,"msg":"Database problem !"}');return;
+      echo('{"success": false, "msg": "Database problem !"}');return;
     }
 
     if(!empty($users)) {
@@ -209,9 +204,9 @@ class ajaxUsersController extends Controller
         $users = array($users);
 
       end($users); $last = current($users); reset($users);
-      echo '{"success":true,"msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ',"first":' . $users[0]['id_user'] . ',"last":' . $last['id_user'] . '}';
+      echo '{"success": true, "msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
     } else
-      echo '{"success":true,"msg":""}';
+      echo '{"success": true, "msg": ""}';
 
     return;
   }

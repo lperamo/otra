@@ -22,7 +22,7 @@
 			<tr id="trOptions">
 				<td colspan="6" class="options">
 					<span id="prev" class="softBtn smallBtn fontBtn paging disabled" data-tooltip="Previous users">&laquo;</span>
-					<span id="next" class="softBtn smallBtn fontBtn paging" data-tooltip="Next users">&raquo;</span>
+					<span id="next" class="softBtn smallBtn fontBtn paging<? if($count < $limit) echo ' disabled'; ?>" data-tooltip="Next users">&raquo;</span>
 					<span id="pageInd">Page <span id="currentPage">1</span> / <span id="lastPage"><?= (0 == $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count ?> users)</span>
 					<div id="limit" class="select" data-last="<?= $users[0]['id_user'] ?>" data-first="<?= $users[0]['id_user'] ?>">
 			      <span class="fl input actualSelectValue">

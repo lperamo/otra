@@ -167,7 +167,7 @@ td .input{ margin:0 !important}
 	height: 0.9em;
 	padding: 0 3px 3px 2px
 }
-.paging.disabled { color: #888 }
+.paging.disabled { color: #888; cursor: default }
 
 #pageInd {
   display: inline-block;
