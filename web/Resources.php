@@ -9,7 +9,7 @@ define('BASE_PATH2', substr($__DIR__, 0, -4)); // Finit sans /
 
 if(false !== ($posDot = strpos($uri, '.')))
 {
-  $uri = $_SERVER['REQUEST_URI'];
+  $uri = $_SERVER['REDIRECT_URL'];
 
   // Verifies that we went from the site and whether the file have an extension or not
   $ext = substr($uri, $posDot + 1);
