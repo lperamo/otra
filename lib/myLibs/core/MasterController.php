@@ -8,12 +8,12 @@ namespace lib\myLibs\core;
 class MasterController
 {
   public static $path;
+  public $route,
+        $bundle = '',
+        $module = '';
 
-  protected $bundle = '',
-    $module = '',
-    $controller = '',
+  protected $controller = '',
     $action = '',
-    $route,
     $getParams = '',
     $viewCSSPath = '/', // CSS path for this module
     $viewJSPath = '/', // JS path for this module
@@ -35,7 +35,7 @@ class MasterController
    *
    * @param array $getParams The params passed by GET method
    */
-  public function __construct(array $baseParams = array(), array $getParams = array())
+  public function __construct(array $baseParams = [], array $getParams = [])
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if(isset($baseParams['controller']))
@@ -59,7 +59,7 @@ class MasterController
       // runs the preexecute function if exists and then the action
       $this->preExecute();
       // dump($getParams, $baseParams);die;
-      call_user_func_array(array($this, $baseParams['action']), $getParams);
+      call_user_func_array([$this, $baseParams['action']], $getParams);
     }
   }
 
@@ -123,7 +123,8 @@ class MasterController
    *
    * @param string $title
    */
-  protected static function title($title) {
+  protected static function title($title)
+  {
     self::$layout = (isset(self::$layout))
       ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
       : '<title>' . $title . '</title><body>';

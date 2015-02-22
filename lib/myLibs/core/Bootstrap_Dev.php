@@ -47,9 +47,10 @@ try
     // require BASE_PATH . 'cache/php/' . $route[0] . '.php';
     Router::get($route[0], $route[1]);
   }
-} catch(Exception $e) {
+} catch(Exception $e)
+{
   echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success":false, "msg":' . json_encode($e->errorMessage()) . '}'
+    ? '{"success": "exception", "msg":' . json_encode($e->errorMessage()) . '}'
     : $e->errorMessage();
 
   return;

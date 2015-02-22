@@ -13,9 +13,9 @@ class Controller extends MasterController
   public $viewPath = '/'; // index/index/ for indexController and indexAction
 
   private static $cache_used,
-    $css = array(),
-    $js = array(),
-    $rendered = array();
+    $css = [],
+    $js = [],
+    $rendered = [];
 
   /** If the files are in cache, put them directly in $rendered
    *
@@ -50,10 +50,12 @@ class Controller extends MasterController
    *
    * return string parent::$template Content of the template
    */
-  public final function renderView($file, array $variables = array(), $ajax = false, $viewPath = true)
+  public final function renderView($file, array $variables = [], $ajax = false, $viewPath = true)
   {
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
-    if(!file_exists($templateFile)){
+
+    if(!file_exists($templateFile))
+    {
       require BASE_PATH . '/lib/myLibs/core/Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
       die('Server problem : the file requested doesn\'t exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
@@ -61,6 +63,9 @@ class Controller extends MasterController
 
     // If we already have the template in memory and that it's not empty then we show it
     self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
+
+    if(!$ajax)
+      $this->ajax = $ajax;
 
     if(self::$cache_used)
       parent::$template = self::$rendered[$templateFile];
@@ -94,10 +99,13 @@ class Controller extends MasterController
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><',
       (!$layout) ? str_replace('/title>', '/title>', $content)
-                 : str_replace('/title>', '/title>'. $this->addCss($routeV), $content . $this->addJs($routeV))); // suppress useless spaces
+                 : ($ajax
+                   ? str_replace('/title>', '/title>'. $this->addCss($routeV), $content . $this->addJs($routeV))
+                   : $content . $this->addCss($routeV) . $this->addJs($routeV))
+                 ); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
-    self::$js = self::$css = array();
+    self::$js = self::$css = [];
 
     if('cli' == PHP_SAPI)
       return $content;
@@ -118,7 +126,7 @@ class Controller extends MasterController
     $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
 
     if(!(parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile))) // if it was not in the cache or "fresh"...
-      parent::$layout = $this->buildCachedFile(LAYOUT, array(), $cachedFile, false);
+      parent::$layout = $this->buildCachedFile(LAYOUT, [], $cachedFile, false);
   }
 
   /** Adds a css script to the existing ones
@@ -126,7 +134,7 @@ class Controller extends MasterController
    * @param array $css The css file to add (Array of string)
    */
   protected static function css($css) {
-    array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : array($css));
+    array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
   }
 
   /** Returns the pre-generated css and the additional concatenated css
@@ -169,7 +177,7 @@ class Controller extends MasterController
    * @return string The link to the js file or the script markup with the js inside
    */
   protected static function js($js) {
-    self::$js = array_merge(self::$js, (is_array($js)) ? $js : array($js));
+    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
 
   /** Returns the pre-generated js and the additional concatenated js

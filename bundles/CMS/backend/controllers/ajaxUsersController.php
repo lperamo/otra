@@ -15,7 +15,8 @@ class ajaxUsersController extends Controller
 {
   public function preExecute()
   {
-    if($this->action != 'index' && !isset($_SESSION['sid'])) {
+    if($this->action != 'index' && !isset($_SESSION['sid']))
+    {
       Router::get('backend');
       die;
     }
@@ -37,16 +38,16 @@ class ajaxUsersController extends Controller
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
-      $users = array($users);
+      $users = [$users];
 
     $count = $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
 
-    echo $this->renderView('index.phtml', array(
+    echo $this->renderView('index.phtml', [
       'users' => $users,
       'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
       'count' => (!empty($count)) ? current($count) : '',
       'limit' => 3
-    ), true);
+    ], true);
   }
 
   public static function securityCheck($params)
@@ -168,8 +169,7 @@ class ajaxUsersController extends Controller
 
     $limit = intval($limit);
     $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_user_role ur ON ur.fk_id_user = u.id_user
-      INNER JOIN lpcms_role r ON ur.fk_id_role = r.id_role
+      INNER JOIN lpcms_role r ON u.role_id = r.id_role
       WHERE id_user ';
 
     if('search' == $type)
@@ -195,16 +195,17 @@ class ajaxUsersController extends Controller
       echo('{"success": false, "msg": "Database problem !"}');return;
     }
 
-    if(!empty($users)) {
+    if(!empty($users))
+    {
       $users = $db->values($users);
       sort($users);
 
       // Fixes the bug where there is only one user
       if(isset($users['id_user']))
-        $users = array($users);
+        $users = [$users];
 
       end($users); $last = current($users); reset($users);
-      echo '{"success": true, "msg":' . json_encode($this->renderView('search.phtml', array('users' => $users), true)) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
+      echo '{"success": true, "msg":' . json_encode($this->renderView('search.phtml', ['users' => $users), true)) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
     } else
       echo '{"success": true, "msg": ""}';
 

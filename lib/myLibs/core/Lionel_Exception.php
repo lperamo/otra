@@ -6,7 +6,8 @@
 namespace lib\myLibs\core;
 
 use lib\myLibs\core\Controller,
-    lib\myLibs\core\Debug_Tools;
+    lib\myLibs\core\Debug_Tools,
+    config\Routes;
 
 require_once __DIR__ . '/../../../config/All_Config.php';
 
@@ -23,9 +24,12 @@ class Lionel_Exception extends \Exception
 
   public function errorMessage()
   {
+    $route = 'exception';
     ob_clean();
     $renderController = new Controller();
-    // $renderController->route = '';
+    $renderController->route = $route;
+    $renderController->bundle = Routes::$_[$route]['chunks'][1];
+    $renderController->module = Routes::$_[$route]['chunks'][2];
     $renderController->viewPath = CORE_VIEWS_PATH;
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
@@ -35,14 +39,14 @@ class Lionel_Exception extends \Exception
       convertArrayToShowable($this->context, 'Variables');
     }
 
-    return $renderController->renderView('/exception.phtml', array(
+    return $renderController->renderView('/exception.phtml', [
       'message' =>$this->message,
       'code' => $this->code,
       'file' => $this->file,
       'line' => $this->line,
       'context' => $this->context,
       'backtraces' => $this->getTrace()
-      )
+      ]
     );
   }
 }

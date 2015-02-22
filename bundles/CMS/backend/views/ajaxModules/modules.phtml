@@ -1,6 +1,11 @@
 <tabContent id="tab0">
-	<div id="breadCrumb">Modules</div>
-
+  <nav>
+    <ul id="moduleTabs" class="menus">
+      <li id="modulesMgt" class="tab activeTab center" data-tooltip="Modules management" data-href="/backend/ajax/modules/search/module?search=" data-fn="replaceModulesContent">Modules
+      <li id="elementsMgt" class="tab center" data-tooltip="Elements management" data-href="/backend/ajax/modules/search/elements?search=" data-fn="replaceElementsContent">Elements
+      <li id="articlesMgt" class="tab center" data-tooltip="Articles Management" data-href="/backend/ajax/modules/search/articles?search=" data-fn="replaceArticlesContent">Articles
+    </ul>
+  </nav>
 	<input type="search" id="moduleSearch" placeholder="<? t('Search by module') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/module" data-fn="replaceModulesContent">
 	<input type="search" id="elementSearch" placeholder="<? t('Search by element') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/element" data-fn="replaceElementsContent">
 	<input type="search" id="articleSearch" placeholder="<? t('Search by article') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/article" data-fn="replaceArticlesContent">

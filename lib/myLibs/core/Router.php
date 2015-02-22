@@ -19,12 +19,12 @@ class Router
 	 *
 	 * @return string Controller's path
 	 */
-	public static function get($route = 'index', $params = array(), $launch = true)
+	public static function get($route = 'index', $params = [], $launch = true)
 	{
 		if(!is_array($params))
-			$params = array($params);
+			$params = [$params];
 
-		extract($chunks = array_combine(array('pattern', 'bundle', 'module', 'controller', 'action'), Routes::$_[$route]['chunks']));
+		extract($chunks = array_combine(['pattern', 'bundle', 'module', 'controller', 'action'], Routes::$_[$route]['chunks']));
 		$chunks['route'] = $route;
 		$chunks['css'] = $chunks['js'] = false;
 
@@ -64,14 +64,14 @@ class Router
 				$params = explode('/', trim(substr($pattern, strlen($route)), '/'));
 
 				if('' == $params[0])
-					return array($key, array());
+					return [$key, []];
 
 				// We destroy the parameters after ? because we want only rewrited parameters
 				$derParam = count($params) - 1;
 				$paramsFinal = explode('?', $params[$derParam]);
 				$params[$derParam] = $paramsFinal[0];
 
-				return array($key, $params);
+				return [$key, $params];
 			}
 		}
 

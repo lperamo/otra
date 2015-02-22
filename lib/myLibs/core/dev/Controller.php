@@ -13,11 +13,12 @@ class Controller extends MasterController
 {
   public $viewPath = '/'; // index/index/ for indexController and indexAction
 
-  private static $css = array(),
-    $js = array(),
-    $rendered = array();
+  private static $css = [],
+    $js = [],
+    $rendered = [],
+    $ajax = false;
 
-  public function __construct(array $baseParams = array(), array $getParams = array()){
+  public function __construct(array $baseParams = [], array $getParams = []){
     parent::__construct($baseParams, $getParams);
     Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, 'trace');
   }
@@ -39,10 +40,13 @@ class Controller extends MasterController
    *
    * @return string parent::$template Content of the template
    */
-  public final function renderView($file, array $variables = array(), $ajax = false, $viewPath = true)
+  public final function renderView($file, array $variables = [], $ajax = false, $viewPath = true)
   {
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
     Logger::logTo("\t" . 'Ajax : ' . (($ajax) ? 'true' : 'false'), 'trace');
+
+    if(!$ajax)
+      $this->ajax = $ajax;
 
     if (file_exists($templateFile))
       parent::$template = $this->buildCachedFile($templateFile, $variables);
@@ -73,13 +77,15 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'File : ' . $filename, 'trace');
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
-    $content = str_replace(
-      '/title>',
-      '/title>'. self::addCss($layout),
-      $content . self::addJs($layout));
+    $content = !$this->ajax
+      ? str_replace(
+        '/title>',
+        '/title>'. self::addCss($layout),
+        $content . self::addJs($layout))
+      : $content . self::addCss($layout) . self::addJs($layout) . 'hahahahah';
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
-    self::$js = self::$css = array();
+    self::$js = self::$css = [];
 
     return $content;
   }
@@ -105,15 +111,15 @@ class Controller extends MasterController
 
 
   /** Includes the layout */
-  private function layout() { parent::$layout = $this->buildCachedFile(LAYOUT, array(), null, false); }
+  private function layout() { parent::$layout = $this->buildCachedFile(LAYOUT, [], null, false); }
 
   /** Adds a css script to the existing ones
    *
    * @param array $css The css file to add (Array of string)
    */
-  protected static function css($css = array())
+  protected static function css($css = [])
   {
-    if(!is_array($css)) $css = array($css);
+    if(!is_array($css)) $css = [$css];
 
     array_splice(self::$css, count(self::$css), 0, $css);
   }
@@ -131,8 +137,10 @@ class Controller extends MasterController
 
     if($firstTime)
     {
-      if(isset($route[$this->route])){
+      if(isset($route[$this->route]))
+      {
         $route = $route[$this->route];
+
         if(isset($route['resources']))
         {
           $chunks = $route['chunks'];
@@ -140,24 +148,38 @@ class Controller extends MasterController
           $debLink = "\n" . '<link rel="stylesheet" href="';
           $debLink2 = $debLink . '/bundles/';
 
-          if(isset($resources['first_css'])) {
+          if(isset($resources['first_css']))
+          {
             foreach($resources['first_css'] as $first_css) {
               $debugContent .= $debLink . $css . '.css" />';
             }
           }
-          if(isset($resources['bundle_css'])) {
+
+          if(isset($resources['bundle_css']))
+          {
             foreach($resources['bundle_css'] as $bundle_css) {
               $debugContent .= $debLink2 . $chunks[1] . '/resources/css/' . $bundle_css . '.css" />';
             }
           }
-          if(isset($resources['module_css'])) {
+
+          if(isset($resources['module_css']))
+          {
             foreach($resources['module_css'] as $module_css) {
               $debugContent .= $debLink2 . $chunks[2] . '/resources/css/' . $module_css . '.css" />';
             }
           }
-          if(isset($resources['_css'])) {
+
+          if(isset($resources['_css']))
+          {
             foreach($resources['_css'] as $css) {
-              $debugContent .= $debLink . $css . '.css" />';
+              $debugContent .= $debLink . $this->viewCSSPath . $css . '.css" />';
+            }
+          }
+
+          if(isset($resources['core_css']))
+          {
+            foreach($resources['core_css'] as $core_css) {
+              $debugContent .= $debLink . '/lib/myLibs/core/css/' . $core_css . '.css" />';
             }
           }
         }
@@ -171,17 +193,56 @@ class Controller extends MasterController
     return $debugContent;
   }
 
-  /** Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
+  /**
+   * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
    *
    * @return string The link to the js file or the script markup with the js inside
    */
-  protected static function js($js = array())
+  protected static function js($js = [])
   {
-    if(!is_array($js)) $js = array($js);
+    if(!is_array($js)) $js = [$js];
 
     self::$js = array_merge(self::$js, $js);
+  }
+
+  /**
+   * Uses calculations in order to put scripts in correct order that has been specified in the routes configuration file
+   *
+   * @param array $unorderedArray Unordered array of files
+   * @param array $orderedArray   Ordered array of files
+   *
+   * @return array $scripts Final array
+   */
+  private static function calculateArray(array $unorderedArray, array $orderedArray)
+  {
+    $scripts = [];
+
+    for($i = 0, $max = count($unorderedArray) + count($orderedArray); $i< $max; ++$i )
+    {
+      if(in_array($i, array_keys($orderedArray)))
+      {
+        $scripts[$i] = $orderedArray[$i];
+        unset($orderedArray[$i]);
+      } else
+        $scripts[$i] = array_shift($unorderedArray);
+    }
+
+    return $scripts;
+  }
+
+  /**
+   *
+   */
+  private static function updateScriptsArray(&$unorderedArray, &$orderedArray, &$i, $key, $code)
+  {
+    if(is_string($key))
+      $orderedArray[intval(substr($key,1))] = $code;
+    else
+      $unorderedArray[$i] = $code;
+
+    ++$i;
   }
 
   /** Puts the css into the template. Updates parent::$template.
@@ -197,41 +258,82 @@ class Controller extends MasterController
 
     if($firstTime)
     {
-      if(isset($route[$this->route])) {
+      if(isset($route[$this->route]))
+      {
         $route = $route[$this->route];
+
         if(isset($route['resources']))
         {
           $chunks = $route['chunks'];
           $resources = $route['resources'];
           $debLink = "\n" . '<script src="';
+          $i = 0;
+          $unorderedArray = $orderedArray = [];
           $debLink2 = $debLink . '/bundles/';
 
-          if(isset($resources['first_js'])) {
-            foreach($resources['first_js'] as $first_js) {
-              $debugContent .= $debLink .  $first_js . '.js" ></script>';
+          if(isset($resources['bundle_js']))
+          {
+            foreach($resources['bundle_js'] as $key => $bundleJs)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink2 . $chunks[1] . '/resources/js/' . $bundleJs . '.js" ></script>'
+              );
             }
           }
-          if(isset($resources['bundle_js'])) {
-            foreach($resources['bundle_js'] as $bundleJs) {
-              $debugContent .= $debLink2 . $chunks[1] . '/resources/js/' . $bundleJs . '.js" ></script>';
+
+          if(isset($resources['module_js']))
+          {
+            foreach($resources['module_js'] as $key => $module_js)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink2 . $chunks[2] . '/resources/js/' . $module_js . '.js" ></script>'
+              );
             }
           }
-          if(isset($resources['module_js'])) {
-            foreach($resources['module_js'] as $module_js) {
-              $debugContent .= $debLink2 . $chunks[2] . '/resources/js/' . $module_js . '.js" ></script>';
+
+          if(isset($resources['_js']))
+          {
+            foreach($resources['_js'] as $key => $js)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink . $this->viewJSPath . $js . '.js" ></script>'
+              );
             }
           }
-          if(isset($resources['_js'])) {
-            foreach($resources['_js'] as $js) {
-              // var_dump($this->viewJSPath);die;
-              $debugContent .= $debLink . $this->viewJSPath . $js . '.js" ></script>';
+
+
+          if(isset($resources['core_js']))
+          {
+            foreach($resources['core_js'] as $key => $core_js)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink . '/lib/myLibs/core/js/' . $core_js . '.js" ></script>'
+              );
             }
           }
+
+          $jsArray = self::calculateArray($unorderedArray, $orderedArray);
+
+          foreach($jsArray as $js) { $debugContent .= $js; }
         }
       }
     }
-
-    if(empty(self::$js)) return $debugContent;
 
     foreach(self::$js as $key => $js)
     {

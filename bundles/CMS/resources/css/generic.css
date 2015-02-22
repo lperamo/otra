@@ -1,5 +1,16 @@
-*{margin:0;padding:0}
+html,
+body,
+ul,
+textarea,
+label {
+    margin: 0;
+    padding: 0;
+}
 body{ height: 100vh }
+/* apply a natural box layout model to all elements, but allowing components to change
+ (normally it's html and not * in the following rule ! see paul irish article on that point)*/
+* { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit }
 
 .fl{float:left}
 .fr{float:right}
@@ -11,9 +22,9 @@ body{ height: 100vh }
 /* Tooltips custom management */
 [data-tooltip]{ position: relative }
 
-[data-tooltip]:after {
+[data-tooltip]:after
+{
     content: attr(data-tooltip);
-
     display:table;
     width: inherit;
     height:18px;
@@ -52,10 +63,13 @@ body{ height: 100vh }
     font-size: 0.825rem
 }
 
-[data-tooltip]:hover:after {
+[data-tooltip]:hover:after
+{
     opacity: 1;
     visibility: visible;
     -moz-transition: opacity .2s linear .5s;
     -webkit-transition: opacity .2s linear .5s;
     transition: opacity .2s linear .5s
 }
+table { empty-cells: show }
+th, td { text-align: left }

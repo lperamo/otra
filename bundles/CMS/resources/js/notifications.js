@@ -1,31 +1,34 @@
-(function() {
+var notif = (function()
+{
   'use strict';
-  window.ERROR = 'orangeNotif',
-  window.INFO = 'vertNotif',
-  window.WARNING = 'jauneNotif';
+  var ERROR = 'orangeNotif',
+      INFO = 'vertNotif',
+      WARNING = 'jauneNotif';
 
-  var fadeOut = function(el, duration) {
+  function tick()
+  {
+    var temp = new Date();
+    el.style.opacity -= (temp - last) / duration;
+    last = temp;
+
+    if (el.style.opacity > 0)
+      setTimeout(tick, 1)
+    else
+    {
+      if(null !== el.parentNode) // fixes some bugs
+      {
+        el.parentNode.removeChild(el);
+        window.notifExists = false
+      }
+    }
+  }
+
+  function fadeOut(el, duration)
+  {
     el.style.opacity = 1;
-
-    var last = new Date(),
-      tick = function() {
-        var temp = new Date();
-        el.style.opacity -= (temp - last) / duration;
-        last = temp;
-
-        if (el.style.opacity > 0)
-          setTimeout(tick, 1)
-        else{
-          if(null !== el.parentNode) // fixes some bugs
-          {
-            el.parentNode.removeChild(el);
-            window.notifExists = false
-          }
-        }
-      };
-
+    var last = new Date();
     tick()
-  };
+  }
 
   /**
    * Shows a notification after a html content
@@ -36,7 +39,7 @@
    * @param cssClass The css additional class to apply (optional)
    * @param duree    Duration in milliseconds for the fade effect
    */
-  window.notifications = function(selector, texte, type, cssClass, duree)
+  function run(selector, texte, type, cssClass, duree)
   {
     var cssClass = cssClass || '',
         duree = duree || 10000,
@@ -52,4 +55,12 @@
 
     fadeOut(next, duree)
   }
+
+  return
+  ({
+    ERROR: ERROR,
+    'INFO' : INFO,
+    'WARNING' : WARNING,
+    'run' : run
+  })
 })()

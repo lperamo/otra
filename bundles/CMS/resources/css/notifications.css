@@ -9,8 +9,6 @@
 .notification
 {
   box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-shadow: 5px 5px 4px #888;
   color: #FFF;
   font-size:14px;
@@ -23,36 +21,43 @@
   width: 99.8% /* pour que la bordure avec :after ne dépasse pas */
 }
 
-.orangeNotif{
+.orangeNotif
+{
   background: #FF7D33;
   border: 2px solid rgba(213, 201, 164, 0.25);
   box-shadow: 5px 5px 4px #888;
 }
 
-.orangeNotif:before{
+.orangeNotif:before
+{
   content: url(../images/error.png);
   margin-right: 5px;
   vertical-align: -2px
 }
 
-.vertNotif{
+.vertNotif
+{
   background: #97CF71;
   border: 1px solid #79B198;
   box-shadow: 5px 5px 4px #888;
 }
 
-.vertNotif:before{
+.vertNotif:before
+{
   content: url(../images/info.png);
   margin-right: 5px;
   vertical-align: -2px
 }
-.jauneNotif{
+
+.jauneNotif
+{
   background: #FFB200;
   border: 1px solid #EEA600;
   box-shadow: 5px 5px 4px #888;
 }
 
-.jauneNotif:before{
+.jauneNotif:before
+{
   content: url(../images/warning.png);
   margin-right: 5px;
   vertical-align: -2px

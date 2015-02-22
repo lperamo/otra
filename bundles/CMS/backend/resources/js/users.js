@@ -62,9 +62,9 @@
 				try {
 	        data = JSON.parse(data);
 	        if(true === data.success)
-	        	window.notifications(content, data.msg, 'INFO', window.INFO, 10000);
+	        	notif.run(content, data.msg, 'INFO', notif.INFO, 10000);
 	        else {
-	        	window.notifications(content, data.msg, 'ERROR', window.ERROR, 10000);
+	        	notif.run(content, data.msg, 'ERROR', notif.ERROR, 10000);
 	        	return false
 	        }
 	    	} catch (e) {
@@ -84,7 +84,7 @@
 				checkboxesChecked = content.find('input[type=checkbox]:checked');
 
 			if(0 === checkboxesChecked.length) {
-				window.notifications(content[0], 'Nothing was selected !', 'WARNING', window.WARNING, 10000);
+				notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
 				return false
 			}
 
@@ -166,7 +166,7 @@
 				checkboxesChecked = content.find('input[type=checkbox]:checked');
 
 			if(0 === checkboxesChecked.length) {
-				window.notifications(content[0], 'Nothing was selected !', 'WARNING', window.WARNING, 10000);
+				notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
 				return false
 			}
 
@@ -260,7 +260,7 @@
 
 				return data
 			} else {
-				window.notifications(content, erreurs, 'ERROR', window.ERROR, 10000);
+				notif.run(content, erreurs, 'ERROR', notif.ERROR, 10000);
 				return true
 			}
 		},
@@ -274,10 +274,10 @@
 
         if(true === data.success)
         {
-        	window.notifications(content, data.msg, 'INFO', window.INFO, 10000);
+        	notif.run(content, data.msg, 'INFO', notif.INFO, 10000);
         	return (undef == data.id) ? data.pwd : [data.id, data.pwd]
         } else{
-        	window.notifications(content, data.msg, 'ERROR', window.ERROR, 10000);
+        	notif.run(content, data.msg, 'ERROR', notif.ERROR, 10000);
         	return false
         }
     	} catch (e) {
@@ -341,16 +341,20 @@
 					prev: limit[0].dataset.first,
 					last: limit[0].dataset.last
 				},
-				function(data) {
-					try{
+				function(data)
+				{
+					try
+					{
 						var data = JSON.parse(data);
 
 						if(true === data.success) {
 							tbody.find('tr:first').nextUntil('#trOptions').eq(0).after(data.msg).end().remove();
 							limit.attr({'data-first': data.first, 'data-last': data.last})
-						} else
-							window.notifications(content, data.msg, 'ERROR', window.ERROR, 10000)
-					}catch(e)
+						} else if(false === data.success)
+							notif.run(content, data.msg, 'ERROR', notif.ERROR, 10000)
+						else
+							$('html').html(data.msg)
+					} catch(e)
 					{
 						if(undef !== window.debug)
 	        		window.debug.postLog(e, data);

@@ -12,21 +12,20 @@ use lib\myLibs\core\Controller,
 
 class ajaxModulesController extends Controller
 {
-  public static $moduleTypes = array(
+  public static $moduleTypes = [
     0 => 'Connection',
     1 => 'Vertical menu',
     2 => 'Horizontal menu',
     3 => 'Article',
     4 => 'Arbitrary'
-  );
-
-  public static $rights = array(
+  ], $rights = [
     0 => 'Admin',
     1 => 'Saved',
     2 => 'Public'
-  );
+  ];
 
-  public function preExecute(){
+  public function preExecute()
+  {
     if($this->action != 'index' && !isset($_SESSION['sid']))
     {
       Router::get('backend');
@@ -34,47 +33,59 @@ class ajaxModulesController extends Controller
     }
   }
 
-  public function indexAction(){
+  public function indexAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
     $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
 
-    echo $this->renderView('modules.phtml', array(
+    echo $this->renderView('modules.phtml', [
       'moduleTypes' => self::$moduleTypes,
       'right' => self::$rights,
       'items' => $modules
-    ), true);
+    ], true);
   }
 
-  public function searchModuleAction(){
+  public function searchModuleAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    echo $this->renderView('modulesPartial.phtml', array(
+    echo $this->renderView('modulesPartial.phtml', [
       'moduleTypes' => self::$moduleTypes,
       'right' => self::$rights,
       'items' => $db->values($db->query('
         SELECT id, type, position, ordre, droit, contenu
         FROM lpcms_module WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
-    ), true);
+    ], true);
   }
 
   public function searchElementAction(){
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    echo $this->renderView('elements.phtml', array(
+    var_dump($db->values($db->query('
+        SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu
+              bem.ordre
+        FROM lpcms_elements_menu em
+        INNER JOIN lpcms_bind_em_module bem ON nem.fk_id_elements_menu = em.id
+        WHERE em.contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\'')));
+
+    echo $this->renderView('elements.phtml', [
       'right' => self::$rights,
       'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')), // utile ?
       'items' => $db->values($db->query('
-        SELECT id, parent, aEnfants, droit, contenu
-        FROM lpcms_elements_menu
-        WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
-    ), true);
+        SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu
+              bem.ordre
+        FROM lpcms_elements_menu em
+        INNER JOIN lpcms_bind_em_module bem ON nem.fk_id_elements_menu = em.id
+        WHERE em.contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+    ], true);
   }
 
-  public function searchArticleAction(){
+  public function searchArticleAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 
@@ -82,17 +93,18 @@ class ajaxModulesController extends Controller
      FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
     var_dump($article);die;
 
-    echo $this->renderView('articles.phtml', array(
+    echo $this->renderView('articles.phtml', [
       'right' => self::$rights,
       // 'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
       'items' => $db->values($db->query('
         SELECT id, parent, aEnfants, droit, contenu
         FROM lpcms_elements_menu
         WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
-    ), true);
+    ], true);
   }
 
-  public function getElementsAction(){
+  public function getElementsAction()
+  {
     $db = Session::get('dbConn');
     $db->selectDb();
 

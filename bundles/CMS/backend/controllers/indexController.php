@@ -16,7 +16,8 @@ class indexController extends Controller
 {
   public function preExecute()
   {
-    if($this->action != 'index' && !isset($_SESSION['sid'])){
+    if($this->action != 'index' && !isset($_SESSION['sid']))
+    {
       Router::get('backend');
       exit;
     }
@@ -39,11 +40,11 @@ class indexController extends Controller
     $_SESSION['headers'] = $db->values($db->query('SELECT * FROM lpcms_header'));
     $_SESSION['footers'] = $db->values($db->query('SELECT * FROM lpcms_footer'));
 
-    echo $this->renderView('index.phtml', array(
+    echo $this->renderView('index.phtml', [
       'headers' => $_SESSION['headers'],
       'footers' => $_SESSION['footers'],
       'lpcms_body' => 'page_t.jpg'
-    ));
+    ]);
   }
 
   public function modulesAction()
@@ -53,11 +54,11 @@ class indexController extends Controller
 
     $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
 
-    echo $this->renderView('modules.phtml', array(
+    echo $this->renderView('modules.phtml', [
       'moduleTypes' => ajaxModulesController::$moduleTypes,
       'right' => ajaxModulesController::$rights,
       'items' => $modules
-    ));
+    ]);
   }
 
   public function generalAction()
@@ -69,11 +70,11 @@ class indexController extends Controller
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
     // dump($users);
 
-    $_SESSION['js'] = array();
+    $_SESSION['js'] = [];
 
-    echo $this->renderView('general.phtml', array(
-      'items' => array()
-    ));
+    echo $this->renderView('general.phtml', [
+      'items' => []
+    ]);
   }
 
   public function statsAction()
@@ -85,9 +86,9 @@ class indexController extends Controller
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
     // dump($users);
 
-    $_SESSION['js'] = array();
+    $_SESSION['js'] = [];
 
-    echo $this->renderView('stats.phtml', array('items' => array()));
+    echo $this->renderView('stats.phtml', ['items' => []]);
   }
 
   public function usersAction()
@@ -106,16 +107,16 @@ class indexController extends Controller
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
-      $users = array($users);
+      $users = [$users];
 
     $count = $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
 
-    echo $this->renderView('users.phtml', array(
+    echo $this->renderView('users.phtml', [
       'users' => $users,
       'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
-      'count' => (!empty($count)) ? current($count) : '',
+      'count' => !empty($count) ? current($count) : '',
       'limit' => 3
-    ));
+    ]);
   }
 }
 ?>

@@ -14,7 +14,7 @@ use lib\myLibs\core\Lionel_Exception,
 class Sql
 {
   private static $_instance,
-    $_sgbds = array('Mysql'),
+    $_sgbds = ['Mysql'],
     $_chosenSgbd,
     $_db,
     $_link_identifier;
@@ -161,7 +161,7 @@ class Sql
    *
    * @return array The next result
    */
-  public static function fetchObject($result, $class_name = null, array $params = array() )
+  public static function fetchObject($result, $class_name = null, array $params = [] )
   {
     if(isset($_SESSION['bootstrap']))
       return;

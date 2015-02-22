@@ -38,13 +38,13 @@ class connectionController extends Controller
       : $db->fetchAssoc($db->query('SELECT u.`id_user`, u.`role_id` FROM lpcms_user u WHERE u.`mail` = \'' . $email . '\' AND u.`pwd` = \'' . $pwd . '\' LIMIT 1'));
 
     if(empty($infosUser))
-      echo json_encode(array('fail', 'Bad credentials.'));
+      echo '{"fail", "Bad credentials."}';
     else
     {
-      $_SESSION['sid'] = array(
+      $_SESSION['sid'] = [
         'uid' => $infosUser['id_user'],
         'role' => $infosUser['role_id']
-      );
+      ];
 
       echo '"success"';
     }

@@ -5,7 +5,7 @@ body{
 }
 
 .rightPad{ padding-right:5px }
-#content{	padding:0 15px; width: calc(100% - 30px) }
+#content{	padding:0 15px }
 
 /* Menu generic rules */
 #menusContainer
@@ -15,7 +15,8 @@ body{
 	margin:0 15px 15px 15px;
 }
 
-#menus{
+.menus
+{
 	border-radius: 8px;
 	box-shadow: 3px 3px 6px rgba(228, 139, 39, 0.47);
 	clear: both;
@@ -23,37 +24,40 @@ body{
 	float:left;
 	text-shadow: 1px 1px rgba(123, 123, 123, 0.32);
 	margin:15px;
+  table-layout: fixed;
 	width:calc(100% - 30px);
 }
 
-.tab{
+  #tab0 .menus {
+    margin: 0 0 15px;
+    width: 100%;
+  }
+
+.tab
+{
 	background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
 	border-right: 1px solid rgba(0,0,0,0.2);
 	color: #444;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: table-cell;
 	padding:5px 0 5px 0;
-	transition: .35s;
+	transition: box-shadow .35s;
 	vertical-align: middle
  }
 
 .tab:hover{ box-shadow: 0 -6px 27px #F6B686 inset }
 
- .tab:first-child{border-radius: 8px 0 0 8px }
- .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
+  .tab:first-child{border-radius: 8px 0 0 8px }
+  .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
 
- .tab:active, .activeTab{ background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA }
+  .tab:active, .activeTab{ background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA }
 
-.activeTab{
- 	cursor: default;
- 	/*pointer-events: none*/
- }
+  .activeTab { cursor: default }
 
 /* Table generic rules */
 
-table{
+table {
 	/*background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 27%) no-repeat fixed 0 0 transparent;*/
 	border: 1px solid #CCF;
 	border-spacing: 0;
@@ -64,34 +68,34 @@ table{
 	white-space: normal
 }
 
-th{
-	font-weight: normal;
-	text-shadow: 1px 1px rgba(123, 123, 123, 0.32)
-}
+  th {
+  	font-weight: normal;
+  	text-shadow: 1px 1px rgba(123, 123, 123, 0.32)
+  }
 
-td:first-child, th:first-child {	border-left: 0}
-tr:last-child>td { border-bottom: 0 }
+  td:first-child, th:first-child {	border-left: 0}
+  tr:last-child>td { border-bottom: 0 }
 
-td,th{
-	border: 1px solid #CCF;
-	border-width: 0 0 1px 1px;
-	padding:3px 6px;
-}
+  td, th{
+  	border: 1px solid #CCF;
+  	border-width: 0 0 1px 1px;
+  	padding:3px 6px;
+    transition: background .3s, box-shadow .3s
+  }
 
-tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
-tr>th:hover,tr>td:hover:not(.options){
-	background: rgba(15, 16, 17, 0.06);
-	border-radius:0;
-	text-shadow: 1px 1px #CCC;
-  transition: .3s
-}
-tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
-tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
+  tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
+  tr>th:hover,tr>td:hover:not(.options){
+  	background: rgba(15, 16, 17, 0.06);
+    box-shadow: 0 0 21px rgba(0, 0, 0, 0.5) inset;
+  	border-radius:0;
+  	text-shadow: 1px 1px #CCC;
+  }
+  tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
+  tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
 
-td .input{ margin:0 !important}
+  td .input{ margin:0 !important}
 
-#breadCrumb { margin-bottom: 10px }
-#usersHeader th:nth-of-type(5){ width: 6.2em }
+#usersHeader th:nth-of-type(5){ width: 8em }
 #usersHeader th:nth-of-type(6){ width: 7.8em }
 
 .final{ background: rgba(15, 16, 17, 0.06) !important; border-top: 1px solid rgba(255, 255, 255, 0.54) }
@@ -107,9 +111,9 @@ td .input{ margin:0 !important}
 
 .smallBtn{ width:18px }
 .softBtn {
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: 1px 1px 2px #7E7E7E;
   color: #F1AC46;
-  cursor: pointer;
   display: inline-block;
   font-size: 1.1em;
   letter-spacing: -0.05em;
@@ -117,14 +121,14 @@ td .input{ margin:0 !important}
   padding: 3px 4px 3px 5px;
   text-align: center;
   text-shadow: 1px 1px rgba(84, 84, 84, 0.1);
-  transition: .25s;
+  transition: transform .25s;
 }
 
 .lightBtn { background: #F4F4F4 }
 
 .softBtn:hover {
-  transform: scale(1.05);
-  transition: all .25s ease 0s;
+  cursor: pointer;
+  transform: scale(1.07);
 }
 .softBtn:active {
   box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
@@ -142,7 +146,7 @@ td .input{ margin:0 !important}
 	vertical-align: top
 }
 
-#usersBody > tr:first-child input { width: 100% }
+#usersBody > tr:first-child input { width: calc(100% - 5px) }
 #add { padding: 3px 3px 3px 2px }
 
 #delAll, .delete {	height: 1.2em }

@@ -1,18 +1,24 @@
-body { background: linear-gradient(to bottom, rgba(180, 187, 237, 0.12) 0%, rgba(2, 17, 27, 0.2) 79%) no-repeat fixed 0 0 transparent !important}
-#exception {
-  background: linear-gradient(to bottom, rgba(197, 204, 255, 0.23) 0%, rgba(0, 2, 3, 0.5) 13%) no-repeat fixed 0 0 transparent;
+body {
+  background: linear-gradient(to bottom, rgba(180, 187, 237, 0.12) 0%, rgba(2, 17, 27, 0.2) 79%) no-repeat fixed !important
+}
+
+#exception
+{
+  background: linear-gradient(to bottom, rgba(197, 204, 255, 0.23) 0%, rgba(0, 2, 3, 0.5) 13%) no-repeat fixed;
   padding: 5px 0;
   text-shadow: 0 0 3px #FFF;
   width: 100%
 }
-#explications { font: 12px solid #136; padding-top:20px}
+
+#explications { font: 12px solid #136; padding-top:20px }
 .textCenter { text-align: center }
-.correctDisplay {
+.correctDisplay
+{
 	height:100%;
  	margin: auto;
  	overflow: none;
+  text-align: left;
  	white-space:pre-wrap;
- 	text-align: left;
  	width:70%;
  	-webkit-hyphens: auto;
     -moz-hyphens: auto;
@@ -25,28 +31,33 @@ body { background: linear-gradient(to bottom, rgba(180, 187, 237, 0.12) 0%, rgba
 
 .radius{ border-radius:10px }
 
-table{
+table
+{
 	background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 100%) scroll;
 	border: 1px solid #CCF;
 	border-spacing: 0;
 	width:100%;
 	white-space: normal
 }
-.test{border:0}
 
-td:first-child, th:first-child {	border-left: 0}
+.test { border:0 }
+
+td:first-child, th:first-child {	border-left: 0 }
 tr:last-child>td { border-bottom: 0 }
 
 table:not(.test) td:first-child{ width:150px}
 
-td,th{
+td,th
+{
 	border: 1px solid #CCF;
 	border-width: 0 0 1px 1px;
 	padding:3px 6px;
+  transition: background .25s
 }
 
 tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
-tr>td:hover{
+tr>td:hover
+{
 	background: rgba(15, 16, 17, 0.06);
 	border-radius:0;
 	text-shadow: 1px 1px #CCC
@@ -54,19 +65,21 @@ tr>td:hover{
 tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
 tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
 
-.foldable{
+.foldable
+{
 	background-color: rgba(68, 68, 68, 0.35) !important;
 	cursor:pointer
 }
 
-.foldable:hover{ background-color: rgba(68, 68, 68, 0.5) !important }
+.foldable:hover { background-color: rgba(68, 68, 68, 0.5) !important }
 
-.deepContent{ display:none }
+.deepContent { display:none }
 
-.test td{
+.test td
+{
 	width:0;
 	white-space: nowrap
 }
 
-.dummy{	width: 100% !important }
-.showArgs{ cursor:pointer }
+.dummy {	width: 100% !important }
+.showArgs:hover { cursor:pointer }
