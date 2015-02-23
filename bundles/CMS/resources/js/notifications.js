@@ -5,6 +5,13 @@ var notif = (function()
       INFO = 'vertNotif',
       WARNING = 'jauneNotif';
 
+  /**
+   * Decrease opacity at tick time and remove the notification at the end.
+   *
+   * @param el       The notification DOM element.
+   * @param last     Last time (useful because of the recursion)
+   * @param duration How many time the notification has to last
+   */
   function tick(el, last, duration)
   {
     var temp = new Date;
