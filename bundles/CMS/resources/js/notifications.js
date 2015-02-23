@@ -7,27 +7,17 @@ var notif = (function()
 
   function tick(el, last, duration)
   {
-    var temp = new Date();
+    var temp = new Date;
     el.style.opacity -= (temp - last) / duration;
     last = temp;
 
-    if (el.style.opacity > 0)
-      setTimeout(tick, 1, el, last, duration)
-    else
-    {
-      if(null !== el.parentNode) // fixes some bugs
-      {
-        el.parentNode.removeChild(el);
+    0 < el.style.opacity
+    ? setTimeout(tick, 1, el, last, duration)
+    : null !== el.parentNode && // fixes some bugs
+      (
+        el.parentNode.removeChild(el),
         window.notifExists = false
-      }
-    }
-  }
-
-  function fadeOut(el, duration)
-  {
-    el.style.opacity = 1;
-    var last = new Date();
-    tick(el, last, duration)
+      )
   }
 
   /**
@@ -37,12 +27,12 @@ var notif = (function()
    * @param texte    The text to show in the notification
    * @param type     ERROR, WARNING, INFO ...
    * @param cssClass The css additional class to apply (optional)
-   * @param duree    Duration in milliseconds for the fade effect
+   * @param duration Duration in milliseconds for the fade effect
    */
-  function run(selector, texte, type, cssClass, duree)
+  function run(selector, texte, type, cssClass, duration)
   {
     var cssClass = cssClass || '',
-        duree = duree || 10000,
+        duree = duree || 1E4,
         next = selector.nextElementSibling;
 
     // If a notification exist already then it removes the previous one and creates another
@@ -51,9 +41,12 @@ var notif = (function()
 
     window.notifExists = true;
     selector.insertAdjacentHTML('afterend', '<div class="notifWrapper fl"><div class="notification ' + cssClass + ' ' + type + '">' + texte + '</div></div>');
-    var next = selector.nextElementSibling;
 
-    fadeOut(next, duree)
+    var next = selector.nextElementSibling,
+      last = new Date;
+
+    next.style.opacity = 1;
+    tick(next, last, duration)
   }
 
   var dummy = {
