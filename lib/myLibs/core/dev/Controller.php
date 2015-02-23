@@ -45,7 +45,7 @@ class Controller extends MasterController
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
     Logger::logTo("\t" . 'Ajax : ' . (($ajax) ? 'true' : 'false'), 'trace');
 
-    if(!$ajax)
+    if($ajax)
       $this->ajax = $ajax;
 
     if (file_exists($templateFile))
@@ -82,7 +82,7 @@ class Controller extends MasterController
         '/title>',
         '/title>'. self::addCss($layout),
         $content . self::addJs($layout))
-      : $content . self::addCss($layout) . self::addJs($layout) . 'hahahahah';
+      : $content . self::addCss($layout) . self::addJs($layout);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];

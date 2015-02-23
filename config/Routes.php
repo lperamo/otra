@@ -140,7 +140,6 @@ class Routes
       'backendAjaxUsers' => [
         'chunks' => ['/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'],
         'resources' => [
-          'bundle_css' => ['users'],
           '_js' => ['users']
         ]
       ],
