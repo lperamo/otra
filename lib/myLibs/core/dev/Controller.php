@@ -146,42 +146,69 @@ class Controller extends MasterController
           $chunks = $route['chunks'];
           $resources = $route['resources'];
           $debLink = "\n" . '<link rel="stylesheet" href="';
+          $i = 0;
+          $unorderedArray = $orderedArray = [];
           $debLink2 = $debLink . '/bundles/';
-
-          if(isset($resources['first_css']))
-          {
-            foreach($resources['first_css'] as $first_css) {
-              $debugContent .= $debLink . $css . '.css" />';
-            }
-          }
 
           if(isset($resources['bundle_css']))
           {
-            foreach($resources['bundle_css'] as $bundle_css) {
-              $debugContent .= $debLink2 . $chunks[1] . '/resources/css/' . $bundle_css . '.css" />';
+            foreach($resources['bundle_css'] as $key => $bundle_css)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink2 . $chunks[1] . '/resources/css/' . $bundle_css . '.css" />'
+              );
             }
           }
 
           if(isset($resources['module_css']))
           {
-            foreach($resources['module_css'] as $module_css) {
-              $debugContent .= $debLink2 . $chunks[2] . '/resources/css/' . $module_css . '.css" />';
+            foreach($resources['module_css'] as $key => $module_css)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink2 . $chunks[2] . '/resources/css/' . $module_css . '.css" />'
+              );
             }
           }
 
           if(isset($resources['_css']))
           {
-            foreach($resources['_css'] as $css) {
-              $debugContent .= $debLink . $this->viewCSSPath . $css . '.css" />';
+            foreach($resources['_css'] as $key => $css)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink . $this->viewCSSPath . $css . '.css" />'
+              );
             }
           }
 
           if(isset($resources['core_css']))
           {
-            foreach($resources['core_css'] as $core_css) {
-              $debugContent .= $debLink . '/lib/myLibs/core/css/' . $core_css . '.css" />';
+            foreach($resources['core_css'] as $key => $core_css)
+            {
+              self::updateScriptsArray(
+                $unorderedArray,
+                $orderedArray,
+                $i,
+                $key,
+                $debLink . '/lib/myLibs/core/css/' . $core_css . '.css" />'
+              );
             }
           }
+
+          $cssArray = self::calculateArray($unorderedArray, $orderedArray);
+
+          foreach($cssArray as $css) { $debugContent .= $css; }
         }
       }
     }
