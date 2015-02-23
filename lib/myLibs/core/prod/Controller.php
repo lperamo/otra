@@ -102,7 +102,7 @@ class Controller extends MasterController
       (!$layout) ? str_replace('/title>', '/title>', $content)
                  : ($ajax
                    ? str_replace('/title>', '/title>'. $this->addCss($routeV), $content . $this->addJs($routeV))
-                   : $content . $this->addCss($routeV) . $this->addJs($routeV))
+                   : $this->addCss($routeV) . $content . $this->addJs($routeV))
                  ); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)

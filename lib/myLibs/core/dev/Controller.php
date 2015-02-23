@@ -82,7 +82,7 @@ class Controller extends MasterController
         '/title>',
         '/title>'. self::addCss($layout),
         $content . self::addJs($layout))
-      : $content . self::addCss($layout) . self::addJs($layout);
+      : self::addCss($layout) . $content . self::addJs($layout);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];

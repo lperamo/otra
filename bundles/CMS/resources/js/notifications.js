@@ -5,14 +5,14 @@ var notif = (function()
       INFO = 'vertNotif',
       WARNING = 'jauneNotif';
 
-  function tick()
+  function tick(el, last, duration)
   {
     var temp = new Date();
     el.style.opacity -= (temp - last) / duration;
     last = temp;
 
     if (el.style.opacity > 0)
-      setTimeout(tick, 1)
+      setTimeout(tick, 1, el, last, duration)
     else
     {
       if(null !== el.parentNode) // fixes some bugs
@@ -27,7 +27,7 @@ var notif = (function()
   {
     el.style.opacity = 1;
     var last = new Date();
-    tick()
+    tick(el, last, duration)
   }
 
   /**
@@ -56,11 +56,20 @@ var notif = (function()
     fadeOut(next, duree)
   }
 
-  return
-  ({
+  var dummy = {
     ERROR: ERROR,
     'INFO' : INFO,
     'WARNING' : WARNING,
-    'run' : run
-  })
+    run : run
+  };
+
+  return dummy;
+  // Why the fucking following code doesn't work !!
+  // return
+  // ({
+  //   ERROR: ERROR,
+  //   'INFO' : INFO,
+  //   'WARNING' : WARNING,
+  //   'run' : run
+  // })
 })()
