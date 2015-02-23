@@ -15,7 +15,8 @@ class Controller extends MasterController
   private static $cache_used,
     $css = [],
     $js = [],
-    $rendered = [];
+    $rendered = [],
+    $ajax = false;
 
   /** If the files are in cache, put them directly in $rendered
    *
@@ -64,7 +65,7 @@ class Controller extends MasterController
     // If we already have the template in memory and that it's not empty then we show it
     self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
-    if(!$ajax)
+    if($ajax)
       $this->ajax = $ajax;
 
     if(self::$cache_used)
