@@ -1,11 +1,13 @@
 /* Global generic rules */
-body{
+body {
 	background: #EAEAEA;
 	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif
 }
 
-.rightPad{ padding-right:5px }
-#content{	padding:0 15px }
+.circleBorder { border-radius: 50% }
+
+.rightPad { padding-right:5px }
+#content {	padding:0 15px }
 
 /* Menu generic rules */
 #menusContainer
@@ -84,9 +86,10 @@ table {
   }
 
   tr:nth-of-type(odd)>td { background: rgba(255, 255, 255, 0.48) }
-  tr>th:hover,tr>td:hover:not(.options){
-  	background: rgba(15, 16, 17, 0.06);
-    box-shadow: 0 0 21px rgba(0, 0, 0, 0.5) inset;
+  tr>th:hover,tr>td:hover:not(.options)
+  {
+  	background: rgba(30, 30, 30, 0.06);
+    box-shadow: 0 0 21px rgba(0, 0, 0, 0.2) inset;
   	border-radius:0;
   	text-shadow: 1px 1px #CCC;
   }
@@ -103,54 +106,90 @@ table {
 
 .field{ margin:0;	width:100% }
 
-.field input{
-	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
-	height:25px;
-	font-size:1em
-}
+  .field input{
+  	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
+  	height:25px;
+  	font-size:1em
+  }
 
 .smallBtn{ width:18px }
+
 .softBtn {
   background: rgba(255, 255, 255, 0.8);
-  box-shadow: 1px 1px 2px #7E7E7E;
-  color: #F1AC46;
+  /*box-shadow: 1px 1px 2px #7E7E7E;*/
+  box-shadow: 1px 1px 2px rgba(126, 126, 126, 0.5);
   display: inline-block;
+  margin: 3px 6px 3px 0;
+  padding: 6px;
+  transition: transform .25s, background-color .25s;
+  -webkit-transform-style: flat;
+     -moz-transform-style: flat;
+          transform-style: flat;
+  position: relative;
+  z-index:0;
+}
+
+  .softBtn:hover
+  {
+    cursor: pointer;
+    transform: rotate(0.0001deg) scale(1.07); /* the rotation is only for Firefox to minimize the unvoluntary shake effect */
+    /* Those following lines fix bugs in browsers about z-index problems when scaling */
+    -webkit-transform-style: flat;
+            transform-style: flat;
+    z-index:1
+  }
+
+  tr>th:hover .softBtn, tr>td:hover:not(.options) .softBtn
+  {
+    background-color: #FFF
+  }
+
+  .softBtn:active
+  {
+    box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
+    transform: scale(1)
+  }
+
+.softBtnNoImage
+{
+  color: #F1AC46;
   font-size: 1.1em;
   letter-spacing: -0.05em;
-  margin: 3px 10px 3px 0;
-  padding: 3px 4px 3px 5px;
   text-align: center;
   text-shadow: 1px 1px rgba(84, 84, 84, 0.1);
-  transition: transform .25s;
 }
+
+.softBtnImage { vertical-align: middle }
 
 .lightBtn { background: #F4F4F4 }
 
-.softBtn:hover {
-  cursor: pointer;
-  transform: scale(1.07);
-}
-.softBtn:active {
-  box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
-  transform: scale(1);
-}
-
 .input { margin-right: 10px } /* Rajout pour les templates associés */
 
-.fontBtn{
+.fontBtn
+{
 	color: #F1AC46;
 	font-size: 1.5em;
 	font-weight: bold;
 	line-height: 0.8em;
 	text-shadow: 1px 1px rgba(167, 121, 31, 0.5);
-	vertical-align: top
+	text-align: center
 }
 
 #usersBody > tr:first-child input { width: calc(100% - 5px) }
 #add { padding: 3px 3px 3px 2px }
 
-#delAll, .delete {	height: 1.2em }
-#delAll:before, .delete:before {
+#delAll, .delete
+{
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20fill%3D%22%23f1ac46%22%20d%3D%22m432.54599%2C133.462006l-65.412994%2C-57.072006l-113.054993%2C134.324997l-113.111008%2C-137.012993l-61.513008%2C65.068001c33.791016%2C43.884995%2078.146019%2C89.796997%20123.688011%2C132.464981l-120.149002%2C142.752014l19.865005%2C22.628998c29.250992%2C-20.309998%2087.838989%2C-65.578003%20150.311981%2C-120.09201c63.662018%2C55.812012%20122.860992%2C101.335999%20151.300995%2C121.77301l21.438019%2C-19.442993l-122.105011%2C-147.903992c48.63501%2C-45.241013%2095.504028%2C-93.508011%20128.742004%2C-137.488007z%22/%3E%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.8);
+  height: 14px;
+  width: 14px;
+}
+
+#delAll:hover, .delete:hover
+{
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20id%3D%22svg_2%22%20d%3D%22m432.54599%2C133.462006l-65.412994%2C-57.072006l-113.054993%2C134.324997l-113.111008%2C-137.013l-61.513008%2C65.068008c33.791016%2C43.884979%2078.146019%2C89.796997%20123.688011%2C132.464981l-120.149002%2C142.752014l19.865005%2C22.628998c29.250992%2C-20.309998%2087.838989%2C-65.578003%20150.311981%2C-120.09201c63.662018%2C55.812012%20122.860992%2C101.335999%20151.300995%2C121.77301l21.438019%2C-19.442993l-122.105011%2C-147.903992c48.63501%2C-45.241028%2095.504028%2C-93.508011%20128.742004%2C-137.488007z%22%20fill%3D%22url%28%23svg_3%29%22/%3E%0A%20%3Cdefs%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_3%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23ff0000%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23ffaa56%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%3C/defs%3E%0A%3C/svg%3E%0A')  no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+}
+/*#delAll:before, .delete:before {
   background: none repeat scroll 0 0 #F1AC46;
   box-shadow: 1px 1px 3px rgba(167, 121, 31, 0.5);
   content: "";
@@ -158,14 +197,17 @@ table {
   height: 4px;
   margin: 8px 2px 3px 0;
   width: 10px
+}*/
+
+#valAll {
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20fill%3D%22%23f1ac46%22%20d%3D%22m50%2C236.160004c47.389%2C9.878998%20111.237%2C24.501984%20157.389008%2C54.544983c54.195007%2C-72.617981%20148.666992%2C-141.998993%20254.610992%2C-197.831985c-100.610992%2C99.166%20-185.674988%2C213.119003%20-242.136002%2C326.254013c-45.514999%2C-64.654022%20-93.425995%2C-120.354004%20-169.863998%2C-182.96701z%22/%3E%0A%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+  height: 14px;
+  width: 14px;
 }
 
-#valAll{
-	font-size: 1.5em;
-	line-height: 0.8em;
-	padding: 3px;
-	text-shadow: 1px 1px rgba(167, 121, 31, 0.5)
-}
+  #valAll:hover {
+    background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20id%3D%22svg_3%22%20d%3D%22m50%2C236.160004c47.389%2C9.878998%20111.237%2C24.501984%20157.389008%2C54.544983c54.195007%2C-72.617981%20148.666992%2C-141.998993%20254.610992%2C-197.831985c-100.610992%2C99.166%20-185.674988%2C213.119003%20-242.136002%2C326.254013c-45.514999%2C-64.654022%20-93.425995%2C-120.354004%20-169.863998%2C-182.96701l0%2C0z%22%20fill%3D%22url%28%23svg_5%29%22/%3E%0A%20%3Cdefs%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_4%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%237fff00%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_5%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23d4ffaa%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%3C/defs%3E%0A%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+  }
 
 .paging {
 	height: 0.9em;
@@ -179,3 +221,11 @@ table {
 }
 
 #limit { margin: 0 0 -7px 5px }
+.seeDetails>img { vertical-align: -4px }
+
+.edit
+{
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Asketch%3D%22http%3A//www.bohemiancoding.com/sketch/ns%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3Ctitle/%3E%3Cdefs/%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20id%3D%22miu%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.52081529%2C19.553286%20L13.5208152%2C19.553286%20L13.5208151%2C3.55328599%20L6.52081521%2C3.55328599%20L6.52081529%2C19.553286%20Z%20M6.52081528%2C-0.476770888%20L6.52081528%2C2.47686997%20L13.5197166%2C2.47686992%20L13.5197166%2C-0.476770935%20C13.5197166%2C-1.47918477%2012.5173028%2C-1.47918477%2012.5173028%2C-1.47918477%20L7.52322913%2C-1.47918472%20C7.52322913%2C-1.47918472%206.52081528%2C-1.47918472%206.52081528%2C-0.476770888%20Z%20M6.50416988%2C20.5208153%20L10.0208153%2C25.5075707%20L13.5192284%2C20.5208153%20L6.50416988%2C20.5208153%20Z%22%20fill%3D%22%23f1ac46%22%20id%3D%22editor_pencil_pen_edit_write_glyph%22%20transform%3D%22translate%2810.020815%2C%2012.020815%29%20rotate%2845.000000%29%20translate%28-10.020815%2C%20-12.020815%29%20%22/%3E%3C/g%3E%3C/svg%3E%0D%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+  height: 14px;
+  width: 14px;
+}

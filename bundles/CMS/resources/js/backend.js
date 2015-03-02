@@ -1,6 +1,6 @@
-(function()
+(function(d)
 {
-	"use strict";
+  "use strict";
 
   var tabs = 0;
   function updateURL( event )
@@ -9,7 +9,10 @@
     {
       $.get(
         event.originalEvent.state.link,
-        function(response) { $('#content').html(response); $('title').text(event.originalEvent.state.title); }
+        function(response) {
+          d.getElementById('content').innerHTML = response;
+          d.getElementsByTagName('title')[0].textContent = event.originalEvent.state.title;
+        }
       );
     }
   }
@@ -25,12 +28,12 @@
   function activateTab()
   {
     var $this = $(this),
-    index = $(this).index();
+    index = $this.index();
 
     if(! $this.hasClass('activeTab'))
     {
       var ajaxLink = this.dataset.href.replace('backend/', 'backend/ajax/'),
-          title = 'Backend administration - ' + this.dataset.tooltip;
+          title = this.textContent + ' - Backend';
 
       if(!((tabs & Math.pow(2, index)) >> index)) // if this tab isn't already loaded
       {
@@ -44,7 +47,6 @@
             } catch (e) {
                 $('#content').append(response);
             }
-            $('title').text(title);
             tabs += Math.pow(2, index);
             changeTab($this, index);
           }
@@ -52,15 +54,16 @@
       } else
         changeTab($this, index);
 
+      d.getElementsByTagName('title')[0].textContent = title;
       history.pushState({link: ajaxLink, title: title}, title, this.dataset.href);
     }
   }
 
-	$(window).on('popstate', updateURL);
+  $(window).on('popstate', updateURL);
 
-	$(function()
-	{
-		tabs = Math.pow(2, $('.activeTab').index());
-		$('#menus').on('click', '.tab', activateTab);
-	});
-})();
+  $(function()
+  {
+    tabs = Math.pow(2, $('.activeTab').index());
+    $('#menus').on('click', '.tab', activateTab);
+  });
+})(document);

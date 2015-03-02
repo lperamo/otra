@@ -1,11 +1,12 @@
 <thead>
   <tr>
-    <th><?= t('Détail') ?></th>
+    <th><input id="modules_all" type="checkbox"></th>
     <th><?= t('Type') ?></th>
     <th><?= t('Position') ?></th>
     <th><?= t('Order') ?></th>
     <th><?= t('Right') ?></th>
     <th><?= t('Content') ?></th>
+    <th><?= t('Action') ?></th>
   </tr>
 </thead>
 
@@ -15,12 +16,13 @@ if(!empty($items)) {
   foreach($items as $item)
 {?>
 <tr>
-  <td><a class="softBtn lightBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('See elements') ?></a>
+  <td><input type="checkbox"></td>
   <td><?= $moduleTypes[$item['type']] ?></td>
   <td><?= $item['position'] ?></td>
   <td><?= $item['ordre'] ?></td>
   <td><?= $right[$item['droit']] ?></td>
   <td><?= $item['contenu'] ?></td>
+  <td><a class="softBtn circleBorder softBtnImage seeDetails" data-id="<?= $item['id'] ?>" title="<?= t('See elements') ?>"></a>
 </tr>
 <? } } ?>
 </tbody>

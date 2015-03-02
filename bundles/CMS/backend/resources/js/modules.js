@@ -28,34 +28,40 @@
           changeModuleTab.call(__articlesMgt);
           __table0.innerHTML = data
         },
-      },
+      };
 
-      search = function moduleSearch(e)
+      function moduleSearch(e)
       {
         if(13 === e.which)
           $.get(this.dataset.href, { search: this.value }, s[this.dataset.fn]);
-      },
+      }
 
-      getElements = function getElements()
+      function getElements()
       {
         $.get('/backend/ajax/modules/get/elements', { id: this.dataset.id}, function(){
           console.log('coucou');
         });
-      },
+      }
 
-      changeModuleTab = function changeModuleTab(evt)
+      function changeModuleTab(evt)
       {
         $('.activeTab', '#content').removeClass('activeTab');
         this.classList.add('activeTab');
 
         if(undef !== evt)
           $.get(this.dataset.href, s[this.dataset.fn])
-      };
+      }
+
+      function selectAll()
+      {
+        $(__table0).find('td:nth-child(1)>input[type=checkbox]').prop('checked', !$(this).prop('checked'))
+      }
 
   $(function()
   {
-      $('#content').on('keyup', '._genericSearch', search)
-                   .on('mouseup', '.seeElements', getElements)
+      $('#content').on('keyup', '._genericSearch', moduleSearch)
+                   .on('mouseup', '.seeDetails', getElements)
                    .on('mouseup', '.tab', changeModuleTab)
+      $('#modules_all').on('mouseup', selectAll);
   })
 })(document)
