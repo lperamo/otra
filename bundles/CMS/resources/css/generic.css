@@ -63,6 +63,13 @@ li[data-tooltip]:after, .softBtn[data-tooltip]:after, .actualSelectValue[data-to
     z-index: 10000
 }
 
+.softBtn[data-tooltip]:hover:after {
+    transform: scale(0.1) !important;
+}
+.softBtn[data-tooltip]:active:after {
+    transform: scale(0.1) !important;
+}
+
 /* (top is the default), top right, right etc. clockwise */
 li.TTTR[data-tooltip]:after, .softBtn.TTTR[data-tooltip]:after, .actualSelectValue.TTTR[data-tooltip]:after { left: 100% }
 li.TTR[data-tooltip]:after, .softBtn.TTR[data-tooltip]:after, .actualSelectValue.TTR[data-tooltip]:after { left: calc(100% + 5px); bottom: 0 }

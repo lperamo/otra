@@ -79,7 +79,7 @@ class ajaxUsersController extends Controller
     $db->freeResult($dbUsers);
 
     if($users)
-      die('{"success":false,"msg": "This mail already exists !"');
+      die('{"success": false, "msg": "This mail already exists !"}');
 
     // We can now insert the new user
     $pwd = crypt($pwd, FWK_HASH);
@@ -123,17 +123,11 @@ class ajaxUsersController extends Controller
       'UPDATE lpcms_user SET
       mail = \'' . mysql_real_escape_string($mail) . '\',
       pwd = \'' . mysql_real_escape_string($pwd) . '\',
-      pseudo = \'' . mysql_real_escape_string($pseudo) . '\' WHERE id_user = ' . intval($id_user)))
-      die('{"success":false,"msg":"Database problem !"}');
+      pseudo = \'' . mysql_real_escape_string($pseudo) . '\',
+      role_id = ' . intval($role) . ' WHERE id_user = ' . intval($id_user)))
+      die('{"success": false, "msg": "Database problem !"}');
 
-    // and his role
-    if(false === $db->query(
-      'UPDATE lpcms_user_role SET
-      fk_id_role = ' . intval($role) . '
-      WHERE fk_id_user = ' . intval($id_user)))
-      die('{"success":false,"msg":"Database problem !"}');
-
-    echo '{"success":true, "oldMail":' . $_POST['oldMail'] . ', "msg": "User edited.","pwd","' . $pwd . '"}';
+    echo '{"success":true, "oldMail": "' . $_POST['oldMail'] . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
 
     return;
   }

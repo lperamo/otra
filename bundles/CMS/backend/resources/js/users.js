@@ -5,9 +5,9 @@
 		txtMail = '<input class="input field" type="email" required="required" title="" autocomplete="on" data-tooltip="Please complete this field."',
 		txtPwd = '<input type="password" class="input field" required="required" title="" data-tooltip="Please complete this field. (at least 8 characters)"',
 		txtPseudo = '<input class="input field" required="required" title="" data-tooltip="Please complete this field."',
-		editBtn = '<a class="softBtn circleBorder edit _edit" data-tooltip="Makes the line editable"></a>',
-		validBtn = '<a class="softBtn circleBorder validate _validate" data-tooltip="Validates the new user"></a>',
-		deleteBtn = '<a class="softBtn circleBorder delete _delete" data-tooltip="Delete the user"></a>',
+		editBtn = '<a class="softBtn circleBorder edit _edit TTTL" data-tooltip="Makes the line editable"></a>',
+		validBtn = '<a class="softBtn circleBorder validate _validate TTTL" data-tooltip="Validates the new user"></a>',
+		deleteBtn = '<a class="softBtn circleBorder delete _delete TTTL" data-tooltip="Delete the user"></a>',
 		options = '',
 		prevSel = $('#prev'),
 		nextSel = $('#next'),
@@ -122,13 +122,25 @@
 				window.usersSaveData = [];
 
 			window.usersSaveData[trId] = [mail.text(), pwd.text(), pseudo.text(), roleTxt];
-
-			$this.replaceWith(validBtn + '<a class="softBtn circleBorder cancel _cancel" data-tooltip="Cancels changes"></a>');
+			$this.replaceWith('<a class="_editEnd softBtn circleBorder validate TTTL" data-tooltip="Validates the new user"></a><a class="softBtn circleBorder cancel _cancel TTTL" data-tooltip="Cancels changes"></a>');
 			U.oldMail = window.usersSaveData[trId][0];
 			mail.html(txtMail + 'value="' + U.oldMail + '" />');
 			pwd.html(txtPwd + '/>');
 			pseudo.html(txtPseudo + 'value="' + window.usersSaveData[trId][2] + '" />');
 			role.html(roleText).find('a').attr('data-value', roleId).text(roleTxt)
+		},
+
+		editEnd()
+		{
+			var content = $('#content').find('table')[0],
+				tr = $(this).parents('tr'),
+				tds = tr.find('td:not(:first-child,:last-child)'),
+				data = U.checkin(tr, tds, roles, content);
+
+			if(true !== data)
+				$.post('/backend/ajax/users/edit', data, function(data){ U.afterUpdate(data, content, tds); });
+
+			return false
 		},
 
 		validOne()
@@ -157,6 +169,8 @@
 			var cond = 0 === tr.find('.cancel').length,
 				  data = U.checkin(tr, tds, roles, content[0], cond);
 
+				  console.log(data);
+
 			if(true !== data)
 			{
 				if(cond) // We was adding something
@@ -182,6 +196,7 @@
 			for(var i=0; i < 4; ++i) { tds.eq(i + 1).text(window.usersSaveData[trId][i]) }
 			$this.after(editBtn);
 			$this.prev().remove().end().remove();
+			tr.find('.editEnd').remove()
 		},
 
 		checkin(tr, tds, roles, content, add)
@@ -252,7 +267,7 @@
         {
         	notif.run(content, data.msg, 'INFO', notif.INFO, 10000);
         	return (undef == data.id) ? data.pwd : [data.id, data.pwd]
-        } else{
+        } else {
         	notif.run(content, data.msg, 'ERROR', notif.ERROR, 10000);
         	return false
         }
@@ -274,7 +289,7 @@
 
 			if(false === add)
 				var pwd = data;
-			else{
+			else {
 				tr[0].id = data[0];
 				var pwd = data[1]
 			}
@@ -283,12 +298,11 @@
 				return false;
 
 			tds.find('input').each(function(i) {
-				var $this = $(this);
-				$this.replaceWith(1 === i ? pwd : $this.val())
+				this.outerHTML = 1 === i ? pwd : this.value
 			});
 
-			select.replaceWith(select.find('a').text());
-			tds.last().next().html(editBtn + deleteBtn)
+			select.replaceWith(select[0].querySelectorAll('a').textContent);
+			tds.last()[0].nextElementSibling.innerHTML = editBtn + deleteBtn
 		},
 
 		search(e)
@@ -372,6 +386,7 @@
 				.on('click', '#add', U.addUser)
 				.on('click', 'tr.editable>td', U.focusSelect)
 				.on('click', '._edit', U.edit)
+				.on('click', '._editEnd', U.editEnd)
 				.on('click', '._delete', U.del)
 				.on('click', '#usersDelAll', U.deleteAll)
 				.on('click', '._validate', U.validOne)
