@@ -1,4 +1,4 @@
-(function(d)
+var backend = (function(d)
 {
   "use strict";
 
@@ -59,6 +59,44 @@
     }
   }
 
+  /** Allow to click on TDs instead of directly on checkboxes */
+  function triggerCheckbox(evt)
+  {
+    if('TD' !== evt.target.tagName)
+      return false;
+
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent(evt.originalEvent.type, true, false);
+    this.children[0].dispatchEvent(event);
+    this.children[0].checked = !this.children[0].checked;
+  }
+
+  /** Select/Deselect all the related checkboxes */
+  function selectAll() {
+    $(this).closest('table').find('input[type=checkbox]:not("._selectAll")').prop('checked', !this.checked)
+  }
+
+  /** Make a check before launching a CRUD function via AJAX */
+  function beforeAction(text, callback)
+  {
+    var content = $('#content').find('table'),
+      checkboxesChecked = content.find('input[type=checkbox]:checked');
+
+    if(0 === checkboxesChecked.length) {
+      notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
+      return false
+    }
+
+    if(confirm('Do you really want to validate all the changes ?'))
+    {
+      checkboxesChecked.closest('tr').each(function() {
+        callback.call(this, content)
+      });
+    }
+  }
+
+  // function
+
   $(window).on('popstate', updateURL);
 
   $(function()
@@ -66,4 +104,12 @@
     tabs = Math.pow(2, $('.activeTab').index());
     $('#menus').on('click', '.tab', activateTab);
   });
+
+  var dummy = {
+    beforeAction: beforeAction,
+    triggerCheckbox: triggerCheckbox,
+    selectAll: selectAll
+  };
+
+  return dummy
 })(document);

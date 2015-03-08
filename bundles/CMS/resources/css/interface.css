@@ -1,4 +1,5 @@
 /* Global generic rules */
+html { overflow: hidden }
 body {
 	background: #EAEAEA;
 	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif
@@ -7,7 +8,10 @@ body {
 .circleBorder { border-radius: 50% }
 
 .rightPad { padding-right:5px }
-#content {	padding:0 15px }
+#content {
+  padding:0 15px;
+  width: calc(100% - 30px)
+}
 
 /* Menu generic rules */
 #menusContainer
@@ -90,16 +94,19 @@ table {
   {
   	background: rgba(30, 30, 30, 0.06);
     box-shadow: 0 0 21px rgba(0, 0, 0, 0.2) inset;
-  	border-radius:0;
   	text-shadow: 1px 1px #CCC;
   }
-  tr:last-child>td:first-child{	border-radius: 0 0 0 10px }
-  tr:last-child>td:last-child{	border-radius: 0 0 10px 0 }
+  tr:last-child>td:first-child {	border-bottom-left-radius: 10px }
+  tr:last-child>td:last-child {	border-bottom-right-radius: 10px }
+  th:first-child{ border-top-left-radius: 10px }
+  th:last-child{ border-top-right-radius: 10px }
 
-  td .input{ margin:0 !important}
+  td .input{ margin:0 !important }
+  td:nth-child(1):not(.options):not(.final) { cursor:pointer }
 
 #usersHeader th:nth-of-type(5){ width: 8em }
-#usersHeader th:nth-of-type(6){ width: 7.8em }
+#usersHeader th:nth-of-type(6){ min-width: 4em }
+#usersBody td:nth-of-type(6){ white-space: nowrap }
 
 .final{ background: rgba(15, 16, 17, 0.06) !important; border-top: 1px solid rgba(255, 255, 255, 0.54) }
 .options{ background: #E4E8EA; border-top: 1px double rgba(255, 255, 255, 0.54) }
@@ -115,6 +122,7 @@ table {
 .smallBtn{ width:18px }
 
 .softBtn {
+  /*backface-visibility: hidden;*/
   background: rgba(255, 255, 255, 0.8);
   /*box-shadow: 1px 1px 2px #7E7E7E;*/
   box-shadow: 1px 1px 2px rgba(126, 126, 126, 0.5);
@@ -129,25 +137,36 @@ table {
   z-index:0;
 }
 
-  .softBtn:hover
+  .softBtn:hover:not(.disabled)
   {
     cursor: pointer;
-    transform: rotate(0.0001deg) scale(1.07); /* the rotation is only for Firefox to minimize the unvoluntary shake effect */
+    /*
+       * The fix for WebKit/Blink browsers.
+       */
+      -webkit-backface-visibility: hidden;
+
+      /*
+       * The fix for Firefox ... yes, it has to be on one, huge line.
+       */
+      filter: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><filter id="gaussian_blur"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter></defs></svg>#gaussian_blur');
+    transform: scale(1.07); /* the rotation is only for Firefox to minimize the unvoluntary shake effect */
     /* Those following lines fix bugs in browsers about z-index problems when scaling */
     -webkit-transform-style: flat;
             transform-style: flat;
     z-index:1
   }
 
-  tr>th:hover .softBtn, tr>td:hover:not(.options) .softBtn
-  {
-    background-color: #FFF
-  }
-
-  .softBtn:active
+  .softBtn:active:not(.disabled)
   {
     box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
     transform: scale(1)
+  }
+
+  /*.softBtn:hover:after, .softBtn:active:after { transform: scale(1) }*/
+
+  tr>th:hover .softBtn, tr>td:hover:not(.options) .softBtn
+  {
+    background-color: #FFF
   }
 
 .softBtnNoImage
@@ -158,8 +177,6 @@ table {
   text-align: center;
   text-shadow: 1px 1px rgba(84, 84, 84, 0.1);
 }
-
-.softBtnImage { vertical-align: middle }
 
 .lightBtn { background: #F4F4F4 }
 
@@ -199,15 +216,24 @@ table {
   width: 10px
 }*/
 
-#valAll {
+.validate {
   background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20fill%3D%22%23f1ac46%22%20d%3D%22m50%2C236.160004c47.389%2C9.878998%20111.237%2C24.501984%20157.389008%2C54.544983c54.195007%2C-72.617981%20148.666992%2C-141.998993%20254.610992%2C-197.831985c-100.610992%2C99.166%20-185.674988%2C213.119003%20-242.136002%2C326.254013c-45.514999%2C-64.654022%20-93.425995%2C-120.354004%20-169.863998%2C-182.96701z%22/%3E%0A%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
   height: 14px;
-  width: 14px;
+  width: 14px
 }
 
-  #valAll:hover {
-    background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20id%3D%22svg_3%22%20d%3D%22m50%2C236.160004c47.389%2C9.878998%20111.237%2C24.501984%20157.389008%2C54.544983c54.195007%2C-72.617981%20148.666992%2C-141.998993%20254.610992%2C-197.831985c-100.610992%2C99.166%20-185.674988%2C213.119003%20-242.136002%2C326.254013c-45.514999%2C-64.654022%20-93.425995%2C-120.354004%20-169.863998%2C-182.96701l0%2C0z%22%20fill%3D%22url%28%23svg_5%29%22/%3E%0A%20%3Cdefs%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_4%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%237fff00%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_5%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23d4ffaa%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%3C/defs%3E%0A%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+  .validate:hover {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20id%3D%22svg_3%22%20d%3D%22m50%2C236.160004c47.389%2C9.878998%20111.237%2C24.501984%20157.389008%2C54.544983c54.195007%2C-72.617981%20148.666992%2C-141.998993%20254.610992%2C-197.831985c-100.610992%2C99.166%20-185.674988%2C213.119003%20-242.136002%2C326.254013c-45.514999%2C-64.654022%20-93.425995%2C-120.354004%20-169.863998%2C-182.96701l0%2C0z%22%20fill%3D%22url%28%23svg_5%29%22/%3E%0A%20%3Cdefs%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_4%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%237fff00%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_5%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23d4ffaa%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%2300bf00%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%3C/defs%3E%0A%3C/svg%3E%0A');
   }
+
+.cancel {
+  background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0D%0A%20%3Cg%3E%0D%0A%20%20%3Cg%20fill-rule%3D%22evenodd%22%20fill%3D%22none%22%3E%0D%0A%20%20%20%3Cg%20fill%3D%22%23000000%22%3E%0D%0A%20%20%20%20%3Cpath%20fill%3D%22%23f1ac46%22%20id%3D%22svg_2%22%20d%3D%22m10%2C5.989014l0%2C9.010986l-9%2C0l2.898987%2C-2.903015c-1.298981%2C-1.185974%20-3.194%2C-3.408997%20-2.866974%2C-6.066986c0.598999%2C-3.033997%202.34198%2C-5.087006%207.019989%2C-5.087006c5.238983%2C0%207.02301%2C4.524017%207.02301%2C5.005005c-3.065002%2C-2.639984%20-5.205017%2C-2.951996%20-7.058014%2C-2.951996c-1.85199%2C0%20-2.968994%2C1.376007%20-2.968994%2C2.951996c0%2C1.033997%201.278992%2C2.175995%202.15799%2C2.838989l2.794006%2C-2.797974zm0%2C0%22/%3E%0D%0A%20%20%20%3C/g%3E%0D%0A%20%20%3C/g%3E%0D%0A%20%3C/g%3E%0D%0A%3C/svg%3E%0D%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
+  height: 14px;
+  width: 14px
+}
+.cancel:hover {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2216px%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cg%20fill%3D%22%23000000%22%20id%3D%22Group%22%20transform%3D%22translate%28-336.000000%2C%20-432.000000%29%22%3E%3Cpath%20d%3D%22M346%2C437.989323%20L346%2C447%20L337%2C447%20L339.899296%2C444.097264%20C338.600376%2C442.911115%20336.705115%2C440.688039%20337.032006%2C438.03039%20C337.630994%2C434.996143%20339.373914%2C432.942784%20344.052157%2C432.942784%20C349.290771%2C432.942784%20351.07511%2C437.467285%20351.07511%2C437.947574%20C348.009716%2C435.308356%20345.869521%2C434.996143%20344.017082%2C434.996143%20C342.164643%2C434.996143%20341.048114%2C436.372181%20341.048114%2C437.947574%20C341.048114%2C438.981521%20342.32698%2C440.123648%20343.206047%2C440.786591%20Z%20M346%2C437.989323%22%20/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0D%0A')
+}
 
 .paging {
 	height: 0.9em;
@@ -229,3 +255,10 @@ table {
   height: 14px;
   width: 14px;
 }
+
+.edit:hover
+{
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20id%3D%22miu%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.52081529%2C19.553286%20L13.5208152%2C19.553286%20L13.5208151%2C3.55328599%20L6.52081521%2C3.55328599%20L6.52081529%2C19.553286%20Z%20M6.52081528%2C-0.476770888%20L6.52081528%2C2.47686997%20L13.5197166%2C2.47686992%20L13.5197166%2C-0.476770935%20C13.5197166%2C-1.47918477%2012.5173028%2C-1.47918477%2012.5173028%2C-1.47918477%20L7.52322913%2C-1.47918472%20C7.52322913%2C-1.47918472%206.52081528%2C-1.47918472%206.52081528%2C-0.476770888%20Z%20M6.50416988%2C20.5208153%20L10.0208153%2C25.5075707%20L13.5192284%2C20.5208153%20L6.50416988%2C20.5208153%20Z%22%20fill%3D%22%23000000%22%20id%3D%22editor_pencil_pen_edit_write_glyph%22%20transform%3D%22translate%2810.020815%2C%2012.020815%29%20rotate%2845.000000%29%20translate%28-10.020815%2C%20-12.020815%29%20%22/%3E%3C/g%3E%3C/svg%3E%0D%0A')
+}
+
+.fontBtn:hover:not(.disabled) { color: #000 }

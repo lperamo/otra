@@ -51,7 +51,7 @@ class Controller extends MasterController
     if (file_exists($templateFile))
       parent::$template = $this->buildCachedFile($templateFile, $variables);
     else
-      throw new Lionel_Exception('Erreur : Fichier non trouvé ! : ' , $templateFile);
+      throw new Lionel_Exception('File not found ! : ' , $templateFile);
 
     if(!$ajax)
       self::addDebugBar(CORE_VIEWS_PATH . DS . 'debugBar.phtml');

@@ -52,16 +52,11 @@
           $.get(this.dataset.href, s[this.dataset.fn])
       }
 
-      function selectAll()
-      {
-        $(__table0).find('td:nth-child(1)>input[type=checkbox]').prop('checked', !$(this).prop('checked'))
-      }
-
   $(function()
   {
       $('#content').on('keyup', '._genericSearch', moduleSearch)
                    .on('mouseup', '.seeDetails', getElements)
                    .on('mouseup', '.tab', changeModuleTab)
-      $('#modules_all').on('mouseup', selectAll);
+      $('#modules_all').on('mouseup', backend.selectAll);
   })
 })(document)

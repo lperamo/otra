@@ -1,6 +1,6 @@
 <thead>
   <tr>
-    <th><input id="modules_all" type="checkbox"></th>
+    <th><input id="modules_all" class="_selectAll" type="checkbox"></th>
     <th><?= t('Type') ?></th>
     <th><?= t('Position') ?></th>
     <th><?= t('Order') ?></th>
@@ -22,7 +22,7 @@ if(!empty($items)) {
   <td><?= $item['ordre'] ?></td>
   <td><?= $right[$item['droit']] ?></td>
   <td><?= $item['contenu'] ?></td>
-  <td><a class="softBtn circleBorder softBtnImage seeDetails" data-id="<?= $item['id'] ?>" title="<?= t('See elements') ?>"></a>
+  <td><a class="softBtn circleBorder seeDetails" data-id="<?= $item['id'] ?>" title="<?= t('See elements') ?>"></a>
 </tr>
 <? } } ?>
 </tbody>

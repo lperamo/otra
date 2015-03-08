@@ -5,9 +5,9 @@
 		txtMail = '<input class="input field" type="email" required="required" title="" autocomplete="on" data-tooltip="Please complete this field."',
 		txtPwd = '<input type="password" class="input field" required="required" title="" data-tooltip="Please complete this field. (at least 8 characters)"',
 		txtPseudo = '<input class="input field" required="required" title="" data-tooltip="Please complete this field."',
-		editBtn = '<span class="softBtn edit" data-tooltip="Makes the line editable">Edit</span>',
-		validBtn = '<a data-tooltip="Validates the new user" class="softBtn validate rightPad">Validate</a>',
-		deleteBtn = '<span class="softBtn delete" data-tooltip="Delete the user"></span>',
+		editBtn = '<a class="softBtn circleBorder edit _edit" data-tooltip="Makes the line editable"></a>',
+		validBtn = '<a class="softBtn circleBorder validate _validate" data-tooltip="Validates the new user"></a>',
+		deleteBtn = '<a class="softBtn circleBorder delete _delete" data-tooltip="Delete the user"></a>',
 		options = '',
 		prevSel = $('#prev'),
 		nextSel = $('#next'),
@@ -25,8 +25,6 @@
 		    			</div>',
 		U = {
 		page: 1,
-
-		selectAll() {	tbody.find('input[type=checkbox]').prop('checked', $(this).prop('checked')) },
 
 		addUser()
 		{
@@ -90,7 +88,7 @@
 
 			if(confirm('Do you really want to delete those users ?'))
 			{
-				content.find('input[type=checkbox]:checked').parents('tr').each(function() {
+				checkboxesChecked.closest('tr').each(function(){
 					U.delFn(content[0], $(this)[0])
 				})
 			}
@@ -101,7 +99,7 @@
 		edit()
 		{
 			var $this = $(this),
-					tr = $this.parents('tr'),
+					tr = $this.closest('tr'),
 					tdBackup = tr.html(),
 					mail = tr.find('.mail'),
 					pwd = mail.next(),
@@ -125,32 +123,18 @@
 
 			window.usersSaveData[trId] = [mail.text(), pwd.text(), pseudo.text(), roleTxt];
 
-			$this.remove();
+			$this.replaceWith(validBtn + '<a class="softBtn circleBorder cancel _cancel" data-tooltip="Cancels changes"></a>');
 			U.oldMail = window.usersSaveData[trId][0];
 			mail.html(txtMail + 'value="' + U.oldMail + '" />');
 			pwd.html(txtPwd + '/>');
 			pseudo.html(txtPseudo + 'value="' + window.usersSaveData[trId][2] + '" />');
-			role.html(roleText).find('a').attr('data-value', roleId).text(roleTxt);
-			$(validBtn + '<span class="softBtn cancel" data-tooltip="Cancels changes">Cancel</span>').prependTo(endTd)
-		},
-
-		editEnd()
-		{
-			var content = $('#content').find('table')[0],
-				tr = $(this).parents('tr'),
-				tds = tr.find('td:not(:first-child,:last-child)'),
-				data = U.checkin(tr, tds, roles, content);
-
-			if(true !== data)
-				$.post('/backend/ajax/users/edit', data, function(data){ U.afterUpdate(data, content, tds); });
-
-			return false
+			role.html(roleText).find('a').attr('data-value', roleId).text(roleTxt)
 		},
 
 		validOne()
 		{
 			var content = $('#content').find('table')[0],
-				tr = $(this).parents('tr'),
+				tr = $(this).closest('tr'),
 				tds = tr.find('td:not(:first-child,:last-child)'),
 				data = U.checkin(tr, tds, roles, content, true);
 
@@ -160,52 +144,44 @@
 			return false
 		},
 
-		validAll()
+		validAll(content)
 		{
-			var content = $('#content').find('table'),
-				checkboxesChecked = content.find('input[type=checkbox]:checked');
+			console.log(content);
+			var tr = $(this),
+				tds = tr.find('td:not(:first-child,:last-child)'),
+				undef;
 
-			if(0 === checkboxesChecked.length) {
-				notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
-				return false
-			}
+			if(undef === tds[0].children[0])
+				return false;
 
-			if(confirm('Do you really want to validate all the changes ?'))
+			var cond = 0 === tr.find('.cancel').length,
+				  data = U.checkin(tr, tds, roles, content[0], cond);
+
+			if(true !== data)
 			{
-				checkboxesChecked.parents('tr').each(function(){
-					var tr = $(this),
-						tds = tr.find('td:not(:first-child,:last-child)'),
-						undef;
-
-					if(undef === tds[0].children[0])
-						return false;
-
-					if(true !== data)
-					{
-						var cond = 0 === tr.find('.cancel').length,
-							data = U.checkin(tr, tds, roles, content[0], cond);
-
-						if(0 === tr.find('.cancel').length) // We was adding something
-							$.post('/backend/ajax/users/add', data, function(data){ U.afterUpdate(data, content[0], tds, true, tr); });
-						else
-							$.post('/backend/ajax/users/edit', data, function(data){ U.afterUpdate(data, content, tds); })
-					}
-				})
+				if(cond) // We was adding something
+					$.post('/backend/ajax/users/add', data, function(data){ U.afterUpdate(data, content[0], tds, true, tr); });
+				else
+					$.post('/backend/ajax/users/edit', data, function(data){ U.afterUpdate(data, content, tds); })
 			}
+		},
+
+		launchValidAll()
+		{
+			backend.beforeAction('Do you really want to validate all the changes ?', U.validAll);
 			return false
 		},
 
 		cancel()
 		{
 			var $this = $(this),
-				tr = $this.parents('tr'),
+				tr = $this.closest('tr'),
 				trId = tr[0].id,
 				tds = tr.find('td');
 
 			for(var i=0; i < 4; ++i) { tds.eq(i + 1).text(window.usersSaveData[trId][i]) }
 			$this.after(editBtn);
-			$this.remove();
-			tr.find('.editEnd').remove()
+			$this.prev().remove().end().remove();
 		},
 
 		checkin(tr, tds, roles, content, add)
@@ -391,16 +367,16 @@
 
 		events()
 		{
-			tbody.on('click', '#all', U.selectAll)
+			tbody.on('mouseup', '#usersAll', backend.selectAll)
+				.on('mouseup', 'td:nth-child(1):not(.options,.final)', backend.triggerCheckbox)
 				.on('click', '#add', U.addUser)
 				.on('click', 'tr.editable>td', U.focusSelect)
-				.on('click', '.edit', U.edit)
-				.on('click', '.editEnd', U.editEnd)
-				.on('click', '.delete', U.del)
-				.on('click', '#delAll', U.deleteAll)
-				.on('click', '.validate', U.validOne)
-				.on('click', '#valAll', U.validAll)
-				.on('click', '.cancel', U.cancel)
+				.on('click', '._edit', U.edit)
+				.on('click', '._delete', U.del)
+				.on('click', '#usersDelAll', U.deleteAll)
+				.on('click', '._validate', U.validOne)
+				.on('click', '#usersValAll', U.launchValidAll)
+				.on('click', '._cancel', U.cancel)
 				.on('click',  '#prev:not(.disabled)', U.prev)
 				.on('click',  '#next:not(.disabled)', U.next)
 				.on('keyup',  '.search', U.search)

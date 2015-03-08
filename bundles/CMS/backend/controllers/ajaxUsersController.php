@@ -205,7 +205,7 @@ class ajaxUsersController extends Controller
         $users = [$users];
 
       end($users); $last = current($users); reset($users);
-      echo '{"success": true, "msg":' . json_encode($this->renderView('search.phtml', ['users' => $users], true)) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
+      echo '{"success": true, "msg":' . json_encode($this->renderView('singleUser.phtml', ['users' => $users], true)) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
     } else
       echo '{"success": true, "msg": ""}';
 

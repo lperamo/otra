@@ -63,7 +63,7 @@ var notif = (function()
     run : run
   };
 
-  return dummy;
+  return dummy
   // Why the fucking following code doesn't work !!
   // return
   // ({

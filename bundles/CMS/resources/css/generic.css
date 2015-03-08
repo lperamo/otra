@@ -2,6 +2,7 @@ html,
 body,
 ul,
 textarea,
+p,
 label {
     margin: 0;
     padding: 0;
@@ -22,7 +23,7 @@ body{ height: 100vh }
 /* Tooltips custom management */
 li[data-tooltip], .softBtn[data-tooltip]{ position: relative }
 
-li[data-tooltip]:after, .softBtn[data-tooltip]:after
+li[data-tooltip]:after, .softBtn[data-tooltip]:after, .actualSelectValue[data-tooltip]:after
 {
     background: #C6D8DF; /* Old browsers */
     /* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -44,26 +45,39 @@ li[data-tooltip]:after, .softBtn[data-tooltip]:after
     display:table;
     font-family: "Bookman Old Style",​Arial,​Helvetica,​Sans-Serif;
     font-size: 0.825rem;
+    font-weight: normal; /* to avoid the inheritance of the element style */
     height:18px;
-    left:50%;
+    bottom: calc(100% + 5px);
     position: absolute;
+    left:0;
     line-height: normal;
     text-align: center;
     opacity: 0;
     padding: 3px 7px;
     pointer-events: none;
     text-shadow: 1px 1px rgba(221, 255, 254, 0.78);
-    top:25px;
+    transform: scale(1) !important;
     visibility: hidden;
+    white-space: nowrap;
     width: inherit;
-    z-index:10000;
+    z-index: 10000
 }
 
-li[data-tooltip]:hover:after, .softBtn[data-tooltip]:hover:after
+/* (top is the default), top right, right etc. clockwise */
+li.TTTR[data-tooltip]:after, .softBtn.TTTR[data-tooltip]:after, .actualSelectValue.TTTR[data-tooltip]:after { left: 100% }
+li.TTR[data-tooltip]:after, .softBtn.TTR[data-tooltip]:after, .actualSelectValue.TTR[data-tooltip]:after { left: calc(100% + 5px); bottom: 0 }
+li.TTBR[data-tooltip]:after, .softBtn.TTBR[data-tooltip]:after, .actualSelectValue.TTBR[data-tooltip]:after { top: 100%; left: 100% }
+li.TTB[data-tooltip]:after, .softBtn.TTB[data-tooltip]:after, .actualSelectValue.TTB[data-tooltip]:after { top: calc(100% + 5px) }
+li.TTBL[data-tooltip]:after, .softBtn.TTBL[data-tooltip]:after, .actualSelectValue.TTBL[data-tooltip]:after { left: auto; right: 100%; top: 100% }
+li.TTL[data-tooltip]:after, .softBtn.TTL[data-tooltip]:after, .actualSelectValue.TTL[data-tooltip]:after { bottom: 0; left: auto; right: calc(100% + 5px) }
+li.TTTL[data-tooltip]:after, .softBtn.TTTL[data-tooltip]:after, .actualSelectValue.TTTL[data-tooltip]:after { left:auto; right: 100% }
+
+li[data-tooltip]:hover:after, .softBtn[data-tooltip]:hover:after, .actualSelectValue[data-tooltip]:hover:after
 {
    opacity: 1;
    visibility: visible;
    z-index: 10000;
+   transform: scale(1) !important;
    -moz-transition: opacity .25s linear .5s;
    -webkit-transition: opacity .25s linear .5s;
    transition: opacity .25s linear .5s
