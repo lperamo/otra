@@ -1,7 +1,10 @@
 <?
  foreach($users as $user) {?>
   <tr id="<?= $user['id_user'] ?>">
-    <td><input type="checkbox" role="checkbox" aria-checked="false"/></td>
+    <td>
+      <input id="chk_<?= $user['id_user'] ?>" type="checkbox" role="checkbox" aria-checked="false" class="noLabel" />
+      <label for="chk_<?= $user['id_user'] ?>"></label>
+    </td>
     <td class="mail"><?= $user['mail'] ?></td>
     <td><?= $user['pwd'] ?></td>
     <td><?= $user['pseudo'] ?></td>

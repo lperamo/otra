@@ -12,7 +12,10 @@
 		</thead>
 		<tbody id="usersBody">
 			<tr>
-				<td><input id="usersAll" type="checkbox" class="_selectAll" role="checkbox" aria-checked="false" aria-labelledby="<? t('Select/Deselect All'); ?>" data-tooltip="<? t('Select/Deselect All'); ?>" /></td>
+				<td>
+					<input id="usersAll" type="checkbox" class="_selectAll noLabel" role="checkbox" aria-checked="false" aria-labelledby="<? t('Select/Deselect All'); ?>" data-tooltip="<? t('Select/Deselect All'); ?>" />
+					<label for="usersAll"></label>
+				</td>
 				<td><input class="search" role="search" data-tooltip="<? t('Search by email'); ?>" /></td>
 				<td></td>
 				<td><input class="search" role="search" data-tooltip="<? t('Search by pseudo'); ?>" /></td>

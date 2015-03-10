@@ -1,6 +1,9 @@
 <thead>
   <tr>
-    <th><input id="modules_all" class="_selectAll" type="checkbox"></th>
+    <th>
+      <input id="modules_all" class="_selectAll noLabel" type="checkbox">
+      <label for="modules_all"></label>
+    </th>
     <th><?= t('Type') ?></th>
     <th><?= t('Position') ?></th>
     <th><?= t('Order') ?></th>
@@ -16,7 +19,10 @@ if(!empty($items)) {
   foreach($items as $item)
 {?>
 <tr>
-  <td><input type="checkbox"></td>
+  <td>
+    <input type="checkbox" id="module_<?= $item['ordre'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+    <label for="module_<?= $item['ordre'] ?>"></label><!-- SAME HERE -->
+  </td>
   <td><?= $moduleTypes[$item['type']] ?></td>
   <td><?= $item['position'] ?></td>
   <td><?= $item['ordre'] ?></td>

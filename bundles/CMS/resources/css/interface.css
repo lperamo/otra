@@ -104,6 +104,7 @@ table {
   td .input{ margin:0 !important }
   td:nth-child(1):not(.options):not(.final) { cursor:pointer }
 
+#usersHeader th:nth-of-type(1) { width: 1em }
 #usersHeader th:nth-of-type(5){ width: 8em }
 #usersHeader th:nth-of-type(6){ min-width: 4em }
 #usersBody td:nth-of-type(6){ white-space: nowrap }
@@ -149,7 +150,7 @@ table {
        * The fix for Firefox ... yes, it has to be on one, huge line.
        */
       filter: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><filter id="gaussian_blur"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter></defs></svg>#gaussian_blur');
-    transform: scale(1.07); /* the rotation is only for Firefox to minimize the unvoluntary shake effect */
+    transform: scale(1.1); /* the rotation is only for Firefox to minimize the unvoluntary shake effect */
     /* Those following lines fix bugs in browsers about z-index problems when scaling */
     -webkit-transform-style: flat;
             transform-style: flat;
@@ -258,7 +259,11 @@ table {
 
 .edit:hover
 {
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20id%3D%22miu%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.52081529%2C19.553286%20L13.5208152%2C19.553286%20L13.5208151%2C3.55328599%20L6.52081521%2C3.55328599%20L6.52081529%2C19.553286%20Z%20M6.52081528%2C-0.476770888%20L6.52081528%2C2.47686997%20L13.5197166%2C2.47686992%20L13.5197166%2C-0.476770935%20C13.5197166%2C-1.47918477%2012.5173028%2C-1.47918477%2012.5173028%2C-1.47918477%20L7.52322913%2C-1.47918472%20C7.52322913%2C-1.47918472%206.52081528%2C-1.47918472%206.52081528%2C-0.476770888%20Z%20M6.50416988%2C20.5208153%20L10.0208153%2C25.5075707%20L13.5192284%2C20.5208153%20L6.50416988%2C20.5208153%20Z%22%20fill%3D%22%23000000%22%20id%3D%22editor_pencil_pen_edit_write_glyph%22%20transform%3D%22translate%2810.020815%2C%2012.020815%29%20rotate%2845.000000%29%20translate%28-10.020815%2C%20-12.020815%29%20%22/%3E%3C/g%3E%3C/svg%3E%0D%0A')
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20id%3D%22miu%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.52081529%2C19.553286%20L13.5208152%2C19.553286%20L13.5208151%2C3.55328599%20L6.52081521%2C3.55328599%20L6.52081529%2C19.553286%20Z%20M6.52081528%2C-0.476770888%20L6.52081528%2C2.47686997%20L13.5197166%2C2.47686992%20L13.5197166%2C-0.476770935%20C13.5197166%2C-1.47918477%2012.5173028%2C-1.47918477%2012.5173028%2C-1.47918477%20L7.52322913%2C-1.47918472%20C7.52322913%2C-1.47918472%206.52081528%2C-1.47918472%206.52081528%2C-0.476770888%20Z%20M6.50416988%2C20.5208153%20L10.0208153%2C25.5075707%20L13.5192284%2C20.5208153%20L6.50416988%2C20.5208153%20Z%22%20fill%3D%22%237984f8%22%20id%3D%22editor_pencil_pen_edit_write_glyph%22%20transform%3D%22translate%2810.020815%2C%2012.020815%29%20rotate%2845.000000%29%20translate%28-10.020815%2C%20-12.020815%29%20%22/%3E%3C/g%3E%3C/svg%3E%0D%0A')
 }
 
-.fontBtn:hover:not(.disabled) { color: #000 }
+.fontBtn:hover:not(.disabled)
+{
+  color: #7984f8;
+  text-shadow: 1px 1px #d2d6ff;
+}

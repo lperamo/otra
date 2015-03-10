@@ -62,13 +62,14 @@ var backend = (function(d)
   /** Allow to click on TDs instead of directly on checkboxes */
   function triggerCheckbox(evt)
   {
-    if('TD' !== evt.target.tagName)
+    if('TD' !== evt.target.tagName && 'LABEL' !== evt.target.tagName)
       return false;
 
     var event = document.createEvent('HTMLEvents');
     event.initEvent(evt.originalEvent.type, true, false);
     this.children[0].dispatchEvent(event);
-    this.children[0].checked = !this.children[0].checked;
+    // Acts here like a XOR, LABEL => checked, TD => !checked because of different behaviours depending on whether we click on the TD or the LABEL
+    this.children[0].checked = ('TD' === evt.target.tagName) != this.children[0].checked;
   }
 
   /** Select/Deselect all the related checkboxes */
@@ -94,8 +95,6 @@ var backend = (function(d)
       });
     }
   }
-
-  // function
 
   $(window).on('popstate', updateURL);
 

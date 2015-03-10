@@ -62,7 +62,7 @@ class Routes
       'resources' => [
         '_js' => ['modules'],
         '_css' => ['modules'],
-        'bundle_css' => ['generic', 'interface', 'form'],
+        'bundle_css' => ['generic', 'interface', 'form', 'checkbox'],
         'bundle_js' => ['jquery', 'backend']
       ],
       'session' => ['sid' => '1']
@@ -112,7 +112,7 @@ class Routes
     'backendUsers' => [
       'chunks' => ['/backend/users', 'CMS', 'backend', 'index', 'usersAction'],
       'resources' => [
-        'bundle_css' => ['generic', 'interface', 'form', 'notifications'],
+        'bundle_css' => ['generic', 'interface', 'form', 'notifications', 'checkbox'],
         '_js' => ['_4'=>'users'],
         'bundle_js' => ['jquery', 'backend', 'form', 'notifications']
       ]

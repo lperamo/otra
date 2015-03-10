@@ -1,0 +1,131 @@
+/* Hides the checkbox */
+input[type="checkbox"]:not(:checked),
+input[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+/* Preparing the label */
+input[type="checkbox"]:not(:checked) + label,
+input[type="checkbox"]:checked + label {
+  position: relative; /* allow to position pseudo-elements */
+  cursor: pointer;
+}
+
+input[type="checkbox"]:not(:checked):hover + label,
+input[type="checkbox"]:checked:hover + label {
+  transform: scale(1.3);
+}
+
+.noLabel:checked + label,
+.noLabel:not(:checked) + label
+{
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.noLabel:checked + label:before,
+.noLabel:not(:checked) + label:before
+{
+  right: 0 !important;
+  top: 0 !important;
+}
+
+.noLabel:checked + label:after,
+.noLabel:not(:checked) + label:after
+{
+  right: 0.2em;
+  top: -0.2em;
+}
+
+.leftCheckbox:not(:checked) + label,
+.leftCheckbox:checked + label
+{
+  padding-left: 20px
+}
+
+.rightCheckbox:not(:checked) + label,
+.rightCheckbox:checked + label
+{
+  padding-right: 25px
+}
+
+input[type="checkbox"]:not(:checked) + label:before,
+input[type="checkbox"]:checked + label:before
+{
+  background: #f8f8f8;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+  -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+  content: '';
+  height: 14px;
+  position: absolute;
+  right:6px;
+  top: -3px;
+  width: 14px
+}
+
+.leftCheckbox:not(:checked) + label:before,
+.leftCheckbox:checked + label:before
+{
+  left: 0;
+  top: 0
+}
+
+.rightCheckbox:not(:checked) + label:before,
+.rightCheckbox:checked + label:before
+{
+  right: 6px;
+  top: -3px;
+}
+
+input[type="checkbox"]:not(:checked) + label:after,
+input[type="checkbox"]:checked + label:after
+{
+  color: #09ad7e;
+  content: '\2714';
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  position: absolute;
+  transition: all .2s;
+  vertical-align: top;
+}
+
+.leftCheckbox:not(:checked) + label:after,
+.leftCheckbox:checked + label:after
+{
+  left: 4px;
+  top: -2px
+}
+
+.rightCheckbox:not(:checked) + label:after,
+.rightCheckbox:checked + label:after
+{
+  right: 10px;
+  top: -4px;
+}
+
+/* only for webkit browsers */
+input[type="checkbox"]:not(:checked):not(*:root) + label:after,
+input[type="checkbox"]:checked:not(*:root) + label:after
+{
+  font-size:1em !important;
+  right: 10px !important;
+  top: -1px !important;
+}
+
+/* Aspect if unchecked */
+input[type="checkbox"]:not(:checked) + label:after
+{
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* Aspect if checked */
+input[type="checkbox"]:checked + label:after
+{
+  opacity: 1;
+  transform: scale(1);
+}
