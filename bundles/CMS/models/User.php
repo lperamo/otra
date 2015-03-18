@@ -95,7 +95,7 @@ class User
    * @param string $pseudo
    * @param int    $role
    */
-  public static function updateUser($id_user, $mail, $pwd, $pseudo, $role)
+  public static function updateUser($db, $id_user, $mail, $pwd, $pseudo, $role)
   {
     return $db->query(
       'UPDATE lpcms_user SET

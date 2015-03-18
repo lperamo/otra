@@ -101,7 +101,7 @@ class ajaxUsersController extends Controller
     // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
 
-    false === User::updateUser($id_user, $mail, $pwd, $pseudo, $role) && die('{"success": false, "msg": "Database problem !"}');
+    false === User::updateUser($db, $id_user, $mail, $pwd, $pseudo, $role) && die('{"success": false, "msg": "Database problem !"}');
 
     echo '{"success":true, "oldMail": "' . $_POST['oldMail'] . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
 
