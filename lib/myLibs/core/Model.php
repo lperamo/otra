@@ -46,6 +46,7 @@ class Model
       }
     }
     unset($properties['table'], $props, $prop, $refl);
+
     if($update)
     { // It's an update
       $query = 'UPDATE `'. All_Config::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';

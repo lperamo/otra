@@ -9,7 +9,8 @@ namespace bundles\CMS\backend\controllers;
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
     lib\myLibs\core\Session,
-    config\Router;
+    config\Router,
+    bundles\CMS\models\User;
 
 class ajaxUsersController extends Controller
 {
@@ -27,14 +28,9 @@ class ajaxUsersController extends Controller
   {
     $db = Session::get('dbConn');
     $db->selectDb();
+    $limit = 3;
 
-    // Retrieving the users
-     $users = $db->values($db->query(
-       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-       INNER JOIN lpcms_role r ON u.role_id = r.id_role
-       ORDER BY id_user
-       LIMIT 3'
-     ));
+    $users = User::getFirstUsers($db, $limit);
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
@@ -46,7 +42,7 @@ class ajaxUsersController extends Controller
       'users' => $users,
       'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
       'count' => (!empty($count)) ? current($count) : '',
-      'limit' => 3
+      'limit' => $limit
     ], true);
   }
 
@@ -70,23 +66,13 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // We check whether the email exists
-    $dbUsers = $db->query(
-      'SELECT mail FROM lpcms_user
-       WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
-    );
-    $users = $db->single($dbUsers);
-    $db->freeResult($dbUsers);
-
-    if($users)
-      die('{"success": false, "msg": "This mail already exists !"}');
+    User::checkMailAdd($db, $mail) && exit('{"success": false, "msg": "This mail already exists !"}');
+    User::checkPseudo($pseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
 
     // We can now insert the new user
     $pwd = crypt($pwd, FWK_HASH);
 
-    if(false === $db->query(
-      'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`) VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\', ' . intval($role) . ');'
-    ))
+    if(false === User::addUser($mail, $pwd, $pseudo, $role))
       die('{"error": true, "msg": "Database problem"}');
 
     echo '{"success":true, "msg":"User added.", "pwd":"' . $pwd . '", "id":"' . $db->lastInsertedId() . '"}';
@@ -94,6 +80,7 @@ class ajaxUsersController extends Controller
     return;
   }
 
+  /** POST[id_user, mail, pwd, pseudo, role, oldMail] */
   public function editAction()
   {
     self::securityCheck();
@@ -105,27 +92,16 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // We check whether the email exists
-    $dbUsers = $db->query(
-      'SELECT mail FROM lpcms_user
-       WHERE mail = \'' . mysql_real_escape_string($mail) . '\' LIMIT 1'
-    );
-    $users = $db->values($dbUsers);
-    $db->freeResult($dbUsers);
+    $mail = mysql_real_escape_string($mail);
+    $pseudo = mysql_real_escape_string($pseudo);
 
-    if(is_array($users) && $oldMail != $users[0]['mail'])
-      exit('{"success": false, "msg": "This mail already exists !"}');
+    User::checkMailEdit($db, $mail, $oldMail) && exit('{"success": false, "msg": "This mail already exists !"}');
+    User::checkPseudo($db, $pseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
 
     // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
 
-    if(false === $db->query(
-      'UPDATE lpcms_user SET
-      mail = \'' . mysql_real_escape_string($mail) . '\',
-      pwd = \'' . mysql_real_escape_string($pwd) . '\',
-      pseudo = \'' . mysql_real_escape_string($pseudo) . '\',
-      role_id = ' . intval($role) . ' WHERE id_user = ' . intval($id_user)))
-      die('{"success": false, "msg": "Database problem !"}');
+    false === User::updateUser($id_user, $mail, $pwd, $pseudo, $role) && die('{"success": false, "msg": "Database problem !"}');
 
     echo '{"success":true, "oldMail": "' . $_POST['oldMail'] . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
 
@@ -157,37 +133,10 @@ class ajaxUsersController extends Controller
     if(! isset($_POST['type'], $_POST['mail'], $_POST['pseudo'], $_POST['role'], $_POST['limit'], $_POST['prev'], $_POST['last']) || 7 < count($_POST))  // TODO ip to ban
       die('{"success": false, "msg": "Hack."}');
 
-    extract($_POST);
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    $limit = intval($limit);
-    $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.role_id = r.id_role
-      WHERE id_user ';
-
-    if('search' == $type)
-      $req .= '> ' . (intval($last) - $limit);
-    else
-      $req .= ('next' == $type)
-        ? '> ' . intval($last)
-        : '< ' . intval($prev);
-
-    if('' != $mail)
-      $req .= ' AND u.mail LIKE \'%' . mysql_real_escape_string($mail) . '%\'';
-
-    if('' != $pseudo)
-      $req .= ' AND u.pseudo LIKE \'%' . mysql_real_escape_string($pseudo) . '%\'';
-
-    if('' != $role)
-      $req .= ' AND r.nom LIKE \'%' . mysql_real_escape_string($role) . '%\'';
-
-    if(false === ($users = $db->query(
-      $req . ' ORDER BY u.id_user ' .
-      (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
-    ))) {
-      echo('{"success": false, "msg": "Database problem !"}');return;
-    }
+    $users = User::search($db, $_POST);
 
     if(!empty($users))
     {

@@ -22,7 +22,11 @@ ini_set('error_reporting', -1 & ~E_DEPRECATED);
 
 // We load the class mapping
 require BASE_PATH . 'cache/php/ClassMap.php';
-spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
+spl_autoload_register(function($className) use($classMap) {
+ if(!isset($classMap[$className]))
+   echo 'Path not found for the class name : ', $className, '<BR>';
+ else
+   require $classMap[$className]; });
 
 function errorHandler($errno, $message, $file, $line, $context) { //throw new Lionel_Exception($message, $errno, $file, $line, $context);
 }

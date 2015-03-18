@@ -9,8 +9,7 @@ namespace bundles\CMS\backend\controllers;
 use lib\myLibs\core\Controller,
     lib\myLibs\core\bdd\Sql,
     lib\myLibs\core\Session,
-    lib\myLibs\core\Router,
-    bundles\CMS\services\userServices;
+    lib\myLibs\core\Router;
 
 class indexController extends Controller
 {
@@ -93,27 +92,11 @@ class indexController extends Controller
 
   public function usersAction()
   {
-    // list($users, $count) = userServices::getUsersTab();
-    $db = Session::get('dbConn');
-    $db->selectDb();
-
-    // Retrieving the users
-    $users = $db->values($db->query(
-      'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.role_id = r.id_role
-      ORDER BY id_user
-      LIMIT 3'
-    ));
-
-    // Fixes the bug where there is only one user
-    if(isset($users['id_user']))
-      $users = [$users];
-
-    $count = $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
+    list($roles, $users, $count) = \bundles\CMS\services\usersService::getUsersTab();
 
     echo $this->renderView('users.phtml', [
       'users' => $users,
-      'roles' => $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC')),
+      'roles' => $roles,
       'count' => !empty($count) ? current($count) : '',
       'limit' => 3
     ]);

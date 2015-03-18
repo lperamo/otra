@@ -27,3 +27,4 @@ class MailingList extends Model
 
   }
 }
+?>
