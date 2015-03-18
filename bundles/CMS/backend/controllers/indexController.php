@@ -30,14 +30,11 @@ class indexController extends Controller
       return;
     }
 
-    /** @var Sql $db */
-    //    $db = new Sql();
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    // Retrieving headers and footers
-    $_SESSION['headers'] = $db->values($db->query('SELECT * FROM lpcms_header'));
-    $_SESSION['footers'] = $db->values($db->query('SELECT * FROM lpcms_footer'));
+    $_SESSION['headers'] = \bundles\CMS\models\Header::getAll($db);
+    $_SESSION['footers'] = \bundles\CMS\models\Footer::getAll($db);
 
     echo $this->renderView('index.phtml', [
       'headers' => $_SESSION['headers'],
@@ -51,12 +48,10 @@ class indexController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
-
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => ajaxModulesController::$moduleTypes,
       'right' => ajaxModulesController::$rights,
-      'items' => $modules
+      'items' => \bundles\CMS\models\Module::getAll($db)
     ]);
   }
 

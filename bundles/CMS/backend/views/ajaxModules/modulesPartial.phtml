@@ -20,8 +20,8 @@ if(!empty($items)) {
 {?>
 <tr>
   <td>
-    <input type="checkbox" id="module_<?= $item['ordre'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
-    <label for="module_<?= $item['ordre'] ?>"></label><!-- SAME HERE -->
+    <input type="checkbox" id="module_<?= $item['id'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+    <label for="module_<?= $item['id'] ?>"></label><!-- SAME HERE -->
   </td>
   <td><?= $moduleTypes[$item['type']] ?></td>
   <td><?= $item['position'] ?></td>

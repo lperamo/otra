@@ -33,14 +33,14 @@
       function moduleSearch(e)
       {
         if(13 === e.which)
-          $.get(this.dataset.href, { search: this.value }, s[this.dataset.fn]);
+          $.get(this.dataset.href, { search: this.value }, s[this.dataset.fn])
       }
 
       function getElements()
       {
         $.get('/backend/ajax/modules/get/elements', { id: this.dataset.id}, function(){
-          console.log('coucou');
-        });
+          console.log('coucou')
+        })
       }
 
       function changeModuleTab(evt)

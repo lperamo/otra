@@ -3,7 +3,7 @@
 namespace bundles\CMS\models;
 
 /**
- * LPCMS Mailing List model
+ * LPCMS User model
  *
  * @author Lionel Péramo
  */
