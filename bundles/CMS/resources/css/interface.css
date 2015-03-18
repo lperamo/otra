@@ -102,14 +102,13 @@ table {
   th:last-child{ border-top-right-radius: 10px }
 
   td .input{ margin:0 !important }
-  td:nth-child(1):not(.options):not(.final) { cursor:pointer }
+  td:nth-child(1):not(.options) { cursor:pointer }
 
 #usersHeader th:nth-of-type(1) { width: 1em }
 #usersHeader th:nth-of-type(5){ width: 8em }
 #usersHeader th:nth-of-type(6){ min-width: 4em }
 #usersBody td:nth-of-type(6){ white-space: nowrap }
 
-.final{ background: rgba(15, 16, 17, 0.06) !important; border-top: 1px solid rgba(255, 255, 255, 0.54) }
 .options{ background: #E4E8EA; border-top: 1px double rgba(255, 255, 255, 0.54) }
 
 .field{ margin:0;	width:100% }

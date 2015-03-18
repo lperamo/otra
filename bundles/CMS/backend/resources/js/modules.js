@@ -54,9 +54,10 @@
 
   $(function()
   {
-      $('#content').on('keyup', '._genericSearch', moduleSearch)
-                   .on('mouseup', '.seeDetails', getElements)
-                   .on('mouseup', '.tab', changeModuleTab)
-      $('#modules_all').on('mouseup', backend.selectAll);
+    $('#content').on('keyup', '._genericSearch', moduleSearch)
+                 .on('mouseup', '.seeDetails', getElements)
+                 .on('mouseup', '.tab', changeModuleTab)
+                 .on('mouseup', 'th:nth-child(1), td:nth-child(1)', backend.triggerCheckbox)
+    $('#modules_all').on('mouseup', backend.selectAll);
   })
 })(document)

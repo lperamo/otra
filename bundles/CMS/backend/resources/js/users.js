@@ -382,7 +382,7 @@
 		events()
 		{
 			tbody.on('mouseup', '#usersAll', backend.selectAll)
-				.on('mouseup', 'td:nth-child(1):not(.options,.final)', backend.triggerCheckbox)
+				.on('mouseup', 'td:nth-child(1):not(.options)', backend.triggerCheckbox)
 				.on('click', '#add', U.addUser)
 				.on('click', 'tr.editable>td', U.focusSelect)
 				.on('click', '._edit', U.edit)
