@@ -66,13 +66,13 @@ class ajaxUsersController extends Controller
     $db = Session::get('dbConn');
     $db->selectDb();
 
-    User::checkMailAdd($db, $mail) && exit('{"success": false, "msg": "This mail already exists !"}');
-    User::checkPseudo($pseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
+    User::checkMail($db, $mail) && exit('{"success": false, "msg": "This mail already exists !"}');
+    User::checkPseudo($db, $pseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
 
     // We can now insert the new user
     $pwd = crypt($pwd, FWK_HASH);
 
-    if(false === User::addUser($mail, $pwd, $pseudo, $role))
+    if(false === User::addUser($db, $mail, $pwd, $pseudo, $role))
       die('{"error": true, "msg": "Database problem"}');
 
     echo '{"success":true, "msg":"User added.", "pwd":"' . $pwd . '", "id":"' . $db->lastInsertedId() . '"}';
@@ -85,25 +85,23 @@ class ajaxUsersController extends Controller
   {
     self::securityCheck();
 
-    if(! isset($_POST['id_user'], $_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role'], $_POST['oldMail']) || 6 < count($_POST))  // TODO ip to ban
+    if(! isset($_POST['id_user'], $_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role'], $_POST['oldMail'], $_POST['oldPseudo']) || 7 < count($_POST))  // TODO ip to ban
       die('{"success": false, "msg": "Hack."}');
 
     extract($_POST);
     $db = Session::get('dbConn');
     $db->selectDb();
-
     $mail = mysql_real_escape_string($mail);
     $pseudo = mysql_real_escape_string($pseudo);
 
     User::checkMailEdit($db, $mail, $oldMail) && exit('{"success": false, "msg": "This mail already exists !"}');
-    User::checkPseudo($db, $pseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
+    User::checkPseudoEdit($db, $pseudo, $oldPseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
 
     // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
 
     false === User::updateUser($db, $id_user, $mail, $pwd, $pseudo, $role) && die('{"success": false, "msg": "Database problem !"}');
-
-    echo '{"success":true, "oldMail": "' . $_POST['oldMail'] . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
+    echo '{"success":true, "oldMail": "' . $oldMail . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
 
     return;
   }

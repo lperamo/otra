@@ -21,6 +21,21 @@ class User
     return $users;
   }
 
+  /**
+   * Checks if we already have that pseudo in the database and it's different from the pseudo passed in parameter.
+   * Returns true if there is a problem.
+   *
+   * @param $db        Database connection
+   * @param $pseudo    Wanted pseudo
+   * @param $oldPseudo The old pseudo
+   */
+  public static function checkPseudoEdit($db, $pseudo, $oldPseudo)
+  {
+    $users = self::checkPseudo($db, $pseudo);
+
+    return is_array($users) && $oldPseudo != $pseudo;
+  }
+
   public static function checkMail($db, $mail)
   {
     $dbUsers = $db->query(
@@ -35,18 +50,8 @@ class User
   }
 
   /**
-   * Checks if we already have that mail in the database.
-   *
-   * @param $db      Database connection
-   * @param $mail    Wanted mail
-   */
-  public static function checkMailAdd($db, $mail)
-  {
-    return self::checkMail($db, $mail);
-  }
-
-  /**
    * Checks if we already have that mail in the database and it's different from the mail passed in parameter.
+   * Returns true if there is a problem.
    *
    * @param $db      Database connection
    * @param $mail    Wanted mail
@@ -56,18 +61,19 @@ class User
   {
     $users = self::checkMail($db, $mail);
 
-    return is_array($users) && $oldMail != $users[0]['mail'];
+    return is_array($users) && $oldMail != $mail;
   }
 
   /**
    * Already mysql_real_escaped !
    *
+   * @param type   $db     Database connection
    * @param string $mail
    * @param string $pwd
    * @param string $pseudo
    * @param int $role
    */
-  public static function addUser($mail, $pwd, $pseudo, $role)
+  public static function addUser($db, $mail, $pwd, $pseudo, $role)
   {
     $db->query(
       'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`)
@@ -81,8 +87,8 @@ class User
   public static function getFirstUsers($db, $limit)
   {
     return $db->values($db->query(
-       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-       INNER JOIN lpcms_role r ON u.role_id = r.id_role
+       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
+       INNER JOIN lpcms_role r ON u.role_id = r.id
        ORDER BY id_user
        LIMIT ' . $limit
      ));
@@ -118,8 +124,8 @@ class User
   {
     extract($userParams);
     $limit = intval($limit);
-    $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id_role, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.role_id = r.id_role
+    $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
+      INNER JOIN lpcms_role r ON u.role_id = r.id
       WHERE id_user ';
 
     if('search' == $type)
@@ -157,7 +163,7 @@ class User
   */
   public static function getRoles($db)
   {
-    return $db->values($db->query('SELECT id_role, nom FROM lpcms_role ORDER BY nom ASC'));
+    return $db->values($db->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC'));
   }
 }
 ?>
