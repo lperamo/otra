@@ -81,13 +81,13 @@ class ajaxUsersController extends Controller
     $mail = mysql_real_escape_string($mail);
     $pseudo = mysql_real_escape_string($pseudo);
 
-    User::checkMailEdit($db, $mail, $oldMail) && exit('{"success": false, "msg": "This mail already exists !"}');
-    User::checkPseudoEdit($db, $pseudo, $oldPseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
+    User::checkMailEdit($mail, $oldMail) && exit('{"success": false, "msg": "This mail already exists !"}');
+    User::checkPseudoEdit($pseudo, $oldPseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');
 
     // We can now update the user
     $pwd = crypt($pwd, FWK_HASH);
 
-    echo (false === User::updateUser($db, $id_user, $mail, $pwd, $pseudo, $role))
+    echo (false === User::updateUser($id_user, $mail, $pwd, $pseudo, $role))
       ? '{"success": false, "msg": "Database problem !"}'
       : '{"success":true, "oldMail": "' . $oldMail . '", "msg": "User edited.","pwd": "' . $pwd . '"}';
 
