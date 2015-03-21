@@ -30,11 +30,10 @@ class indexController extends Controller
       return;
     }
 
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
 
-    $_SESSION['headers'] = \bundles\CMS\models\Header::getAll($db);
-    $_SESSION['footers'] = \bundles\CMS\models\Footer::getAll($db);
+    $_SESSION['headers'] = \bundles\CMS\models\Header::getAll();
+    $_SESSION['footers'] = \bundles\CMS\models\Footer::getAll();
 
     echo $this->renderView('index.phtml', [
       'headers' => $_SESSION['headers'],
@@ -45,20 +44,18 @@ class indexController extends Controller
 
   public function modulesAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
 
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => ajaxModulesController::$moduleTypes,
       'right' => ajaxModulesController::$rights,
-      'items' => \bundles\CMS\models\Module::getAll($db)
+      'items' => \bundles\CMS\models\Module::getAll()
     ]);
   }
 
   public function generalAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
 
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
@@ -73,8 +70,7 @@ class indexController extends Controller
 
   public function statsAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
 
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
@@ -87,14 +83,7 @@ class indexController extends Controller
 
   public function usersAction()
   {
-    list($roles, $users, $count) = \bundles\CMS\services\usersService::getUsersTab();
-
-    echo $this->renderView('users.phtml', [
-      'users' => $users,
-      'roles' => $roles,
-      'count' => !empty($count) ? current($count) : '',
-      'limit' => 3
-    ]);
+    echo $this->renderView('users.phtml', \bundles\CMS\services\usersService::getUsersTab());
   }
 }
 ?>

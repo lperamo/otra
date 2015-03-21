@@ -26,4 +26,17 @@ define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2a$07$ThisoneIsanAwesomeframework$');
 
 require XMODE . '/All_Config.php';
+
+// External configuration loading
+$dir = BASE_PATH . 'config/external/';
+$dh = opendir($dir);
+
+while (false !== ($file = readdir($dh)))
+{
+  $file = $dir . $file;
+  if(is_dir($file)) continue;
+
+  require $file;
+}
+closedir($dh);
 ?>

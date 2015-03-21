@@ -10,7 +10,8 @@ class MasterController
   public static $path;
   public $route,
         $bundle = '',
-        $module = '';
+        $module = '',
+        $viewPath = '/'; // index/index/ for indexController and indexAction
 
   protected $controller = '',
     $action = '',
@@ -19,7 +20,12 @@ class MasterController
     $viewJSPath = '/', // JS path for this module
     $pattern = '';
 
-  protected static $id,
+  protected static
+    $css = [],
+    $js = [],
+    $rendered = [],
+    $ajax = false,
+    $id,
   /* @var string $template The actual template being processed */
     $template,
     $layout,
@@ -66,7 +72,8 @@ class MasterController
   // To overload in the child class (e.g: in articleController)
   public function preExecute(){}
 
-  /** Encodes the value passed as parameter in order to create a cache file name
+  /**
+   * Encodes the value passed as parameter in order to create a cache file name
    *
    * @param string $filename File name to modify
    * @param string $path     File's path
@@ -78,7 +85,8 @@ class MasterController
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
-  /** If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE All_Config::$cache TO TRUE !!
+  /**
+   * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE All_Config::$cache TO TRUE !!
    *
    * @param string  $cacheFile The cache file name version of the file
    * @param bool    $exists    True if we know that the file exists.
@@ -93,7 +101,8 @@ class MasterController
     return false;
   }
 
-  /** Replaces the layout body content by the template body content if the layout is set
+  /**
+   * Replaces the layout body content by the template body content if the layout is set
    *
    * @param string $content Content of the template to process
    */
@@ -107,19 +116,22 @@ class MasterController
       return $content;
   }
 
-  /** Sets the body attributes
+  /**
+   * Sets the body attributes
   *
   * @param string $attrs
   */
   public static function bodyAttrs($attrs = '') { self::$bodyAttrs = $attrs; }
 
-  /** Sets the body content
+  /**
+   * Sets the body content
    *
    * @param string $content
    */
   private static function body($content = '') { self::$body = $content; }
 
-  /** Sets the title of the page
+  /**
+   * Sets the title of the page
    *
    * @param string $title
    */
@@ -130,7 +142,8 @@ class MasterController
       : '<title>' . $title . '</title><body>';
   }
 
-  /** Sets the favicons of the site
+  /**
+   * Sets the favicons of the site
    *
    * @param string $filename
    * @param string $filenameIE
@@ -139,6 +152,27 @@ class MasterController
   {
     echo '<link rel="icon" type="image/png" href="' , $filename , '" />
       <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
+  }
+
+  /**
+   * Adds a css script to the existing ones
+   *
+   * @param array $css The css file to add (Array of string)
+   */
+  protected static function css($css = [])
+  {
+    array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
+  }
+
+  /**
+   * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
+   *
+   * @param array $js The javascript file to add (Array of strings)
+   *
+   * @return string The link to the js file or the script markup with the js inside
+   */
+  protected static function js($js = []) {
+    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
 }
 ?>

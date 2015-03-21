@@ -7,7 +7,6 @@
 namespace bundles\CMS\services;
 
 use lib\myLibs\core\bdd\Sql,
-    lib\myLibs\core\Session,
     bundles\CMS\models\User;
 
 class usersService
@@ -17,19 +16,23 @@ class usersService
   */
   public static function getUsersTab()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
+    $limit = \bundles\CMS\models\Config::getByTypeAndKey('user', 'show_limit');
 
-    // Retrieving the users
-    $users = User::getFirstUsers($db, 3);
+    $users = User::getFirstUsers($limit);
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
       $users = array($users);
 
-    $count = User::count($db);
+    $count = User::count();
 
-    return array(User::getRoles($db), $users, $count);
+    return [
+      'count' => !empty($count) ? $count : '',
+      'limit' => $limit,
+      'roles' => User::getRoles(),
+      'users' => $users
+    ];
   }
 }
 ?>

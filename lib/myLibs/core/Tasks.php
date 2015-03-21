@@ -117,7 +117,7 @@ class Tasks
   public static function sql_isDesc()
   {
     return array(
-      'Creates the database schema from your database.',
+      'Creates the database schema from your database. (importSchema)',
       array ('databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
              'configuration' => 'The configuration that you want to use from your configuration file.'),
       array('optional', 'optional')

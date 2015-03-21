@@ -10,13 +10,7 @@ use config\All_Config,
 
 class Controller extends MasterController
 {
-  public $viewPath = '/'; // index/index/ for indexController and indexAction
-
-  private static $cache_used,
-    $css = [],
-    $js = [],
-    $rendered = [],
-    $ajax = false;
+  private static $cache_used;
 
   /** If the files are in cache, put them directly in $rendered
    *
@@ -130,14 +124,6 @@ class Controller extends MasterController
       parent::$layout = $this->buildCachedFile(LAYOUT, [], $cachedFile, false);
   }
 
-  /** Adds a css script to the existing ones
-   *
-   * @param array $css The css file to add (Array of string)
-   */
-  protected static function css($css) {
-    array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
-  }
-
   /** Returns the pre-generated css and the additional concatenated css
    *
    * @param string $routeV Route name plus the version
@@ -169,16 +155,6 @@ class Controller extends MasterController
     fclose($fp);
 
     return $content . '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '_dyn', '.css') . '" />';
-  }
-
-  /** Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
-   *
-   * @param array $js The javascript file to add (Array of strings)
-   *
-   * @return string The link to the js file or the script markup with the js inside
-   */
-  protected static function js($js) {
-    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
 
   /** Returns the pre-generated js and the additional concatenated js

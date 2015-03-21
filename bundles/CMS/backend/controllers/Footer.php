@@ -1,6 +1,8 @@
-<?php
+<?
 
 namespace bundles\CMS\models;
+
+
 
 /**
  * LPCMS Footer model
@@ -12,9 +14,9 @@ class Footer
   /**
    * @return $headers
    */
-  public static function getAll($db)
+  public static function getAll()
   {
-    return $db->values($db->query('SELECT * FROM lpcms_footer'));
+    return Sql::$instance->values(Sql::$instance->query('SELECT * FROM lpcms_footer'));
   }
 }
 ?>

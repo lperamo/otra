@@ -1,4 +1,4 @@
-<?php
+<?
 
 namespace bundles\CMS\models;
 

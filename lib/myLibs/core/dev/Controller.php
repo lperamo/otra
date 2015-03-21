@@ -1,5 +1,6 @@
 <?
-/** A classic MVC development controller class
+/**
+ * A classic MVC development controller class
  *
  * @author Lionel Péramo */
 namespace lib\myLibs\core;
@@ -11,19 +12,13 @@ use config\All_Config,
 
 class Controller extends MasterController
 {
-  public $viewPath = '/'; // index/index/ for indexController and indexAction
-
-  private static $css = [],
-    $js = [],
-    $rendered = [],
-    $ajax = false;
-
   public function __construct(array $baseParams = [], array $getParams = []){
     parent::__construct($baseParams, $getParams);
     Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, 'trace');
   }
 
-  /** If the files are in cache, put them directly in $rendered
+  /**
+   * If the files are in cache, put them directly in $rendered
    *
    * @param array $filesToCheck Files to check in cache
    *
@@ -31,7 +26,8 @@ class Controller extends MasterController
    */
   public function checkCache(array $filesToCheck) { return false; }
 
-  /** Renders a view. NB: Even is cache is activated, the template can be not fresh !
+  /**
+   * Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
    * @param string $file      The file to render
    * @param array  $variables Variables to pass
@@ -59,7 +55,8 @@ class Controller extends MasterController
     return parent::$template;
   }
 
-  /** Parses the template file and updates parent::$template
+  /**
+   * Parses the template file and updates parent::$template
    *
    * @param string $filename  The file name
    * @param array  $variables Variables to pass to the template
@@ -90,7 +87,8 @@ class Controller extends MasterController
     return $content;
   }
 
-  /** Adds a debug bar at the top of the template
+  /**
+   * Adds a debug bar at the top of the template
    *
    * @param string $debugBar Debug bar template
    */
@@ -113,18 +111,8 @@ class Controller extends MasterController
   /** Includes the layout */
   private function layout() { parent::$layout = $this->buildCachedFile(LAYOUT, [], null, false); }
 
-  /** Adds a css script to the existing ones
-   *
-   * @param array $css The css file to add (Array of string)
-   */
-  protected static function css($css = [])
-  {
-    if(!is_array($css)) $css = [$css];
-
-    array_splice(self::$css, count(self::$css), 0, $css);
-  }
-
-  /** Puts the css into the template
+  /**
+   * Puts the css into the template
    *
    * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
    *
@@ -221,20 +209,6 @@ class Controller extends MasterController
   }
 
   /**
-   * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
-   *
-   * @param array $js The javascript file to add (Array of strings)
-   *
-   * @return string The link to the js file or the script markup with the js inside
-   */
-  protected static function js($js = [])
-  {
-    if(!is_array($js)) $js = [$js];
-
-    self::$js = array_merge(self::$js, $js);
-  }
-
-  /**
    * Uses calculations in order to put scripts in correct order that has been specified in the routes configuration file
    *
    * @param array $unorderedArray Unordered array of files
@@ -260,9 +234,15 @@ class Controller extends MasterController
   }
 
   /**
+   * Updates the CSS or JS scripts array in order to allow scripts generation order calculations.
    *
+   * @param array      &$unorderedArray
+   * @param array      &$orderedArray
+   * @param int        &$i
+   * @param int|string $key
+   * @param string     $code
    */
-  private static function updateScriptsArray(&$unorderedArray, &$orderedArray, &$i, $key, $code)
+  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, &$i, $key, $code)
   {
     if(is_string($key))
       $orderedArray[intval(substr($key,1))] = $code;
@@ -272,7 +252,8 @@ class Controller extends MasterController
     ++$i;
   }
 
-  /** Puts the css into the template. Updates parent::$template.
+  /**
+   * Puts the css into the template. Updates parent::$template.
    *
    * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
    *

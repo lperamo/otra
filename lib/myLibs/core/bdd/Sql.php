@@ -13,11 +13,13 @@ use lib\myLibs\core\Lionel_Exception,
 
 class Sql
 {
-  private static $_instance,
-    $_sgbds = ['Mysql'],
-    $_chosenSgbd,
+  private static
+    $_sgbds = ['Mysql'], // Available sgbds
     $_db,
+    $_chosenSgbd,
     $_link_identifier;
+
+  public static $instance;
 
   public function __construct($sgbd) { self::$_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
 
@@ -27,26 +29,33 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet
    *
-   * @param string $sgbd Kind of sgbd
+   * @param bool   $selectDb Does we have to select the default database ?
+   * @param string $sgbd     Kind of sgbd
+   * @param string $conn     Connection used (see All_Config files)
+   *
+   * @return
    */
-  public static function getDB($sgbd)
+  public static function getDB($selectDb = true, $sgbd = false, $conn = false)
   {
+    $sgbd = $sgbd ?: All_Config::$dbConnections[All_Config::$defaultConn]['driver'];
+
     if(in_array($sgbd, self::$_sgbds))
     {
-      if (null == self::$_instance)
+      if (null == self::$instance)
       {
-        self::$_instance = new Sql($sgbd);
+        self::$instance = new Sql($sgbd);
         require $sgbd . '.php';
       }
 
-      extract(All_Config::$dbConnections[Session::get('db')]);
+      extract(All_Config::$dbConnections[$conn ?: All_Config::$defaultConn]);
       self::$_db = $db;
-      $server = ('' == $port) ? $host : $host . ':' . $port;
-      self::$_link_identifier = self::connect($server, $login, $password);
-
-      return self::$_instance;
+      self::$_link_identifier = self::connect('' == $port ? $host : $host . ':' . $port, $login, $password);
     }else
       throw new Lionel_Exception('This SGBD doesn\'t exist...yet !', 'E_CORE_ERROR');
+
+    $selectDb && self::$instance->selectDb();
+
+    return self::$instance;
   }
 
   /**

@@ -1,6 +1,8 @@
-<?php
+<?
 
 namespace bundles\CMS\models;
+
+use lib\myLibs\core\bdd\Sql;
 
 /**
  * LPCMS Header model
@@ -12,9 +14,9 @@ class Header
   /**
    * @return $headers
    */
-  public static function getAll($db)
+  public static function getAll()
   {
-    return $db->values($db->query('SELECT * FROM lpcms_header'));
+    return Sql::$instance->values(Sql::$instance->query('SELECT * FROM lpcms_header'));
   }
 }
 ?>

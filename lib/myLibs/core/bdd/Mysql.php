@@ -154,7 +154,7 @@ class Mysql
     if (0 == mysql_num_rows($result))
       return false;
 
-    return mysql_fetch_assoc($result);
+    return current(mysql_fetch_assoc($result));
   }
 
   /**

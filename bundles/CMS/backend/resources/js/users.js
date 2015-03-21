@@ -15,12 +15,12 @@
 		lastPageSel = doc.getElementById('lastPage');
 
 		for(var role in roles) {
-			options += '<li class="selectChoice" data-value="' + roles[role].id_role + '">' + roles[role].nom + '</li>';
+			options += '<li class="selectChoice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>';
 		}
 
 		var roleText = '<div class="select">\n\
 					      <span class="fl input actualSelectValue">\n\
-					        <a data-value="' + roles[0].id_role + '">' + roles[0].nom + '</a>\n\
+					        <a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>\n\
 					        <span class="fr selectArrow"></span>\n\
 					      </span>\n\
 					      <div class="clearBoth"></div>\n\
@@ -32,7 +32,7 @@
 		addUser()
 		{
 			tbody.find('#trOptions').before('<tr id="_'+ cpt + '" class="editable">\n\
-						<td><input type="checkbox"/></td>\n\
+						<td><input id="chk__' + cpt + '" type="checkbox" role="checkbox" class="noLabel" /><label for="chk__' + cpt + '"></td>\n\
 						<td class="mail">' + txtMail + ' /></td>\n\
 						<td>' + txtPwd + '/></td>\n\
 						<td>' + txtPseudo + '/></td>\n\
@@ -233,7 +233,9 @@
 				erreurs += 'Pseudo not specified !<br>';
 
 			var temp = false,
-				roleVal = tds[3].querySelectorAll('a[data-value]')[0].dataset.value;
+				roleVal = tds[3].querySelector('a[data-value]').dataset.value;
+
+				console.log(roleVal);
 
 			for(var key in roles)
 			{
@@ -345,7 +347,7 @@
 					pseudo: tds.eq(3)[0].querySelector('input').value.trim(),
 					role: tds.eq(4)[0].querySelector('input').value.trim(),
 					type: type,
-					limit: limit.querySelector('.actualSelectValue>a').dataset.value,
+					limit: limit.querySelector('.actualSelectValue>a').textContent,
 					prev: limit.dataset.first,
 					last: limit.dataset.last
 				},

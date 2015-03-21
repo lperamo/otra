@@ -35,10 +35,9 @@ class ajaxModulesController extends Controller
 
   public function indexAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    Sql::getDB();
 
-    $modules = $db->values($db->query('SELECT * FROM lpcms_module'));
+    $modules = \bundles\CMS\models\Module::getAll();
 
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => self::$moduleTypes,
@@ -49,8 +48,7 @@ class ajaxModulesController extends Controller
 
   public function searchModuleAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    $db = Sql::getDB();
 
     echo $this->renderView('modulesPartial.phtml', [
       'moduleTypes' => self::$moduleTypes,
@@ -62,8 +60,7 @@ class ajaxModulesController extends Controller
   }
 
   public function searchElementAction(){
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    $db = Sql::getDB();
 
     var_dump($db->values($db->query('
         SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu
@@ -86,8 +83,7 @@ class ajaxModulesController extends Controller
 
   public function searchArticleAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    $db = Sql::getDB();
 
     $article = $db->values($db->query('SELECT id, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
      FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
@@ -105,8 +101,7 @@ class ajaxModulesController extends Controller
 
   public function getElementsAction()
   {
-    $db = Session::get('dbConn');
-    $db->selectDb();
+    $db = Sql::getDB();
 
     // $element = $db->values($db->query('SELECT id_elementsmenu, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
     //  FROM lpcms_elements_menu WHERE fk_id_module = ' . intval($_GET['id'])));

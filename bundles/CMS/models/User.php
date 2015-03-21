@@ -1,6 +1,8 @@
-<?php
+<?
 
 namespace bundles\CMS\models;
+
+use lib\myLibs\core\bdd\Sql;
 
 /**
  * LPCMS User model
@@ -9,14 +11,14 @@ namespace bundles\CMS\models;
  */
 class User
 {
-  public static function checkPseudo($db, $pseudo)
+  public static function checkPseudo($pseudo)
   {
-    $dbUsers = $db->query(
+    $dbUsers = Sql::$instance->query(
       'SELECT pseudo FROM lpcms_user
        WHERE pseudo = \'' . $pseudo . '\' LIMIT 1'
     );
-    $users = $db->values($dbUsers);
-    $db->freeResult($dbUsers);
+    $users = Sql::$instance->values($dbUsers);
+    Sql::$instance->freeResult($dbUsers);
 
     return $users;
   }
@@ -25,26 +27,25 @@ class User
    * Checks if we already have that pseudo in the database and it's different from the pseudo passed in parameter.
    * Returns true if there is a problem.
    *
-   * @param $db        Database connection
    * @param $pseudo    Wanted pseudo
    * @param $oldPseudo The old pseudo
    */
-  public static function checkPseudoEdit($db, $pseudo, $oldPseudo)
+  public static function checkPseudoEdit($pseudo, $oldPseudo)
   {
-    $users = self::checkPseudo($db, $pseudo);
+    $users = self::checkPseudo($pseudo);
 
     return is_array($users) && $oldPseudo != $pseudo;
   }
 
-  public static function checkMail($db, $mail)
+  public static function checkMail($mail)
   {
-    $dbUsers = $db->query(
+    $dbUsers = Sql::$instance->query(
       'SELECT mail FROM lpcms_user
        WHERE mail = \'' . $mail . '\' LIMIT 1'
     );
 
-    $users = $db->single($dbUsers);
-    $db->freeResult($dbUsers);
+    $users = Sql::$instance->single($dbUsers);
+    Sql::$instance->freeResult($dbUsers);
 
     return $users;
   }
@@ -53,13 +54,12 @@ class User
    * Checks if we already have that mail in the database and it's different from the mail passed in parameter.
    * Returns true if there is a problem.
    *
-   * @param $db      Database connection
    * @param $mail    Wanted mail
    * @param $oldMail The old mail
    */
-  public static function checkMailEdit($db, $mail, $oldMail)
+  public static function checkMailEdit($mail, $oldMail)
   {
-    $users = self::checkMail($db, $mail);
+    $users = self::checkMail($mail);
 
     return is_array($users) && $oldMail != $mail;
   }
@@ -67,15 +67,14 @@ class User
   /**
    * Already mysql_real_escaped !
    *
-   * @param type   $db     Database connection
    * @param string $mail
    * @param string $pwd
    * @param string $pseudo
    * @param int $role
    */
-  public static function addUser($db, $mail, $pwd, $pseudo, $role)
+  public static function addUser($mail, $pwd, $pseudo, $role)
   {
-    $db->query(
+    Sql::$instance->query(
       'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`)
        VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\', ' . intval($role) . ');'
     );
@@ -84,9 +83,9 @@ class User
   /**
    * @param $limit
    */
-  public static function getFirstUsers($db, $limit)
+  public static function getFirstUsers($limit)
   {
-    return $db->values($db->query(
+    return Sql::$instance->values(Sql::$instance->query(
        'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
        INNER JOIN lpcms_role r ON u.role_id = r.id
        ORDER BY id_user
@@ -101,9 +100,9 @@ class User
    * @param string $pseudo
    * @param int    $role
    */
-  public static function updateUser($db, $id_user, $mail, $pwd, $pseudo, $role)
+  public static function updateUser($id_user, $mail, $pwd, $pseudo, $role)
   {
-    return $db->query(
+    return Sql::$instance->query(
       'UPDATE lpcms_user SET
       mail = \'' . $mail . '\',
       pwd = \'' . mysql_real_escape_string($pwd) . '\',
@@ -115,12 +114,11 @@ class User
   /**
    * Already mysql_real_escaped !
    *
-   * @param $db Database connection
    * @param $userParams [$type, $prev, $last, $limit, $mail, $pseudo, $role]
    *
    * @return $users
    */
-  public static function search($db, $userParams)
+  public static function search($userParams)
   {
     extract($userParams);
     $limit = intval($limit);
@@ -144,26 +142,34 @@ class User
     if('' != $role)
       $req .= ' AND r.nom LIKE \'%' . mysql_real_escape_string($role) . '%\'';
 
-    return $db->query(
+    return Sql::$instance->query(
       $req . ' ORDER BY u.id_user ' .
       (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
     );
   }
 
   /**
-  * @param $db Database connection
+  * @return int Users count
   */
   public static function count($db)
   {
-    return $db->single($db->query('SELECT COUNT(id_user) FROM lpcms_user'));
+    return Sql::$instance->single(Sql::$instance->query('SELECT COUNT(id_user) FROM lpcms_user'));
   }
 
   /**
-  * @param $db Database connection
+  * @param array Roles
   */
   public static function getRoles($db)
   {
-    return $db->values($db->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC'));
+    return Sql::$instance->values(Sql::$instance->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC'));
+  }
+
+  /**
+  * @param bool Success ?
+  */
+  public static function delete($db)
+  {
+    return Sql::$instance->query('DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user));
   }
 }
 ?>
