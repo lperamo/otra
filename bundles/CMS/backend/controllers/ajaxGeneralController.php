@@ -21,11 +21,7 @@ class ajaxGeneralController extends Controller
   }
 
   public function indexAction(){
-    $db = Session::get('dbConn');
-    $db->selectDb();
-
-    // Puts the UTF-8 encoding in order to correctly render accents
-    $db->query('SET NAMES UTF8');
+    Sql::getDB();
 
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));

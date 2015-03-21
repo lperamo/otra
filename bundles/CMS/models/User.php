@@ -65,7 +65,7 @@ class User
   }
 
   /**
-   * Already mysql_real_escaped !
+   * Parameters sanitized in the function.
    *
    * @param string $mail
    * @param string $pwd
@@ -89,11 +89,13 @@ class User
        'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
        INNER JOIN lpcms_role r ON u.role_id = r.id
        ORDER BY id_user
-       LIMIT ' . $limit
+       LIMIT ' . intval($limit)
      ));
   }
 
   /**
+   * Parameters sanitized in the function : pwd, role, intval.
+   *
    * @param int    $id_user
    * @param string $mail
    * @param string $pwd
@@ -112,7 +114,7 @@ class User
   }
 
   /**
-   * Already mysql_real_escaped !
+   * Parameters sanitized in the function.
    *
    * @param $userParams [$type, $prev, $last, $limit, $mail, $pseudo, $role]
    *
@@ -165,7 +167,11 @@ class User
   }
 
   /**
-  * @param bool Success ?
+  * Parameter intvaled in the function.
+  *
+  * @param int $id_user
+  *
+  * @return bool Success ?
   */
   public static function delete($id_user)
   {
