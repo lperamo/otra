@@ -151,7 +151,7 @@ class User
   /**
   * @return int Users count
   */
-  public static function count($db)
+  public static function count()
   {
     return Sql::$instance->single(Sql::$instance->query('SELECT COUNT(id_user) FROM lpcms_user'));
   }
@@ -159,7 +159,7 @@ class User
   /**
   * @param array Roles
   */
-  public static function getRoles($db)
+  public static function getRoles()
   {
     return Sql::$instance->values(Sql::$instance->query('SELECT id, nom FROM lpcms_role ORDER BY nom ASC'));
   }
@@ -167,7 +167,7 @@ class User
   /**
   * @param bool Success ?
   */
-  public static function delete($db)
+  public static function delete($id_user)
   {
     return Sql::$instance->query('DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user));
   }

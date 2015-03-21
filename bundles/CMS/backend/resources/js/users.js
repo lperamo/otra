@@ -235,8 +235,6 @@
 			var temp = false,
 				roleVal = tds[3].querySelector('a[data-value]').dataset.value;
 
-				console.log(roleVal);
-
 			for(var key in roles)
 			{
 				if(roleVal === roles[key].id) {

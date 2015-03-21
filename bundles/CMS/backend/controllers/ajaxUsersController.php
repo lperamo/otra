@@ -101,10 +101,9 @@ class ajaxUsersController extends Controller
     // TODO ip to ban
     (!isset($_POST['id_user']) || 1 < count($_POST)) && die('{"success": false, "msg": "Hack."}');
 
-    extract($_POST);
     Sql::getDB();
 
-    echo (false === User::delete())
+    echo (false === User::delete($_POST['id_user']))
      ? '{"success":false,"msg":"Database problem !"}'
      : '{"success":true, "msg": "User deleted."}';
 
