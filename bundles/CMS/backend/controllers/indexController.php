@@ -55,17 +55,7 @@ class indexController extends Controller
 
   public function generalAction()
   {
-    Sql::getDB();
-
-    // Retrieving the headers
-    // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
-    // dump($users);
-
-    $_SESSION['js'] = [];
-
-    echo $this->renderView('general.phtml', [
-      'items' => []
-    ]);
+    echo $this->renderView('general.phtml', \bundles\CMS\services\configService::getConfigTab());
   }
 
   public function statsAction()
@@ -75,8 +65,6 @@ class indexController extends Controller
     // Retrieving the headers
     // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
     // dump($users);
-
-    $_SESSION['js'] = [];
 
     echo $this->renderView('stats.phtml', ['items' => []]);
   }

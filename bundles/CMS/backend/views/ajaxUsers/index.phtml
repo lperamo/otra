@@ -16,20 +16,21 @@
 					<input id="usersAll" type="checkbox" class="_selectAll noLabel" role="checkbox" aria-checked="false" aria-labelledby="<? t('Select/Deselect All'); ?>" data-tooltip="<? t('Select/Deselect All'); ?>" />
 					<label for="usersAll"></label>
 				</td>
-				<td><input class="search" role="search" data-tooltip="<? t('Search by email'); ?>" /></td>
+				<td><input class="input search" role="search" data-tooltip="<? t('Search by email'); ?>" placeholder="<? t('Search by email'); ?>" /></td>
 				<td></td>
-				<td><input class="search" role="search" data-tooltip="<? t('Search by pseudo'); ?>" /></td>
-				<td><input class="search" role="search" data-tooltip="<? t('Search by role'); ?>" /></td>
+				<td><input class="input search" role="search" data-tooltip="<? t('Search by pseudo'); ?>" placeholder="<? t('Search by pseudo'); ?>" /></td>
+				<td><input class="input search" role="search" data-tooltip="<? t('Search by role'); ?>" placeholder="<? t('Search by role'); ?>" /></td>
+				<td></td>
 			</tr>
 			<? if (!empty($users)) require 'singleUser.phtml'; ?>
 			<tr id="trOptions">
 				<td colspan="6" class="options">
 					<a role="button" aria-labelledby="<? t('Previous users'); ?>" id="prev" class="softBtn circleBorder smallBtn fontBtn paging disabled" data-tooltip="<? t('Previous users'); ?>">&laquo;</a><!--
 					--><a role="button" aria-labelledby="<? t('Next users'); ?>" id="next" class="softBtn circleBorder smallBtn fontBtn paging<? if($count < $limit) echo ' disabled'; ?>" data-tooltip="<? t('Next users'); ?>">&raquo;</a>
-					<span id="pageInd"><? t('Page'); ?> <span id="currentPage">1</span> / <span id="lastPage"><?= (0 == $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count ?> <? t('users'); ?>)</span>
+					<span id="pageInd" data-realcount="<?= $count?>" data-actualcount="<?= $count?>"><? t('Page'); ?> <span id="currentPage">1</span> / <span id="lastPage"><?= (0 == $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count ?> <? t('users'); ?>)</span>
 					<div id="limit" class="select" data-first="<?= $users[0]['id_user'] ?>" data-last="<?= $users[count($users) - 1]['id_user'] ?>" >
 			      <span class="fl input actualSelectValue" data-tooltip="Users per page">
-			        <a><?= $limit ?></a>
+			        <a id="limitValue"><?= $limit ?></a>
 			        <span class="fr selectArrow"></span>
 			      </span>
 			      <div class="clearBoth"></div>

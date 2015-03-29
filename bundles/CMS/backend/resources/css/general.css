@@ -1,0 +1,36 @@
+/*.cfgLine:hover, */
+ .hidden {
+  height: 0; font-size: 0;
+  transform: scale(0.1);
+}
+
+#mainCfgDiv {
+  background: #f7f7f7;
+  color: #444
+}
+
+#mainCfgDiv label {
+  display: inline-block;
+}
+  #mainCfgDiv label:first-child {
+    width: 250px
+  }
+
+.cfgSection {
+  background: linear-gradient(#e8e1d4 0%, #fcd484 100%) #eaeaea;
+  color: #8785ff;
+  cursor: pointer;
+  padding: 5px 10px;
+  text-shadow: 1px 1px #d0c6ed
+}
+
+.cfgLine {
+  padding: 5px 10px;
+  opacity: 1;
+  transform: scale(1);
+  transition: transform .35s
+}
+
+  .cfgLine:nth-child(2n+1) {
+    background: #f1f1f1;
+  }

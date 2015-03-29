@@ -114,7 +114,31 @@ class User
   }
 
   /**
-   * Parameters sanitized in the function.
+   * Adds a field to the search
+   *
+   * @param  string $field     Field to add
+   * @param  mixed  $value     Value of the field
+   * @param  bool   $search    Search(true) or pagination(false)
+   * @param  bool   &$sqlStart Is the request starting ?
+   * @param  string &$req      Request being made
+   */
+  private static function searchPart($field, $value, $search, &$sqlStart, &$req)
+  {
+    if('' != $value)
+    {
+      if($search && $sqlStart)
+        $req .= ' WHERE ';
+
+      if(!$sqlStart)
+        $req .= ' AND ';
+
+      $req .= $field . ' LIKE \'%' . mysql_real_escape_string($value) . '%\'';
+      $sqlStart = false;
+    }
+  }
+
+  /**
+   * Parameters sanitized in the function. 2 requests !
    *
    * @param $userParams [$type, $prev, $last, $limit, $mail, $pseudo, $role]
    *
@@ -124,30 +148,38 @@ class User
   {
     extract($userParams);
     $limit = intval($limit);
-    $req = 'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.role_id = r.id
-      WHERE id_user ';
+    $req = ' FROM lpcms_user u
+      INNER JOIN lpcms_role r ON u.role_id = r.id';
+    $search = 'search' == $type;
+    $cond = 'next' == $type || $search;
+    $sqlStart = true;
 
-    if('search' == $type)
-      $req .= '> ' . (intval($last) - $limit);
-    else
-      $req .= ('next' == $type)
+    if(!$search)
+      $req .= ' WHERE id_user ' . ('next' == $type
         ? '> ' . intval($last)
-        : '< ' . intval($prev);
+        : '< ' . intval($prev)
+        );
 
+    // Search by mail ?
     if('' != $mail)
-      $req .= ' AND u.mail LIKE \'%' . mysql_real_escape_string($mail) . '%\'';
+    {
+      $req .= ($search && $sqlStart ? ' WHERE' : ' AND') . ' u.mail LIKE \'%' . mysql_real_escape_string($mail) . '%\'';
+      $sqlStart = false;
+    }
 
-    if('' != $pseudo)
-      $req .= ' AND u.pseudo LIKE \'%' . mysql_real_escape_string($pseudo) . '%\'';
+    self::searchPart('u.pseudo', $pseudo, $search, $sqlStart, $req);
+    self::searchPart('r.nom', $role, $search, $sqlStart, $req);
 
-    if('' != $role)
-      $req .= ' AND r.nom LIKE \'%' . mysql_real_escape_string($role) . '%\'';
+    $req .= ' ORDER BY u.id_user ';
 
-    return Sql::$instance->query(
-      $req . ' ORDER BY u.id_user ' .
-      (('next' == $type) ? 'LIMIT ' : 'DESC LIMIT ') . $limit
-    );
+    $result = Sql::$instance->query('SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom' . $req . ($cond ? 'LIMIT ' : 'DESC LIMIT ') . $limit);
+
+    return $search
+      ? [
+          $result,
+          Sql::$instance->single(Sql::$instance->query('SELECT COUNT(u.id_user) ' . $req . ($cond ? '' : 'DESC')))
+        ]
+      : $result;
   }
 
   /**
@@ -176,6 +208,25 @@ class User
   public static function delete($id_user)
   {
     return Sql::$instance->query('DELETE FROM lpcms_user WHERE `id_user` = ' . intval($id_user));
+  }
+
+  /**
+   * Checks if the user can be logged. Parameters sanitized in the function.
+   *
+   * @param  string $email
+   * @param  string $pwd
+   *
+   * @return array [id_user, role_id]
+   */
+  public static function auth($email, $pwd)
+  {
+    return Sql::$instance->fetchAssoc(
+      Sql::$instance->query('SELECT u.`id_user`, u.`role_id`
+       FROM lpcms_user u
+       WHERE u.`mail` = \'' . mysql_real_escape_string($email) . '\'
+        AND u.`pwd` = \'' . mysql_real_escape_string($pwd) . '\'
+        LIMIT 1')
+    );
   }
 }
 ?>

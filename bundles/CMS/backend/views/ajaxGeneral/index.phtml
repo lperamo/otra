@@ -1,26 +1,37 @@
 <tabContent id="tab1">
-	<table class="fl">
-		<thead>
-			<tr>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<? foreach($items as $item)
-			{?>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<? } ?>
-		</tbody>
-	</table>
+	<div id="mainCfgDiv">
+		<? $actualName = $cfg['name'];
+		foreach($config as $cfg)
+		{
+			if($actualName != $cfg['name'])
+			{
+				$actualName = $cfg['name'];
+				?> <div class="cfgSection"><?= $cfg['name'] ?></div>
+				<?
+			}
+			?>
+			<div class="cfgLine" data-id="<?= $cfg['id'] ?>">
+				<label id="cfg_lab_<?= $cfg['id'] ?>"><?= $cfg['title'] ?></label>
+				<?
+				 switch($cfg['type'])
+				 {
+				 	case 0 :
+				  ?>
+				  	<input for="cfg_chk_<?= $cfg['id'] ?>" type="checkbox" class="noLabel" value="<?= $cfg['value'] ?>" />
+				  	<label id="cfg_chk_<?= $cfg['id'] ?>"></label>
+				  <? break;
+				  case 1:
+				  	?>
+				  	<input type="number" for="cfg_lab_<?= $cfg['id'] ?>" class="input" value="<?= $cfg['value'] ?>"/>
+				  	<?
+				  	break;
+				  case 2:
+			  		?>
+			  		<input for="cfg_lab_<?= $cfg['id'] ?>" class="input" value="<?= $cfg['value'] ?>"/>
+			  		<?
+				  } ?>
+				  <a role="button" aria-labelledby="<? t('Edit this configuration line'); ?>" class="softBtn circleBorder edit _edit TTTL" data-tooltip="<? t('Edit this configuration line'); ?>"></a>
+			</div>
+		<? } ?>
 	</div>
 </tabContent>

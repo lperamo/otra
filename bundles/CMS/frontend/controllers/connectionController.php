@@ -15,6 +15,8 @@ class connectionController extends Controller
 {
   public function ajaxLoginAction()
   {
+    !isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST) && die('Hack.');
+
     $email = $_POST['email'];
     $pwd = $_POST['pwd'];
 
@@ -24,18 +26,14 @@ class connectionController extends Controller
     if(empty($pwd))
       throw new Lionel_Exception('Missing password !');
 
-    $db = Session::get('dbConn');
-    $db->selectDb();
-
-    // Checks if the email already exists
-    $pwd = crypt($pwd, FWK_HASH);
+    \lib\myLibs\core\bdd\Sql::getDB();
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
-    $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR'] || '176.183.7.251' == $_SERVER['REMOTE_ADDR'] || '80.215.41.155' == $_SERVER['REMOTE_ADDR']
+    $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR']
       ? array(
         'id_user' => '-1',
         'role_id' => 1)
-      : $db->fetchAssoc($db->query('SELECT u.`id_user`, u.`role_id` FROM lpcms_user u WHERE u.`mail` = \'' . $email . '\' AND u.`pwd` = \'' . $pwd . '\' LIMIT 1'));
+      : \bundles\CMS\models\User::auth($email, crypt($pwd, FWK_HASH));
 
     if(empty($infosUser))
       echo '{"fail", "Bad credentials."}';

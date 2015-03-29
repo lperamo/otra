@@ -3,6 +3,7 @@ body,
 ul,
 textarea,
 p,
+h1, h2, h3,
 label {
     margin: 0;
     padding: 0;
@@ -11,7 +12,7 @@ body{ height: 100vh }
 /* apply a natural box layout model to all elements, but allowing components to change
  (normally it's html and not * in the following rule ! see paul irish article on that point)*/
 * { box-sizing: border-box; }
-*, *:before, *:after { box-sizing: inherit }
+*:before, *:after { box-sizing: inherit }
 
 .fl{float:left}
 .fr{float:right}

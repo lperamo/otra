@@ -19,23 +19,13 @@ class articleController extends Controller
   {
     if(!$this->checkCache(array('show.phtml')))
     {
-      //    $db = new Sql();
-      /* @var $db \lib\myLibs\core\bdd\Sql */
+      $db = Sql::getDB();
 
-      /* @var $db Sql */
-      $db = Session::get('dbConn');
-      $db->selectDb();
-
-      // Puts the UTF-8 encoding in order to correctly render accents
-      $db->query('SET NAMES UTF8');
-
-      // Retrieving the headers
       if(!isset($_SESSION['headers']))
-        $_SESSION['headers'] = $db->values($db->query('SELECT * FROM lpcms_header'));
+        $_SESSION['headers'] = \bundles\CMS\models\Header::getAll();
 
-      // Retrieving the footers
       if (!isset($_SESSION['footers']))
-        $_SESSION['footers'] = $db->values($db->query('SELECT * FROM lpcms_footer'));
+        $_SESSION['footers'] = \bundles\CMS\models\Footer::getAll();
 
       // Retrieving the modules content
       $query = $db->query('SELECT

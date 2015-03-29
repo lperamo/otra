@@ -1,4 +1,9 @@
 <?
+/**
+ * Sites routes
+ *
+ * @author Lionel Péramo
+ */
 namespace config;
 
 class Routes
@@ -96,10 +101,19 @@ class Routes
     'backendGeneral' => [
       'chunks' => ['/backend/general', 'CMS', 'backend', 'index', 'generalAction'],
       'resources' => [
-        'bundle_css' => ['generic', 'interface', 'form'],
+        '_css' => ['general'],
+        'bundle_css' => ['generic', 'interface', 'form', 'checkbox', 'radio'],
+        '_js' => ['general'],
         'bundle_js' => ['jquery', 'backend']
       ]
     ],
+      'backendAjaxGeneral' => [
+        'chunks' => ['/backend/ajax/general', 'CMS', 'backend', 'ajaxGeneral', 'indexAction'],
+        'resources' => [
+          '_css' => ['general'],
+          '_js' => ['general']
+        ]
+      ],
     'backendStats' => [
       'chunks' => ['/backend/stats', 'CMS', 'backend', 'index', 'statsAction'],
       'resources' => [
@@ -112,6 +126,7 @@ class Routes
     'backendUsers' => [
       'chunks' => ['/backend/users', 'CMS', 'backend', 'index', 'usersAction'],
       'resources' => [
+        '_css' => ['users'],
         'bundle_css' => ['generic', 'interface', 'form', 'notifications', 'checkbox'],
         '_js' => ['_4'=>'users'],
         'bundle_js' => ['jquery', 'backend', 'form', 'notifications']
@@ -140,15 +155,13 @@ class Routes
       'backendAjaxUsers' => [
         'chunks' => ['/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'],
         'resources' => [
+          '_css' => ['users'],
           '_js' => ['users']
         ]
       ],
 
       // ----------------
 
-    'backendAjaxGeneral' => [
-      'chunks' => ['/backend/ajax/general', 'CMS', 'backend', 'ajaxGeneral', 'indexAction']
-    ],
     'backendAjaxStats' => [
       'chunks' => ['/backend/ajax/stats', 'CMS', 'backend', 'ajaxStats', 'indexAction']
     ],

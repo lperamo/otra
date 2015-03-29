@@ -1,8 +1,9 @@
 <?
 /**
-* Backend of the LPCMS
+ * Backend of the LPCMS
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
 
 namespace bundles\CMS\backend\controllers;
 
@@ -62,7 +63,7 @@ class ajaxUsersController extends Controller
 
     echo (false === User::addUser($mail, $pwd, $pseudo, $role))
       ? '{"error": true, "msg": "Database problem"}'
-      : '{"success":true, "msg":"User added.", "pwd":"' . $pwd . '", "id":"' . $db->lastInsertedId() . '"}';
+      : '{"success":true, "msg":"User added.", "id":"' . $db->lastInsertedId() . '"}';
 
     return;
   }
@@ -105,11 +106,12 @@ class ajaxUsersController extends Controller
 
     echo (false === User::delete($_POST['id_user']))
      ? '{"success":false,"msg":"Database problem !"}'
-     : '{"success":true, "msg": "User deleted."}';
+     : '{"success":true, "msg": "User deleted.", "count": ' . User::count() . '}';
 
     return;
   }
 
+  /** A criteria based search or a previous/next pagination */
   public function searchAction()
   {
     self::securityCheck();
@@ -119,26 +121,30 @@ class ajaxUsersController extends Controller
 
     $db = Sql::getDB();
 
-    $users = User::search($_POST);
+    $data = User::search($_POST);
+    $users = (isset($data[0])) ? $data[0] : $data;
 
     if(!empty($users))
     {
       $users = $db->values($users);
       sort($users);
 
-      // Fixes the bug where there is only one user
-      if(isset($users['id_user']))
-        $users = [$users];
+      if(empty($users))
+        echo '{"success": true, "msg": "", "count": 0, "first": 0, "last":0}';
+      else
+      {
+        end($users);
+        $last = current($users);
+        reset($users);
 
-      end($users);
-      $last = current($users);
-      reset($users);
-
-      echo '{"success": true, "msg":' . json_encode($this->renderView(
-          'singleUser.phtml',
-          ['users' => $users],
-          true)
-        ) . ', "first":' . $users[0]['id_user'] . ', "last":' . $last['id_user'] . '}';
+        echo '{"success": true, "msg":' . json_encode($this->renderView(
+            'singleUser.phtml',
+            ['users' => $users],
+            true)
+          ) . ', "count":' . (isset($data[1]) ? $data[1] : '-1') .
+           ', "first":' . $users[0]['id_user'] .
+           ', "last":' . $last['id_user'] . '}';
+      }
     } else
       echo '{"success": true, "msg": ""}';
 

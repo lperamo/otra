@@ -2,7 +2,8 @@
 /**
  * Users service
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
 
 namespace bundles\CMS\services;
 

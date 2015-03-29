@@ -1,7 +1,9 @@
 <?
-/** Backend of the LPCMS
+/**
+ *  Backend of the LPCMS
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
 
 namespace bundles\CMS\backend\controllers;
 
@@ -12,7 +14,8 @@ use lib\myLibs\core\Controller,
 
 class ajaxGeneralController extends Controller
 {
-  public function preExecute(){
+  public function preExecute()
+  {
     if($this->action != 'index' && !isset($_SESSION['sid']))
     {
       Router::get('backend');
@@ -21,15 +24,7 @@ class ajaxGeneralController extends Controller
   }
 
   public function indexAction(){
-    Sql::getDB();
-
-    // Retrieving the headers
-    // $users = $db->fetchAssoc($db->query('SELECT * FROM lpcms_user'));
-    // dump($users);
-
-    echo $this->renderView('index.phtml', array(
-      'items' => array()
-    ), true);
+    echo $this->renderView('index.phtml', \bundles\CMS\services\configService::getConfigTab(), true);
   }
 }
 ?>
