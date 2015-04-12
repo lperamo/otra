@@ -185,7 +185,7 @@ function js($shaName, array $chunks, $bundlePath, array $resources)
   }
 
   /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
-  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' & gzip -f -9 ' . $pathAndFile);
+  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' --language_in=ECMASCRIPT6_STRICT & gzip -f -9 ' . $pathAndFile);
 }
 
 /**

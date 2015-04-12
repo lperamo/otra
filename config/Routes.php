@@ -128,8 +128,10 @@ class Routes
       'resources' => [
         '_css' => ['users'],
         'bundle_css' => ['generic', 'interface', 'form', 'notifications', 'checkbox'],
-        '_js' => ['_4'=>'users'],
-        'bundle_js' => ['jquery', 'backend', 'form', 'notifications']
+        'core_css' => ['lightbox'],
+        '_js' => ['_5'=>'users'],
+        'bundle_js' => ['jquery', 'backend', 'form', 'notifications'],
+        'core_js' => ['_4' => 'lightbox']
       ]
     ],
       'addUser' => [
@@ -156,7 +158,9 @@ class Routes
         'chunks' => ['/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'],
         'resources' => [
           '_css' => ['users'],
-          '_js' => ['users']
+          'core_css' => ['lightbox'],
+          '_js' => ['users'],
+          'core_js' => ['_1' => 'lightbox']
         ]
       ],
 

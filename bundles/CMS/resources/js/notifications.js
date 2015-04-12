@@ -1,4 +1,4 @@
-var notif = (function()
+window.notif = (function()
 {
   'use strict';
   var ERROR = 'orangeNotif',
@@ -8,9 +8,9 @@ var notif = (function()
   /**
    * Decrease opacity at tick time and remove the notification at the end.
    *
-   * @param el       The notification DOM element.
-   * @param last     Last time (useful because of the recursion)
-   * @param duration How many time the notification has to last
+   * @param {Element} el       The notification DOM element.
+   * @param {Date}    last     Last time (useful because of the recursion)
+   * @param {number}  duration How many time the notification has to last
    */
   function tick(el, last, duration)
   {
@@ -30,13 +30,13 @@ var notif = (function()
   /**
    * Shows a notification after a html content
    *
-   * @param selector The html content selector
-   * @param texte    The text to show in the notification
-   * @param type     ERROR, WARNING, INFO ...
-   * @param cssClass The css additional class to apply (optional)
-   * @param duration Duration in milliseconds for the fade effect
+   * @param {HTMLInputElement} selector The html content selector
+   * @param {string}           text     The text to show in the notification
+   * @param {string}           type     ERROR, WARNING, INFO ...
+   * @param {string}           cssClass The css additional class to apply (optional)
+   * @param {number}           duration Duration in milliseconds for the fade effect
    */
-  function run(selector, texte, type, cssClass, duration)
+  function run(selector, text, type, cssClass, duration)
   {
     var cssClass = cssClass || '',
         duree = duree || 1E4,
@@ -47,10 +47,10 @@ var notif = (function()
       next.parentNode.removeChild(next);
 
     window.notifExists = true;
-    selector.insertAdjacentHTML('afterend', '<div class="notifWrapper fl"><div class="notification ' + cssClass + ' ' + type + '">' + texte + '</div></div>');
+    selector.insertAdjacentHTML('afterend', '<div class="notifWrapper fl"><div class="notification ' + cssClass + ' ' + type + '">' + text + '</div></div>');
 
     var next = selector.nextElementSibling,
-      last = new Date;
+        last = new Date;
 
     next.style.opacity = 1;
     tick(next, last, duration)

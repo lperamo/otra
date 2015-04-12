@@ -1,0 +1,459 @@
+
+#menuChoix {
+    background-color: #4d4d4d;
+    margin-bottom: 0px;
+    padding: 12px 0 0px;
+}
+#menuChoix a.choixperiode {
+    background-color: #297eff;
+    color: #fff;
+    text-decoration: none;
+}
+#menuChoix .select-block {
+    float: left;
+    margin-left: 15px;
+}
+#menuChoix .col-xs-3 {
+    float: left;
+    width: auto;
+}
+.col-xs-3 > a {
+    margin-left: 10px;
+    padding: 10px 15px !important;
+}
+#menuChoix .bootstrap-select {
+    width: auto;
+}
+.special {
+    background: none repeat scroll 0 0 #000;
+    color: #bc0000 !important;
+    font-style: italic;
+    font-weight: bold !important;
+}
+.choixSelect {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #555;
+    font-size: 13px;
+    height: 28px;
+    margin-right: 10px;
+    padding: 8px;
+    vertical-align: middle;
+    width: 210px;
+}
+.grasRouge {
+    color: #404040;
+    font-weight: bold;
+}
+#info_filtre {
+    background: none repeat scroll 0 0 #fdf5d9;
+    border: 1px solid #fcf0ca;
+    color: #404040;
+    font-size: 11px;
+    height: 24px;
+    line-height: 24px;
+    margin: 10px 0;
+    padding: 0 10px;
+}
+#choisir {
+    background: linear-gradient(to top, rgba(255, 251, 251, 0.1), rgba(120, 120, 120, 0.3)) repeat scroll 0 0 #f5f5f5;
+    border: 1px solid rgba(100, 100, 100, 0.5);
+    color: #000;
+    cursor: pointer;
+    font-size: 0.875em;
+    height: 28px;
+    margin: 0 0 3px 5px;
+    padding: 3px 8px;
+    text-shadow: 0 1px #ddd;
+}
+#choisir:hover {
+    background: none repeat scroll 0 0 #fff;
+}
+#selectContainer {
+    margin-right: 15px;
+}
+#choix_semaine ~ .dropdown-menu {
+    left: -49px;
+    position: absolute;
+    right: -2px;
+}
+.barre_sous_menu {
+    background-color: #4d4d4d;
+    margin-top: 3px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    width: 100%;
+}
+.barre_sous_menu * {
+    margin-left: 10px;
+    width: 250px;
+}
+a {
+    background: none repeat scroll 0 0 transparent;
+}
+a:active, a:hover {
+    outline: 0 none;
+}
+button, input, optgroup, select, textarea {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+}
+button {
+    overflow: visible;
+}
+body {
+    background-color: #fff;
+    color: #333;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857;
+}
+a:focus {
+    outline: thin dotted;
+    outline-offset: -2px;
+}
+ul, ol {
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+#menu_sec ul {
+    margin-bottom: 4px;
+}
+label {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.btn {
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.btn:focus {
+    outline: thin dotted;
+    outline-offset: -2px;
+}
+.btn:hover, .btn:focus {
+    color: #333;
+    text-decoration: none;
+}
+.btn-primary {
+    background-color: #428bca;
+    border-color: #357ebd;
+    color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    background-color: #3276b1;
+    border-color: #285e8e;
+    color: #fff;
+}
+.caret {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid;
+    display: inline-block;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    width: 0;
+}
+.dropdown-menu {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+    display: none;
+    float: left;
+    font-size: 14px;
+    left: 0;
+    list-style: outside none none;
+    margin: 2px 0 0;
+    min-width: 160px;
+    padding: 5px 0;
+    position: absolute;
+    top: 100%;
+    z-index: 1000;
+}
+.dropdown-menu > li > a {
+    clear: both;
+    color: #333;
+    display: block;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 3px 20px;
+    white-space: nowrap;
+}
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #f5f5f5;
+    color: #262626;
+    text-decoration: none;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background-color: #428bca;
+    color: #fff;
+    outline: 0 none;
+    text-decoration: none;
+}
+.dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
+    color: #999;
+}
+.dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
+    background-color: transparent;
+    background-image: none;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+.open > .dropdown-menu {
+    display: block;
+}
+.btn-group > .btn, .btn-group-vertical > .btn {
+    float: left;
+    position: relative;
+}
+.btn-group > .btn:hover, .btn-group-vertical > .btn:hover, .btn-group > .btn:focus, .btn-group-vertical > .btn:focus, .btn-group > .btn:active, .btn-group-vertical > .btn:active, .btn-group > .btn.active, .btn-group-vertical > .btn.active {
+    z-index: 2;
+}
+.btn-group > .btn:focus, .btn-group-vertical > .btn:focus {
+    outline: medium none;
+}
+.btn-group > .btn:first-child {
+    margin-left: 0;
+}
+.btn-group .dropdown-toggle:active, .btn-group.open .dropdown-toggle {
+    outline: 0 none;
+}
+.btn-group.open .dropdown-toggle {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125) inset;
+}
+.pagination > li > a, .pagination > li > span {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #428bca;
+    float: left;
+    line-height: 1.42857;
+    margin-left: -1px;
+    padding: 6px 12px;
+    position: relative;
+    text-decoration: none;
+}
+.pagination > li:first-child > a, .pagination > li:first-child > span {
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    margin-left: 0;
+}
+.pagination > li:last-child > a, .pagination > li:last-child > span {
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
+    background-color: #eee;
+    border-color: #ddd;
+    color: #2a6496;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color: #e63b13;
+    border-color: #e63b13;
+    color: #fff;
+    cursor: default;
+    z-index: 2;
+}
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+    background-color: #fff;
+    border-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+}
+.clearfix:after, .container:after, .container-fluid:after, .row:after, .form-horizontal .form-group:after, .btn-toolbar:after, .btn-group-vertical > .btn-group:after, .nav:after, .navbar:after, .navbar-header:after, .navbar-collapse:after, .pager:after, .panel-body:after, .modal-footer:after {
+    clear: both;
+}
+.mySF ul {
+    min-height: 0 !important;
+}
+.mySF .dropdown-menu {
+    min-width: 100%;
+}
+.mySF {
+    color: #34495e;
+    float: right;
+    font-family: "Lato",Helvetica,Arial,sans-serif;
+    font-size: 18px;
+    line-height: 1.72222;
+}
+.mySF a {
+    text-decoration: none;
+    transition: all 0.25s ease 0s;
+}
+.mySF a:hover, .mySF a:focus {
+    text-decoration: none;
+}
+.mySF a:focus {
+    outline: medium none;
+}
+.mySF p {
+    font-size: 18px;
+    line-height: 1.72222;
+    margin: 0 0 15px;
+}
+.mySF ul, .mySF ol {
+    margin-bottom: 15px;
+}
+button, select {
+    text-transform: none;
+}
+.select .btn {
+    padding: 8px 37px 7px 20px !important;
+}
+.btn-group > .btn, .btn-group > .dropdown-menu, .btn-group > .popover {
+    font-weight: 400;
+}
+.mySF .btn:hover, .mySF .btn:focus, .mySF .btn:active, .mySF .btn.active, .open .dropdown-toggle.btn-primary {
+    background-color: #e63b13;
+    border-color: #5eb8ff;
+    color: #fff;
+}
+.mySF .btn:active, .mySF .btn.active, .open .dropdown-toggle.btn {
+    background: none repeat scroll 0 0 #e63b13;
+    border-color: #16a085;
+}
+.mySF .btn {
+    background-color: #4d4d4d;
+    border: medium none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 1.4;
+    padding: 2px 5px;
+    transition: border 0.25s linear 0s, color 0.25s linear 0s, background-color 0.25s linear 0s;
+}
+.mySF .btn:hover, .mySF .btn:focus {
+    color: #fff;
+    outline: medium none;
+}
+.mySF .btn:active, .mySF .btn.active {
+    box-shadow: none;
+    outline: medium none;
+}
+.mySF .select {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.mySF .select.select-block {
+    float: right;
+    margin-left: 5px;
+    width: auto;
+}
+.btn-group, .btn-group-vertical {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+.dropdown-menu li:first-child > a {
+    padding-top: 8px;
+}
+.dropdown-menu li:last-child > a {
+    padding-bottom: 10px;
+}
+.dropdown-menu li.active > a, .mySF div > a.selected, .dropdown-menu li.selected > a {
+    background: none repeat scroll 0 0 #e63b13;
+    border: medium none;
+    color: #fff;
+    outline: 0 none !important;
+}
+.dropdown-menu li > a {
+    color: rgba(52, 73, 94, 0.75);
+    padding: 6px 15px 8px;
+    text-decoration: none;
+    transition: background-color 0.25s ease 0s;
+}
+.dropdown-menu li > a:hover, .dropdown-menu li > a:active, .dropdown-menu li > a:focus {
+    background: none repeat scroll 0 0 #e1e4e7;
+    color: inherit;
+    outline: medium none;
+}
+.dropdown-menu li:first-child > a {
+    padding-top: 8px;
+}
+.dropdown-menu li:last-child > a {
+    padding-bottom: 10px;
+}
+.dropdown-menu li.active > a, .dropdown-menu li.selected > a {
+    background: none repeat scroll 0 0 #5eb8ff;
+    color: #fff;
+}
+.dropdown-menu li.active > a:hover, .dropdown-menu li.selected > a:hover, .dropdown-menu li.active > a:focus, .dropdown-menu li.selected > a:focus {
+    background: none repeat scroll 0 0 #e63b13;
+    color: #fff;
+}
+.dropdown-menu li > a {
+    color: rgba(52, 73, 94, 0.75);
+    padding: 6px 15px 8px;
+    text-decoration: none;
+    transition: background-color 0.25s ease 0s;
+}
+.dropdown-menu li > a:hover, .dropdown-menu li > a:active, .dropdown-menu li > a:focus {
+    background: none repeat scroll 0 0 #e1e4e7;
+    color: inherit;
+    outline: medium none;
+}
+.dropdown-inverse {
+    background-color: #781b03;
+    color: #ccc;
+    padding: 4px 0 6px;
+}
+.dropdown-inverse li {
+    margin: 0 4px -2px;
+}
+.dropdown-inverse li:first-child > a, .dropdown-inverse li:last-child > a {
+    padding-bottom: 7px;
+    padding-top: 5px;
+}
+.dropdown-inverse li:first-child dt + a, .dropdown-inverse li:last-child dt + a {
+}
+.dropdown-inverse li.active > a, .dropdown-inverse li.selected > a {
+    background: none repeat scroll 0 0 #e63b13;
+    color: #fff;
+    outline: 0 none !important;
+    position: relative;
+    z-index: 1;
+}
+.dropdown-inverse li > a {
+    color: #fff;
+    padding: 5px 11px 7px;
+}
+.dropdown-inverse li > a:hover, .dropdown-inverse li > a:active, .dropdown-inverse li > a:focus {
+    background: none repeat scroll 0 0 #4d1406;
+}
+.dropdown-toggle .caret {
+    margin-left: 8px;
+}
+.caret {
+    border-bottom: 8px none #fff;
+    border-style: solid solid none;
+    border-top: 8px solid #fff;
+    border-width: 8px 6px;
+    margin-top: -3px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: scale(1.001);
+    transition: all 0.25s ease 0s;
+}
+a, button, span {
+    outline: 0 none !important;
+}
+button #choix_calendrier {
+    border: medium none;
+}

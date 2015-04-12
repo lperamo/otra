@@ -1,0 +1,72 @@
+.hiddenImp { display:none !important }
+.hidden2 { display:none } /* deuxième classe pour éviter de cacher des éléments qui ne le doivent pas */
+.paginationMargin { margin: 10px 0 20px }
+
+.pagination {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  margin:10px 0 0 -1px;
+  text-align: left;
+}
+
+.paginationLeft > li:last-child > a { border-radius: 0 !important }
+.paginationCenterStyle { position: absolute; width: 10000px } /* cette valeur de width règle un 'bug' qui ferait passer les puces en dessous au lieu de les laisser à droite */
+.paginationCenter > li > a { border-radius: 0 !important }
+.paginationRight > li:first-child > a { border-radius: 0 !important }
+.paginationRight { margin: 10px 0 0 -2px }
+.paginationRight li { height:34px }
+
+.pagination li {
+  display: inline-block;
+  margin: 0 0 -3px
+}
+
+#saut { height: 34px }
+#sautInput {
+  border: 1px solid #DDD;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 0 1px #DDD inset;
+  box-shadow: 0 0 1px #DDD inset;
+  display: inline-block;
+  float: left;
+  height: 100%;
+  margin-left: -1px;
+  padding: 0 7px 0 6px;
+  outline: none;
+  width: 2.8em
+}
+
+.pagination a { cursor: pointer }
+/*#previous>a:hover, #next>a:hover { color: #FFF; background: #428BCA }*/
+#indications {
+  margin-left: 20px;
+  width: 95px
+}
+#limitContainer { margin: 15px 0 0 15px }
+#limitContainer>label { margin-left: 10px }
+
+#dots:hover a {
+  background-color: #FFF;
+  border-color: #DDD;
+  color: #999;
+  cursor: not-allowed
+}
+
+#paginationOverflowContainer {
+  display: inline-block;
+  height: 45px;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+}
+
+.paginationFixedWidth { width: 14.2em }
+.paginationFlexWidth { max-width: 14.2em }
+
+.pages{
+  margin: 10px 0 0;
+  position: absolute
+}
+
+

@@ -1,0 +1,40 @@
+{% spaceless %}
+<div class="inlineBlock paginationMargin">
+  <ul class="fl pagination paginationLeft">
+    <li id="first" class="disabled"><a>Début</a></li>
+    <li id="previous" class="disabled"><a>«</a></li>
+  </ul>
+
+  {% set nbPages, state = ((count / limit) | round(0, 'ceil')), 'debut' %}
+  <div id="paginationOverflowContainer" class="fl{{ nbPages > 6 ? ' paginationFixedWidth' : ' paginationFlexWidth' }}">
+    <ul class="pagination paginationCenter{{ nbPages > 6 ? ' paginationCenterStyle'}}">
+      {% for i in 1 .. nbPages %}
+        <li{{ loop.first ? ' class="active"' }}><a>{{ i }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <ul class="fl pagination paginationRight">
+    {% if nbPages > 6 %}
+      <li id="dots"><a>...</a></li>
+      <li id="saut"><input id="sautInput" placeholder="#" /></li>
+    {% endif %}
+
+    <li id="next"{{ 1 == nbPages ? ' class="disabled"' }}><a>»</a></li>
+    {{ nbPages > 1 ? '<li id="last"><a>Fin</a></li>' }}
+  </ul>
+
+  <div id="indications" class="inlineBlock gris">
+    0 - {{ limit }} / {{ count }}
+  </div>
+
+  <div id="limitContainer" class="inlineBlock gris">
+    <select id="limit" name="limit">
+      {% for i in [20,50,100] %}
+        <option value="{{ i }}"{{ i == limit ? ' selected="selected"' }}>{{ i }}</option>
+      {% endfor %}
+    </select>
+    <label for="limit">par page</label>
+  </div>
+</div>
+{% endspaceless %}

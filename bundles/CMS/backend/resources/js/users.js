@@ -1,3 +1,7 @@
+/**
+ * closure compiler annotation
+ * @suppress {checkVars, missingProperties}
+ */
 (function(doc, window)
 {
 	"use strict";
@@ -9,50 +13,58 @@
 		validBtn = '<a class="softBtn circleBorder validate _validate TTTL" data-tooltip="Validates the new user"></a>',
 		deleteBtn = '<a class="softBtn circleBorder delete _delete TTTL" data-tooltip="Delete the user"></a>',
 		options = '',
-		$prev = doc.getElementById('prev'),
-		$next = doc.getElementById('next'),
-		$currentPage = doc.getElementById('currentPage'),
-		$lastPage = doc.getElementById('lastPage'),
-		$pageInd = doc.getElementById('pageInd'),
-		$limitValue = doc.getElementById('limitValue');
+		$prev,
+		$next,
+		$currentPage,
+		$lastPage,
+		$pageInd,
+		$limit,
+		$limitValue;
 
 		for(var role in roles) {
 			options += '<li class="selectChoice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>';
 		}
 
-		var roleText = '<div class="select">\
-					      <span class="fl input actualSelectValue">\
-					        <a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>\
-					        <span class="fr selectArrow"></span>\
-					      </span>\
-					      <div class="clearBoth"></div>\
-					      <ul class="fl selectChoices">' + options + '</ul>\
-		    			</div>',
+		var roleText = '<div class="select">' +
+					      '<span class="fl input actualSelectValue">' +
+					        '<a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>' +
+					        '<span class="fr selectArrow"></span>' +
+					      '</span>'+
+					      '<div class="clearBoth"></div>'+
+					      '<ul class="fl selectChoices">' + options + '</ul>'+
+		    			'</div>',
 		U = {
 		page: 1,
 
 		addUser()
 		{
-			$$tbody.find('#trOptions').before('<tr id="_'+ cpt + '" class="editable">\
-						<td><input id="chk__' + cpt + '" type="checkbox" role="checkbox" class="noLabel" /><label for="chk__' + cpt + '"></td>\
-						<td class="mail">' + txtMail + ' /></td>\
-						<td>' + txtPwd + '/></td>\
-						<td>' + txtPseudo + '/></td>\
-						<td>' + roleText + '</td>\
-						<td> ' + validBtn + deleteBtn + '</td>\
-					</tr>');
+			$$tbody.find('#trOptions').before('<tr id="_'+ cpt + '" class="editable">'+
+						'<td><input id="chk__' + cpt + '" type="checkbox" role="checkbox" class="noLabel" /><label for="chk__' + cpt + '"></td>'+
+						'<td class="mail">' + txtMail + ' /></td>'+
+						'<td>' + txtPwd + '/></td>'+
+						'<td>' + txtPseudo + '/></td>'+
+						'<td>' + roleText + '</td>'+
+						'<td> ' + validBtn + deleteBtn + '</td>'+
+					'</tr>');
 
 			document.querySelector('tbody>tr:nth-last-child(2)>td:nth-of-type(2)>input').focus()
 		},
 
 		del()
 		{
-			if(confirm('Do you really want to delete this user ?'))
-				U.delFn($('#content').find('table')[0], this.parentNode.parentNode);
+			var that = this;
+			lightbox.confirm('Do you really want to delete this user ?', function()
+				{
+					U.delFn($('#content').find('table')[0], that.parentNode.parentNode);
+				}
+			);
 
 			return false
 		},
 
+		/**
+		 * @suppress {checkTypes}
+		 */
 		delFn(content, tr, undef)
 		{
 			if('_' === tr.id.substr(0,1))
@@ -80,17 +92,17 @@
 
 	    	tr.parentNode.removeChild(tr);
 
+	    	// We update the paging informations
+	    	$lastPage.nextSibling.textContent = ' (' + data.count + ' users)';
+	    	$pageInd.dataset.realcount = data.count;
+
+	    	if($pageInd.dataset.actualcount > data.count)
+	    		$pageInd.dataset.actualcount = data.count
+
+	    	// if there are no more users on this page, we remove one page and we pass to the previous page of users
 	    	if(2 === $$tbody[0].querySelectorAll('tr').length && 1 < +$currentPage.textContent)
 	    	{
-	    		// We update the paging informations
 	    		$lastPage.textContent = +$lastPage.textContent - 1;
-					$lastPage.nextSibling.textContent = ' (' + data.count + ' users)';
-					$pageInd.dataset.realcount = data.count;
-
-					if($pageInd.dataset.actualcount > data.count)
-						$pageInd.dataset.actualcount = data.count
-
-					// And we pass to the previous page of users
 	    		U.prev()
 	    	}
 			})
@@ -226,8 +238,8 @@
 		{
 			var $$this = $(this),
 				$$tr = $$this.closest('tr'),
-				trId = tr[0].id,
-				$$tds = tr.find('td');
+				trId = $$tr[0].id,
+				$$tds = $$tr.find('td');
 
 			for(var i = 0; i < 4; ++i) { $$tds.eq(i + 1).text(window.usersSaveData[trId][i]) }
 			$$this[0].insertAdjacentHTML('afterend', editBtn);
@@ -319,7 +331,16 @@
     	}
 		},
 
-		/** Triggered after we comes back from the PHP */
+		/**
+		 * Triggered after we comes back from the PHP
+		 *
+		 * @param  {Object} data     [description]
+		 * @param  {Object} $content [description]
+		 * @param  {Object} $$tds    [description]
+		 * @param  {bool} 	add      [description]
+		 * @param  {Object} $$tr     [description]
+		 * @return {Object}          [description]
+		 */
 		afterUpdate(data, $content, $$tds, add, $$tr)
 		{
 			var data = U.formSuccess(data, $content);
@@ -339,16 +360,23 @@
 			$$select.replaceWith($$select[0].querySelector('a').textContent);
 			$$tds.last()[0].nextElementSibling.innerHTML = editBtn + deleteBtn;
 
-			if(true === add && 2 + +$limitValue.textContent < $$tbody[0].querySelectorAll('tr').length)
+			// if there are too much users on this page, we add a page and we pass to the next page of users
+			if(true === add)
 			{
+				// We update the paging informations
 				++$pageInd.dataset.realcount;
-				U.next();
-
-				// The last page cannot be less than the actual !!
-				if(+$currentPage.textContent > +$lastPage.textContent)
-					$lastPage.textContent = $currentPage.textContent;
-
 				$lastPage.nextSibling.textContent = ' (' + $pageInd.dataset.realcount + ' users)';
+
+				// If adds a new user adds an page then we pass to this new page.
+				if(2 + +$limitValue.textContent < $$tbody[0].querySelectorAll('tr').length)
+				{
+					U.next();
+
+					// The last page cannot be less than the actual !!
+					if(+$currentPage.textContent > +$lastPage.textContent)
+						$lastPage.textContent = $currentPage.textContent
+				} else // else ... we change the data-last attribute
+					$limit.dataset.last = data
 			}
 		},
 
@@ -368,7 +396,6 @@
 				mail = $$tds.eq(1)[0].querySelector('input').value.trim(),
 				pseudo = $$tds.eq(3)[0].querySelector('input').value.trim(),
 				role = $$tds.eq(4)[0].querySelector('input').value.trim(),
-				$limit = doc.getElementById('limit'),
 				limitValue = $limitValue.textContent,
 				pageIndDataset = $pageInd.dataset;
 
@@ -478,9 +505,17 @@
 	};
 
 	window.initUsers = function() {
-		$$tbody = $('#usersBody'), cpt = 0;
+		$$tbody = $('#usersBody'),
+		cpt = 0,
+		$prev = doc.getElementById('prev'),
+		$next = doc.getElementById('next'),
+		$currentPage = doc.getElementById('currentPage'),
+		$lastPage = doc.getElementById('lastPage'),
+		$pageInd = doc.getElementById('pageInd'),
+		$limit = doc.getElementById('limit'),
+		$limitValue = doc.getElementById('limitValue');
 		U.events()
 	};
 
-	window.initUsers()
+	$(function() { window.initUsers()	})
 })(document, window);
