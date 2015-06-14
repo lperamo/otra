@@ -19,7 +19,7 @@ class Routes
 
   $_ = [
     'exception' => [
-      'chunks' => '',
+      'chunks' => ['exception'],
       'core' => true,
       'resources' => [
         'core_css' => ['lionel_exception'],

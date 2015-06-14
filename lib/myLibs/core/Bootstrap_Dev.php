@@ -54,8 +54,8 @@ try
 } catch(Exception $e)
 {
   echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode($e->errorMessage()) . '}'
-    : $e->errorMessage();
+    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}' //errorMessage
+    : $e->getMessage();//errorMessage
 
   return;
 }

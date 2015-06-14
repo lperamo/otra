@@ -26,9 +26,9 @@ class User
   /**
    * Checks if we already have that pseudo in the database and it's different from the pseudo passed in parameter.
    * Returns true if there is a problem.
-   *
    * @param $pseudo    Wanted pseudo
    * @param $oldPseudo The old pseudo
+   * @return bool
    */
   public static function checkPseudoEdit($pseudo, $oldPseudo)
   {
@@ -53,9 +53,9 @@ class User
   /**
    * Checks if we already have that mail in the database and it's different from the mail passed in parameter.
    * Returns true if there is a problem.
-   *
-   * @param $mail    Wanted mail
-   * @param $oldMail The old mail
+   * @param $mail    string Wanted mail
+   * @param $oldMail string The old mail
+   * @return bool
    */
   public static function checkMailEdit($mail, $oldMail)
   {
@@ -140,7 +140,7 @@ class User
   /**
    * Parameters sanitized in the function. 2 requests !
    *
-   * @param $userParams [$type, $prev, $last, $limit, $mail, $pseudo, $role]
+   * @param $userParams array [$type, $prev, $last, $limit, $mail, $pseudo, $role]
    *
    * @return $users
    */

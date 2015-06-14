@@ -30,7 +30,7 @@ class ajaxUsersController extends Controller
     echo $this->renderView('index.phtml', \bundles\CMS\services\usersService::getUsersTab(), true);
   }
 
-  public static function securityCheck($params)
+  public static function securityCheck()
   {
     if(!isset($_SESSION['sid']['role']))
     {

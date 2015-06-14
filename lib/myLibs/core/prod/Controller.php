@@ -75,11 +75,11 @@ class Controller extends MasterController
   }
 
   /** Parses the template file and updates parent::$template
-   *
    * @param string $filename
    * @param array  $variables Variables to pass to the template
    * @param sting  $cacheFile The cache file name version of the file
    * @param bool   $layout    If we add a layout or not
+   * @return mixed|string
    */
   private function buildCachedFile($filename, array $variables, $cachedFile = null, $layout = true)
   {
@@ -191,7 +191,7 @@ class Controller extends MasterController
       $allJs .= file_get_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js'));
 
     if(strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' . $allJs . '</script>';
+      return '<script async defer>' + $allJs + '</script>';
     $lastFile .= VERSION;
     // Creates/erase the corresponding cleaned js file
     $fp = fopen(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), 'w');

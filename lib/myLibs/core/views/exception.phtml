@@ -4,8 +4,8 @@ self::title('Exception !');
 ?>
 <div id="exception" class="textCenter">Exception</div>
 <div id="explications" class="textCenter correctDisplay"><?
-  if (isset($code)) echo 'Error code ' , $code , '. ';
-  echo 'Description : \'' , $message , '\' in ' , $file , ' at line ' , $line, '<br />'; ?>
+  if (isset($code)) echo 'Error code ' , $code , ' in ' , $file , ' at line ' , $line, '<br />', $message;
+  ?>
 	<br />
 	<table class="radius">
 		<thead>

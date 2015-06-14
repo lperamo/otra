@@ -97,7 +97,7 @@ function status($status, $color = 'lightGreen'){ return ' [' . $color() . $statu
 /**
  * Cleans the css (spaces and comments)
  *
- * @param $content The css content to clean
+ * @param $content string The css content to clean
  *
  * @return string The cleaned css
  */
@@ -114,12 +114,12 @@ function cleanCss($content)
 }
 
 /** Generates the gzipped css files
-*
-* @param string $shaName    Name of the cached file
-* @param array  $chunks     Route site path
-* @param string $bundlePath
-* @param array  $resources  Resources array from the defined routes of the site
-*/
+ * @param string $shaName   Name of the cached file
+ * @param array  $chunks    Route site path
+ * @param string $bundlePath
+ * @param array  $resources Resources array from the defined routes of the site
+ * @return string
+ */
 function css($shaName, array $chunks, $bundlePath, array $resources)
 {
   ob_start();
@@ -144,11 +144,11 @@ function css($shaName, array $chunks, $bundlePath, array $resources)
 
 /**
  *  Generates the gzipped js files
- *
  * @param string $shaName   Name of the cached file
  * @param array  $chunks    Route site path
  * @param string $bundlePath
  * @param array  $resources Resources array from the defined routes of the site
+ * @return string
  */
 function js($shaName, array $chunks, $bundlePath, array $resources)
 {
@@ -223,10 +223,10 @@ function loadResource(array $resources, array $chunks, $key, $bundlePath, $path 
 
 /**
  * Generates the gzipped css files
- *
  * @param string $shaName   Name of the cached file
  * @param string $route
  * @param array  $resources Resources array from the defined routes of the site
+ * @return string
  */
 function template($shaName, $route, array $resources)
 {

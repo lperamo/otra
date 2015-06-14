@@ -77,11 +77,11 @@ function convertArrayToShowable(&$dataToShow, $title, $indexToExclude = null){
 }
 
 /** Recursive function that converts a php array into a stylish tbody
-*
-* @param $donnees        array|object  Array or object to convert
-* @param $indexToExclude string        Index to exclude from the render
-* @param $boucle         int           Number of recursions
-*/
+ * @param $donnees        array|object  Array or object to convert
+ * @param $indexToExclude string        Index to exclude from the render
+ * @param $boucle         int           Number of recursions
+ * @return int
+ */
 function recurArrayConvertTab($donnees, $indexToExclude = null, $boucle = -1){
   $i = 0;
   $oldBoucle = $boucle;

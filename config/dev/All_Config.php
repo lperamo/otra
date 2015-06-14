@@ -17,8 +17,8 @@ class All_Config
     $defaultConn = 'CMS', // mandatory
     $dbConnections = array( // mandatory
       'CMS' => array(
-        'driver' => 'Mysql',
-        'host' => 'localhost',
+        'driver' => 'PDO_MySQL',
+        'host' => '127.0.0.1',
         'port' => '',
         'db' => 'lpcms',
         'login' => '_lionel_87',

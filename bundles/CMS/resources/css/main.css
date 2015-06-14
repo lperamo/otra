@@ -241,11 +241,6 @@
     animation: sepia 2s linear 1 both
 }
 
-@-webkit-keyframes sepia2
-{
-    -webkit-filter: sepia(0);
-    -webkit-filter: sepia(0%)
-}
 /* Chrome, Safari, Opera */
 @-webkit-keyframes sepia
 {
@@ -412,4 +407,4 @@
 }
 
 .softBtn:hover{ box-shadow: 1px 1px 2px #7E7E7E, 1px 1px 2px #7E7E7E inset }
-.softBtn:active{ box-shadow: 1px 1px 2px #7E7E7E inset, 0px 0px 1px #7E7E7E inset, 2px 2px 2px #7E7E7E inset }
+.softBtn:active{ box-shadow: 1px 1px 2px #7E7E7E inset, 0 0 1px #7E7E7E inset, 2px 2px 2px #7E7E7E inset }

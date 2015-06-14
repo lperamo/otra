@@ -1,3 +1,4 @@
 cache/*
 logs/*
 web/phpMyAdmin
+.idea

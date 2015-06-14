@@ -156,9 +156,9 @@ class Database
 
   /**
    * Sort the tables using the foreign keys
-   *
    * @param array $theOtherTables Remaining tables to sort
    * @param array $tables         Final sorted tables array
+   * @return bool
    */
   private static function _sortTableByForeignKeys(array $theOtherTables, &$tables, $oldCountArrayToSort = 0)
   {
@@ -628,10 +628,10 @@ class Database
 
   /**
    * Creates the database schema from a database.
-   *
-   * @param string $database (optional)
+   * @param string $database  (optional)
    * @param string $confToUse (optional)
-  */
+   * @return bool
+   */
   public static function importSchema($database = null, $confToUse = null)
   {
     error_reporting(0);

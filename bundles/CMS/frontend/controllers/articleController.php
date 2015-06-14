@@ -13,7 +13,7 @@ class articleController extends Controller
 {
   /** Shows an article as main content.
    *
-   * @param int $article Article's id
+   * @param string $article Article's id
    */
   public function showAction($article = 'article2')
   {

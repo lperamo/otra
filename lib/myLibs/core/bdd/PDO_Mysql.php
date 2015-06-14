@@ -7,22 +7,31 @@
 namespace lib\myLibs\core\bdd;
 use lib\myLibs\core\Lionel_Exception;
 
-class Mysql
+class PDO_Mysql
 {
-  static private $db;
+  private $conn;
 
   /**
-   * Connects to Mysql
+   * Connects to PDO_MySql
    *
-   * @param string $server   Mysql server
+   * @param string $server   Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
    * @param string $username Username
    * @param string $password Password
    *
    * @return bool|resource Returns a MySQL link identifier on success, or false on error
    * @link http://php.net/manual/en/function.mysql-connect.php
    */
-  public static function connect($server = 'localhost:3306', $username = 'root', $password = '') {
-    return \mysql_connect($server, $username, $password);
+  public function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
+  {
+    try
+    {
+      $this->$conn = new \PDO($dsn, $username, $password);
+    }catch(\PDOException $e)
+    {
+      echo 'Connection failed: ' . $e->getMessage();
+    }
+
+    return $this;
   }
 
   /** Connects to a database
@@ -114,6 +123,7 @@ class Mysql
    */
   public static function values($result)
   {
+    var_dump($this->instance->rowCount());die;
     if (0 == mysql_num_rows($result))
       return [];
 
@@ -177,11 +187,21 @@ class Mysql
   public static function fetchField($result) { return mysql_fetch_field($result); }
 
   /**
-   * Close MySQL connection
+   * Closes connection.
+   *
+   * @param bool|SQL $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
-  public static function close($link_identifier) { return mysql_close(); }
+  public function close(&$instanceToClose = true)
+  {
+    if ($instanceToClose)
+      $this->instance = null;
+    else
+      $instanceToClose = null;
+
+    return true;
+  }
 
   /**
    * Get the ID generated in the last query

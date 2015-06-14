@@ -103,8 +103,8 @@ class MasterController
 
   /**
    * Replaces the layout body content by the template body content if the layout is set
-   *
    * @param string $content Content of the template to process
+   * @return mixed|string
    */
   protected static function addLayout($content)
   {

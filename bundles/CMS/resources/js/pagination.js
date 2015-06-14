@@ -29,7 +29,7 @@ var p = (function(){
     dots: $('#dots'),
     indications: $('#indications'),
     limitSel: $('#limit'),
-    nbPages: Math.ceil(count / $('#limit').val()),
+    nbPages: Math.ceil(count / limitSel.val()),
 
     entry: function(e){
       if(13 === e.which)
@@ -101,10 +101,11 @@ var p = (function(){
       p.indications.text(p.offset + ' - ' + ((max > count) ? count : max) + ' / ' + count);
 
       // On bouge les cases pour mettre les cases les plus proches près de la page actuelle
-      var temp = $('.paginationCenter').css('left');
+      var $$paginationCenter = $('.paginationCenter'),
+          temp = $$paginationCenter.css('left');
 
-      if(!(($('.paginationCenter').offset().left - temp.substr(0, temp.length - 2)) - oldActive.offset().left < -2 ))
-        $('.paginationCenter').animate({'left': '+=' + newActive.width()}, 500);
+      if(!(($$paginationCenter.offset().left - temp.substr(0, temp.length - 2)) - oldActive.offset().left < -2 ))
+        $$paginationCenter.animate({'left': '+=' + newActive.width()}, 500);
 
       p.dots.toggleClass('hiddenImp', newActive.index() + 1 > p.nbPages - p.nbPagesVisibles);
    },

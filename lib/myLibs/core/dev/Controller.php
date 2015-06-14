@@ -28,13 +28,12 @@ class Controller extends MasterController
 
   /**
    * Renders a view. NB: Even is cache is activated, the template can be not fresh !
-   *
-   * @param string $file      The file to render
-   * @param array  $variables Variables to pass
-   * @param bool   $ajax      Is this an ajax partial ?
-   * @param string $viewPath  Using the view path or not
-   *
+   * @param string      $file      The file to render
+   * @param array       $variables Variables to pass
+   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool|string $viewPath  Using the view path or not
    * @return string parent::$template Content of the template
+   * @throws Lionel_Exception
    */
   public final function renderView($file, array $variables = [], $ajax = false, $viewPath = true)
   {
@@ -57,11 +56,11 @@ class Controller extends MasterController
 
   /**
    * Parses the template file and updates parent::$template
-   *
    * @param string $filename  The file name
    * @param array  $variables Variables to pass to the template
    * @param sting  $cacheFile The cache file name version of the file
    * @param bool   $layout    If we add a layout or not
+   * @return mixed|string
    */
   private function buildCachedFile($filename, array $variables, $cachedFile = null, $layout = true)
   {

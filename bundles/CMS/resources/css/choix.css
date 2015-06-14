@@ -1,8 +1,8 @@
 
 #menuChoix {
     background-color: #4d4d4d;
-    margin-bottom: 0px;
-    padding: 12px 0 0px;
+    margin-bottom: 0;
+    padding: 12px 0 0;
 }
 #menuChoix a.choixperiode {
     background-color: #297eff;
@@ -211,9 +211,8 @@ label {
     color: #999;
 }
 .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
-    background-color: transparent;
-    background-image: none;
-    cursor: not-allowed;
+  background: transparent none;
+  cursor: not-allowed;
     text-decoration: none;
 }
 .open > .dropdown-menu {

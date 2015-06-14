@@ -35,8 +35,10 @@ function contentToFile($content, $outputFile)
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
- * @param $content       Content to fix
- * @param $filesToConcat Files to merge
+ * @param $content       string Content to fix
+ * @param $filesToConcat array  Files to merge
+ *
+ * @return mixed
  */
 function fixUses($content, $filesToConcat = array())
 {

@@ -22,6 +22,9 @@ class indexController extends Controller
     }
   }
 
+  /**
+   * Shows a login form or the backend modules page if the user is already connected
+   */
   public function indexAction()
   {
     if(isset($_SESSION['sid']))
@@ -71,6 +74,7 @@ class indexController extends Controller
 
   public function usersAction()
   {
+    phpinfo();die;
     echo $this->renderView('users.phtml', \bundles\CMS\services\usersService::getUsersTab());
   }
 }

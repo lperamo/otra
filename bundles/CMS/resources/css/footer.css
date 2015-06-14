@@ -6,7 +6,6 @@
     font-family:Arial,Helvetica,Sans-Serif!important;
     font-size:.6875em!important;
     font-weight:400!important;
-    -moz-border-radius:0 0 20px 20px;
     -khtml-border-bottom-left-radius: 20px;
     -khtml-border-bottom-right-radius: 20px;
     -webkit-border-bottom-left-radius: 20px;
@@ -38,7 +37,7 @@
   width: 16.5em */
 
   border-radius: 80px / 10px;
-  box-shadow: 0px -8px 12px -8px rgba(255, 255, 255, 0.78);
+  box-shadow: 0 -8px 12px -8px rgba(255, 255, 255, 0.78);
   content: " ";
   display: block;
   height: 23px;
