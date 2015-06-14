@@ -181,7 +181,7 @@ class Mysql
    *
    * @return bool Returns true on success or false on failure
    */
-  public static function close($link_identifier) { return mysql_close(); }
+  public static function close($link_identifier = null) { return \mysql_close($link_identifier); }
 
   /**
    * Get the ID generated in the last query

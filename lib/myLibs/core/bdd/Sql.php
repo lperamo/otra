@@ -23,15 +23,18 @@ class Sql
   private static
     $_sgbds = ['MySQL', 'PDO_MySQL'],
     $_currentConn,
+    /** @type sqlResource Shortcut */
+    $_CURRENT_CONN,
+    /** @type array Available active connections */
+    /** @type array Available SQL instances */
     $_activeConn = [];
 
   private
     $_db,
     $_chosenSgbd;
 
-  public
-    $_i,
-    $connection;
+  public static
+    $instance;
 
   /**
    * @param string $sgbd
@@ -53,24 +56,25 @@ class Sql
    * @internal param string $sgbd Kind of sgbd
    * @internal param string $conn Connection used (see All_Config files)
    */
-  public function getDB($conn = false) // $selectDb = true, $sgbd = false, $conn = false
+  public static function getDB($conn = false) // $selectDb = true, $sgbd = false, $conn = false
   {
+    /*echo '<pre>';
+    var_dump(debug_backtrace());
+    echo '</pre>';
+    die;*/
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
      */
     if($conn)
     {
-      if(isset($_activeConnections[$conn]))
+      if(isset(self::$_activeConn[$conn]))
       {
         self::$_currentConn = $conn;
-      } else
+      } else if(isset(All_Config::$dbConnections[$conn]))
       {
-        if(isset(All_Config::$dbConnections[$conn]))
-        {
-          self::$_currentConn = $conn;
-          self::$_activeConn[] = $conn;
-        }
+        self::$_currentConn = $conn;
+        self::$_activeConn[$conn] = null;
       }
     } else
     {
@@ -79,10 +83,9 @@ class Sql
 
       $conn = All_Config::$defaultConn;
 
-      if(!isset($_activeConnections[$conn]))
-      {
-        self::$_activeConn[] = $conn;
-      }
+      // If it's not already added, we add it
+      if(!isset(self::$_activeConn[$conn]))
+        self::$_activeConn[$conn] = null;
 
       self::$_currentConn = $conn;
     }
@@ -99,11 +102,13 @@ class Sql
      * @type string $login
      * @type string $password
      */
+
+    // Is this driver available ?
     if(in_array($driver, self::$_sgbds))
     {
-      if (null == $this->_i)
+      if (null == self::$_activeConn[self::$_currentConn])
       {
-        $this->_i = new Sql($driver);
+        self::$_activeConn[self::$_currentConn]['instance'] = new Sql($driver);
         require $driver . '.php';
       }
 
@@ -116,22 +121,29 @@ class Sql
        * @type string $login
        * @type string $password
        */
-      $this->_db = $db;
+
+      $activeConn = &self::$_activeConn[self::$_currentConn];
+      $activeConn['db'] = $db;
+      self::$instance = $activeConn['instance'];
+
       //var_dump(strtolower(substr(strchr($driver, '_'), 1)) . ':dbname=' . $db . ';host=' .
       //         ('' == $port ? $host : $host . ':' . $port), $login, $password);die;
       try
       {
-        $this->_i = $this->_i->connect(
+        $activeConn['conn'] = $activeConn['instance']->connect(
           strtolower(substr(strchr($driver, '_'), 1)) . ':dbname=' . $db . ';host=' .
           ('' == $port ? $host : $host . ':' . $port), $login, $password);
+
+        self::$_CURRENT_CONN = $activeConn['conn'];
+        $activeConn['instance']->selectDb($db , self::$_CURRENT_CONN);
       }catch(\Exception $e)
       {
         echo $e->getMessage();
       }
     }else
-      throw new Lionel_Exception('This SGBD doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', $this->_sgbds), 'E_CORE_ERROR');
+      throw new Lionel_Exception('This SGBD doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), 'E_CORE_ERROR');
 
-    return $this->_i;
+    return $activeConn['instance'];
   }
 
   /**
@@ -185,7 +197,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func($this->_chosenSgbd . '::query', $query, $this->connection);
+    return call_user_func($this->_chosenSgbd . '::query', $query, self::$_CURRENT_CONN);
   }
 
   /**
@@ -260,7 +272,6 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    var_dump($this->_chosenSgbd);die;
     return call_user_func_array($this->_chosenSgbd . '::values', $params);
   }
 
