@@ -25,13 +25,13 @@ class PDO_Mysql
   {
     try
     {
-      $this->$conn = new \PDO($dsn, $username, $password);
+      $conn = new \PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
       echo 'Connection failed: ' . $e->getMessage();
     }
 
-    return $this;
+    return $conn;
   }
 
   /** Connects to a database
@@ -55,9 +55,11 @@ class PDO_Mysql
    * @throws Lionel_Exception
    * @link http://php.net/manual/en/function.mysql-query.php
    */
+  //public static function query($query, $link_identifier)
   public static function query($query, $link_identifier)
   {
-    if (!$result = mysql_query($query, $link_identifier))
+    //if (!$result = mysql_query($query, $link_identifier))
+    if(!$result = SQL::$_CURRENT_CONN->query($query))
       throw new Lionel_Exception('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
     else
       return $result;
@@ -123,11 +125,10 @@ class PDO_Mysql
    */
   public static function values($result)
   {
-    var_dump($this->instance->rowCount());die;
-    if (0 == mysql_num_rows($result))
+    if (0 == $result->rowCount())
       return [];
 
-    while ($row = mysql_fetch_assoc($result)) { $results[] = $row; }
+    while ($row = $result->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row; }
 
     return $results;
   }
@@ -141,13 +142,13 @@ class PDO_Mysql
    */
   public static function valuesOneCol($result)
   {
-    if (0 == mysql_num_rows($result))
+    if (0 == $result->rowCount())
       return false;
 
-    $row = mysql_fetch_assoc($result);
+    $row = $result->fetch(\PDO::FETCH_ASSOC);
     $results[] = $row[($key = key($row))];
 
-    while ($row = mysql_fetch_assoc($result)) { $results[] = $row[$key]; }
+    while ($row = $result->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
 
     return $results;
   }
@@ -161,10 +162,10 @@ class PDO_Mysql
    */
   public static function single($result)
   {
-    if (0 == mysql_num_rows($result))
+    if (0 == $result->rowCount())
       return false;
 
-    return current(mysql_fetch_assoc($result));
+    return current($result->fetch(\PDO::FETCH_ASSOC));
   }
 
   /**
@@ -175,7 +176,7 @@ class PDO_Mysql
    * @return bool Returns true on success or false on failure.
    * @link http://php.net/manual/en/function.mysql-free-result.php
    */
-  public static function freeResult($result) { return mysql_free_result($result); }
+  public static function freeResult($result) { return $result->closeCursor(); }
 
     /**
    * Returns the results
@@ -184,7 +185,7 @@ class PDO_Mysql
    *
    * @return array The results
    */
-  public static function fetchField($result) { return mysql_fetch_field($result); }
+  public static function fetchField($result) { return $result->getColumnMeta(); }
 
   /**
    * Closes connection.
@@ -196,7 +197,7 @@ class PDO_Mysql
   public function close(&$instanceToClose = true)
   {
     if ($instanceToClose)
-      $this->instance = null;
+      SQL::$_CURRENT_CONN = null;
     else
       $instanceToClose = null;
 

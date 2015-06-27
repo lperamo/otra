@@ -14,7 +14,7 @@ use lib\myLibs\core\Lionel_Exception,
 class Sql
 {
   /**
-   * @type array  $_sgbds             Available sgbds
+   * @type array  $_sgbds       Available sgbds
    * @type array  $_activeConn
    * @type string $_currentConn
    * @type string $_db
@@ -23,8 +23,6 @@ class Sql
   private static
     $_sgbds = ['MySQL', 'PDO_MySQL'],
     $_currentConn,
-    /** @type sqlResource Shortcut */
-    $_CURRENT_CONN,
     /** @type array Available active connections */
     /** @type array Available SQL instances */
     $_activeConn = [];
@@ -34,7 +32,9 @@ class Sql
     $_chosenSgbd;
 
   public static
-    $instance;
+    $instance,
+    /** @type sqlResource Shortcut */
+    $_CURRENT_CONN;
 
   /**
    * @param string $sgbd

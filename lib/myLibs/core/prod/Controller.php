@@ -165,7 +165,7 @@ class Controller extends MasterController
    */
   private function addJs($routeV)
   {
-    $content = ($this->chkJs) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = ($this->chkJs) ? '<script type="application/javascript;version=1.7" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
     if(empty(self::$js))
       return $content;
 

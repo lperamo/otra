@@ -1,26 +1,52 @@
 "use strict";
 
-$(function()
+(function(document)
 {
-    $('#connectionForm').submit(this, function()
-    {
-        var formThis = this;
-        $.post(
-            this.dataset.href,
-            {
-                email: document.getElementById('email').value,
-                pwd: document.getElementById('pwd').value
-            },
-            function(response)
-            {
-                response = $.parseJSON(response);
-                if('fail' === response[0])
-                    $('#connection_info').html(response[1]);
-                else
-                    document.location.href = formThis.dataset.href_redirect;
-            }
-        );
+  let formThis;
 
-        return false;
-    });
-});
+  function connectReturn(response)
+  {
+    // fail
+    if (undefined === response.status)
+      $('#connection_info').html(response[0])
+    else // success
+      document.location.href = formThis.dataset.href_redirect
+  }
+
+  function checkStatus(response)
+  {
+    if (200 !== response.status)
+    {
+      console.log('Looks like there was a problem. Status Code: ' + response.status);
+      return
+    }
+
+    return response.json().then(connectReturn)
+  }
+
+  function connect(evt)
+  {
+    evt.preventDefault();
+    formThis = this;
+
+    window.fetch(this.dataset.href,
+      {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        credentials: 'same-origin',
+        body: 'email=' + document.getElementById('email').value +
+              '&pwd=' + document.getElementById('pwd').value
+      })
+      .then(checkStatus)
+
+    return 0
+  }
+
+  $(function ()
+  {
+    document.getElementById('connectionForm').addEventListener("submit", connect, false)
+  })
+})(document);

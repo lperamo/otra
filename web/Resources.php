@@ -13,6 +13,7 @@ if(false !== ($posDot = strpos($uri, '.')))
 
   // Verifies that we went from the site and whether the file have an extension or not
   $ext = substr($uri, $posDot + 1);
+  // Comment it for debugging purposes
   if(isset($_SERVER['HTTP_REFERER']))
   {
     if('gz' == $ext)
@@ -38,7 +39,7 @@ if(false !== ($posDot = strpos($uri, '.')))
 
   // User can't see a resource directly so => 404
   header('HTTP/1.0 404 Not Found');
-  die;
+  return 0;
 }
 
 define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /

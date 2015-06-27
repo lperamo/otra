@@ -273,7 +273,7 @@ class Controller extends MasterController
         {
           $chunks = $route['chunks'];
           $resources = $route['resources'];
-          $debLink = "\n" . '<script src="';
+          $debLink = "\n" . '<script type="application/javascript;version=1.7" src="';
           $i = 0;
           $unorderedArray = $orderedArray = [];
           $debLink2 = $debLink . '/bundles/';
@@ -319,7 +319,6 @@ class Controller extends MasterController
               );
             }
           }
-
 
           if(isset($resources['core_js']))
           {

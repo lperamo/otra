@@ -19,16 +19,45 @@ class Tasks
 
   public static function ccDesc() { return array('Clears the cache'); }
 
-  public static function crypt($argv) {
-    require '../config/All_Config.php';
+  public static function crypt($argv)
+  {
+    if(isset($argv[3]))
+      define(FWK_HASH, $argv[3]);
+    else
+      require '../config/All_Config.php';
+
     echo crypt($argv[2], FWK_HASH), PHP_EOL;
   }
 
   public static function cryptDesc()
   {
     return array('Crypts a password and shows it.',
-      array('password' => 'The password to crypt.'),
-      array('required')
+      array(
+        'password' => 'The password to crypt.',
+        'hash' => 'The hash to use.'
+      ),
+      array('required', 'optional')
+    );
+  }
+
+  public static function hash($argv)
+  {
+    $argv[2] = isset($argv[2]) ? $argv[2] : 7;
+    $salt = '';
+    $salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+    for($i = 0; $i < 22; ++$i)
+    {
+      $salt .= $salt_chars[array_rand($salt_chars)];
+    }
+
+    echo '$2y$0' . $argv[2] . '$'. $salt, PHP_EOL;
+  }
+
+  public static function hashDesc()
+  {
+    return array('Returns a random hash.',
+           array('rounds' => 'The numbers of round for the blowfish salt. Default: 7.'),
+           array('optional')
     );
   }
 

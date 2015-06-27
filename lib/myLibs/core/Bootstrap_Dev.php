@@ -1,5 +1,6 @@
 <?
 $_SESSION['debuglp_'] = 'Dev';
+
 define ('BEFORE', microtime(true));
 if(!defined('BASE_PATH'))
   define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
@@ -16,7 +17,7 @@ use lib\myLibs\core\Router,
 
 ob_start();
 
-// ini_set('display_errors', 1);
+ ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('error_reporting', -1 & ~E_DEPRECATED);
 

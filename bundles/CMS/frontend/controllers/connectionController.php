@@ -19,7 +19,7 @@ class connectionController extends Controller
 
     $email = $_POST['email'];
     $pwd = $_POST['pwd'];
-
+    
     if(empty($email))
       throw new Lionel_Exception('Missing email !');
 
@@ -30,21 +30,21 @@ class connectionController extends Controller
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
     $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR']
-      ? array(
+      ? [
         'id_user' => '-1',
-        'role_id' => 1)
+        'role_id' => 1]
       : \bundles\CMS\models\User::auth($email, crypt($pwd, FWK_HASH));
 
-    if(empty($infosUser))
-      echo '{"fail", "Bad credentials."}';
-    else
+    if(empty($infosUser)){
+      echo '{"0": "Bad credentials."}';
+    } else
     {
       $_SESSION['sid'] = [
         'uid' => $infosUser['id_user'],
         'role' => $infosUser['role_id']
       ];
 
-      echo '"success"';
+      echo '{"status": 1}';
     }
   }
 
