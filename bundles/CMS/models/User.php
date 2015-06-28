@@ -76,7 +76,7 @@ class User
   {
     Sql::$instance->query(
       'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`)
-       VALUES (\'' . mysql_real_escape_string($mail) . '\', \'' . mysql_real_escape_string($pwd) . '\', \'' . mysql_real_escape_string($pseudo) . '\', ' . intval($role) . ');'
+       VALUES (\'' . Sql::$instance->quote($mail) . '\', \'' . Sql::$instance->quote($pwd) . '\', \'' . Sql::$instance->quote($pseudo) . '\', ' . intval($role) . ');'
     );
   }
 
@@ -107,7 +107,7 @@ class User
     return Sql::$instance->query(
       'UPDATE lpcms_user SET
       mail = \'' . $mail . '\',
-      pwd = \'' . mysql_real_escape_string($pwd) . '\',
+      pwd = \'' . Sql::$instance->quote($pwd) . '\',
       pseudo = \'' . $pseudo . '\',
       role_id = ' . intval($role) . ' WHERE id_user = ' . intval($id_user)
     );
@@ -132,7 +132,7 @@ class User
       if(!$sqlStart)
         $req .= ' AND ';
 
-      $req .= $field . ' LIKE \'%' . mysql_real_escape_string($value) . '%\'';
+      $req .= $field . ' LIKE \'%' . Sql::$instance->quote($value) . '%\'';
       $sqlStart = false;
     }
   }
@@ -163,7 +163,7 @@ class User
     // Search by mail ?
     if('' != $mail)
     {
-      $req .= ($search && $sqlStart ? ' WHERE' : ' AND') . ' u.mail LIKE \'%' . mysql_real_escape_string($mail) . '%\'';
+      $req .= ($search && $sqlStart ? ' WHERE' : ' AND') . ' u.mail LIKE \'%' . Sql::$instance->quote($mail) . '%\'';
       $sqlStart = false;
     }
 
@@ -220,11 +220,12 @@ class User
    */
   public static function auth($email, $pwd)
   {
+
     return Sql::$instance->fetchAssoc(
       Sql::$instance->query('SELECT u.`id_user`, u.`role_id`
        FROM lpcms_user u
-       WHERE u.`mail` = \'' . mysql_real_escape_string($email) . '\'
-        AND u.`pwd` = \'' . mysql_real_escape_string($pwd) . '\'
+       WHERE u.`mail` = \'' . Sql::$instance->quote($email) . '\'
+        AND u.`pwd` = \'' . Sql::$instance->quote($pwd) . '\'
         LIMIT 1')
     );
   }

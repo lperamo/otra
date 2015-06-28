@@ -34,18 +34,6 @@ class PDO_Mysql
     return $conn;
   }
 
-  /** Connects to a database
-   *
-   * @param string   $database_name Database name
-   * @param resource $link_identifier
-   *
-   * @return bool True if successful
-   * @link http://php.net/manual/en/function.mysql-select-db.php
-   */
-  public static function selectDb($database_name, $link_identifier) {
-    return mysql_select_db($database_name, $link_identifier);
-  }
-
   /**
    * Sends a SQL query !
    * @param string $query SQL query.
@@ -73,7 +61,7 @@ class PDO_Mysql
    * @return array The next result
    * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
-  public static function fetchAssoc($result) { return mysql_fetch_assoc($result); }
+  public static function fetchAssoc($result) { return $result->fetch(\PDO::FETCH_ASSOC); }
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
@@ -210,6 +198,11 @@ class PDO_Mysql
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId($link_identifier) { return mysql_insert_id($link_identifier); }
+  public static function lastInsertedId($string = null) { return SQL::$_CURRENT_CONN->lastInsertId($string); }
+
+  public static function quote($string)
+  {
+    return trim(SQL::$_CURRENT_CONN->quote($string), '\'');
+  }
 }
 ?>

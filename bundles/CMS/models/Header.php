@@ -16,8 +16,6 @@ class Header
    */
   public static function getAll()
   {
-//    dump(Sql::$instance->values(Sql::$instance->query('SELECT * FROM lpcms_header')));
-//    die;
     return Sql::$instance->values(Sql::$instance->query('SELECT * FROM lpcms_header'));
   }
 }

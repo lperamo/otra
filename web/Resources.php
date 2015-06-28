@@ -2,6 +2,11 @@
 /** Bootstrap of the framework (redirection)
  *
  * @author Lionel Péramo */
+//echo '<pre>';
+//var_dump($GLOBALS);
+//echo '</pre>';
+//die;
+$_SERVER;
 $uri = $_SERVER['REDIRECT_URL'];
 define('DS', '/'); // Fixes windows awful __DIR__
 $__DIR__ = str_replace('\\', '/', __DIR__);

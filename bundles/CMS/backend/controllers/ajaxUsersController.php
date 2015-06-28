@@ -79,8 +79,8 @@ class ajaxUsersController extends Controller
 
     extract($_POST);
     $db = Sql::getDB();
-    $mail = mysql_real_escape_string($mail);
-    $pseudo = mysql_real_escape_string($pseudo);
+    $mail = Sql::$instance->quote($mail);
+    $pseudo = Sql::$instance->quote($pseudo);
 
     User::checkMailEdit($mail, $oldMail) && exit('{"success": false, "msg": "This mail already exists !"}');
     User::checkPseudoEdit($pseudo, $oldPseudo) && exit('{"success": false, "msg": "This pseudo already exists !"}');

@@ -25,18 +25,6 @@ class Mysql
     return \mysql_connect($server, $username, $password);
   }
 
-  /** Connects to a database
-   *
-   * @param string   $database_name Database name
-   * @param resource $link_identifier
-   *
-   * @return bool True if successful
-   * @link http://php.net/manual/en/function.mysql-select-db.php
-   */
-  public static function selectDb($database_name, $link_identifier) {
-    return mysql_select_db($database_name, $link_identifier);
-  }
-
   /**
    * Sends a SQL query !
    * @param string $query SQL query.
@@ -190,5 +178,10 @@ class Mysql
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
   public static function lastInsertedId($link_identifier) { return mysql_insert_id($link_identifier); }
+
+  public static function quote(&$string)
+  {
+    return mysql_real_escape_string($string);
+  }
 }
 ?>

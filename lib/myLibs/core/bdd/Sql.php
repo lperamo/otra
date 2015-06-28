@@ -135,7 +135,6 @@ class Sql
           ('' == $port ? $host : $host . ':' . $port), $login, $password);
 
         self::$_CURRENT_CONN = $activeConn['conn'];
-        $activeConn['instance']->selectDb($db , self::$_CURRENT_CONN);
       }catch(\Exception $e)
       {
         echo $e->getMessage();
@@ -337,6 +336,11 @@ class Sql
   public function lastInsertedId()
   {
     return call_user_func($this->_chosenSgbd . '::lastInsertedId', $this->_instance);
+  }
+
+  public function quote($string)
+  {
+    return call_user_func($this->_chosenSgbd . '::quote', $string);
   }
 }
 ?>

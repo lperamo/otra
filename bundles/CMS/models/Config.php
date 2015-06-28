@@ -25,7 +25,7 @@ class Config
       'SELECT value
        FROM lpcms_config c
        INNER JOIN lpcms_types_cfg cfg ON c.type_cfg_id = cfg.id
-       WHERE c.`key` = \'' . mysql_real_escape_string($key) . '\' AND cfg.key = \'' . mysql_real_escape_string($type) . '\' LIMIT 1'
+       WHERE c.`key` = \'' . Sql::$instance->quote($key) . '\' AND cfg.key = \'' . Sql::$instance->quote($type) . '\' LIMIT 1'
     );
     $value = Sql::$instance->single($dbConfig);
     Sql::$instance->freeResult($dbConfig);

@@ -74,7 +74,6 @@ class indexController extends Controller
 
   public function usersAction()
   {
-    phpinfo();die;
     echo $this->renderView('users.phtml', \bundles\CMS\services\usersService::getUsersTab());
   }
 }

@@ -55,7 +55,7 @@ class ajaxModulesController extends Controller
       'right' => self::$rights,
       'items' => $db->values($db->query('
         SELECT id, type, position, ordre, droit, contenu
-        FROM lpcms_module WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+        FROM lpcms_module WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
     ], true);
   }
 
@@ -67,7 +67,7 @@ class ajaxModulesController extends Controller
               bem.ordre
         FROM lpcms_elements_menu em
         INNER JOIN lpcms_bind_em_module bem ON nem.fk_id_elements_menu = em.id
-        WHERE em.contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\'')));
+        WHERE em.contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\'')));
 
     echo $this->renderView('elements.phtml', [
       'right' => self::$rights,
@@ -77,7 +77,7 @@ class ajaxModulesController extends Controller
               bem.ordre
         FROM lpcms_elements_menu em
         INNER JOIN lpcms_bind_em_module bem ON nem.fk_id_elements_menu = em.id
-        WHERE em.contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+        WHERE em.contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
     ], true);
   }
 
@@ -86,7 +86,7 @@ class ajaxModulesController extends Controller
     $db = Sql::getDB();
 
     $article = $db->values($db->query('SELECT id, titre, contenu, droit, date_creation, cree_par, derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication, meta, rank_sum, rank_count
-     FROM lpcms_article WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''));
+     FROM lpcms_article WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''));
     var_dump($article);die;
 
     echo $this->renderView('articles.phtml', [
@@ -95,7 +95,7 @@ class ajaxModulesController extends Controller
       'items' => $db->values($db->query('
         SELECT id, parent, aEnfants, droit, contenu
         FROM lpcms_elements_menu
-        WHERE contenu LIKE \'%' . mysql_real_escape_string($_GET['search']). '%\''))
+        WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
     ], true);
   }
 
