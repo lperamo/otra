@@ -182,7 +182,7 @@ class PDO_Mysql
    *
    * @return bool Returns true on success or false on failure
    */
-  public function close(&$instanceToClose = true)
+  public static function close($instanceToClose = true)
   {
     if ($instanceToClose)
       SQL::$_CURRENT_CONN = null;

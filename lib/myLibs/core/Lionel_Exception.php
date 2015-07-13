@@ -9,7 +9,7 @@ use lib\myLibs\core\Controller,
     lib\myLibs\core\Debug_Tools,
     config\Routes;
 
-require_once __DIR__ . '/../../../config/All_Config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/../config/All_Config.php';
 
 class Lionel_Exception extends \Exception
 {

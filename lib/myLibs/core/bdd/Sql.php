@@ -23,8 +23,9 @@ class Sql
   private static
     $_sgbds = ['MySQL', 'PDO_MySQL'],
     $_currentConn,
+    $_currentSGBD,
+    //$_activeSGBD = [],
     /** @type array Available active connections */
-    /** @type array Available SQL instances */
     $_activeConn = [];
 
   private
@@ -39,10 +40,13 @@ class Sql
   /**
    * @param string $sgbd
    */
-  public function __construct($sgbd) { $this->_chosenSgbd = __NAMESPACE__ . '\\' . $sgbd; }
+  public function __construct($sgbd)
+  {
+    self::$_currentSGBD = __NAMESPACE__ . '\\' . $sgbd;
+  }
 
   /** Destructor that closes the connection */
-  public function __destruct() { self::close(); }
+  public function __destruct() { $this->close(); }
 
   /**
    * Retrieves an instance of this class or creates it if it not exists yet
@@ -154,7 +158,7 @@ class Sql
    */
   public function connect(...$params)
   {
-    return call_user_func_array($this->_chosenSgbd . '::connect', $params);
+    return call_user_func_array(self::$_currentSGBD . '::connect', $params);
   }
 
   /**
@@ -166,7 +170,7 @@ class Sql
    */
   public function selectDb(...$params)
   {
-    $retour = call_user_func_array($this->_chosenSgbd . '::selectDb', $params);
+    $retour = call_user_func_array(self::$_currentSGBD . '::selectDb', $params);
     $this->query('SET NAMES UTF8');
 
     return $retour;
@@ -196,7 +200,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func($this->_chosenSgbd . '::query', $query, self::$_CURRENT_CONN);
+    return call_user_func(self::$_currentSGBD . '::query', $query, self::$_CURRENT_CONN);
   }
 
   /**
@@ -211,7 +215,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::fetchAssoc', $params);
+    return call_user_func_array(self::$_currentSGBD . '::fetchAssoc', $params);
   }
 
     /**
@@ -226,7 +230,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::fetchArray', $params);
+    return call_user_func_array(self::$_currentSGBD . '::fetchArray', $params);
   }
 
   /**
@@ -241,7 +245,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::fetchField', $params);
+    return call_user_func_array(self::$_currentSGBD . '::fetchField', $params);
   }
 
   /**
@@ -256,7 +260,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::fetchObject', $params);
+    return call_user_func_array(self::$_currentSGBD . '::fetchObject', $params);
   }
 
   /**
@@ -271,7 +275,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::values', $params);
+    return call_user_func_array(self::$_currentSGBD . '::values', $params);
   }
 
   /**
@@ -286,7 +290,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::valuesOneCol', $params);
+    return call_user_func_array(self::$_currentSGBD . '::valuesOneCol', $params);
   }
 
   /**
@@ -300,7 +304,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::single', $params);
+    return call_user_func_array(self::$_currentSGBD . '::single', $params);
   }
 
   /**
@@ -308,9 +312,9 @@ class Sql
    *
    * @return bool Returns true on success or false on failure
    */
-  private function close()
+  private static function close()
   {
-    return call_user_func($this->_chosenSgbd . '::close', $this->connection);
+    return call_user_func(self::$_currentSGBD . '::close', self::$_CURRENT_CONN);
   }
 
     /**
@@ -325,7 +329,7 @@ class Sql
     if(isset($_SESSION['bootstrap']))
       return;
 
-    return call_user_func_array($this->_chosenSgbd . '::freeResult', $params);
+    return call_user_func_array(self::$_currentSGBD . '::freeResult', $params);
   }
 
   /**
@@ -335,12 +339,12 @@ class Sql
    */
   public function lastInsertedId()
   {
-    return call_user_func($this->_chosenSgbd . '::lastInsertedId', $this->_instance);
+    return call_user_func(self::$_currentSGBD . '::lastInsertedId', self::$_CURRENT_CONN);
   }
 
   public function quote($string)
   {
-    return call_user_func($this->_chosenSgbd . '::quote', $string);
+    return call_user_func(self::$_currentSGBD . '::quote', $string);
   }
 }
 ?>

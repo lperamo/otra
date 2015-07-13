@@ -47,9 +47,9 @@ require BASE_PATH . 'lib/myLibs/core/TaskFileOperation.php';
 
 contentToFile(
   fixUses(
-    //file_get_contents(BASE_PATH . '/cache/php/ClassMap.php') .
   file_get_contents(BASE_PATH . '/lib/myLibs/core/Router.php') .
-  file_get_contents(BASE_PATH . '/config/Routes.php')),
+  file_get_contents(BASE_PATH . '/config/Routes.php'),
+    $verbose),
    $routesManagementFile);
 
 if(hasSyntaxErrors($routesManagementFile, $verbose))
