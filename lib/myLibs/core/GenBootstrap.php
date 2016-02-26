@@ -21,7 +21,7 @@ if(isset($argv[4]))
 {
   $route = $argv[4];
   if(isset(\config\Routes::$_[$route]))
-    $routes = array($route => \config\Routes::$_[$route]);
+    $routes = [$route => \config\Routes::$_[$route]];
   else
   {
     echo 'This route doesn\'t exist !', PHP_EOL;
@@ -33,11 +33,15 @@ if(isset($argv[4]))
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
-foreach(array_keys($routes) as $route)
+foreach(array_keys($routes) as &$route)
 {
-  passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
+  if(!isset($routes[$route]['resources']['template']))
+    passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
+  else{
+    echo cyan(), 'No micro-bootstrap to generate for this file ! (Generated template instead)', endColor(), PHP_EOL, PHP_EOL;
+  }
 }
-
+die;
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';
 

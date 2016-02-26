@@ -22,7 +22,7 @@ class All_Config
         'port' => '',
         'db' => 'lpcms',
         'login' => '_lionel_87',
-        'password' => 'e94b8f58',
+        'password' => '_lmo5uj4FF*8', // _lmo5uj4FF*8
         'motor' => 'InnoDB'
       )
     );

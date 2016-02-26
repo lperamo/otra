@@ -1,10 +1,14 @@
 <thead>
   <tr>
-    <th><?= t('Détail') ?></th>
+    <th>
+      <input id="modules_all" class="_selectAll noLabel" type="checkbox">
+      <label for="modules_all"></label>
+    </th>
+    <th><?= t('Content') ?></th>
+    <th><?= t('Detail') ?></th>
     <th><?= t('Parent') ?></th>
     <th><?= t('Order') ?></th>
     <th><?= t('Right') ?></th>
-    <th><?= t('Content') ?></th>
   </tr>
 </thead>
 <tbody id="tbody">
@@ -12,11 +16,15 @@
       foreach($items as $item)
       {?>
       <tr>
+        <td>
+          <input type="checkbox" id="article_<?= $item['id'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+          <label for="article_<?= $item['id'] ?>"></label><!-- SAME HERE -->
+        </td>
+        <td><?= $item['contenu'] ?></td>
         <td><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('Voir les éléments associés') ?></a>
         <td><?= $item['parent'] ?></td>
         <td><?= $item['ordre'] ?></td>
         <td><?= $right[$item['droit']] ?></td>
-        <td><?= $item['contenu'] ?></td>
       </tr>
-      <? } } ?>
+  <? } } ?>
 </tbody>

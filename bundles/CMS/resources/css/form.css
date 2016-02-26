@@ -93,10 +93,6 @@ input[type=submit]{
     padding:0 5px;
     height:31px;
     border: 1px groove #779ba9;
-
-    -khtml-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
     border-radius: 10px;
 
     /* IE9 SVG, needs conditional override of 'filter' to 'none' */

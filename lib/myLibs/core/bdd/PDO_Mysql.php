@@ -21,14 +21,14 @@ class PDO_Mysql
    * @return bool|resource Returns a MySQL link identifier on success, or false on error
    * @link http://php.net/manual/en/function.mysql-connect.php
    */
-  public function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
+  public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
   {
     try
     {
       $conn = new \PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
-      echo 'Connection failed: ' . $e->getMessage();
+      throw new Lionel_Exception('Connection failed: ' . $e->getMessage());
     }
 
     return $conn;
@@ -48,8 +48,10 @@ class PDO_Mysql
   {
     //if (!$result = mysql_query($query, $link_identifier))
     if(!$result = SQL::$_CURRENT_CONN->query($query))
-      throw new Lionel_Exception('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
-    else
+    {
+      $errorInfo = SQL::$_CURRENT_CONN->errorInfo();
+      throw new Lionel_Exception('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
+    } else
       return $result;
   }
 

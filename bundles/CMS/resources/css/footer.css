@@ -6,12 +6,6 @@
     font-family:Arial,Helvetica,Sans-Serif!important;
     font-size:.6875em!important;
     font-weight:400!important;
-    -khtml-border-bottom-left-radius: 20px;
-    -khtml-border-bottom-right-radius: 20px;
-    -webkit-border-bottom-left-radius: 20px;
-    -webkit-border-bottom-right-radius: 20px;
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     padding:.625em 0
@@ -35,7 +29,6 @@
   position: absolute;
   top: 1.7em;
   width: 16.5em */
-
   border-radius: 80px / 10px;
   box-shadow: 0 -8px 12px -8px rgba(255, 255, 255, 0.78);
   content: " ";

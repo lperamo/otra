@@ -56,14 +56,44 @@ lpcms_bind_em_module:
       type: int(11)
       notnull: true
   relations:
-    lpcms_module:
-      local: fk_id_module
-      foreign: id
-      constraint_name: fk_bemm_module0
     lpcms_elements_menu:
       local: fk_id_elements_menu
       foreign: id
       constraint_name: fk_bemm_article0
+    lpcms_module:
+      local: fk_id_module
+      foreign: id
+      constraint_name: fk_bemm_module0
+
+lpcms_config: 
+  columns:
+    id:
+      type: int(11)
+      notnull: true
+      primary: true
+    user_id:
+      type: int(11)
+    type:
+      type: tinyint(1) unsigned
+    key:
+      type: varchar(45)
+    title:
+      type: varchar(45)
+    value:
+      type: varchar(45)
+    type_cfg_id:
+      type: smallint(5) unsigned
+    placeholder:
+      type: varchar(45)
+  relations:
+    lpcms_types_cfg:
+      local: type_cfg_id
+      foreign: id
+      constraint_name: fk_config_type
+    lpcms_user:
+      local: user_id
+      foreign: id_user
+      constraint_name: fk_config_user
 
 lpcms_elements_menu: 
   columns:
@@ -179,17 +209,28 @@ lpcms_module:
 
 lpcms_role: 
   columns:
-    id_role:
+    id:
       type: int(11)
       notnull: true
       auto_increment: true
       primary: true
     mask:
-      type: int(11)
+      type: tinyint(3) unsigned
       notnull: true
     nom:
       type: varchar(255)
       notnull: true
+
+lpcms_types_cfg: 
+  columns:
+    id:
+      type: smallint(5) unsigned
+      notnull: true
+      primary: true
+    key:
+      type: varchar(20)
+    name:
+      type: varchar(45)
 
 lpcms_user: 
   columns:
@@ -212,22 +253,6 @@ lpcms_user:
   relations:
     lpcms_role:
       local: role_id
-      foreign: id_role
+      foreign: id
       constraint_name: lpcms_user_role
-
-lpcms_user_role: 
-  columns:
-    fk_id_user:
-      type: int(11)
-      notnull: true
-      primary: true
-    fk_id_role:
-      type: int(11)
-      notnull: true
-      primary: true
-  relations:
-    lpcms_role:
-      local: fk_id_role
-      foreign: id_role
-      constraint_name: lpcms_user_role_ibfk_1
 

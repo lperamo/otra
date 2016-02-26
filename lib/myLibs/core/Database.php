@@ -4,12 +4,11 @@
  *
  * @author Lionel Péramo
  */
+declare(strict_types=1);
 namespace lib\myLibs\core;
 
-use lib\sf2_yaml\Parser,
-    lib\sf2_yaml\Yaml,
-    config\All_Config,
-    lib\myLibs\core\bdd\Sql;
+use lib\{sf2_yaml\Yaml, myLibs\core\bdd\Sql};
+use config\All_Config;
 
 class Database
 {
@@ -39,14 +38,18 @@ class Database
     // just in order to simplify the code
     $attributeInfos = array();
 
-  /** Initalizes paths, commands and connections */
-  public static function init()
+  /** Initializes paths, commands and connections
+   *
+   * @param string $dbConnKey Database connection key from the general configuration
+   */
+  public static function init(string $dbConnKey = null)
   {
     self::initBase();
     define('VERBOSE', All_Config::$verbose);
     $dbConn = All_Config::$dbConnections;
+    $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
-    if(isset($dbConn[key($dbConn)]))
+    if(isset($dbConn[$dbConnKey]))
     {
       $infosDb = $dbConn[key($dbConn)];
       self::$user = $infosDb['login'];
@@ -64,7 +67,6 @@ class Database
       return false;
     }
 
-
     self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
     self::$initCommand = 'mysql --login-path=' . self::$frameworkName . (VERBOSE ? ' --show-warnings' : '');
     $finCommande = ' -e "source ' . self::$pathSql;
@@ -75,11 +77,11 @@ class Database
 
     self::$fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
 
-    if(!file_exists(self::$fixtureFolder))
+    if(false === file_exists(self::$fixtureFolder))
       mkdir(self::$fixtureFolder);
 
     // If we haven't store the database identifiers yet, store them ... only asking for password.
-    if('' == Script_Functions::cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
+    if('' === Script_Functions::cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
     {
       echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
       Script_Functions::cli('mysql_config_editor set --login-path=' . self::$frameworkName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
@@ -97,15 +99,15 @@ class Database
   }
 
   /** Cleans sql and yml files in the case where there are problems that had corrupted files. */
-  public static function clean($extensive = false)
+  public static function clean(bool $extensive = false)
   {
     self::initBase();
     array_map('unlink', glob(self::$pathSql . '*'));
 
-    if($extensive && file_exists(self::$tablesOrderFile))
+    if(true === $extensive && true === file_exists(self::$tablesOrderFile))
       unlink(self::$tablesOrderFile);
 
-    echo ($extensive) ? 'Full cleaning done.' : 'Cleaning done.', PHP_EOL;
+    echo lightGreenText(($extensive) ? 'Full cleaning done.' : 'Cleaning done.'), PHP_EOL;
   }
 
   /**
@@ -114,9 +116,9 @@ class Database
    * @param string   $databaseName Database name
    * @param bool     $force        If true, we erase the database before the tables creation.
    */
-  public static function createDatabase($databaseName, $force = false)
+  public static function createDatabase(string $databaseName, bool $force = false)
   {
-    if ($force)
+    if (true === $force)
     {
       self::dropDatabase($databaseName);
       self::generateSqlSchema($databaseName, true);
@@ -126,54 +128,67 @@ class Database
       Script_Functions::cli(self::$initCommand . self::$databaseFile . '.sql "', VERBOSE);
     }
 
+  /** TODO Find a solution on how to inform the final user that there is problems or no via the mysql command. */
     echo 'Database created.', PHP_EOL;
   }
 
   /**
-   * Returns the attribute in uppercase if it exists
+   * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
    *
    * @param string $attr  Attribute
    * @param bool   $show  If we show the information. Default : false
    *
    * @return string $attr Concerned attribute in uppercase
    */
-  public static function getAttr($attr, $show = false)
+  public static function getAttr(string $attr, bool $show = false) : string
   {
     $output = '';
-    if(isset(self::$attributeInfos[$attr]))
+
+    if(true === isset(self::$attributeInfos[$attr]))
     {
-      if('notnull' == $attr)
+      if('notnull' === $attr)
         $attr = 'not null';
-      else if('type' == $attr && false !== strpos(self::$attributeInfos[$attr], 'string'))
+      else if('type' === $attr && false !== strpos(self::$attributeInfos[$attr], 'string'))
         return 'VARCHAR'.substr(self::$attributeInfos[$attr], 6);
 
-      $output .= ($show) ? ' '.strtoupper($attr)
-                         : strtoupper(self::$attributeInfos[$attr]);
+      $output .= true === $show ? ' ' . strtoupper($attr)
+                                : strtoupper(self::$attributeInfos[$attr]);
     }
 
     return $output;
   }
 
   /**
-   * Sort the tables using the foreign keys
-   * @param array $theOtherTables Remaining tables to sort
-   * @param array $tables         Final sorted tables array
+   * Sort the tables that have relations with other tables using the foreign keys
+   *
+   * @param array $tablesWithRelations Remaining tables to sort
+   * @param array $sortedTables        Final sorted tables array
+   * @param int   $oldCountArrayToSort
+   *
    * @return bool
    */
-  private static function _sortTableByForeignKeys(array $theOtherTables, &$tables, $oldCountArrayToSort = 0)
+  private static function _sortTableByForeignKeys(array $tablesWithRelations, array &$sortedTables, int $oldCountArrayToSort = 0)
   {
-    $nextArrayToSort = $theOtherTables;
+    $nextArrayToSort = $tablesWithRelations;
 
-    foreach($theOtherTables as $key => $properties)
+    foreach($tablesWithRelations as $key => $properties)
     {
+      $add = ['valid' => true];
+
+      // Is there a relation in $properties['relations'] that is part of $sortedTables ?
       foreach($properties['relations'] as $relation => $relationProperties)
       {
-        $add = (in_array($relation, $tables));
+        $alreadyExists = (in_array($relation, $sortedTables));
+        /* If there is at least one problem because one foreign key references an non-existent table ...
+           => that's invalid ...we put false */
+        $add['valid'] = $add['valid'] && $alreadyExists;
       }
 
-      if($add)
+      /* If all the tables related to foreign keys are already known,
+         we add it to the other tables because we can do these relations safely */
+      if (true === $add['valid'])
       {
-        $tables[$key] = $key;
+        $sortedTables[] = $key;
         unset($nextArrayToSort[$key]);
       }
     }
@@ -183,12 +198,13 @@ class Database
     /* Fix for the "recursive" tables */
     if($oldCountArrayToSort == $countArrayToSort)
     {
-      $tables[$key] = $key;
+      $sortedTables[] = $key;
       return true;
     }
 
+    // If it remains some tables to sort we re-launch the function
     if(0 < $countArrayToSort)
-      self::_sortTableByForeignKeys ($nextArrayToSort, $tables, $countArrayToSort);
+      self::_sortTableByForeignKeys ($nextArrayToSort, $sortedTables, $countArrayToSort);
   }
 
   /**
@@ -201,7 +217,13 @@ class Database
    * @param array  $fixtureMemory An array that stores foreign identifiers in order to resolve yaml aliases
    * @param bool   $force         True => we have to truncate the table before inserting the fixtures
    */
-  public static function createFixture($databaseName, $file, array $schema, array $sortedTables, &$fixtureMemory = array(), $force = false)
+  public static function createFixture(
+      string $databaseName,
+      string $file,
+      array $schema,
+      array $sortedTables,
+      array &$fixtureMemory = [],
+      bool $force = false)
   {
     // Gets the fixture data
     $fixturesData = Yaml::parse(file_get_contents($file));
@@ -223,7 +245,6 @@ class Database
 
       if (!file_exists($createdFile))
       {
-        //$tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (' . PHP_EOL;
         $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
         $values = $properties = array();
         $theProperties = '';
@@ -247,10 +268,9 @@ class Database
           ksort($properties);
 
           $ymlIdentifiers .= '  ' . $name . ': ' . $i++ . PHP_EOL;
-          //$ymlIdentifiers .= '  ' . $name . ': ' . $i++;
           $localMemory[$name] = $i;
-
           $theValues = '';
+
           foreach ($properties as $property => $value)
           {
             // If the property refers to a table name, then we search the corresponding foreign key name
@@ -276,7 +296,6 @@ class Database
                   {
                     case 'timestamp' :
                     case 'int' : $value = 0;
-                                 break;
                   }
                 }
               } else if(is_bool($value))
@@ -321,7 +340,7 @@ class Database
    * @param string $databaseName Database name !
    * @param bool   $force        If true, we erase the data before inserting
    */
-  public static function createFixtures($databaseName, $force = false)
+  public static function createFixtures(string $databaseName, bool $force = false)
   {
     $folder = '';
 
@@ -329,7 +348,7 @@ class Database
     if ($folder = opendir(self::$pathYmlFixtures))
     {
       // Analyzes the database schema in order to guess the properties types
-      if(!file_exists(self::$schemaFile))
+      if(false === file_exists(self::$schemaFile))
       {
         echo cyan() , 'You have to create a database schema file in config/data/schema.yml before using fixtures.' , endColor();
         die;
@@ -338,7 +357,7 @@ class Database
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
 
 
-      if(!file_exists(self::$tablesOrderFile))
+      if(false === file_exists(self::$tablesOrderFile))
       {
         echo cyan() , 'You must use the database generation task before using the fixtures !' , endColor();
         die;
@@ -390,12 +409,29 @@ class Database
   }
 
   /**
+   * @param string $file
+   * @param string $databaseName Where to execute the SQL file ?
+   */
+  public static function executeFile(string $file, string $databaseName = null)
+  {
+    if(true === file_exists($file))
+    {
+      self::init($databaseName);
+      Script_Functions::cli(self::$initCommand . $file, VERBOSE);
+    } else
+    {
+      echo 'The file "', $file, '" doesn\'t exist !';
+      exit(1);
+    }
+  }
+
+  /**
    * Executes the sql file for the specified table and database
    *
    * @param string $databaseName The database name
    * @param string $table        The table name
    */
-  public static function executeFixture($databaseName, $table)
+  public static function executeFixture(string $databaseName, string $table)
   {
     Script_Functions::cli(self::$initCommand . self::$fixturesFile . '_' . $databaseName .'_' . $table . '.sql "', VERBOSE);
   }
@@ -405,13 +441,13 @@ class Database
    *
    * @param string $databaseName Database name !
    */
-  public static function dropDatabase($databaseName)
+  public static function dropDatabase(string $databaseName)
   {
     $file = 'drop_' . $databaseName.'.sql';
     $pathAndFile = self::$pathSql . $file;
 
     // If the file that drops database doesn't exist yet...creates it.
-    if (!file_exists($pathAndFile))
+    if (false === file_exists($pathAndFile))
     {
       exec('echo DROP DATABASE IF EXISTS ' . $databaseName . '; > ' . $pathAndFile);
       echo '\'Drop database\' file created.' , PHP_EOL;
@@ -419,6 +455,7 @@ class Database
 
     // And drops the database
     Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
+
     echo 'Database dropped.', PHP_EOL;
   }
 
@@ -428,156 +465,195 @@ class Database
    * @param string $databaseName Database name
    * @param bool   $force        If true, we erase the existing tables
    */
-  public static function generateSqlSchema($databaseName, $force = false)
+  public static function generateSqlSchema(string $databaseName, bool $force = false)
   {
     $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
 
-    if (!file_exists($dbFile))
+    if (true === file_exists($dbFile)) {
+      echo 'The \'SQL schema\' file already exists.', PHP_EOL;
+      return;
+    }
+
+    echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
+    $sql = ($force) ? 'CREATE DATABASE '
+                    : 'CREATE DATABASE IF NOT EXISTS ';
+
+    $sql .=  $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
+
+    // Gets the database schema
+    $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+
+    // $tableSql contains all the SQL for each table, indexed by table name
+    $tableSql = $tablesWithRelations = $sortedTables = [];
+    $constraints = '';
+
+    // For each table
+    foreach($schema as $table => &$properties)
     {
-      echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
-      $sql = ($force) ? 'CREATE DATABASE '
-                      : 'CREATE DATABASE IF NOT EXISTS ';
+      $primaryKeys = [];
+      $defaultCharacterSet = '';
 
-      $sql .=  $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
-//      $sql .= 'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL . PHP_EOL;
+      /** @TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
+      $tableSql[$table] = 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
 
-      // Gets the database schema
-      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
-      $tableSql = $theOtherTables = $sortedTables = array();
-      $constraints = '';
+      /**********************
+       * COLUMNS MANAGEMENT *
+       **********************/
 
-      // For each table
-      foreach($schema as $table => $properties)
+      // For each kind of data (columns, indexes, etc.)
+      foreach($properties as $property => &$attributes)
       {
-        $primaryKeys = array();
-        $defaultCharacterSet = '';
-
-        /** @TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
-        $tableSql[$table] = 'DROP TABLE IF EXISTS `' . $table . '`;' . PHP_EOL . 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
-
-        // For each kind of data (columns, indexes, etc.)
-        foreach($properties as $property => $attributes)
+        if('columns' === $property)
         {
-          if('columns' == $property)
+          // For each column
+          foreach ($attributes as $attribute => &$informations)
           {
-            // For each column
-            foreach ($attributes as $attribute => $informations)
-            {
-              self::$attributeInfos = $informations;
+            self::$attributeInfos = $informations;
 
-              $tableSql[$table] .= '  `' . $attribute . '` '
-                . self::getAttr('type')
-                . self::getAttr('notnull', true)
-                . self::getAttr('auto_increment', true)
-                . ',' . PHP_EOL;
+            $tableSql[$table] .= '  `' . $attribute . '` '
+              . self::getAttr('type')
+              . self::getAttr('notnull', true)
+              . self::getAttr('auto_increment', true)
+              . ',' . PHP_EOL;
 
-              if('' != self::getAttr('primary'))
-                $primaryKeys[] = $attribute;
-            }
-          } else if('relations' == $property)
+            // If the column is a primary key, we add it to the primary keys array
+            if(isset(self::$attributeInfos['primary']) && '' !== self::$attributeInfos['primary'])
+              $primaryKeys[] = $attribute;
+          }
+        } else if('relations' === $property)
+        {
+          foreach ($attributes as $otherTable => &$attribute)
           {
-            foreach ($attributes as $otherTable => $attribute)
-            {
-              // Management of 'ON DELETE XXXX'
-              $onDelete = '';
+            // Management of 'ON DELETE XXXX'
+            $onDelete = '';
 
-              if(isset($attribute['onDelete']))
-                $onDelete = '  ON DELETE '.strtoupper ($attribute['onDelete']);
+            if(isset($attribute['onDelete']))
+              $onDelete = '  ON DELETE ' . strtoupper($attribute['onDelete']);
 
-              $constraints .= 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
-                . ' FOREIGN KEY(' . $attribute['local'] . ')' . PHP_EOL;
-              $constraints .= '  REFERENCES ' . $otherTable . '(' . $attribute['foreign'] . ')' . PHP_EOL
-                . $onDelete . ';' . PHP_EOL;
-            }
+            $constraints .= 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
+              . ' FOREIGN KEY(`' . $attribute['local'] . '`)' . PHP_EOL;
+            $constraints .= '  REFERENCES ' . $otherTable . '(`' . $attribute['foreign'] . '`)' . PHP_EOL
+              . $onDelete . ';' . PHP_EOL;
+          }
+        } else if('indexes' === $property)
+        {
+          /** @TODO Manage the indexes part */
+        } else if('default_character_set' === $property)
+          $defaultCharacterSet = $attributes;
+      }
 
-          } else if('indexes' == $property)
-          {
-            /** @TODO Manage the indexes part */
-          } else if('default_character_set' == $property)
-            $defaultCharacterSet = $attributes;
+      // Cleaning memory...
+      unset($property, $attributes, $informations, $otherTable, $attribute);
+
+      /***************************
+       * PRIMARY KEYS MANAGEMENT *
+       ***************************/
+      if(empty($primaryKeys))
+        echo 'NOTICE : There isn\'t primary key in ', $table, '!', PHP_EOL;
+      else
+      {
+        $primaries = '`';
+
+        foreach ($primaryKeys as &$primaryKey)
+        {
+          $primaries .= $primaryKey . '`, `';
         }
 
-        unset($property, $attributes, $informations, $otherTable, $attribute);
+        $tableSql[$table] .= '  PRIMARY KEY(' . substr($primaries, 0, -3) . ')';
+      }
 
-        if(empty($primaryKeys))
-          echo 'NOTICE : There isn\'t primary key in ', $table, '!', PHP_EOL;
-        else
+      // Cleaning memory...
+      unset($primaries, $primaryKey);
+
+      /************************
+       * RELATIONS MANAGEMENT *
+       ************************/
+
+      if($hasRelations = isset($properties['relations']))
+      {
+        foreach($properties['relations'] as $key => &$relation)
         {
-          $primaries = '`';
-          foreach ($primaryKeys as $primaryKey)
+          if(false === isset($relation['local']))
           {
-            $primaries .= $primaryKey . '`, `';
+            echo 'You don\'t have specified a local key for the constraint concerning table ' . $key;
+            exit(1);
           }
 
-          $tableSql[$table] .= '  PRIMARY KEY(' . substr($primaries, 0, -3) . ')';
-        }
-
-        unset($primaries, $primaryKey);
-
-        if($hasRelations = isset($properties['relations']))
-        {
-          foreach($properties['relations'] as $key => $relation)
+          if(false === isset($relation['foreign']))
           {
-            if(!isset($relation['local']))
-            {
-              echo 'You don\'t have specified a local key for the constraint concerning table ' . $key;
-              die;
-            }
-
-            if(!isset($relation['foreign']))
-            {
-              echo 'You don\'t have specified a foreign key for the constraint concerning table ' . $key;
-              die;
-            }
-
-            $tableSql[$table] .= ',' . PHP_EOL .'  CONSTRAINT ' . (isset($relation['constraint_name']) ? $relation['constraint_name'] : $relation['local'] . '_to_' . $relation['foreign']) .
-             ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $key . '(' . $relation['foreign'] . ')';
+            echo 'You don\'t have specified a foreign key for the constraint concerning table ' . $key;
+            exit(1);
           }
+
+          // No problems. We can add the relations to the SQL.
+          $tableSql[$table] .= ',' . PHP_EOL .'  CONSTRAINT ' .
+            (isset($relation['constraint_name'])
+              ? $relation['constraint_name']
+              : $relation['local'] . '_to_' . $relation['foreign']
+            ) . ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $key . '(' . $relation['foreign'] . ')';
         }
-
-        $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
-
-        $tableSql[$table] .= ';' . PHP_EOL . PHP_EOL;
-
-        // Sort the tables by foreign keys associations
-        if($hasRelations)
-          $theOtherTables[$table] = $schema[$table];
-        else
-          $sortedTables[] = $table;
       }
 
-      //$sql .= $constraints. PHP_EOL. 'SET FOREIGN_KEY_CHECKS = 1;' . PHP_EOL;
+      // We add the default character set (UTF8) and the ENGINE define in the framework configuration
+      $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
 
-      self::_sortTableByForeignKeys($theOtherTables, $sortedTables);
+      $tableSql[$table] .= ';' . PHP_EOL . PHP_EOL;
 
-      $tablesOrder = '';
-      $storeSortedTables = ($force || !file_exists(self::$tablesOrderFile));
+      /**
+       * We separate
+       * the tables with no relations with other tables (that doesn't need to be sorted)
+       * from the tables that have relations with other tables (that need to be sorted)
+       */
+      if(true === $hasRelations)
+        $tablesWithRelations[$table] = $schema[$table];
+      else
+        $sortedTables[] = $table;
+    }
 
-      foreach($sortedTables as $sortedTable)
-      {
-        // We store the names of the sorted tables into a file in order to use it later
-        if ($storeSortedTables)
-          $tablesOrder .= '- ' . $sortedTable . PHP_EOL;
+    // We sort tables that need sorting
+    self::_sortTableByForeignKeys($tablesWithRelations, $sortedTables);
 
-        $sql .= $tableSql[$sortedTable];
-      }
+    $sqlCreateSection = $sqlDropSection = $tablesOrder = '';
+    $storeSortedTables = ($force || false === file_exists(self::$tablesOrderFile));
 
-      if($storeSortedTables)
-      {
-        $fp = fopen(self::$tablesOrderFile, 'w' );
-        fwrite($fp, $tablesOrder);
-        fclose($fp);
+    // We use the information on the order in which the tables have to be created / used to create correctly the final SQL schema file.
+    foreach($sortedTables as $sortedTable)
+    {
+      // We store the names of the sorted tables into a file in order to use it later
+      if ($storeSortedTables)
+        $tablesOrder .= '- ' . $sortedTable . PHP_EOL;
 
-        echo '\'Tables order\' file created.', PHP_EOL;
-      }
+      /* We create the 'create' section of the sql schema file */
+      $sqlCreateSection .= $tableSql[$sortedTable];
 
-      $fp = fopen($dbFile, 'w');
-      fwrite($fp, $sql);
+      /* We create the 'drop' section of the sql schema file */
+      $sqlDropSection = ' `' . $sortedTable . '`,' . PHP_EOL . $sqlDropSection;
+    }
+
+    /** TODO Test on unix systems if the value 3 is correct or not */
+    $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -3) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
+
+    // We generates the file that precise the order in which the tables have to be created / used if needed.
+    // (asked explicitly by user when overwriting the database or when the file simply doesn't exist)
+    if($storeSortedTables)
+    {
+      $fp = fopen(self::$tablesOrderFile, 'w' );
+      fwrite($fp, $tablesOrder);
       fclose($fp);
 
-      echo '\'SQL schema\' file created.', PHP_EOL;
-    }else
-      echo 'The \'SQL schema\' file already exists.', PHP_EOL;
+      echo '\'Tables order\' file created.', PHP_EOL;
+    }
+
+    /** DROP TABLE MANAGEMENT */
+
+
+
+    // We create the SQL schema file with the generated content.
+    $fp = fopen($dbFile, 'w');
+    fwrite($fp, $sql);
+    fclose($fp);
+
+    echo '\'SQL schema\' file created.', PHP_EOL;
   }
 
   /**
@@ -586,13 +662,13 @@ class Database
    * @param string $databaseName Database name
    * @param string $tableName    Table name
    */
-  public static function truncateTable($databaseName, $tableName)
+  public static function truncateTable(string $databaseName, string $tableName)
   {
     $file = 'truncate_' . $databaseName . '_' . $tableName . '.sql';
     $pathAndFile = self::$pathSql . $file;
 
     // If the file that truncates the table doesn't exist yet...creates it.
-    if (!file_exists($pathAndFile))
+    if (false === file_exists($pathAndFile))
     {
       $fp = fopen($pathAndFile, 'x');
       fwrite($fp, 'USE '. $databaseName . ';' . PHP_EOL . 'TRUNCATE TABLE ' . $tableName . ';');
@@ -612,7 +688,7 @@ class Database
    *
    * @return array The found table names
    */
-  private static function analyzeFixtures($file)
+  private static function analyzeFixtures(string $file)
   {
     // Gets the fixture data
     $fixturesData = Yaml::parse(file_get_contents($file));
@@ -628,11 +704,13 @@ class Database
 
   /**
    * Creates the database schema from a database.
+   * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
+   *
    * @param string $database  (optional)
    * @param string $confToUse (optional)
    * @return bool
    */
-  public static function importSchema($database = null, $confToUse = null)
+  public static function importSchema(string $database = null, string $confToUse = null)
   {
     error_reporting(0);
 
@@ -644,12 +722,11 @@ class Database
       $database = All_Config::$dbConnections[$confToUse]['db'];
 
     Session::set('db', $confToUse);
-    $db = Sql::getDB('Mysql');
-    $db->selectDb();
+    $db = Sql::getDB();
 
     // Checks if the database concerned exists
     $schemaInfo = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
-    if(!in_array($database, $schemaInfo))
+    if(false === in_array($database, $schemaInfo))
     {
       echo 'This database doesn\'t exist.';
       return false;
@@ -661,9 +738,11 @@ class Database
       $content .= $table . ': ' . PHP_EOL;
       $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
 
+      // If there are columns ...
       if(0 < count($cols))
         $content .= '  columns:' . PHP_EOL;
 
+      // For each column in this table, we set the different properties
       foreach($cols as $col)
       {
         $content .= '    '  . $col['COLUMN_NAME'] . ':' . PHP_EOL;
@@ -685,14 +764,16 @@ class Database
           AND TABLE_NAME = \'' . $table . '\'
           AND CONSTRAINT_NAME <> \'PRIMARY\''));
 
+      // if there are constraints for this table
       if(0 < count($constraints))
       {
         $content .= '  relations:' . PHP_EOL;
 
+        // For each constraint of this table
         foreach($constraints as $constraint)
         {
-          if(!isset($constraint['REFERENCED_TABLE_NAME']))
-            echo 'There is no REFERENCED_TABLE_NAME on ' . (isset($constraint['CONSTRAINT_NAME']) ? $constraint['CONSTRAINT_NAME'] : '/NO CONSTRAINT NAME/');
+          if(false === isset($constraint['REFERENCED_TABLE_NAME']))
+            echo 'There is no REFERENCED_TABLE_NAME on ' . (isset($constraint['CONSTRAINT_NAME']) ? $constraint['CONSTRAINT_NAME'] : '/NO CONSTRAINT NAME/') . '.' . PHP_EOL;
 
           $content .= '    ' . $constraint['REFERENCED_TABLE_NAME'] . ':' . PHP_EOL;
           $content .= '      local: ' . $constraint['COLUMN_NAME'] . PHP_EOL;

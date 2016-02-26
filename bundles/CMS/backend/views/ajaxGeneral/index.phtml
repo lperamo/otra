@@ -17,17 +17,17 @@
 				 {
 				 	case 0 :
 				  ?>
-				  	<input id="cfg_chk_<?= $cfg['id'] ?>" type="checkbox" class="noLabel" value="<?= $cfg['value'] ?>" />
+				  	<input id="cfg_chk_<?= $cfg['id'] ?>" type="checkbox" class="noLabel" value="<?= $cfg['value'] ?>" placeholder="<?= $cfg['placeholder'] ?>"/>
 				  	<label for="cfg_chk_<?= $cfg['id'] ?>"></label>
 				  <? break;
 				  case 1:
 				  	?>
-				  	<input type="number" class="input" value="<?= $cfg['value'] ?>"/>
+				  	<input type="number" class="input" value="<?= $cfg['value'] ?>" placeholder="<?= $cfg['placeholder'] ?>"/>
 				  	<?
 				  	break;
 				  case 2:
 			  		?>
-			  		<input class="input" value="<?= $cfg['value'] ?>"/>
+			  		<input class="input" value="<?= $cfg['value'] ?>" placeholder="<?= $cfg['placeholder'] ?>"/>
 			  		<?
 				  } ?>
 				  <a role="button" aria-labelledby="<? t('Edit this configuration line'); ?>" class="softBtn circleBorder edit _edit TTTL" data-tooltip="<? t('Edit this configuration line'); ?>"></a>

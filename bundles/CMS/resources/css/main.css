@@ -99,15 +99,15 @@
     position:absolute;
     width:2px
 }
-#light1{
+.light1{
     /*-webkit-animation: lightAnim 2s linear infinite alternate, lightAnim2 2s linear infinite alternate ;*/
     animation: lightAnim 2s linear infinite alternate, lightAnim2 2s ease -2s infinite alternate forwards
 }
 
-#light2{
+.light2{
     top: 5px
 }
-#light3{
+.light3{
     /*-webkit-animation: lightAnim 2s linear infinite alternate, lightAnim2 2s linear infinite alternate;*/
     animation: lightAnim 2s linear infinite alternate, lightAnim2 2s ease infinite alternate;
     top:10px

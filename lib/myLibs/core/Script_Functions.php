@@ -16,8 +16,8 @@ class Script_Functions
    * @param string  $cmd     Command to pass
    * @param integer $verbose Verbose mode (0,1 or 2)
    *
-   * @return bool Status
+   * @return bool Success or fail ?
    */
-  public static function cli($cmd, $verbose = 1) { return (0 < $verbose) ? passthru($cmd) : exec($cmd); }
+  public static function cli($cmd, $verbose = 1) { (0 < $verbose) ? passthru($cmd, $return) : exec($cmd, $return); return $return; }
 }
 ?>

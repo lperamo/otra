@@ -92,7 +92,6 @@ $content = '';
 
 $allFilesIncluded = array_flip(get_included_files());
 $fileToModify = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH . 'config/dev/All_Config.php');
-// var_dump($fileToModify, $allFilesIncluded);die;
 $val = $allFilesIncluded[$fileToModify];
 unset($allFilesIncluded[$fileToModify]);
 
@@ -107,6 +106,7 @@ $file_ = $file . '_.php';
 require BASE_PATH . 'lib/myLibs/core/TaskFileOperation.php';
 ksort($filesToConcat);
 contentToFile(fixUses($content, $verbose, $filesToConcat), $file_);
+
 unset($content);
 
 if(hasSyntaxErrors($file_, $verbose))

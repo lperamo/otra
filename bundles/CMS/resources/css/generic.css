@@ -37,9 +37,6 @@ li[data-tooltip]:after, .softBtn[data-tooltip]:after, .actualSelectValue[data-to
     background: linear-gradient(top,  #C6D8DF 0%,#bedce8 45%,#C6D8DF 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#C6D8DF', endColorstr='#C6D8DF',GradientType=0 ); /* IE6-8 */
     border: 2px groove rgba(128,128,128,0.1);
-    -khtml-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
     border-radius: 5px;
     color:#2E4747 !important;
     content: attr(data-tooltip);

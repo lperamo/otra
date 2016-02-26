@@ -3,6 +3,7 @@
  *
  * @author Lionel Péramo
  */
+declare(strict_types=1);
 namespace lib\myLibs\core;
 
 use config\All_Config,
@@ -18,7 +19,7 @@ class Controller extends MasterController
    *
    * @return bool True if ALL the files are in cache, false otherwise
    */
-  public function checkCache(array $filesToCheck)
+  public function checkCache(array $filesToCheck) : bool
   {
     foreach($filesToCheck as $fileToCheck)
     {
@@ -45,7 +46,7 @@ class Controller extends MasterController
    *
    * return string parent::$template Content of the template
    */
-  public final function renderView($file, array $variables = [], $ajax = false, $viewPath = true)
+  public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
 
@@ -81,7 +82,7 @@ class Controller extends MasterController
    * @param bool   $layout    If we add a layout or not
    * @return mixed|string
    */
-  private function buildCachedFile($filename, array $variables, $cachedFile = null, $layout = true)
+  private function buildCachedFile(string $filename, array $variables, $cachedFile = null, bool $layout = true) : string
   {
     extract($variables);
     ob_start();
@@ -130,7 +131,7 @@ class Controller extends MasterController
    *
    * @return string The links to the css files or the style markup with the css inside
    */
-  private function addCss($routeV)
+  private function addCss(string $routeV) : string
   {
     $content = ($this->chkCss) ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
 
@@ -163,7 +164,7 @@ class Controller extends MasterController
    *
    * @return The links to the js files or the script markup with the js inside
    */
-  private function addJs($routeV)
+  private function addJs(string $routeV) : string
   {
     $content = ($this->chkJs) ? '<script type="application/javascript;version=1.7" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
     if(empty(self::$js))

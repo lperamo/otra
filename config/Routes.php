@@ -4,6 +4,7 @@
  *
  * @author Lionel Péramo
  */
+declare(strict_types=1);
 namespace config;
 
 class Routes
@@ -72,14 +73,6 @@ class Routes
       ],
       'session' => ['sid' => '1']
     ],
-
-      'backendAjaxModules' => [
-        'chunks' => ['/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction'],
-        'resources' => [
-          '_css' => ['modules'],
-          '_js' => ['modules']
-        ]
-      ],
       'moduleSearch' => [
         'chunks' => ['/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction'],
         'get' => ['search' => '']
@@ -92,6 +85,15 @@ class Routes
         'chunks' => ['/backend/ajax/modules/search/article', 'CMS', 'backend', 'ajaxModules', 'searchArticleAction'],
         'get' => ['search' => '']
       ],
+
+      'backendAjaxModules' => [
+        'chunks' => ['/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction'],
+        'resources' => [
+          '_css' => ['modules'],
+          '_js' => ['modules']
+        ]
+      ],
+
       'getElements' => [
         'chunks' => ['/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction']
       ],

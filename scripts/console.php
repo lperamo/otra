@@ -1,5 +1,6 @@
 #!/usr/bin/php -ddisplay_errors=E_ALL
 <?
+declare(strict_types=1);
 define('_DIR_', str_replace('\\', '/', __DIR__));  // Fixes windows awful __DIR__
 define('XMODE', 'dev');
 define('ROOTPATH', _DIR_ . '/../'); // CHECK ALL OCCURRENCES OF THIS AND SUPPRESS THEM
@@ -10,7 +11,7 @@ require BASE_PATH . 'lib/myLibs/core/Colors.php';
 
 // If we didn't specify any command, list the available commands
 if ($argc < 2) {
-  lib\myLibs\core\Tasks_Manager::showCommands('No commands specified ! ');
+  lib\myLibs\core\Tasks_Manager::showCommands('No specified commands ! ');
   die;
 }
 

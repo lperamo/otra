@@ -1,22 +1,30 @@
 <thead>
-  <tr>
-    <th><?= t('Parent') ?></th>
-    <th><?= t('Détail') ?></th>
-    <th><?= t('Order') ?></th>
-    <th><?= t('Right') ?></th>
-    <th><?= t('Content') ?></th>
-  </tr>
+<tr>
+  <th>
+    <input id="modules_all" class="_selectAll noLabel" type="checkbox">
+    <label for="modules_all"></label>
+  </th>
+  <th><?= t('Content') ?></th>
+  <th><?= t('Parent') ?></th>
+  <th><?= t('Détail') ?></th>
+  <th><?= t('Order') ?></th>
+  <th><?= t('Right') ?></th>
+</tr>
 </thead>
 <tbody id="tbody">
-  <? if(!empty($items)) {
-      foreach($items as $item)
-      {?>
-      <tr>
-        <td><? if (-1 != $item['parent']) {?> <a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See parent module'); ?></a><? } else {?>No parent module.<? } ?>
-        <td><? if (0 != $item['aEnfants']) {?><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See articles') ?></a>
-        <td><?= $item['ordre'] ?></td>
-        <td><?= $right[$item['droit']] ?></td>
-        <td><?= $item['contenu'] ?></td>
-      </tr>
-      <? } } ?>
+<? if(!empty($items)) {
+foreach($items as $item)
+{?>
+  <tr>
+    <td>
+      <input type="checkbox" id="element_<?= $item['id'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+      <label for="element_<?= $item['id'] ?>"></label><!-- SAME HERE -->
+    </td>
+    <td><?= $item['contenu'] ?></td>
+    <td><? if (-1 != $item['parent']) {?> <a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See parent module'); ?></a><? } else {?>No parent module.<? } ?>
+    <td><? if (0 != $item['aEnfants']) {?><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See articles') ?></a><? } else {?>No articles.<? } ?>
+    <td><?= $item['ordre'] ?></td>
+    <td><?= $right[$item['droit']] ?></td>
+  </tr>
+<? } } ?>
 </tbody>

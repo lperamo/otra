@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace lib\myLibs\core;
 require_once ROOTPATH . 'lib/myLibs/core/Tasks.php';
 
@@ -13,7 +13,7 @@ class Tasks_Manager
    *
    * @param string $message The message to display before showing the commands
    */
-  public static function showCommands($message)
+  public static function showCommands(string $message)
   {
     echo file_get_contents('LICENSE2.txt'), endColor(), PHP_EOL;
     echo PHP_EOL, lightRed(), $message, lightGray(), PHP_EOL, PHP_EOL;
@@ -47,7 +47,7 @@ class Tasks_Manager
     echo endColor();
   }
 
-  public static function execute($task, array $argv)
+  public static function execute(string $task, array $argv)
   {
     if(!file_exists(ROOTPATH . 'cache/php/ClassMap.php'))
     {
@@ -56,7 +56,7 @@ class Tasks_Manager
     }
 
     require_once ROOTPATH . 'cache/php/ClassMap.php';
-    spl_autoload_register(function($className) use($classMap){ require $classMap[$className]; });
+    spl_autoload_register(function(string $className) use($classMap){ require $classMap[$className]; });
     Tasks::$task($argv);
   }
 }

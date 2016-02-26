@@ -3,6 +3,7 @@
  * THE framework router
  *
  * @author Lionel Péramo */
+declare(strict_types=1);
 namespace lib\myLibs\core;
 
 use lib\myLibs\core\Controller,
@@ -19,7 +20,7 @@ class Router
 	 *
 	 * @return string Controller's path
 	 */
-	public static function get($route = 'index', $params = [], $launch = true)
+	public static function get(string $route = 'index', array $params = [], bool $launch = true)
 	{
 		if(!is_array($params))
 			$params = [$params];
@@ -52,7 +53,7 @@ class Router
 	 *
 	 * @return bool|array The route and the parameters if they exist, false otherwise
 	 */
-	public static function getByPattern($pattern)
+	public static function getByPattern(string $pattern)
 	{
 		foreach(Routes::$_ as $key => $route)
 		{

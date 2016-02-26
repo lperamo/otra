@@ -4,8 +4,9 @@
 - lpcms_mailing_list
 - lpcms_module
 - lpcms_role
+- lpcms_types_cfg
 - lpcms_elements_menu
 - lpcms_user
-- lpcms_user_role
 - lpcms_bind_em_module
+- lpcms_config
 - lpcms_mailing_list_user

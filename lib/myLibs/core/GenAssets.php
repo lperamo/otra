@@ -47,13 +47,13 @@ if(isset($argv[3]))
   $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
 
   if($mask & 1)
-    array_map('unlink', glob(\Config\All_Config::$cache_path . '/tpl/*'));
+    array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
 
   if(($mask & 2) >> 1)
-    array_map('unlink', glob(\Config\All_Config::$cache_path . '/css/*'));
+    array_map('unlink', glob(CACHE_PATH . 'css/*'));
 
   if(($mask & 4) >> 2)
-    array_map('unlink', glob(\Config\All_Config::$cache_path . '/js/*'));
+    array_map('unlink', glob(CACHE_PATH . 'js/*'));
 
   echo lightGreen(), ' OK', PHP_EOL, endColor();
 }
@@ -62,7 +62,7 @@ $cptRoutes = count($routes);
 
 echo $cptRoutes , ' route(s) to process. Processing the route(s) ... ' . PHP_EOL . PHP_EOL;
 
-for($i = 0; $i < $cptRoutes; $i += 1)
+for($i = 0; $i < $cptRoutes; ++$i)
 {
   $route = current($routes);
   $name = key($routes);
@@ -159,7 +159,7 @@ function js($shaName, array $chunks, $bundlePath, array $resources)
   loadResource($resources, $chunks, '_js', $bundlePath);
   $allJs = ob_get_clean();
 
-  if('' == $allJs)
+  if('' === $allJs)
     return status('No JS', 'cyan');
 
   $pathAndFile = CACHE_PATH . 'js/' . $shaName;
@@ -185,7 +185,7 @@ function js($shaName, array $chunks, $bundlePath, array $resources)
   }
 
   /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
-  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' --language_in=ECMASCRIPT6_STRICT & gzip -f -9 ' . $pathAndFile);
+  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT & gzip -f -9 ' . $pathAndFile);
 }
 
 /**
@@ -222,7 +222,7 @@ function loadResource(array $resources, array $chunks, $key, $bundlePath, $path 
 }
 
 /**
- * Generates the gzipped css files
+ * Generates the gzipped template files
  * @param string $shaName   Name of the cached file
  * @param string $route
  * @param array  $resources Resources array from the defined routes of the site

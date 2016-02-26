@@ -50,6 +50,7 @@ if ((isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_']) || isset($_
   require BASE_PATH . 'lib/myLibs/core/Bootstrap_Dev.php';
 else // mode Prod
 {
+  // We ensure that the debug bar is no more active
   if(isset($_SESSION['debuglp_'])) unset($_SESSION['debuglp_']);
 
   require BASE_PATH . 'cache/php/RouteManagement.php';

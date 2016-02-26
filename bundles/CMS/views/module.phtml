@@ -3,10 +3,10 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
 
   $hztl = false;
   if(1 == $type)
-    echo '<nav class="menuv">';
+    echo '<nav class="menuv" role="navigation">';
   else if(2 == $type)
   {
-    echo '<nav class="menuh center">';
+    echo '<nav class="menuh center" role="navigation">';
     $hztl = true;
   }
 
@@ -57,9 +57,9 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
         </li>
         <div id="lightsContainer">
           <div id="lightsRelativeContainer">
-            <div id="light1" class="light"></div>
-            <div id="light2" class="light"></div>
-            <div id="light3" class="light"></div>
+            <div class="light light1"></div>
+            <div class="light light2"></div>
+            <div class="light light3"></div>
           </div>
         </div>
         </ul><?

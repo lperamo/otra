@@ -27,7 +27,7 @@
         replaceArticlesContent(data) {
           changeModuleTab.call(__articlesMgt);
           __table0.innerHTML = data
-        },
+        }
       };
 
       function moduleSearch(e)

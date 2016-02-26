@@ -5,11 +5,8 @@
 
 namespace lib\myLibs\core\bdd;
 
-use lib\myLibs\core\Lionel_Exception,
-  lib\myLibs\core\Session,
-  lib\myLibs\core\bdd\Mysql,
-  config\All_Config,
-  lib\myLibs\core\Logger;
+use lib\myLibs\core\{ Lionel_Exception, Session, bdd\Mysql, Logger };
+use config\All_Config;
 
 class Sql
 {
@@ -40,7 +37,7 @@ class Sql
   /**
    * @param string $sgbd
    */
-  public function __construct($sgbd)
+  public function __construct(string $sgbd)
   {
     self::$_currentSGBD = __NAMESPACE__ . '\\' . $sgbd;
   }
@@ -60,12 +57,8 @@ class Sql
    * @internal param string $sgbd Kind of sgbd
    * @internal param string $conn Connection used (see All_Config files)
    */
-  public static function getDB($conn = false) // $selectDb = true, $sgbd = false, $conn = false
+  public static function getDB($conn = false) : Sql // $selectDb = true, $sgbd = false, $conn = false
   {
-    /*echo '<pre>';
-    var_dump(debug_backtrace());
-    echo '</pre>';
-    die;*/
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
@@ -79,7 +72,9 @@ class Sql
       {
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
-      }
+      } else
+        die(lightRedText('There is no ' . $conn . ' configuration available in the All_Config file !') . PHP_EOL);
+
     } else
     {
       if(!isset(All_Config::$defaultConn))
@@ -130,8 +125,6 @@ class Sql
       $activeConn['db'] = $db;
       self::$instance = $activeConn['instance'];
 
-      //var_dump(strtolower(substr(strchr($driver, '_'), 1)) . ':dbname=' . $db . ';host=' .
-      //         ('' == $port ? $host : $host . ':' . $port), $login, $password);die;
       try
       {
         $activeConn['conn'] = $activeConn['instance']->connect(
@@ -156,9 +149,12 @@ class Sql
    *
    * @return bool|resource Returns a MySQL link identifier on success, or false on error
    */
-  public function connect(...$params)
+  public static function connect(...$params)
   {
-    return call_user_func_array(self::$_currentSGBD . '::connect', $params);
+    //return call_user_func_array(self::$_currentSGBD . '::connect', $params);
+    return call_user_func_array([self::$_currentSGBD, 'connect'], $params);
+
+/*    return call_user_func_array(array(self::$_activeConn[self::$_currentConn]['instance'], 'connect'), $params);*/
   }
 
   /**
@@ -184,7 +180,7 @@ class Sql
    *
    * @return bool|resource Returns a resource on success, or false on error
    */
-  public function query($query)
+  public function query(string $query)
   {
     if(isset($_SESSION['bootstrap']))
       return;
@@ -342,7 +338,11 @@ class Sql
     return call_user_func(self::$_currentSGBD . '::lastInsertedId', self::$_CURRENT_CONN);
   }
 
-  public function quote($string)
+ /**
+ * @param string $string
+ * @return mixed
+ */
+  public function quote(string $string)
   {
     return call_user_func(self::$_currentSGBD . '::quote', $string);
   }

@@ -2,7 +2,7 @@
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
  * @author Lionel Péramo */
-
+declare(strict_types=1);
 namespace lib\myLibs\core;
 
 use lib\myLibs\core\Database,
@@ -17,9 +17,9 @@ class Tasks
     echo('Cache cleared.' . PHP_EOL);
   }
 
-  public static function ccDesc() { return array('Clears the cache'); }
+  public static function ccDesc(): array { return array('Clears the cache'); }
 
-  public static function crypt($argv)
+  public static function crypt(array $argv)
   {
     if(isset($argv[3]))
       define(FWK_HASH, $argv[3]);
@@ -29,7 +29,7 @@ class Tasks
     echo crypt($argv[2], FWK_HASH), PHP_EOL;
   }
 
-  public static function cryptDesc()
+  public static function cryptDesc() : array
   {
     return array('Crypts a password and shows it.',
       array(
@@ -40,7 +40,7 @@ class Tasks
     );
   }
 
-  public static function hash($argv)
+  public static function hash(array $argv)
   {
     $argv[2] = isset($argv[2]) ? $argv[2] : 7;
     $salt = '';
@@ -53,7 +53,7 @@ class Tasks
     echo '$2y$0' . $argv[2] . '$'. $salt, PHP_EOL;
   }
 
-  public static function hashDesc()
+  public static function hashDesc() : array
   {
     return array('Returns a random hash.',
            array('rounds' => 'The numbers of round for the blowfish salt. Default: 7.'),
@@ -61,9 +61,9 @@ class Tasks
     );
   }
 
-  public static function genAssets($argv){ require 'GenAssets.php'; }
+  public static function genAssets(array $argv) { require 'GenAssets.php'; }
 
-  public static function genAssetsDesc()
+  public static function genAssetsDesc() : array
   {
     return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
       array(
@@ -73,14 +73,21 @@ class Tasks
     );
   }
 
-  /** Executes the sql script */
-  public static function sql() { exec('mysql ../sql/entire_script.sql'); }
+  /**
+   * Executes the sql script
+   *
+   * @param array $argv
+   */
+  public static function sql(array $argv) { Database::executeFile('../sql/entire_script.sql', $argv[2] ?? null); }
 
-  public static function sqlDesc() { return array('Executes the sql script'); }
+  public static function sqlDesc() : array { return array('Executes the sql script'); }
 
-  public static function sql_clean($argv) { Database::clean(isset($argv[2]) ? $argv[2] : false); }
+  /**
+   * @param array $argv
+   */
+  public static function sql_clean(array $argv) { Database::clean(isset($argv[2]) ? '1' === $argv[2]  : false); }
 
-  public static function sql_cleanDesc()
+  public static function sql_cleanDesc() : array
   {
     return array(
       'Cleans sql and yml files in the case where there are problems that had corrupted files.',
@@ -90,7 +97,7 @@ class Tasks
   }
 
   /** (sql_generate_basic) Database creation, tables creation. */
-  public static function sql_gdb($argv)
+  public static function sql_gdb(array $argv)
   {
     Database::init();
 
@@ -100,7 +107,7 @@ class Tasks
       Database::createDatabase($argv[2]);
   }
 
-  public static function sql_gdbDesc()
+  public static function sql_gdbDesc() : array
   {
     return array(
       'Database creation, tables creation.(sql_generate_basic)',
@@ -113,7 +120,7 @@ class Tasks
   }
 
   /** (sql_generate_fixtures) Generates fixtures. */
-  public static function sql_gf($argv)
+  public static function sql_gf(array $argv)
   {
     Database::init();
 
@@ -123,7 +130,7 @@ class Tasks
       Database::createFixtures($argv[2]);
   }
 
-  public static function sql_gfDesc()
+  public static function sql_gfDesc() : array
   {
     return array(
       'Generates fixtures. (sql_generate_fixtures)',
@@ -135,7 +142,7 @@ class Tasks
     );
   }
 
-  public static function sql_is($argv)
+  public static function sql_is(array $argv)
   {
     Database::init();
     isset($argv[2])
@@ -143,7 +150,7 @@ class Tasks
       : Database::importSchema();
   }
 
-  public static function sql_isDesc()
+  public static function sql_isDesc() : array
   {
     return array(
       'Creates the database schema from your database. (importSchema)',
@@ -164,7 +171,10 @@ class Tasks
       $chunks = $details['chunks'];
       $altColor = ($alt % 2) ? cyan() : lightCyan();
       echo $altColor, PHP_EOL, sprintf('%-25s', $route), str_pad('Url', 10, ' '), ': ' , $chunks[0], PHP_EOL;
-      echo str_pad(' ', 25, ' '), str_pad('Path', 10, ' '), ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4] , PHP_EOL;
+
+      if ('exception' !== $route ) {
+        echo str_pad(' ', 25, ' '), str_pad('Path', 10, ' '), ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4], PHP_EOL;
+      }
 
       $shaName = sha1('ca' . $route . All_Config::$version . 'che');
 
@@ -195,14 +205,14 @@ class Tasks
     }
   }
 
-  public static function routesDesc(){ return array('Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)'); }
+  public static function routesDesc() : array { return array('Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)'); }
 
   public static function genClassMap(){ require('GenClassMap.php'); }
-  public static function genClassMapDesc(){ return array('Generates a class mapping file that will be used to replace the autoloading method.'); }
+  public static function genClassMapDesc() : array { return array('Generates a class mapping file that will be used to replace the autoloading method.'); }
 
-  public static function genBootstrap($argv) { require('GenBootstrap.php'); }
+  public static function genBootstrap(array $argv) { require('GenBootstrap.php'); }
 
-  public static function genBootstrapDesc()
+  public static function genBootstrapDesc() : array
   {
     return array(
       'Launch the genClassMap command and generates a file that contains all the necessary php files.',

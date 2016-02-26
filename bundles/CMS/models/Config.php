@@ -40,7 +40,8 @@ class Config
   public static function getAllConfigurablesByUserId($id_user)
   {
     $dbConfig = Sql::$instance->query(
-      'SELECT c.id, c.type, c.title, c.value,  cfg.name
+      'SELECT c.id, c.type, c.title, c.value, c.placeholder,
+         cfg.name
        FROM lpcms_config c
        INNER JOIN lpcms_types_cfg cfg ON c.type_cfg_id = cfg.id
        WHERE c.user_id = ' . $id_user . ' OR c.user_id IS NULL'

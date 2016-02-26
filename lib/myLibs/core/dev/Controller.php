@@ -3,12 +3,11 @@
  * A classic MVC development controller class
  *
  * @author Lionel Péramo */
+declare(strict_types=1);
 namespace lib\myLibs\core;
 
-use config\All_Config,
-    lib\myLibs\core\Logger,
-    config\Routes,
-    lib\myLibs\core\MasterController;
+use config\{All_Config, Routes};
+use lib\myLibs\core\{Logger, MasterController};
 
 class Controller extends MasterController
 {
@@ -24,7 +23,7 @@ class Controller extends MasterController
    *
    * @return bool True if ALL the files are in cache, false otherwise
    */
-  public function checkCache(array $filesToCheck) { return false; }
+  public function checkCache(array $filesToCheck) : bool { return false; }
 
   /**
    * Renders a view. NB: Even is cache is activated, the template can be not fresh !
@@ -35,7 +34,7 @@ class Controller extends MasterController
    * @return string parent::$template Content of the template
    * @throws Lionel_Exception
    */
-  public final function renderView($file, array $variables = [], $ajax = false, $viewPath = true)
+  public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
     Logger::logTo("\t" . 'Ajax : ' . (($ajax) ? 'true' : 'false'), 'trace');
@@ -62,7 +61,7 @@ class Controller extends MasterController
    * @param bool   $layout    If we add a layout or not
    * @return mixed|string
    */
-  private function buildCachedFile($filename, array $variables, $cachedFile = null, $layout = true)
+  private function buildCachedFile(string $filename, array $variables, string $cachedFile = null, bool $layout = true) : string
   {
     extract($variables);
 
@@ -73,7 +72,7 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'File : ' . $filename, 'trace');
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
-    $content = !$this->ajax
+    $content = !self::$ajax
       ? str_replace(
         '/title>',
         '/title>'. self::addCss($layout),
@@ -91,7 +90,7 @@ class Controller extends MasterController
    *
    * @param string $debugBar Debug bar template
    */
-  private function addDebugBar($debugBar)
+  private function addDebugBar(string $debugBar)
   {
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
@@ -117,7 +116,7 @@ class Controller extends MasterController
    *
    * @return string The links to the css files or the style markup with the css inside
    */
-  private function addCss($firstTime)
+  private function addCss(bool $firstTime) : string
   {
     $route = Routes::$_;
     $debugContent = '';
@@ -215,7 +214,7 @@ class Controller extends MasterController
    *
    * @return array $scripts Final array
    */
-  private static function calculateArray(array $unorderedArray, array $orderedArray)
+  private static function calculateArray(array $unorderedArray, array $orderedArray) : array
   {
     $scripts = [];
 
@@ -241,7 +240,7 @@ class Controller extends MasterController
    * @param int|string $key
    * @param string     $code
    */
-  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, &$i, $key, $code)
+  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, $key, string $code)
   {
     if(is_string($key))
       $orderedArray[intval(substr($key,1))] = $code;
@@ -258,7 +257,7 @@ class Controller extends MasterController
    *
    * @return The links to the js files or the script markup with the js inside
    */
-  private function addJs($firstTime)
+  private function addJs(bool $firstTime) : string
   {
     $route = Routes::$_;
     $debugContent = '';
