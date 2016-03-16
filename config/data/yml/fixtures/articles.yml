@@ -1,6 +1,6 @@
 lpcms_article:
   accessoires:
-    lpcms_module:             article1
+#    lpcms_module:             article1
     titre:                    Accessoires
     contenu:                  accessoires
     droit:                    2
@@ -16,7 +16,7 @@ lpcms_article:
     rank_sum:                 0
     rank_count:               0
   parchemins:
-    lpcms_module:             article1
+#    lpcms_module:             article1
     titre:                    Parchemins
     contenu:                  parchemins
     droit:                    2
@@ -32,7 +32,7 @@ lpcms_article:
     rank_sum:                 0
     rank_count:               0
   potions:
-    lpcms_module:             article1
+#    lpcms_module:             article1
     titre:                    Potions
     contenu:                  potions
     droit:                    2
@@ -48,7 +48,7 @@ lpcms_article:
     rank_sum:                 0
     rank_count:               0
   deuxieme_article:
-    lpcms_module:             article2
+#    lpcms_module:             article2
     titre:                    Deuxième article
     contenu:                  article2
     droit:                    2
@@ -64,7 +64,7 @@ lpcms_article:
     rank_sum:                 0
     rank_count:               0
   troisieme_article:
-    lpcms_module:             article3
+#    lpcms_module:             article3
     titre:                    Troisième article
     contenu:                  article3
     droit:                    2

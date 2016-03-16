@@ -21,6 +21,7 @@ class Database
 
     // commands beginning
     $command = '',
+    $baseCommand = '',
     $initCommand = '',
 
     // paths
@@ -69,16 +70,15 @@ class Database
 
     self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
     self::$initCommand = 'mysql --login-path=' . self::$frameworkName . (VERBOSE ? ' --show-warnings' : '');
-    $finCommande = ' -e "source ' . self::$pathSql;
-
-    self::$command =  self::$initCommand . ' -D ' . self::$base . ((VERBOSE > 1) ? ' -v' . $finCommande : $finCommande);
+    self::$baseCommand = self::$initCommand . ' -D ' . self::$base . (VERBOSE > 1 ? ' -v' : '');
+    self::$command = self::$baseCommand . ' -e "source ' . self::$pathSql;
 
     self::$initCommand .= ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ') . self::$pathSql;
 
     self::$fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
 
     if(false === file_exists(self::$fixtureFolder))
-      mkdir(self::$fixtureFolder);
+      mkdir(self::$fixtureFolder, 0777, true);
 
     // If we haven't store the database identifiers yet, store them ... only asking for password.
     if('' === Script_Functions::cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
@@ -91,7 +91,7 @@ class Database
   /** Initializes main paths */
   public static function initBase()
   {
-    self::$pathSql = _DIR_ . '/../config/data/';
+    self::$pathSql = realpath(_DIR_ . '/../config/data') . '/';
     self::$pathYml = self::$pathSql . 'yml/';
     self::$pathSql .= 'sql/';
     self::$schemaFile = self::$pathYml . self::$schemaFile;
@@ -208,142 +208,148 @@ class Database
   }
 
   /**
-   * Create the sql content of the wanted fixture
+   * Create the sql content of the wanted fixture. We only allow one table per file for simplicity and performance.
    *
-   * @param string $databaseName  The database name to use
-   * @param string $file          The fixture file to parse
-   * @param array  $schema        The database schema in order to have the properties type
-   * @param array  $sortedTables  Final sorted tables array
-   * @param array  $fixtureMemory An array that stores foreign identifiers in order to resolve yaml aliases
-   * @param bool   $force         True => we have to truncate the table before inserting the fixtures
+   * @param string $databaseName             The database name to use
+   * @param string $file                     The fixture file to parse
+   * @param array  $schema                   The database schema in order to have the properties type
+   * @param array  $sortedTables             Final sorted tables array
+   * @param array  $fixturesMemory           An array that stores foreign identifiers in order to resolve yaml aliases
+   * @param string $fixtureFileNameBeginning Path chunk like YOURFULLPATH/scripts/../config/data/sql/db_fixture_lpcms_"
    */
   public static function createFixture(
       string $databaseName,
       string $file,
       array $schema,
       array $sortedTables,
-      array &$fixtureMemory = [],
-      bool $force = false)
-  {
+      array &$fixturesMemory,
+      string $fixtureFileNameBeginning
+  ) {
     // Gets the fixture data
     $fixturesData = Yaml::parse(file_get_contents($file));
+    $table = key($fixturesData);
+    $createdFile = $fixtureFileNameBeginning . $table . '.sql';
 
-    $createdFiles = array();
-    $first = true;
-
-    // For each table
-    foreach ($fixturesData as $table => $names)
+    if (true === file_exists($createdFile))
     {
-      $createdFile = self::$pathSql . self::$fixturesFile . '_' . $databaseName . '_' . $table . '.sql';
-      $createdFiles [$table]= $createdFile;
-
-      $localMemory = array();
-      $ymlIdentifiers = $table . ': ' . PHP_EOL;
-
-      if($force)
-        self::truncateTable($databaseName, $table);
-
-      if (!file_exists($createdFile))
-      {
-        $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
-        $values = $properties = array();
-        $theProperties = '';
-
-        if(isset($schema[$table]['relations']))
-        {
-          foreach(array_keys($schema[$table]['relations']) as $relation)
-          {
-            $datas = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
-            foreach($datas as $key => $data) {
-              $fixturesMemory[$key] = $data;
-            }
-          }
-        }
-
-        $i = 1; // The database ids begin to 1 by default
-
-        foreach($names as $name => $properties)
-        {
-          // Allows to put the properties in disorder in the fixture file
-          ksort($properties);
-
-          $ymlIdentifiers .= '  ' . $name . ': ' . $i++ . PHP_EOL;
-          $localMemory[$name] = $i;
-          $theValues = '';
-
-          foreach ($properties as $property => $value)
-          {
-            // If the property refers to a table name, then we search the corresponding foreign key name
-            if ($first)
-                $theProperties .= (in_array($property, $sortedTables)) ? '`' . $schema[$table]['relations'][$property]['local'] . '`, '
-                                                                       : '`' . $property . '`, ';
-            $properties [] = $property;
-
-            if (!in_array($property, $sortedTables))
-            {
-              // if the value is null
-              if(null === $value)
-              {
-                $tmp = $schema[$table]['columns'][$property];
-                $tmpBool = isset($tmp['notnull']);
-
-                if(!$tmpBool || ($tmpBool && false === $tmp['notnull']))
-                {
-                  if (false !== strpos($tmp['type'], 'string'))
-                    $value = ' ';
-
-                  switch($tmp['type'])
-                  {
-                    case 'timestamp' :
-                    case 'int' : $value = 0;
-                  }
-                }
-              } else if(is_bool($value))
-                  $value = $value ? 1 : 0;
-              else if(is_string($value) && 'int' == $schema[$table]['columns'][$property]['type'])
-                $value = $localMemory[$value];
-
-              $theValues .= (is_string($value)) ? '\'' . addslashes($value) . '\', ' : $value . ', ';
-            } else
-              $theValues .= $fixturesMemory[$property][$value] . ', ';
-
-            $values [] = array($name => $value);
-          }
-
-          if ($first)
-            $tableSql .= substr($theProperties, 0, -2) . ') VALUES';
-
-          $tableSql .= '(' . substr($theValues, 0, -2) . '),';
-
-          $first = false;
-        }
-
-        $tableSql  = substr($tableSql, 0, -1) . ';';
-
-        $fp = fopen($createdFile, 'x' );
-        fwrite($fp, $tableSql);
-        fclose($fp);
-
-        echo 'Fixture file created : ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql', PHP_EOL;
-
-        $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w' );
-        fwrite($fp, $ymlIdentifiers);
-        fclose($fp);
-      } else
-        echo 'Fixture file creation aborted : the file ' , self::$fixturesFile, '_' , $databaseName , '_' , $table, '.sql', ' already exists.', PHP_EOL;
+      echo 'Fixture file creation aborted : the file ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql already exists.', PHP_EOL;
+      exit(0);
     }
+
+    $first = true;
+    $ymlIdentifiers = $table . ': ' . PHP_EOL;
+    $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+    $localMemory = $values = $properties = [];
+    $theProperties = '';
+
+    if(true === isset($schema[$table]['relations']))
+    {
+      foreach(array_keys($schema[$table]['relations']) as $relation)
+      {
+        $datas = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
+
+        foreach($datas as $key => $data) {
+          $fixturesMemory[$key] = $data;
+        }
+      }
+    }
+
+    $i = 1; // The database ids begin to 1 by default
+
+    foreach($fixturesData[$table] as $fixtureName => $properties)
+    {
+      $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $i++ . PHP_EOL;
+      $localMemory[$fixtureName] = $i;
+      $theValues = '';
+
+      foreach ($properties as $property => $value)
+      {
+//      var_dump($schema[$table]);
+        // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
+        $theProperties .= '`' .
+          (in_array($property,
+            $sortedTables)
+            ? $schema[$table]['relations'][$property]['local']
+            : $property) .
+          '`, ';
+
+        $properties [] = $property;
+
+        if (!in_array($property, $sortedTables))
+        {
+          if(null === $value)
+          {
+//                $value = 'NULL';
+//                $tableStructureProperty = $schema[$table]['columns'][$property];
+//                $tableStructurePropertyNotNull = isset($tableStructureProperty['notnull']);
+//
+//                // If the value can be null
+//                if(!$tableStructurePropertyNotNull || ($tableStructurePropertyNotNull && false === $tableStructureProperty['notnull']))
+//                {
+//                  // If we expect a string, we put ' '
+//                  if (false !== strpos($tableStructureProperty['type'], 'string'))
+//                    $value = ' ';
+//                  else
+//                  {
+//                    switch ($tableStructureProperty['type'])
+//                    {
+//                      case 'bool' :
+//                        $value = 'NULL';
+//                        break;
+//                      case 'timestamp' :
+//                      case 'int' :
+//                        $value = 0;
+//                    }
+//                  }
+//                }
+          } else if(is_bool($value))
+              $value = $value ? 1 : 0;
+          else if(is_string($value) && 'int' == $schema[$table]['columns'][$property]['type'])
+            $value = $localMemory[$value];
+
+//              var_dump($value, null === $value);
+
+          $theValues .= (null === $value)
+            ? 'NULL, '
+            : (is_string($value)
+              ? '\'' . addslashes($value) . '\', '
+              : $value . ', ');
+        } else
+          $theValues .= $fixturesMemory[$property][$value] . ', ';
+
+        $values [] = array($fixtureName => $value);
+      }
+
+      if ($first)
+        $tableSql .= substr($theProperties, 0, -2) . ') VALUES';
+
+      $tableSql .= '(' . substr($theValues, 0, -2) . '),';
+
+      $first = false;
+    }
+
+    $tableSql  = substr($tableSql, 0, -1) . ';';
+
+    $fp = fopen($createdFile, 'x' );
+    fwrite($fp, $tableSql);
+    fclose($fp);
+
+    echo lightGreenText('Fixture file created : '), lightCyanText(self::$fixturesFile . '_' . $databaseName . '_' . $table . '.sql'), PHP_EOL;
+
+    $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w' );
+    fwrite($fp, $ymlIdentifiers);
+    fclose($fp);
   }
 
   /**
    * Creates all the fixtures for the specified database
    *
    * @param string $databaseName Database name !
-   * @param bool   $force        If true, we erase the data before inserting
+   * @param int    $mask         1 => we truncate the table before inserting the fixtures,
+   *                             2 => we clean the fixtures sql files and THEN we truncate the table before inserting the fixtures
    */
-  public static function createFixtures(string $databaseName, bool $force = false)
+  public static function createFixtures(string $databaseName, int $mask)
   {
-    $folder = '';
-
     // Looks for the fixtures file
     if ($folder = opendir(self::$pathYmlFixtures))
     {
@@ -351,20 +357,27 @@ class Database
       if(false === file_exists(self::$schemaFile))
       {
         echo cyan() , 'You have to create a database schema file in config/data/schema.yml before using fixtures.' , endColor();
-        die;
+        exit(1);
       }
-
-      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
-
 
       if(false === file_exists(self::$tablesOrderFile))
       {
         echo cyan() , 'You must use the database generation task before using the fixtures !' , endColor();
-        die;
+        exit(1);
       }
 
+      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
-      $tablesToCreate = array();
+      $fixtureFileNameBeginning = self::$pathSql . self::$fixturesFile . '_' . $databaseName . '_';
+
+      // We clean the fixtures sql files whether it's needed
+      if (2 === $mask)
+      {
+        array_map('unlink', glob($fixtureFileNameBeginning . '*'));
+        echo lightGreenText('Fixtures sql files cleaned.'), PHP_EOL;
+      }
+
+      $tablesToCreate = [];
 
       // Browse all the fixtures files
       while(false !== ($file = readdir($folder)))
@@ -376,6 +389,7 @@ class Database
           if (!is_dir($file))
           {
             $tables = self::analyzeFixtures($file);
+
             // Beautify the array
             foreach ($tables as $table => $file)
             {
@@ -386,16 +400,25 @@ class Database
       }
 
       $color = 0;
+      $fixturesMemory = [];
+      $weNeedToTruncate = 0 < $mask;
+
       foreach($tablesOrder as $table)
       {
         echo $color % 2 ? cyan() : lightCyan();
+
+        if ($weNeedToTruncate)
+        {
+          // We truncate the tables
+          self::truncateTable($databaseName, $table);
+        }
 
         for ($i = 0, $cptTables = count($tablesToCreate[$databaseName]); $i < $cptTables; $i += 1)
         {
           if(isset($tablesToCreate[$databaseName][$table]))
           {
             $file = $tablesToCreate[$databaseName][$table];
-            self::createFixture($databaseName, $file, $schema, $tablesOrder, $fixtureMemory, $force);
+            self::createFixture($databaseName, $file, $schema, $tablesOrder, $fixturesMemory, $fixtureFileNameBeginning);
             self::executeFixture($databaseName, $table, $file);
             break;
           }
@@ -456,7 +479,7 @@ class Database
     // And drops the database
     Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
 
-    echo 'Database dropped.', PHP_EOL;
+    echo 'Database ', lightCyanText($databaseName), ' dropped.', PHP_EOL;
   }
 
   /**
@@ -471,7 +494,7 @@ class Database
 
     if (true === file_exists($dbFile)) {
       echo 'The \'SQL schema\' file already exists.', PHP_EOL;
-      return;
+      exit(1);
     }
 
     echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
@@ -671,14 +694,17 @@ class Database
     if (false === file_exists($pathAndFile))
     {
       $fp = fopen($pathAndFile, 'x');
-      fwrite($fp, 'USE '. $databaseName . ';' . PHP_EOL . 'TRUNCATE TABLE ' . $tableName . ';');
+      fwrite($fp, 'USE '. $databaseName . ';' . PHP_EOL .
+        'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
+        'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
+        'SET FOREIGN_KEY_CHECKS = 1;');
       fclose($fp);
-      echo '\'Truncate table\' file created.' , PHP_EOL;
+      echo '\'Truncate table\' file created.', PHP_EOL;
     }
 
     // And truncates the table
     Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
-    echo 'Table truncated.', PHP_EOL;
+    echo green(), 'Table ', lightCyanText($tableName), green(), ' truncated.', endColor(), PHP_EOL;
   }
 
   /**

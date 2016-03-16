@@ -1,0 +1,4 @@
+USE lpcms;
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE lpcms_mailing_list;
+SET FOREIGN_KEY_CHECKS = 1;

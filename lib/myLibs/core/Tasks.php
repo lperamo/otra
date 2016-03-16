@@ -10,6 +10,8 @@ use lib\myLibs\core\Database,
 
 class Tasks
 {
+  protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
+
   /** Clears the cache. */
   public static function cc()
   {
@@ -67,7 +69,10 @@ class Tasks
   {
     return array('Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
       array(
-        'mask' => '1 => templates, 2 => css; 4 => js, => 7 all',
+        'mask' => '1 => templates,' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => css,' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => js,' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '7 => all',
         'route' => 'The route for which you want to generate resources.'),
       array('optional', 'optional')
     );
@@ -123,20 +128,20 @@ class Tasks
   public static function sql_gf(array $argv)
   {
     Database::init();
-
-    if(isset($argv[3]))
-      Database::createFixtures($argv[2], 'true' == $argv[3]);// Forces the value to be a boolean
-    else
-      Database::createFixtures($argv[2]);
+    Database::createFixtures(
+      $argv[2],
+      true === isset($argv[3]) ? (int) $argv[3] : 0
+    );
   }
 
   public static function sql_gfDesc() : array
   {
     return array(
-      'Generates fixtures. (sql_generate_fixtures)',
+      'Generates fixtures sql files and executes them. (sql_generate_fixtures)',
       array(
         'databaseName' => 'The database name !',
-        'force' => 'If true, we erase the database !'
+        'mask' => '1 => We erase the database' . PHP_EOL .
+                  str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => We clean the fixtures sql files and we erase the database.'
       ),
       array('required', 'optional')
     );

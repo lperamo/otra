@@ -76,6 +76,22 @@ function convertArrayToShowable(&$dataToShow, $title, $indexToExclude = null){
     $dataToShow = ob_get_clean();
 }
 
+/** Converts a php array into stylish console table. TODO finish it !
+ *
+ * @param $dataToShow array  Array to convert
+ * @param $title      string Table name to show in the header
+ * @param $indexToExclude string Index to exclude from the render
+ */
+function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = null){
+  return;
+
+  echo $title, PHP_EOL,
+  lightBlueText('|'), ' Name' ,
+  lightBlueText('|'), ' Index or value if array',
+  lightBlueText('|'), ' Value if array', PHP_EOL;
+  //recurArrayConvertTab($dataToShow, $indexToExclude);
+}
+
 /** Recursive function that converts a php array into a stylish tbody
  * @param $donnees        array|object  Array or object to convert
  * @param $indexToExclude string        Index to exclude from the render
