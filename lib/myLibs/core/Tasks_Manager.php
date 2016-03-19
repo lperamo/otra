@@ -61,7 +61,9 @@ class Tasks_Manager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    set_error_handler(function ($errno, $message, $file, $line, $context) { throw new Lionel_Exception($message, $errno, $file, $line, $context); });
+    set_error_handler(function ($errno, $message, $file, $line, $context) {
+      throw new Lionel_Exception($message, $errno, $file, $line, $context);
+    });
 
     try
     {

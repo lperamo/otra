@@ -35,11 +35,10 @@ if(isset($argv[4]))
 
 foreach(array_keys($routes) as &$route)
 {
-  if(!isset($routes[$route]['resources']['template']))
-    passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
-  else{
+  if(isset($routes[$route]['resources']['template']))
     echo cyan(), 'No micro-bootstrap to generate for this file ! (Generated template instead)', endColor(), PHP_EOL, PHP_EOL;
-  }
+  else
+    passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
 die;
 // Final specific management for routes files

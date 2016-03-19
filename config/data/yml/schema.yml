@@ -1,4 +1,4 @@
-lpcms_article: 
+lpcms_article:
   columns:
     id:
       type: int(11)
@@ -42,7 +42,7 @@ lpcms_article:
       type: int(11)
       notnull: true
 
-lpcms_bind_em_module: 
+lpcms_bind_em_module:
   columns:
     fk_id_module:
       type: int(11)
@@ -65,7 +65,7 @@ lpcms_bind_em_module:
       foreign: id
       constraint_name: fk_bemm_module0
 
-lpcms_config: 
+lpcms_config:
   columns:
     id:
       type: int(11)
@@ -95,18 +95,18 @@ lpcms_config:
       foreign: id_user
       constraint_name: fk_config_user
 
-lpcms_elements_menu: 
+lpcms_elements_menu:
   columns:
     id:
       type: int(11)
       notnull: true
       primary: true
+      auto_increment: true
     fk_id_article:
       type: int(11)
       notnull: true
     parent:
       type: int(11)
-      notnull: true
     aEnfants:
       type: tinyint(1)
       notnull: true
@@ -121,8 +121,12 @@ lpcms_elements_menu:
       local: fk_id_article
       foreign: id
       constraint_name: lpcms_elements_menu_ibfk_2
+    lpcms_elements_menu:
+          local: parent
+          foreign: id
+          constraint_name: lpcms_elements_menu_towards_lpcms_elements_menu
 
-lpcms_footer: 
+lpcms_footer:
   columns:
     id_footer:
       type: int(11)
@@ -138,7 +142,7 @@ lpcms_footer:
       notnull: true
       primary: true
 
-lpcms_header: 
+lpcms_header:
   columns:
     id_header:
       type: int(11)
@@ -152,7 +156,7 @@ lpcms_header:
       type: varchar(255)
       notnull: true
 
-lpcms_mailing_list: 
+lpcms_mailing_list:
   columns:
     id_mailing_list:
       type: int(11)
@@ -165,7 +169,7 @@ lpcms_mailing_list:
     descr:
       type: varchar(255)
 
-lpcms_mailing_list_user: 
+lpcms_mailing_list_user:
   columns:
     fk_id_mailing_list:
       type: int(11)
@@ -185,7 +189,7 @@ lpcms_mailing_list_user:
       foreign: id_user
       constraint_name: lpcms_mailing_list_user_ibfk_2
 
-lpcms_module: 
+lpcms_module:
   columns:
     id:
       type: int(11)
@@ -207,7 +211,7 @@ lpcms_module:
     contenu:
       type: varchar(255)
 
-lpcms_role: 
+lpcms_role:
   columns:
     id:
       type: int(11)
@@ -221,7 +225,7 @@ lpcms_role:
       type: varchar(255)
       notnull: true
 
-lpcms_types_cfg: 
+lpcms_types_cfg:
   columns:
     id:
       type: smallint(5) unsigned
@@ -232,7 +236,7 @@ lpcms_types_cfg:
     name:
       type: varchar(45)
 
-lpcms_user: 
+lpcms_user:
   columns:
     id_user:
       type: int(11)

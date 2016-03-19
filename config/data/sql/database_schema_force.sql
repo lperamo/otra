@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS lpcms;
+CREATE DATABASE lpcms;
 
 USE lpcms;
 
@@ -80,14 +80,15 @@ CREATE TABLE `lpcms_types_cfg` (
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 CREATE TABLE `lpcms_elements_menu` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `fk_id_article` INT(11) NOT NULL,
-  `parent` INT(11) NOT NULL,
+  `parent` INT(11),
   `aEnfants` TINYINT(1) NOT NULL,
   `droit` INT(1) NOT NULL,
   `contenu` VARCHAR(255) NOT NULL,
   PRIMARY KEY(`id`),
-  CONSTRAINT lpcms_elements_menu_ibfk_2 FOREIGN KEY (fk_id_article) REFERENCES lpcms_article(id)
+  CONSTRAINT lpcms_elements_menu_ibfk_2 FOREIGN KEY (fk_id_article) REFERENCES lpcms_article(id),
+  CONSTRAINT lpcms_elements_menu_towards_lpcms_elements_menu FOREIGN KEY (parent) REFERENCES lpcms_elements_menu(id)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8;
 
 CREATE TABLE `lpcms_user` (

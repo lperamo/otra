@@ -1,0 +1,4 @@
+USE lpcms;
+SET NAMES UTF8;
+
+INSERT INTO `lpcms_elements_menu` (`fk_id_article`, `parent`, `aEnfants`, `droit`, `contenu`) VALUES(4, NULL, 0, 1, 'Forum'),(4, NULL, 0, 1, 'Jeu'),(4, NULL, 0, 1, 'News'),(4, NULL, 0, 2, 'L\'équipe'),(1, NULL, 1, 1, 'Accessoires'),(2, 5, 0, 1, 'Parchemins'),(3, 5, 0, 1, 'Potions'),(4, NULL, 0, 1, 'Armes'),(5, NULL, 0, 1, 'Aromathérapie'),(5, NULL, 0, 1, 'Divers'),(5, NULL, 0, 1, 'Histoire'),(5, NULL, 0, 1, 'Lithothérapie'),(5, NULL, 0, 1, 'Objets Magiques'),(5, NULL, 0, 1, 'Sorts'),(5, NULL, 0, 1, 'Documentation'),(5, NULL, 0, 1, 'Forum'),(5, NULL, 0, 1, 'Profil'),(5, NULL, 0, 0, 'Soumettre un article'),(5, NULL, 0, 1, 'Se déconnecter');

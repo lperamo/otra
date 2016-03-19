@@ -63,7 +63,7 @@ try
 {
   \lib\myLibs\core\Router::get(
     $route,
-    (isset($params['bootstrap'])) ? $params['bootstrap'] : ''
+    (isset($params['bootstrap'])) ? $params['bootstrap'] : []
   );
   $output = ob_get_clean();
 

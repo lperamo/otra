@@ -1,23 +1,28 @@
 <?
 echo redText(PHP_EOL . 'PHP exception' . PHP_EOL . '=============' . PHP_EOL . PHP_EOL);
 
-$numeroWidth = 3;
-$functionWidth = 30;
+$typeWidth = 16; // the longest type is E_RECOVERABLE_ERROR
+$functionWidth = 40;
 $lineWidth = 4;
-$fileWidth = 100;
+$fileWidth = 80;
 
-if (isset($this->code)) echo 'Error code ' , $this->code , ' in ' , $this->file , ' at line ' , $this->line, PHP_EOL, $this->message, PHP_EOL;
+if (isset($this->code)) echo 'Error type ' , cyanText($this->code), ' in ' , cyanText($this->file), ' at line ' , cyanText($this->line), PHP_EOL, $this->message, PHP_EOL;
 
-// Write headers of the table
+/******************************
+ * Write HEADERS of the table *
+ ******************************/
 echo PHP_EOL,
-  lightBlueText(str_repeat('-', $numeroWidth + $functionWidth + $lineWidth + $fileWidth + 80)), PHP_EOL,
-  lightBlueText('|'), ' N°', str_repeat(' ', $numeroWidth),
-  lightBlueText('|'), ' Function', str_repeat(' ', $functionWidth),
-  lightBlueText('|'), ' Line', str_repeat(' ', $lineWidth),
-  lightBlueText('|'), ' File', str_repeat(' ', $fileWidth),
-  lightBlueText('|'), ' Arguments', PHP_EOL,
-  lightBlueText(str_repeat('-', $numeroWidth + $functionWidth + $lineWidth + $fileWidth + 80)), PHP_EOL;
+  lightBlueText(str_repeat('-', $typeWidth + $functionWidth + $lineWidth + $fileWidth + 80)), PHP_EOL,
+  lightBlueText('|'), brown(), ' TYPE', str_repeat(' ', $typeWidth),
+  lightBlueText('|'), brown(), ' Function', str_repeat(' ', $functionWidth),
+  lightBlueText('|'), brown(), ' Line', str_repeat(' ', $lineWidth),
+  lightBlueText('|'), brown(), ' File', str_repeat(' ', $fileWidth),
+  lightBlueText('|'), brown(), ' Arguments', PHP_EOL,
+  lightBlueText(str_repeat('-', $typeWidth + $functionWidth + $lineWidth + $fileWidth + 80)), endColor(), PHP_EOL;
 
+/*******************************
+ * Write the BODY of the table *
+ *******************************/
 for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
 {
   $now = $trace[$i];
@@ -26,7 +31,7 @@ for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
 
   convertArrayToShowableConsole($now['args'], 'Arguments', 'variables');
 
-  echo lightBlueText('| '), str_pad(0 === $i ? $this->code : '', $numeroWidth + 2, ' '),
+  echo lightBlueText('| '), str_pad(0 === $i ? $this->code : '', $typeWidth + 4, ' '),
     /** FUNCTION */
     lightBlueText('|'),
     str_pad(isset($now['function'])
@@ -63,5 +68,5 @@ for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
   // echo $now['args']; after args has been converted
 }
 
-echo lightBlueText(str_repeat('-', $numeroWidth + $functionWidth + $lineWidth + $fileWidth + 80)), PHP_EOL;
+echo lightBlueText(str_repeat('-', $typeWidth + $functionWidth + $lineWidth + $fileWidth + 80)), PHP_EOL;
 // echo $this->context ...too big for console output !

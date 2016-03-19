@@ -42,6 +42,8 @@ class Database
   /** Initializes paths, commands and connections
    *
    * @param string $dbConnKey Database connection key from the general configuration
+   *
+   * @return bool | void
    */
   public static function init(string $dbConnKey = null)
   {
@@ -171,14 +173,14 @@ class Database
   {
     $nextArrayToSort = $tablesWithRelations;
 
-    foreach($tablesWithRelations as $key => $properties)
+    foreach($tablesWithRelations as $table => $properties)
     {
       $add = ['valid' => true];
 
-      // Is there a relation in $properties['relations'] that is part of $sortedTables ?
-      foreach($properties['relations'] as $relation => $relationProperties)
+      // Are the relations of $properties['relations'] all in $sortedTables or are they recursive links (e.g. : parent property) ?
+      foreach(array_keys($properties['relations']) as $relation)
       {
-        $alreadyExists = (in_array($relation, $sortedTables));
+        $alreadyExists = (in_array($relation, $sortedTables) || $relation === $table);
         /* If there is at least one problem because one foreign key references an non-existent table ...
            => that's invalid ...we put false */
         $add['valid'] = $add['valid'] && $alreadyExists;
@@ -188,8 +190,8 @@ class Database
          we add it to the other tables because we can do these relations safely */
       if (true === $add['valid'])
       {
-        $sortedTables[] = $key;
-        unset($nextArrayToSort[$key]);
+        $sortedTables[] = $table;
+        unset($nextArrayToSort[$table]);
       }
     }
 
@@ -198,43 +200,41 @@ class Database
     /* Fix for the "recursive" tables */
     if($oldCountArrayToSort == $countArrayToSort)
     {
-      $sortedTables[] = $key;
+      $sortedTables[] = $table;
       return true;
     }
 
     // If it remains some tables to sort we re-launch the function
     if(0 < $countArrayToSort)
       self::_sortTableByForeignKeys ($nextArrayToSort, $sortedTables, $countArrayToSort);
+    else
+    {
+
+    }
   }
 
   /**
    * Create the sql content of the wanted fixture. We only allow one table per file for simplicity and performance.
    *
-   * @param string $databaseName             The database name to use
-   * @param string $file                     The fixture file to parse
-   * @param array  $schema                   The database schema in order to have the properties type
-   * @param array  $sortedTables             Final sorted tables array
-   * @param array  $fixturesMemory           An array that stores foreign identifiers in order to resolve yaml aliases
-   * @param string $fixtureFileNameBeginning Path chunk like YOURFULLPATH/scripts/../config/data/sql/db_fixture_lpcms_"
+   * @param string $databaseName   The database name to use
+   * @param string $table          The table name relating to the fixture to create
+   * @param string $file           The fixture file to parse
+   * @param array  $tableData      The table data form the database schema in order to have the properties type
+   * @param array  $sortedTables   Final sorted tables array
+   * @param array  $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
+   * @param string $createdFile    Name of the fixture file that will be created.
    */
   public static function createFixture(
       string $databaseName,
+      string $table,
       string $file,
-      array $schema,
+      array $tableData,
       array $sortedTables,
       array &$fixturesMemory,
-      string $fixtureFileNameBeginning
+      string $createdFile
   ) {
     // Gets the fixture data
     $fixturesData = Yaml::parse(file_get_contents($file));
-    $table = key($fixturesData);
-    $createdFile = $fixtureFileNameBeginning . $table . '.sql';
-
-    if (true === file_exists($createdFile))
-    {
-      echo 'Fixture file creation aborted : the file ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql already exists.', PHP_EOL;
-      exit(0);
-    }
 
     $first = true;
     $ymlIdentifiers = $table . ': ' . PHP_EOL;
@@ -242,17 +242,25 @@ class Database
     $localMemory = $values = $properties = [];
     $theProperties = '';
 
-    if(true === isset($schema[$table]['relations']))
+    /**
+     * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
+     * TODO Maybe we can store less things in this variable.
+     */
+    if(true === isset($tableData['relations']))
     {
-      foreach(array_keys($schema[$table]['relations']) as $relation)
+      foreach(array_keys($tableData['relations']) as &$relation)
       {
-        $datas = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
+        $data = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
 
-        foreach($datas as $key => $data) {
-          $fixturesMemory[$key] = $data;
+        foreach($data as $otherTable => &$otherTableData) {
+          $fixturesMemory[$otherTable] = $otherTableData;
         }
       }
     }
+
+    /**
+     * THE REAL WORK BEGINS HERE.
+     */
 
     $i = 1; // The database ids begin to 1 by default
 
@@ -264,12 +272,18 @@ class Database
 
       foreach ($properties as $property => $value)
       {
-//      var_dump($schema[$table]);
+        if(in_array($property,
+          $sortedTables) && !isset($tableData['relations'][$property]))
+        {
+          echo 'It lacks a relation to `' . $table . '`` for a `' . $property . '`` like property';
+          exit(1);
+        }
+
         // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
         $theProperties .= '`' .
           (in_array($property,
             $sortedTables)
-            ? $schema[$table]['relations'][$property]['local']
+            ? $tableData['relations'][$property]['local']
             : $property) .
           '`, ';
 
@@ -277,37 +291,10 @@ class Database
 
         if (!in_array($property, $sortedTables))
         {
-          if(null === $value)
-          {
-//                $value = 'NULL';
-//                $tableStructureProperty = $schema[$table]['columns'][$property];
-//                $tableStructurePropertyNotNull = isset($tableStructureProperty['notnull']);
-//
-//                // If the value can be null
-//                if(!$tableStructurePropertyNotNull || ($tableStructurePropertyNotNull && false === $tableStructureProperty['notnull']))
-//                {
-//                  // If we expect a string, we put ' '
-//                  if (false !== strpos($tableStructureProperty['type'], 'string'))
-//                    $value = ' ';
-//                  else
-//                  {
-//                    switch ($tableStructureProperty['type'])
-//                    {
-//                      case 'bool' :
-//                        $value = 'NULL';
-//                        break;
-//                      case 'timestamp' :
-//                      case 'int' :
-//                        $value = 0;
-//                    }
-//                  }
-//                }
-          } else if(is_bool($value))
+          if(is_bool($value))
               $value = $value ? 1 : 0;
-          else if(is_string($value) && 'int' == $schema[$table]['columns'][$property]['type'])
+          else if(is_string($value) && 'int' == $tableData['columns'][$property]['type'])
             $value = $localMemory[$value];
-
-//              var_dump($value, null === $value);
 
           $theValues .= (null === $value)
             ? 'NULL, '
@@ -405,7 +392,7 @@ class Database
 
       foreach($tablesOrder as $table)
       {
-        echo $color % 2 ? cyan() : lightCyan();
+        echo PHP_EOL, $color % 2 ? cyan() : lightCyan();
 
         if ($weNeedToTruncate)
         {
@@ -418,8 +405,16 @@ class Database
           if(isset($tablesToCreate[$databaseName][$table]))
           {
             $file = $tablesToCreate[$databaseName][$table];
-            self::createFixture($databaseName, $file, $schema, $tablesOrder, $fixturesMemory, $fixtureFileNameBeginning);
-            self::executeFixture($databaseName, $table, $file);
+            $createdFile = $fixtureFileNameBeginning . $table . '.sql';
+
+            if (true === file_exists($createdFile))
+            {
+              echo 'Fixture file creation aborted : the file ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql already exists.', PHP_EOL;
+              exit(0);
+            }
+
+            self::createFixture($databaseName, $table, $file, $schema[$table], $tablesOrder, $fixturesMemory, $createdFile);
+            self::executeFixture($databaseName, $table);
             break;
           }
         }
