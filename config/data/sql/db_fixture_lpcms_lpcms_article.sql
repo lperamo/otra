@@ -1,4 +1,0 @@
-USE lpcms;
-SET NAMES UTF8;
-
-INSERT INTO `lpcms_article` (`titre`, `contenu`, `droit`, `date_creation`, `cree_par`, `derniere_modif`, `der_modif_par`, `derniere_visualisation`, `der_visualise_par`, `nb_vu`, `date_publication`, `meta`, `rank_sum`, `rank_count`) VALUES('Accessoires', 'accessoires', 2, '2010-12-31', 0, '2010-12-31', 0, NULL, NULL, 0, NULL, NULL, 0, 0),('Parchemins', 'parchemins', 2, '2010-12-31', 0, '2010-12-31', 0, NULL, NULL, 0, NULL, NULL, 0, 0),('Potions', 'potions', 2, '2010-12-31', 0, '2010-12-31', 0, NULL, NULL, 0, NULL, NULL, 0, 0),('Deuxième article', 'article2', 2, '2010-12-31', 0, '2010-12-31', 0, NULL, NULL, 0, NULL, NULL, 0, 0),('Troisième article', 'article3', 2, '2010-12-31', 0, '2010-12-31', 0, NULL, NULL, 0, NULL, NULL, 0, 0);

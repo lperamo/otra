@@ -90,7 +90,13 @@ class Database
     }
   }
 
-  /** Initializes main paths */
+  /**
+   * Initializes main paths :
+   * - configuration path : $pathSql, $pathYml
+   * - output path : $pathSQL
+   * - schema file path : $schemaFile
+   * - tables order path : $tablesOrderFile
+   */
   public static function initBase()
   {
     self::$pathSql = realpath(_DIR_ . '/../config/data') . '/';
@@ -100,11 +106,22 @@ class Database
     self::$tablesOrderFile = self::$pathYml . self::$tablesOrderFile;
   }
 
-  /** Cleans sql and yml files in the case where there are problems that had corrupted files. */
+  /**
+   * Cleans sql and yml files in the case where there are problems that had corrupted files.
+   */
   public static function clean(bool $extensive = false)
   {
     self::initBase();
-    array_map('unlink', glob(self::$pathSql . '*'));
+    $dbFixturePath = self::$pathSql . self::$fixturesFile;
+
+    if(file_exists($dbFixturePath))
+    {
+      array_map('unlink', glob($dbFixturePath . '/*.sql'));
+      rmdir($dbFixturePath);
+    }
+
+    array_map('unlink', glob(self::$pathSql . '/*.sql'));
+    array_map('unlink', glob(self::$pathSql . 'truncate/*.sql'));
 
     if(true === $extensive && true === file_exists(self::$tablesOrderFile))
       unlink(self::$tablesOrderFile);
@@ -207,10 +224,6 @@ class Database
     // If it remains some tables to sort we re-launch the function
     if(0 < $countArrayToSort)
       self::_sortTableByForeignKeys ($nextArrayToSort, $sortedTables, $countArrayToSort);
-    else
-    {
-
-    }
   }
 
   /**
@@ -321,7 +334,7 @@ class Database
     fwrite($fp, $tableSql);
     fclose($fp);
 
-    echo lightGreenText('Fixture file created : '), lightCyanText(self::$fixturesFile . '_' . $databaseName . '_' . $table . '.sql'), PHP_EOL;
+    echo lightGreenText('Fixture file created : '), lightCyanText($databaseName . '_' . $table . '.sql'), PHP_EOL;
 
     $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w' );
     fwrite($fp, $ymlIdentifiers);
@@ -353,14 +366,19 @@ class Database
         exit(1);
       }
 
+      $dbFixturePath = self::$pathSql . self::$fixturesFile;
+
+      if(false === file_exists($dbFixturePath))
+        mkdir($dbFixturePath);
+
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
-      $fixtureFileNameBeginning = self::$pathSql . self::$fixturesFile . '_' . $databaseName . '_';
+      $fixtureFileNameBeginning = $dbFixturePath . '/' . $databaseName . '_';
 
       // We clean the fixtures sql files whether it's needed
       if (2 === $mask)
       {
-        array_map('unlink', glob($fixtureFileNameBeginning . '*'));
+        array_map('unlink', glob($fixtureFileNameBeginning . '*.sql'));
         echo lightGreenText('Fixtures sql files cleaned.'), PHP_EOL;
       }
 
@@ -389,12 +407,16 @@ class Database
       $color = 0;
       $fixturesMemory = [];
       $weNeedToTruncate = 0 < $mask;
+      $truncatePath = self::$pathSql . 'truncate';
+
+      if(true === $weNeedToTruncate && false === file_exists($truncatePath))
+        mkdir($truncatePath);
 
       foreach($tablesOrder as $table)
       {
         echo PHP_EOL, $color % 2 ? cyan() : lightCyan();
 
-        if ($weNeedToTruncate)
+        if (true === $weNeedToTruncate)
         {
           // We truncate the tables
           self::truncateTable($databaseName, $table);
@@ -409,7 +431,7 @@ class Database
 
             if (true === file_exists($createdFile))
             {
-              echo 'Fixture file creation aborted : the file ', self::$fixturesFile, '_', $databaseName, '_', $table, '.sql already exists.', PHP_EOL;
+              echo 'Fixture file creation aborted : the file ', $databaseName, '_', $table, '.sql already exists.', PHP_EOL;
               exit(0);
             }
 
@@ -451,7 +473,7 @@ class Database
    */
   public static function executeFixture(string $databaseName, string $table)
   {
-    Script_Functions::cli(self::$initCommand . self::$fixturesFile . '_' . $databaseName .'_' . $table . '.sql "', VERBOSE);
+    Script_Functions::cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName .'_' . $table . '.sql "', VERBOSE);
   }
 
   /**
@@ -682,7 +704,7 @@ class Database
    */
   public static function truncateTable(string $databaseName, string $tableName)
   {
-    $file = 'truncate_' . $databaseName . '_' . $tableName . '.sql';
+    $file = 'truncate/' . $databaseName . '_' . $tableName . '.sql';
     $pathAndFile = self::$pathSql . $file;
 
     // If the file that truncates the table doesn't exist yet...creates it.
