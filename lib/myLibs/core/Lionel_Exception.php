@@ -9,7 +9,7 @@ namespace lib\myLibs\core;
 use lib\myLibs\core\Controller,
     config\Routes;
 
-require_once BASE_PATH . 'config/All_Config.php';
+
 require BASE_PATH . 'lib\myLibs\core\Debug_Tools.php';
 
 class Lionel_Exception extends \Exception
@@ -58,6 +58,7 @@ class Lionel_Exception extends \Exception
    */
   public function errorMessage() : string
   {
+    require_once BASE_PATH . 'config/All_Config.php';
     $route = 'exception';
 
     ob_clean();

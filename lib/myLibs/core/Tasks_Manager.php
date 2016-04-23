@@ -18,7 +18,7 @@ class Tasks_Manager
   public static function showCommands(string $message)
   {
     echo file_get_contents('LICENSE2.txt'), endColor(), PHP_EOL;
-    echo PHP_EOL, lightRed(), $message, lightGray(), PHP_EOL, PHP_EOL;
+    echo PHP_EOL, brown(), $message, lightGray(), PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '- ', white(), str_pad('no argument',
       25,
       ' '), lightGray();

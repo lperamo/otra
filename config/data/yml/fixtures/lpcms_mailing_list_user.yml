@@ -1,0 +1,10 @@
+lpcms_mailing_list_user: 
+  lpcms_mailing_list_user_0:
+    lpcms_mailing_list: lpcms_mailing_list_0
+    lpcms_user: lpcms_user_0
+  lpcms_mailing_list_user_1:
+    lpcms_mailing_list: lpcms_mailing_list_1
+    lpcms_user: lpcms_user_0
+  lpcms_mailing_list_user_2:
+    lpcms_mailing_list: lpcms_mailing_list_0
+    lpcms_user: lpcms_user_1

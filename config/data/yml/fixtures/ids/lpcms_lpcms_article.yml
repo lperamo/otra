@@ -1,6 +1,6 @@
 lpcms_article: 
-  accessoires: 1
-  parchemins: 2
-  potions: 3
-  deuxieme_article: 4
-  troisieme_article: 5
+  lpcms_article_0: 1
+  lpcms_article_1: 2
+  lpcms_article_2: 3
+  lpcms_article_3: 4
+  lpcms_article_4: 5

@@ -25,7 +25,8 @@ class Logger
 		if($_SERVER['REMOTE_ADDR'] != $_SESSION['_ip'])
 			$infos .= $infos . '[' . ($_SESSION['_ip'] = $_SERVER['REMOTE_ADDR']) . '] ';
 
-		if($_SERVER['HTTP_USER_AGENT'] != $_SESSION['_browser'])
+		// user agent not set if we come from the console
+		if(true === isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT'] != $_SESSION['_browser'])
 			return $infos . '[' .  ($_SESSION['_browser'] = $_SERVER['HTTP_USER_AGENT']) . '] ';
 
 

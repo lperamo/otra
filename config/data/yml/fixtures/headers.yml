@@ -1,5 +1,0 @@
-# data/fixtures/headers.yml
-lpcms_header:
-  header1:
-    fichierImage:             'header.jpg'
-    titre:                    'Erevent'

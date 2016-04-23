@@ -108,7 +108,7 @@ class Sql
       if (null == self::$_activeConn[self::$_currentConn])
       {
         self::$_activeConn[self::$_currentConn]['instance'] = new Sql($driver);
-        require $driver . '.php';
+        require BASE_PATH . 'lib/myLibs/core/bdd/' . $driver . '.php';
       }
 
       extract(All_Config::$dbConnections[$conn ?: All_Config::$defaultConn]);
@@ -331,11 +331,13 @@ class Sql
   /**
    * Return the last inserted id
    *
+   * @param string $sequenceName
+   *
    * @return int The last inserted id
    */
-  public function lastInsertedId()
+  public function lastInsertedId(string $sequenceName = null)
   {
-    return call_user_func(self::$_currentSGBD . '::lastInsertedId', self::$_CURRENT_CONN);
+    return call_user_func(self::$_currentSGBD . '::lastInsertedId', $sequenceName);
   }
 
  /**

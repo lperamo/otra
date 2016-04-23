@@ -1,0 +1,13 @@
+lpcms_user: 
+  lpcms_user_0:
+    id_user: '1'
+    mail: 'peramo.lionel@gmail.com'
+    pwd: '$2y$07$hu3yJ9cEtjFXwzpHoMdv5ebsC0nEFn..JdJcMzrdVHb6vA0LqDlsq'
+    pseudo: 'pgmail'
+    role_id: ~
+  lpcms_user_1:
+    id_user: '2'
+    mail: 'lionelperamo@hotmail.fr'
+    pwd: '$2y$07$hu3yJ9cEtjFXwzpHoMdv5e41JN9DjNc7Pf28mbhxTu70vsqCs1RC2'
+    pseudo: 'photmail'
+    role_id: ~

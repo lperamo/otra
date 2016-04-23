@@ -52,7 +52,7 @@ lpcms_bind_em_module:
       type: int(11)
       notnull: true
       primary: true
-    ordre:
+    order:
       type: int(11)
       notnull: true
   relations:

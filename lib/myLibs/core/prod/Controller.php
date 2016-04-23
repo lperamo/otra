@@ -60,8 +60,8 @@ class Controller extends MasterController
     // If we already have the template in memory and that it's not empty then we show it
     self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
-    if($ajax)
-      $this->ajax = $ajax;
+    if ($ajax)
+      self::$ajax = $ajax;
 
     if(self::$cache_used)
       parent::$template = self::$rendered[$templateFile];
@@ -76,10 +76,12 @@ class Controller extends MasterController
   }
 
   /** Parses the template file and updates parent::$template
+   *
    * @param string $filename
-   * @param array  $variables Variables to pass to the template
-   * @param sting  $cacheFile The cache file name version of the file
-   * @param bool   $layout    If we add a layout or not
+   * @param array  $variables  Variables to pass to the template
+   * @param string $cachedFile The cache file name version of the file
+   * @param bool   $layout     If we add a layout or not
+   *
    * @return mixed|string
    */
   private function buildCachedFile(string $filename, array $variables, $cachedFile = null, bool $layout = true) : string
@@ -95,7 +97,7 @@ class Controller extends MasterController
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><',
       (!$layout) ? str_replace('/title>', '/title>', $content)
-                 : ($ajax
+                 : (self::$ajax
                    ? str_replace('/title>', '/title>'. $this->addCss($routeV), $content . $this->addJs($routeV))
                    : $this->addCss($routeV) . $content . $this->addJs($routeV))
                  ); // suppress useless spaces
@@ -133,29 +135,10 @@ class Controller extends MasterController
    */
   private function addCss(string $routeV) : string
   {
-    $content = ($this->chkCss) ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
-
-    if(empty(self::$css))
-      return $content;
-
-    $allCss = '';
-
-    foreach(self::$css as $css) {
-      $allCss .= file_get_contents(self::$path . $css . '.css');
-    }
-
-    if($firstTime)
-      $allCss .= file_get_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '', '.css'));
-
-    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
-      return '<style>' . $allCss . '</style>';
-
-    $lastFile .= VERSION;
-    $fp = fopen(parent::getCacheFileName($routeV, CACHE_PATH . 'css/', '_dyn', '.css'), 'w');
-    fwrite($fp, $allCss);
-    fclose($fp);
-
-    return $content . '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '_dyn', '.css') . '" />';
+    // If we have CSS files to load, then we load them
+    return $this->chkCss ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
+//    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
+//      return '<style>' . $allCss . '</style>';
   }
 
   /** Returns the pre-generated js and the additional concatenated js
@@ -166,6 +149,7 @@ class Controller extends MasterController
    */
   private function addJs(string $routeV) : string
   {
+    // If we have JS files to load, then we load them
     $content = ($this->chkJs) ? '<script type="application/javascript;version=1.7" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
     if(empty(self::$js))
       return $content;

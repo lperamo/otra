@@ -71,7 +71,7 @@ class Routes
         'bundle_css' => ['generic', 'interface', 'form', 'checkbox'],
         'bundle_js' => ['jquery', 'backend']
       ],
-      'session' => ['sid' => '1']
+//      'session' => ['sid' => ['uid' => 1]]
     ],
       'moduleSearch' => [
         'chunks' => ['/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction'],
@@ -95,7 +95,8 @@ class Routes
       ],
 
       'getElements' => [
-        'chunks' => ['/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction']
+        'chunks' => ['/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction'],
+        'get' => ['id' => 1]
       ],
 
     // -----------
@@ -107,14 +108,16 @@ class Routes
         'bundle_css' => ['generic', 'interface', 'form', 'checkbox', 'radio'],
         '_js' => ['general'],
         'bundle_js' => ['jquery', 'backend']
-      ]
+      ],
+//      'session' => ['sid' => ['uid' => 1]]
     ],
       'backendAjaxGeneral' => [
         'chunks' => ['/backend/ajax/general', 'CMS', 'backend', 'ajaxGeneral', 'indexAction'],
         'resources' => [
           '_css' => ['general'],
           '_js' => ['general']
-        ]
+        ],
+//        'session' => ['sid' => ['uid' => 1]]
       ],
     'backendStats' => [
       'chunks' => ['/backend/stats', 'CMS', 'backend', 'index', 'statsAction'],
@@ -138,23 +141,19 @@ class Routes
     ],
       'addUser' => [
         'chunks' => ['/backend/ajax/users/add', 'CMS', 'backend', 'ajaxUsers', 'addAction'],
-        'post' => ['mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' '],
-        'session' => ['sid' => ['role' => 1]]
+        'post' => ['mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' ']
       ],
       'editUser' => [
         'chunks' => ['/backend/ajax/users/edit', 'CMS', 'backend', 'ajaxUsers', 'editAction'],
-        'post' => ['id_user' => 0, 'mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' ', 'oldMail' => ' '],
-        'session' => ['sid' => ['role' => 1]]
+        'post' => ['id_user' => 0, 'mail' => ' ', 'pwd' => ' ', 'pseudo' => ' ', 'role' => ' ', 'oldMail' => ' ']
       ],
       'deleteUser' => [
         'chunks' => ['/backend/ajax/users/delete', 'CMS', 'backend', 'ajaxUsers', 'deleteAction'],
-        'post' => ['id_user' => 0],
-        'session' => ['sid' => ['role' => 1]]
+        'post' => ['id_user' => 0]
       ],
       'searchUser' => [
         'chunks' => ['/backend/ajax/users/search', 'CMS', 'backend', 'ajaxUsers', 'searchAction'],
-        'post' => ['type' => ' ', 'mail' => ' ', 'pseudo' => ' ', 'role' => ' ', 'limit' => 0, 'prev' => 0, 'last' => 1],
-        'session' => ['sid' => ['role' => 1]]
+        'post' => ['type' => ' ', 'mail' => ' ', 'pseudo' => ' ', 'role' => ' ', 'limit' => 0, 'prev' => 0, 'last' => 1]
       ],
       'backendAjaxUsers' => [
         'chunks' => ['/backend/ajax/users', 'CMS', 'backend', 'ajaxUsers', 'indexAction'],

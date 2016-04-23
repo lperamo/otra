@@ -24,6 +24,11 @@ error_reporting(-1 & ~E_DEPRECATED);
 
 spl_autoload_register(function($className) use($classMap)
 {
+  /*if (!isset($classMap[$className]))
+  {
+    debug_print_backtrace();
+    echo '********* ', $className, ' *************';die;
+  }*/
   require $classMap[$className];
 });
 
@@ -47,6 +52,9 @@ if(isset($params['post']))
 
 if(isset($params['get']))
   $_GET = $params['get'];
+
+// We put default parameters in order to not write too much times the session configuration in the routes file
+$_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
 if(isset($params['session']))
 {
@@ -77,7 +85,7 @@ try
 
   unset($output);
 
-  echo lightGreen(), str_pad('Can execute it.', 35 - strlen($route), ' ', STR_PAD_LEFT), endColor(), PHP_EOL;
+  echo lightGreen(), str_pad('[EXECUTION]', 35 - strlen($route), ' ', STR_PAD_LEFT), endColor();
 } catch(Exception $e)
 {
   ob_end_clean();

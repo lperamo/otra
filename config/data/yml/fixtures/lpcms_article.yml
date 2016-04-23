@@ -1,0 +1,81 @@
+lpcms_article: 
+  lpcms_article_0:
+    id: '1'
+    titre: 'Accessoires'
+    contenu: 'accessoires'
+    droit: '2'
+    date_creation: '2010-12-31 00:00:00'
+    cree_par: '0'
+    derniere_modif: '2010-12-31 00:00:00'
+    der_modif_par: '0'
+    derniere_visualisation: '2016-04-22 12:17:51'
+    der_visualise_par: ~
+    nb_vu: '0'
+    date_publication: '2016-04-22 12:17:51'
+    meta: ~
+    rank_sum: '0'
+    rank_count: '0'
+  lpcms_article_1:
+    id: '2'
+    titre: 'Parchemins'
+    contenu: 'parchemins'
+    droit: '2'
+    date_creation: '2010-12-31 00:00:00'
+    cree_par: '0'
+    derniere_modif: '2010-12-31 00:00:00'
+    der_modif_par: '0'
+    derniere_visualisation: '2016-04-22 12:17:51'
+    der_visualise_par: ~
+    nb_vu: '0'
+    date_publication: '2016-04-22 12:17:51'
+    meta: ~
+    rank_sum: '0'
+    rank_count: '0'
+  lpcms_article_2:
+    id: '3'
+    titre: 'Potions'
+    contenu: 'potions'
+    droit: '2'
+    date_creation: '2010-12-31 00:00:00'
+    cree_par: '0'
+    derniere_modif: '2010-12-31 00:00:00'
+    der_modif_par: '0'
+    derniere_visualisation: '2016-04-22 12:17:51'
+    der_visualise_par: ~
+    nb_vu: '0'
+    date_publication: '2016-04-22 12:17:51'
+    meta: ~
+    rank_sum: '0'
+    rank_count: '0'
+  lpcms_article_3:
+    id: '4'
+    titre: 'Deuxième article'
+    contenu: 'article2'
+    droit: '2'
+    date_creation: '2010-12-31 00:00:00'
+    cree_par: '0'
+    derniere_modif: '2010-12-31 00:00:00'
+    der_modif_par: '0'
+    derniere_visualisation: '2016-04-22 12:17:51'
+    der_visualise_par: ~
+    nb_vu: '0'
+    date_publication: '2016-04-22 12:17:51'
+    meta: ~
+    rank_sum: '0'
+    rank_count: '0'
+  lpcms_article_4:
+    id: '5'
+    titre: 'Troisième article'
+    contenu: 'article3'
+    droit: '2'
+    date_creation: '2010-12-31 00:00:00'
+    cree_par: '0'
+    derniere_modif: '2010-12-31 00:00:00'
+    der_modif_par: '0'
+    derniere_visualisation: '2016-04-22 12:17:51'
+    der_visualise_par: ~
+    nb_vu: '0'
+    date_publication: '2016-04-22 12:17:51'
+    meta: ~
+    rank_sum: '0'
+    rank_count: '0'

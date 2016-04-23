@@ -1,5 +1,5 @@
 lpcms_role: 
-  admin: 1
-  redacteur: 2
-  moderateur: 3
-  user: 4
+  lpcms_role_0: 1
+  lpcms_role_1: 2
+  lpcms_role_2: 3
+  lpcms_role_3: 4

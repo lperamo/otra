@@ -11,7 +11,7 @@ require BASE_PATH . 'lib/myLibs/core/Colors.php';
 
 // If we didn't specify any command, list the available commands
 if ($argc < 2) {
-  lib\myLibs\core\Tasks_Manager::showCommands('No specified commands ! ');
+  lib\myLibs\core\Tasks_Manager::showCommands('No specified commands ! We then show the available commands ... ');
   die;
 }
 

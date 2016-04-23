@@ -20,7 +20,7 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
 {
   $fp = fopen($outputFile . '.php', 'w');
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-  // fwrite($fp, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
+//  fwrite($fp, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
   fwrite($fp, file_get_contents($fileToCompress));
   fclose($fp);
   unlink($fileToCompress);
@@ -35,21 +35,20 @@ function contentToFile(string $content, string $outputFile)
 
   // Test each part of the process in order to precisely detect where there is an error.
   if (hasSyntaxErrors($tempFile, true))
-    die(PHP_EOL . PHP_EOL . lightRedText('Syntax errors when putting content in ' . substr($tempFile, strlen(BASE_PATH)) . '!' . PHP_EOL));
+    die(PHP_EOL . PHP_EOL . lightRedText('[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]' . PHP_EOL));
 
   $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
-  $endText = ' syntax errors in ' . $smallOutputFile . endColor() . PHP_EOL;
 
-  echo PHP_EOL, lightGreen(), 'No \'classic\'', $endText;
+  echo lightGreen(), '[CLASSIC SYNTAX]';
 
   $fp = fopen($outputFile, 'w');
   fwrite($fp, $content);
   fclose($fp);
 
   if (hasSyntaxErrors($outputFile, true))
-    die(PHP_EOL . PHP_EOL . lightRedText('Syntax errors when putting content in the final file ' . $smallOutputFile . '!' . PHP_EOL));
+    die(PHP_EOL . PHP_EOL . lightRedText('[NAMESPACES ERRORS in ' . $smallOutputFile . '!]' . PHP_EOL));
 
-  echo lightGreen(), 'No namespaces', $endText;
+  echo lightGreen(), '[NAMESPACES]';
 }
 
 /**
@@ -62,7 +61,7 @@ function contentToFile(string $content, string $outputFile)
  * @param bool|int $result        Numbers of results if already made
  * @param array    $matches       Results of the search of included files (via require) if already made
  *
- * @return bool True we break, true we continue
+ * @return bool False we break, true we continue
  */
 function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, array &$filesToConcat, &$verbose, &$pattern, $result = [], array $matches = [])
 {
@@ -94,11 +93,11 @@ function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, 
 
     $contentToAdd = file_get_contents($file);
 
-    if(13 == $inc)
-    {
-      file_put_contents('../logs/temporary file.php', $tempContent);
-      die;
-    }
+//    if(13 === $inc)
+//    {
+//      file_put_contents('../logs/temporary file.php', $tempContent);
+//      die;
+//    }
 
     // If we have a require statement, we replace it by the file content
     if(false === strpos($match, 'extends'))
@@ -107,9 +106,10 @@ function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, 
 
       if ($posRequire) // why is this condition necessary ?
       {
-        if(false !== strpos($match, 'self::layout'))
+        if(false !== strpos($match, 'self:layout'))
         {
-          die('coucou');
+//          die('coucouss');
+          file_put_contents('../logs/temporary file.php', $tempContent);
           $tempContent = substr_replace($tempContent, ' ?>' . $contentToAdd . '<? ', $posRequire, strlen($match));
         } else
         {
@@ -142,10 +142,15 @@ function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, 
             } else
               $tempContent = $contentToAdd . $tempContent;
           }
+
+          if(false !== strpos($match, 'self::layout'))
+          file_put_contents('../logs/temporary file.php', $tempContent);
         }
       }
     } else // otherwise we just put the file content before
+    {
       $tempContent = $contentToAdd . $tempContent;
+    }
 
     if($verbose)
     {
@@ -163,7 +168,7 @@ function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, 
         die;
       }
 
-      echo lightGreen(), ' No syntax errors.', endColor(), PHP_EOL;
+      echo lightGreen(), ' [SYNTAX ERRORS]', endColor(), PHP_EOL;
 
       echo substr($file, strlen(BASE_PATH)), ' included.', PHP_EOL;
     }
@@ -226,7 +231,7 @@ function fixUses($content, $verbose, $filesToConcat = [])
 
       --$nbHtmlsToInclude;
       $pattern = '@\s{0,}
-        (?:self::layout();\s{0,})|
+        (?:self::layout\(\);\s{0,})|
         (?:require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:extends\s[^\{]{1,})\s{0,}
         @mx';
@@ -257,10 +262,51 @@ function fixUses($content, $verbose, $filesToConcat = [])
     $content = $finalContent;
   }
 
-  $splits = explode(',', $content);
-  $contents = [];
+  echo PHP_EOL, cyanText('Static direct calls'), PHP_EOL, cyanText('-------------------'), PHP_EOL, PHP_EOL;
+  /**
+   * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
+   */
+  preg_match_all('@(\\\\){0,1}(([\\w]{1,}\\\\){1,})((\\w{1,})[:]{2}\\w{1,}\\()@', $content, $matches, PREG_OFFSET_CAPTURE);
 
-  // We retrieves the "uses" (namespaces) and we use them to replace classes calls
+  $temp = '';
+  $newFilesUsed = [];
+  $lengthAdjustment = 0;
+
+//  var_dump($matches);die;
+
+  foreach($matches[0] as $key => $match)
+  {
+    $simpleFile = $matches[5][$key][0];
+    $newFile = $matches[2][$key][0] . $simpleFile . '.php';
+
+    // If we haven't already loaded that file and the class doesn't exist before this process, we add its content into $content
+    if(! in_array($newFile, $newFilesUsed)
+      && false === strpos($content, 'class ' . $simpleFile)
+      && false === strpos($temp, 'class ' . $simpleFile))
+    {
+      $newFilesUsed[] = $newFile;
+      $temp .= file_get_contents(BASE_PATH . $newFile);
+      echo $newFile . greenText(' [LOADED]') . PHP_EOL;
+    }
+
+    // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
+    $length = strlen($match[0]);
+
+    $content = substr_replace($content,
+      $matches[4][$key][0],
+      $match[1] - $lengthAdjustment,
+      $length
+    );
+
+    // We calculate the new offset for the offset !
+    $lengthAdjustment += $length - strlen($matches[4][$key][0]);
+  }
+
+  $content = $temp . $content;
+
+  /**
+   * We retrieves the "uses" (namespaces) and we use them to replace classes calls
+   */
   preg_match_all('@^\s{0,}use[^;]{1,};\s{0,}$@m', $content, $matches);
 
   foreach ($matches[0] as $match)
@@ -290,22 +336,33 @@ function fixUses($content, $verbose, $filesToConcat = [])
     }
   }
 
-  // We suppress namespaces
+  /** We remove all the declare strict types declarations */
+  $content = str_replace('declare(strict_types=1);', '', $content);
+
+  /** We suppress namespaces */
   $content = preg_replace(
     '@\s*namespace [^;]{1,};\s*@',
     '',
     preg_replace('@\?>\s*<\?@', '', $content)
   );
 
- /* We add the namespace cache\php at the beginning of the file
-    then we delete final ... partial ... use statements,
-    then we change things like \blabla\blabla\blabla::trial() by blabla::trial()
+//  $content = preg_replace(
+//    '@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@',
+//    '$4',
+//    $content
+//  );
+
+  /* We add the namespace cache\php at the beginning of the file
+    then we delete final ... partial ... use statements
  */
 
-  return preg_replace('@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@', '$4', str_replace('use ', '', ('<?' == substr($content, 0, 2))
-    ? '<? namespace cache\php;' . substr($content, 2)
-    : '<? namespace cache\php;?>' . $content
-  ));
+  return str_replace(
+    'use ', '', ('<?' == substr($content, 0, 2))
+    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php;' . substr($content, 2)
+    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php;?>' . $content
+  );
+
+
 
   /*return str_replace('use ', '', ('<?' == substr($content, 0, 2))
     ? '<? namespace cache\php;' . substr($content, 2)

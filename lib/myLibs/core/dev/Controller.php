@@ -63,12 +63,15 @@ class Controller extends MasterController
    */
   private function buildCachedFile(string $filename, array $variables, string $cachedFile = null, bool $layout = true) : string
   {
+    // We log the action variables into logs/trace.txt
+    Logger::logTo(print_r($variables, true), 'trace');
     extract($variables);
 
     ob_start();
     require $filename;
     $content = ($layout && !parent::$layoutOnce) ? parent::addLayout(ob_get_clean()) : ob_get_clean();
 
+    // We log the template file name into logs/trace.txt
     Logger::logTo("\t" . 'File : ' . $filename, 'trace');
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)

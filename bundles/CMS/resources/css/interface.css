@@ -65,7 +65,7 @@ body {
 
 table {
 	/*background: linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 27%) no-repeat fixed 0 0 transparent;*/
-	border: 1px solid #CCF;
+	border: 1px solid #f1D7A2;
 	border-spacing: 0;
 	border-radius:10px;
 	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.47);
@@ -83,7 +83,7 @@ table {
   tr:last-child>td { border-bottom: 0 }
 
   td, th{
-  	border: 1px solid #CCF;
+  	border: 1px solid #f1D7A2;
   	border-width: 0 0 0 1px;
   	padding:3px 6px;
     transition: background .3s, box-shadow .3s

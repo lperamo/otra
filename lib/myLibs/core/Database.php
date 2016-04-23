@@ -148,7 +148,7 @@ class Database
     }
 
   /** TODO Find a solution on how to inform the final user that there is problems or no via the mysql command. */
-    echo 'Database created.', PHP_EOL;
+    echo lightGreen(), 'Database ', lightCyanText($databaseName), lightGreenText(' created.'), PHP_EOL;
   }
 
   /**
@@ -231,7 +231,7 @@ class Database
    *
    * @param string $databaseName   The database name to use
    * @param string $table          The table name relating to the fixture to create
-   * @param string $file           The fixture file to parse
+   * @param array  $fixturesData   The table fixtures
    * @param array  $tableData      The table data form the database schema in order to have the properties type
    * @param array  $sortedTables   Final sorted tables array
    * @param array  $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
@@ -240,20 +240,30 @@ class Database
   public static function createFixture(
       string $databaseName,
       string $table,
-      string $file,
+      array $fixturesData,
       array $tableData,
       array $sortedTables,
       array &$fixturesMemory,
       string $createdFile
   ) {
-    // Gets the fixture data
-    $fixturesData = Yaml::parse(file_get_contents($file));
-
     $first = true;
     $ymlIdentifiers = $table . ': ' . PHP_EOL;
     $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
     $localMemory = $values = $properties = [];
     $theProperties = '';
+
+    $i = 1; // The database ids begin to 1 by default
+
+    foreach(array_keys($fixturesData) as &$fixtureName)
+    {
+      $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $i++ . PHP_EOL;
+    }
+
+    $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w');
+    fwrite($fp, $ymlIdentifiers);
+    fclose($fp);
+
+    echo 'Data  ', lightGreenText('[YML IDENTIFIERS] ');
 
     /**
      * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
@@ -272,23 +282,22 @@ class Database
     }
 
     /**
-     * THE REAL WORK BEGINS HERE.
+     * THE REAL, COMPLICATED, WORK BEGINS HERE.
      */
 
     $i = 1; // The database ids begin to 1 by default
 
-    foreach($fixturesData[$table] as $fixtureName => $properties)
+    foreach($fixturesData as $fixtureName => $properties)
     {
-      $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $i++ . PHP_EOL;
+      $i++;
       $localMemory[$fixtureName] = $i;
       $theValues = '';
 
       foreach ($properties as $property => $value)
       {
-        if(in_array($property,
-          $sortedTables) && !isset($tableData['relations'][$property]))
+        if(in_array($property, $sortedTables) && !isset($tableData['relations'][$property]))
         {
-          echo 'It lacks a relation to `' . $table . '`` for a `' . $property . '`` like property';
+          echo 'It lacks a relation to the table `' . $table . '` for a `' . $property . '` like property';
           exit(1);
         }
 
@@ -302,9 +311,9 @@ class Database
 
         $properties [] = $property;
 
-        if (!in_array($property, $sortedTables))
+        if (false === in_array($property, $sortedTables))
         {
-          if(is_bool($value))
+          if(true === is_bool($value))
               $value = $value ? 1 : 0;
           else if(is_string($value) && 'int' == $tableData['columns'][$property]['type'])
             $value = $localMemory[$value];
@@ -315,12 +324,14 @@ class Database
               ? '\'' . addslashes($value) . '\', '
               : $value . ', ');
         } else
+        {
           $theValues .= $fixturesMemory[$property][$value] . ', ';
+        }
 
         $values [] = array($fixtureName => $value);
       }
 
-      if ($first)
+      if (true === $first)
         $tableSql .= substr($theProperties, 0, -2) . ') VALUES';
 
       $tableSql .= '(' . substr($theValues, 0, -2) . '),';
@@ -330,15 +341,12 @@ class Database
 
     $tableSql  = substr($tableSql, 0, -1) . ';';
 
+    // We create sql file that can generate the fixtures in the BDD
     $fp = fopen($createdFile, 'x' );
     fwrite($fp, $tableSql);
     fclose($fp);
 
-    echo lightGreenText('Fixture file created : '), lightCyanText($databaseName . '_' . $table . '.sql'), PHP_EOL;
-
-    $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml', 'w' );
-    fwrite($fp, $ymlIdentifiers);
-    fclose($fp);
+    echo lightGreenText('[SQL CREATION] ');
   }
 
   /**
@@ -362,7 +370,7 @@ class Database
 
       if(false === file_exists(self::$tablesOrderFile))
       {
-        echo cyan() , 'You must use the database generation task before using the fixtures !' , endColor();
+        echo brownText('You must use the database generation task before using the fixtures !');
         exit(1);
       }
 
@@ -390,6 +398,7 @@ class Database
         if ($file != '.' && $file != '..' && $file != '')
         {
           $file = self::$pathYmlFixtures . $file;
+
           // If it's not a folder (for later if we want to add some "complex" folder management ^^)
           if (!is_dir($file))
           {
@@ -435,7 +444,17 @@ class Database
               exit(0);
             }
 
-            self::createFixture($databaseName, $table, $file, $schema[$table], $tablesOrder, $fixturesMemory, $createdFile);
+            // Gets the fixture data
+            $fixturesData = Yaml::parse(file_get_contents($file));
+
+            if(false === isset($fixturesData[$table]))
+            {
+              echo brownText('No fixtures available for this table \'' . $table . '\'.'), PHP_EOL;
+
+              break;
+            }
+
+            self::createFixture($databaseName, $table, $fixturesData[$table], $schema[$table], $tablesOrder, $fixturesMemory, $createdFile);
             self::executeFixture($databaseName, $table);
             break;
           }
@@ -474,6 +493,7 @@ class Database
   public static function executeFixture(string $databaseName, string $table)
   {
     Script_Functions::cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName .'_' . $table . '.sql "', VERBOSE);
+    echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
   }
 
   /**
@@ -490,13 +510,13 @@ class Database
     if (false === file_exists($pathAndFile))
     {
       exec('echo DROP DATABASE IF EXISTS ' . $databaseName . '; > ' . $pathAndFile);
-      echo '\'Drop database\' file created.' , PHP_EOL;
+      echo lightGreenText('Drop database sql file created : '), lightCyanText($file), PHP_EOL;
     }
 
     // And drops the database
     Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
 
-    echo 'Database ', lightCyanText($databaseName), ' dropped.', PHP_EOL;
+    echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
   }
 
   /**
@@ -681,19 +701,17 @@ class Database
       fwrite($fp, $tablesOrder);
       fclose($fp);
 
-      echo '\'Tables order\' file created.', PHP_EOL;
+      echo lightGreenText('\'Tables order\' sql file created : '), lightCyanText(basename(self::$tablesOrderFile)), PHP_EOL;
     }
 
     /** DROP TABLE MANAGEMENT */
-
-
 
     // We create the SQL schema file with the generated content.
     $fp = fopen($dbFile, 'w');
     fwrite($fp, $sql);
     fclose($fp);
 
-    echo '\'SQL schema\' file created.', PHP_EOL;
+    echo lightGreenText('SQL schema file created.'), PHP_EOL;
   }
 
   /**
@@ -707,6 +725,8 @@ class Database
     $file = 'truncate/' . $databaseName . '_' . $tableName . '.sql';
     $pathAndFile = self::$pathSql . $file;
 
+    echo lightCyanText($databaseName . '.' . $tableName), PHP_EOL, 'Table ';
+
     // If the file that truncates the table doesn't exist yet...creates it.
     if (false === file_exists($pathAndFile))
     {
@@ -716,12 +736,12 @@ class Database
         'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
         'SET FOREIGN_KEY_CHECKS = 1;');
       fclose($fp);
-      echo '\'Truncate table\' file created.', PHP_EOL;
+      echo greenText('[SQL CREATION] ');
     }
 
     // And truncates the table
     Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
-    echo green(), 'Table ', lightCyanText($tableName), green(), ' truncated.', endColor(), PHP_EOL;
+    echo greenText('[TRUNCATED]'), PHP_EOL;
   }
 
   /**
@@ -755,9 +775,6 @@ class Database
    */
   public static function importSchema(string $database = null, string $confToUse = null)
   {
-    error_reporting(0);
-
-    require(__DIR__ . '/../../../lib/myLibs/core/Debug_Tools.php');
     if(null == $confToUse)
       $confToUse = key(All_Config::$dbConnections);
 
@@ -832,5 +849,147 @@ class Database
     fwrite($fp, $content);
     fclose($fp);
   }
+
+  /**
+   * Creates the database schema from a database.
+   * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
+   *
+   * @param string $database  (optional)
+   * @param string $confToUse (optional)
+   *
+   * @return bool
+   */
+  public static function importFixtures(string $database = null, string $confToUse = null)
+  {
+    if(null == $confToUse)
+      $confToUse = key(All_Config::$dbConnections);
+
+    if(null == $database)
+      $database = All_Config::$dbConnections[$confToUse]['db'];
+
+    Session::set('db', $confToUse);
+    $db = Sql::getDB();
+
+    // Checks if the database concerned exists
+    $schemaInfo = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
+    if(false === in_array($database, $schemaInfo))
+    {
+      echo 'This database doesn\'t exist.';
+      exit(1);
+    }
+
+    if(false === file_exists(self::$tablesOrderFile))
+    {
+      echo brownText('You must create the tables order file (' . self::$tablesOrderFile .') before using this task !');
+      exit(1);
+    }
+
+    // Everything is in order, we can clean the old files before the process
+    array_map('unlink', glob(self::$pathYmlFixtures . '*.yml'));
+
+    /** REAL BEGINNING OF THE TASK */
+
+    $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
+    $foreignKeysMemory = [];
+
+    foreach($tablesOrder
+      as &$table)
+    {
+      $content = $table . ': ' . PHP_EOL;
+      $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
+
+      // If there are columns ...
+      if (0 < count($cols))
+      {
+        $sql = 'SELECT ';
+
+        foreach ($cols as &$col)
+        {
+          $sql .= '`' . $col['COLUMN_NAME'] . '`, ';
+        }
+
+        $rows = $db->values($db->query(substr($sql, 0, -2) . ' FROM ' . $database . '.' . $table));
+
+        // If we have results, there is a real interest to create the fixtures (Why create empty files ?!)
+        if (0 < count($rows))
+        {
+          $foreignKeysMemory[$table] = [];
+
+          $constraints = $db->values($db->query('SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = \'' . $database . '\'
+              AND TABLE_NAME = \'' . $table . '\'
+              AND CONSTRAINT_NAME <> \'PRIMARY\'')
+          );
+
+          $foreignConstraintsCount = count($constraints);
+
+          foreach ($rows as $key => &$row)
+          {
+            $fixtureId = $table . '_' . $key;
+            $content .= '  ' . $fixtureId . ':' . PHP_EOL;
+
+            foreach ($row as $key => &$colOfRow)
+            {
+              $content .= '    ';
+              // We check if the column has a foreign key assigned or not
+              if (0 < $foreignConstraintsCount)
+              {
+                $arrayKeyFromConstraints = array_search(
+                  $key,
+                  array_column($constraints, 'COLUMN_NAME')
+                );
+
+                if (null !== $colOfRow && $key === $constraints[$arrayKeyFromConstraints]['COLUMN_NAME'])
+                {
+                  $content .= $constraints[$arrayKeyFromConstraints]['REFERENCED_TABLE_NAME'] . ': ' .
+                    $foreignKeysMemory[$constraints[$arrayKeyFromConstraints]['REFERENCED_TABLE_NAME']][(int) $colOfRow] . PHP_EOL;
+                  continue;
+                }
+              }
+
+              /** We check if the column is a primary key and, if it's the case, we put the name of the actual table
+              /* and we store the association for later in order to manage the foreign key associations
+              /****************/
+              if('PRI' === $cols[array_search(
+                  $key,
+                  array_column($cols, 'COLUMN_NAME')
+                )]['COLUMN_KEY'])
+              {
+                $foreignKeysMemory[$table][$colOfRow] = $fixtureId;
+//                if($table === )
+                $content .= $key; // $table
+              } else // if it's a classic column...
+                $content .= $key;
+
+              $content .= ': ';
+
+              if (null === $colOfRow)
+                $content .= '~';
+              else if(is_string($colOfRow))
+              {
+                // For some obscure reasons, PHP_EOL cannot work in this case as it is always returning \n in my tests...
+                if (false === strpos($colOfRow, "\n"))
+                  $content .= '\'' . str_replace('\'', '\'\'', $colOfRow) . '\'';
+                else // Multi lines text management
+                  $content .= '|' . PHP_EOL . '      ' . str_replace("\n", "\n      ", $colOfRow);
+              }else
+                $content .= $colOfRow;
+
+              $content .= PHP_EOL;
+            }
+          }
+        }
+      }
+
+      // We can now create the fixture file...
+      $fp = fopen(self::$pathYmlFixtures . $table . '.yml', 'w' );
+      fwrite($fp, $content);
+      fclose($fp);
+
+      echo green(), 'File ', cyan(), $table . '.yml', greenText(' created'), PHP_EOL;
+    }
+  }
 }
+
 ?>

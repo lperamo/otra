@@ -30,7 +30,7 @@ class articleController extends Controller
       // Retrieving the modules content
       $query = $db->query('SELECT
           m.id, type, position, m.ordre as m_ordre, m.droit as m_droit, m.contenu as m_contenu,
-          bemm.fk_id_module as em_fk_id_module, bemm.ordre as em_ordre,
+          bemm.fk_id_module as em_fk_id_module, bemm.order as em_ordre,
           a.id, titre, a.contenu as a_contenu, a.droit as a_droit, date_creation, cree_par,
             derniere_modif, der_modif_par, derniere_visualisation, der_visualise_par, nb_vu, date_publication,
             meta, rank_sum, rank_count,

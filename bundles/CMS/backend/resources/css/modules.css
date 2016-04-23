@@ -4,7 +4,6 @@
 #table0 td:nth-child(5), #table0 th:nth-child(5) { text-align: right; width:50px }
 #table0 td:nth-child(7), #table0 th:nth-child(7) { width:121px }
 tar { text-align: right }
-#table0 td, #table0 th { border-width: 0 0 1px 0 }
 
 .seeDetails
 {

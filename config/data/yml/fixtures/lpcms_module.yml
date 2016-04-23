@@ -1,0 +1,57 @@
+lpcms_module: 
+  lpcms_module_0:
+    id: '1'
+    type: '2'
+    position: '0'
+    ordre: '0'
+    droit: '2'
+    contenu: 'Menu Horizontal'
+  lpcms_module_1:
+    id: '2'
+    type: '2'
+    position: '0'
+    ordre: '1'
+    droit: '2'
+    contenu: 'Autre module horizontal'
+  lpcms_module_2:
+    id: '3'
+    type: '1'
+    position: '1'
+    ordre: '0'
+    droit: '2'
+    contenu: 'Documents'
+  lpcms_module_3:
+    id: '4'
+    type: '1'
+    position: '1'
+    ordre: '1'
+    droit: '2'
+    contenu: 'Outils'
+  lpcms_module_4:
+    id: '5'
+    type: '0'
+    position: '1'
+    ordre: '2'
+    droit: '2'
+    contenu: 'Connexion'
+  lpcms_module_5:
+    id: '6'
+    type: '3'
+    position: '2'
+    ordre: '0'
+    droit: '2'
+    contenu: ~
+  lpcms_module_6:
+    id: '7'
+    type: '3'
+    position: '2'
+    ordre: '1'
+    droit: '2'
+    contenu: ~
+  lpcms_module_7:
+    id: '8'
+    type: '3'
+    position: '2'
+    ordre: '2'
+    droit: '2'
+    contenu: ~

@@ -16,7 +16,7 @@ if(false !== ($posDot = strpos($uri, '.')))
   // Comment it for debugging purposes
   if(isset($_SERVER['HTTP_REFERER']))
   {
-    if('gz' == $ext)
+    if('gz' === $ext)
     {
       if(false !== strpos($uri, 'css'))
         header('Content-type:  text/css');
@@ -44,14 +44,15 @@ if(false !== ($posDot = strpos($uri, '.')))
 
 define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
+$debugKey = 'debuglp_';
 session_start();
 
-if ((isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_']) || isset($_GET['debuglp_']) && 'Dev' == $_GET['debuglp_'])
+if ((isset($_SESSION[$debugKey]) && 'Dev' == $_SESSION[$debugKey]) || isset($_GET[$debugKey]) && 'Dev' == $_GET[$debugKey])
   require BASE_PATH . 'lib/myLibs/core/Bootstrap_Dev.php';
 else // mode Prod
 {
   // We ensure that the debug bar is no more active
-  if(isset($_SESSION['debuglp_'])) unset($_SESSION['debuglp_']);
+  if(isset($_SESSION[$debugKey])) unset($_SESSION[$debugKey]);
 
   require BASE_PATH . 'cache/php/RouteManagement.php';
 
@@ -67,10 +68,23 @@ else // mode Prod
       echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . 'v1che') . '.gz'); // version to change
       exit;
     }
+
     define('XMODE', 'prod');
 
     function t($texte){ echo $texte; }
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+    ini_set('display_errors', 1);
+    ini_set('html_errors', 1);
+
+    // We load the class mapping
+    require BASE_PATH . 'cache/php/ClassMap.php';
+    spl_autoload_register(function($className) use($classMap)
+    {
+      if(!isset($classMap[$className]))
+        echo 'Path not found for the class name : ', $className, '<BR>';
+      else
+        require $classMap[$className];
+    });
 
     // Init' the database and loads the found route
     require BASE_PATH . 'cache/php/' . $route[0] . '.php';

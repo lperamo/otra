@@ -33,11 +33,21 @@ if(isset($argv[4]))
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
+$key = 0;
 foreach(array_keys($routes) as &$route)
 {
-  if(isset($routes[$route]['resources']['template']))
-    echo cyan(), 'No micro-bootstrap to generate for this file ! (Generated template instead)', endColor(), PHP_EOL, PHP_EOL;
-  else
+  if ('exception' === $route)
+    continue;
+
+  if (0 !== $key)
+    echo PHP_EOL;
+
+  ++$key;
+
+  if (isset($routes[$route]['resources']['template']))
+  {
+    echo white(), $route, cyanText(str_pad('[NO MICRO BOOTSTRAP => TEMPLATE GENERATED]', 66 - strlen($route), ' ', STR_PAD_LEFT));
+  } else
     passthru('php ' . BASE_PATH . 'lib/myLibs/core/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
 die;

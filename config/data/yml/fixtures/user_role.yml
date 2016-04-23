@@ -1,7 +1,0 @@
-lpcms_user_role:
-  gmail_assoc:
-    lpcms_user: gmail
-    lpcms_role: admin
-  hotmail_assoc:
-    lpcms_user: hotmail
-    lpcms_role: user

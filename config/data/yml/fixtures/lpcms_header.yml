@@ -1,0 +1,5 @@
+lpcms_header: 
+  lpcms_header_0:
+    id_header: '1'
+    fichierImage: 'header.jpg'
+    titre: 'Erevent'

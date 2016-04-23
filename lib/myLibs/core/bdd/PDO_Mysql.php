@@ -197,12 +197,19 @@ class PDO_Mysql
   /**
    * Get the ID generated in the last query
    *
+   * @param string $sequenceName
+   *
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId($string = null) { return SQL::$_CURRENT_CONN->lastInsertId($string); }
+  public static function lastInsertedId(string $sequenceName = null) { return SQL::$_CURRENT_CONN->lastInsertId($sequenceName); }
 
-  public static function quote($string)
+  /**
+   * @param string $string
+   *
+   * @return string
+   */
+  public static function quote(string $string)
   {
     return trim(SQL::$_CURRENT_CONN->quote($string), '\'');
   }

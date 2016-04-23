@@ -8,6 +8,7 @@ namespace lib\myLibs\core;
 
 use lib\myLibs\core\Controller,
     config\Routes;
+//use lib\myLibs\core\Logger;
 
 class Router
 {
@@ -25,7 +26,11 @@ class Router
 		if(!is_array($params))
 			$params = [$params];
 
-		extract($chunks = array_combine(['pattern', 'bundle', 'module', 'controller', 'action'], Routes::$_[$route]['chunks']));
+		// We ensure that our input array really contains 5 parameters in order to make array_combine works
+		extract($chunks = array_combine(
+			['pattern', 'bundle', 'module', 'controller', 'action'],
+			array_pad(Routes::$_[$route]['chunks'], 5, null)
+		));
 		$chunks['route'] = $route;
 		$chunks['css'] = $chunks['js'] = false;
 
@@ -36,6 +41,11 @@ class Router
 			$chunks['css'] = (isset($resources['bundle_css']) || isset($resources['module_css']) || isset($resources['_css']));
 		}
 
+	/*	if(isset(Routes::$_[$route]['core']))
+		{
+      Logger::logTo($route, 'trace');
+      Logger::logTo(debug_print_backtrace(), 'trace');
+		};*/
     $controller = ('prod' == XMODE)
      	? 'cache\\php\\' . $controller . 'Controller'
 	    : (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
