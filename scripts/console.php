@@ -3,11 +3,11 @@
 declare(strict_types=1);
 define('_DIR_', str_replace('\\', '/', __DIR__));  // Fixes windows awful __DIR__
 define('XMODE', 'dev');
-define('ROOTPATH', _DIR_ . '/../'); // CHECK ALL OCCURRENCES OF THIS AND SUPPRESS THEM
 define('BASE_PATH', substr(_DIR_, 0, -7)); // Finit avec /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/core/');
 
-require BASE_PATH . 'lib/myLibs/core/console/TasksManager.php';
-require BASE_PATH . 'lib/myLibs/core/console/Colors.php';
+require CORE_PATH . 'console/TasksManager.php';
+require CORE_PATH . 'console/Colors.php';
 
 // If we didn't specify any command, list the available commands
 if ($argc < 2) {
@@ -16,10 +16,10 @@ if ($argc < 2) {
 }
 
 // if the command exists, runs it
-if (method_exists('lib\myLibs\core\Tasks', $argv[1]) && method_exists('lib\myLibs\core\Tasks', $argv[1] . 'Desc'))
+if (method_exists('lib\myLibs\core\console\Tasks', $argv[1]) && method_exists('lib\myLibs\core\console\Tasks', $argv[1] . 'Desc'))
 {
   $methodDesc = $argv[1] . 'Desc';
-  $paramsDesc = lib\myLibs\core\Tasks::$methodDesc();
+  $paramsDesc = lib\myLibs\core\console\Tasks::$methodDesc();
 
     // We test if the number of parameters is correct
   $total = $required = 0;

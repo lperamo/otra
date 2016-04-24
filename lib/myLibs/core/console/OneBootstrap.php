@@ -3,7 +3,7 @@ $verbose = $argv[1];
 $route = $argv[2];
 
 define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, -15)); // Fixes windows awful __DIR__, BASE_PATH ends with /
-require BASE_PATH . 'lib/myLibs/core/console/Colors.php';
+require CORE_PATH . 'console/Colors.php';
 
 echo white(), $route, endColor();
 
@@ -11,7 +11,7 @@ define('XMODE', 'dev');
 
 require BASE_PATH . 'config/Routes.php';
 require BASE_PATH . 'cache/php/ClassMap.php';
-require BASE_PATH . 'lib/myLibs/core/Router.php';
+require CORE_PATH . 'Router.php';
 
 $params = \config\Routes::$_[$route];
 
@@ -35,8 +35,8 @@ spl_autoload_register(function($className) use($classMap)
 require BASE_PATH . 'config/All_Config.php';
 
 // Init require section
-require BASE_PATH . 'lib/myLibs/core/Session.php';
-require BASE_PATH . 'lib/myLibs/core/bdd/Sql.php';
+require CORE_PATH . 'Session.php';
+require CORE_PATH . 'bdd/Sql.php';
 $defaultRoute = \config\Routes::$default['bundle'];
 require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
 call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
@@ -111,7 +111,7 @@ $filesToConcat[] = BASE_PATH . 'lib\\myLibs\\core\\Lionel_Exception.php';
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
-require BASE_PATH . 'lib/myLibs/core/console/TaskFileOperation.php';
+require CORE_PATH . 'console/TaskFileOperation.php';
 ksort($filesToConcat);
 contentToFile(fixUses($content, $verbose, $filesToConcat), $file_);
 

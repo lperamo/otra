@@ -8,7 +8,7 @@ namespace lib\myLibs\core\console;
 use lib\myLibs\core\console\Database,
     config\All_Config;
 
-require BASE_PATH . 'lib\myLibs\core\console\ConsoleTools.php';
+require CORE_PATH . 'console\ConsoleTools.php';
 
 class Tasks
 {
@@ -25,7 +25,7 @@ class Tasks
 
   public static function createBundle(array $argv)
   {
-    require BASE_PATH . 'lib/myLibs/core/console/CreateBundle.php';
+    require CORE_PATH . 'console/CreateBundle.php';
   }
 
   public static function createBundleDesc(): array {
@@ -91,7 +91,7 @@ class Tasks
     ];
   }
 
-  public static function genAssets(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/GenAssets.php'; }
+  public static function genAssets(array $argv) { require CORE_PATH . 'console/GenAssets.php'; }
 
   public static function genAssetsDesc() : array
   {
@@ -107,6 +107,24 @@ class Tasks
       ['optional', 'optional']
     ];
   }
+
+  public static function genBootstrap(array $argv) { require CORE_PATH . 'console/GenBootstrap.php'; }
+
+  public static function genBootstrapDesc() : array
+  {
+    return [
+      'Launch the genClassMap command and generates a file that contains all the necessary php files.',
+      [
+        'genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.',
+        'verbose' => 'If set to 1, we print all the warnings when the task fails.',
+        'route' => 'The route for which you want to generate the micro bootstrap.'
+      ],
+      ['optional', 'optional', 'optional']
+    ];
+  }
+
+  public static function genClassMap(){ require CORE_PATH . 'console/GenClassMap.php'; }
+  public static function genClassMapDesc() : array { return ['Generates a class mapping file that will be used to replace the autoloading method.']; }
 
   /**
    * Executes the sql script
@@ -217,7 +235,7 @@ class Tasks
     ];
   }
 
-  public static function routes(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/Routes.php'; }
+  public static function routes(array $argv) { require CORE_PATH . 'console/Routes.php'; }
 
   public static function routesDesc() : array
   {
@@ -228,23 +246,11 @@ class Tasks
     ];
   }
 
-  public static function genClassMap(){ require BASE_PATH . 'lib/myLibs/core/console/GenClassMap.php'; }
-  public static function genClassMapDesc() : array { return ['Generates a class mapping file that will be used to replace the autoloading method.']; }
-
-  public static function genBootstrap(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/GenBootstrap.php'; }
-
-  public static function genBootstrapDesc() : array
-  {
-    return [
-      'Launch the genClassMap command and generates a file that contains all the necessary php files.',
-      [
-        'genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.',
-        'verbose' => 'If set to 1, we print all the warnings when the task fails.',
-        'route' => 'The route for which you want to generate the micro bootstrap.'
-      ],
-      ['optional', 'optional', 'optional']
-    ];
+  public static function version() {
+    echo file_get_contents('LICENSE2.txt'), endColor(), PHP_EOL, brownText('Version 1.0 ALPHA.');
   }
+
+  public static function versionDesc() : array { return ['Shows the framework version.']; }
 }
 ?>
 

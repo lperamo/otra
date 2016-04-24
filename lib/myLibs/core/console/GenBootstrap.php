@@ -2,7 +2,7 @@
 // We generate the class mapping file if we need it.
 if(!(isset($argv[2]) && '0' == $argv[2]))
 {
-  require(BASE_PATH . 'lib/myLibs/core/console/GenClassMap.php');
+  require(CORE_PATH . 'console/GenClassMap.php');
   echo PHP_EOL;
   require BASE_PATH . '/cache/php/ClassMap.php'; // on recharge la classmap que si elle a été modifiée.
 }
@@ -48,7 +48,7 @@ foreach(array_keys($routes) as &$route)
   {
     echo white(), $route, cyanText(str_pad('[NO MICRO BOOTSTRAP => TEMPLATE GENERATED]', 66 - strlen($route), ' ', STR_PAD_LEFT));
   } else
-    passthru('php ' . BASE_PATH . 'lib/myLibs/core/console/OneBootstrap.php ' . $verbose . ' ' . $route);
+    passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
 die;
 // Final specific management for routes files
@@ -56,7 +56,7 @@ echo 'Create the specific routes management file... ';
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
-require BASE_PATH . 'lib/myLibs/core/console/TaskFileOperation.php';
+require CORE_PATH . 'console/TaskFileOperation.php';
 
 contentToFile(
   fixUses(
