@@ -83,10 +83,10 @@ class Database
       mkdir(self::$fixtureFolder, 0777, true);
 
     // If we haven't store the database identifiers yet, store them ... only asking for password.
-    if('' === Script_Functions::cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
+    if('' === cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
     {
       echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
-      Script_Functions::cli('mysql_config_editor set --login-path=' . self::$frameworkName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
+      cli('mysql_config_editor set --login-path=' . self::$frameworkName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
     }
   }
 
@@ -141,10 +141,10 @@ class Database
     {
       self::dropDatabase($databaseName);
       self::generateSqlSchema($databaseName, true);
-      Script_Functions::cli(self::$initCommand . self::$databaseFile . '_force.sql "', VERBOSE);
+      cli(self::$initCommand . self::$databaseFile . '_force.sql "', VERBOSE);
     } else {
       self::generateSqlSchema($databaseName, false);
-      Script_Functions::cli(self::$initCommand . self::$databaseFile . '.sql "', VERBOSE);
+      cli(self::$initCommand . self::$databaseFile . '.sql "', VERBOSE);
     }
 
   /** TODO Find a solution on how to inform the final user that there is problems or no via the mysql command. */
@@ -476,7 +476,7 @@ class Database
     if(true === file_exists($file))
     {
       self::init($databaseName);
-      Script_Functions::cli(self::$initCommand . $file, VERBOSE);
+      cli(self::$initCommand . $file, VERBOSE);
     } else
     {
       echo 'The file "', $file, '" doesn\'t exist !';
@@ -492,7 +492,7 @@ class Database
    */
   public static function executeFixture(string $databaseName, string $table)
   {
-    Script_Functions::cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName .'_' . $table . '.sql "', VERBOSE);
+    cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName .'_' . $table . '.sql "', VERBOSE);
     echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
   }
 
@@ -514,7 +514,7 @@ class Database
     }
 
     // And drops the database
-    Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
+    cli(self::$initCommand . $file . '"', VERBOSE);
 
     echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
   }
@@ -740,7 +740,7 @@ class Database
     }
 
     // And truncates the table
-    Script_Functions::cli(self::$initCommand . $file . '"', VERBOSE);
+    cli(self::$initCommand . $file . '"', VERBOSE);
     echo greenText('[TRUNCATED]'), PHP_EOL;
   }
 
@@ -766,14 +766,16 @@ class Database
   }
 
   /**
-   * Creates the database schema from a database.
+   * Ensures that the configuration to use and the database name are correct. Ensures also that the specified database exists.
+   *
    * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
    *
    * @param string $database  (optional)
    * @param string $confToUse (optional)
-   * @return bool
+   *
+   * @return mixed Returns a SQL instance.
    */
-  public static function importSchema(string $database = null, string $confToUse = null)
+  private static function initImports(&$database, &$confToUse)
   {
     if(null == $confToUse)
       $confToUse = key(All_Config::$dbConnections);
@@ -785,14 +787,30 @@ class Database
     $db = Sql::getDB();
 
     // Checks if the database concerned exists
-    $schemaInfo = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
-    if(false === in_array($database, $schemaInfo))
+    if(false === in_array($database, $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'))))
     {
       echo 'This database doesn\'t exist.';
       return false;
     }
 
+    return $db;
+  }
+
+  /**
+   * Creates the database schema from a database.
+   * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
+   *
+   * @param string $database  (optional)
+   * @param string $confToUse (optional)
+   *
+   * @return bool
+   */
+  public static function importSchema(string $database = null, string $confToUse = null)
+  {
+    $db = self::initImports($database, $confToUse);
+
     $content = '';
+
     foreach($db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\'')) as $table)
     {
       $content .= $table . ': ' . PHP_EOL;
@@ -851,7 +869,7 @@ class Database
   }
 
   /**
-   * Creates the database schema from a database.
+   * Creates the database fixtures from a database.
    * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
    *
    * @param string $database  (optional)
@@ -861,26 +879,11 @@ class Database
    */
   public static function importFixtures(string $database = null, string $confToUse = null)
   {
-    if(null == $confToUse)
-      $confToUse = key(All_Config::$dbConnections);
-
-    if(null == $database)
-      $database = All_Config::$dbConnections[$confToUse]['db'];
-
-    Session::set('db', $confToUse);
-    $db = Sql::getDB();
-
-    // Checks if the database concerned exists
-    $schemaInfo = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
-    if(false === in_array($database, $schemaInfo))
-    {
-      echo 'This database doesn\'t exist.';
-      exit(1);
-    }
+    $db = self::initImports($database, $confToUse);
 
     if(false === file_exists(self::$tablesOrderFile))
     {
-      echo brownText('You must create the tables order file (' . self::$tablesOrderFile .') before using this task !');
+    echo brownText('You must create the tables order file (' . self::$tablesOrderFile .') before using this task !');
       exit(1);
     }
 

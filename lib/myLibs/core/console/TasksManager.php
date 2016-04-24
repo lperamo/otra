@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
-namespace lib\myLibs\core;
-require_once ROOTPATH . 'lib/myLibs/core/Tasks.php';
+namespace lib\myLibs\core\console;
+require_once BASE_PATH . 'lib/myLibs/core/console/Tasks.php';
 
 
 
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
  * @author Lionel Péramo */
-class Tasks_Manager
+class TasksManager
 {
   /**
    * List the available commands
@@ -24,7 +24,7 @@ class Tasks_Manager
       ' '), lightGray();
     echo ': ', cyan(), 'Shows the available commands.', PHP_EOL, PHP_EOL;
 
-    $methods = get_class_methods('lib\myLibs\core\Tasks');
+    $methods = get_class_methods('lib\myLibs\core\console\Tasks');
 
     foreach ($methods as $method)
     {

@@ -3,10 +3,12 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\myLibs\core;
+namespace lib\myLibs\core\console;
 
-use lib\myLibs\core\Database,
+use lib\myLibs\core\console\Database,
     config\All_Config;
+
+require BASE_PATH . 'lib\myLibs\core\console\ConsoleTools.php';
 
 class Tasks
 {
@@ -19,7 +21,30 @@ class Tasks
     echo 'Cache cleared.', PHP_EOL;
   }
 
-  public static function ccDesc(): array { return array('Clears the cache'); }
+  public static function ccDesc(): array { return ['Clears the cache']; }
+
+  public static function createBundle(array $argv)
+  {
+    require BASE_PATH . 'lib/myLibs/core/console/CreateBundle.php';
+  }
+
+  public static function createBundleDesc(): array {
+    return [
+      'Creates a bundle.',
+      [
+        'bundle name' => 'The name of the bundle !',
+        'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '0 => nothing' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => models' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => resources' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => views'
+      ],
+      [
+        'optional',
+        'optional'
+      ]
+    ];
+  }
 
   public static function crypt(array $argv)
   {
@@ -66,16 +91,16 @@ class Tasks
     ];
   }
 
-  public static function genAssets(array $argv) { require 'GenAssets.php'; }
+  public static function genAssets(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/GenAssets.php'; }
 
   public static function genAssetsDesc() : array
   {
     return [
       'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
       [
-        'mask' => '1 => templates,' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => css,' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => js,' . PHP_EOL .
+        'mask' => '1 => templates' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => css' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => js' . PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '7 => all',
         'route' => 'The route for which you want to generate resources.'
       ],
@@ -192,7 +217,7 @@ class Tasks
     ];
   }
 
-  public static function routes(array $argv) { require 'Routes.php'; }
+  public static function routes(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/Routes.php'; }
 
   public static function routesDesc() : array
   {
@@ -203,10 +228,10 @@ class Tasks
     ];
   }
 
-  public static function genClassMap(){ require 'GenClassMap.php'; }
+  public static function genClassMap(){ require BASE_PATH . 'lib/myLibs/core/console/GenClassMap.php'; }
   public static function genClassMapDesc() : array { return ['Generates a class mapping file that will be used to replace the autoloading method.']; }
 
-  public static function genBootstrap(array $argv) { require 'GenBootstrap.php'; }
+  public static function genBootstrap(array $argv) { require BASE_PATH . 'lib/myLibs/core/console/GenBootstrap.php'; }
 
   public static function genBootstrapDesc() : array
   {

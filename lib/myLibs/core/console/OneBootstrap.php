@@ -3,7 +3,7 @@ $verbose = $argv[1];
 $route = $argv[2];
 
 define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, -15)); // Fixes windows awful __DIR__, BASE_PATH ends with /
-require BASE_PATH . 'lib/myLibs/core/Colors.php';
+require BASE_PATH . 'lib/myLibs/core/console/Colors.php';
 
 echo white(), $route, endColor();
 
@@ -111,7 +111,7 @@ $filesToConcat[] = BASE_PATH . 'lib\\myLibs\\core\\Lionel_Exception.php';
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
-require BASE_PATH . 'lib/myLibs/core/TaskFileOperation.php';
+require BASE_PATH . 'lib/myLibs/core/console/TaskFileOperation.php';
 ksort($filesToConcat);
 contentToFile(fixUses($content, $verbose, $filesToConcat), $file_);
 

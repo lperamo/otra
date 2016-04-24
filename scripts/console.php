@@ -6,12 +6,12 @@ define('XMODE', 'dev');
 define('ROOTPATH', _DIR_ . '/../'); // CHECK ALL OCCURRENCES OF THIS AND SUPPRESS THEM
 define('BASE_PATH', substr(_DIR_, 0, -7)); // Finit avec /
 
-require BASE_PATH . 'lib/myLibs/core/Tasks_Manager.php';
-require BASE_PATH . 'lib/myLibs/core/Colors.php';
+require BASE_PATH . 'lib/myLibs/core/console/TasksManager.php';
+require BASE_PATH . 'lib/myLibs/core/console/Colors.php';
 
 // If we didn't specify any command, list the available commands
 if ($argc < 2) {
-  lib\myLibs\core\Tasks_Manager::showCommands('No specified commands ! We then show the available commands ... ');
+  lib\myLibs\core\console\TasksManager::showCommands('No specified commands ! We then show the available commands ... ');
   die;
 }
 
@@ -40,7 +40,7 @@ if (method_exists('lib\myLibs\core\Tasks', $argv[1]) && method_exists('lib\myLib
     dieC('lightRed', 'Not enough parameters ! The total number of required parameters is : ' . $required . PHP_EOL);
 
   // And we runs the task if all is correct
-  lib\myLibs\core\Tasks_Manager::execute($argv[1], $argv);
+  lib\myLibs\core\console\TasksManager::execute($argv[1], $argv);
 } else
-  lib\myLibs\core\Tasks_Manager::showCommands('This command doesn\'t exist. ');
+  lib\myLibs\core\console\TasksManager::showCommands('This command doesn\'t exist. ');
 ?>
