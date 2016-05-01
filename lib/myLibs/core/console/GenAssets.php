@@ -6,10 +6,11 @@ require_once BASE_PATH . '/config/All_Config.php';
 $routes = \config\Routes::$_;
 
 // If we ask just for only one route
-if(isset($argv[3]))
+if(true === isset($argv[3]))
 {
   $theRoute = $argv[3];
-  if(isset($routes[$theRoute]))
+
+  if(true === isset($routes[$theRoute]))
   {
     echo 'Cleaning the resources cache...';
     $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
@@ -70,14 +71,26 @@ for($i = 0; $i < $cptRoutes; ++$i)
   echo lightCyan(), str_pad($name, 25, ' '), lightGray();
 
   if(!isset($route['resources'])) {
-    echo status('Nothing to do', 'cyan'), ' =>', lightGreen(), ' OK', endColor(), PHP_EOL;
+    echo status('Nothing to do', 'cyan'), ' =>', lightGreenText(' OK'), PHP_EOL;
     continue;
   }
 
   $resources = $route['resources'];
   $chunks = $route['chunks'];
   $shaName = sha1('ca' . $name . VERSION . 'che');
-  $bundlePath = BASE_PATH . '/bundles/' . $chunks[1] . '/';
+
+
+  // TODO suppress this block and do the appropriate fixes
+  if (false === isset($chunks[1]))
+  {
+    echo '[NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', PHP_EOL;
+    continue;
+  }
+
+  $bundlePath = (true === isset($chunks[1])
+    ? BASE_PATH . '/bundles/' . $chunks[1] . '/'
+    : CORE_PATH
+  );
 
   if(($mask & 2) >> 1)
     echo css($shaName, $chunks, $bundlePath, $resources);
@@ -101,7 +114,7 @@ function status($status, $color = 'lightGreen'){ return ' [' . $color() . $statu
  *
  * @return string The cleaned css
  */
-function cleanCss($content)
+function cleanCss(string $content) : string
 {
   $content = preg_replace('@/\*.*?\*/@s', '', $content);
   $content = str_replace(array("\r\n", "\r", "\n", "\t", '  '), '', $content);
@@ -114,13 +127,15 @@ function cleanCss($content)
 }
 
 /** Generates the gzipped css files
+ *
  * @param string $shaName   Name of the cached file
  * @param array  $chunks    Route site path
  * @param string $bundlePath
  * @param array  $resources Resources array from the defined routes of the site
+ *
  * @return string
  */
-function css($shaName, array $chunks, $bundlePath, array $resources)
+function css(string $shaName, array $chunks, string $bundlePath, array $resources) : string
 {
   ob_start();
   loadResource($resources, $chunks, 'first_css', $bundlePath);
@@ -144,13 +159,15 @@ function css($shaName, array $chunks, $bundlePath, array $resources)
 
 /**
  *  Generates the gzipped js files
+ *
  * @param string $shaName   Name of the cached file
  * @param array  $chunks    Route site path
  * @param string $bundlePath
  * @param array  $resources Resources array from the defined routes of the site
+ *
  * @return string
  */
-function js($shaName, array $chunks, $bundlePath, array $resources)
+function js(string $shaName, array $chunks, string $bundlePath, array $resources)
 {
   ob_start();
   loadResource($resources, $chunks, 'first_js', $bundlePath);
@@ -197,16 +214,16 @@ function js($shaName, array $chunks, $bundlePath, array $resources)
  * @param string      $bundlePath
  * @param string|bool $path
  */
-function loadResource(array $resources, array $chunks, $key, $bundlePath, $path = true)
+function loadResource(array $resources, array $chunks, $key, string $bundlePath, $path = true)
 {
-  if(isset($resources[$key]))
+  if(true === isset($resources[$key]))
   {
     $type = substr(strrchr($key, '_'), 1);
     $path = $bundlePath . (($path)
       ? $chunks[2] . '/resources/' . $type . '/'
       : $path . 'resources/' . $type . '/');
 
-    foreach($resources[$key] as $resource)
+    foreach($resources[$key] as &$resource)
     {
       if(false === strpos($resource, 'http'))
         echo file_get_contents($path . $resource . '.' . $type);
@@ -223,12 +240,14 @@ function loadResource(array $resources, array $chunks, $key, $bundlePath, $path 
 
 /**
  * Generates the gzipped template files
+ *
  * @param string $shaName   Name of the cached file
  * @param string $route
  * @param array  $resources Resources array from the defined routes of the site
+ *
  * @return string
  */
-function template($shaName, $route, array $resources)
+function template(string $shaName, string $route, array $resources) : string
 {
   if(!isset($resources['template']))
     return status('No TEMPLATE', 'cyan');

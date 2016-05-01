@@ -99,7 +99,7 @@ class Database
    */
   public static function initBase()
   {
-    self::$pathSql = realpath(_DIR_ . '/../config/data') . '/';
+    self::$pathSql = realpath(BASE_PATH . 'config/data/');
     self::$pathYml = self::$pathSql . 'yml/';
     self::$pathSql .= 'sql/';
     self::$schemaFile = self::$pathYml . self::$schemaFile;

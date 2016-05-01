@@ -2,11 +2,11 @@
 $verbose = $argv[1];
 $route = $argv[2];
 
-define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, -15)); // Fixes windows awful __DIR__, BASE_PATH ends with /
+define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, 27)); // Fixes windows awful __DIR__, BASE_PATH ends with /. 27 is strlen(__DIR__) - strlen('lib/myLibs/core/console')
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/core/');
 require CORE_PATH . 'console/Colors.php';
 
-echo white(), $route, endColor();
-
+echo white(), str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, endColor();
 define('XMODE', 'dev');
 
 require BASE_PATH . 'config/Routes.php';
@@ -24,11 +24,6 @@ error_reporting(-1 & ~E_DEPRECATED);
 
 spl_autoload_register(function($className) use($classMap)
 {
-  /*if (!isset($classMap[$className]))
-  {
-    debug_print_backtrace();
-    echo '********* ', $className, ' *************';die;
-  }*/
   require $classMap[$className];
 });
 
@@ -85,7 +80,7 @@ try
 
   unset($output);
 
-  echo lightGreen(), str_pad('[EXECUTION]', 35 - strlen($route), ' ', STR_PAD_LEFT), endColor();
+  echo str_pad('Route execution ', 75, '.', STR_PAD_RIGHT), greenText(' [OK]');
 } catch(Exception $e)
 {
   ob_end_clean();

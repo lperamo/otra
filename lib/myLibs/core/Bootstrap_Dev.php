@@ -43,7 +43,7 @@ try
   // if the pattern is in the routes, launch the associated route
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
-    function t($texte) { echo $texte; }
+    function t(string $texte) { echo $texte; }
     $defaultRoute = Routes::$default['bundle'];
     require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
     call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');

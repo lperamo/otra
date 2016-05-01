@@ -71,7 +71,8 @@ else // mode Prod
 
     define('XMODE', 'prod');
 
-    function t($texte){ echo $texte; }
+    // Will be the future translation feature
+    function t(string $texte) { echo $texte; }
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
     ini_set('display_errors', 1);
     ini_set('html_errors', 1);
@@ -80,7 +81,7 @@ else // mode Prod
     require BASE_PATH . 'cache/php/ClassMap.php';
     spl_autoload_register(function($className) use($classMap)
     {
-      if(!isset($classMap[$className]))
+      if (false === isset($classMap[$className]))
         echo 'Path not found for the class name : ', $className, '<BR>';
       else
         require $classMap[$className];

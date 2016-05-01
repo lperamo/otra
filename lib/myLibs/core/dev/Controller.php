@@ -275,7 +275,7 @@ class Controller extends MasterController
         {
           $chunks = $route['chunks'];
           $resources = $route['resources'];
-          $debLink = "\n" . '<script type="application/javascript;version=1.7" src="';
+          $debLink = "\n" . '<script type="application/javascript" src="';
           $i = 0;
           $unorderedArray = $orderedArray = [];
           $debLink2 = $debLink . '/bundles/';

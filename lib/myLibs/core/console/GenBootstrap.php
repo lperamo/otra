@@ -27,13 +27,14 @@ if(isset($argv[4]))
     echo 'This route doesn\'t exist !', PHP_EOL;
     return;
   }
-  echo 'Generating \'micro\' bootstrap for the route \'', $route, '\'', PHP_EOL, PHP_EOL;
+  echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else {
   $routes = \config\Routes::$_;
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
 $key = 0;
+
 foreach(array_keys($routes) as &$route)
 {
   if ('exception' === $route)
@@ -45,11 +46,11 @@ foreach(array_keys($routes) as &$route)
   ++$key;
 
   if (isset($routes[$route]['resources']['template']))
-  {
-    echo white(), $route, cyanText(str_pad('[NO MICRO BOOTSTRAP => TEMPLATE GENERATED]', 66 - strlen($route), ' ', STR_PAD_LEFT));
-  } else
+    echo white() . str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . cyan() . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . white(), 94, '=', STR_PAD_BOTH), endColor(), PHP_EOL;
+  else
     passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
+
 die;
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';

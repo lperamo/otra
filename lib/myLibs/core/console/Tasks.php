@@ -8,8 +8,6 @@ namespace lib\myLibs\core\console;
 use lib\myLibs\core\console\Database,
     config\All_Config;
 
-require CORE_PATH . 'console\ConsoleTools.php';
-
 class Tasks
 {
   protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
@@ -30,7 +28,7 @@ class Tasks
 
   public static function createBundleDesc(): array {
     return [
-      'Creates a bundle.',
+      'Creates a bundle.' . brownText('[PARTIALLY IMPLEMENTED]'),
       [
         'bundle name' => 'The name of the bundle !',
         'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
@@ -43,6 +41,24 @@ class Tasks
         'optional',
         'optional'
       ]
+    ];
+  }
+
+  public static function createModel(array $argv)
+  {
+    require CORE_PATH . 'console/CreateModel.php';
+  }
+
+  public static function createModelDesc() : array {
+    return [
+      'Creates a model.' . red() . '[TASK NOT FINISHED]' . cyan(),
+      [
+        'bundle' => 'The bundle in which the model',
+        'how' => '1 => Creates from nothing' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. brown() . 'schema.yml' . cyan(). PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . brown() .'schema.yml' . cyan()
+      ],
+      ['optional', 'optional']
     ];
   }
 

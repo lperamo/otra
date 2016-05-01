@@ -28,6 +28,7 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
 
 function contentToFile(string $content, string $outputFile)
 {
+  echo PHP_EOL, PHP_EOL, cyan(), 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = '../logs/temporary file.php';
@@ -48,7 +49,7 @@ function contentToFile(string $content, string $outputFile)
   if (hasSyntaxErrors($outputFile, true))
     die(PHP_EOL . PHP_EOL . lightRedText('[NAMESPACES ERRORS in ' . $smallOutputFile . '!]' . PHP_EOL));
 
-  echo lightGreen(), '[NAMESPACES]';
+  echo lightGreen(), '[NAMESPACES]', PHP_EOL;
 }
 
 /**
@@ -262,7 +263,6 @@ function fixUses($content, $verbose, $filesToConcat = [])
     $content = $finalContent;
   }
 
-  echo PHP_EOL, cyanText('Static direct calls'), PHP_EOL, cyanText('-------------------'), PHP_EOL, PHP_EOL;
   /**
    * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
    */
@@ -272,7 +272,11 @@ function fixUses($content, $verbose, $filesToConcat = [])
   $newFilesUsed = [];
   $lengthAdjustment = 0;
 
-//  var_dump($matches);die;
+  define('ERASE_SEQUENCE', "\033[1A\r\033[K\e[1A\r\e[K");
+
+  // There are no files to add via direct static calls so we clean the console output
+  if(false === empty($matches[0]))
+    echo PHP_EOL, PHP_EOL, cyanText('------ STATIC DIRECT CALLS ------'), PHP_EOL;
 
   foreach($matches[0] as $key => $match)
   {
@@ -286,7 +290,7 @@ function fixUses($content, $verbose, $filesToConcat = [])
     {
       $newFilesUsed[] = $newFile;
       $temp .= file_get_contents(BASE_PATH . $newFile);
-      echo $newFile . greenText(' [LOADED]') . PHP_EOL;
+      echo PHP_EOL, str_pad($newFile . ' ', 71, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
     }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
@@ -301,6 +305,10 @@ function fixUses($content, $verbose, $filesToConcat = [])
     // We calculate the new offset for the offset !
     $lengthAdjustment += $length - strlen($matches[4][$key][0]);
   }
+
+  // Finally, there are no files to add via direct static calls so we clean the console output
+  if (false === empty($matches[0]) && true === empty($newFilesUsed))
+    echo ERASE_SEQUENCE;
 
   $content = $temp . $content;
 
@@ -358,8 +366,8 @@ function fixUses($content, $verbose, $filesToConcat = [])
 
   return str_replace(
     'use ', '', ('<?' == substr($content, 0, 2))
-    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php;' . substr($content, 2)
-    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php;?>' . $content
+    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; function t(string $texte){ echo $texte; }' . substr($content, 2) // Function t will be the future translation feature
+    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; function t(string $texte){ echo $texte; }?>' . $content // Function t will be the future translation feature
   );
 
 

@@ -1,32 +1,42 @@
 <?
+require CORE_PATH . 'console\ConsoleTools.php';
 
 if (false === isset($argv[2]))
+{
   $argv[2] = promptUser('You did not specified a name for the bundle. What is it ?');
 
+  // We clean the screen
+  echo ERASE_SEQUENCE;
+}
+
 $bundlesPath = BASE_PATH . 'bundles/';
-$eraseSequence = "\033[1A\r\033[K\e[1A\r\e[K";
 
 while (true === file_exists($bundlesPath . $argv[2]))
 {
   // Erases the previous question before we ask...
-  $argv[2] = promptUser($eraseSequence . 'This folder \'' . $argv[2] . '\' already exist. Try once again :');
+  $argv[2] = promptUser('This folder \'' . $argv[2] . '\' already exist. Try once again :');
+
+  // We clean the screen
+  echo ERASE_SEQUENCE;
 }
 
 $folders = ['models', 'resources', 'views'];
 
-if (false === isset($argv[3]))
+if (false === isset($argv[3]) || $argv[3] < 0 || $argv[3] > 7)
 {
-  $begin = 'Do you want to associate ';
+  $begin = 'You don\'t have specified which directories you want to create or the mask is incorrect. Do you want to associate ';
   $end = ' with that bundle (0 or 1)?';
   $argv[3] = 0; // By default, we create 0 additional folders
 
   foreach($folders as $key => &$folder)
   {
-    $answer = promptUser($eraseSequence . $begin . $folder . $end);
+    $answer = promptUser($begin . $folder . $end);
 
     while ('0' !== $answer && '1' !== $answer)
     {
-      $answer = promptUser($eraseSequence . 'Bad answer. ' . $begin . $folder . $end);
+      $answer = promptUser('Bad answer. ' . $begin . $folder . $end);
+      // We clean the screen
+      echo ERASE_SEQUENCE;
     }
 
     $argv[3] += pow(2, $key) * $answer;
@@ -35,7 +45,7 @@ if (false === isset($argv[3]))
 
 $moduleBasePath = $bundlesPath . $argv[2];
 mkdir($moduleBasePath, 755);
-echo $eraseSequence . green(), 'Bundle \'', cyan(), $argv[2], greenText('\' created.'), PHP_EOL;
+echo ERASE_SEQUENCE, green(), 'Bundle \'', cyan(), $argv[2], greenText('\' created.'), PHP_EOL;
 
 $mask = $argv[3];
 

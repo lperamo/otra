@@ -27,7 +27,7 @@
 				<td colspan="6" class="options">
 					<a role="button" aria-labelledby="<? t('Previous users'); ?>" id="prev" class="softBtn circleBorder smallBtn fontBtn paging disabled" data-tooltip="<? t('Previous users'); ?>">&laquo;</a><!--
 					--><a role="button" aria-labelledby="<? t('Next users'); ?>" id="next" class="softBtn circleBorder smallBtn fontBtn paging<? if($count <= $limit) echo ' disabled'; ?>" data-tooltip="<? t('Next users'); ?>">&raquo;</a>
-					<span id="pageInd" data-realcount="<?= $count?>" data-actualcount="<?= $count?>"><? t('Page'); ?> <span id="currentPage">1</span> / <span id="lastPage"><?= (0 == $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count ?> <? t('users'); ?>)</span>
+					<span id="pageInd" data-realcount="<?= $count ?>" data-actualcount="<?= $count ?>"><? t('Page'); ?> <span id="currentPage">1</span> / <span id="lastPage"><?= (0 == $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count . t('users'); ?>)</span>
 					<div id="limit" class="select" data-first="<?= $users[0]['id_user'] ?>" data-last="<?= $users[count($users) - 1]['id_user'] ?>" >
 			      <span class="fl input actualSelectValue" data-tooltip="Users per page">
 			        <a id="limitValue"><?= $limit ?></a>
