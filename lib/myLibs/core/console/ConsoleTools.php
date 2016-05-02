@@ -52,4 +52,41 @@ function askQuestion(string $question) : string
  * @return bool Success or fail ?
  */
 function cli($cmd, $verbose = 1) { (0 < $verbose) ? passthru($cmd, $return) : exec($cmd, $return); return $return; }
+
+/**
+ * Loops through words to find the closest word
+ *
+ * @param string $input
+ * @param array  $words
+ *
+ * @return array [$closest, $shortest]
+ */
+function guessWords(string $input, array $words) : array
+{
+  $closest = null;
+  $shortest = -1;
+
+  foreach ($words as &$word)
+  {
+    // Calculates the distance between the input word and the current word
+    $lev = levenshtein($input, $word);
+
+    // Checks for an exact match
+    if (0 === $lev)
+    {
+      $closest = $word;
+      $shortest = 0;
+      break;
+    }
+
+    // If this distance is less than the next found shortest distance OR if a next shortest word has not yet been found
+    if ($lev <= $shortest || 0 >= $shortest)
+    {
+      $closest  = $word;
+      $shortest = $lev;
+    }
+  }
+
+  return 10 >= $shortest ? [$closest, $shortest] : [null, $shortest];
+}
 ?>

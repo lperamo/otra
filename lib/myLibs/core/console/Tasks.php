@@ -51,7 +51,7 @@ class Tasks
 
   public static function createModelDesc() : array {
     return [
-      'Creates a model.' . red() . '[TASK NOT FINISHED]' . cyan(),
+      'Creates a model.',
       [
         'bundle' => 'The bundle in which the model',
         'how' => '1 => Creates from nothing' . PHP_EOL .
@@ -141,6 +141,22 @@ class Tasks
 
   public static function genClassMap(){ require CORE_PATH . 'console/GenClassMap.php'; }
   public static function genClassMapDesc() : array { return ['Generates a class mapping file that will be used to replace the autoloading method.']; }
+
+  /**
+   * Show the help for the specified command.
+   *
+   * @param array $argv
+   */
+  public static function help(array $argv) { require CORE_PATH . 'console/Help.php'; }
+
+  public static function helpDesc() :array
+  {
+    return [
+      'Shows the help for the specified command.',
+      ['command' => 'The command which you need help for.'],
+      ['required']
+    ];
+  }
 
   /**
    * Executes the sql script
