@@ -3,8 +3,8 @@
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)
  */
-define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
+if (!defined('ERASE_SEQUENCE')) define('ERASE_SEQUENCE', "\033[1A\r\033[K");
+if (!defined('DOUBLE_ERASE_SEQUENCE')) define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
 /**
  * Asks the user a question again and again until the answer was correct.
  *
@@ -88,5 +88,46 @@ function guessWords(string $input, array $words) : array
   }
 
   return 10 >= $shortest ? [$closest, $shortest] : [null, $shortest];
+}
+
+/**
+ * Shows the context of the error found in a given file.
+ *
+ * @param string $file      Name of the file that contains the error
+ * @param int    $errorLine N° of the error
+ * @param int    $context   How much lines for context ?
+ */
+function showContext(string $file, int $errorLine, int $context)
+{
+  $lines = file($file);
+  $midContext = (int) $context >> 1;
+
+  // Shows the context of the error
+  for ($i = $errorLine - $midContext, $max = $errorLine + $midContext; $i < $max; ++$i)
+  {
+    if(-1 !== $errorLine)
+    {
+      echo ($i === $errorLine
+        ? red() . $i
+        : green() . $i . lightGray()
+        ), ' ', $lines[$i];
+    }
+  }
+}
+
+/**
+ * Shows the context of the error found in a given error message that appears in a given file.
+ *
+ * @param string $file    Name of the file that contains the error
+ * @param string $error   Error to analyze
+ * @param int    $context How much lines for context ?
+ */
+function showContextByError(string $file, string $error, int $context)
+{
+  showContext(
+    $file,
+    (int)substr($error, strrpos($error, ' ', -1)),
+    $context
+  );
 }
 ?>

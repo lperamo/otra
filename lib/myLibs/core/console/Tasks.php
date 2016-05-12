@@ -186,7 +186,7 @@ class Tasks
   {
     Database::init();
 
-    if(isset($argv[3]))
+    if(true === isset($argv[3]))
       Database::createDatabase($argv[2], 'true' == $argv[3]); // Forces the value to be a boolean
     else
       Database::createDatabase($argv[2]);

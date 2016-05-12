@@ -6,8 +6,7 @@
 declare(strict_types=1);
 namespace lib\myLibs\core;
 
-use config\All_Config,
-    lib\myLibs\core\MasterController;
+use config\All_Config;
 
 class Controller extends MasterController
 {
@@ -90,7 +89,7 @@ class Controller extends MasterController
     ob_start();
     require $filename;
 
-    $content = ($layout) ? self::addLayout(ob_get_clean()) : ob_get_clean();
+    $content = $layout ? self::addLayout(ob_get_clean()) : ob_get_clean();
 
     $routeV = $this->route . VERSION;
 
@@ -105,10 +104,10 @@ class Controller extends MasterController
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];
 
-    if('cli' == PHP_SAPI)
+    if('cli' === PHP_SAPI)
       return $content;
 
-    if(null != $cachedFile)
+    if(null !== $cachedFile)
     {
       $fp = fopen($cachedFile, 'w');
       fwrite($fp, $content);
@@ -119,7 +118,7 @@ class Controller extends MasterController
   }
 
   /** Includes the layout */
-  private function layout()
+  public function layout()
   {
     $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
 

@@ -9,8 +9,8 @@ namespace lib\myLibs\core;
 use lib\myLibs\core\Controller,
     config\Routes;
 
-
-require BASE_PATH . 'lib\myLibs\core\Debug_Tools.php';
+// Sometimes it is already defined ! so we put '_once' ...
+require_once BASE_PATH . 'lib\myLibs\core\Debug_Tools.php';
 
 class Lionel_Exception extends \Exception
 {
@@ -75,9 +75,14 @@ class Lionel_Exception extends \Exception
       convertArrayToShowable($this->context, 'Variables');
     }
 
+    // Is the error code a native error code ?
+    $this->code = isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+
+    http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
+
     return $renderController->renderView('/exception.phtml', [
       'message' =>$this->message,
-      'code' => self::$codes[$this->code],
+      'code' => $this->code,
       'file' => $this->file,
       'line' => $this->line,
       'context' => $this->context,

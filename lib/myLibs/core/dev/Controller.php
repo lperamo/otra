@@ -40,7 +40,7 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'Ajax : ' . (($ajax) ? 'true' : 'false'), 'trace');
 
     if($ajax)
-      $this->ajax = $ajax;
+      self::$ajax = $ajax;
 
     if (file_exists($templateFile))
       parent::$template = $this->buildCachedFile($templateFile, $variables);

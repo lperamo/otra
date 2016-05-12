@@ -8,7 +8,6 @@ namespace lib\myLibs\core;
 
 use lib\myLibs\core\Controller,
     config\Routes;
-//use lib\myLibs\core\Logger;
 
 class Router
 {
@@ -41,11 +40,6 @@ class Router
 			$chunks['css'] = (isset($resources['bundle_css']) || isset($resources['module_css']) || isset($resources['_css']));
 		}
 
-	/*	if(isset(Routes::$_[$route]['core']))
-		{
-      Logger::logTo($route, 'trace');
-      Logger::logTo(debug_print_backtrace(), 'trace');
-		};*/
     $controller = ('prod' == XMODE)
      	? 'cache\\php\\' . $controller . 'Controller'
 	    : (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
@@ -87,5 +81,12 @@ class Router
 
 		return false;
 	}
+
+	/**
+	 * @param string $route
+	 *
+	 * @return string
+	 */
+	public static function getRouteUrl(string $route) : string { return Routes::$_[$route]['chunks'][0]; }
 }
 ?>

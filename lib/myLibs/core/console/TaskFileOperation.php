@@ -1,14 +1,39 @@
 <?
-function hasSyntaxErrors(string $file_, bool $verbose) : bool
+define('PATTERN', '@\s{0,}
+        (?:self::layout\(\);\s{0,})|
+        (?:require(?:_once){0,1}\s[^;]{1,};\s{0,})|
+        (?:extends\s[^\{]{1,})\s{0,}
+        @mx');
+
+/**
+ * We have to manage differently the code that we put into an eval either it is PHP code or not
+ *
+ * @param string $contentToAdd
+ */
+function phpOrHTMLIntoEval(string &$contentToAdd)
 {
-  exec('php -l ' . $file_, $output); // Syntax verification
-  $sortie = implode(' ', $output);
+  // Beginning of content
+  $contentToAdd = ('<?' === substr($contentToAdd, 0, 2))
+    ? substr($contentToAdd, 2)
+    : '?>' . $contentToAdd;
+
+  // Ending of content
+  if ('?>' === substr($contentToAdd, - 2))
+    $contentToAdd = substr($contentToAdd, 0, -2);
+  else
+    $contentToAdd .= '<?';
+}
+
+function hasSyntaxErrors(string $file) : bool
+{
+  exec('php -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
+  $sortie = implode(PHP_EOL, $output);
 
   if(strlen($sortie) > 6 && false !== strpos($sortie, 'pars', 7))
   {
-    echo lightRed(), ' Beware of the syntax errors in the file ', $file_,' !', endColor(), PHP_EOL;
-    if($verbose)
-      echo $sortie;
+    echo PHP_EOL, lightRed(), $sortie, PHP_EOL, PHP_EOL;
+    require CORE_PATH . 'console/ConsoleTools.php';
+    showContextByError($file, $sortie, 10);
 
     return true;
   }
@@ -18,11 +43,9 @@ function hasSyntaxErrors(string $file_, bool $verbose) : bool
 
 function compressPHPFile(string $fileToCompress, string $outputFile)
 {
-  $fp = fopen($outputFile . '.php', 'w');
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-//  fwrite($fp, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
-  fwrite($fp, file_get_contents($fileToCompress));
-  fclose($fp);
+//   file_put_contents($outputFile . '.php', rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
+  file_put_contents($outputFile . '.php', file_get_contents($fileToCompress));
   unlink($fileToCompress);
 }
 
@@ -35,153 +58,180 @@ function contentToFile(string $content, string $outputFile)
   file_put_contents($tempFile, $content);
 
   // Test each part of the process in order to precisely detect where there is an error.
-  if (hasSyntaxErrors($tempFile, true))
-    die(PHP_EOL . PHP_EOL . lightRedText('[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]' . PHP_EOL));
+  if (true === hasSyntaxErrors($tempFile))
+  {
+    echo PHP_EOL, PHP_EOL, lightRedText('[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]'), PHP_EOL;
+    exit(1);
+  }
 
   $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
 
   echo lightGreen(), '[CLASSIC SYNTAX]';
 
-  $fp = fopen($outputFile, 'w');
-  fwrite($fp, $content);
-  fclose($fp);
+  file_put_contents($outputFile, $content);
 
-  if (hasSyntaxErrors($outputFile, true))
-    die(PHP_EOL . PHP_EOL . lightRedText('[NAMESPACES ERRORS in ' . $smallOutputFile . '!]' . PHP_EOL));
+  if (true === hasSyntaxErrors($outputFile))
+  {
+    echo PHP_EOL, PHP_EOL, lightRedText('[NAMESPACES ERRORS in ' . $smallOutputFile . '!]'), PHP_EOL;
+    exit(1);
+  }
 
   echo lightGreen(), '[NAMESPACES]', PHP_EOL;
 }
 
 /**
- * @param string   $inc           Only for debugging purposes.
- * @param int      $nbHtmlsToInclude
- * @param string   $tempContent   Actual content to be processed
- * @param array    $filesToConcat Remaining files to concatenate
- * @param bool     $verbose       Verbose debugging
- * @param string   $pattern       Pattern to use for the search
- * @param bool|int $result        Numbers of results if already made
- * @param array    $matches       Results of the search of included files (via require) if already made
+ * @param int    $inc            Only for debugging purposes.
+ * @param int    $level          Only for debugging purposes.
+ * @param int    $nbFilesToInclude
+ * @param string $finalContent   Actual content to be processed
+ * @param string $contentToAdd   Actual content to be processed
+ * @param array  $filesToConcat  Remaining files to concatenate
+ * @param array  $alreadyMatched Files already added to the content
  *
  * @return bool False we break, true we continue
  */
-function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, array &$filesToConcat, &$verbose, &$pattern, $result = [], array $matches = [])
+function assembleFiles(int &$inc, int &$level, int &$nbFilesToInclude, string &$finalContent, string $contentToAdd, array &$filesToConcat, array &$alreadyMatched = [])
 {
-  if(empty($result))
-    $result = preg_match_all($pattern, $tempContent, $matches);
+  preg_match_all(PATTERN, $contentToAdd, $matches);
 
-  if (!$result)
+  // We suppress the files routes.php and
+//  foreach($matches as &$match)
+//  {
+//  CORE_PATH . 'Router.php'], $allFilesIncluded[BASE_PATH . 'config/Routes.php'
+//  }
+
+  // We don't search already searched things
+  $tempMatches = array_diff(is_array($matches[0]) ? $matches[0] : $matches, $alreadyMatched);
+  $numberMatches = count($tempMatches);
+
+  ++$level;
+
+  // If there are no more files to check we break the loop
+  if (0 === $numberMatches)
   {
-    if ($verbose)
-      echo cyan(), 'Nothing found. Only one file included.', endColor(), PHP_EOL;
-
-    // If there are no more files to check we break the loop
-    if (empty($filesToConcat))
-      return $tempContent;
+    --$level;
+    return true;
   }
 
-  $tempMatches = is_array($matches[0]) ? $matches[0] : $matches;
-
-  if($verbose)
-    echo PHP_EOL, lightCyan(), count($tempMatches), cyan(), ' file(s) to include found.', endColor(); // in addition to the parsed file
-
   // For all the inclusions
-  foreach($tempMatches as $match)
+  foreach($tempMatches as &$match)
   {
-    if(empty($filesToConcat))
-      return $tempContent;
+    // If there are no more files to check we break the loop
+    if(true === empty($filesToConcat))
+      return true;
+
+    $alreadyMatched[] = $match;
+
+    $file = array_shift($filesToConcat);
+    $contentToAdd = file_get_contents($file);
+
+    // Show the actually parsed file
+    if(1 === VERBOSE)
+      echo str_repeat(' ', ($level) << 1) . '| ', substr($file, strlen(BASE_PATH)), PHP_EOL;
+
+    --$nbFilesToInclude;
+
+    // We increase the process step (DEBUG)
+    ++$inc;
+
+    // if it is a phtml template, we'll use an eval instead in order to include it exactly where we want
+    if (false !== strpos($file, '.phtml'))
+    {
+      $posMatch = strpos($finalContent, $match);
+
+      // if not found then $match has been trimmed in previous loops, so we retrieve $posMatch via the $match trimmed
+      if (false === $posMatch)
+        $posMatch = strpos($finalContent, preg_replace('@\s{2,}@', '', $match));
+
+      // We escape the quotes only in the PHP portions of the file that we want to add
+      $offset = 0;
+
+      while(false !== ($posBeginPHP = strpos($contentToAdd, '<?', $offset)))
+      {
+        $posFinPHP = strpos($contentToAdd, '?>', $posBeginPHP);
+
+        $contentToAdd = substr_replace($contentToAdd,
+          str_replace('\'', '\\\'', substr($contentToAdd, $posBeginPHP, $posFinPHP - $posBeginPHP), $nbReplacements),
+          $posBeginPHP,
+          $posFinPHP - $posBeginPHP
+        );
+
+        $offset = $posBeginPHP + 2 + $nbReplacements;
+      }
+
+      /* We ensure us that the content have only one space after the PHP opening tag and before the PHP ending tag
+       * that surrounds the require statement */
+      $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\?>))@', ' ', $finalContent);
+
+      // We have to process the $match value because we have modified the code
+      $newMatch = preg_replace('@\s{2,}@', '', $match);
+
+      // Checks if our $match is in PHP code
+      $inPhpTAG = preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent);
+
+      // Checks if our $match is in an eval()
+      $inEval = preg_match('@(?<=BOOTSTRAP###)[\S\s]*' . preg_quote($match) . '[\S\s]*(?=###BOOTSTRAP)@', $finalContent);
+
+      if(1 === $inPhpTAG)
+      {
+        // We remove PHP tags
+        substr_replace($finalContent, $newMatch, $posMatch - 2, $posMatch);
+
+        $replacement = $contentToAdd;
+      } else if(1 === $inEval)
+      {
+        phpOrHTMLIntoEval($contentToAdd);
+        $replacement = 'eval(\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\\'); ';
+      } else
+      {
+        phpOrHTMLIntoEval($contentToAdd);
+        $replacement = 'eval(\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\'); ';
+      }
+
+      // Add the code in the finalContent
+      $finalContent = substr_replace(
+        $finalContent,
+        $replacement,
+        strpos($finalContent, $newMatch),
+        strlen($newMatch)
+      );
+    } else
+      $finalContent = $contentToAdd . $finalContent;
+
+    assembleFiles($inc, $level, $nbFilesToInclude, $finalContent, $contentToAdd, $filesToConcat, $alreadyMatched);
+
+    // We increase the process step (DEBUG)
+    ++$inc;
+  }
+
+  // We increase the process step (DEBUG)
+  ++$inc;
+
+  while (0 < $nbFilesToInclude)
+  {
+    // Either we begin the process, either we return to the roots of the process so ... (DEBUG)
+    $level = 0;
 
     $file = array_shift($filesToConcat);
 
-    $contentToAdd = file_get_contents($file);
+    if(1 === VERBOSE)
+      echo PHP_EOL, substr($file, strlen(BASE_PATH)), PHP_EOL;
 
-//    if(13 === $inc)
-//    {
-//      file_put_contents('../logs/temporary file.php', $tempContent);
-//      die;
-//    }
+    $finalContent .= file_get_contents($file);
+    --$nbFilesToInclude;
 
-    // If we have a require statement, we replace it by the file content
-    if(false === strpos($match, 'extends'))
-    {
-      $posRequire = strpos($tempContent, $match);
-
-      if ($posRequire) // why is this condition necessary ?
-      {
-        if(false !== strpos($match, 'self:layout'))
-        {
-//          die('coucouss');
-          file_put_contents('../logs/temporary file.php', $tempContent);
-          $tempContent = substr_replace($tempContent, ' ?>' . $contentToAdd . '<? ', $posRequire, strlen($match));
-        } else
-        {
-          if (false === strpos($contentToAdd, '<?')) // if it's a phtml template with NO PHP
-          {
-            //$basePathLength = strlen(BASE_PATH);
-            //$absoluteDir = substr($file, $basePathLength, strlen($file) - strlen(basename($file)) - $basePathLength - 1);
-            //// we modify the require statement in order to replace __DIR__ by a path accessible from anywhere
-            //$tempContent = substr_replace($tempContent, str_replace('__DIR__', '\'' . $absoluteDir . '\'', $match), $posRequire, strlen($match));
-            $tempContent = substr_replace($tempContent, ' ?>' . $contentToAdd . '<? ', $posRequire, strlen($match));
-          } else
-          {
-            if (false !== strpos($file, '.phtml')) // if it is a phtml template with PHP
-            {
-              // If it doesn't begin with a PHP tag
-              if ('<?' !== substr($contentToAdd, 0, 2))
-                $contentToAdd = '?> ' . $contentToAdd;
-
-              // If it doesn't end with a PHP tag
-              if ('?>' !== substr($contentToAdd, 0, strlen($contentToAdd) - 2))
-                $contentToAdd .= ' <?';
-
-              $tempContent = substr_replace($tempContent, $contentToAdd, $posRequire, strlen($match));
-
-              /*$basePathLength = strlen(BASE_PATH);
-              $absoluteDir = BASE_PATH . substr($file, $basePathLength, strlen($file) - strlen(basename($file)) - $basePathLength - 1);
-              // we modify the require statement in order to replace __DIR__ by a path accessible from anywhere
-
-              $tempContent = $contentToAdd . substr_replace($tempContent, str_replace('__DIR__', '\'' . $absoluteDir . '\'', $match), $posRequire, strlen($match));*/
-            } else
-              $tempContent = $contentToAdd . $tempContent;
-          }
-
-          if(false !== strpos($match, 'self::layout'))
-          file_put_contents('../logs/temporary file.php', $tempContent);
-        }
-      }
-    } else // otherwise we just put the file content before
-    {
-      $tempContent = $contentToAdd . $tempContent;
-    }
-
-    if($verbose)
-    {
-      $tempFile = '../logs/temporary file.php';
-      file_put_contents($tempFile, $tempContent);
-
-      // Test each part of the process in order to precisely detect where there is an error.
-      if (hasSyntaxErrors($tempFile, true))
-      {
-        echo PHP_EOL, PHP_EOL, lightRedText('----------- ERRORS -----------'), PHP_EOL, PHP_EOL;
-        echo cyanText(str_pad('File', 17, ' ') . ' : '), substr($file, strlen(BASE_PATH)), PHP_EOL;
-        echo cyanText('Require statement : '), preg_replace('@\s@', '', $match), PHP_EOL;
-        echo cyanText(str_pad('Process turn', 17, ' ') . ' : '), $inc, PHP_EOL, PHP_EOL;
-        echo lightRedText('------------------------------'), PHP_EOL;
-        die;
-      }
-
-      echo lightGreen(), ' [SYNTAX ERRORS]', endColor(), PHP_EOL;
-
-      echo substr($file, strlen(BASE_PATH)), ' included.', PHP_EOL;
-    }
-
-    --$nbHtmlsToInclude;
-    ++$inc;
-
-    if(! assembleFiles($inc, $nbHtmlsToInclude, $tempContent, $filesToConcat, $verbose, $pattern))
-      break;
+    assembleFiles(
+      $inc,
+      $level,
+      $nbFilesToInclude,
+      $finalContent,
+      $finalContent,
+      $filesToConcat,
+      $alreadyMatched
+    );
   }
 
-  return $tempContent;
+  return true;
 }
 
 /**
@@ -193,74 +243,28 @@ function assembleFiles(int &$inc, int &$nbHtmlsToInclude, string &$tempContent, 
  *
  * @return mixed
  */
-function fixUses($content, $verbose, $filesToConcat = [])
+function fixFiles(&$content, &$verbose, &$filesToConcat = [])
 {
-  if($verbose)
+  define('VERBOSE', (int) $verbose);
+
+  if(false === empty($filesToConcat))
   {
-    echo PHP_EOL, lightCyanText('Files to concat (' . count($filesToConcat) . ') :'), PHP_EOL, PHP_EOL;
+    $nbFilesToInclude = count($filesToConcat);
 
-    foreach ($filesToConcat as $file)
-    {
-      echo substr($file, strlen(BASE_PATH)), PHP_EOL, PHP_EOL;
-    }
+    if(0 < $nbFilesToInclude && 1 === VERBOSE)
+      echo PHP_EOL, PHP_EOL, cyanText(count($filesToConcat)), ' files to process ... ', PHP_EOL, PHP_EOL,
+        substr(current($filesToConcat), strlen(BASE_PATH)), PHP_EOL;
 
-    echo PHP_EOL;
-  }
+    $content = file_get_contents(array_shift($filesToConcat));
+    --$nbFilesToInclude;
 
-  if(!empty($filesToConcat))
-  {
-    $nbHtmlsToInclude = count($filesToConcat) - 1;
+    // we create these variables only for the reference pass
+    $inc = $level = 0;
+    $alreadyMatched = [];
 
-    /* $tempContent wil not be equal to the real final content because we will suppress extends statement for this variable
-       in order to not make researches of the same thing multiple times */
-    $j = 0;
+    assembleFiles($inc, $level, $nbFilesToInclude, $content, $content, $filesToConcat, $alreadyMatched, []);
 
-    if(0 < $nbHtmlsToInclude && $verbose)
-     echo lightCyanText('Base file : '), substr(current($filesToConcat), strlen(BASE_PATH)), PHP_EOL;
-
-    $finalContent = '';$tempContent = '';
-    $inc = 0;
-
-    while(0 < $nbHtmlsToInclude)
-    {
-      $file = array_shift($filesToConcat);
-      $masterContentToAdd = file_get_contents($file);
-      $tempContent .= $masterContentToAdd;
-
-      if($verbose)
-        echo PHP_EOL, lightCyanText('File under analysis : '), $j, ': ' , substr($file, strlen(BASE_PATH)), PHP_EOL;
-
-      --$nbHtmlsToInclude;
-      $pattern = '@\s{0,}
-        (?:self::layout\(\);\s{0,})|
-        (?:require(?:_once){0,1}\s[^;]{1,};\s{0,})|
-        (?:extends\s[^\{]{1,})\s{0,}
-        @mx';
-      $result = preg_match_all($pattern, $tempContent, $matches);
-
-      // If the actual content doesn't have inclusions anymore, we add the next file and we retry
-      if(!$result)
-      {
-        if($verbose)
-          echo 'Nothing found. Only one file included.', PHP_EOL;
-
-        $finalContent .= $masterContentToAdd;
-        // If there are no more files to check we break the loop
-        if(empty($filesToConcat))
-          break;
-
-        continue;
-      }
-
-      $finalContent = assembleFiles($inc, $nbHtmlsToInclude, $tempContent, $filesToConcat, $verbose, $pattern, $result, $matches[0]);
-
-      if($verbose)
-        echo PHP_EOL;
-
-      ++$j;
-    }
-
-    $content = $finalContent;
+    echo PHP_EOL, str_pad('Files to include ', 71, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
   }
 
   /**
@@ -275,7 +279,7 @@ function fixUses($content, $verbose, $filesToConcat = [])
   define('ERASE_SEQUENCE', "\033[1A\r\033[K\e[1A\r\e[K");
 
   // There are no files to add via direct static calls so we clean the console output
-  if(false === empty($matches[0]))
+  if(1 === VERBOSE && false === empty($matches[0]))
     echo PHP_EOL, PHP_EOL, cyanText('------ STATIC DIRECT CALLS ------'), PHP_EOL;
 
   foreach($matches[0] as $key => $match)
@@ -284,13 +288,15 @@ function fixUses($content, $verbose, $filesToConcat = [])
     $newFile = $matches[2][$key][0] . $simpleFile . '.php';
 
     // If we haven't already loaded that file and the class doesn't exist before this process, we add its content into $content
-    if(! in_array($newFile, $newFilesUsed)
+    if(false === in_array($newFile, $newFilesUsed)
       && false === strpos($content, 'class ' . $simpleFile)
       && false === strpos($temp, 'class ' . $simpleFile))
     {
       $newFilesUsed[] = $newFile;
       $temp .= file_get_contents(BASE_PATH . $newFile);
-      echo PHP_EOL, str_pad($newFile . ' ', 71, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
+
+      if (1 === VERBOSE)
+        echo PHP_EOL, str_pad($newFile . ' ', 71, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
     }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
@@ -354,27 +360,24 @@ function fixUses($content, $verbose, $filesToConcat = [])
     preg_replace('@\?>\s*<\?@', '', $content)
   );
 
-//  $content = preg_replace(
-//    '@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@',
-//    '$4',
-//    $content
-//  );
-
-  /* We add the namespace cache\php at the beginning of the file
-    then we delete final ... partial ... use statements
- */
-
-  return str_replace(
-    'use ', '', ('<?' == substr($content, 0, 2))
-    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; function t(string $texte){ echo $texte; }' . substr($content, 2) // Function t will be the future translation feature
-    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; function t(string $texte){ echo $texte; }?>' . $content // Function t will be the future translation feature
+  $content = preg_replace(
+    '@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@',
+    '$4',
+    $content
   );
 
 
+  // We suppress our markers that helped us for the eval()
+  $content = str_replace(['BOOTSTRAP###', '###BOOTSTRAP'], '', $content);
 
-  /*return str_replace('use ', '', ('<?' == substr($content, 0, 2))
-    ? '<? namespace cache\php;' . substr($content, 2)
-    : '<? namespace cache\php;?>' . $content
-  );*/
+  /* We add the namespace cache\php at the beginning of the file
+    then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments like 'becaUSE'
+ */
+
+  return preg_replace(
+    '@\buse\b@', '', ('<?' == substr($content, 0, 2))
+    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . substr($content, 2)
+    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ?>' . $content
+  );
 }
 ?>

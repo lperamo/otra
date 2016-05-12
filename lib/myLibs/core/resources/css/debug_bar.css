@@ -4,8 +4,8 @@
 
 #dbgBar
 {
-    background: rgba(51, 51, 51, 0.8);
-    box-shadow:  0 0 10px rgba(51, 51, 51, 0.8), 0 0 10px 0 #000;
+    background: rgba(67, 67, 67, 0.8);
+    box-shadow:  0 0 10px rgba(67, 67, 67, 0.8), 0 0 10px 0 #000;
     color: #eee;
     font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
     margin-bottom: 7px;

@@ -1,23 +1,23 @@
 <?
 // We generate the class mapping file if we need it.
-if(!(isset($argv[2]) && '0' == $argv[2]))
+if(false === (isset($argv[2]) && '0' == $argv[2]))
 {
-  require(CORE_PATH . 'console/GenClassMap.php');
+  require CORE_PATH . 'console/GenClassMap.php';
   echo PHP_EOL;
-  require BASE_PATH . '/cache/php/ClassMap.php'; // on recharge la classmap que si elle a été modifiée.
+  require BASE_PATH . 'cache/php/ClassMap.php'; // on recharge la classmap que si elle a été modifiée.
 }
 
 $verbose = isset($argv[3]) ? $argv[3] : 0;
 
-require BASE_PATH . '/config/Routes.php';
-require BASE_PATH . '/lib/myLibs/core/Router.php';
+require BASE_PATH . 'config/Routes.php';
+require CORE_PATH . 'Router.php';
 
 // Checks that the folder of micro bootstraps exists
 if(!file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
-if(isset($argv[4]))
+if (isset($argv[4]))
 {
   $route = $argv[4];
   if(isset(\config\Routes::$_[$route]))
@@ -28,7 +28,8 @@ if(isset($argv[4]))
     return;
   }
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
-} else {
+} else
+{
   $routes = \config\Routes::$_;
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
@@ -51,26 +52,20 @@ foreach(array_keys($routes) as &$route)
     passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
 
-die;
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
+$content = file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php');
+contentToFile(fixFiles($content, $verbose), $routesManagementFile);
 
-contentToFile(
-  fixUses(
-  file_get_contents(BASE_PATH . '/lib/myLibs/core/Router.php') .
-  file_get_contents(BASE_PATH . '/config/Routes.php'),
-    $verbose),
-   $routesManagementFile);
-
-if(hasSyntaxErrors($routesManagementFile, $verbose))
+if (hasSyntaxErrors($routesManagementFile, $verbose))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
 
-echo PHP_EOL, 'Generation of the associated templates...' , PHP_EOL;
-passthru('php console.php genAssets 1 ' . (isset($argv[4]) ? $argv[4] : ''));
+//echo PHP_EOL, 'Generation of the associated templates...' , PHP_EOL;
+//passthru('php console.php genAssets 1 ' . (isset($argv[4]) ? $argv[4] : ''));
 ?>

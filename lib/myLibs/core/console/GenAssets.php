@@ -5,44 +5,42 @@ require_once BASE_PATH . '/config/All_Config.php';
 
 $routes = \config\Routes::$_;
 
+/**
+ * @param string $folder  The resource folder name
+ * @param string $shaName The route's name encoded in sha1
+ */
+function unlinkResourceFile(string $folder, string $shaName)
+{
+  $file = CACHE_PATH . $folder . $shaName . '.gz';
+
+  if (true === file_exists($file))
+    unlink($file);
+}
+
 // If we ask just for only one route
 if(true === isset($argv[3]))
 {
   $theRoute = $argv[3];
 
-  if(true === isset($routes[$theRoute]))
-  {
-    echo 'Cleaning the resources cache...';
-    $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
-
-    $routes = array($theRoute => $routes[$theRoute]);
-    // Cleaning the files specific to the route passed in parameter
-    $shaName = sha1('ca' . $theRoute . VERSION . 'che');
-
-    if($mask & 1)
-    {
-      $file = CACHE_PATH . 'tpl/' . $shaName . '.gz';
-      if(file_exists($file))
-        unlink($file);
-    }
-
-    if(($mask & 2) >> 1)
-    {
-      $file = CACHE_PATH . 'css/' . $shaName . '.gz';
-      if(file_exists($file))
-        unlink($file);
-    }
-
-    if(($mask & 4) >> 2)
-    {
-      $file = CACHE_PATH . 'js/' . $shaName . '.gz';
-      if(file_exists($file))
-        unlink($file);
-    }
-    echo lightGreen(), ' OK', PHP_EOL, endColor();
-  } else
+  if (false === isset($routes[$theRoute]))
     dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
-}else
+
+  echo 'Cleaning the resources cache...';
+  $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
+
+  $routes = array($theRoute => $routes[$theRoute]);
+  // Cleaning the files specific to the route passed in parameter
+  $shaName = sha1('ca' . $theRoute . VERSION . 'che');
+
+  if($mask & 1)
+    unlinkResourceFile('tpl/', $shaName);
+
+  if(($mask & 2) >> 1)
+    unlinkResourceFile('css/', $shaName);
+
+  if(($mask & 4) >> 2)
+    unlinkResourceFile('js/', $shaName);
+} else
 {
   echo PHP_EOL, 'Cleaning the resources cache...';
   $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
@@ -55,13 +53,13 @@ if(true === isset($argv[3]))
 
   if(($mask & 4) >> 2)
     array_map('unlink', glob(CACHE_PATH . 'js/*'));
-
-  echo lightGreen(), ' OK', PHP_EOL, endColor();
 }
+
+echo lightGreenText(' OK'), PHP_EOL;
 
 $cptRoutes = count($routes);
 
-echo $cptRoutes , ' route(s) to process. Processing the route(s) ... ' . PHP_EOL . PHP_EOL;
+echo $cptRoutes, ' route(s) to process. Processing the route(s) ... ', PHP_EOL, PHP_EOL;
 
 for($i = 0; $i < $cptRoutes; ++$i)
 {
@@ -70,7 +68,8 @@ for($i = 0; $i < $cptRoutes; ++$i)
   next($routes);
   echo lightCyan(), str_pad($name, 25, ' '), lightGray();
 
-  if(!isset($route['resources'])) {
+  if (false === isset($route['resources']))
+  {
     echo status('Nothing to do', 'cyan'), ' =>', lightGreenText(' OK'), PHP_EOL;
     continue;
   }
@@ -78,7 +77,6 @@ for($i = 0; $i < $cptRoutes; ++$i)
   $resources = $route['resources'];
   $chunks = $route['chunks'];
   $shaName = sha1('ca' . $name . VERSION . 'che');
-
 
   // TODO suppress this block and do the appropriate fixes
   if (false === isset($chunks[1]))
@@ -99,13 +97,23 @@ for($i = 0; $i < $cptRoutes; ++$i)
   if($mask & 1)
     echo template($shaName, $name, $resources);
 
-  echo ' => ', lightGreen(), 'OK ', endColor(), '[', cyan(), $shaName, endColor(), ']', PHP_EOL;
+  echo ' => ', lightGreenText('OK'), '[', cyanText($shaName), ']', PHP_EOL;
 }
 
-// helper function
-function checkShellCommand($command) { return !empty(shell_exec("$command")); }
+/**
+ * @param string $command
+ *
+ * @return bool
+ */
+function checkShellCommand(string $command) : bool { return false === empty(shell_exec("$command")); }
 
-function status($status, $color = 'lightGreen'){ return ' [' . $color() . $status . lightGray(). ']'; }
+/**
+ * @param string $status
+ * @param string $color
+ *
+ * @return string
+ */
+function status(string $status, string $color = 'lightGreen') : string { return ' [' . $color() . $status . lightGray(). ']'; }
 
 /**
  * Cleans the css (spaces and comments)
@@ -117,11 +125,11 @@ function status($status, $color = 'lightGreen'){ return ' [' . $color() . $statu
 function cleanCss(string $content) : string
 {
   $content = preg_replace('@/\*.*?\*/@s', '', $content);
-  $content = str_replace(array("\r\n", "\r", "\n", "\t", '  '), '', $content);
-  $content = str_replace(array('{ ',' {'), '{', $content);
-  $content = str_replace(array(' }','} '), '}', $content);
-  $content = str_replace(array('; ',' ;'), ';', $content);
-  $content = str_replace(array(', ',' ,'), ',', $content);
+  $content = str_replace(["\r\n", "\r", "\n", "\t", '  '], '', $content);
+  $content = str_replace(['{ ',' {'], '{', $content);
+  $content = str_replace([' }','} '], '}', $content);
+  $content = str_replace(['; ',' ;'], ';', $content);
+  $content = str_replace([', ',' ,'], ',', $content);
 
   return str_replace(': ', ':', $content);
 }
@@ -144,14 +152,11 @@ function css(string $shaName, array $chunks, string $bundlePath, array $resource
   loadResource($resources, $chunks, '_css', $bundlePath);
   $allCss = ob_get_clean();
 
-  if('' == $allCss)
+  if('' === $allCss)
     return status('No CSS', 'cyan');
 
-  $allCss = cleanCss($allCss);
   $pathAndFile = CACHE_PATH . 'css/' . $shaName;
-  $fp = fopen($pathAndFile, 'w');
-  fwrite($fp, $allCss);
-  fclose($fp);
+  file_put_contents($pathAndFile, cleanCss($allCss));
   exec('gzip -f -9 ' . $pathAndFile);
 
   return status('CSS');
@@ -165,7 +170,7 @@ function css(string $shaName, array $chunks, string $bundlePath, array $resource
  * @param string $bundlePath
  * @param array  $resources Resources array from the defined routes of the site
  *
- * @return string
+ * @return mixed
  */
 function js(string $shaName, array $chunks, string $bundlePath, array $resources)
 {
@@ -180,29 +185,27 @@ function js(string $shaName, array $chunks, string $bundlePath, array $resources
     return status('No JS', 'cyan');
 
   $pathAndFile = CACHE_PATH . 'js/' . $shaName;
-  $fp = fopen($pathAndFile, 'w');
-  fwrite($fp, $allJs);
-  fclose($fp);
+  file_put_contents($pathAndFile, $allJs);
 
   // Linux or Windows ? We have java or jamvm ?
   if(false === strpos(php_uname('s'), 'Windows'))
   {
-    if(empty(exec('which java')))
+    if(true === empty(exec('which java')))
     {
       exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
       return status('JS');
     }
-  } else
+  } else if(true === empty(exec('where java')))
   {
-    if(empty(exec('where java')))
-    {
-      exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
-      return status('JS');
-    }
+    exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
+    return status('JS');
   }
 
   /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
-  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' . $pathAndFile . ' --js_output_file ' . $pathAndFile . ' --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT & gzip -f -9 ' . $pathAndFile);
+  exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' .
+    $pathAndFile . ' --js_output_file ' . $pathAndFile . ' --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT & gzip -f -9 ' . $pathAndFile);
+
+  return status('JS');
 }
 
 /**
@@ -216,24 +219,23 @@ function js(string $shaName, array $chunks, string $bundlePath, array $resources
  */
 function loadResource(array $resources, array $chunks, $key, string $bundlePath, $path = true)
 {
-  if(true === isset($resources[$key]))
-  {
-    $type = substr(strrchr($key, '_'), 1);
-    $path = $bundlePath . (($path)
-      ? $chunks[2] . '/resources/' . $type . '/'
-      : $path . 'resources/' . $type . '/');
+  if(false === isset($resources[$key]))
+    return;
 
-    foreach($resources[$key] as &$resource)
+  $type = substr(strrchr($key, '_'), 1);
+  $path = $bundlePath . (true === $path ? $chunks[2] . '/' : $path) . 'resources/' . $type . '/';
+
+  foreach($resources[$key] as &$resource)
+  {
+    if (false === strpos($resource, 'http'))
+      echo file_get_contents($path . $resource . '.' . $type);
+    else
     {
-      if(false === strpos($resource, 'http'))
-        echo file_get_contents($path . $resource . '.' . $type);
-      else {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $resource . '.' . $type);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_exec($ch);
-        curl_close($ch);
-      }
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $resource . '.' . $type);
+      curl_setopt($ch, CURLOPT_HEADER, false);
+      curl_exec($ch);
+      curl_close($ch);
     }
   }
 }
@@ -249,7 +251,7 @@ function loadResource(array $resources, array $chunks, $key, string $bundlePath,
  */
 function template(string $shaName, string $route, array $resources) : string
 {
-  if(!isset($resources['template']))
+  if(false === isset($resources['template']))
     return status('No TEMPLATE', 'cyan');
 
   // We don't allow errors shown on production !
@@ -265,9 +267,7 @@ function template(string $shaName, string $route, array $resources) : string
   error_reporting($oldErrorReporting);
 
   $pathAndFile = CACHE_PATH . 'tpl/' . $shaName;
-  $fp = fopen($pathAndFile, 'w');
-  fwrite($fp, preg_replace('@\s{2,}@', ' ', $content));
-  fclose($fp);
+  file_put_contents($pathAndFile, preg_replace('@\s{2,}@', ' ', $content));
   exec('gzip -f -9 ' . $pathAndFile);
 
   return status('TEMPLATE');

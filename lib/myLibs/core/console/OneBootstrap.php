@@ -1,4 +1,17 @@
 <?
+declare(strict_types=1);
+
+/**
+ * @param array  $array
+ * @param string $fileBaseName
+ *
+ * @return bool|int Index if found, false otherwise
+ */
+function foundKey(array $array, string $fileBaseName)
+{
+  return array_search(str_replace('/', DIRECTORY_SEPARATOR, $fileBaseName), $array);
+}
+
 $verbose = $argv[1];
 $route = $argv[2];
 
@@ -9,11 +22,7 @@ require CORE_PATH . 'console/Colors.php';
 echo white(), str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, endColor();
 define('XMODE', 'dev');
 
-require BASE_PATH . 'config/Routes.php';
 require BASE_PATH . 'cache/php/ClassMap.php';
-require CORE_PATH . 'Router.php';
-
-$params = \config\Routes::$_[$route];
 
 $_SESSION['bootstrap'] = 1; // in order to not really make BDD requests !
 $_SESSION['debuglp_'] = 'Dev';// We save the previous state of dev/prod mode
@@ -29,15 +38,19 @@ spl_autoload_register(function($className) use($classMap)
 
 require BASE_PATH . 'config/All_Config.php';
 
+$params = \config\Routes::$_[$route];
+
 // Init require section
 require CORE_PATH . 'Session.php';
 require CORE_PATH . 'bdd/Sql.php';
 $defaultRoute = \config\Routes::$default['bundle'];
 require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
 call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
-//var_dump(get_included_files());die;
 
-$_SERVER['REMOTE_ADDR'] = 'console'; // in order to pass some conditions;
+// in order to pass some conditions;
+$_SERVER['REMOTE_ADDR'] = 'console';
+$_SERVER['REQUEST_SCHEME'] = 'HTTPS';
+$_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // to put into a file to configure for each project ?
 
 // Preparation of default parameters for the routes
 $chunks = $params['chunks'];
@@ -93,14 +106,25 @@ try
 // ...and retrieve the PHP classes used and concatenate them
 $content = '';
 
-$allFilesIncluded = array_flip(get_included_files());
-$fileToModify = str_replace('/', DIRECTORY_SEPARATOR, BASE_PATH . 'config/dev/All_Config.php');
-$val = $allFilesIncluded[$fileToModify];
-unset($allFilesIncluded[$fileToModify]);
+$allFilesIncluded = get_included_files();
+$allFilesIncluded[foundKey($allFilesIncluded, BASE_PATH . 'config/dev/All_Config.php')]
+  = BASE_PATH . 'config/prod/All_Config.php';
 
-$allFilesIncluded[BASE_PATH . 'config/prod/All_Config.php'] = $val;
-$filesToConcat = array_diff(array_flip($allFilesIncluded), $firstFilesIncluded);
+$filesToConcat = array_diff($allFilesIncluded, $firstFilesIncluded);
 $filesToConcat[] = BASE_PATH . 'lib\\myLibs\\core\\Lionel_Exception.php';
+
+/** WE UNSET THE ROUTER CLASS AND ROUTES CLASS BECAUSE WE HAVE THEM IN cache/php/RouteManagement.php */
+$keyRouter = foundKey($filesToConcat, CORE_PATH . 'Router.php');
+
+if (false !== $keyRouter)
+  unset($filesToConcat[$keyRouter]);
+
+$keyRoutes = foundKey($filesToConcat, BASE_PATH . 'config/Routes.php');
+
+if (false !== $keyRoutes)
+  unset($filesToConcat[$keyRoutes]);
+
+/** END */
 
 // We fix the created problems, check syntax errors and then minifies it
 $file = BASE_PATH . 'cache/php/' . $route;
@@ -108,7 +132,15 @@ $file_ = $file . '_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
 ksort($filesToConcat);
-contentToFile(fixUses($content, $verbose, $filesToConcat), $file_);
+
+// TEST WITHOUT TEMPLATE PHTML
+foreach($filesToConcat as $key => $fileToConcat)
+{
+  if (false !== strpos($fileToConcat, '.phtml'))
+    unset($filesToConcat[$key]);
+}
+
+contentToFile(fixFiles($content, $verbose, $filesToConcat), $file_);
 
 unset($content);
 
@@ -117,6 +149,6 @@ if(hasSyntaxErrors($file_, $verbose))
 
 compressPHPFile($file_, $file);
 
-// Declaration of the special t function for templates...
-function t($texte){ echo $texte; }
+// Declaration of the special translation t function for templates...
+function t(string $text) : string { return $text; }
 ?>
