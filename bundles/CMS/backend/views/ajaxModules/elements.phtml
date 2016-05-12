@@ -21,9 +21,9 @@ foreach($items as $item)
       <label for="element_<?= $item['id'] ?>"></label><!-- SAME HERE -->
     </td>
     <td><?= $item['contenu'] ?></td>
-    <td><? if (-1 != $item['parent']) {?> <a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See parent module'); ?></a><? } else {?>No parent module.<? } ?>
-    <td><? if (0 != $item['aEnfants']) {?><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('See articles') ?></a><? } else {?>No articles.<? } ?>
-    <td><?= $item['ordre'] ?></td>
+    <td><? if (-1 != $item['parent']) {?> <a class="softBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('See parent module'); ?></a><? } else {?>No parent module.<? } ?>
+    <td><? if (0 != $item['aEnfants']) {?><a class="softBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('See articles') ?></a><? } else {?>No articles.<? } ?>
+    <td><?= $item['order'] ?></td>
     <td><?= $right[$item['droit']] ?></td>
   </tr>
 <? } } ?>

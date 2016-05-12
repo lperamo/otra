@@ -72,7 +72,7 @@ class ajaxModulesController extends Controller
       'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')), // utile ?
       'items' => $db->values($db->query('
         SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu,
-              bem.ordre
+              bem.order
         FROM lpcms_elements_menu em
         INNER JOIN lpcms_bind_em_module bem ON bem.fk_id_elements_menu = em.id
         WHERE em.contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
@@ -90,8 +90,9 @@ class ajaxModulesController extends Controller
       'right' => self::$rights,
       // 'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
       'items' => $db->values($db->query('
-        SELECT id, parent, aEnfants, droit, contenu
-        FROM lpcms_elements_menu
+        SELECT em.id, parent, aEnfants, droit, contenu, bem.order
+        FROM lpcms_elements_menu em
+        INNER JOIN lpcms_bind_em_module bem ON bem.fk_id_elements_menu = em.id
         WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
     ], true);
   }

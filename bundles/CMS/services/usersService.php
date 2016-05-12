@@ -20,11 +20,15 @@ class usersService
     Sql::getDB();
     $limit = \bundles\CMS\models\Config::getByTypeAndKey('user', 'show_limit');
 
+    // If no limit is stored into the database, we fix it at 10
+    if (false === $limit)
+      $limit = 10;
+
     $users = User::getFirstUsers($limit);
 
     // Fixes the bug where there is only one user
     if(isset($users['id_user']))
-      $users = array($users);
+      $users = [$users];
 
     $count = User::count();
 

@@ -1,30 +1,53 @@
-(function(d, undef)
+(function(d, w, undef)
 {
   "use strict";
   var __table0 = d.getElementById('table0'),
       __modulesMgt = d.getElementById('modulesMgt'),
       __elementsMgt = d.getElementById('elementsMgt'),
       __articlesMgt = d.getElementById('articlesMgt'),
+      ajaxInit = {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        credentials: 'same-origin'
+      },
       s = {
         replaceModulesContent(data) {
           changeModuleTab.call(__modulesMgt);
           __table0.innerHTML = data
         },
 
-        replaceElementsContent(data)
+        checkStatus(response)
         {
-          // Errors management
-          if(-1 !== data.indexOf('exception'))
+        console.log('checkStatus');
+        //console.log(response.headers.get("content-type"));
+        //console.log(response.text());
+        console.log(response.ok);
+          if (true !== response.ok)
           {
-            data = JSON.parse(data);
-            d.getElementsByTagName('html')[0].innerHTML = data.msg;
+          console.log('test1');
+            response.text().then(text => function()
+            {
+              console.log('test2');
+              d.getElementsByTagName('html')[0].innerHTML = text;
+              console.log('Looks like there was a problem. Status Code: ' + response.status);
+              return
+            });
           }
 
+          return response.text()
+        },
+
+        replaceElementsContent(data)
+        {
           changeModuleTab.call(__elementsMgt);
           __table0.innerHTML = data
         },
 
-        replaceArticlesContent(data) {
+        replaceArticlesContent(data)
+        {
           changeModuleTab.call(__articlesMgt);
           __table0.innerHTML = data
         }
@@ -33,23 +56,24 @@
       function moduleSearch(e)
       {
         if(13 === e.which)
-          $.get(this.dataset.href, { search: this.value }, s[this.dataset.fn])
+          w.fetch(this.dataset.href, { search: this.value }).then(s.checkStatus).then(s[this.dataset.fn])
       }
 
       function getElements()
       {
-        $.get('/backend/ajax/modules/get/elements', { id: this.dataset.id}, function(){
+        w.fetch('/backend/ajax/modules/get/elements', { id: this.dataset.id}).then(s.checkStatus).then(function(){
           console.log('coucou')
         })
       }
 
       function changeModuleTab(evt)
       {
+        console.log('changeModuleTab');
         $('.activeTab', '#content').removeClass('activeTab');
         this.classList.add('activeTab');
 
         if(undef !== evt)
-          $.get(this.dataset.href, s[this.dataset.fn])
+          w.fetch(new Request(this.dataset.href, ajaxInit)).then(s.checkStatus).then(s[this.dataset.fn])
       }
 
   $(function()
@@ -60,4 +84,4 @@
                  .on('mouseup', 'th:nth-child(1), td:nth-child(1)', backend.triggerCheckbox)
     $('#modules_all').on('mouseup', backend.selectAll);
   })
-})(document)
+})(document, window)

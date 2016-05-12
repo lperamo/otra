@@ -16,8 +16,8 @@ define('CMS_JS_PATH', '/bundles/CMS/resources/js/');
 
 // Framework core resources
 define('CORE_VIEWS_PATH', '../lib/myLibs/core/views');
-define('CORE_CSS_PATH', '/lib/myLibs/core/css/');
-define('CORE_JS_PATH', '/lib/myLibs/core/js/');
+define('CORE_CSS_PATH', '/lib/myLibs/core/resources/css/');
+define('CORE_JS_PATH', '/lib/myLibs/core/resources/js/');
 
 define('LAYOUT', CORE_VIEWS_PATH . '/layout.phtml');
 

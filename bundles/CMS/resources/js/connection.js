@@ -15,13 +15,13 @@
 
   function checkStatus(response)
   {
-    if (200 !== response.status)
+    if (true !== response.ok)
     {
       console.log('Looks like there was a problem. Status Code: ' + response.status);
       return
     }
 
-    return response.json().then(connectReturn)
+    return response.json()
   }
 
   function connect(evt)
@@ -40,7 +40,7 @@
         body: 'email=' + document.getElementById('email').value +
               '&pwd=' + document.getElementById('pwd').value
       })
-      .then(checkStatus)
+      .then(checkStatus).then(connectReturn)
 
     return 0
   }

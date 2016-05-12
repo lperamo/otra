@@ -21,9 +21,9 @@
           <label for="article_<?= $item['id'] ?>"></label><!-- SAME HERE -->
         </td>
         <td><?= $item['contenu'] ?></td>
-        <td><a class="softBtn seeElements" data-id="<?= $item['id_elementsmenu'] ?>"><?= t('Voir les éléments associés') ?></a>
+        <td><a class="softBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('Voir les éléments associés') ?></a>
         <td><?= $item['parent'] ?></td>
-        <td><?= $item['ordre'] ?></td>
+        <td><?= $item['order'] ?></td>
         <td><?= $right[$item['droit']] ?></td>
       </tr>
   <? } } ?>

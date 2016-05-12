@@ -75,7 +75,7 @@ class User
   public static function addUser($mail, $pwd, $pseudo, $role)
   {
     Sql::$instance->query(
-      'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `role_id`)
+      'INSERT INTO lpcms_user (`mail`, `pwd`, `pseudo`, `fk_id_role`)
        VALUES (\'' . Sql::$instance->quote($mail) . '\', \'' . Sql::$instance->quote($pwd) . '\', \'' . Sql::$instance->quote($pseudo) . '\', ' . intval($role) . ');'
     );
   }
@@ -86,8 +86,8 @@ class User
   public static function getFirstUsers($limit)
   {
     return Sql::$instance->values(Sql::$instance->query(
-       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id, r.nom FROM lpcms_user u
-       INNER JOIN lpcms_role r ON u.role_id = r.id
+       'SELECT u.id_user, u.mail, u.pwd, u.pseudo, r.id as fk_id_role, r.nom FROM lpcms_user u
+       INNER JOIN lpcms_role r ON u.fk_id_role = r.id
        ORDER BY id_user
        LIMIT ' . intval($limit)
      ));
@@ -109,7 +109,7 @@ class User
       mail = \'' . $mail . '\',
       pwd = \'' . Sql::$instance->quote($pwd) . '\',
       pseudo = \'' . $pseudo . '\',
-      role_id = ' . intval($role) . ' WHERE id_user = ' . intval($id_user)
+      fk_id_role = ' . intval($role) . ' WHERE id_user = ' . intval($id_user)
     );
   }
 
@@ -149,7 +149,7 @@ class User
     extract($userParams);
     $limit = intval($limit);
     $req = ' FROM lpcms_user u
-      INNER JOIN lpcms_role r ON u.role_id = r.id';
+      INNER JOIN lpcms_role r ON u.fk_id_role = r.id';
     $search = 'search' == $type;
     $cond = 'next' == $type || $search;
     $sqlStart = true;
@@ -216,13 +216,13 @@ class User
    * @param  string $email
    * @param  string $pwd
    *
-   * @return array [id_user, role_id]
+   * @return array [id_user, fk_id_role]
    */
   public static function auth($email, $pwd)
   {
 
     return Sql::$instance->fetchAssoc(
-      Sql::$instance->query('SELECT u.`id_user`, u.`role_id`
+      Sql::$instance->query('SELECT u.`id_user`, u.`fk_id_role`
        FROM lpcms_user u
        WHERE u.`mail` = \'' . Sql::$instance->quote($email) . '\'
         AND u.`pwd` = \'' . Sql::$instance->quote($pwd) . '\'

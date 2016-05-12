@@ -2,6 +2,7 @@
 $_SESSION['debuglp_'] = 'Dev';
 
 define ('BEFORE', microtime(true));
+
 if(!defined('BASE_PATH'))
   define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
 
@@ -43,7 +44,6 @@ try
   // if the pattern is in the routes, launch the associated route
   if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
-    function t(string $texte) { echo $texte; }
     $defaultRoute = Routes::$default['bundle'];
     require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
     call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
@@ -51,7 +51,7 @@ try
   }
 } catch(Exception $e)
 {
-  echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
+  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
     : $e->getMessage();
 

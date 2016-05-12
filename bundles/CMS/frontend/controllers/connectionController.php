@@ -1,10 +1,8 @@
 <?
 namespace bundles\CMS\frontend\controllers;
 
-use \lib\myLibs\core\Controller,
-    \lib\myLibs\core\Lionel_Exception,
-    \lib\myLibs\core\Session,
-    \lib\myLibs\core\Router;
+use \lib\myLibs\core\{Controller, Router, Lionel_Exception};
+//    ,Session, Router;
 
 /**
  * LPCMS Connection management
@@ -19,7 +17,7 @@ class connectionController extends Controller
 
     $email = $_POST['email'];
     $pwd = $_POST['pwd'];
-    
+
     if(empty($email))
       throw new Lionel_Exception('Missing email !');
 
@@ -32,7 +30,7 @@ class connectionController extends Controller
     $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR']
       ? [
         'id_user' => '-1',
-        'role_id' => 1]
+        'fk_id_role' => 1]
       : \bundles\CMS\models\User::auth($email, crypt($pwd, FWK_HASH));
 
     if(empty($infosUser)){
@@ -41,7 +39,7 @@ class connectionController extends Controller
     {
       $_SESSION['sid'] = [
         'uid' => $infosUser['id_user'],
-        'role' => $infosUser['role_id']
+        'role' => $infosUser['fk_id_role']
       ];
 
       echo '{"status": 1}';
@@ -51,7 +49,12 @@ class connectionController extends Controller
   public function logoutAction()
   {
     unset($_SESSION['sid']);
-    Router::get('backend');
+    $backendRouteUrl = Router::getRouteUrl('backend');
+
+    // PHP redirects the user to the frontend page or the backend page according to what he's actually viewing.
+    header('Location: ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] .
+      (false === isset($_SERVER['HTTP_REFERER']) || false === strpos($_SERVER['HTTP_REFERER'], $backendRouteUrl) ? '/' : $backendRouteUrl)
+    );
   }
 }
 ?>

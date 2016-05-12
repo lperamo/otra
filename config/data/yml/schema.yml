@@ -243,6 +243,8 @@ lpcms_user:
       notnull: true
       auto_increment: true
       primary: true
+    fk_id_role:
+      type: int(11)
     mail:
       type: varchar(255)
       notnull: true
@@ -252,11 +254,10 @@ lpcms_user:
     pseudo:
       type: varchar(255)
       notnull: true
-    role_id:
-      type: int(11)
+
   relations:
     lpcms_role:
-      local: role_id
+      local: fk_id_role
       foreign: id
       constraint_name: lpcms_user_role
 

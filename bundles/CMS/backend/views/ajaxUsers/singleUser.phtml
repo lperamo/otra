@@ -8,10 +8,10 @@
     <td class="mail"><?= $user['mail'] ?></td>
     <td>********</td>
     <td><?= $user['pseudo'] ?></td>
-    <td data-value="<?= $user['id_role'] ?>"><?= $user['nom'] ?></td>
+    <td data-value="<?= $user['fk_id_role'] ?>"><?= $user['nom'] ?></td>
     <td>
-      <a role="button" aria-labelledby="<? t('Edit the user'); ?>" class="softBtn circleBorder edit _edit TTTL" data-tooltip="<? t('Makes the line editable'); ?>"></a><!--
-      --><a role="button" aria-labelledby="<? t('Delete the user'); ?>" class="softBtn circleBorder delete _delete TTTL" data-tooltip="Delete the user"></a>
+      <a role="button" aria-labelledby="<?= t('Edit the user'); ?>" class="softBtn circleBorder edit _edit TTTL" data-tooltip="<?= t('Makes the line editable'); ?>"></a><!--
+      --><a role="button" aria-labelledby="<?= t('Delete the user'); ?>" class="softBtn circleBorder delete _delete TTTL" data-tooltip="Delete the user"></a>
     </td>
   </tr>
 <? }

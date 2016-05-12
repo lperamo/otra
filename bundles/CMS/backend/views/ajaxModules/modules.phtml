@@ -1,14 +1,14 @@
 <tabContent id="tab0">
   <nav>
     <ul id="moduleTabs" class="menus" role="tablist">
-      <li id="modulesMgt" class="tab activeTab center" role="presentation" data-tooltip="Modules management" data-href="/backend/ajax/modules/search/module?search=" data-fn="replaceModulesContent"><? t('Modules'); ?>
-      <li id="elementsMgt" class="tab center" role="presentation" data-tooltip="Elements management" data-href="/backend/ajax/modules/search/elements?search=" data-fn="replaceElementsContent"><? t('Elements'); ?>
-      <li id="articlesMgt" class="tab center" role="presentation" data-tooltip="Articles Management" data-href="/backend/ajax/modules/search/articles?search=" data-fn="replaceArticlesContent"><? t('Articles'); ?>
+      <li id="modulesMgt" class="tab activeTab center" role="presentation" data-tooltip="Modules management" data-href="/backend/ajax/modules/search/module?search=" data-fn="replaceModulesContent"><?= t('Modules'); ?>
+      <li id="elementsMgt" class="tab center" role="presentation" data-tooltip="Elements management" data-href="/backend/ajax/modules/search/elements?search=" data-fn="replaceElementsContent"><?= t('Elements'); ?>
+      <li id="articlesMgt" class="tab center" role="presentation" data-tooltip="Articles Management" data-href="/backend/ajax/modules/search/articles?search=" data-fn="replaceArticlesContent"><?= t('Articles'); ?>
     </ul>
   </nav>
-	<input type="search" id="moduleSearch" role="search" placeholder="<? t('Search by module') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/module" data-fn="replaceModulesContent">
-	<input type="search" id="elementSearch" role="search" placeholder="<? t('Search by element') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/element" data-fn="replaceElementsContent">
-	<input type="search" id="articleSearch" role="search" placeholder="<? t('Search by article') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/article" data-fn="replaceArticlesContent">
+	<input type="search" id="moduleSearch" role="search" placeholder="<?= t('Search by module') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/module" data-fn="replaceModulesContent">
+	<input type="search" id="elementSearch" role="search" placeholder="<?= t('Search by element') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/element" data-fn="replaceElementsContent">
+	<input type="search" id="articleSearch" role="search" placeholder="<?= t('Search by article') ?>" class="input _genericSearch" data-href="/backend/ajax/modules/search/article" data-fn="replaceArticlesContent">
 	<div class="clearBoth"></div><br>
 
 	<table id="table0" role="tabpanel">

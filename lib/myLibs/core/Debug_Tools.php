@@ -1,8 +1,12 @@
 <?
-function lg($message){
+/**
+ * @param string $message
+ */
+function lg(string $message)
+{
   require_once __DIR__ . '/Logger.php';
   lib\myLibs\core\Logger::logTo($message, 'trace');
-};
+}
 
 /**
  * A nice dump function that takes as much parameters as we want to put. Somewhat disables XDebug.
@@ -45,18 +49,20 @@ function dumpSmall()
  *
  * @return string The formatted string
  */
-function reformatSource($stringToFormat)
+function reformatSource(string $stringToFormat) : string
 {
   return preg_replace('@&gt;\s*&lt;@', "&gt;<br/>&lt;", htmlspecialchars($stringToFormat));
 }
 
-/** Converts a php array into stylish html table
+/**
+ * Converts a php array into stylish html table
  *
- * @param $dataToShow array  Array to convert
- * @param $title      string Table name to show in the header
- * @param $indexToExclude string Index to exclude from the render
+ * @param        $dataToShow     Array to convert
+ * @param string $title          Table name to show in the header
+ * @param null   $indexToExclude Index to exclude from the render
  */
-function convertArrayToShowable(&$dataToShow, $title, $indexToExclude = null){
+function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = null)
+{
     ob_start();?>
     <table class="radius test">
       <thead>
@@ -86,9 +92,9 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
   return;
 
   echo $title, PHP_EOL,
-  lightBlueText('|'), ' Name' ,
-  lightBlueText('|'), ' Index or value if array',
-  lightBlueText('|'), ' Value if array', PHP_EOL;
+    lightBlueText('|'), ' Name' ,
+    lightBlueText('|'), ' Index or value if array',
+    lightBlueText('|'), ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
@@ -98,10 +104,11 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
  * @param $boucle         int           Number of recursions
  * @return int
  */
-function recurArrayConvertTab($donnees, $indexToExclude = null, $boucle = -1){
+function recurArrayConvertTab($donnees, $indexToExclude = null, int $boucle = -1){
   $i = 0;
   $oldBoucle = $boucle;
   ++$boucle;
+
   foreach($donnees as $index => &$donnee)
   {
     if($index === $indexToExclude)
@@ -111,19 +118,17 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, $boucle = -1){
       continue;
     }
 
-    if($boucle == 0)
-    {
+    if(0 === $boucle)
       echo '</tbody></table><table class="test"><tbody>';
-    }
+
     if(is_array($donnee) || is_object($donnee))
     {
         if(1 == $boucle){
-          if($boucle < $oldBoucle){
+          if($boucle < $oldBoucle)
             echo '<tr class="foldable"><td colspan="' , $boucle , '"></td><td>\'' , $index, '\'</td></tr>';
-          }
           else
             echo '<td>\'' , $index, '\'</td><td colspan="0" class="dummy"></td></tr>';
-        }else if($boucle > 1)
+        } else if($boucle > 1)
           echo '<tr class="foldable"><td colspan="', $boucle, '"></td><td colspan="0">\'' , $index,  '\'</td><td colspan="0" class="dummy"></td></tr>';
         else
           echo '<tr class="foldable"><td>\'' , $index, '\'</td>';
@@ -132,20 +137,34 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, $boucle = -1){
 
         // if($boucle + 1 < $oldBoucle)
         //   echo $boucle, $oldBoucle, '</tr></tbody></table>';
-    }else
+    } else
     {
-      if(0 == $boucle){
+      if(0 === $boucle)
         echo '<tr class="foldable" ><td>\'', $index, '\'</td><td colspan="2">\'', $donnee , '\'</td></tr>';
-      }else{
-        if(is_object($donnee))
+      else
+      {
+        if(true === is_object($donnee))
           $donnee = 'This is an Object non renderable !!';
         echo '<tr class="deepContent"><td colspan="' , $boucle , '"></td><td>\'', $index, '\'</td><td>\'', $donnee , '\'</td></tr>';
       }
     }
-    $i += 1;
+
+    ++$i;
   }
+
   return $oldBoucle;
 }
 
-function debug($noErrors = true){ if($noErrors) error_reporting(0); return (isset($_SESSION['debuglp_']) && $_SESSION['debuglp_'] == 'Dev');}
+/**
+ * @param bool $noErrors
+ *
+ * @return bool
+ */
+function debug(bool $noErrors = true) : bool
+{
+  if (true === $noErrors)
+    error_reporting(0);
+
+  return true === isset($_SESSION['debuglp_']) && 'Dev' === $_SESSION['debuglp_'];
+}
 ?>
