@@ -6,7 +6,7 @@
 
 namespace bundles\CMS\backend\controllers;
 
-use lib\myLibs\core\{Controller, bdd\Sql, Session, Router};
+use lib\myLibs\{Controller, bdd\Sql, Session, Router};
 
 class indexController extends Controller
 {

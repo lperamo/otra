@@ -1,7 +1,7 @@
 <?
 namespace bundles\CMS\frontend\controllers;
 
-use lib\myLibs\core\Controller,
+use lib\myLibs\Controller,
 		bundles\CMS\models\MailingList;
 
 /**

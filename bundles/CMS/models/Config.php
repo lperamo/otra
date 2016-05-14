@@ -2,7 +2,7 @@
 
 namespace bundles\CMS\models;
 
-use lib\myLibs\core\bdd\Sql;
+use lib\myLibs\bdd\Sql;
 
 /**
  * LPCMS Config model

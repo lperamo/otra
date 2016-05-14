@@ -43,6 +43,7 @@ if(false !== ($posDot = strpos($uri, '.')))
 }
 
 define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 define('DEBUG_KEY', 'debuglp_');
 session_start();
@@ -52,7 +53,7 @@ function t(string $texte) : string { return $texte; }
 
 if (true === isset($_SESSION[DEBUG_KEY]) && 'Dev' == $_SESSION[DEBUG_KEY]
   || true === isset($_GET[DEBUG_KEY]) && 'Dev' == $_GET[DEBUG_KEY])
-  require BASE_PATH . 'lib/myLibs/core/Bootstrap_Dev.php';
+  require CORE_PATH . 'Bootstrap_Dev.php';
 else // mode Prod
 {
   // We ensure that the debug bar is no more active

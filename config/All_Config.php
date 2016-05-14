@@ -5,21 +5,22 @@
  * @author Lionel Péramo */
 
 namespace config;
-use lib\myLibs\core\Session;
+use lib\myLibs\Session;
 
 define('CACHE_PATH', BASE_PATH . 'cache/');
 
 // CMS core resources
-define('CMS_VIEWS_PATH', '../bundles/CMS/views/');
-define('CMS_CSS_PATH', '/bundles/CMS/resources/css/');
-define('CMS_JS_PATH', '/bundles/CMS/resources/js/');
+define('CMS_VIEWS_PATH', BASE_PATH . 'bundles/CMS/views/');
+define('CMS_CSS_PATH', BASE_PATH . 'bundles/CMS/resources/css/');
+define('CMS_JS_PATH', BASE_PATH . 'bundles/CMS/resources/js/');
 
 // Framework core resources
-define('CORE_VIEWS_PATH', '../lib/myLibs/core/views');
-define('CORE_CSS_PATH', '/lib/myLibs/core/resources/css/');
-define('CORE_JS_PATH', '/lib/myLibs/core/resources/js/');
+define('CORE_RESOURCES_PATH', '/lib/myLibs/'); // Finit avec /
+define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
+define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
+define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
 
-define('LAYOUT', CORE_VIEWS_PATH . '/layout.phtml');
+define('LAYOUT', CORE_VIEWS_PATH . 'layout.phtml'); // It has to be layout
 
 define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters

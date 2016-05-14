@@ -2,7 +2,7 @@
 
 namespace bundles\CMS\models;
 
-use lib\myLibs\core\Model;
+use lib\myLibs\Model;
 
 /**
  * LPCMS Mailing List model

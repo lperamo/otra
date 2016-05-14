@@ -7,9 +7,9 @@
 
 namespace bundles\CMS\backend\controllers;
 
-use lib\myLibs\core\Controller,
-    lib\myLibs\core\bdd\Sql,
-    lib\myLibs\core\Session,
+use lib\myLibs\Controller,
+    lib\myLibs\bdd\Sql,
+    lib\myLibs\Session,
     config\Router,
     bundles\CMS\models\User;
 

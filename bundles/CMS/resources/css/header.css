@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'LucidaHandwritingItalic';
-  src: url('/../../assets/resources/lhandw-webfont.woff');
+  src: url('../others/lhandw-webfont.woff');
 }
 
 #headerTitle {

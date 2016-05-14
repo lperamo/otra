@@ -7,7 +7,7 @@
 
 namespace bundles\CMS\services;
 
-use lib\myLibs\core\bdd\Sql,
+use lib\myLibs\bdd\Sql,
     bundles\CMS\models\User;
 
 class usersService

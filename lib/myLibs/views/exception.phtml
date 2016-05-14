@@ -1,0 +1,43 @@
+<?
+self::layout();
+self::title('Exception !');
+?>
+<div id="exception" class="textCenter">Exception</div>
+<div id="explications" class="textCenter correctDisplay"><?
+  if (isset($code)) echo 'Error code ' , $code , ' in ' , $file , ' at line ' , $line, '<br />', $message;
+  ?>
+	<br />
+	<table class="radius">
+		<thead>
+	  	<tr class="head">
+	  		<th>Error Code</th>
+				<th>Function</th>
+				<th>Line</th>
+				<th>File</th>
+				<th>Arguments</th>
+			</tr>
+		</thead>
+		<tbody>
+		  <? for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
+		  {
+		  	$now = $trace[$i];
+		  	?><tr>
+		  		<td></td>
+		  	 	<td><?= (isset($now['function'])) ? $now['function'] : '-' ?></td>
+				<td><?= (isset($now['line'])) ? $now['line'] : '-' ?></td>
+				<td><?= (isset($now['file'])) ? $now['file'] : '-' ?></td>
+				<td>
+					<i class="showArgs">Show</i>
+				</td>
+			</tr>
+			<tr class="deepContent">
+				<td colspan="0"><? if(0 == $i) unset($now['args']['variables']);
+				 convertArrayToShowable($now['args'], 'Arguments', 'variables'); echo $now['args']; ?></td>
+			</tr>
+			<?
+		  }?>
+	  </tbody>
+	</table>
+	<br />
+	<?= $context ?>
+</div>

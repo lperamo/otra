@@ -1,7 +1,7 @@
 <?
 namespace bundles\CMS\frontend\controllers;
 
-use \lib\myLibs\core\{Controller, Router, Lionel_Exception};
+use \lib\myLibs\{Controller, Router, Lionel_Exception};
 //    ,Session, Router;
 
 /**
@@ -24,7 +24,7 @@ class connectionController extends Controller
     if(empty($pwd))
       throw new Lionel_Exception('Missing password !');
 
-    \lib\myLibs\core\bdd\Sql::getDB();
+    \lib\myLibs\bdd\Sql::getDB();
 
     // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
     $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR']

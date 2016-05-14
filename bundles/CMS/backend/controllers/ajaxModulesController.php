@@ -5,7 +5,7 @@
 declare(strict_types=1);
 namespace bundles\CMS\backend\controllers;
 
-use lib\myLibs\core\{Controller, bdd\Sql, Session, Router};
+use lib\myLibs\{Controller, bdd\Sql, Session, Router};
 
 class ajaxModulesController extends Controller
 {

@@ -4,7 +4,7 @@
  * @author Lionel Péramo */
 
 namespace bundles\CMS\frontend\controllers;
-use lib\myLibs\core\Controller;
+use lib\myLibs\Controller;
 
 class ajaxArticleController extends Controller
 {
