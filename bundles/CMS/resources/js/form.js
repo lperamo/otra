@@ -1,16 +1,28 @@
-$('body').on('click', '.select', function(e){
-	e.stopImmediatePropagation();
-	$(this).find('.selectChoices:first').toggleClass('selectVisible');
+(function()
+{
+	"use strict";
 
-	// Retrieves the selected value in the select
-	$('.selectChoice').click(function(){
+	var selectChoice = function selectChoice()
+	{
 		$(this).parents('.select').find('.actualSelectValue>a').attr('data-value', this.dataset.value).text(this.innerHTML);
-	});
+	},
 
-	var hideChoices = function(){
+	hideChoices = function hideChoices()
+	{
 		$(this).find('.selectChoices:first').removeClass('selectVisible');
 		$(':not(.select, .selectChoices)').off('click', hideChoices);
 		$('.selectChoice').off('click');
+	},
+
+	selectClick = function selectClick(e)
+	{
+		e.stopImmediatePropagation();
+		$(this).find('.selectChoices:first').toggleClass('selectVisible');
+
+		// Retrieves the selected value in the select
+		$('.selectChoice').click(selectChoice);
+		$(':not(.select, .selectChoices)').click(hideChoices);
 	};
-	$(':not(.select, .selectChoices)').click(hideChoices);
-});
+
+	$('body').on('click', '.select', selectClick);
+})();

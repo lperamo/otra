@@ -17,6 +17,9 @@ function unlinkResourceFile(string $folder, string $shaName)
     unlink($file);
 }
 
+if (true === isset($argv[2]) && false === is_numeric($argv[2]))
+  dieC('red', 'This not a valid mask ! It must be between 1 and 7.');
+
 // If we ask just for only one route
 if(true === isset($argv[3]))
 {
@@ -26,7 +29,7 @@ if(true === isset($argv[3]))
     dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
 
   echo 'Cleaning the resources cache...';
-  $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
 
   $routes = array($theRoute => $routes[$theRoute]);
   // Cleaning the files specific to the route passed in parameter
@@ -43,7 +46,7 @@ if(true === isset($argv[3]))
 } else
 {
   echo PHP_EOL, 'Cleaning the resources cache...';
-  $mask = (isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
 
   if($mask & 1)
     array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
@@ -188,18 +191,20 @@ function js(string $shaName, array $chunks, string $bundlePath, array $resources
   file_put_contents($pathAndFile, $allJs);
 
   // Linux or Windows ? We have java or jamvm ?
-  if(false === strpos(php_uname('s'), 'Windows'))
+  if(false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
   {
-    if(true === empty(exec('which java')))
+    if(true === empty(exec('which java'))) // JAMVM CASE
     {
       exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js; gzip -f -9 ' . $pathAndFile);
       return status('JS');
     }
-  } else if(true === empty(exec('where java')))
+  } else if(true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
   {
     exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar ' . $pathAndFile . ' -o ' . $pathAndFile . ' --type js & gzip -f -9 ' . $pathAndFile);
     return status('JS');
   }
+
+  // JAVA CASE
 
   /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
   exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar ../lib/compiler.jar --logging_level FINEST -W QUIET --js ' .

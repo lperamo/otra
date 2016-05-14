@@ -72,4 +72,4 @@ window.notif = (function()
   //   'WARNING' : WARNING,
   //   'run' : run
   // })
-})()
+})();
