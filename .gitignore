@@ -3,3 +3,4 @@ logs/*
 web/phpMyAdmin
 .idea
 config/data/sql/*
+*.sh
