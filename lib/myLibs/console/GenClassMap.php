@@ -7,7 +7,7 @@ $dirs = ['bundles', 'config', 'lib'];
 $classes = [];
 $processedDir = 0;
 
-foreach ($dirs as $dir) {
+foreach ($dirs as &$dir) {
   list($classes, $processedDir) = iterateCM($classes, BASE_PATH . $dir, $processedDir);
 }
 
@@ -17,14 +17,19 @@ ob_start();
 var_export($classes);
 $classMap = ob_get_clean();
 
-$fp = fopen(BASE_PATH . 'cache/php/ClassMap.php', 'w');
-fwrite($fp, '<? $classMap = ' . substr(
-  str_replace(
-    ['\\\\', ' ', "\n"],
-    ['\\', '', ''],
-    $classMap
-  ), 0, -2) . ');?>');
-fclose($fp);
+// We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file
+file_put_contents(
+  BASE_PATH . 'cache/php/ClassMap.php',
+  '<? $classMap=' . substr(
+    str_replace(
+      ['\\\\', ' ', "\n", 'array('],
+      ['\\', '', '', '['],
+      $classMap
+    ),
+    0,
+    -2
+  ) . '];?>'
+);
 
 echo lightGreen() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;
 echo print_r($classMap, true), PHP_EOL;
