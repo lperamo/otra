@@ -1,1 +1,0 @@
-En gros, dans cette version j'ai terminé la gestion du cache en amont de l'action et non en fin d'action contrairement à la version précèdente.

@@ -4,3 +4,4 @@ web/phpMyAdmin
 .idea
 config/data/sql/*
 *.sh
+php.ini*
