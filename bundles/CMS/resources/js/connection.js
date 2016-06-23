@@ -1,14 +1,14 @@
 "use strict";
 
-(function(document)
+(function(document, undef)
 {
   let formThis;
 
   function connectReturn(response)
   {
     // fail
-    if (undefined === response.status)
-      $('#connection_info').html(response[0])
+    if (undef === response.status)
+      $('#connection-info').html(response[0])
     else // success
       document.location.href = formThis.dataset.href_redirect
   }
@@ -47,6 +47,6 @@
 
   $(function ()
   {
-    document.getElementById('connectionForm').addEventListener("submit", connect, false)
+    document.getElementById('connection-form').addEventListener("submit", connect, false)
   })
 })(document);

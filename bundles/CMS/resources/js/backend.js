@@ -21,8 +21,8 @@ var backend = (function(d)
   function changeTab($this, index)
   {
    $('#tab' + index).show();
-   $('#tab' + $('.activeTab', '#menus').removeClass('activeTab').index()).hide();
-   $this.addClass('activeTab')
+   $('#tab' + $('.active-tab', '#menus').removeClass('active-tab').index()).hide();
+   $this.addClass('active-tab')
   }
 
   function activateTab()
@@ -30,12 +30,12 @@ var backend = (function(d)
     var $this = $(this),
     index = $this.index();
 
-    if(! $this.hasClass('activeTab'))
+    if (false === $this.hasClass('active-tab'))
     {
       var ajaxLink = this.dataset.href.replace('backend/', 'backend/ajax/'),
           title = this.textContent + ' - Backend';
 
-      if(!((tabs & Math.pow(2, index)) >> index)) // if this tab isn't already loaded
+      if (false === ((tabs & Math.pow(2, index)) >> index)) // if this tab isn't already loaded
       {
         $.get(
           ajaxLink,
@@ -74,7 +74,7 @@ var backend = (function(d)
 
   /** Select/Deselect all the related checkboxes */
   function selectAll() {
-    $(this).closest('table').find('input[type=checkbox]:not("._selectAll")').prop('checked', !this.checked)
+    $(this).closest('table').find('input[type=checkbox]:not("._select-all")').prop('checked', !this.checked)
   }
 
   /** Make a check before launching a CRUD function via AJAX */
@@ -88,7 +88,7 @@ var backend = (function(d)
       return false
     }
 
-    if(confirm('Do you really want to validate all the changes ?'))
+    if(true === confirm('Do you really want to validate all the changes ?'))
     {
       checkboxesChecked.closest('tr').each(function() {
         callback.call(this, content)
@@ -100,7 +100,7 @@ var backend = (function(d)
 
   $(function()
   {
-    tabs = Math.pow(2, $('.activeTab').index());
+    tabs = Math.pow(2, $('.active-tab').index());
     $('#menus').on('click', '.tab', activateTab);
   });
 

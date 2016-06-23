@@ -1,8 +1,9 @@
 <?
 namespace bundles\CMS\frontend\controllers;
 
-use \lib\myLibs\{Controller, Router, Lionel_Exception};
-//    ,Session, Router;
+use \lib\myLibs\{Controller, Router, bdd\Sql, Lionel_Exception};
+use \bundles\CMS\models\User;
+//    ,Session;
 
 /**
  * LPCMS Connection management
@@ -13,37 +14,35 @@ class connectionController extends Controller
 {
   public function ajaxLoginAction()
   {
-    !isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST) && die('Hack.');
+    false === isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST) && die('Hack.');
 
     $email = $_POST['email'];
-    $pwd = $_POST['pwd'];
 
-    if(empty($email))
+    if (true === empty($email))
       throw new Lionel_Exception('Missing email !');
 
-    if(empty($pwd))
+    $pwd = $_POST['pwd'];
+
+    if (true === empty($pwd))
       throw new Lionel_Exception('Missing password !');
 
-    \lib\myLibs\bdd\Sql::getDB();
+    Sql::getDB();
 
-    // if('192.168.1.1' == $_SERVER['REMOTE_ADDR'])
-    $infosUser = '192.168.1.1' == $_SERVER['REMOTE_ADDR']
-      ? [
-        'id_user' => '-1',
-        'fk_id_role' => 1]
-      : \bundles\CMS\models\User::auth($email, crypt($pwd, FWK_HASH));
+    $infosUser = User::auth($email, crypt($pwd, FWK_HASH));
 
-    if(empty($infosUser)){
-      echo '{"0": "Bad credentials."}';
-    } else
+    if (true === empty($infosUser))
     {
-      $_SESSION['sid'] = [
-        'uid' => $infosUser['id_user'],
-        'role' => $infosUser['fk_id_role']
-      ];
+      echo '{"0": "Bad credentials."}';
 
-      echo '{"status": 1}';
+      return;
     }
+
+    $_SESSION['sid'] = [
+      'uid' => $infosUser['id_user'],
+      'role' => $infosUser['fk_id_role']
+    ];
+
+    echo '{"status": 1}';
   }
 
   public function logoutAction()

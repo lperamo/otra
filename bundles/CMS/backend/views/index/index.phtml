@@ -2,19 +2,19 @@
 self::layout();
 self::title('Welcome to the LPCMS !');
 ?>
-<div id="backgroundspe"></div>
-<div id="mainBgd"></div>
-<div id="mainFrame">
+<div class="background-spe"></div>
+<div class="main-bgd"></div>
+<div class="main-frame">
   <? require CMS_VIEWS_PATH . 'header.phtml'; ?>
-  <div id="bgMiddle">
+  <div class="bg-middle">
 
-    <div class="moduleStyle1">
-      <ul class="menusVHeaderUl nodecoration">
-        <li class="menusVHeaderLi tcenter">
+    <div class="module-style1">
+      <ul class="menus-v-header-ul no-decoration">
+        <li class="menus-v-header-li t-center">
           Connexion
       </ul>
       <? $connCenter = true;require CMS_VIEWS_PATH . 'connection.phtml'; ?>
-      <div class="clearBoth"></div>
+      <div class="clear-both"></div>
     </div>
 
   <?  require CMS_VIEWS_PATH . 'footer.phtml';  ?>

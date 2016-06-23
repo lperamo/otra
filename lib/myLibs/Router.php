@@ -22,32 +22,51 @@ class Router
 	 */
 	public static function get(string $route = 'index', array $params = [], bool $launch = true)
 	{
-		if(!is_array($params))
+		if (false === is_array($params))
 			$params = [$params];
 
 		// We ensure that our input array really contains 5 parameters in order to make array_combine works
+		/**
+		 * We extract potentially those variables from $chunks
+		 *
+		 * @var $action
+		 * @var $bundle
+		 * @var $controller
+		 * @var $module
+		 * @var $pattern
+		 */
 		extract($chunks = array_combine(
 			['pattern', 'bundle', 'module', 'controller', 'action'],
 			array_pad(Routes::$_[$route]['chunks'], 5, null)
 		));
+
+		$controller = ('prod' === XMODE)
+			? 'cache\\php\\' . $controller . 'Controller'
+			: (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
+
+		if (false === $launch)
+			return $controller;
+
 		$chunks['route'] = $route;
 		$chunks['css'] = $chunks['js'] = false;
 
-		if(isset(Routes::$_[$route]['resources']))
+		// Do we have some resources for this route...
+		if (true === isset(Routes::$_[$route]['resources']))
 		{
 			$resources = Routes::$_[$route]['resources'];
-			$chunks['js'] = (isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['_js']));
-			$chunks['css'] = (isset($resources['bundle_css']) || isset($resources['module_css']) || isset($resources['_css']));
+			$chunks['js'] = (
+				true === isset($resources['bundle_js'])
+				|| true === isset($resources['module_js'])
+				|| true === isset($resources['_js'])
+			);
+			$chunks['css'] = (
+				true === isset($resources['bundle_css'])
+				|| true === isset($resources['module_css'])
+				|| true === isset($resources['_css'])
+			);
 		}
 
-    $controller = ('prod' == XMODE)
-     	? 'cache\\php\\' . $controller . 'Controller'
-	    : (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
-
-		if($launch)
-			new $controller($chunks, $params);
-		else
-			return Routes::$_[$route] . 'Controller'; // TODO
+		new $controller($chunks, $params);
 	}
 
 	/**
@@ -59,24 +78,24 @@ class Router
 	 */
 	public static function getByPattern(string $pattern)
 	{
-		foreach(Routes::$_ as $key => $route)
+		foreach (Routes::$_ as $routeName => &$routeData)
 		{
-			$route = $route['chunks'][0];
+			$routeUrl = $routeData['chunks'][0];
 
-			if(0 === strpos($pattern, $route))
-			{
-				$params = explode('/', trim(substr($pattern, strlen($route)), '/'));
+			if (0 !== strpos($pattern, $routeUrl))
+				continue;
 
-				if('' == $params[0])
-					return [$key, []];
+			$params = explode('/', trim(substr($pattern, strlen($routeUrl)), '/'));
 
-				// We destroy the parameters after ? because we want only rewrited parameters
-				$derParam = count($params) - 1;
-				$paramsFinal = explode('?', $params[$derParam]);
-				$params[$derParam] = $paramsFinal[0];
+			if ('' === $params[0])
+				return [$routeName, []];
 
-				return [$key, $params];
-			}
+			// We destroy the parameters after ? because we only want rewritten parameters
+			$derParam = count($params) - 1;
+			$paramsFinal = explode('?', $params[$derParam]);
+			$params[$derParam] = $paramsFinal[0];
+
+			return [$routeName, $params];
 		}
 
 		return false;

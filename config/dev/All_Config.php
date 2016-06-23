@@ -15,8 +15,8 @@ class All_Config
     $cache_path = CACHE_PATH,
     $version = 'v1',
     $defaultConn = 'CMS', // mandatory
-    $dbConnections = array( // mandatory
-      'CMS' => array(
+    $dbConnections = [ // mandatory
+      'CMS' => [
         'driver' => 'PDO_MySQL',
         'host' => '127.0.0.1',
         'port' => '',
@@ -24,7 +24,7 @@ class All_Config
         'login' => '_lionel_87',
         'password' => '_lmo5uj4FF*8', // _lmo5uj4FF*8
         'motor' => 'InnoDB'
-      )
-    );
+      ]
+    ];
 }
 ?>

@@ -1,8 +1,8 @@
 <thead>
   <tr>
     <th>
-      <input id="modules_all" class="_selectAll noLabel" type="checkbox">
-      <label for="modules_all"></label>
+      <input id="modules-all" class="_select-all no-label" type="checkbox">
+      <label for="modules-all"></label>
     </th>
     <th><?= t('Content') ?></th>
     <th><?= t('Detail') ?></th>
@@ -17,11 +17,11 @@
       {?>
       <tr>
         <td>
-          <input type="checkbox" id="article_<?= $item['id'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+          <input type="checkbox" id="article_<?= $item['id'] ?>" class="no-label"><!-- change THAT WITH A CORRECT ID !!! -->
           <label for="article_<?= $item['id'] ?>"></label><!-- SAME HERE -->
         </td>
         <td><?= $item['contenu'] ?></td>
-        <td><a class="softBtn seeElements" data-id="<?= $item['id'] ?>"><?= t('Voir les éléments associés') ?></a>
+        <td><a class="soft-btn see-elements" data-id="<?= $item['id'] ?>"><?= t('Voir les éléments associés') ?></a>
         <td><?= $item['parent'] ?></td>
         <td><?= $item['order'] ?></td>
         <td><?= $right[$item['droit']] ?></td>

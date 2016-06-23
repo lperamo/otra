@@ -1,5 +1,5 @@
 <?
-require CORE_PATH . 'console\ConsoleTools.php';
+require CORE_PATH . 'console\Tools.php';
 
 if (false === isset($argv[2]))
 {

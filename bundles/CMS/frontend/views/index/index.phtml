@@ -2,11 +2,11 @@
 $this->layout();
 self::title('Welcome to the LPCMS !');
 ?>
-<div id="mainBgd">
-  <div id="backgroundspe"></div>
-  <div id="mainFrame">
+<div class="main-bgd">
+  <div class="background-spe"></div>
+  <div class="main-frame">
   <?php require CMS_VIEWS_PATH . 'header.phtml'; ?>
-    <div id="bgMiddle">
+    <div class="bg-middle">
       <?php for($i=0; $i<2; $i += 1)
       {
         echo '<div id="location' , $i , '">';
@@ -24,10 +24,10 @@ self::title('Welcome to the LPCMS !');
         lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
         lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
       </article>
-    <div class="clearBoth"></div>
+    <div class="clear-both"></div>
 
     <?php require CMS_VIEWS_PATH . 'footer.phtml';  ?>
     </div>
-    <p id="designby" class="center"  data-tooltip="Main page">Designed by Péramo Lionel.</p>
+    <p class="design-by" class="center"  data-tooltip="Main page">Designed by Péramo Lionel.</p>
   </div>
 </div>

@@ -7,43 +7,54 @@
 namespace lib\myLibs\controllers;
 
 use lib\myLibs\Controller,
-    lib\myLibs\bdd\Sql,
-    lib\myLibs\Session,
     config\Router;
 
 class profilerController extends Controller
 {
-  public function preExecute(){
-    if('Dev' !== $_SESSION['debuglp_'])
-      die('No hacks.');
+  public function preExecute()
+  {
+    if ('Dev' !== $_SESSION['debuglp_'])
+    {
+      echo 'No hacks.';
+      exit (1);
+    }
   }
 
-  public function indexAction($refresh = false)
+  public function indexAction()
   {
-    echo '<div id="profiler">
+    echo '<div id="profiler" class="profiler">
       <div>
-        <a id="dbgHideProfiler" role="button" class="lbBtn dbg_marginR5">Hide the profiler</a>
-        <a id="dbgClearSQLLogs" role="button" class="lbBtn dbg_marginR5">Clear SQL logs</a>
-        <a id="dbgRefreshSQLLogs" role="button" class="lbBtn">Refresh SQL logs</a><br><br>
+        <a id="dbg-hide-profiler" role="button" class="lb-btn dbg-marginR5">Hide the profiler</a>
+        <a id="dbg-clear-sql-logs" role="button" class="lb-btn dbg-marginR5">Clear SQL logs</a>
+        <a id="dbg-refresh-sql-logs" role="button" class="lb-btn">Refresh SQL logs</a><br><br>
       </div>
-      <div id="dbgSQLLogs">';
+      <div id="dbg-sql-logs" class="dbg-sql-logs">';
 
     self::writeLogs(BASE_PATH . 'logs/sql.txt');
 
     echo '</div></div>';
   }
 
-  private static function writeLogs($file)
+  /**
+   * @param string $file
+   */
+  private static function writeLogs(string $file)
   {
-    if(file_exists($file) && '' != ($contents = file_get_contents($file)))
+    if ( true === file_exists($file) && '' !== ($contents = file_get_contents($file)))
     {
       $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
-      // print_r(substr($contents, 0, -1) . ']');die;
+
       foreach($requests as $r)
       {
-        echo '<div><div class="dbg_leftBlock dbg_fl">In file <span class="dbg_file">', $r['file'], '</span> at line <span class="dbg_line">', $r['line'], '</span>: <p>', $r['query'], '</p></div><a role="button" class="dbg_fr lbBtn">Copy</a></div>';
+        echo '<div>',
+            '<div class="dbg-left-block dbg-fl">',
+              'In file <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> at line&nbsp;<span class="dbg-line">', $r['line'], '</span> :',
+              '<p>', $r['query'], '</p>',
+            '</div>',
+            '<a role="button" class="dbg-fr lb-btn">Copy</a>',
+          '</div>';
       }
-    }else
+    } else
       echo 'No stored queries in ', $file, '.';
   }
 
@@ -54,7 +65,7 @@ class profilerController extends Controller
     ftruncate($handle, 0);
     fclose($handle);
 
-    echo 'No more stored queries in ' , $file , '.';
+    echo 'No more stored queries in ', $file, '.';
   }
 
   public function refreshSQLLogsAction() { self::writeLogs(BASE_PATH . 'logs/sql.txt'); }

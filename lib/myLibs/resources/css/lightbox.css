@@ -1,16 +1,11 @@
-@-webkit-keyframes lightboxStart {
-    from { opacity:0; left: -100% }
-    to { opacity:1; left: 0 }
-}
-@keyframes lightboxStart {
+@keyframes lightbox-start {
     from { opacity:0; left: -100% }
     to { opacity:1; left: 0 }
 }
 
-.lightboxContainer {
+.lightbox-container {
   align-items: center;
-  -webkit-animation: lightboxStart .15s ease-out 0s;
-  animation: lightboxStart .15s ease-out 0s;
+  animation: lightboxStart .25s ease-out 0s;
   border-radius: 3px;
   color:#EEE;
   display:flex;
@@ -20,14 +15,14 @@
   opacity: 1;
   position:absolute;
   overflow: hidden;
-  text-shadow:0 0 3px #CCC;
+  text-shadow:0 0 3px #777;
   top:0;
   transition: opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
   width:100%;
   z-index:10000
 }
   /* Class for the exit animation */
-  .lightboxEnding
+  .lightbox-ending
   {
     left: 100%;
     opacity: 0;
@@ -37,7 +32,7 @@
     background:rgba(51,51,51,0.8);
     border-radius: 5px;
   }
-    .finalDiv {
+    .final-div {
       display: inline-block;
       text-align: left;
       animation-name: lightboxStart;
@@ -46,7 +41,7 @@
 
     .confirm { padding: 10px 20px }
 
-      .confirmButton {
+      .confirm-button {
         border-radius: 3px;
         color: #444;
         float: right;

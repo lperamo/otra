@@ -2,16 +2,16 @@
  * closure compiler annotation
  * @suppress {checkVars, missingProperties}
  */
-(function(doc, window)
+(function(doc, window, undef)
 {
 	"use strict";
 	var $$tbody, cpt,
 		txtMail = '<input class="input field" type="email" required="required" title="" autocomplete="on" data-tooltip="Please complete this field."',
 		txtPwd = '<input type="password" class="input field" required="required" title="" data-tooltip="Please complete this field. (at least 8 characters)"',
 		txtPseudo = '<input class="input field" required="required" title="" data-tooltip="Please complete this field."',
-		editBtn = '<a class="softBtn circleBorder edit _edit TTTL" data-tooltip="Makes the line editable"></a>',
-		validBtn = '<a class="softBtn circleBorder validate _validate TTTL" data-tooltip="Validates the new user"></a>',
-		deleteBtn = '<a class="softBtn circleBorder delete _delete TTTL" data-tooltip="Delete the user"></a>',
+		editBtn = '<a class="soft-btn circle-border edit _edit tttl" data-tooltip="Makes the line editable"></a>',
+		validBtn = '<a class="soft-btn circle-border validate _validate tttl" data-tooltip="Validates the new user"></a>',
+		deleteBtn = '<a class="soft-btn circle-border delete _delete tttl" data-tooltip="Delete the user"></a>',
 		options = '',
 		$prev,
 		$next,
@@ -22,24 +22,24 @@
 		$limitValue;
 
 		for(var role in roles) {
-			options += '<li class="selectChoice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>';
+			options += '<li class="select-choice" data-value="' + roles[role].id + '">' + roles[role].nom + '</li>';
 		}
 
 		var roleText = '<div class="select">' +
-					      '<span class="fl input actualSelectValue">' +
-					        '<a data-value="' + roles[0].id + '">' + roles[0].nom + '</a>' +
-					        '<span class="fr selectArrow"></span>' +
+					      '<span class="fl input actual-select-value">' +
+					        '<a data-value="' + roles[0].id + '" class="actual-select-value__link">' + roles[0].nom + '</a>' +
+					        '<span class="fr select-arrow"></span>' +
 					      '</span>'+
-					      '<div class="clearBoth"></div>'+
-					      '<ul class="fl selectChoices">' + options + '</ul>'+
+					      '<div class="clear-both"></div>'+
+					      '<ul class="fl select-choices">' + options + '</ul>'+
 		    			'</div>',
 		U = {
 		page: 1,
 
 		addUser()
 		{
-			$$tbody.find('#trOptions').before('<tr id="_'+ cpt + '" class="editable">'+
-						'<td><input id="chk__' + cpt + '" type="checkbox" role="checkbox" class="noLabel" /><label for="chk__' + cpt + '"></td>'+
+			$$tbody.find('#tr-options').before('<tr id="_'+ cpt + '" class="editable">'+
+						'<td><input id="chk__' + cpt + '" type="checkbox" role="checkbox" class="no-label" /><label for="chk__' + cpt + '"></td>'+
 						'<td class="mail">' + txtMail + ' /></td>'+
 						'<td>' + txtPwd + '/></td>'+
 						'<td>' + txtPseudo + '/></td>'+
@@ -65,7 +65,7 @@
 		/**
 		 * @suppress {checkTypes}
 		 */
-		delFn(content, tr, undef)
+		delFn(content, tr)
 		{
 			if('_' === tr.id.substr(0,1))
 			{
@@ -96,11 +96,11 @@
 	    	$lastPage.nextSibling.textContent = ' (' + data.count + ' users)';
 	    	$pageInd.dataset.realcount = data.count;
 
-	    	if($pageInd.dataset.actualcount > data.count)
+	    	if ($pageInd.dataset.actualcount > data.count)
 	    		$pageInd.dataset.actualcount = data.count
 
 	    	// if there are no more users on this page, we remove one page and we pass to the previous page of users
-	    	if(2 === $$tbody[0].querySelectorAll('tr').length && 1 < +$currentPage.textContent)
+	    	if (2 === $$tbody[0].querySelectorAll('tr').length && 1 < +$currentPage.textContent)
 	    	{
 	    		$lastPage.textContent = +$lastPage.textContent - 1;
 	    		U.prev()
@@ -137,7 +137,6 @@
 					$pseudo = $pwd.nextElementSibling,
 					$role = $pseudo.nextElementSibling,
 					roleTxt = $role.textContent,
-					undef,
 					roleId,
 					trId = $$tr[0].id;
 
@@ -149,11 +148,11 @@
 				}
 			}
 
-			if(undef === window.usersSaveData)
+			if (undef === window.usersSaveData)
 				window.usersSaveData = [];
 
 			window.usersSaveData[trId] = [$mail.textContent, $pwd.textContent, $pseudo.textContent, $role.textContent];
-			this.outerHTML = '<a class="_editEnd softBtn circleBorder validate TTTL" data-tooltip="Validates the new user"></a><a class="softBtn circleBorder cancel _cancel TTTL" data-tooltip="Cancels changes"></a>';
+			this.outerHTML = '<a class="_edit-end soft-btn circle-border validate tttl" data-tooltip="Validates the new user"></a><a class="soft-btn circle-border cancel _cancel tttl" data-tooltip="Cancels changes"></a>';
 			U.oldMail = window.usersSaveData[trId][0];
 			U.oldPseudo = window.usersSaveData[trId][2];
 			$mail.innerHTML = txtMail + 'value="' + U.oldMail + '" />';
@@ -204,16 +203,15 @@
 		validAll($$content)
 		{
 			var $$tr = $(this),
-				$$tds = $$tr.find('td:not(:first-child,:last-child)'),
-				undef;
+				$$tds = $$tr.find('td:not(:first-child,:last-child)');
 
-			if(undef === $$tds[0].children[0])
+			if (undef === $$tds[0].children[0])
 				return false;
 
 			var cond = 0 === $$tr.find('.cancel').length,
 				  data = U.checkin($$tr, $$tds, roles, $$content[0], cond);
 
-			if(true !== data)
+			if (true !== data)
 			{
 				if(cond) // We was adding something
 					$.post('/backend/ajax/users/add', data, function(data)
@@ -244,7 +242,7 @@
 			for(var i = 0; i < 4; ++i) { $$tds.eq(i + 1).text(window.usersSaveData[trId][i]) }
 			$$this[0].insertAdjacentHTML('afterend', editBtn);
 			$$this.prev().remove().end().remove();
-			$$tr.find('.editEnd').remove()
+			$$tr.find('.edit-end').remove()
 		},
 
 		/** Check form informations before send them to PHP */
@@ -312,8 +310,7 @@
 		{
 			try
 			{
-        var data = JSON.parse(data),
-        		undef;
+        var data = JSON.parse(data);
 
         if(true === data.success)
         {
@@ -324,7 +321,6 @@
         	return false
         }
     	} catch (e) {
-    		var undef;
     		undef !== window.debug && window.debug.postLog(e, data);
 
         return false
@@ -337,7 +333,7 @@
 		 * @param  {Object} data     [description]
 		 * @param  {Object} $content [description]
 		 * @param  {Object} $$tds    [description]
-		 * @param  {bool} 	add      [description]
+		 * @param  {boolean} 	add      [description]
 		 * @param  {Object} $$tr     [description]
 		 * @return {Object}          [description]
 		 */
@@ -347,7 +343,6 @@
 			if(false === data) return false;
 
 			var $$select = $$tds.find('.select'),
-				undef,
 				add = add || false;
 
 			if(false !== add)
@@ -389,7 +384,7 @@
 		},
 
 		/** Refreshes the table. We can come from the pagination or a search. */
-		refresh(type, undef)
+		refresh(type)
 		{
 			var $$firstTr = $$tbody.find('tr:first'),
 				$$tds = $$firstTr.find('td'),
@@ -402,7 +397,7 @@
 			if('search' === type && pageIndDataset.realcount === pageIndDataset.actualcount && '' === mail + pseudo + role)
 				return false;
 
-			var options = $$tbody.find('#trOptions');
+			var options = $$tbody.find('#tr-options');
 
 			$.post(
 				'/backend/ajax/users/search',
@@ -428,13 +423,13 @@
 								pageIndDataset.actualcount = data.count;
 
 								// Updates ... Page 1 / 2 (1 user) ... section
-								$pageInd.querySelector('#lastPage').innerHTML = Math.ceil(data.count / limitValue);
+								$pageInd.querySelector('#last-page').innerHTML = Math.ceil(data.count / limitValue);
 								var $childNodes = $pageInd.childNodes;
 								$childNodes.item($childNodes.length - 1).textContent = ' (' + data.count + (2 > data.count ? ' user)' : ' users)');
 							}
 
 							var $$trFirst = $$tbody.find('tr:first'),
-									$$thingsToReplace = $$trFirst.nextUntil('#trOptions');
+									$$thingsToReplace = $$trFirst.nextUntil('#tr-options');
 
 							// Fixes the bug when the previous search has put nothing...then there is nothing to replace
 							if(0 === $$thingsToReplace.length)
@@ -485,16 +480,16 @@
 
 		events()
 		{
-			$$tbody.on('mouseup', '#usersAll', backend.selectAll)
+			$$tbody.on('mouseup', '#users-all', backend.selectAll)
 				.on('mouseup', 'td:nth-child(1):not(.options)', backend.triggerCheckbox)
 				.on('mouseup', '#add', U.addUser)
 				.on('mouseup', 'tr.editable>td', U.focusSelect)
 				.on('mouseup', '._edit', U.edit)
 				.on('mouseup', '._editEnd', U.editEnd)
 				.on('mouseup', '._delete', U.del)
-				.on('mouseup', '#usersDelAll', U.deleteAll)
+				.on('mouseup', '#users-del-all', U.deleteAll)
 				.on('mouseup', '._validate', U.validOne)
-				.on('mouseup', '#usersValAll', U.launchValidAll)
+				.on('mouseup', '#users-val-all', U.launchValidAll)
 				.on('mouseup', '._cancel', U.cancel)
 				.on('mouseup',  '#prev:not(.disabled)', U.prev)
 				.on('mouseup',  '#next:not(.disabled)', U.next)
@@ -505,17 +500,17 @@
 	};
 
 	window.initUsers = function() {
-		$$tbody = $('#usersBody'),
+		$$tbody = $('#users-body'),
 		cpt = 0,
 		$prev = doc.getElementById('prev'),
 		$next = doc.getElementById('next'),
-		$currentPage = doc.getElementById('currentPage'),
-		$lastPage = doc.getElementById('lastPage'),
-		$pageInd = doc.getElementById('pageInd'),
+		$currentPage = doc.getElementById('current-page'),
+		$lastPage = doc.getElementById('last-page'),
+		$pageInd = doc.getElementById('page-ind'),
 		$limit = doc.getElementById('limit'),
-		$limitValue = doc.getElementById('limitValue');
+		$limitValue = doc.getElementById('limit-value');
 		U.events()
 	};
 
 	$(function() { window.initUsers()	})
-})(document, window);
+})(document, window, undefined);

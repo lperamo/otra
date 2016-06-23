@@ -1,10 +1,12 @@
 <? self::css(CORE_CSS_PATH . 'debug_bar'); ?>
-<div id="dbgBar">
+<? self::css(CORE_CSS_PATH . 'lightbox'); ?>
+<div id="dbg-bar" class="dbg-bar">
    <? echo '\'', $this->route, '\' | ', $this->bundle, '/', $this->module, '/', $this->controller, '/', $this->action,
-   ' | ', round(microtime(true) - BEFORE, 3) ?>s | <span class="<?= (isset($_SESSION['sid'])) ? 'dbg_on' : 'dbg_off'?>">Connected</span>
-   | <a id="showSQL" class="dbgBtn">Inspect SQL</a>
-   <p id="toggle">▶</p>
-</div><div id="dbgBarXS">
-	<p id="toggleSmall">▼</p>
+   ' | ', round(microtime(true) - BEFORE, 3) ?>s | <span class="<?= (isset($_SESSION['sid'])) ? 'dbg-on' : 'dbg-off'?>">Connected</span>
+   | <a id="show-sql" class="dbg-btn">Inspect SQL</a>
+   <p id="toggle" class="toggle">▶</p>
+</div><div class="dbg-bar-xs">
+	<p id="toggle-small" class="toggle-small">▼</p>
 </div>
-<?php self::js(CORE_JS_PATH . 'debug_bar'); ?>
+<?php self::js(CORE_JS_PATH . 'debug_bar');
+  self::js(CORE_JS_PATH . 'lightbox'); ?>

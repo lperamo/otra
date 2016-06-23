@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace bundles\CMS\backend\controllers;
 
 use lib\myLibs\{Controller, bdd\Sql, Session, Router};
+use bundles\CMS\models\Module;
 
 class ajaxModulesController extends Controller
 {
@@ -23,7 +24,7 @@ class ajaxModulesController extends Controller
 
   public function preExecute()
   {
-    if($this->action != 'index' && !isset($_SESSION['sid']))
+    if($this->action !== 'index' && false === isset($_SESSION['sid']))
     {
       Router::get('backend');
       die;
@@ -34,7 +35,7 @@ class ajaxModulesController extends Controller
   {
     Sql::getDB();
 
-    $modules = \bundles\CMS\models\Module::getAll();
+    $modules = Module::getAll();
 
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => self::$moduleTypes,
@@ -72,7 +73,7 @@ class ajaxModulesController extends Controller
       'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')), // utile ?
       'items' => $db->values($db->query('
         SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu,
-              bem.order
+               bem.order
         FROM lpcms_elements_menu em
         INNER JOIN lpcms_bind_em_module bem ON bem.fk_id_elements_menu = em.id
         WHERE em.contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))
@@ -90,7 +91,8 @@ class ajaxModulesController extends Controller
       'right' => self::$rights,
       // 'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
       'items' => $db->values($db->query('
-        SELECT em.id, parent, aEnfants, droit, contenu, bem.order
+        SELECT em.id, parent, aEnfants, droit, contenu,
+               bem.order
         FROM lpcms_elements_menu em
         INNER JOIN lpcms_bind_em_module bem ON bem.fk_id_elements_menu = em.id
         WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))

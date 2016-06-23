@@ -1,16 +1,7 @@
 <?
 declare(strict_types=1);
 
-/**
- * @param array  $array
- * @param string $fileBaseName
- *
- * @return bool|int Index if found, false otherwise
- */
-function foundKey(array $array, string $fileBaseName)
-{
-  return array_search(str_replace('/', DIRECTORY_SEPARATOR, $fileBaseName), $array);
-}
+use config\All_Config;
 
 $verbose = $argv[1];
 $route = $argv[2];
@@ -31,9 +22,19 @@ $firstFilesIncluded = get_included_files();
 // Force to show all errors
 error_reporting(-1 & ~E_DEPRECATED);
 
-spl_autoload_register(function($className) use($classMap)
+spl_autoload_register(function($className)
 {
-  require $classMap[$className];
+  if (isset(CLASSMAP[$className]))
+  {
+    require CLASSMAP[$className];
+  } else {
+
+    echo red(), 'CLASSMAP PROBLEM !!', PHP_EOL, debug_print_backtrace(), PHP_EOL;
+    var_dump(CLASSMAP);
+    echo PHP_EOL, endColor();
+
+  }
+
 });
 
 require BASE_PATH . 'config/All_Config.php';
@@ -55,96 +56,59 @@ $_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // to put into a file to c
 // Preparation of default parameters for the routes
 $chunks = $params['chunks'];
 
-if(isset($params['post']))
+if(true === isset($params['post']))
   $_POST = $params['post'];
 
-if(isset($params['get']))
+if(true === isset($params['get']))
   $_GET = $params['get'];
 
 // We put default parameters in order to not write too much times the session configuration in the routes file
 $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
-if(isset($params['session']))
+if(true === isset($params['session']))
 {
-  foreach($params['session'] as $key => $param)
+  foreach($params['session'] as $key => &$param)
   {
     $_SESSION[$key] = $param;
   }
 }
-
-// We execute the route...
-ob_start();
-
-try
-{
-  \lib\myLibs\Router::get(
-    $route,
-    (isset($params['bootstrap'])) ? $params['bootstrap'] : []
-  );
-  $output = ob_get_clean();
-
-  if(false !== ($pos = strpos($output, 'Notice')))
-  {
-    preg_match('@Notice.*\d@', $output, $matches);
-    echo lightCyan(), ' Beware ... there are notices around !' . PHP_EOL;
-    foreach($matches as $match) { echo $match; }
-    unset($matches, $match);
-  }
-
-  unset($output);
-
-  echo str_pad('Route execution ', 75, '.', STR_PAD_RIGHT), greenText(' [OK]');
-} catch(Exception $e)
-{
-  ob_end_clean();
-  echo red(), str_pad('Fail.', 35 - strlen($route), ' ', STR_PAD_LEFT), PHP_EOL,
-    str_pad('- ', 5, ' ', STR_PAD_LEFT) . $e->getMessage(), endColor(), PHP_EOL;
-
-  return;
-}
-
-// ...and retrieve the PHP classes used and concatenate them
-$content = '';
-
-$allFilesIncluded = get_included_files();
-$allFilesIncluded[foundKey($allFilesIncluded, BASE_PATH . 'config/dev/All_Config.php')]
-  = BASE_PATH . 'config/prod/All_Config.php';
-
-$filesToConcat = array_diff($allFilesIncluded, $firstFilesIncluded);
-$filesToConcat[] = CORE_PATH . 'Lionel_Exception.php';
-
-/** WE UNSET THE ROUTER CLASS AND ROUTES CLASS BECAUSE WE HAVE THEM IN cache/php/RouteManagement.php */
-$keyRouter = foundKey($filesToConcat, CORE_PATH . 'Router.php');
-
-if (false !== $keyRouter)
-  unset($filesToConcat[$keyRouter]);
-
-$keyRoutes = foundKey($filesToConcat, BASE_PATH . 'config/Routes.php');
-
-if (false !== $keyRoutes)
-  unset($filesToConcat[$keyRoutes]);
-
-/** END */
 
 // We fix the created problems, check syntax errors and then minifies it
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
-ksort($filesToConcat);
+$fileToInclude = BASE_PATH . str_replace('\\', '/', \lib\myLibs\Router::get(
+    $route,
+    (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+    false
+  )) . '.php';
 
-// TEST WITHOUT TEMPLATE PHTML
-foreach($filesToConcat as $key => $fileToConcat)
+define(
+  'PATH_CONSTANTS',
+  [
+    'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+    'driver' => All_Config::$dbConnections[key(All_Config::$dbConnections)]['driver']
+  ]);
+//    'driver' => C:\LPAMP\www\framework-cms\config\dev\All_Config.php]);
+
+set_error_handler(function ($errno, $message, $file, $line, $context) {
+  throw new \lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context);
+});
+
+try
 {
-  if (false !== strpos($fileToConcat, '.phtml'))
-    unset($filesToConcat[$key]);
+  contentToFile(fixFiles(file_get_contents($fileToInclude), $verbose, $fileToInclude), $file_);
+} catch(\Exception $e)
+{
+  echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
+    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
+    : $e->getMessage();
+
+  return;
 }
 
-contentToFile(fixFiles($content, $verbose, $filesToConcat), $file_);
-
-unset($content);
-
-if(hasSyntaxErrors($file_, $verbose))
+if (hasSyntaxErrors($file_, $verbose))
   return;
 
 compressPHPFile($file_, $file);

@@ -140,7 +140,7 @@ class MasterController
    *
    * @param string $filename File name to modify
    * @param string $path     File's path
-   * @param stirng $prefix   Prefix of the file name
+   * @param string $prefix   Prefix of the file name
    *
    * @return string The cache file name version of the file
    */
@@ -158,7 +158,7 @@ class MasterController
    */
   protected static function getCachedFile($cachedFile, $exists = false)
   {
-    if((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
+    if ((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
       return file_get_contents ($cachedFile);
 
     return false;
@@ -171,7 +171,7 @@ class MasterController
    */
   protected static function addLayout($content)
   {
-    if(isset(self::$layout))
+    if (true === isset(self::$layout))
     {
       self::$layoutOnce = true;
       return preg_replace('`(<body[^>]*>)(.*)`s', '$1' . str_replace('$','\\$', $content), self::$layout);

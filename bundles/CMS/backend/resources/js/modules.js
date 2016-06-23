@@ -2,9 +2,9 @@
 {
   "use strict";
   var __table0 = d.getElementById('table0'),
-      __modulesMgt = d.getElementById('modulesMgt'),
-      __elementsMgt = d.getElementById('elementsMgt'),
-      __articlesMgt = d.getElementById('articlesMgt'),
+      __modulesMgt = d.getElementById('modules-mgt'),
+      __elementsMgt = d.getElementById('elements-mgt'),
+      __articlesMgt = d.getElementById('articles-mgt'),
       ajaxInit = {
         method: 'post',
         headers: {
@@ -69,8 +69,8 @@
       function changeModuleTab(evt)
       {
         console.log('changeModuleTab');
-        $('.activeTab', '#content').removeClass('activeTab');
-        this.classList.add('activeTab');
+        $('.active-tab', '#content').removeClass('active-tab');
+        this.classList.add('active-tab');
 
         if(undef !== evt)
           w.fetch(new Request(this.dataset.href, ajaxInit)).then(s.checkStatus).then(s[this.dataset.fn])
@@ -78,8 +78,8 @@
 
   $(function()
   {
-    $('#content').on('keyup', '._genericSearch', moduleSearch)
-                 .on('mouseup', '.seeDetails', getElements)
+    $('#content').on('keyup', '._generic-search', moduleSearch)
+                 .on('mouseup', '.see-details', getElements)
                  .on('mouseup', '.tab', changeModuleTab)
                  .on('mouseup', 'th:nth-child(1), td:nth-child(1)', backend.triggerCheckbox)
     $('#modules_all').on('mouseup', backend.selectAll);

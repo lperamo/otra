@@ -5,7 +5,7 @@ $methods = get_class_methods('lib\myLibs\console\Tasks');
 
 if (false === in_array($method, $methods, true))
 {
-  require CORE_PATH . 'console/ConsoleTools.php';
+  require CORE_PATH . 'console/Tools.php';
   list($newTask) = guessWords($method, $methods);
 
   // If there are no existing task with a close name ...

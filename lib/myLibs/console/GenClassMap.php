@@ -13,14 +13,12 @@ foreach ($dirs as &$dir) {
 
 echo "\x0d\033[K", 'Processed directories : ', $processedDir, '.';
 
-ob_start();
-var_export($classes);
-$classMap = ob_get_clean();
+$classMap = var_export($classes, true);
 
 // We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file
 file_put_contents(
   BASE_PATH . 'cache/php/ClassMap.php',
-  '<? $classMap=' . substr(
+  '<? define(\'CLASSMAP\',' . substr(
     str_replace(
       ['\\\\', ' ', "\n", 'array('],
       ['\\', '', '', '['],
@@ -28,7 +26,7 @@ file_put_contents(
     ),
     0,
     -2
-  ) . '];?>'
+  ) . ']);?>'
 );
 
 echo lightGreen() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;

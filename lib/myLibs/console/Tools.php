@@ -49,9 +49,9 @@ function askQuestion(string $question) : string
  * @param string  $cmd     Command to pass
  * @param integer $verbose Verbose mode (0,1 or 2)
  *
- * @return bool Success or fail ?
+ * @return array [bool, string] Success, content
  */
-function cli($cmd, $verbose = 1) { (0 < $verbose) ? passthru($cmd, $return) : exec($cmd, $return); return $return; }
+function cli(string $cmd, int $verbose = 1) { (0 < $verbose) ? passthru($cmd, $success) : exec($cmd, $return, $success); return [$success, $return ?? '']; }
 
 /**
  * Loops through words to find the closest word

@@ -1,6 +1,6 @@
 <tabContent id="tab3">
 	<table>
-		<thead id="usersHeader">
+		<thead class="users-header">
 			<tr>
 				<th></th>
 				<th><?= t('Email'); ?></th>
@@ -10,11 +10,11 @@
 				<th><?= t('Actions'); ?></th>
 			</tr>
 		</thead>
-		<tbody id="usersBody">
+		<tbody id="users-body" class="users-body">
 			<tr>
 				<td>
-					<input id="usersAll" type="checkbox" class="_selectAll noLabel" role="checkbox" aria-checked="false" aria-labelledby="<?= t('Select/Deselect All'); ?>" data-tooltip="<?= t('Select/Deselect All'); ?>" />
-					<label for="usersAll"></label>
+					<input id="users-all" type="checkbox" class="_select-all no-label" role="checkbox" aria-checked="false" aria-labelledby="<?= t('Select/Deselect All'); ?>" data-tooltip="<?= t('Select/Deselect All'); ?>" />
+					<label for="users-all"></label>
 				</td>
 				<td><input class="input search" role="search" data-tooltip="<?= t('Search by email'); ?>" placeholder="<?= t('Search by email'); ?>" /></td>
 				<td></td>
@@ -22,27 +22,27 @@
 				<td><input class="input search" role="search" data-tooltip="<?= t('Search by role'); ?>" placeholder="<?= t('Search by role'); ?>" /></td>
 				<td></td>
 			</tr>
-			<? if (false === empty($users)) require 'singleUser.phtml'; ?>
-			<tr id="trOptions">
+			<? if (false === empty($users)) require __DIR__ . '/singleUser.phtml'; ?>
+			<tr id="tr-options">
 				<td colspan="6" class="options">
-					<a role="button" aria-labelledby="<?= t('Previous users'); ?>" id="prev" class="softBtn circleBorder smallBtn fontBtn paging disabled" data-tooltip="<?= t('Previous users'); ?>">&laquo;</a><!--
-					--><a role="button" aria-labelledby="<?= t('Next users'); ?>" id="next" class="softBtn circleBorder smallBtn fontBtn paging<? if($count <= $limit) echo ' disabled'; ?>" data-tooltip="<?= t('Next users'); ?>">&raquo;</a>
-					<span id="pageInd" data-realcount="<?= $count ?>" data-actualcount="<?= $count ?>"><?= t('Page'); ?> <span id="currentPage">1</span> / <span id="lastPage"><?= (0 === $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count . t(' users'); ?>)</span>
+					<a role="button" aria-labelledby="<?= t('Previous users'); ?>" id="prev" class="soft-btn circle-border small-btn font-btn paging disabled" data-tooltip="<?= t('Previous users'); ?>">&laquo;</a><!--
+					--><a role="button" aria-labelledby="<?= t('Next users'); ?>" id="next" class="soft-btn circle-border small-btn font-btn paging<? if($count <= $limit) echo ' disabled'; ?>" data-tooltip="<?= t('Next users'); ?>">&raquo;</a>
+					<span id="page-ind" data-realcount="<?= $count ?>" data-actualcount="<?= $count ?>"><?= t('Page'); ?> <span id="current-page">1</span> / <span id="last-page"><?= (0 === $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count . t(' users'); ?>)</span>
 					<div id="limit" class="select" data-first="<?= true === isset($users[0]) ? $users[0]['id_user'] : 'No user' ?>" data-last="<?= true === isset($users[0]) ? $users[count($users) - 1]['id_user'] : 'No user' ?>" >
-			      <span class="fl input actualSelectValue" data-tooltip="Users per page">
-			        <a id="limitValue"><?= $limit ?></a>
-			        <span class="fr selectArrow"></span>
+			      <span class="fl input actual-select-value" data-tooltip="Users per page">
+			        <a id="limit-value" class="actual-select-value__link"><?= $limit ?></a>
+			        <span class="fr select-arrow"></span>
 			      </span>
-			      <div class="clearBoth"></div>
-			      <ul class="fl selectChoices">
-			      	<li data-value="3" class="selectChoice">3
-			      	<li data-value="6" class="selectChoice">6
-			      	<li data-value="10" class="selectChoice">10
+			      <div class="clear-both"></div>
+			      <ul class="fl select-choices">
+			      	<li data-value="3" class="select-choice">3
+			      	<li data-value="6" class="select-choice">6
+			      	<li data-value="10" class="select-choice">10
 		      	</ul>
     			</div>
-					<span role="button" aria-labelledby="<?= t('Add a new user'); ?>" id="add" class="fl softBtn circleBorder smallBtn fontBtn" data-tooltip="<?= t('Add a new user'); ?>">+</span>
-					<span role="button" aria-labelledby="<?= t('Delete all the selected users !'); ?>"id="delAll" class="fl softBtn circleBorder" data-tooltip="<?= t('Delete all the selected users !'); ?>"></span>
-					<span role="button" aria-labelledby="<?= t('Validate all the selected users !'); ?>"id="usersValAll" class="fl softBtn validate circleBorder" data-tooltip="<?= t('Validate all the selected users !'); ?>"></span>
+					<span role="button" aria-labelledby="<?= t('Add a new user'); ?>" id="add" class="fl soft-btn circle-border small-btn font-btn" data-tooltip="<?= t('Add a new user'); ?>">+</span>
+					<span role="button" aria-labelledby="<?= t('Delete all the selected users !'); ?>"id="del-all" class="fl soft-btn circle-border" data-tooltip="<?= t('Delete all the selected users !'); ?>"></span>
+					<span role="button" aria-labelledby="<?= t('Validate all the selected users !'); ?>"id="users-val-all" class="fl soft-btn validate circle-border" data-tooltip="<?= t('Validate all the selected users !'); ?>"></span>
 				</td>
 			</tr>
 		</tbody>

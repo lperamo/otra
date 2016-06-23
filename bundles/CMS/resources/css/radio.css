@@ -12,14 +12,14 @@ input[type="radio"]:checked + label {
   cursor: pointer;
 }
 
-.leftRadio:not(:checked) + label,
-.leftRadio:checked + label
+.left-radio:not(:checked) + label,
+.left-radio:checked + label
 {
   padding-left: 20px
 }
 
-.rightRadio:not(:checked) + label,
-.rightRadio:checked + label
+.right-radio:not(:checked) + label,
+.right-radio:checked + label
 {
   padding-right: 25px;
 }
@@ -38,15 +38,15 @@ input[type="radio"]:checked + label:before
   width: 14px
 }
 
-.leftRadio:not(:checked) + label:before,
-.leftRadio:checked + label:before
+.left-radio:not(:checked) + label:before,
+.left-radio:checked + label:before
 {
   left: 0;
   top: 0
 }
 
-.rightRadio:not(:checked) + label:before,
-.rightRadio:checked + label:before
+.right-radio:not(:checked) + label:before,
+.right-radio:checked + label:before
 {
   right: 6px;
   top: -3px;
@@ -64,15 +64,15 @@ input[type="radio"]:checked + label:after
   vertical-align: top;
 }
 
-.leftRadio:not(:checked) + label:after,
-.leftRadio:checked + label:after
+.left-radio:not(:checked) + label:after,
+.left-radio:checked + label:after
 {
   left: -1px;
   top: 1px
 }
 
-.rightRadio:not(:checked) + label:after,
-.rightRadio:checked + label:after
+.right-radio:not(:checked) + label:after,
+.right-radio:checked + label:after
 {
   right: 7.5px;
   top: -11px;
@@ -112,6 +112,6 @@ input[type="radio"]:checked + label:after
   transform: scale(1);
 }
 
-div.casesDiv {
+div.cases-div {
   position: relative;
 }

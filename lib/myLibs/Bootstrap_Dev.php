@@ -3,57 +3,61 @@ $_SESSION['debuglp_'] = 'Dev';
 
 define ('BEFORE', microtime(true));
 
-if(!defined('BASE_PATH'))
-  define('BASE_PATH', substr(__DIR__, 0, -15)); // Finit avec /
+if (false === defined('BASE_PATH'))
+  define('BASE_PATH', substr(__DIR__, 0, -15)); // Ends with /
 
 require CORE_PATH . 'Debug_Tools.php';
 
-if(isset($_GET['d']) && 'out'== $_GET['d'])
-	unset($_SESSION['debuglp_']);
-
-use lib\myLibs\{Router, Lionel_Exception};
-use config\{Routes, All_Config};
-
-ob_start();
+// User wants to get out from the dev mode, so we do it and we refresh (more a redirect) the page
+if (true === isset($_GET['d']) && 'out' === $_GET['d'])
+{
+  unset($_SESSION['debuglp_']);
+  header('Location: ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REDIRECT_URL']);
+}
 
 ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('error_reporting', -1 & ~E_DEPRECATED);
 
-// We load the class mapping
-require BASE_PATH . 'cache/php/ClassMap.php';
-spl_autoload_register(function($className) use($classMap)
-  {
-  if(!isset($classMap[$className]))
-    echo 'Path not found for the class name : ', $className, '<BR>';
-  else
-    require $classMap[$className];
-});
-
-function errorHandler($errno, $message, $file, $line, $context) { throw new Lionel_Exception($message, $errno, $file, $line, $context); }
-set_error_handler('errorHandler');
+// We are now in dev mode
 define('XMODE', 'dev');
 
-ob_get_clean();
+/** CLASS MAPPING */
+require BASE_PATH . 'cache/php/ClassMap.php';
+
+spl_autoload_register(function($className)
+{
+  if (false === isset(CLASSMAP[$className]))
+    echo 'Path not found for the class name : ', $className, '<br>';
+  else
+    require CLASSMAP[$className];
+});
+
+/** ERROR MANAGEMENT */
+function errorHandler($errno, $message, $file, $line, $context) { throw new lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context); }
+
+set_error_handler('errorHandler');
+
+use lib\myLibs\Router;
 
 try
 {
-  header('Content-Type: text/html; charset=utf-8');
-  header("Vary: Accept-Encoding,Accept-Language");
-
-  // if the pattern is in the routes, launch the associated route
-  if($route = Router::getByPattern($_SERVER['REQUEST_URI']))
+  // If the pattern is in the routes, launch the associated route
+  if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))
   {
-    $defaultRoute = Routes::$default['bundle'];
+    header('Content-Type: text/html; charset=utf-8');
+    header('Vary: Accept-Encoding,Accept-Language');
+
+    $defaultRoute = config\Routes::$default['bundle'];
     require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
     call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
     Router::get($route[0], $route[1]);
   }
 } catch(Exception $e)
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
+  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
     : $e->getMessage();
 
-  return;
+  exit(1);
 }

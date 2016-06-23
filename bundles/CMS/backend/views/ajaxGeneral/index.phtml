@@ -1,5 +1,5 @@
 <tabContent id="tab1">
-	<div id="mainCfgDiv">
+	<div id="main-cfg-div">
 		<? $actualName = '';
 
 		if(null !== $config)
@@ -10,18 +10,18 @@
 				{
 					$actualName = $cfg['name'];
 					?>
-					<div class="cfgSection"><?= $cfg['name'] ?></div>
+					<div class="cfg-section"><?= $cfg['name'] ?></div>
 					<?
 				}
 				?>
-				<div class="cfgLine" data-id="<?= $cfg['id'] ?>">
+				<div class="cfg-line" data-id="<?= $cfg['id'] ?>">
 					<label id="cfg_lab_<?= $cfg['id'] ?>"><?= $cfg['title'] ?></label>
 					<?
 					switch ($cfg['type'])
 					{
 						case 0 :
 							?>
-							<input id="cfg_chk_<?= $cfg['id'] ?>" type="checkbox" class="noLabel" value="<?= $cfg['value'] ?>"
+							<input id="cfg_chk_<?= $cfg['id'] ?>" type="checkbox" class="no-label" value="<?= $cfg['value'] ?>"
 										 placeholder="<?= $cfg['placeholder'] ?>"/>
 							<label for="cfg_chk_<?= $cfg['id'] ?>"></label>
 							<? break;
@@ -36,7 +36,7 @@
 							<?
 					} ?>
 					<a role="button" aria-labelledby="<?= t('Edit this configuration line'); ?>"
-						 class="softBtn circleBorder edit _edit TTTL" data-tooltip="<?= t('Edit this configuration line'); ?>"></a>
+						 class="soft-btn circle-border edit _edit tttl" data-tooltip="<?= t('Edit this configuration line'); ?>"></a>
 				</div>
 			<? }
 		} ?>

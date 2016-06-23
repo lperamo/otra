@@ -1,52 +1,112 @@
 @font-face {
-  font-family: 'LucidaHandwritingItalic';
-  src: url('../others/lhandw-webfont.woff');
+  font-family : 'LucidaHandwritingItalic';
+  src         : url('../others/lhandw-webfont.woff');
 }
 
-#headerTitle {
-    color:#BCD6DD !important;
-    cursor:pointer;
-    font-family:"LucidaHandwritingItalic";
-    font-size:3.5em;
-    font-style:italic;
-    font-weight:400;
-    height:90px;
-    line-height:100px;
-    text-align:center;
-    text-shadow: 2px 2px 2px rgba(72, 72, 72, 0.75), 0 0 rgba(71, 71, 71, 0.75);
-    position: relative
+.header-title {
+  /* box */
+  height      : 90px;
+  position    : relative;
+
+  /* others */
+  cursor      : pointer;
+
+  /* text */
+  color       : #bcd6dd !important; /* TODO find why we need important ! */
+  font-family : "LucidaHandwritingItalic";
+  font-size   : 3.5em;
+  font-style  : italic;
+  font-weight : 400;
+  line-height : 100px;
+  text-align  : center;
+  text-shadow : 2px 2px 2px rgba(72, 72, 72, 0.75), 0 0 rgba(71, 71, 71, 0.75);
 }
 
-#headerTitle:before
-{
-  -webkit-animation:headerAnim 12s linear infinite; /* Chrome, Safari, Opera */
-  animation:headerAnim 12s linear infinite;
-  -moz-box-shadow: 0 0 9px 3px #444;
-  box-shadow: 0 0 9px 3px #444;
-  content: ' ';
-  height: 0;
-  left:17%;
-  position: absolute;
-  width: 70%;
-  border-top:1px groove rgba(0,0,0, 0.5)
+.header-title:before {
+  /* animation */
+  -webkit-animation : headerAnim 12s linear infinite; /* Chrome, Safari, Opera */
+  animation         : headerAnim 12s linear infinite;
+
+  /* box */
+  height            : 0; width : 70%;
+  left              : 17%;
+  position          : absolute;
+
+  /* content */
+  content           : ' ';
+
+  /* display */
+  border-top        : 1px groove rgba(0, 0, 0, 0.5);
+  -moz-box-shadow   : 0 0 9px 3px #444;
+  box-shadow        : 0 0 9px 3px #444;
 }
 
 /* Chrome, Safari, Opera */
-@-webkit-keyframes headerAnim
-{
-  0% { top:0;z-index:1;border:1px groove rgba(0,0,0, 0.25) }
-  3% { box-shadow: 0 0 9px 3px #444; top:calc(25% - 9px); width:72%; left:13%;}
-  6% {border-top:2px groove rgba(255,255,255, 0.7); box-shadow: 0 0 6px 3px #DDD; top:calc(50% - 9px); width:75%; left:10%;}
-  15% {border-top:1px solid rgba(100,100,100, 0);top:calc(100% - 9px); left:17%; width: 70%;z-index:-10000}
-  16%, 100% {border-top-width: 0; box-shadow: 0 0 0 transparent; top:calc(100% - 9px); }
+@-webkit-keyframes header-anim {
+  0% {
+    top     : 0;
+    z-index : 1;
+    border  : 1px groove rgba(0, 0, 0, 0.25)
+  }
+
+  3% {
+    box-shadow : 0 0 9px 3px #444;
+    top        : calc(25% - 9px); left : 13%;
+    width      : 72%;
+  }
+
+  6% {
+    border-top : 2px groove rgba(255, 255, 255, 0.7);
+    box-shadow : 0 0 6px 3px #ddd;
+    top        : calc(50% - 9px); left : 10%;
+    width      : 75%;
+  }
+
+  15% {
+    border-top : 1px solid rgba(100, 100, 100, 0);
+    top        : calc(100% - 9px); left : 17%;
+    width      : 70%;
+    z-index    : -10000
+  }
+
+  16%, 100% {
+    border-top-width : 0;
+    box-shadow       : 0 0 0 transparent;
+    top              : calc(100% - 9px);
+  }
 }
 
- /*Standard syntax*/
-@keyframes headerAnim
-{
-  0% { top:0;z-index:1;border:1px groove rgba(0,0,0, 0.25) }
-  3% { box-shadow: 0 0 9px 3px #444; top:calc(25% - 9px); width:72%; left:13%;}
-  6% {border-top:2px groove rgba(255,255,255, 0.7); box-shadow: 0 0 6px 3px #DDD; top:calc(50% - 9px); width:75%; left:10%;}
-  15% {border-top:1px solid rgba(100,100,100, 0);top:calc(100% - 9px); left:17%; width: 70%;z-index:-10000}
-  16%, 100% {border-top-width: 0; box-shadow: 0 0 0 transparent; top:calc(100% - 9px)}
+/*Standard syntax*/
+@keyframes header-anim {
+  0% {
+    top     : 0;
+    z-index : 1;
+    border  : 1px groove rgba(0, 0, 0, 0.25)
+  }
+
+  3% {
+    box-shadow : 0 0 9px 3px #444;
+    top        : calc(25% - 9px); left : 13%;
+    width      : 72%;
+  }
+
+  6% {
+    border-top : 2px groove rgba(255, 255, 255, 0.7);
+    box-shadow : 0 0 6px 3px #ddd;
+    top        : calc(50% - 9px); left : 10%;
+    width      : 75%;
+  }
+
+  15% {
+    border-top : 1px solid rgba(100, 100, 100, 0);
+    top        : calc(100% - 9px); left : 17%;
+    width      : 70%;
+    z-index    : -10000
+  }
+
+  16%, 100% {
+    border-top-width : 0;
+    box-shadow       : 0 0 0 transparent;
+    top              : calc(100% - 9px);
+  }
 }

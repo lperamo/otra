@@ -1,13 +1,19 @@
 <?
+
+$verbose = $argv[3] ?? 0;
+
 // We generate the class mapping file if we need it.
 if(false === (isset($argv[2]) && '0' == $argv[2]))
 {
+  // Generation of the class mapping
   require CORE_PATH . 'console/GenClassMap.php';
-  echo PHP_EOL;
-  require BASE_PATH . 'cache/php/ClassMap.php'; // on recharge la classmap que si elle a été modifiée.
-}
 
-$verbose = isset($argv[3]) ? $argv[3] : 0;
+  // Re-execute our task now that we have a correct class mapping
+  require CORE_PATH . 'console/Tools.php';
+  echo PHP_EOL;
+  list($success) = cli('php ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''), $verbose);
+  exit($success);
+}
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
@@ -51,15 +57,21 @@ foreach(array_keys($routes) as &$route)
   else
     passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
-
+die;
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
-$content = file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php');
-contentToFile(fixFiles($content, $verbose), $routesManagementFile);
+
+contentToFile(
+  fixFiles(
+    file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php'),
+    $verbose
+  ),
+  $routesManagementFile
+);
 
 if (hasSyntaxErrors($routesManagementFile, $verbose))
   return;

@@ -5,3 +5,4 @@ web/phpMyAdmin
 config/data/sql/*
 *.sh
 php.ini*
+bundles/config

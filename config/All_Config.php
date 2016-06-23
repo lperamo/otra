@@ -5,14 +5,8 @@
  * @author Lionel Péramo */
 
 namespace config;
-use lib\myLibs\Session;
 
 define('CACHE_PATH', BASE_PATH . 'cache/');
-
-// CMS core resources
-define('CMS_VIEWS_PATH', BASE_PATH . 'bundles/CMS/views/');
-define('CMS_CSS_PATH', BASE_PATH . 'bundles/CMS/resources/css/');
-define('CMS_JS_PATH', BASE_PATH . 'bundles/CMS/resources/js/');
 
 // Framework core resources
 define('CORE_RESOURCES_PATH', '/lib/myLibs/'); // Finit avec /
@@ -29,16 +23,8 @@ define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n');
 // require_once 'cause maybe the class Lionel_Exception will attempt to load it too !
 require_once BASE_PATH . 'config/' . XMODE . '/All_Config.php';
 
-// External configuration loading
-$dir = BASE_PATH . 'config/external/';
-$dh = opendir($dir);
+$externalConfigFile = BASE_PATH . 'bundles/config/Config.php';
 
-while (false !== ($file = readdir($dh)))
-{
-  $file = $dir . $file;
-  if(is_dir($file)) continue;
-
-  require $file;
-}
-closedir($dh);
+if (true === file_exists($externalConfigFile))
+  require $externalConfigFile;
 ?>

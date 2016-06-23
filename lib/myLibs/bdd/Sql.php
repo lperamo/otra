@@ -63,33 +63,35 @@ class Sql
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
      */
-    if($conn)
+    if (true === $conn)
     {
-      if(isset(self::$_activeConn[$conn]))
+      if (true === isset(self::$_activeConn[$conn]))
       {
         self::$_currentConn = $conn;
-      } else if(isset(All_Config::$dbConnections[$conn]))
+      } else if (true === isset(All_Config::$dbConnections[$conn]))
       {
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
-      } else
-        die(lightRedText('There is no ' . $conn . ' configuration available in the All_Config file !') . PHP_EOL);
+      } else {
+        echo lightRedText('There is no ' . $conn . ' configuration available in the All_Config file !'), PHP_EOL;
+        exit(1);
+      }
 
     } else
     {
-      if(!isset(All_Config::$defaultConn))
-        throw new LionelException('Default connection not available ! Check your configuration.', 'E_CORE_ERROR');
+      if (false === isset(All_Config::$defaultConn))
+        throw new LionelException('Default connection not available ! Check your configuration.', E_CORE_ERROR);
 
       $conn = All_Config::$defaultConn;
 
       // If it's not already added, we add it
-      if(!isset(self::$_activeConn[$conn]))
+      if (false === isset(self::$_activeConn[$conn]))
         self::$_activeConn[$conn] = null;
 
       self::$_currentConn = $conn;
     }
 
-    extract( All_Config::$dbConnections[$conn]);
+    extract(All_Config::$dbConnections[$conn]);
 
     /**
      * Extractions give those variables
@@ -103,7 +105,7 @@ class Sql
      */
 
     // Is this driver available ?
-    if(in_array($driver, self::$_sgbds))
+    if (true === in_array($driver, self::$_sgbds))
     {
       if (null == self::$_activeConn[self::$_currentConn])
       {
@@ -137,7 +139,7 @@ class Sql
         echo $e->getMessage();
       }
     }else
-      throw new Lionel_Exception('This SGBD doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), 'E_CORE_ERROR');
+      throw new Lionel_Exception('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }

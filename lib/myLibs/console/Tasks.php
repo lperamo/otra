@@ -64,7 +64,7 @@ class Tasks
 
   public static function crypt(array $argv)
   {
-    if(isset($argv[3]))
+    if(true === isset($argv[3]))
       define(FWK_HASH, $argv[3]);
     else
       require BASE_PATH . 'config/All_Config.php';
@@ -158,6 +158,10 @@ class Tasks
     ];
   }
 
+  public static function upConf() { require CORE_PATH . 'console/UpdateConf.php'; }
+
+  public static function upConfDesc() : array { return ['Updates the files related to bundles and routes.']; }
+
   /**
    * Executes the sql script
    *
@@ -184,12 +188,12 @@ class Tasks
   /** (sql_generate_basic) Database creation, tables creation. */
   public static function sql_gdb(array $argv)
   {
-    Database::init();
-
-    if(true === isset($argv[3]))
-      Database::createDatabase($argv[2], 'true' == $argv[3]); // Forces the value to be a boolean
-    else
-      Database::createDatabase($argv[2]);
+      Database::createDatabase(
+        $argv[2],
+        true === isset($argv[3])
+          ? 'true' == $argv[3] // Forces the value to be a boolean
+          : false
+      );
   }
 
   public static function sql_gdbDesc() : array
@@ -207,7 +211,6 @@ class Tasks
   /** (sql_generate_fixtures) Generates fixtures. */
   public static function sql_gf(array $argv)
   {
-    Database::init();
     Database::createFixtures(
       $argv[2],
       true === isset($argv[3]) ? (int) $argv[3] : 0
@@ -229,7 +232,6 @@ class Tasks
 
   public static function sql_is(array $argv)
   {
-    Database::init();
     isset($argv[2])
       ? (isset($argv[3]) ? Database::importSchema($argv[2], $argv[3]) : Database::importSchema($argv[2]))
       : Database::importSchema();
@@ -249,7 +251,6 @@ class Tasks
 
   public static function sql_if(array $argv)
   {
-    Database::init();
     isset($argv[2])
       ? (isset($argv[3]) ? Database::importFixtures($argv[2], $argv[3]) : Database::importFixtures($argv[2]))
       : Database::importFixtures();

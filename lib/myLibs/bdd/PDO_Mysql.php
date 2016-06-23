@@ -47,9 +47,9 @@ class PDO_Mysql
   public static function query($query, $link_identifier)
   {
     //if (!$result = mysql_query($query, $link_identifier))
-    if(!$result = SQL::$_CURRENT_CONN->query($query))
+    if(!$result = Sql::$_CURRENT_CONN->query($query))
     {
-      $errorInfo = SQL::$_CURRENT_CONN->errorInfo();
+      $errorInfo = Sql::$_CURRENT_CONN->errorInfo();
       throw new Lionel_Exception('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
     } else
       return $result;
@@ -187,7 +187,7 @@ class PDO_Mysql
   public static function close($instanceToClose = true)
   {
     if ($instanceToClose)
-      SQL::$_CURRENT_CONN = null;
+      Sql::$_CURRENT_CONN = null;
     else
       $instanceToClose = null;
 
@@ -202,7 +202,7 @@ class PDO_Mysql
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) { return SQL::$_CURRENT_CONN->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) { return Sql::$_CURRENT_CONN->lastInsertId($sequenceName); }
 
   /**
    * @param string $string
@@ -211,7 +211,7 @@ class PDO_Mysql
    */
   public static function quote(string $string)
   {
-    return trim(SQL::$_CURRENT_CONN->quote($string), '\'');
+    return trim(Sql::$_CURRENT_CONN->quote($string), '\'');
   }
 }
 ?>

@@ -4,7 +4,7 @@
  */
 function lg(string $message)
 {
-  require_once __DIR__ . '/Logger.php';
+  require_once CORE_PATH . 'Logger.php';
   lib\myLibs\Logger::logTo($message, 'trace');
 }
 
@@ -104,27 +104,28 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
  * @param $boucle         int           Number of recursions
  * @return int
  */
-function recurArrayConvertTab($donnees, $indexToExclude = null, int $boucle = -1){
+function recurArrayConvertTab($donnees, $indexToExclude = null, int $boucle = -1)
+{
   $i = 0;
   $oldBoucle = $boucle;
   ++$boucle;
 
-  foreach($donnees as $index => &$donnee)
+  foreach ($donnees as $index => &$donnee)
   {
-    if($index === $indexToExclude)
+    if ($index === $indexToExclude)
     {
       // foreach(array_keys($donnees[$index]) as $key) { unset($donnees[$key]); }
       // unset($donnees[$index]);
       continue;
     }
 
-    if(0 === $boucle)
+    if (0 === $boucle)
       echo '</tbody></table><table class="test"><tbody>';
 
-    if(is_array($donnee) || is_object($donnee))
+    if (true === is_array($donnee) || true === is_object($donnee))
     {
-        if(1 == $boucle){
-          if($boucle < $oldBoucle)
+        if (1 === $boucle){
+          if ($boucle < $oldBoucle)
             echo '<tr class="foldable"><td colspan="' , $boucle , '"></td><td>\'' , $index, '\'</td></tr>';
           else
             echo '<td>\'' , $index, '\'</td><td colspan="0" class="dummy"></td></tr>';
@@ -139,12 +140,13 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $boucle = -1
         //   echo $boucle, $oldBoucle, '</tr></tbody></table>';
     } else
     {
-      if(0 === $boucle)
+      if (0 === $boucle)
         echo '<tr class="foldable" ><td>\'', $index, '\'</td><td colspan="2">\'', $donnee , '\'</td></tr>';
       else
       {
-        if(true === is_object($donnee))
+        if (true === is_object($donnee))
           $donnee = 'This is an Object non renderable !!';
+
         echo '<tr class="deepContent"><td colspan="' , $boucle , '"></td><td>\'', $index, '\'</td><td>\'', $donnee , '\'</td></tr>';
       }
     }

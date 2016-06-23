@@ -5,16 +5,16 @@ body {
 	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif
 }
 
-.circleBorder { border-radius: 50% }
+.circle-border { border-radius: 50% }
 
-.rightPad { padding-right:5px }
+.right-pad { padding-right:5px }
 #content {
   padding:0 15px;
   width: 100%
 }
 
 /* Menu generic rules */
-#menusContainer
+#menus-container
 {
 	border-radius: 8px;
 	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.47);
@@ -33,11 +33,6 @@ body {
 	width:calc(100% - 30px);
 }
 
-  #tab0 .menus {
-    margin: 0 0 15px;
-    width: 100%;
-  }
-
 .tab
 {
 	background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;
@@ -55,11 +50,11 @@ body {
   .tab:first-child{border-radius: 8px 0 0 8px }
   .tab:last-child{ border-right:0; border-radius: 0 8px 8px 0 }
 
-  .tab:active, .activeTab {
+  .tab:active, .active-tab {
    background: linear-gradient(rgba(255, 182, 111, 0.14) 0%, #F7924F 100%) #EAEAEA
   }
 
-  .activeTab { cursor: default }
+  .active-tab { cursor: default }
 
 /* Table generic rules */
 
@@ -105,17 +100,17 @@ table {
 
 .options{ background: #E4E8EA; border-top: 1px double rgba(255, 255, 255, 0.54) }
 
-.field{ margin:0;	width:100% }
+/*.field{ margin:0;	width:100% }*/
 
-  .field input{
-  	font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;
-  	height:25px;
-  	font-size:1em
-  }
+  /*.field input{*/
+  	/*font-family: "Bookman Old Style",Arial,Helvetica,Sans-Serif;*/
+  	/*height:25px;*/
+  	/*font-size:1em*/
+  /*}*/
 
-.smallBtn{ width: 25px }
+.small-btn{ width: 25px }
 
-.softBtn {
+.soft-btn {
   /*backface-visibility: hidden;*/
   background: rgba(255, 255, 255, 0.8);
   /*box-shadow: 1px 1px 2px #7E7E7E;*/
@@ -132,7 +127,7 @@ table {
   z-index:0;
 }
 
-  .softBtn:hover:not(.disabled)
+  .soft-btn:hover:not(.disabled)
   {
     cursor: pointer;
     /*
@@ -151,7 +146,7 @@ table {
     z-index:1
   }
 
-  .softBtn:active:not(.disabled)
+  .soft-btn:active:not(.disabled)
   {
     box-shadow: 1px 1px 4px #aaa, 0 0 1px #f4f4f4 inset, 2px 2px 2px #f4f4f4 inset;
     transform: scale(1)
@@ -159,12 +154,12 @@ table {
 
   /*.softBtn:hover:after, .softBtn:active:after { transform: scale(1) }*/
 
-  tr>th:hover .softBtn, tr>td:hover:not(.options) .softBtn
+  tr>th:hover .soft-btn, tr>td:hover:not(.options) .soft-btn
   {
     background-color: #FFF
   }
 
-.softBtnNoImage
+.soft-btn-no-image
 {
   color: #F1AC46;
   font-size: 1.1em;
@@ -173,9 +168,9 @@ table {
   text-shadow: 1px 1px rgba(84, 84, 84, 0.1);
 }
 
-.lightBtn { background: #F4F4F4 }
+.light-btn { background: #F4F4F4 }
 
-.fontBtn
+.font-btn
 {
 	color: #F1AC46;
 	font-size: 1.5em;
@@ -187,14 +182,14 @@ table {
 
 #add { padding: 3px 3px 3px 2px }
 
-#delAll, .delete
+#del-all, .delete
 {
   background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20fill%3D%22%23f1ac46%22%20d%3D%22m432.54599%2C133.462006l-65.412994%2C-57.072006l-113.054993%2C134.324997l-113.111008%2C-137.012993l-61.513008%2C65.068001c33.791016%2C43.884995%2078.146019%2C89.796997%20123.688011%2C132.464981l-120.149002%2C142.752014l19.865005%2C22.628998c29.250992%2C-20.309998%2087.838989%2C-65.578003%20150.311981%2C-120.09201c63.662018%2C55.812012%20122.860992%2C101.335999%20151.300995%2C121.77301l21.438019%2C-19.442993l-122.105011%2C-147.903992c48.63501%2C-45.241013%2095.504028%2C-93.508011%20128.742004%2C-137.488007z%22/%3E%3C/svg%3E%0A') no-repeat center center / 16px 16px rgba(255, 255, 255, 0.8);
   height: 26px;
   width: 26px;
 }
 
-#delAll:hover, .delete:hover
+#del-all:hover, .delete:hover
 {
   background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cpath%20id%3D%22svg_2%22%20d%3D%22m432.54599%2C133.462006l-65.412994%2C-57.072006l-113.054993%2C134.324997l-113.111008%2C-137.013l-61.513008%2C65.068008c33.791016%2C43.884979%2078.146019%2C89.796997%20123.688011%2C132.464981l-120.149002%2C142.752014l19.865005%2C22.628998c29.250992%2C-20.309998%2087.838989%2C-65.578003%20150.311981%2C-120.09201c63.662018%2C55.812012%20122.860992%2C101.335999%20151.300995%2C121.77301l21.438019%2C-19.442993l-122.105011%2C-147.903992c48.63501%2C-45.241028%2095.504028%2C-93.508011%20128.742004%2C-137.488007z%22%20fill%3D%22url%28%23svg_3%29%22/%3E%0A%20%3Cdefs%3E%0A%20%20%3ClinearGradient%20y2%3D%221%22%20x2%3D%221%22%20y1%3D%220%22%20x1%3D%220%22%20id%3D%22svg_3%22%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23ff0000%22%20offset%3D%220%22/%3E%0A%20%20%20%3Cstop%20stop-color%3D%22%23ffaa56%22%20offset%3D%221%22/%3E%0A%20%20%3C/linearGradient%3E%0A%20%3C/defs%3E%0A%3C/svg%3E%0A')  no-repeat center center / 16px 16px rgba(255, 255, 255, 0.6);
 }
@@ -223,9 +218,9 @@ table {
   height: 26px;
   width: 26px
 }
-.cancel:hover {
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2216px%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cg%20fill%3D%22%23000000%22%20id%3D%22Group%22%20transform%3D%22translate%28-336.000000%2C%20-432.000000%29%22%3E%3Cpath%20d%3D%22M346%2C437.989323%20L346%2C447%20L337%2C447%20L339.899296%2C444.097264%20C338.600376%2C442.911115%20336.705115%2C440.688039%20337.032006%2C438.03039%20C337.630994%2C434.996143%20339.373914%2C432.942784%20344.052157%2C432.942784%20C349.290771%2C432.942784%20351.07511%2C437.467285%20351.07511%2C437.947574%20C348.009716%2C435.308356%20345.869521%2C434.996143%20344.017082%2C434.996143%20C342.164643%2C434.996143%20341.048114%2C436.372181%20341.048114%2C437.947574%20C341.048114%2C438.981521%20342.32698%2C440.123648%20343.206047%2C440.786591%20Z%20M346%2C437.989323%22%20/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0D%0A')
-}
+  .cancel:hover {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2216px%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cg%20fill%3D%22%23000000%22%20id%3D%22Group%22%20transform%3D%22translate%28-336.000000%2C%20-432.000000%29%22%3E%3Cpath%20d%3D%22M346%2C437.989323%20L346%2C447%20L337%2C447%20L339.899296%2C444.097264%20C338.600376%2C442.911115%20336.705115%2C440.688039%20337.032006%2C438.03039%20C337.630994%2C434.996143%20339.373914%2C432.942784%20344.052157%2C432.942784%20C349.290771%2C432.942784%20351.07511%2C437.467285%20351.07511%2C437.947574%20C348.009716%2C435.308356%20345.869521%2C434.996143%20344.017082%2C434.996143%20C342.164643%2C434.996143%20341.048114%2C436.372181%20341.048114%2C437.947574%20C341.048114%2C438.981521%20342.32698%2C440.123648%20343.206047%2C440.786591%20Z%20M346%2C437.989323%22%20/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0D%0A')
+  }
 
 .paging {
 	height: 26px;
@@ -234,7 +229,7 @@ table {
 }
 .paging.disabled { color: #888; cursor: default }
 
-#pageInd {
+#page-ind {
   display: inline-block;
   padding-top: 5px;
 }
@@ -253,7 +248,7 @@ table {
   background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224px%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20id%3D%22miu%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.52081529%2C19.553286%20L13.5208152%2C19.553286%20L13.5208151%2C3.55328599%20L6.52081521%2C3.55328599%20L6.52081529%2C19.553286%20Z%20M6.52081528%2C-0.476770888%20L6.52081528%2C2.47686997%20L13.5197166%2C2.47686992%20L13.5197166%2C-0.476770935%20C13.5197166%2C-1.47918477%2012.5173028%2C-1.47918477%2012.5173028%2C-1.47918477%20L7.52322913%2C-1.47918472%20C7.52322913%2C-1.47918472%206.52081528%2C-1.47918472%206.52081528%2C-0.476770888%20Z%20M6.50416988%2C20.5208153%20L10.0208153%2C25.5075707%20L13.5192284%2C20.5208153%20L6.50416988%2C20.5208153%20Z%22%20fill%3D%22%237984f8%22%20id%3D%22editor_pencil_pen_edit_write_glyph%22%20transform%3D%22translate%2810.020815%2C%2012.020815%29%20rotate%2845.000000%29%20translate%28-10.020815%2C%20-12.020815%29%20%22/%3E%3C/g%3E%3C/svg%3E%0D%0A')
 }
 
-.fontBtn:hover:not(.disabled)
+.font-btn:hover:not(.disabled)
 {
   color: #7984f8;
   text-shadow: 1px 1px #d2d6ff;

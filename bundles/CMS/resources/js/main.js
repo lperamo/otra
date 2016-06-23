@@ -1,12 +1,15 @@
-(function(d){
+(function(d)
+{
 	'use strict';
 
-	var matches = function(el, selector) {
+	var matches = function matches(el, selector)
+	{
 		el = el[0];
 	  return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
 	},
 		baseUrl = location.protocol + '//' + location.hostname + (location.port && ':' + location.port),
-		changeArticle = function(){
+		changeArticle = function changeArticle()
+		{
 			if(window.location.href != baseUrl + this.dataset.href)
 			{
 				history.pushState(null, 'Welcome to the LPCMS -' + this.title, this.dataset.href);
@@ -17,13 +20,15 @@
 			}
 		};
 
-	window.onload = function(){
+	window.onload = function myOnload()
+	{
 		// Protection against console.log IE problems
-		if(!window.console)
+		if (false === window.console)
 			window.console = {log:function(){}};
 
 		var html = d.getElementsByTagName('html');
-		if(!matches(html, '.cli') && matches(html, '.ie6, .ie7, .ie8'))
+
+		if (false === matches(html, '.cli') && true === matches(html, '.ie6, .ie7, .ie8'))
 		{
 			var xmlhttp;
 
@@ -34,7 +39,7 @@
 	    xmlhttp.onreadystatechange = function() {
         if (4 === xmlhttp.readyState && 200 === xmlhttp.status) {
           d.body.innerHTML += xmlhttp.responseText;
-          d.getElementById(container).className += ' animate'
+          d.getElementById('container').className += ' animate'
         }
 	    }
 

@@ -7,6 +7,8 @@
 namespace bundles\CMS\backend\controllers;
 
 use lib\myLibs\{Controller, bdd\Sql, Session, Router};
+use \bundles\CMS\models\{Header, Footer, Module};
+use \bundles\CMS\services\{configService, usersService};
 
 class indexController extends Controller
 {
@@ -32,8 +34,8 @@ class indexController extends Controller
 
     Sql::getDB();
 
-    $_SESSION['headers'] = \bundles\CMS\models\Header::getAll();
-    $_SESSION['footers'] = \bundles\CMS\models\Footer::getAll();
+    $_SESSION['headers'] = Header::getAll();
+    $_SESSION['footers'] = Footer::getAll();
 
     echo $this->renderView('index.phtml', [
       'headers' => $_SESSION['headers'],
@@ -49,13 +51,13 @@ class indexController extends Controller
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => ajaxModulesController::$moduleTypes,
       'right' => ajaxModulesController::$rights,
-      'items' => \bundles\CMS\models\Module::getAll()
+      'items' => Module::getAll()
     ]);
   }
 
   public function generalAction()
   {
-    echo $this->renderView('general.phtml', \bundles\CMS\services\configService::getConfigTab());
+    echo $this->renderView('general.phtml', configService::getConfigTab());
   }
 
   public function statsAction()
@@ -71,7 +73,7 @@ class indexController extends Controller
 
   public function usersAction()
   {
-    echo $this->renderView('users.phtml', \bundles\CMS\services\usersService::getUsersTab());
+    echo $this->renderView('users.phtml', usersService::getUsersTab());
   }
 }
 ?>

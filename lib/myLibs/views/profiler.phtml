@@ -1,7 +1,6 @@
 <?
 $file = '/logs/sql.txt';
-if(file_exists($file))
-  echo file_get_contents($file) . 'plop';
-else
-  echo 'Aucune requête stockée.';
+echo (true === file_exists($file))
+  ? file_get_contents($file) . 'plop'
+  : 'Aucune requête stockée.';
 ?>

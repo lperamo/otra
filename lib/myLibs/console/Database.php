@@ -5,7 +5,7 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace { require CORE_PATH . 'console/ConsoleTools.php'; }
+namespace { require_once CORE_PATH . 'console/Tools.php'; }
 namespace lib\myLibs\console {
 
   use lib\ { sf2_yaml\Yaml, myLibs\bdd\Sql };
@@ -15,28 +15,26 @@ namespace lib\myLibs\console {
   class Database
   {
     // Database connection
-    private static $host,
-      $user,
-      $pwd,
-      $base,
+    private static $base,
+      $host,
       $motor,
+      $pwd,
+      $user,
 
       // commands beginning
-      $command = '',
-      $baseCommand = '',
       $initCommand = '',
 
       // paths
+      $baseDirs = [],
+      $databaseFile = 'database_schema',
+      $fixturesFile = 'db_fixture',
+      $fixturesFileIdentifiers = 'ids',
       $pathSql = '',
       $pathYml = '',
       $pathYmlFixtures = '',
-      $databaseFile = 'database_schema',
+      $projectName = 'lpframework',
       $schemaFile = 'schema.yml',
-      $fixturesFile = 'db_fixture',
-      $fixturesFileIdentifiers = 'ids',
       $tablesOrderFile = 'tables_order.yml',
-      $fixtureFolder,
-      $frameworkName = 'lpframework',
 
       // just in order to simplify the code
       $attributeInfos = [];
@@ -49,51 +47,46 @@ namespace lib\myLibs\console {
      */
     public static function init(string $dbConnKey = null)
     {
-      self::initBase();
-      define('VERBOSE', All_Config::$verbose);
       $dbConn = All_Config::$dbConnections;
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
-      if (isset($dbConn[$dbConnKey]))
-      {
-        $infosDb = $dbConn[key($dbConn)];
-        self::$user = $infosDb['login'];
-        self::$pwd = $infosDb['password'];
-        self::$base = $infosDb['db'];
-
-        if (isset($infosDb['motor']))
-          self::$motor = $infosDb['motor'];
-        else
-        {
-          echo 'You haven\'t specified the database engine in your configuration file.';
-
-          return false;
-        }
-      } else
+      if (false === isset($dbConn[$dbConnKey]))
       {
         echo 'You haven\'t specified any database configuration in your configuration file.';
 
         return false;
       }
 
+      $infosDb = $dbConn[$dbConnKey];
+
+      if (false === isset($infosDb['motor']))
+      {
+        echo 'You haven\'t specified the database engine in your configuration file.';
+
+        return false;
+      }
+
+      self::initBase();
+      define('VERBOSE', All_Config::$verbose);
+      self::$base = $infosDb['db'];
+      self::$motor = $infosDb['motor'];
+      self::$pwd = $infosDb['password'];
+      self::$user = $infosDb['login'];
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
-      self::$initCommand = 'mysql --login-path=' . self::$frameworkName . (VERBOSE ? ' --show-warnings' : '');
-      self::$baseCommand = self::$initCommand . ' -D ' . self::$base . (VERBOSE > 1 ? ' -v' : '');
-      self::$command = self::$baseCommand . ' -e "source ' . self::$pathSql;
-
-      self::$initCommand .= ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ') . self::$pathSql;
-
-      self::$fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
-
-      if (false === file_exists(self::$fixtureFolder))
-        mkdir(self::$fixtureFolder, 0777, true);
 
       // If we haven't store the database identifiers yet, store them ... only asking for password.
-      if ('' === cli('mysql_config_editor print --login-path=' . self::$frameworkName, 0))
+      if ('' === cli('mysql_config_editor print --login-path=' . self::$projectName, 0))
       {
         echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
-        cli('mysql_config_editor set --login-path=' . self::$frameworkName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
+        cli('mysql_config_editor set --login-path=' . self::$projectName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
       }
+    }
+
+    /** Sets the self::initCommand variable that allows to execute SQL files */
+    public function initCommand()
+    {
+      self::$initCommand = 'mysql --login-path=' . self::$projectName . (VERBOSE ? ' --show-warnings' : '') .
+        ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ') . self::$pathSql;
     }
 
     /**
@@ -103,13 +96,66 @@ namespace lib\myLibs\console {
      * - schema file path : $schemaFile
      * - tables order path : $tablesOrderFile
      */
-    public static function initBase()
+    public static function initBase(bool $schema = false)
     {
-      self::$pathSql = realpath(BASE_PATH . 'config/data');
-      self::$pathYml = self::$pathSql . '/yml/';
-      self::$pathSql .= '/sql/';
+      self::$baseDirs = self::getDirs($schema);
+      self::$pathYml = self::$baseDirs[0] . '/yml/';
+      self::$pathSql .= self::$baseDirs[0] . '/sql/';
       self::$schemaFile = self::$pathYml . self::$schemaFile;
       self::$tablesOrderFile = self::$pathYml . self::$tablesOrderFile;
+    }
+
+    /**
+     * @param bool $boolSchema Do we retrieve all the information from YML schemas ?
+     *
+     * @return array
+     */
+    public static function getDirs(bool $boolSchema = false) : array
+    {
+      $dir = BASE_PATH . 'bundles/';
+      $folderHandler = opendir($dir);
+      $dirs = [];
+
+      if (true === $boolSchema)
+        $schemas = [];
+
+      // We scan the bundles directory to retrieve all the bundles name ...
+      while (false !== ($file = readdir($folderHandler)))
+      {
+        // config is not a bundle ... just a configuration folder
+        if (true === in_array($file, ['.', '..', 'config']))
+          continue;
+
+        $bundleDir = $dir . $file;
+
+        // We don't need the files either
+        if (true !== is_dir($bundleDir))
+          continue;
+
+        $dirs[] = $bundleDir . '/';
+
+        if (true === $boolSchema)
+        {
+          $bundleSchemas = glob($bundleDir . '/config/data/yml/*Schema.yml');
+
+          if (false === empty($bundleSchemas))
+            $schemas = array_merge($schemas, $bundleSchemas);
+        }
+      }
+
+      if (true === $boolSchema)
+      {
+        $content = '';
+
+        foreach ($schemas as &$schema)
+        {
+          $content .= file_get_contents($schema);
+        }
+        var_dump($content);
+        die;
+      }
+
+      return $dirs;
     }
 
     /**
@@ -143,6 +189,9 @@ namespace lib\myLibs\console {
      */
     public static function createDatabase( string $databaseName, bool $force = false)
     {
+      self::init();
+      self::initCommand();
+
       if (true === $force)
       {
         self::dropDatabase($databaseName);
@@ -174,14 +223,10 @@ namespace lib\myLibs\console {
       {
         if ('notnull' === $attr)
           $attr = 'not null';
-        else if ('type' === $attr && false !== strpos(self::$attributeInfos[$attr],
-            'string')
-        )
-          return 'VARCHAR' . substr(self::$attributeInfos[$attr],
-            6);
+        else if ('type' === $attr && false !== strpos(self::$attributeInfos[$attr], 'string'))
+          return 'VARCHAR' . substr(self::$attributeInfos[$attr], 6);
 
-        $output .= true === $show ? ' ' . strtoupper($attr)
-          : strtoupper(self::$attributeInfos[$attr]);
+        $output .= true === $show ? ' ' . strtoupper($attr) : strtoupper(self::$attributeInfos[$attr]);
       }
 
       return $output;
@@ -264,6 +309,7 @@ namespace lib\myLibs\console {
       string $createdFile
     )
     {
+      self::init();
       $first = true;
       $ymlIdentifiers = $table . ': ' . PHP_EOL;
       $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
@@ -277,7 +323,13 @@ namespace lib\myLibs\console {
         $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $i++ . PHP_EOL;
       }
 
-      $fp = fopen(self::$fixtureFolder . $databaseName . '_' . $table . '.yml',
+      $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
+
+      // if the fixtures folder doesn't exist, we create it.
+      if (false === file_exists(self::$fixtureFolder))
+        mkdir(self::$fixtureFolder, 0777, true);
+
+      $fp = fopen($fixtureFolder . $databaseName . '_' . $table . '.yml',
         'w');
       fwrite($fp,
         $ymlIdentifiers);
@@ -293,7 +345,7 @@ namespace lib\myLibs\console {
       {
         foreach (array_keys($tableData['relations']) as &$relation)
         {
-          $data = Yaml::parse(file_get_contents(self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/' . $databaseName . '_' . $relation . '.yml'));
+          $data = Yaml::parse(file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml'));
 
           foreach ($data as $otherTable => &$otherTableData)
           {
@@ -522,6 +574,7 @@ namespace lib\myLibs\console {
       if (true === file_exists($file))
       {
         self::init($databaseName);
+        self::initCommand();
         cli(self::$initCommand . $file,
           VERBOSE);
       } else
@@ -541,6 +594,7 @@ namespace lib\myLibs\console {
       string $databaseName,
       string $table)
     {
+      self::initCommand();
       cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName . '_' . $table . '.sql "',
         VERBOSE);
       echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
@@ -562,6 +616,8 @@ namespace lib\myLibs\console {
         exec('echo DROP DATABASE IF EXISTS ' . $databaseName . '; > ' . $pathAndFile);
         echo lightGreenText('Drop database sql file created : '), lightCyanText($file), PHP_EOL;
       }
+
+      self::initCommand();
 
       // And drops the database
       cli(self::$initCommand . $file . '"',
@@ -808,6 +864,8 @@ namespace lib\myLibs\console {
         echo greenText('[SQL CREATION] ');
       }
 
+      self::initCommand();
+
       // And truncates the table
       cli(self::$initCommand . $file . '"',
         VERBOSE);
@@ -883,6 +941,7 @@ namespace lib\myLibs\console {
      */
     public static function importSchema( string $database = null, string $confToUse = null)
     {
+      self::init();
       $db = self::initImports($database, $confToUse);
 
       $content = '';
@@ -956,6 +1015,7 @@ namespace lib\myLibs\console {
      */
     public static function importFixtures( string $database = null, string $confToUse = null)
     {
+      self::init();
       $db = self::initImports($database,
         $confToUse);
 

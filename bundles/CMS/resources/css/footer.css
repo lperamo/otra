@@ -1,27 +1,37 @@
-#footer {
-    background: url('/images/footer.png');
-    background: rgba(200,210,210,0.4);
-    text-align:center;
-    color:#355F59;
-    font-family:Arial,Helvetica,Sans-Serif!important;
-    font-size:.6875em!important;
-    font-weight:400!important;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    padding:.625em 0
+.footer {
+  /* background */
+  background                 : url('/images/footer.png');
+  background                 : rgba(200, 210, 210, 0.4);
+
+  /* border */
+  border-bottom-left-radius  : 20px;
+  border-bottom-right-radius : 20px;
+
+  /* box */
+  padding                    : .625em 0;
+
+  /* text */
+  color                      : #355f59;
+  font-family                : Arial, Helvetica, Sans-Serif !important;
+  font-size                  : .6875em !important;
+  font-weight                : 400 !important;
+  text-align                 : center;
 }
 
-#designby {
-    color:#FFF !important;
-    font-family:LucidaHandwritingItalic;
-    font-size:.675em;
-    text-shadow: 0.1em 0.1em #377, 0.1em 0.1em 10px #333;
-    margin-top:.625em;
-    position: relative;
-    width: 16.5em
+.design-by {
+  /* box */
+  margin      : .625em auto 0;
+  position    : relative;
+  width       : 16.5em;
+
+  /* text */
+  color       : #fff !important;
+  font-family : LucidaHandwritingItalic;
+  font-size   : .675em;
+  text-shadow : 0.1em 0.1em #377, 0.1em 0.1em 10px #333;
 }
 
-#designby:before {
+.design-by:before {
   /* box-shadow: 0 0 2px #FFFFFF, 0 0 2px #FFFFFF;
   content: " ";
   display: block;
@@ -29,12 +39,17 @@
   position: absolute;
   top: 1.7em;
   width: 16.5em */
-  border-radius: 80px / 10px;
-  box-shadow: 0 -8px 12px -8px rgba(255, 255, 255, 0.78);
-  content: " ";
-  display: block;
-  height: 23px;
-  position: absolute;
-  top: 2.1em;
-  width: 16.8em;
+
+  /* display */
+  border-radius : 80px / 10px;
+  box-shadow    : 0 -8px 12px -8px rgba(255, 255, 255, 0.78);
+
+  /* box */
+  display       : block;
+  height        : 23px; width : 16.8em;
+  position      : absolute;
+  top           : 2.1em;
+
+  /* content*/
+  content       : " ";
 }

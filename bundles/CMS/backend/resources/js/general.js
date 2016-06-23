@@ -8,7 +8,7 @@
 
     while(next = next.nextElementSibling)
     {
-      if(!next.classList.contains('cfgLine'))
+      if(!next.classList.contains('cfg-line'))
         break;
 
       next.classList.contains('hidden')
@@ -19,6 +19,6 @@
 
   $(function()
   {
-    $('#mainCfgDiv').on('mouseup', '.cfgSection', toggleCfgSection)
+    $('#main-cfg-div').on('mouseup', '.cfg-section', toggleCfgSection)
   })
 })()

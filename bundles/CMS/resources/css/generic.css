@@ -8,84 +8,130 @@ label {
     margin: 0;
     padding: 0;
 }
-body{ height: 100vh }
+
+body { height : 100vh }
 /* apply a natural box layout model to all elements, but allowing components to change
  (normally it's html and not * in the following rule ! see paul irish article on that point)*/
 * { box-sizing: border-box; }
-*:before, *:after { box-sizing: inherit }
 
-.fl{float:left}
-.fr{float:right}
-.center{ margin:auto; text-align:center}
-.clearBoth{ clear: both}
-.tcenter{ text-align: center }
-.nodecoration{ list-style-type:none }
+*:before,
+*:after { box-sizing : inherit }
+
+.fl { float : left }
+
+.fr { float : right }
+
+.center { margin : auto; text-align : center }
+
+.clear-both { clear : both }
+
+.t-center { text-align : center }
+
+.no-decoration { list-style-type : none }
 
 /* Tooltips custom management */
-li[data-tooltip], .softBtn[data-tooltip]{ position: relative }
-
-li[data-tooltip]:after, .softBtn[data-tooltip]:after, .actualSelectValue[data-tooltip]:after
-{
-    background: #C6D8DF; /* Old browsers */
-    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk3YmJjOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQ1JSIgc3RvcC1jb2xvcj0iI2JlZGNlOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5N2JiYzkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-    background: -moz-linear-gradient(top,  #C6D8DF 0%, #bedce8 45%, #C6D8DF 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#C6D8DF), color-stop(45%,#bedce8), color-stop(100%,#C6D8DF)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #C6D8DF 0%,#bedce8 45%,#C6D8DF 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #C6D8DF 0%,#bedce8 45%,#C6D8DF 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #C6D8DF 0%,#bedce8 45%,#C6D8DF 100%); /* IE10+ */
-    background: linear-gradient(top,  #C6D8DF 0%,#bedce8 45%,#C6D8DF 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#C6D8DF', endColorstr='#C6D8DF',GradientType=0 ); /* IE6-8 */
-    border: 2px groove rgba(128,128,128,0.1);
-    border-radius: 5px;
-    color:#2E4747 !important;
-    content: attr(data-tooltip);
-    display:table;
-    font-family: "Bookman Old Style",​Arial,​Helvetica,​Sans-Serif;
-    font-size: 0.825rem;
-    font-weight: normal; /* to avoid the inheritance of the element style */
-    height:18px;
-    bottom: calc(100% + 5px);
-    position: absolute;
-    left:0;
-    line-height: normal;
-    text-align: center;
-    opacity: 0;
-    padding: 3px 7px;
-    pointer-events: none;
-    text-shadow: 1px 1px rgba(221, 255, 254, 0.78);
-    transform: scale(1) !important;
-    visibility: hidden;
-    white-space: nowrap;
-    width: inherit;
-    z-index: 10000
+li[data-tooltip],
+.soft-btn[data-tooltip] {
+  position: relative
 }
 
-.softBtn[data-tooltip]:hover:after {
+li[data-tooltip]:after,
+.soft-btn[data-tooltip]:after,
+.actual-select-value[data-tooltip]:after {
+  /* background */
+  background     : #c6d8df; /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background     : url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk3YmJjOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQ1JSIgc3RvcC1jb2xvcj0iI2JlZGNlOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5N2JiYzkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background     : -moz-linear-gradient(top, #c6d8df 0%, #bedce8 45%, #c6d8df 100%); /* FF3.6+ */
+  background     : -webkit-gradient(linear, left top, left bottom, color-stop(0%, #c6d8df), color-stop(45%, #bedce8), color-stop(100%, #c6d8df)); /* Chrome,Safari4+ */
+  background     : -webkit-linear-gradient(top, #c6d8df 0%, #bedce8 45%, #c6d8df 100%); /* Chrome10+,Safari5.1+ */
+  background     : -o-linear-gradient(top, #c6d8df 0%, #bedce8 45%, #c6d8df 100%); /* Opera 11.10+ */
+  background     : -ms-linear-gradient(top, #c6d8df 0%, #bedce8 45%, #c6d8df 100%); /* IE10+ */
+  background     : linear-gradient(top, #c6d8df 0%, #bedce8 45%, #c6d8df 100%); /* W3C */
+  filter         : progid:DXImageTransform.Microsoft.gradient(startColorstr='#C6D8DF', endColorstr='#C6D8DF', GradientType=0); /* IE6-8 */
+
+  /* border */
+  border         : 2px groove rgba(128, 128, 128, 0.1);
+  border-radius  : 5px;
+
+  /* box */
+  height         : 18px; width          : inherit;
+  left : 0; bottom : calc(100% + 5px);
+  padding        : 3px 7px;
+  position       : absolute;
+
+  /* display */
+  content        : attr(data-tooltip);
+  display        : table;
+  opacity        : 0;
+  visibility     : hidden;
+
+  /* text */
+  color          : #2e4747 !important;
+  font-family    : "bookman old style", arial, helvetica, sans-serif;
+  font-size      : 0.825rem;
+  font-weight    : normal; /* to avoid the inheritance of the element style */
+  line-height    : normal;
+  text-align     : center;
+  text-shadow    : 1px 1px rgba(221, 255, 254, 0.78);
+  white-space    : nowrap;
+
+  /* others */
+  pointer-events : none;
+  transform      : scale(1) !important;
+  z-index        : 10000
+}
+
+.soft-btn[data-tooltip]:hover:after {
     transform: scale(0.1) !important;
 }
-.softBtn[data-tooltip]:active:after {
+.soft-btn[data-tooltip]:active:after {
     transform: scale(0.1) !important;
 }
 
 /* (top is the default), top right, right etc. clockwise */
-li.TTTR[data-tooltip]:after, .softBtn.TTTR[data-tooltip]:after, .actualSelectValue.TTTR[data-tooltip]:after { left: 100% }
-li.TTR[data-tooltip]:after, .softBtn.TTR[data-tooltip]:after, .actualSelectValue.TTR[data-tooltip]:after { left: calc(100% + 5px); bottom: 0 }
-li.TTBR[data-tooltip]:after, .softBtn.TTBR[data-tooltip]:after, .actualSelectValue.TTBR[data-tooltip]:after { top: 100%; left: 100% }
-li.TTB[data-tooltip]:after, .softBtn.TTB[data-tooltip]:after, .actualSelectValue.TTB[data-tooltip]:after { top: calc(100% + 5px) }
-li.TTBL[data-tooltip]:after, .softBtn.TTBL[data-tooltip]:after, .actualSelectValue.TTBL[data-tooltip]:after { left: auto; right: 100%; top: 100% }
-li.TTL[data-tooltip]:after, .softBtn.TTL[data-tooltip]:after, .actualSelectValue.TTL[data-tooltip]:after { bottom: 0; left: auto; right: calc(100% + 5px) }
-li.TTTL[data-tooltip]:after, .softBtn.TTTL[data-tooltip]:after, .actualSelectValue.TTTL[data-tooltip]:after { left:auto; right: 100% }
+li.tttr[data-tooltip]:after,
+.soft-btn.tttr[data-tooltip]:after,
+.actual-select-value.tttr[data-tooltip]:after { left : 100% }
 
-li[data-tooltip]:hover:after, .softBtn[data-tooltip]:hover:after, .actualSelectValue[data-tooltip]:hover:after
-{
-   opacity: 1;
-   visibility: visible;
-   z-index: 10000;
-   transform: scale(1) !important;
-   -moz-transition: opacity .25s linear .5s;
-   -webkit-transition: opacity .25s linear .5s;
-   transition: opacity .25s linear .5s
+li.ttr[data-tooltip]:after,
+.soft-btn.ttr[data-tooltip]:after,
+.actual-select-value.ttr[data-tooltip]:after { left : calc(100% + 5px); bottom : 0 }
+
+li.ttbr[data-tooltip]:after,
+.soft-btn.ttbr[data-tooltip]:after,
+.actual-select-value.ttbr[data-tooltip]:after { top : 100%; left : 100% }
+
+li.ttb[data-tooltip]:after,
+.soft-btn.ttb[data-tooltip]:after,
+.actual-select-value.ttb[data-tooltip]:after { top : calc(100% + 5px) }
+
+li.ttbl[data-tooltip]:after,
+.soft-btn.ttbl[data-tooltip]:after,
+.actual-select-value.ttbl[data-tooltip]:after { left : auto; right : 100%; top : 100% }
+
+li.ttl[data-tooltip]:after,
+.soft-btn.ttl[data-tooltip]:after,
+.actual-select-value.ttl[data-tooltip]:after { bottom : 0; left : auto; right : calc(100% + 5px) }
+
+li.tttl[data-tooltip]:after,
+.soft-btn.tttl[data-tooltip]:after,
+.actual-select-value.tttl[data-tooltip]:after { left : auto; right : 100% }
+
+li[data-tooltip]:hover:after,
+.soft-btn[data-tooltip]:hover:after,
+.actual-select-value[data-tooltip]:hover:after {
+  /* display */
+  opacity            : 1;
+  visibility         : visible;
+  z-index            : 10000;
+
+  /* animation */
+  transform          : scale(1) !important;
+  -moz-transition    : opacity .25s linear .5s;
+  -webkit-transition : opacity .25s linear .5s;
+  transition         : opacity .25s linear .5s
+
 }
 table { empty-cells: show }
 th, td { text-align: left }

@@ -1,12 +1,12 @@
 <?
-echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type . '">';
+echo '<div class="' . (2 == $type ? '' : 'module-style1 ') . 'module-type' . $type . '">';
 
   $hztl = false;
   if(1 == $type)
-    echo '<nav class="menuv" role="navigation">';
+    echo '<nav class="menu-v" role="navigation">';
   else if(2 == $type)
   {
-    echo '<nav class="menuh center" role="navigation">';
+    echo '<nav class="menu-h center" role="navigation">';
     $hztl = true;
   }
 
@@ -14,8 +14,8 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
   {
     if(!$hztl)
     { ?>
-      <ul class="nodecoration shadowEffect">
-        <li class="menusVHeaderUl menusVHeaderLi">
+      <ul class="no-decoration shadow-effect">
+        <li class="menus-v-header-ul menus-v-header-li">
           <?= $moduleName ?>
         </li><?
     }
@@ -33,8 +33,8 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
         {
           if('' != $menuItem['em_contenu'])
           {
-            ?><li class="<? if($key == $cptMenuItems){ echo 'menuVPad ';}?>menuVLi">
-              <a href="#" class="menuVLink" data-tooltip="<?= $menuItem['titre'] ?>"><?= $menuItem['em_contenu'] ?></a>
+            ?><li class="<? if($key == $cptMenuItems){ echo 'menu-v-pad ';}?>menu-v-li">
+              <a href="#" class="menu-v-link" data-tooltip="<?= $menuItem['titre'] ?>"><?= $menuItem['em_contenu'] ?></a>
             <?
           }
         }
@@ -44,19 +44,19 @@ echo '<div class="' . (2 == $type ? '' : 'moduleStyle1 ') . 'moduleType' . $type
       case 2:
       if(2 == $moduleItems[0]['id']) // TODO à gérer autrement
         break;
-        ?><ul class="menusHUl nodecoration"><?
+        ?><ul class="menus-h-ul no-decoration"><?
         foreach($moduleItems as $menuItem)
         {
           if('' != $menuItem['em_contenu'])
           {?>
-            <li class="menuHLi" data-href="/<?= 'article/show/' , $menuItem['a_contenu'] ?>" data-tooltip="<?= $menuItem['titre'] ?>">
+            <li class="menu-h-li" data-href="/<?= 'article/show/' , $menuItem['a_contenu'] ?>" data-tooltip="<?= $menuItem['titre'] ?>">
               <?= $menuItem['em_contenu'] ?>
           <?}
         }
         ?>
         </li>
-        <div id="lightsContainer">
-          <div id="lightsRelativeContainer">
+        <div id="lights-container">
+          <div id="lights-relative-container">
             <div class="light light1"></div>
             <div class="light light2"></div>
             <div class="light light3"></div>

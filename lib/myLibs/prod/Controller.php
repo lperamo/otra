@@ -49,7 +49,7 @@ class Controller extends MasterController
   {
     $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
 
-    if(!file_exists($templateFile))
+    if (false === file_exists($templateFile))
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
@@ -59,10 +59,10 @@ class Controller extends MasterController
     // If we already have the template in memory and that it's not empty then we show it
     self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
-    if ($ajax)
+    if (true === $ajax)
       self::$ajax = $ajax;
 
-    if(self::$cache_used)
+    if (true === self::$cache_used)
       parent::$template = self::$rendered[$templateFile];
     else
     {
@@ -76,18 +76,18 @@ class Controller extends MasterController
 
   /** Parses the template file and updates parent::$template
    *
-   * @param string $filename
+   * @param string $templateFilename
    * @param array  $variables  Variables to pass to the template
    * @param string $cachedFile The cache file name version of the file
    * @param bool   $layout     If we add a layout or not
    *
    * @return mixed|string
    */
-  private function buildCachedFile(string $filename, array $variables, $cachedFile = null, bool $layout = true) : string
+  private function buildCachedFile(string $templateFilename, array $variables, $cachedFile = null, bool $layout = true) : string
   {
     extract($variables);
     ob_start();
-    require $filename;
+    require $templateFilename;
 
     $content = $layout ? self::addLayout(ob_get_clean()) : ob_get_clean();
 

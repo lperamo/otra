@@ -17,16 +17,28 @@
   }
 
 .cfgSection {
+  /* background */
   background: linear-gradient(#e8e1d4 0%, #fcd484 100%) #eaeaea;
-  color: #8785ff;
-  cursor: pointer;
+
+  /* box */
   padding: 5px 10px;
+
+  /* text */
+  color: #8785ff;
   text-shadow: 1px 1px #d0c6ed
+
+  /* other */
+  cursor: pointer;
 }
 
 .cfgLine {
-  padding: 5px 10px;
+  /* background */
   opacity: 1;
+
+  /* box */
+  padding: 5px 10px;
+
+  /* animation */
   transform: scale(1);
   transition: transform .35s
 }

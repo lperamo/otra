@@ -1,4 +1,4 @@
-<?php
+<?
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
@@ -62,12 +62,12 @@ class TasksManager
     {
       if(false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
       {
-        echo yellow(), 'We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...', endColor(), PHP_EOL;
+        echo yellowText('We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...'), PHP_EOL;
         Tasks::genClassMap();
       }
 
       require_once BASE_PATH . 'cache/php/ClassMap.php';
-      spl_autoload_register(function(string $className) use($classMap){ require $classMap[$className]; });
+      spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
       Tasks::$task($argv);
     } catch(\Exception $e)
     {

@@ -1,9 +1,9 @@
 window.notif = (function()
 {
   'use strict';
-  var ERROR = 'orangeNotif',
-      INFO = 'vertNotif',
-      WARNING = 'jauneNotif';
+  var ERROR = 'orange-notif',
+      INFO = 'vert-notif',
+      WARNING = 'jaune-notif';
 
   /**
    * Decrease opacity at tick time and remove the notification at the end.
@@ -47,7 +47,7 @@ window.notif = (function()
       next.parentNode.removeChild(next);
 
     window.notifExists = true;
-    selector.insertAdjacentHTML('afterend', '<div class="notifWrapper fl"><div class="notification ' + cssClass + ' ' + type + '">' + text + '</div></div>');
+    selector.insertAdjacentHTML('afterend', '<div class="notif-wrapper fl"><div class="notification ' + cssClass + ' ' + type + '">' + text + '</div></div>');
 
     var next = selector.nextElementSibling,
         last = new Date;
@@ -64,7 +64,7 @@ window.notif = (function()
   };
 
   return dummy
-  // Why the fucking following code doesn't work !!
+  // Why the following code doesn't work ?!
   // return
   // ({
   //   ERROR: ERROR,
