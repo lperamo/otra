@@ -40,12 +40,12 @@ class Router
 			array_pad(Routes::$_[$route]['chunks'], 5, null)
 		));
 
-		$controller = ('prod' === XMODE)
-			? 'cache\\php\\' . $controller . 'Controller'
-			: (isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . 'Controller';
+		$action = ('prod' === XMODE)
+			? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
+			: (true === isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . $action;
 
 		if (false === $launch)
-			return $controller;
+			return $action;
 
 		$chunks['route'] = $route;
 		$chunks['css'] = $chunks['js'] = false;
@@ -66,7 +66,7 @@ class Router
 			);
 		}
 
-		new $controller($chunks, $params);
+		new $action($chunks, $params);
 	}
 
 	/**

@@ -107,7 +107,7 @@ class MasterController
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
-    if(isset($baseParams['controller']))
+    if (true === isset($baseParams['controller']))
     {
       // Stores the bundle, module, controller and action for later use
       list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, $this->chkJs, $this->chkCss) = array_values($baseParams);
@@ -125,15 +125,9 @@ class MasterController
 
       self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
-      // runs the preexecute function if exists and then the action
-      $this->preExecute();
-      // dump($getParams, $baseParams);die;
       call_user_func_array([$this, $baseParams['action']], $getParams);
     }
   }
-
-  // To overload in the child class (e.g: in articleController)
-  public function preExecute(){}
 
   /**
    * Encodes the value passed as parameter in order to create a cache file name

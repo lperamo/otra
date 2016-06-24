@@ -39,5 +39,20 @@ class usersService
       'users' => $users
     ];
   }
+
+  public static function securityCheck()
+  {
+    if (false === isset($_SESSION['sid']['role']))
+    {
+      echo '{"success": false, "msg": "Deconnected"}';
+      return ;
+    }
+
+    if('1' !== $_SESSION['sid']['role'])
+    {
+      echo '{"success": false, "msg": "Lack of rights."}';
+      return;
+    }
+  }
 }
 ?>

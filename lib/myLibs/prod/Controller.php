@@ -20,19 +20,20 @@ class Controller extends MasterController
    */
   public function checkCache(array $filesToCheck) : bool
   {
-    foreach($filesToCheck as $fileToCheck)
+    foreach($filesToCheck as &$fileToCheck)
     {
       $templateFile = $this->viewPath . $fileToCheck;
-
       $cachedFile = parent::getCacheFileName($templateFile);
-      if (file_exists($cachedFile))
-      {
-        self::$rendered[$templateFile] = parent::getCachedFile($cachedFile, true);
-        if(!self::$rendered[$templateFile])
-          return false;
-      }else
+
+      if (false === file_exists($cachedFile))
+        return false;
+
+      self::$rendered[$templateFile] = parent::getCachedFile($cachedFile, true);
+
+      if (false === self::$rendered[$templateFile])
         return false;
     }
+
     return true;
   }
 
@@ -104,15 +105,11 @@ class Controller extends MasterController
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];
 
-    if('cli' === PHP_SAPI)
+    if ('cli' === PHP_SAPI)
       return $content;
 
-    if(null !== $cachedFile)
-    {
-      $fp = fopen($cachedFile, 'w');
-      fwrite($fp, $content);
-      fclose($fp);
-    }
+    if (null !== $cachedFile)
+      file_put_contents($cachedFile, $content);
 
     return $content;
   }
@@ -122,7 +119,7 @@ class Controller extends MasterController
   {
     $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
 
-    if(!(parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile))) // if it was not in the cache or "fresh"...
+    if (false === (parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile))) // if it was not in the cache or "fresh"...
       parent::$layout = $this->buildCachedFile(LAYOUT, [], $cachedFile, false);
   }
 
@@ -150,18 +147,21 @@ class Controller extends MasterController
   {
     // If we have JS files to load, then we load them
     $content = ($this->chkJs) ? '<script type="application/javascript" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
-    if(empty(self::$js))
+
+    if (true === empty(self::$js))
       return $content;
 
     $allJs = '';
 
-    foreach(self::$js as $js)
+    foreach(self::$js as &$js)
     {
       $lastFile = $js . '.js';
       ob_start();
-      if(false === strpos($lastFile, ('http')))
+
+      if (false === strpos($lastFile, ('http')))
         echo file_get_contents(parent::$path . $lastFile);
-      else{
+      else
+      {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $lastFile);
         curl_setopt($ch, CURLOPT_HEADER, false);
@@ -171,16 +171,16 @@ class Controller extends MasterController
       $allJs .= ob_get_clean();
     }
 
-    if($firstTime)
-      $allJs .= file_get_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js'));
+//    if (true === $firstTime)
+//      $allJs .= file_get_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js'));
 
-    if(strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
+    if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
       return '<script async defer>' + $allJs + '</script>';
+
     $lastFile .= VERSION;
+
     // Creates/erase the corresponding cleaned js file
-    $fp = fopen(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), 'w');
-    fwrite($fp, $allJs);
-    fclose($fp);
+    file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
     return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }

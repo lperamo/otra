@@ -46,6 +46,7 @@ class Controller extends MasterController
     if (true === $ajax)
       self::$ajax = $ajax;
 
+    // we use self::ajax in this function (it is why we cannot merge the two if with self::$ajax
     parent::$template = $this->buildCachedFile($templateFile, $variables);
 
     if (false === $ajax)
@@ -343,8 +344,9 @@ class Controller extends MasterController
     foreach(self::$js as $key => &$js)
     {
       // If the key don't give info on async and defer then put them automatically
-      if(true === is_int($key))
+      if (true === is_int($key))
         $key = '';
+
       $debugContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
     }
 

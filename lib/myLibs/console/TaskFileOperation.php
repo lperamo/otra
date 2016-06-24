@@ -137,7 +137,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  */
 function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles) : array
 {
-  preg_match_all('@^\s{0,}use\s{0,}([^;]{0,});\s{0,}@mx', $contentToAdd, $useMatches, PREG_OFFSET_CAPTURE);
+  preg_match_all('@^\\s{0,}use\\s{1,}([^;]{0,});\\s{0,}@mx', $contentToAdd, $useMatches, PREG_OFFSET_CAPTURE);
 
   $classesFromFile = [];
 
@@ -183,8 +183,6 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
             // simplifies the usage of classes by passing from FQCN to class name ... lib\myLibs\bdd\Sql => Sql
             str_replace($classToReplace, $chunk, $contentToAdd);
           }
-
-
         } else { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
           $lastChunk = substr($chunk, 0, -1);
           $classToReplace = $beginString . $lastChunk;
@@ -632,10 +630,7 @@ function processStaticCalls(string &$contentToAdd, array &$filesToConcat, array 
 {
   preg_match_all('@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@', $contentToAdd, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
-//    var_dump($matches);
   $lengthAdjustment = 0;
-
-//  var_dump('++');
 
   foreach($matches as &$match)
   {
@@ -715,7 +710,21 @@ function fixFiles(string $content, &$verbose, &$fileToInclude = '')
   $parsedFiles = [];
   $contentToAdd = $content;
 
-  $finalContent = assembleFiles($inc, $level, $fileToInclude, $contentToAdd, $parsedFiles);
+  if ('' !== $fileToInclude)
+    $finalContent = assembleFiles($inc, $level, $fileToInclude, $contentToAdd, $parsedFiles);
+  else
+  {
+    $finalContent = $content;
+    preg_match_all('@^\\s{0,}use\\s{1,}[^;]{0,};\\s{0,}@mx', $finalContent, $useMatches, PREG_OFFSET_CAPTURE);
+    $offset = 0;
+
+    foreach($useMatches[0] as &$useMatch)
+    {
+      $length = strlen($useMatch[0]);
+      $finalContent = substr_replace($finalContent, '', $useMatch[1] - $offset, $length);
+      $offset += $length;
+    }
+  }
 
   echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
 

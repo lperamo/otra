@@ -57,9 +57,18 @@ foreach(array_keys($routes) as &$route)
   else
     passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
 }
-die;
+
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';
+
+//require BASE_PATH . 'config/All_Config.php';
+
+define(
+'PATH_CONSTANTS',
+[
+  'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+  'driver' => config\All_Config::$dbConnections[key(config\All_Config::$dbConnections)]['driver']
+]);
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
