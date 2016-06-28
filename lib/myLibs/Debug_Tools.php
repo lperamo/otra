@@ -16,15 +16,7 @@ function dump()
   $oldXDebug = ini_get('xdebug.var_display_max_data');
   ini_set('xdebug.var_display_max_data', -1);
 
-	echo '<pre>';
-
-	foreach (func_get_args() as $param)
-	{
-    var_dump(is_string($param) ? htmlspecialchars($param) : $param);
-    echo '<br />';
-	}
-
-	echo '</pre>';
+	call_user_func_array('dumpSmall', func_get_args());
   ini_set('xdebug.var_display_max_data', $oldXDebug);
 }
 
@@ -34,7 +26,7 @@ function dump()
 function dumpSmall()
 {
   echo '<pre>';
-  foreach (func_get_args() as $param)
+  foreach (func_get_args() as &$param)
   {
     var_dump(is_string($param) ? htmlspecialchars($param) : $param);
     echo '<br />';
@@ -64,12 +56,12 @@ function reformatSource(string $stringToFormat) : string
 function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = null)
 {
     ob_start();?>
-    <table class="radius test">
+    <table class="test innerHeader">
       <thead>
-        <tr class="head">
+        <tr>
           <th colspan="3"><?= $title ?></th>
         </tr>
-        <tr class="head">
+        <tr>
           <th>Name</th>
           <th>Index or value if array</th>
           <th>Value if array</th>
@@ -88,7 +80,8 @@ function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = n
  * @param $title      string Table name to show in the header
  * @param $indexToExclude string Index to exclude from the render
  */
-function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = null){
+function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = null)
+{
   return;
 
   echo $title, PHP_EOL,
@@ -98,63 +91,103 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
+function getArgumentType(&$index, &$value)
+{
+  switch($index)
+  {
+    case 0:
+      if (true === is_int($value) && true === isset(lib\myLibs\Lionel_Exception::$codes[$value]))
+      {
+        $value = lib\myLibs\Lionel_Exception::$codes[$value];
+        return 'Error type';
+      }
+
+      return $index;
+    case 1: return 'Error';
+    case 2: return 'File';
+    case 3: return 'Line';
+    case 4: return 'Arguments';
+  }
+}
+
 /** Recursive function that converts a php array into a stylish tbody
+ *
  * @param $donnees        array|object  Array or object to convert
  * @param $indexToExclude string        Index to exclude from the render
- * @param $boucle         int           Number of recursions
+ * @param $loop           int           Number of recursions
  * @return int
  */
-function recurArrayConvertTab($donnees, $indexToExclude = null, int $boucle = -1)
+function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
 {
   $i = 0;
-  $oldBoucle = $boucle;
-  ++$boucle;
+  $oldLoop = $loop;
+  ++$loop;
 
   foreach ($donnees as $index => &$donnee)
   {
     if ($index === $indexToExclude)
-    {
-      // foreach(array_keys($donnees[$index]) as $key) { unset($donnees[$key]); }
-      // unset($donnees[$index]);
       continue;
-    }
 
-    if (0 === $boucle)
-      echo '</tbody></table><table class="test"><tbody>';
+    $index = true === is_numeric($index) ? $index : '\'' . $index . '\'';
+    $donnee = (true === is_array($donnee) || true === is_object($donnee) || true === is_numeric($donnee)) ? $donnee : '\'' . $donnee . '\'';
+
+    // End of the table that shows the inner headers
+    if (0 === $loop)
+    {
+      ?> </tbody></table><table class="test"><tbody><?
+    }
 
     if (true === is_array($donnee) || true === is_object($donnee))
     {
-        if (1 === $boucle){
-          if ($boucle < $oldBoucle)
-            echo '<tr class="foldable"><td colspan="' , $boucle , '"></td><td>\'' , $index, '\'</td></tr>';
+        if (1 === $loop)
+        {
+          // if we have lost one dimension
+          if ($loop < $oldLoop)
+            echo '<tr class="foldable">',
+                   '<td colspan="' , $loop , '"></td>',
+                   '<td>' , $index, '</td>',
+                 '</tr>';
           else
-            echo '<td>\'' , $index, '\'</td><td colspan="0" class="dummy"></td></tr>';
-        } else if($boucle > 1)
-          echo '<tr class="foldable"><td colspan="', $boucle, '"></td><td colspan="0">\'' , $index,  '\'</td><td colspan="0" class="dummy"></td></tr>';
+            echo '<td>' , $index, '</td>',
+                 '<td colspan="0" class="dummy"></td>',
+              '</tr>';
+        } else if ($loop > 1)
+          echo '<tr class="foldable">',
+                 '<td colspan="', $loop, '"></td>',
+                 '<td colspan="0">' , $index,  '</td>',
+                 '<td colspan="0" class="dummy"></td>',
+               '</tr>';
         else
-          echo '<tr class="foldable"><td>\'' , $index, '\'</td>';
+          echo '<tr class="foldable no-dummy">',
+                 '<td colspan="">Index:' , getArgumentType($index, $donnee), ', Loop:' . $loop . '</td>';
 
-        $oldBoucle = recurArrayConvertTab($donnee, $indexToExclude, $boucle);
-
-        // if($boucle + 1 < $oldBoucle)
-        //   echo $boucle, $oldBoucle, '</tr></tbody></table>';
+        $oldLoop = recurArrayConvertTab($donnee, $indexToExclude, $loop);
     } else
     {
-      if (0 === $boucle)
-        echo '<tr class="foldable" ><td>\'', $index, '\'</td><td colspan="2">\'', $donnee , '\'</td></tr>';
+      if (0 === $loop)
+        echo '<tr class="foldable no-dummy" >',
+               '<td>', getArgumentType($index, $donnee), '</td>',
+               '<td colspan="2">', $donnee , '</td>',
+             '</tr>';
       else
       {
         if (true === is_object($donnee))
+        {
           $donnee = 'This is an Object non renderable !!';
-
-        echo '<tr class="deepContent"><td colspan="' , $boucle , '"></td><td>\'', $index, '\'</td><td>\'', $donnee , '\'</td></tr>';
+          echo '*******************';
+        } else
+          echo '<tr class="deep-content">',
+                 '<td colspan="' , $loop , '"></td>',
+                 '<td>', $index, '</td>',
+                 '<td>', $donnee , '</td>',
+               '</tr>';
       }
     }
 
     ++$i;
   }
 
-  return $oldBoucle;
+  return $oldLoop;
 }
 
 /**

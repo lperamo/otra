@@ -192,7 +192,7 @@ class Controller extends MasterController
               $orderedArray,
               $i,
               $key,
-              $debLink . '/lib/myLibs/css/' . $core_css . '.css" />'
+              $debLink . '/lib/myLibs/resources/css/' . $core_css . '.css" />'
             );
           }
         }
@@ -330,7 +330,7 @@ class Controller extends MasterController
               $orderedArray,
               $i,
               $key,
-              $debLink . '/lib/myLibs/js/' . $core_js . '.js" ></script>'
+              $debLink . '/lib/myLibs/resources/js/' . $core_js . '.js" ></script>'
             );
           }
         }

@@ -14,7 +14,7 @@ require_once BASE_PATH . 'lib\myLibs\Debug_Tools.php';
 
 class Lionel_Exception extends \Exception
 {
-  private static $codes = [
+  public static $codes = [
     E_COMPILE_ERROR => 'E_COMPILE_ERROR',
     E_COMPILE_WARNING => 'E_COMPILE_WARNING',
     E_CORE_ERROR => 'E_CORE_ERROR',
@@ -69,21 +69,22 @@ class Lionel_Exception extends \Exception
     $renderController->viewPath = CORE_VIEWS_PATH;
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
-    if(! empty($this->context))
+    if (false === empty($this->context))
     {
       unset($this->context['variables']);
       convertArrayToShowable($this->context, 'Variables');
-    }
+    } else
+      $this->context = '';
 
     // Is the error code a native error code ?
-    $this->code = isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $this->code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
 
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
     return $renderController->renderView('/exception.phtml', [
-      'message' =>$this->message,
+      'message' => $this->message,
       'code' => $this->code,
-      'file' => $this->file,
+      'file' => substr($this->file, strlen(BASE_PATH)),
       'line' => $this->line,
       'context' => $this->context,
       'backtraces' => $this->getTrace()
@@ -96,7 +97,7 @@ class Lionel_Exception extends \Exception
    */
   public function consoleMessage()
   {
-    if(! empty($this->context))
+    if (false === empty($this->context))
     {
       unset($this->context['variables']);
 //      convertArrayToShowableConsole($this->context, 'Variables');
@@ -105,7 +106,7 @@ class Lionel_Exception extends \Exception
     $backtraces = $this->getTrace();
 
     // Is the error code a native error code ?
-    $this->code = isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $this->code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     $this->message = preg_replace('/\<br\s*\/?\>/i', '', $this->message);
 
     require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');

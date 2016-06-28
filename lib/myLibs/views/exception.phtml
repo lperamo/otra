@@ -2,14 +2,15 @@
 self::layout();
 self::title('Exception !');
 ?>
-<div id="exception" class="text-center">Exception</div>
-<div id="explications" class="text-center correctDisplay"><?
-  if (isset($code)) echo 'Error code ' , $code , ' in ' , $file , ' at line ' , $line, '<br />', $message;
+<div class="exception text-center">Exception</div>
+<div class="explications text-center correct-display"><?
+  if (true === isset($code))
+  	echo 'Error code <span class="exception-brown">', $code , '</span> in <span class="exception-file">' , $file , '</span> at line <span class="exception-line">' , $line, '</span><br />', $message;
   ?>
 	<br />
-	<table class="radius">
+	<table>
 		<thead>
-	  	<tr class="head">
+	  	<tr>
 	  		<th>Error Code</th>
 				<th>Function</th>
 				<th>Line</th>
@@ -23,19 +24,21 @@ self::title('Exception !');
 		  	$now = $trace[$i];
 		  	?><tr>
 		  		<td></td>
-		  	 	<td><?= (isset($now['function'])) ? $now['function'] : '-' ?></td>
-				<td><?= (isset($now['line'])) ? $now['line'] : '-' ?></td>
-				<td><?= (isset($now['file'])) ? $now['file'] : '-' ?></td>
-				<td>
-					<i class="showArgs">Show</i>
+		  	 	<td><?= (true === isset($now['function'])) ? $now['function'] : '-' ?></td>
+				<td><?= (true === isset($now['line'])) ? $now['line'] : '-' ?></td>
+				<td><?= (true === isset($now['file'])) ? substr($now['file'], strlen(BASE_PATH)) : '-' ?></td>
+				<? if (true === empty($now['args']))
+				{ ?> <td></td></tr> <? } else { ?>
+				<td class="show-args">
+						<i>Show</i>
 				</td>
 			</tr>
-			<tr class="deepContent">
-				<td colspan="0"><? if(0 == $i) unset($now['args']['variables']);
+			<tr class="deep-content">
+				<td colspan="5"><? if(0 === $i) unset($now['args']['variables']);
 				 convertArrayToShowable($now['args'], 'Arguments', 'variables'); echo $now['args']; ?></td>
 			</tr>
-			<?
-		  }?>
+			<? }
+      } ?>
 	  </tbody>
 	</table>
 	<br />

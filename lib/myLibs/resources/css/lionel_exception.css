@@ -24,6 +24,96 @@ body {
   font        : 12px solid #136;
   padding-top : 20px
 }
+  .exception-file {
+    color: #F55;
+    font-weight: bold;
+  }
+
+  .exception-line {
+    color: #65e;
+    font-weight: bold;
+  }
+
+  table {
+    /* border */
+    border         : 1px solid #ccf;
+    border-spacing : 0;
+
+    /* box */
+    width          : 100%;
+
+    /* text */
+    white-space    : normal
+  }
+
+    td, th {
+      border       : 1px solid #ccf;
+      border-width : 0 0 1px 1px;
+      padding      : 3px 6px;
+      transition   : background .25s
+    }
+
+    tr:nth-of-type(odd) > td { background : rgba(255, 255, 255, 0.48) }
+
+    tr > td:hover {
+      background    : rgba(15, 16, 17, 0.06);
+      border-radius : 0;
+      /*text-shadow   : 1px 1px #ccc*/
+    }
+
+    /* border bottom left */
+    /*tr:last-child > td:first-child { border-radius : 0 0 0 10px }*/
+
+    /* border bottom right */
+    /*tr:last-child > td:last-child { border-radius : 0 0 10px 0 }*/
+    table:not(.test) td:first-child { width : 150px }
+
+    td:first-child, th:first-child { border-left : 0 }
+
+    tr:last-child > td { border-bottom : 0 }
+
+    .show-args { font-style: italic; }
+      .show-args:hover { cursor : pointer }
+
+    .test:not(.innerHeader)
+    {
+      border-top: 0;
+    }
+
+    .deep-content { display : none }
+
+      .test td {
+        width       : 0;
+        white-space : nowrap
+      }
+
+      .foldable {
+        cursor : pointer
+      }
+
+        /* TODO why important */
+        .foldable:hover {
+          background-color : rgba(68, 68, 68, 0.5);
+          color: #DDD;
+          text-shadow : none;
+        }
+
+        .foldable:hover .dummy::after, .foldable.no-dummy:hover::after
+        {
+          /* display */
+          content: 'Foldable !';
+          display: table-cell;
+
+          /* text */
+          color : #EEE;
+          text-align: center;
+          text-shadow: none;
+          vertical-align : middle;
+        }
+
+
+
+        .dummy { width : 100% !important }/* TODO why important */
 
 .text-center { text-align : center }
 
@@ -45,63 +135,6 @@ body {
   /* overflow:word-wrap; bientôt en css3 il faudra remplacer par cette valeur car ce sera la nouvelle norme */
 }
 
-.radius { border-radius : 10px }
+/*.radius { border-radius : 10px }*/
 
-table {
-  background     : linear-gradient(to bottom, rgba(209, 237, 180, 0) 0%, rgba(34, 81, 115, 0.2) 100%) scroll;
-
-  /* border */
-  border         : 1px solid #ccf;
-  border-spacing : 0;
-
-  /* box */
-  width          : 100%;
-
-  /* text */
-  white-space    : normal
-}
-
-.test { border : 0 }
-
-td:first-child, th:first-child { border-left : 0 }
-
-tr:last-child > td { border-bottom : 0 }
-
-table:not(.test) td:first-child { width : 150px }
-
-td, th {
-  border       : 1px solid #ccf;
-  border-width : 0 0 1px 1px;
-  padding      : 3px 6px;
-  transition   : background .25s
-}
-
-tr:nth-of-type(odd) > td { background : rgba(255, 255, 255, 0.48) }
-
-tr > td:hover {
-  background    : rgba(15, 16, 17, 0.06);
-  border-radius : 0;
-  text-shadow   : 1px 1px #ccc
-}
-
-tr:last-child > td:first-child { border-radius : 0 0 0 10px }
-
-tr:last-child > td:last-child { border-radius : 0 0 10px 0 }
-
-.foldable {
-  background-color : rgba(68, 68, 68, 0.35) !important; /* TODO why important */
-  cursor           : pointer
-}
-
-.foldable:hover { background-color : rgba(68, 68, 68, 0.5) !important }/* TODO why important */
-
-.deep-content { display : none }
-
-.test td {
-  width       : 0;
-  white-space : nowrap
-}
-
-.dummy { width : 100% !important }/* TODO why important */
-
-.show-args:hover { cursor : pointer }
+.noBorder { border : 0 }

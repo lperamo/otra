@@ -138,19 +138,19 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName($filename, $path = CACHE_PATH, $prefix = '', $extension = '.cache') {
+  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = '', string $extension = '.cache') {
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
   /**
    * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE All_Config::$cache TO TRUE !!
    *
-   * @param string  $cacheFile The cache file name version of the file
-   * @param bool    $exists    True if we know that the file exists.
+   * @param string $cachedFile The cache file name version of the file
+   * @param bool   $exists     True if we know that the file exists.
    *
    * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
    */
-  protected static function getCachedFile($cachedFile, $exists = false)
+  protected static function getCachedFile(string $cachedFile, bool $exists = false)
   {
     if ((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
       return file_get_contents ($cachedFile);
@@ -163,7 +163,7 @@ class MasterController
    * @param string $content Content of the template to process
    * @return mixed|string
    */
-  protected static function addLayout($content)
+  protected static function addLayout(string $content)
   {
     if (true === isset(self::$layout))
     {
@@ -178,21 +178,21 @@ class MasterController
   *
   * @param string $attrs
   */
-  public static function bodyAttrs($attrs = '') { self::$bodyAttrs = $attrs; }
+  public static function bodyAttrs(string $attrs = '') { self::$bodyAttrs = $attrs; }
 
   /**
    * Sets the body content
    *
    * @param string $content
    */
-  private static function body($content = '') { self::$body = $content; }
+  private static function body(string $content = '') { self::$body = $content; }
 
   /**
    * Sets the title of the page
    *
    * @param string $title
    */
-  protected static function title($title)
+  protected static function title(string $title)
   {
     self::$layout = (isset(self::$layout))
       ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
@@ -205,7 +205,7 @@ class MasterController
    * @param string $filename
    * @param string $filenameIE
    */
-  protected static function favicon($filename = '', $filenameIE = '')
+  protected static function favicon(string $filename = '', string $filenameIE = '')
   {
     echo '<link rel="icon" type="image/png" href="' , $filename , '" />
       <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
