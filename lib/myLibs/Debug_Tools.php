@@ -55,6 +55,7 @@ function reformatSource(string $stringToFormat) : string
  */
 function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = null)
 {
+//var_dump($dataToShow);
     ob_start();?>
     <table class="test innerHeader">
       <thead>
@@ -128,7 +129,6 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
     if ($index === $indexToExclude)
       continue;
 
-    $index = true === is_numeric($index) ? $index : '\'' . $index . '\'';
     $donnee = (true === is_array($donnee) || true === is_object($donnee) || true === is_numeric($donnee)) ? $donnee : '\'' . $donnee . '\'';
 
     // End of the table that shows the inner headers
@@ -137,7 +137,7 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
       ?> </tbody></table><table class="test"><tbody><?
     }
 
-    if (true === is_array($donnee) || true === is_object($donnee))
+    if ((true === is_array($donnee) || true === is_object($donnee)) && false === empty($donnee))
     {
         if (1 === $loop)
         {
@@ -154,7 +154,7 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
         } else if ($loop > 1)
           echo '<tr class="foldable">',
                  '<td colspan="', $loop, '"></td>',
-                 '<td colspan="0">' , $index,  '</td>',
+                 '<td colspan="0">', $index,  '</td>',
                  '<td colspan="0" class="dummy"></td>',
                '</tr>';
         else
@@ -164,24 +164,15 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
         $oldLoop = recurArrayConvertTab($donnee, $indexToExclude, $loop);
     } else
     {
-      if (0 === $loop)
-        echo '<tr class="foldable no-dummy" >',
+      if (true === is_array($donnee))
+        $donnee = 'Empty';
+
+//      if (0 === $loop)
+        echo '<tr class="no-dummy" >',
                '<td>', getArgumentType($index, $donnee), '</td>',
                '<td colspan="2">', $donnee , '</td>',
              '</tr>';
-      else
-      {
-        if (true === is_object($donnee))
-        {
-          $donnee = 'This is an Object non renderable !!';
-          echo '*******************';
-        } else
-          echo '<tr class="deep-content">',
-                 '<td colspan="' , $loop , '"></td>',
-                 '<td>', $index, '</td>',
-                 '<td>', $donnee , '</td>',
-               '</tr>';
-      }
+
     }
 
     ++$i;
