@@ -6,6 +6,11 @@ use phpunit\framework\TestCase;
  */
 class ConsoleTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+  
   /**
    * @author Lionel Péramo
    */

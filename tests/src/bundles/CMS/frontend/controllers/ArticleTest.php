@@ -7,6 +7,11 @@ use phpunit\framework\TestCase,
  */
 class ArticleTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   /**
    * @author Lionel Péramo
    */

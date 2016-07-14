@@ -9,6 +9,11 @@ use lib\myLibs\Lionel_Exception;
  */
 class DatabaseTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   private static $configFolder = BASE_PATH . 'tests/bundles/core/config/';
   /**
    * Removes all files and folders specified in the array.

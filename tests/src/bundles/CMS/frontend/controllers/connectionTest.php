@@ -7,6 +7,11 @@ use \lib\myLibs\Router;
  */
 class ConnectionTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   /**
    * @author Lionel Péramo
    */

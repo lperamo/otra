@@ -7,6 +7,11 @@ use phpunit\framework\TestCase,
  */
 class ConfigServiceTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   /**
    * @author Lionel Péramo
    */

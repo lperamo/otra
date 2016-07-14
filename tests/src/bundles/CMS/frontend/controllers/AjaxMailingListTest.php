@@ -7,6 +7,11 @@ use phpunit\framework\TestCase,
  */
 class AjaxMailingTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   /**
    * @author Lionel Péramo
    */

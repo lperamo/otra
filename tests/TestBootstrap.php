@@ -13,7 +13,6 @@ spl_autoload_register(function($className)
 
 define('BASE_PATH', substr(_DIR_, 0, -5)); // Finit avec /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
-define('XMODE', 'PROD');
 define('DEBUG_KEY', 'debuglp_');
 require CORE_PATH . 'console/Colors.php';
 

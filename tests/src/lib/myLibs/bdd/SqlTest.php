@@ -9,6 +9,11 @@ use lib\myLibs\Lionel_Exception;
  */
 class SqlTest extends TestCase
 {
+  protected function setUp()
+  {
+    define('XMODE', 'PROD');
+  }
+
   /**
    * @author                         Lionel Péramo
    * @expectedException              \lib\myLibs\Lionel_Exception
