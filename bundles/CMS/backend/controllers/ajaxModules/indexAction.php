@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace bundles\CMS\backend\controllers\ajaxModules;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use bundles\CMS\{models\Module, services\backendService};
+use bundles\CMS\{models\Module, models\GlobalConstants, services\backendService};
 
 class indexAction extends Controller
 {
@@ -19,7 +19,7 @@ class indexAction extends Controller
 
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => Module::$moduleTypes,
-      'right' => Module::$rights,
+      'right' => GlobalConstants::$rights,
       'items' => $modules
     ], true);
   }

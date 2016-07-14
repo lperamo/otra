@@ -13,7 +13,11 @@ class ajaxLoginAction extends Controller
 {
   public function ajaxLoginAction()
   {
-    false === isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST) && die('Hack.');
+    if (false === isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST))
+    {
+      echo 'Hack.';
+      return;
+    }
 
     $email = $_POST['email'];
 

@@ -10,7 +10,7 @@ namespace lib\myLibs\console {
 
   use lib\ { sf2_yaml\Yaml, myLibs\bdd\Sql };
   use config\All_Config;
-  use lib\myLibs\Session;
+  use lib\myLibs\{Session, Lionel_Exception};
 
   class Database
   {
@@ -43,6 +43,8 @@ namespace lib\myLibs\console {
      *
      * @param string $dbConnKey Database connection key from the general configuration
      *
+     * @throws Lionel_Exception If there are no database or database engine configured.
+     *
      * @return bool | void
      */
     public static function init(string $dbConnKey = null)
@@ -51,20 +53,12 @@ namespace lib\myLibs\console {
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
       if (false === isset($dbConn[$dbConnKey]))
-      {
-        echo 'You haven\'t specified any database configuration in your configuration file.';
-
-        return false;
-      }
+        throw new Lionel_Exception('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
 
       $infosDb = $dbConn[$dbConnKey];
 
       if (false === isset($infosDb['motor']))
-      {
-        echo 'You haven\'t specified the database engine in your configuration file.';
-
-        return false;
-      }
+        throw new Lionel_Exception('You haven\'t specified the database engine in your configuration file.', E_CORE_WARNING);
 
       self::initBase();
       define('VERBOSE', All_Config::$verbose);
@@ -83,7 +77,7 @@ namespace lib\myLibs\console {
     }
 
     /** Sets the self::initCommand variable that allows to execute SQL files */
-    public function initCommand()
+    public static function initCommand()
     {
       self::$initCommand = 'mysql --login-path=' . self::$projectName . (VERBOSE ? ' --show-warnings' : '') .
         ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ') . self::$pathSql;
@@ -99,20 +93,22 @@ namespace lib\myLibs\console {
     public static function initBase(bool $schema = false)
     {
       self::$baseDirs = self::getDirs($schema);
-      self::$pathYml = self::$baseDirs[0] . '/yml/';
-      self::$pathSql .= self::$baseDirs[0] . '/sql/';
+      self::$pathYml = self::$baseDirs[0] . 'config/data/yml/';
+      self::$pathYmlFixtures = self::$pathYml . 'fixtures';
+      self::$pathSql .= self::$baseDirs[0] . 'config/sql/';
       self::$schemaFile = self::$pathYml . self::$schemaFile;
       self::$tablesOrderFile = self::$pathYml . self::$tablesOrderFile;
     }
 
     /**
-     * @param bool $boolSchema Do we retrieve all the information from YML schemas ?
+     * @param bool   $boolSchema Do we retrieve all the information from YML schemas ?
+     * @param string $folder     Where to find the data folders
      *
      * @return array
      */
-    public static function getDirs(bool $boolSchema = false) : array
+    public static function getDirs(bool $boolSchema = false, string $folder = 'bundles/') : array
     {
-      $dir = BASE_PATH . 'bundles/';
+      $dir = BASE_PATH . $folder;
       $folderHandler = opendir($dir);
       $dirs = [];
 
@@ -215,7 +211,7 @@ namespace lib\myLibs\console {
      *
      * @return string $attr Concerned attribute in uppercase
      */
-    public static function getAttr( string $attr, bool $show = false) : string
+    public static function getAttr(string $attr, bool $show = false) : string
     {
       $output = '';
 
@@ -246,6 +242,9 @@ namespace lib\myLibs\console {
       array &$sortedTables,
       int $oldCountArrayToSort = 0)
     {
+      if (true === empty($tablesWithRelations))
+        return true;
+
       $nextArrayToSort = $tablesWithRelations;
 
       foreach ($tablesWithRelations as $table => $properties)
@@ -298,6 +297,8 @@ namespace lib\myLibs\console {
      * @param array  $sortedTables   Final sorted tables array
      * @param array  $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
      * @param string $createdFile    Name of the fixture file that will be created.
+     *
+     * @throws Lionel_Exception If a database relation is missing.
      */
     public static function createFixture(
       string $databaseName,
@@ -326,8 +327,8 @@ namespace lib\myLibs\console {
       $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
 
       // if the fixtures folder doesn't exist, we create it.
-      if (false === file_exists(self::$fixtureFolder))
-        mkdir(self::$fixtureFolder, 0777, true);
+      if (false === file_exists($fixtureFolder))
+        mkdir($fixtureFolder, 0777, true);
 
       $fp = fopen($fixtureFolder . $databaseName . '_' . $table . '.yml',
         'w');
@@ -368,13 +369,8 @@ namespace lib\myLibs\console {
 
         foreach ($properties as $property => $value)
         {
-          if (in_array($property,
-              $sortedTables) && !isset($tableData['relations'][$property])
-          )
-          {
-            echo 'It lacks a relation to the table `' . $table . '` for a `' . $property . '` like property';
-            exit(1);
-          }
+          if (true === in_array($property, $sortedTables) && false === isset($tableData['relations'][$property]))
+            throw new Lionel_Exception('It lacks a relation to the table `' . $table . '` for a `' . $property . '` like property', E_CORE_ERROR);
 
           // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
           $theProperties .= '`' .
@@ -386,9 +382,7 @@ namespace lib\myLibs\console {
 
           $properties [] = $property;
 
-          if (false === in_array($property,
-              $sortedTables)
-          )
+          if (false === in_array($property, $sortedTables))
           {
             if (true === is_bool($value))
               $value = $value ? 1 : 0;
@@ -424,9 +418,9 @@ namespace lib\myLibs\console {
           0,
           -1) . ';';
 
-      // We create sql file that can generate the fixtures in the BDD
-      $fp = fopen($createdFile,
-        'x');
+      // We create sql file that can generate the fixtures in the BDD.
+      // If the file exists because of anormal reasons, thanks to mode 'w' instead of 'x' it will not crash.
+      $fp = fopen($createdFile, 'w');
       fwrite($fp,
         $tableSql);
       fclose($fp);
@@ -441,10 +435,7 @@ namespace lib\myLibs\console {
      * @param int    $mask         1 => we truncate the table before inserting the fixtures,
      *                             2 => we clean the fixtures sql files and THEN we truncate the table before inserting the fixtures
      */
-    public static function createFixtures(
-      string $databaseName,
-      int $mask)
-    {
+    public static function createFixtures(string $databaseName, int $mask) {
       // Looks for the fixtures file
       if ($folder = opendir(self::$pathYmlFixtures))
       {
@@ -490,7 +481,7 @@ namespace lib\myLibs\console {
             // If it's not a folder (for later if we want to add some "complex" folder management ^^)
             if (!is_dir($file))
             {
-              $tables = self::analyzeFixtures($file);
+              $tables = self::_analyzeFixtures($file);
 
               // Beautify the array
               foreach ($tables as $table => $file)
@@ -543,15 +534,15 @@ namespace lib\myLibs\console {
                 break;
               }
 
-              self::createFixture($databaseName,
+              self::createFixture(
+                $databaseName,
                 $table,
                 $fixturesData[$table],
                 $schema[$table],
                 $tablesOrder,
                 $fixturesMemory,
                 $createdFile);
-              self::executeFixture($databaseName,
-                $table);
+              self::executeFixture($databaseName, $table);
               break;
             }
           }
@@ -566,22 +557,18 @@ namespace lib\myLibs\console {
     /**
      * @param string $file
      * @param string $databaseName Where to execute the SQL file ?
+     *
+     * @throws Lionel_Exception if the file to execute doesn't exist
      */
-    public static function executeFile(
-      string $file,
-      string $databaseName = null)
+    public static function executeFile( string $file, string $databaseName = null)
     {
       if (true === file_exists($file))
       {
         self::init($databaseName);
         self::initCommand();
-        cli(self::$initCommand . $file,
-          VERBOSE);
+        cli(self::$initCommand . $file, VERBOSE);
       } else
-      {
-        echo 'The file "', $file, '" doesn\'t exist !';
-        exit(1);
-      }
+        throw new Lionel_Exception('The file "' . $file . '" doesn\'t exist !', E_CORE_ERROR, __FILE__, __LINE__);
     }
 
     /**
@@ -590,13 +577,13 @@ namespace lib\myLibs\console {
      * @param string $databaseName The database name
      * @param string $table        The table name
      */
-    public static function executeFixture(
-      string $databaseName,
-      string $table)
+    public static function executeFixture( string $databaseName, string $table)
     {
       self::initCommand();
-      cli(self::$initCommand . self::$fixturesFile . '/' . $databaseName . '_' . $table . '.sql "',
-        VERBOSE);
+      echo self::$initCommand, PHP_EOL;
+      echo self::$pathYmlFixtures, PHP_EOL;
+      echo self::$fixturesFile . '/' . $databaseName . '_' . $table . '.sql';die;
+      cli(self::$initCommand . self::$pathYmlFixtures . self::$fixturesFile . '/' . $databaseName . '_' . $table . '.sql "', VERBOSE);
       echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
     }
 
@@ -620,8 +607,7 @@ namespace lib\myLibs\console {
       self::initCommand();
 
       // And drops the database
-      cli(self::$initCommand . $file . '"',
-        VERBOSE);
+      cli(self::$initCommand . $file . '"', VERBOSE);
 
       echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
     }
@@ -631,26 +617,29 @@ namespace lib\myLibs\console {
      *
      * @param string $databaseName Database name
      * @param bool   $force        If true, we erase the existing tables
+     *
+     * @throws Lionel_Exception If the SQL schema already exists or if the YAML schema doesn't exist.
      */
-    public static function generateSqlSchema(
-      string $databaseName,
-      bool $force = false)
+    public static function generateSqlSchema( string $databaseName, bool $force = false)
     {
       $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
 
       if (true === file_exists($dbFile))
-      {
-        echo 'The \'SQL schema\' file already exists.', PHP_EOL;
-        exit(1);
-      }
+        throw new Lionel_Exception('The \'SQL schema\' file already exists.', E_CORE_WARNING, __FILE__, __LINE__);
 
       echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
-      $sql = ($force) ? 'CREATE DATABASE '
-        : 'CREATE DATABASE IF NOT EXISTS ';
+      $sql = ($force) ? 'CREATE DATABASE ' : 'CREATE DATABASE IF NOT EXISTS ';
 
       $sql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
 
-      // Gets the database schema
+      // Gets the database schema if the YML schema exists.
+      if (false === file_exists(self::$schemaFile))
+        throw new Lionel_Exception('The file \'' . self::$schemaFile . '\' doesn\'t exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
+
+      // We ensure us that all the needed folders exist
+      if (false === file_exists(self::$pathSql))
+        mkdir(self::$pathSql, 0777, true);
+
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
 
       // $tableSql contains all the SQL for each table, indexed by table name
@@ -806,31 +795,19 @@ namespace lib\myLibs\console {
       }
 
       /** TODO Test on unix systems if the value 3 is correct or not */
-      $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection,
-          0,
-          -3) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
+      $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -3) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
 
       // We generates the file that precise the order in which the tables have to be created / used if needed.
       // (asked explicitly by user when overwriting the database or when the file simply doesn't exist)
       if ($storeSortedTables)
       {
-        $fp = fopen(self::$tablesOrderFile,
-          'w');
-        fwrite($fp,
-          $tablesOrder);
-        fclose($fp);
-
+        file_put_contents(self::$tablesOrderFile, $tablesOrder);
         echo lightGreenText('\'Tables order\' sql file created : '), lightCyanText(basename(self::$tablesOrderFile)), PHP_EOL;
       }
 
       /** DROP TABLE MANAGEMENT */
-
       // We create the SQL schema file with the generated content.
-      $fp = fopen($dbFile,
-        'w');
-      fwrite($fp,
-        $sql);
-      fclose($fp);
+      file_put_contents($dbFile, $sql);
 
       echo lightGreenText('SQL schema file created.'), PHP_EOL;
     }
@@ -841,34 +818,41 @@ namespace lib\myLibs\console {
      * @param string $databaseName Database name
      * @param string $tableName    Table name
      */
-    public static function truncateTable(
-      string $databaseName,
-      string $tableName)
+    public static function truncateTable( string $databaseName, string $tableName)
     {
-      $file = 'truncate/' . $databaseName . '_' . $tableName . '.sql';
-      $pathAndFile = self::$pathSql . $file;
+      self::initBase();
+
+      $truncatePath = self::$pathSql . 'truncate/';
+
+      if (false === file_exists($truncatePath))
+        mkdir($truncatePath, 0777, true);
+
+      $file = $databaseName . '_' . $tableName . '.sql';
+      $pathAndFile = $truncatePath . $file;
 
       echo lightCyanText($databaseName . '.' . $tableName), PHP_EOL, 'Table ';
 
       // If the file that truncates the table doesn't exist yet...creates it.
       if (false === file_exists($pathAndFile))
       {
-        $fp = fopen($pathAndFile,
-          'x');
-        fwrite($fp,
+        file_put_contents($pathAndFile,
           'USE ' . $databaseName . ';' . PHP_EOL .
           'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
           'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
           'SET FOREIGN_KEY_CHECKS = 1;');
-        fclose($fp);
         echo greenText('[SQL CREATION] ');
       }
 
       self::initCommand();
 
       // And truncates the table
-      cli(self::$initCommand . $file . '"',
-        VERBOSE);
+      try
+      {
+        cli(self::$initCommand . 'truncate/' . $file . '"', VERBOSE);
+      } catch(\Exception $e)
+      {
+        throw new Lionel_Exception($e->getMessage());
+      }
       echo greenText('[TRUNCATED]'), PHP_EOL;
     }
 
@@ -879,7 +863,7 @@ namespace lib\myLibs\console {
      *
      * @return array The found table names
      */
-    private static function analyzeFixtures(string $file)
+    private static function _analyzeFixtures(string $file)
     {
       // Gets the fixture data
       $fixturesData = Yaml::parse(file_get_contents($file));
@@ -901,16 +885,16 @@ namespace lib\myLibs\console {
      * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
+     * @throws Lionel_Exception If the database doesn't exist.
+     *
      * @return mixed Returns a SQL instance.
      */
-    private static function initImports(
-      &$database,
-      &$confToUse)
+    private static function _initImports(&$database, &$confToUse)
     {
-      if (null == $confToUse)
+      if (null === $confToUse)
         $confToUse = key(All_Config::$dbConnections);
 
-      if (null == $database)
+      if (null === $database)
         $database = All_Config::$dbConnections[$confToUse]['db'];
 
       Session::set('db',
@@ -918,14 +902,10 @@ namespace lib\myLibs\console {
       $db = Sql::getDB();
 
       // Checks if the database concerned exists
-      if (false === in_array($database,
-          $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA')))
+      if (false === in_array($database, $db->valuesOneCol(
+        $db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA')))
       )
-      {
-        echo 'This database doesn\'t exist.';
-
-        return false;
-      }
+        throw new Lionel_Exception('The database \'' . $database . '\' doesn\'t exist.', E_CORE_ERROR);
 
       return $db;
     }
@@ -942,8 +922,7 @@ namespace lib\myLibs\console {
     public static function importSchema( string $database = null, string $confToUse = null)
     {
       self::init();
-      $db = self::initImports($database, $confToUse);
-
+      $db = self::_initImports($database, $confToUse);
       $content = '';
 
       foreach ($db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\'')) as $table)
@@ -973,12 +952,9 @@ namespace lib\myLibs\console {
             $content .= '      primary: true' . PHP_EOL;
         }
 
-        $constraints = $db->values($db->query('
-          SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
-          FROM information_schema.KEY_COLUMN_USAGE
-          WHERE TABLE_SCHEMA = \'' . $database . '\'
-            AND TABLE_NAME = \'' . $table . '\'
-            AND CONSTRAINT_NAME <> \'PRIMARY\''));
+        $constraints = $db->values(
+          $db->query(' SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\' AND CONSTRAINT_NAME <> \'PRIMARY\'')
+        );
 
         // if there are constraints for this table
         if (0 < count($constraints))
@@ -1016,7 +992,7 @@ namespace lib\myLibs\console {
     public static function importFixtures( string $database = null, string $confToUse = null)
     {
       self::init();
-      $db = self::initImports($database,
+      $db = self::_initImports($database,
         $confToUse);
 
       if (false === file_exists(self::$tablesOrderFile))
@@ -1034,8 +1010,7 @@ namespace lib\myLibs\console {
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
       $foreignKeysMemory = [];
 
-      foreach ($tablesOrder
-               as &$table)
+      foreach ($tablesOrder as &$table)
       {
         $content = $table . ': ' . PHP_EOL;
         $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));

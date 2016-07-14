@@ -19,7 +19,7 @@ class configService
     Sql::getDB();
 
     return [
-      'config' => \bundles\CMS\models\Config::getAllConfigurablesByUserId($_SESSION['sid']['uid'])
+      'config' => Config::getAllConfigurablesByUserId($_SESSION['sid']['uid'])
     ];
   }
 }

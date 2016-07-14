@@ -18,8 +18,13 @@ class searchAction extends Controller
     backendService::checkConnection($this->action);
     usersService::securityCheck();
 
-    if (false === isset($_POST['type'], $_POST['mail'], $_POST['pseudo'], $_POST['role'], $_POST['limit'], $_POST['prev'], $_POST['last']) || 7 < count($_POST))  // TODO ip to ban
-      die('{"success": false, "msg": "Hack."}');
+    // TODO ip to ban
+    if (false === isset($_POST['type'], $_POST['mail'], $_POST['pseudo'], $_POST['role'], $_POST['limit'], $_POST['prev'], $_POST['last']) || 7 < count($_POST))
+    {
+      echo '{"success": false, "msg": "Hack."}';
+      return;
+    }
+
 
     $db = Sql::getDB();
 

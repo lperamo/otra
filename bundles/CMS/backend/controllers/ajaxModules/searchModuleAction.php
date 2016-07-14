@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace bundles\CMS\backend\controllers\ajaxModules;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use bundles\CMS\{models\Module, services\backendService};
+use bundles\CMS\{models\Module, services\backendService, models\GlobalConstants};
 
 class searchModuleAction extends Controller
 {
@@ -17,7 +17,7 @@ class searchModuleAction extends Controller
 
     echo $this->renderView('modulesPartial.phtml', [
       'moduleTypes' => Module::$moduleTypes,
-      'right' => Module::$rights,
+      'right' => GlobalConstants::$rights,
       'items' => $db->values($db->query('
         SELECT id, type, position, ordre, droit, contenu
         FROM lpcms_module WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''))

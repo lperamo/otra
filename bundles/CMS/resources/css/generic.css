@@ -112,7 +112,9 @@ li.ttbl[data-tooltip]:after,
 
 li.ttl[data-tooltip]:after,
 .soft-btn.ttl[data-tooltip]:after,
-.actual-select-value.ttl[data-tooltip]:after { bottom : 0; left : auto; right : calc(100% + 5px) }
+.actual-select-value.ttl[data-tooltip]:after {
+  bottom : 0; left : auto; right  : calc(100% + 5px);
+}
 
 li.tttl[data-tooltip]:after,
 .soft-btn.tttl[data-tooltip]:after,

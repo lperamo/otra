@@ -7,7 +7,7 @@
 namespace bundles\CMS\backend\controllers\index;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use \bundles\CMS\{models\Module, services\backendService};
+use \bundles\CMS\{models\GlobalConstants, models\Module, services\backendService};
 
 class modulesAction extends Controller
 {
@@ -18,7 +18,7 @@ class modulesAction extends Controller
 
     echo $this->renderView('modules.phtml', [
       'moduleTypes' => Module::$moduleTypes,
-      'right' => Module::$rights,
+      'right' => GlobalConstants::$rights,
       'items' => Module::getAll()
     ]);
   }

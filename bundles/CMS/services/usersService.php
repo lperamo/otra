@@ -45,7 +45,7 @@ class usersService
     if (false === isset($_SESSION['sid']['role']))
     {
       echo '{"success": false, "msg": "Deconnected"}';
-      return ;
+      return;
     }
 
     if('1' !== $_SESSION['sid']['role'])

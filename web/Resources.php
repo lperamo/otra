@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo */
 $uri = $_SERVER['REDIRECT_URL'];
-$__DIR__ = str_replace('\\', '/', __DIR__);
+define ('_DIR_', str_replace('\\', '/', __DIR__));
 
 if( false !== ($posDot = strpos($uri, '.')))
 {
@@ -32,7 +32,7 @@ if( false !== ($posDot = strpos($uri, '.')))
       }
     }
 
-    die(file_get_contents(substr($__DIR__, 0, -4) . $uri));
+    die(file_get_contents(substr(_DIR_, 0, -4) . $uri));
   }
 
   // User can't see a resource directly so => 404
@@ -40,7 +40,7 @@ if( false !== ($posDot = strpos($uri, '.')))
   return 0;
 }
 
-define('BASE_PATH', substr($__DIR__, 0, -3)); // Finit avec /
+define('BASE_PATH', substr(_DIR_, 0, -3)); // Finit avec /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 define('DEBUG_KEY', 'debuglp_');
@@ -93,6 +93,7 @@ else // mode Prod
     // Loads the found route
     require BASE_PATH . 'cache/php/' . $route[0] . '.php';
 //    call_user_func('\cache\php\Init::Init');
+
     \cache\php\Router::get($route[0], $route[1]);
   }
 }

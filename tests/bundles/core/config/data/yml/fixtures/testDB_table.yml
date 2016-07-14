@@ -1,0 +1,20 @@
+testDB_table:
+  testDB_table_0:
+    id: '1'
+    titre: 'Accessoires'
+    date_creation: '2010-12-31 00:00:00'
+    testDB_table2: testDB_table2_0
+    testDB_table3: testDB_table3_1
+  testDB_table_1:
+    id: '2'
+    titre: 'Parchemins'
+    date_creation: '2010-12-31 00:00:00'
+    testDB_table2: testDB_table2_2
+    testDB_table3: testDB_table3_0
+  testDB_table_2:
+    id: '3'
+    titre: 'Potions'
+    date_creation: '2010-12-31 00:00:00'
+    testDB_table2: testDB_table2_1
+    testDB_table3: testDB_table3_1
+

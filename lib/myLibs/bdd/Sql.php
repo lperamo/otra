@@ -14,20 +14,20 @@ class Sql
    * @type array  $_sgbds       Available sgbds
    * @type array  $_activeConn
    * @type string $_currentConn
-   * @type string $_db
-   * @type string $_chosenSgbd
+//   * @type string $_db
+//   * @type string $_chosenSgbd
    */
   private static
-    $_sgbds = ['MySQL', 'PDO_MySQL'],
+    $_sgbds = ['Mysql', 'Pdomysql'],
     $_currentConn,
     $_currentSGBD,
     //$_activeSGBD = [],
     /** @type array Available active connections */
     $_activeConn = [];
 
-  private
-    $_db,
-    $_chosenSgbd;
+//  private
+//    $_db,
+//    $_chosenSgbd;
 
   public static
     $instance,
@@ -39,7 +39,12 @@ class Sql
    */
   public function __construct(string $sgbd)
   {
-    self::$_currentSGBD = __NAMESPACE__ . '\\' . $sgbd;
+    $theSgbd = ucfirst(strtolower($sgbd));
+    // Is this driver available ?
+    if (false === in_array($theSgbd, self::$_sgbds))
+      throw new Lionel_Exception('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+
+    self::$_currentSGBD = __NAMESPACE__ . '\\' . $theSgbd;
   }
 
   /** Destructor that closes the connection */
@@ -53,9 +58,9 @@ class Sql
    * @return bool|Sql|resource
    *
    * @throws Lionel_Exception
-   * @internal param bool $selectDb Does we have to select the default database ? (omits it for PDO connection)
-   * @internal param string $sgbd Kind of sgbd
-   * @internal param string $conn Connection used (see All_Config files)
+   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
+   * @internal param string $sgbd     Kind of sgbd
+   * @internal param string $conn     Connection used (see All_Config files)
    */
   public static function getDB($conn = false) : Sql // $selectDb = true, $sgbd = false, $conn = false
   {
@@ -72,10 +77,8 @@ class Sql
       {
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
-      } else {
-        echo lightRedText('There is no ' . $conn . ' configuration available in the All_Config file !'), PHP_EOL;
-        exit(1);
-      }
+      } else
+        throw new Lionel_Exception('There is no ' . $conn . ' configuration available in the All_Config file !');
 
     } else
     {
@@ -104,6 +107,8 @@ class Sql
      * @type string $password
      */
 
+    $driver = ucfirst(strtolower($driver));
+
     // Is this driver available ?
     if (true === in_array($driver, self::$_sgbds))
     {
@@ -130,13 +135,13 @@ class Sql
       try
       {
         $activeConn['conn'] = $activeConn['instance']->connect(
-          strtolower(substr(strchr($driver, '_'), 1)) . ':dbname=' . $db . ';host=' .
+          strtolower(substr($driver, 3)) . ':dbname=' . $db . ';host=' .
           ('' == $port ? $host : $host . ':' . $port), $login, $password);
 
         self::$_CURRENT_CONN = $activeConn['conn'];
       }catch(\Exception $e)
       {
-        echo $e->getMessage();
+        throw new Lionel_Exception($e->getMessage());
       }
     }else
       throw new Lionel_Exception('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
@@ -184,7 +189,7 @@ class Sql
    */
   public function query(string $query)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     if(isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_'])
@@ -210,7 +215,7 @@ class Sql
    */
   public function fetchAssoc(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchAssoc', $params);
@@ -225,7 +230,7 @@ class Sql
    */
   public function fetchArray(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchArray', $params);
@@ -240,7 +245,7 @@ class Sql
    */
   public function fetchField(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchField', $params);
@@ -255,10 +260,25 @@ class Sql
    */
   public function fetchObject(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchObject', $params);
+  }
+
+  /**
+   * Returns the results
+   *
+   * @param mixed $params See the driver for more info.
+   *
+   * @return array The next result
+   */
+  public static function fetchRow(...$params)
+  {
+    if (true === isset($_SESSION['bootstrap']))
+      return;
+
+    return call_user_func_array(self::$_currentSGBD . '::fetchRow', $params);
   }
 
   /**
@@ -270,7 +290,7 @@ class Sql
    */
   public function values(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::values', $params);
@@ -285,7 +305,7 @@ class Sql
    */
   public function valuesOneCol(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::valuesOneCol', $params);
@@ -299,7 +319,7 @@ class Sql
    * @return bool|mixed The result. Returns false if there are no result.
    */
   public function single(...$params){
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::single', $params);
@@ -324,7 +344,7 @@ class Sql
    */
   public function freeResult(...$params)
   {
-    if(isset($_SESSION['bootstrap']))
+    if (true === isset($_SESSION['bootstrap']))
       return;
 
     return call_user_func_array(self::$_currentSGBD . '::freeResult', $params);

@@ -18,7 +18,11 @@ class deleteAction extends Controller
     usersService::securityCheck();
 
     // TODO ip to ban
-    (false === isset($_POST['id_user']) || 1 < count($_POST)) && die('{"success": false, "msg": "Hack."}');
+    if (false === isset($_POST['id_user']) || 1 < count($_POST))
+    {
+      echo '{"success": false, "msg": "Hack."}';
+      return;
+    }
 
     Sql::getDB();
 

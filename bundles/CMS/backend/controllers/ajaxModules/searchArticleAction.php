@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace bundles\CMS\backend\controllers\ajaxModules;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use bundles\CMS\services\backendService;
+use bundles\CMS\{services\backendService, models\GlobalConstants};
 //use bundles\CMS\models\Module;
 
 class searchArticleAction extends Controller
@@ -20,7 +20,7 @@ class searchArticleAction extends Controller
      FROM lpcms_article WHERE contenu LIKE \'%' . Sql::$instance->quote($_GET['search']). '%\''));
 
     echo $this->renderView('articles.phtml', [
-      'right' => self::$rights,
+      'right' => GlobalConstants::$rights,
       // 'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')),
       'items' => $db->values($db->query('
         SELECT em.id, parent, aEnfants, droit, contenu,

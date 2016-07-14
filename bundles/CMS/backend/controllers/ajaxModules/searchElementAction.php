@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace bundles\CMS\backend\controllers\ajaxModules;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use bundles\CMS\services\backendService;
+use bundles\CMS\{services\backendService, models\GlobalConstants};
 //use bundles\CMS\models\Module;
 
 class searchElementAction extends Controller
@@ -17,7 +17,7 @@ class searchElementAction extends Controller
     $db = Sql::getDB();
 
     echo $this->renderView('elements.phtml', [
-      'right' => self::$rights,
+      'right' => GlobalConstants::$rights,
       'moduleList' => $db->values($db->query('SELECT id, contenu FROM lpcms_module')), // utile ?
       'items' => $db->values($db->query('
         SELECT em.id, em.parent, em.aEnfants, em.droit, em.contenu,

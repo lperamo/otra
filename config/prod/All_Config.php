@@ -15,7 +15,7 @@ class All_Config
     $defaultConn = 'CMS', // mandatory
     $dbConnections = [ // mandatory
       'CMS' => [
-        'driver' => 'PDO_MySQL',
+        'driver' => 'PDOMySQL',
         'host' => 'localhost',
         'port' => '',
         'db' => 'lpcms',

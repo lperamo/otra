@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo */
 
-namespace bundles\CMS\frontend\controllers;
+namespace bundles\CMS\frontend\controllers\ajaxArticle;
 use lib\myLibs\Controller;
 
 class showAction extends Controller

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="TestBootstrap.php" verbose="true">
+         <!--convertErrorsToExceptions="true"-->
+         <!--convertNoticesToExceptions="true"-->
+         <!--convertWarningsToExceptions="true"-->
+    <testsuite name="Framework tests">
+        <directory suffix="Test.php">./src/</directory>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../</directory>
+            <directory suffix=".php">../bundles/*</directory>
+            <directory suffix=".php">../lib/myLibs/</directory>
+            <directory suffix=".php">../web/</directory>
+            <exclude>
+                <directory>./</directory>
+                <directory>./bundles/</directory>
+                <directory>../.git</directory>
+                <directory>../.idea</directory>
+                <directory>../bundles/config</directory>
+                <directory>../cache</directory>
+                <directory>../logs</directory>
+                <directory>./coverageHtml</directory>
+                <directory>../lib/myLibs/packerjs</directory>
+                <directory>../lib/myLibs/sf2_yaml</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html" target="./coverageHtml" title="LP Framework" />
+    </logging>
+</phpunit>

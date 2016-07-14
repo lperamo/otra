@@ -7,7 +7,7 @@
 namespace lib\myLibs\bdd;
 use lib\myLibs\Lionel_Exception;
 
-class PDO_Mysql
+class Pdomysql
 {
   private $conn;
 
@@ -28,7 +28,7 @@ class PDO_Mysql
       $conn = new \PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
-      throw new Lionel_Exception('Connection failed: ' . $e->getMessage());
+      throw new Lionel_Exception('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
     }
 
     return $conn;
@@ -46,8 +46,10 @@ class PDO_Mysql
   //public static function query($query, $link_identifier)
   public static function query($query, $link_identifier)
   {
+    $result = Sql::$_CURRENT_CONN->query($query);
+
     //if (!$result = mysql_query($query, $link_identifier))
-    if(!$result = Sql::$_CURRENT_CONN->query($query))
+    if (false === $result)
     {
       $errorInfo = Sql::$_CURRENT_CONN->errorInfo();
       throw new Lionel_Exception('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
@@ -69,15 +71,12 @@ class PDO_Mysql
    * Fetch a result row as an associative array, a numeric array, or both
    *
    * @param resource $result      The query result
-   * @param int      $result_type The type of array that is to be fetched. It's a constant and can take the
-   * following values: MYSQL_ASSOC, MYSQL_NUM, and MYSQL_BOTH.
+   * @param int      $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
    * @return array The next result
-   * @link http://php.net/manual/en/function.mysql-fetch-array.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchArray($result, $result_type) {
-    return mysql_fetch_array($result, $result_type);
-  }
+  public static function fetchArray($result, $fetch_style = \PDO::FETCH_BOTH) { return $result->fetch($fetch_style); }
 
   /**
    * Returns the results
@@ -85,26 +84,19 @@ class PDO_Mysql
    * @param resource $result The query result
    *
    * @return array The next result
-   * @link http://php.net/manual/en/function.mysql-fetch-row.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchRow($result) { return mysql_fetch_row($result); }
+  public static function fetchRow($result) { return $result->fetch(\PDO::FETCH_NUM); }
 
   /**
    * Returns the results as an object (simplified version of the existing one)
    *
    * @param resource $result The query result
-   * @param string   $class_name [optional] <p>
-   * Class name to instantiate, set the properties of and return. Default: returns a stdClass object.</p>
-   *
-   * @param array    $params [optional] Optional array of parameters to pass to the constructor
-   *  for class_name objects.
    *
    * @return array The next result
-   * @link http://php.net/manual/en/function.mysql-fetch-object.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchObject($result, $class_name = null, array $params = []) {
-    return mysql_fetch_object(func_get_args());
-  }
+  public static function fetchObject($result) { return $result->fetch(\PDO::FETCH_OBJ); }
 
   /**
    * Returns all the results in an associative array
@@ -175,7 +167,7 @@ class PDO_Mysql
    *
    * @return array The results
    */
-  public static function fetchField($result) { return $result->getColumnMeta(); }
+  public static function fetchField($result, $column) { return $result->getColumnMeta($column); }
 
   /**
    * Closes connection.

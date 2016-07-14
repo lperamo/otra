@@ -17,8 +17,12 @@ class addAction extends Controller
     backendService::checkConnection($this->action);
     usersService::securityCheck();
 
-    if (false === isset($_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role']) || 4 < count($_POST))  // TODO ip to ban
-      exit('{"success": false, "msg": "Hack."}');
+    // TODO ip to ban
+    if (false === isset($_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role']) || 4 < count($_POST))
+    {
+      echo '{"success": false, "msg": "Hack."}';
+      return;
+    }
 
     /**
      * Will be extracted ...

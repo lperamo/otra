@@ -119,7 +119,7 @@ class Controller extends MasterController
   {
     $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
 
-    if (false === (parent::$layout = parent::getCachedFile(LAYOUT, $cachedFile))) // if it was not in the cache or "fresh"...
+    if (false === (parent::$layout = parent::getCachedFile($cachedFile))) // if it was not in the cache or "fresh"...
       parent::$layout = $this->buildCachedFile(LAYOUT, [], $cachedFile, false);
   }
 

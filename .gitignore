@@ -1,8 +1,6 @@
 cache/*
 logs/*
-web/phpMyAdmin
 .idea
-config/data/sql/*
+bundles/CMS/config/data/sql/*
 *.sh
-php.ini*
-bundles/config
+tests/coverageHtml

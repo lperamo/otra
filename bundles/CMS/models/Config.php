@@ -35,9 +35,10 @@ class Config
 
   /**
    * @param  int $id_user
+   *
    * @return [type]          [description]
    */
-  public static function getAllConfigurablesByUserId($id_user)
+  public static function getAllConfigurablesByUserId(int $id_user)
   {
     $dbConfig = Sql::$instance->query(
       'SELECT c.id, c.type, c.title, c.value, c.placeholder,

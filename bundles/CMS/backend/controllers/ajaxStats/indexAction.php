@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo */
 
-namespace bundles\CMS\backend\controllers;
+namespace bundles\CMS\backend\controllers\ajaxStats;
 
 use lib\myLibs\{Controller, bdd\Sql};
 use bundles\CMS\services\backendService;

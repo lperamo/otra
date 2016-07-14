@@ -20,7 +20,10 @@ class editAction extends Controller
 
     // TODO ip to ban
     if (false === isset($_POST['id_user'], $_POST['mail'], $_POST['pwd'], $_POST['pseudo'], $_POST['role'], $_POST['oldMail'], $_POST['oldPseudo']) || 7 < count($_POST))
-      die('{"success": false, "msg": "Hack."}');
+    {
+      echo '{"success": false, "msg": "Hack."}';
+      return;
+    }
 
     /**
      * Will be extracted ...

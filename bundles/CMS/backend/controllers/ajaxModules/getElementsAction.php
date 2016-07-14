@@ -15,7 +15,7 @@ class getElementsAction extends Controller
     backendService::checkConnection($this->action);
     $db = Sql::getDB();
 
-    $element = $db->values($db->query('SELECT id_elementsmenu, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
+    $element = $db->values($db->query('SELECT id, fk_id_module, fk_id_article, parent, aEnfants, droit, ordre, contenu
       FROM lpcms_elements_menu WHERE fk_id_module = ' . intval($_GET['id'])));
   }
 }

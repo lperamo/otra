@@ -20,6 +20,9 @@ return [
     'chunks' => ['/ajaxConnection/ajaxLogin', 'CMS', 'frontend', 'connection', 'ajaxLoginAction'],
     'post' => ['pwd' => ' ', 'email' => ' ']
   ],
+  'ajaxMailingList' => [
+    'chunks' => ['/ajaxMailingList', 'CMS', 'frontend', 'ajaxMailingList', 'addAction']
+  ],
 
   // ---------
   'backendModules' => [

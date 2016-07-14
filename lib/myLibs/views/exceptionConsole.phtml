@@ -6,7 +6,7 @@ $functionWidth = 40;
 $lineWidth = 4;
 $fileWidth = 80;
 
-if (isset($this->code)) echo 'Error type ' , cyanText($this->code), ' in ' , cyanText($this->file), ' at line ' , cyanText($this->line), PHP_EOL, $this->message, PHP_EOL;
+if (isset($code)) echo 'Error type ' , cyanText($code), ' in ' , cyanText($this->file), ' at line ' , cyanText($this->line), PHP_EOL, $this->message, PHP_EOL;
 
 /******************************
  * Write HEADERS of the table *
@@ -31,7 +31,7 @@ for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
 
   convertArrayToShowableConsole($now['args'], 'Arguments', 'variables');
 
-  echo lightBlueText('| '), str_pad(0 === $i ? $this->code : '', $typeWidth + 4, ' '),
+  echo lightBlueText('| '), str_pad(0 === $i ? $code : '', $typeWidth + 4, ' '),
     /** FUNCTION */
     lightBlueText('|'),
     str_pad(isset($now['function'])

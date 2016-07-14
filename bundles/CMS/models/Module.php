@@ -17,10 +17,6 @@ class Module
     2 => 'Horizontal menu',
     3 => 'Article',
     4 => 'Arbitrary'
-  ], $rights = [
-    0 => 'Admin',
-    1 => 'Saved',
-    2 => 'Public'
   ];
 
   /**
