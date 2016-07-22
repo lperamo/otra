@@ -205,5 +205,37 @@ class Pdomysql
   {
     return trim(Sql::$_CURRENT_CONN->quote($string), '\'');
   }
+
+  /**
+ * @return bool
+ */
+  public static function beginTransaction() : bool
+  {
+    return Sql::$_CURRENT_CONN->beginTransaction();
+  }
+
+  /**
+   * @return bool
+   */
+  public static function inTransaction() : bool
+  {
+    return Sql::$_CURRENT_CONN->inTransaction();
+  }
+
+  /**
+   * @return bool
+   */
+  public static function commit() : bool
+  {
+    return Sql::$_CURRENT_CONN->commit();
+  }
+
+  /**
+   * @return bool
+   */
+  public static function rollBack() : bool
+  {
+    return Sql::$_CURRENT_CONN->rollBack();
+  }
 }
 ?>

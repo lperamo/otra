@@ -370,5 +370,37 @@ class Sql
   {
     return call_user_func(self::$_currentSGBD . '::quote', $string);
   }
+
+  /**
+   * @return bool
+   */
+  public function beginTransaction() : bool
+  {
+    return call_user_func(self::$_currentSGBD . '::beginTransaction');
+  }
+
+  /**
+   * @return bool
+   */
+  public function inTransaction() : bool
+  {
+    return call_user_func(self::$_currentSGBD . '::inTransaction');
+  }
+
+  /**
+   * @return bool
+   */
+  public function commit() : bool
+  {
+    return call_user_func(self::$_currentSGBD . '::commit');
+  }
+
+  /**
+   * @return bool
+   */
+  public function rollBack() : bool
+  {
+    return call_user_func(self::$_currentSGBD . '::rollBack');
+  }
 }
 ?>
