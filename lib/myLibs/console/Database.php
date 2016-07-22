@@ -689,7 +689,7 @@ namespace lib\myLibs\console {
 
       // Gets the database schema if the YML schema exists.
       if (false === file_exists(self::$schemaFile))
-        throw new Lionel_Exception('The file \'' . self::$schemaFile . '\' doesn\'t exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
+        throw new Lionel_Exception('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' doesn\'t exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
 
       // We ensure us that all the needed folders exist
       if (false === file_exists(self::$pathSql))
@@ -953,8 +953,8 @@ namespace lib\myLibs\console {
       Session::set('db', $confToUse);
       $db = Sql::getDB();
 
-      // Checks if the database concerned exists
-      if (false === in_array($database, $db->valuesOneCol(
+      // Checks if the database concerned exists, strtolower because if we put uppercase, the database have lowercase so ...
+      if (false === in_array(strtolower($database), $db->valuesOneCol(
         $db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA')))
       )
         throw new Lionel_Exception('The database \'' . $database . '\' doesn\'t exist.', E_CORE_ERROR);
@@ -968,6 +968,8 @@ namespace lib\myLibs\console {
      *
      * @param string $database  (optional)
      * @param string $confToUse (optional)
+     *
+     * @throws Lionel_Exception If we cannot create the folder that will contain the schema
      *
      * @return bool
      */
@@ -1031,6 +1033,22 @@ namespace lib\myLibs\console {
         $content .= PHP_EOL;
       }
 
+      $saveFolder = dirname(self::$schemaFile);
+
+      if (false === file_exists($saveFolder))
+      {
+        $exceptionMessage = 'Cannot remove the folder \'' . $saveFolder . '\'.';
+
+        try
+        {
+          if (false === mkdir($saveFolder, 0777, true))
+            throw new Lionel_Exception($exceptionMessage, E_CORE_ERROR);
+        } catch(Exception $e)
+        {
+          throw new Lionel_Exception('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+        }
+      }
+
       file_put_contents(self::$schemaFile, $content);
     }
 
@@ -1058,6 +1076,21 @@ namespace lib\myLibs\console {
 
       // Everything is in order, we can clean the old files before the process
       array_map('unlink', glob(self::$pathYmlFixtures . '*.yml'));
+
+      // We ensure us that the folder where we have to create the fixtures file exist
+      if (false === file_exists(self::$pathYmlFixtures))
+      {
+        $exceptionMessage = 'Cannot remove the folder \'' . self::$pathYmlFixtures . '\'.';
+
+        try
+        {
+          if (false === mkdir(self::$pathYmlFixtures, 0777, true))
+            throw new Lionel_Exception($exceptionMessage, E_CORE_ERROR);
+        } catch(Exception $e)
+        {
+          throw new Lionel_Exception('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+        }
+      }
 
       /** REAL BEGINNING OF THE TASK */
 
