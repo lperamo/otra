@@ -1,4 +1,5 @@
 <?
+declare(strict_types=1);
 /**
  * If we do not have the information of the type of this property in schema.yml,
  * we notice the user of that and we stop the script

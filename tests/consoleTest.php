@@ -10,7 +10,7 @@ class ConsoleTest extends TestCase
   {
     define('XMODE', 'PROD');
   }
-  
+
   /**
    * @author Lionel Péramo
    */

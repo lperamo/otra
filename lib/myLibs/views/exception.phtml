@@ -26,7 +26,12 @@ self::title('Exception !');
 		  		<td></td>
 		  	 	<td><?= (true === isset($now['function'])) ? $now['function'] : '-' ?></td>
 				<td><?= (true === isset($now['line'])) ? $now['line'] : '-' ?></td>
-				<td><?= (true === isset($now['file'])) ? substr($now['file'], strlen(BASE_PATH)) : '-' ?></td>
+				<td><?= (true === isset($now['file']))
+					? (false !== strpos($now['file'], BASE_PATH)
+						? substr($now['file'], strlen(BASE_PATH))
+						: $now['file'])
+					: '-'
+				?></td>
 				<? if (true === empty($now['args']))
 				{ ?> <td></td></tr> <? } else { ?>
 				<td class="show-args">

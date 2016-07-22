@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="TestBootstrap.php" verbose="true">
+<phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
     <testsuite name="Framework tests">
         <file>./src/lib/myLibs/console/DatabaseTest.php</file>
     </testsuite>

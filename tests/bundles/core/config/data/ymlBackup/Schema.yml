@@ -19,11 +19,11 @@ testDB_table:
       type: int(11)
       notnull: true
   relations:
-    lpcms_elements_menu:
+    testDB_table2:
       local: fk_id_table2
       foreign: id
       constraint_name: fk_testDB_table2
-    lpcms_module:
+    testDB_table3:
       local: fk_id_table3
       foreign: id
       constraint_name: fk_testDB_table3

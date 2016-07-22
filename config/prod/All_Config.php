@@ -22,6 +22,15 @@ class All_Config
         'login' => '_lionel_87',
         'password' => '_lmo5uj4FF*8', // _lmo5uj4FF*8
         'motor' => 'InnoDB'
+      ],
+      'test' => [ // do not modify this key name
+        'driver' => 'PDOMySQL',
+        'host' => 'localhost',
+        'port' => '',
+        'db' => 'testDB', // do not modify this !
+        'login' => '_lionel_87',
+        'password' => '_lmo5uj4FF*8', // _lmo5uj4FF*8
+        'motor' => 'InnoDB'
       ]
     ]; // 178.183.7.251 ip externe du nas
 }

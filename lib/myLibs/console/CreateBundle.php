@@ -1,4 +1,5 @@
 <?
+declare(strict_types=1);
 require CORE_PATH . 'console\Tools.php';
 
 if (false === isset($argv[2]))

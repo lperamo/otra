@@ -35,9 +35,9 @@ return;
 
 function iterateCM($classes, $dir, $processedDir)
 {
-  if ($handle = opendir($dir))
+  if ($folderHandler = opendir($dir))
   {
-      while (false !== ($entry = readdir($handle)))
+      while (false !== ($entry = readdir($folderHandler)))
       {
         // We check that we process interesting things
         if('.' === $entry || '..' === $entry)
@@ -65,6 +65,8 @@ function iterateCM($classes, $dir, $processedDir)
 
       return [$classes, $processedDir];
   }
+
+  closedir($folderHandler);
 
   echo redText('Problem encountered with the directory : ' . $dir . ' !');
   exit(1);

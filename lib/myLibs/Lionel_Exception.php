@@ -6,8 +6,8 @@
 declare(strict_types=1);
 namespace lib\myLibs;
 
-use lib\myLibs\Controller,
-    config\Routes;
+use lib\myLibs\{Controller, console\LionelExceptionCLI};
+use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
 require_once BASE_PATH . 'lib\myLibs\Debug_Tools.php';
@@ -45,7 +45,7 @@ class Lionel_Exception extends \Exception
   {
     $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->code = ('' != $code) ? $code : $this->getCode();
-    $this->file = ('' == $file) ? $this->getFile() : $file;
+    $this->file = str_replace('\\', '/', (('' == $file) ? $this->getFile() : $file));
     $this->line = ('' == $line) ? $this->getLine() : $line;
     $this->context = $context;
 
@@ -102,14 +102,14 @@ class Lionel_Exception extends \Exception
 //      convertArrayToShowableConsole($this->context, 'Variables');
     }
 
-    $backtraces = $this->getTrace();
+    $this->backtraces = $this->getTrace();
 
     // Is the error code a native error code ?
-    $code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
-
+    $this->code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     $this->message = preg_replace('/\<br\s*\/?\>/i', '', $this->message);
 
-    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
+    LionelExceptionCLI::showMessage($this);
+//    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
   }
 }
 ?>
