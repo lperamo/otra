@@ -9,14 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace lib\sf2_yaml\Exception;
+namespace Symfony\Component\Yaml\Exception;
 
 /**
  * Exception class thrown when an error occurs during parsing.
  *
  * @author Romain Neutron <imprec@gmail.com>
- *
- * @api
  */
 class RuntimeException extends \RuntimeException implements ExceptionInterface
 {

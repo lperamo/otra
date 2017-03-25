@@ -9,11 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace lib\sf2_yaml\Tests;
+namespace Symfony\Component\Yaml\Tests;
 
-use lib\sf2_yaml\Yaml;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 
-class YamlTest extends \PHPUnit_Framework_TestCase
+class YamlTest extends TestCase
 {
     public function testParseAndDump()
     {
@@ -23,12 +24,21 @@ class YamlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($data, $parsed);
     }
 
-    public function testParseFromFile()
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The indentation must be greater than zero
+     */
+    public function testZeroIndentationThrowsException()
     {
-        $filename = __DIR__.'/Fixtures/index.yml';
-        $contents = file_get_contents($filename);
-        $parsedByFilename = Yaml::parse($filename);
-        $parsedByContents = Yaml::parse($contents);
-        $this->assertEquals($parsedByFilename, $parsedByContents);
+        Yaml::dump(array('lorem' => 'ipsum', 'dolor' => 'sit'), 2, 0);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The indentation must be greater than zero
+     */
+    public function testNegativeIndentationThrowsException()
+    {
+        Yaml::dump(array('lorem' => 'ipsum', 'dolor' => 'sit'), 2, -4);
     }
 }

@@ -9,14 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace lib\sf2_yaml\Exception;
+namespace Symfony\Component\Yaml\Exception;
 
 /**
  * Exception interface for all exceptions thrown by the component.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @api
  */
 interface ExceptionInterface
 {
