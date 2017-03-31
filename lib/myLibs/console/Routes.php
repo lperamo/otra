@@ -6,7 +6,23 @@
  * - the resources generated
  * - the key used for the cached file names
  */
+
+/**
+ * @param string $resourceExtension
+ * @param string $resourceType
+ * @param string $basePath
+ * @param string $shaName
+ * @param string $altColor
+ */
+function showResourceState(string $resourceExtension, string $resourceType, string &$basePath, string &$shaName, string &$altColor)
+{
+  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[', $resourceType, ']', $altColor;
+}
+
 $alt = 0;
+const WIDTH_LEFT = 25;
+const WIDTH_MIDDLE = 10;
+const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\All_Config::$version . 'che'))]
 
 // Check if we want one or all the routes
 if (true === isset($argv[2]))
@@ -26,36 +42,39 @@ foreach($routes as $route => &$details)
   // Routes and paths management
   $chunks = $details['chunks'];
   $altColor = ($alt % 2) ? cyan() : lightCyan();
-  echo $altColor, sprintf('%-25s', $route), str_pad('Url', 10, ' '), ': ' , $chunks[0], PHP_EOL, PHP_EOL;
+  echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route), str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[0], PHP_EOL;
 
-  if ('exception' !== $route ) {
-    echo str_pad(' ', 25, ' '), str_pad('Path', 10, ' '), ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4], PHP_EOL;
-  }
+  if ('exception' !== $route )
+    echo str_pad(' ', WIDTH_LEFT, ' '),
+      str_pad('Path', WIDTH_MIDDLE, ' '),
+      ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4],
+      PHP_EOL;
 
+  // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . config\All_Config::$version . 'che');
 
-  $basePath = substr(__DIR__, 0, -15) . 'cache/';
+  $basePath = substr(__DIR__, 0, -strlen('lib/myLibs/console')) . 'cache/';
 
-  echo str_pad(' ', 25, ' '), 'Resources : ';
-  echo (file_exists($basePath . 'php' . '/' . $route. '.php')) ? lightGreen() : lightRed(), '[PHP]', $altColor;
+  echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
+  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? lightGreen() : lightRed(), '[PHP]', $altColor;
 
-  // Resources management
-  if(isset($details['resources']))
+  // Resources management : show the state of each ressource. Red => missing, green => exists
+  if (true === isset($details['resources']))
   {
     $resources = $details['resources'];
 
-    if(isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
-      echo (file_exists($basePath . 'css' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[CSS]', $altColor;
+    if (true === isset($resources['_css']) || true === isset($resources['bundle_css']) ||true === isset($resources['module_css']))
+      showResourceState('css', 'CSS', $basePath, $shaName, $altColor);
 
-    if(isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
-      echo (file_exists($basePath . 'js' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[JS]', $altColor;
+    if (true === isset($resources['_js']) || true === isset($resources['bundle_js']) || true === isset($resources['module_js']) || true === isset($resources['first_js']))
+      showResourceState('js', 'JS', $basePath, $shaName, $altColor);
 
-    if(isset($resources['template']))
-      echo (file_exists($basePath . 'tpl' . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[TEMPLATE]', $altColor;
-
-    echo '[', $shaName, ']', PHP_EOL, endColor();
+    if (true === isset($resources['template']))
+      showResourceState('tpl', 'TEMPLATE', $basePath, $shaName, $altColor);
   } else
-    echo ' No other resources. ', '[', $shaName, ']', PHP_EOL, endColor();
+    echo ' No other resources. ';
+
+  echo '[', $shaName, ']', PHP_EOL, endColor(), str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT), PHP_EOL;
 
   ++$alt;
 }
