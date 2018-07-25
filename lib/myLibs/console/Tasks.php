@@ -5,27 +5,43 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
-use lib\myLibs\console\Database,
-    config\All_Config;
-
 class Tasks
 {
   protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
 
-  /** Clears the cache. */
-  public static function cc()
+  /**
+   * @param array|null $argv
+   */
+  public static function cc(?array $argv = null)
   {
-    array_map('unlink', glob(All_Config::$cache_path . '*.cache'));
-    echo 'Cache cleared.', PHP_EOL;
+    require CORE_PATH . 'console/ClearCache.php';
   }
 
-  public static function ccDesc(): array { return ['Clears the cache']; }
+  /**
+   * @return array
+   */
+  public static function ccDesc(): array
+  {
+    return [
+      'Clears the cache',
+      [
+        'route name' => 'If you want to clear cache for only one route.'
+      ],
+      ['optional']
+    ];
+  }
 
+  /**
+   * @param array $argv
+   */
   public static function createBundle(array $argv)
   {
     require CORE_PATH . 'console/CreateBundle.php';
   }
 
+  /**
+   * @return array
+   */
   public static function createBundleDesc(): array {
     return [
       'Creates a bundle.' . brownText('[PARTIALLY IMPLEMENTED]'),
@@ -44,11 +60,17 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function createModel(array $argv)
   {
     require CORE_PATH . 'console/CreateModel.php';
   }
 
+  /**
+   * @return array
+   */
   public static function createModelDesc() : array {
     return [
       'Creates a model.',
@@ -62,9 +84,12 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function crypt(array $argv)
   {
-    if(true === isset($argv[3]))
+    if (true === isset($argv[3]))
       define(FWK_HASH, $argv[3]);
     else
       require BASE_PATH . 'config/All_Config.php';
@@ -72,6 +97,9 @@ class Tasks
     echo crypt($argv[2], FWK_HASH), PHP_EOL;
   }
 
+  /**
+   * @return array
+   */
   public static function cryptDesc() : array
   {
     return [
@@ -84,6 +112,28 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
+  public static function deploy(array $argv) { require CORE_PATH . 'console/Deploy.php'; }
+
+  public static function deployDesc() : array {
+    return [
+      'Deploy the site. ' . brownText('[WIP - Do not use yet !]'),
+      [
+        'mode' => '0 => Nothing to do (default)' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => Generates php production files.' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => Same as 1 + resource production files.' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => Same as 2 + class mapping',
+        'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
+      ],
+      ['optional', 'optional']
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
   public static function hash(array $argv)
   {
     $argv[2] = isset($argv[2]) ? $argv[2] : 7;
@@ -98,6 +148,9 @@ class Tasks
     echo '$2y$0', $argv[2], '$', $salt, PHP_EOL;
   }
 
+  /**
+   * @return array
+   */
   public static function hashDesc() : array
   {
     return [
@@ -107,8 +160,14 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function genAssets(array $argv) { require CORE_PATH . 'console/GenAssets.php'; }
 
+  /**
+   * @return array
+   */
   public static function genAssetsDesc() : array
   {
     return [
@@ -124,23 +183,41 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function genBootstrap(array $argv) { require CORE_PATH . 'console/GenBootstrap.php'; }
 
+  /**
+   * @return array
+   */
   public static function genBootstrapDesc() : array
   {
     return [
       'Launch the genClassMap command and generates a file that contains all the necessary php files.',
       [
         'genClassmap' => 'If set to 0, it prevents the generation/override of the class mapping file.',
-        'verbose' => 'If set to 1, we print all the warnings when the task fails.',
+        'verbose' => 'If set to 1, we print all the main warnings when the task fails. Put 2 to get every warning.',
         'route' => 'The route for which you want to generate the micro bootstrap.'
       ],
       ['optional', 'optional', 'optional']
     ];
   }
 
-  public static function genClassMap(){ require CORE_PATH . 'console/GenClassMap.php'; }
-  public static function genClassMapDesc() : array { return ['Generates a class mapping file that will be used to replace the autoloading method.']; }
+  /**
+   * Generates the class mapping. If the only parameters in argv is set to 1 => show all the...cf. description
+   *
+   * @param array|null|null $argv
+   */
+  public static function genClassMap(?array $argv = null) { require CORE_PATH . 'console/GenClassMap.php'; }
+  public static function genClassMapDesc() : array
+  {
+    return [
+      'Generates a class mapping file that will be used to replace the autoloading method.',
+      ['verbose' => 'If set to 1 => Show all the classes that will be used. Default to 0.'],
+      ['optional']
+    ];
+  }
 
   /**
    * Show the help for the specified command.
@@ -149,10 +226,13 @@ class Tasks
    */
   public static function help(array $argv) { require CORE_PATH . 'console/Help.php'; }
 
-  public static function helpDesc() :array
+  /**
+   * @return array
+   */
+  public static function helpDesc() : array
   {
     return [
-      'Shows the help for the specified command.',
+      'Shows the extended help for the specified command.',
       ['command' => 'The command which you need help for.'],
       ['required']
     ];
@@ -160,6 +240,9 @@ class Tasks
 
   public static function upConf() { require CORE_PATH . 'console/UpdateConf.php'; }
 
+  /**
+   * @return array
+   */
   public static function upConfDesc() : array { return ['Updates the files related to bundles and routes.']; }
 
   /**
@@ -167,20 +250,36 @@ class Tasks
    *
    * @param array $argv
    */
-  public static function sql(array $argv) { Database::executeFile('../sql/entire_script.sql', $argv[2] ?? null); }
+  public static function sql(array $argv)
+  {
+    Database::executeFile($argv[2], $argv[3] ?? null);
+  }
 
-  public static function sqlDesc() : array { return ['Executes the sql script']; }
+  public static function sqlDesc() : array
+  {
+    return [
+      'Executes the sql script',
+      [
+        'file' => 'File that will be executed',
+        'database' => 'Database to use for this script'
+      ],
+      ['required', 'optional']
+    ];
+  }
 
   /**
    * @param array $argv
    */
   public static function sql_clean(array $argv) { Database::clean(isset($argv[2]) ? '1' === $argv[2]  : false); }
 
+  /**
+   * @return array
+   */
   public static function sql_cleanDesc() : array
   {
     return [
-      'Cleans sql and yml files in the case where there are problems that had corrupted files.',
-      ['cleaningLevel' => 'Type 1 in order to also clean the file that describes the tables order.'],
+      'Removes sql and yml files in the case where there are problems that had corrupted files.',
+      ['cleaningLevel' => 'Type 1 in order to also remove the file that describes the tables order.'],
       ['optional']
     ];
   }
@@ -196,6 +295,9 @@ class Tasks
       );
   }
 
+  /**
+   * @return array
+   */
   public static function sql_gdbDesc() : array
   {
     return [
@@ -217,6 +319,9 @@ class Tasks
     );
   }
 
+  /**
+   * @return array
+   */
   public static function sql_gfDesc() : array
   {
     return [
@@ -230,6 +335,9 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function sql_is(array $argv)
   {
     isset($argv[2])
@@ -237,6 +345,9 @@ class Tasks
       : Database::importSchema();
   }
 
+  /**
+   * @return array
+   */
   public static function sql_isDesc() : array
   {
     return [
@@ -249,6 +360,9 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function sql_if(array $argv)
   {
     isset($argv[2])
@@ -256,6 +370,9 @@ class Tasks
       : Database::importFixtures();
   }
 
+  /**
+   * @return array
+   */
   public static function sql_ifDesc() : array
   {
     return [
@@ -268,8 +385,14 @@ class Tasks
     ];
   }
 
+  /**
+   * @param array $argv
+   */
   public static function routes(array $argv) { require CORE_PATH . 'console/Routes.php'; }
 
+  /**
+   * @return array
+   */
   public static function routesDesc() : array
   {
     return [
@@ -283,6 +406,9 @@ class Tasks
     echo file_get_contents(CORE_PATH . 'console/LICENSE2.txt'), endColor(), PHP_EOL, brownText('Version 1.0 ALPHA.');
   }
 
+  /**
+   * @return array
+   */
   public static function versionDesc() : array { return ['Shows the framework version.']; }
 }
 ?>

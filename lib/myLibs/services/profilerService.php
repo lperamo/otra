@@ -27,18 +27,18 @@ class profilerService
     {
       $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
 
-      foreach($requests as $r)
+      foreach($requests as &$r)
       {
         echo '<div>',
         '<div class="dbg-left-block dbg-fl">',
-        'In file <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> at line&nbsp;<span class="dbg-line">', $r['line'], '</span> :',
+        t('In file') . ' <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> ' . t('at line') . '&nbsp;<span class="dbg-line">', $r['line'], '</span> :',
         '<p>', $r['query'], '</p>',
         '</div>',
-        '<a role="button" class="dbg-fr lb-btn">Copy</a>',
+        '<a role="button" class="dbg-fr lb-btn">' . t('Copy') .'</a>',
         '</div>';
       }
     } else
-      echo 'No stored queries in ', $file, '.';
+      echo t('No stored queries in '), $file, '.';
   }
 }
 ?>

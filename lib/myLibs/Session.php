@@ -15,7 +15,7 @@ class Session
    * @param string $key
    * @param mixed  $value
    */
-  public static function set($key, $value) { $_SESSION[sha1(self::$id .$key)] = $value; }
+  public static function set(string $key, $value) { $_SESSION[sha1(self::$id .$key)] = $value; }
 
   /** Puts all the value associated with the keys of the array into the session
    *
@@ -29,6 +29,6 @@ class Session
    *
    * @return mixed
    */
-  public static function get($key) { return $_SESSION[sha1(self::$id . $key)]; }
+  public static function get(string $key) { return $_SESSION[sha1(self::$id . $key)]; }
 }
 ?>

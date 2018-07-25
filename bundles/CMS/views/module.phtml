@@ -2,9 +2,9 @@
 echo '<div class="' . (2 == $type ? '' : 'module-style1 ') . 'module-type' . $type . '">';
 
   $hztl = false;
-  if(1 == $type)
+  if (1 === $type)
     echo '<nav class="menu-v" role="navigation">';
-  else if(2 == $type)
+  else if(2 === $type)
   {
     echo '<nav class="menu-h center" role="navigation">';
     $hztl = true;
@@ -12,7 +12,7 @@ echo '<div class="' . (2 == $type ? '' : 'module-style1 ') . 'module-type' . $ty
 
   foreach($module as $moduleName => $moduleItems)
   {
-    if(!$hztl)
+    if ($hztl === false)
     { ?>
       <ul class="no-decoration shadow-effect">
         <li class="menus-v-header-ul menus-v-header-li">

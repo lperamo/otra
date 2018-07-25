@@ -1,0 +1,135 @@
+html,
+body,
+ul,
+textarea,
+p,
+h1, h2, h3,
+label {
+  margin: 0;
+  padding: 0;
+}
+
+body { height : 100vh }
+
+.hidden { display: none !important }
+
+/* apply a natural box layout model to all elements, but allowing components to change
+ (normally it's html and not * in the following rule ! see paul irish article on that point)*/
+*
+{
+  box-sizing: border-box;
+
+  &:before, &:after { box-sizing : inherit }
+}
+
+.fl { float : left }
+.fr { float : right }
+.center { margin : auto; text-align : center }
+.clear-both { clear : both }
+.t-center { text-align : center }
+.no-decoration { list-style-type : none }
+
+/* Tooltips custom management */
+.soft-btn[data-tooltip]
+{
+  &:hover:after, &:active:after {
+    transform: scale(0.1) !important;
+  }
+}
+
+li[data-tooltip],
+.soft-btn[data-tooltip] {
+  position: relative
+}
+
+li, .soft-btn, .actual-select-value
+{
+  /* (top is the default), top right, right etc. clockwise ...ToolTipTopLeft for example  => tttl */
+  &[data-tooltip]:after
+  {
+    background-image : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%);
+
+    /* border */
+    border        : 2px groove rgba(128, 128, 128, 0.1);
+    border-radius : 5px;
+
+    /* box */
+    height   : 18px; width : inherit;
+    left     : 0; bottom : calc(100% + 5px);
+    padding  : 3px 7px;
+    position : absolute;
+
+    /* display */
+    content    : attr(data-tooltip);
+    display    : table;
+    opacity    : 0;
+    visibility : hidden;
+
+    /* text */
+    color       : #2e4747 !important;
+    font-family : "bookman old style", arial, helvetica, sans-serif;
+    font-size   : 0.825rem;
+    font-weight : normal; /* to avoid the inheritance of the element style */
+    line-height : normal;
+    text-align  : center;
+    text-shadow : 1px 1px rgba(221, 255, 254, 0.78);
+    white-space : nowrap;
+
+    /* others */
+    pointer-events : none;
+    transform      : scale(1) !important;
+    z-index        : 10000
+  }
+
+  &.tttr[data-tooltip]:after { left : 100% }
+
+  &.ttr[data-tooltip]:after
+  {
+    left   : calc(100% + 5px);
+    bottom : 0
+  }
+
+  &.ttbr[data-tooltip]:after
+  {
+    top  : 100%;
+    left : 100%
+  }
+
+  &.ttb[data-tooltip]:after { top : calc(100% + 5px) }
+
+  &.ttbl[data-tooltip]:after
+  {
+    left  : auto;
+    right : 100%;
+    top   : 100%
+  }
+
+  &.ttl[data-tooltip]:after
+  {
+    bottom : 0;
+    left   : auto;
+    right  : calc(100% + 5px);
+  }
+
+  &.tttl[data-tooltip]:after
+  {
+    left  : auto;
+    right : 100%
+  }
+
+  &[data-tooltip]:hover:after
+  {
+    /* display */
+    opacity            : 1;
+    visibility         : visible;
+    z-index            : 10000;
+
+    /* animation */
+    transform          : scale(1) !important;
+    transition         : opacity .25s linear .5s
+
+  }
+}
+
+table { empty-cells: show }
+th, td { text-align: left }

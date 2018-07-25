@@ -30,21 +30,22 @@ if (false === in_array($method, $methods, true))
 /** WE DISPLAY HERE THE COMMAND HELP */
 $methodDesc = $method . 'Desc';
 $paramsDesc = self::$methodDesc();
-echo white(), str_pad($method, 25, ' '), lightGray(), ': ', cyan(), $paramsDesc[0], PHP_EOL;
+echo white(), str_pad($method, 27, ' '), lightGray(), ': ', cyan(), $paramsDesc[0], PHP_EOL;
 
 // If we have parameters for this command, displays them
-if (isset($paramsDesc[1]))
+if (isset($paramsDesc[1]) === true)
 {
   $i = 0;
-  foreach ($paramsDesc[1] as $parameter => $paramDesc)
+
+  foreach ($paramsDesc[1] as $parameter => &$paramDesc)
   {
     // + parameter : (required|optional) Description
-    echo lightCyan(), ' + ', str_pad($parameter, 22, ' '), lightGray();
+    echo lightCyan(), '   + ', str_pad($parameter, 22, ' '), lightGray();
     echo ': ', lightCyan(), '(', $paramsDesc[2][$i], ') ', cyan(), $paramDesc, PHP_EOL;
     ++$i;
   }
 }
 
-echo PHP_EOL, endColor();
+echo endColor();
 
 ?>

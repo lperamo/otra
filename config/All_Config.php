@@ -14,7 +14,7 @@ define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
 define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
 define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
 
-define('LAYOUT', CORE_VIEWS_PATH . 'layout.phtml'); // It has to be layout
+define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layout
 
 define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters

@@ -41,7 +41,7 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 
     if (false === file_exists($templateFile))
-      throw new Lionel_Exception('File not found ! : ', $templateFile);
+      throw new Lionel_Exception('File not found ! : ' . $templateFile);
 
     if (true === $ajax)
       self::$ajax = $ajax;
@@ -106,10 +106,12 @@ class Controller extends MasterController
                         ? ob_get_clean() . parent::$template
                         : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 
+    // suppress useless spaces
     parent::$template = str_replace(
       '/title>',
       '/title>'. self::addCss(false),
-      parent::$template . self::addJs(false)); // suppress useless spaces
+      parent::$template . self::addJs(false)
+    );
   }
 
 
@@ -255,7 +257,7 @@ class Controller extends MasterController
   }
 
   /**
-   * Puts the css into the template. Updates parent::$template.
+   * Puts the js into the template. Updates parent::$template.
    *
    * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
    *

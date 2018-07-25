@@ -23,7 +23,7 @@ class Routes
       'chunks' => ['exception'],
       'core' => true,
       'resources' => [
-        'core_css' => ['lionel_exception'],
+        'core_css' => ['lionelException'],
         'core_js' => ['tools']
       ]
     ],
@@ -47,8 +47,7 @@ class Routes
   {
     self::$_ = array_merge(
       self::$_,
-      require BASE_PATH . 'bundles/config/Routes.php'
-    );
+      require BASE_PATH . 'bundles/config/Routes.php'); // TODO find a way to allow the parenthese to be correctly placed ! For now, change it breaks the production task code :/
   }
 }
 
