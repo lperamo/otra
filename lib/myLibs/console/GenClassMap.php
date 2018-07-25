@@ -18,13 +18,14 @@ if (VERBOSE === 1)
 
 $classMap = var_export($classes, true);
 
-// We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file
+// We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file.
+// Here, we take care of the spaces contained into folders and files names.
 file_put_contents(
   BASE_PATH . 'cache/php/ClassMap.php',
   '<? define(\'CLASSMAP\',' . substr(
     str_replace(
-      ['\\\\', ' ', "\n", 'array('],
-      ['\\', '', '', '['],
+      ['\\\\', ' => ', '  \'', "\n", 'array ('],
+      ['\\', '=>', '\'', '', '['],
       $classMap
     ),
     0,

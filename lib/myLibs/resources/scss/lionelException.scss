@@ -1,0 +1,153 @@
+@import 'devModeColors';
+
+body {
+  background : linear-gradient(
+          to bottom,
+          rgba(180, 187, 237, 0.12) 0%,
+          rgba(2, 17, 27, 0.2) 79%) no-repeat fixed !important /* TODO why important */
+}
+
+.exception {
+  /* background */
+  background  : linear-gradient(
+          to bottom,
+          rgba(197, 204, 255, 0.23) 0%,
+          rgba(0, 2, 3, 0.5) 13%) no-repeat fixed;
+
+  /* box */
+  padding     : 5px 0;
+  width       : 100%;
+
+  /* text */
+  text-shadow : 0 0 3px $exception--text-shadow;
+}
+
+.explications {
+  padding-top : 20px;
+
+  @at-root {
+    .exception-{
+      &file {
+        color: $exception--file-color;
+        font-weight: bold;
+      }
+
+      &-line {
+        color: $exception--line-color;
+        font-weight: bold;
+      }
+    }
+
+    table {
+      /* border */
+      border         : 1px solid $exception--table-border-color;
+      border-spacing : 0;
+
+      /* box */
+      width          : 100%;
+
+      /* text */
+      white-space    : normal;
+    }
+
+    td, th {
+      border       : 1px solid $exception--table-cell-color;
+      border-width : 0 0 1px 1px;
+      padding      : 3px 6px;
+      transition   : background .25s
+    }
+
+    tr:nth-of-type(odd) > td { background : $exception--table-odd-cell-background-color }
+
+    tr > td:hover {
+      background    : $exception--table-cell-hover-color;
+      border-radius : 0;
+      /*text-shadow   : 1px 1px #ccc*/
+    }
+
+    /* border bottom left */
+    /*tr:last-child > td:first-child { border-radius : 0 0 0 10px }*/
+
+    /* border bottom right */
+    /*tr:last-child > td:last-child { border-radius : 0 0 10px 0 }*/
+    table:not(.test) td:first-child { width : 150px }
+
+    td:first-child, th:first-child { border-left : 0 }
+
+    tr:last-child > td { border-bottom : 0 }
+
+    .show-args {
+      font-style: italic;
+
+      &:hover { cursor : pointer }
+    }
+
+    .deep-content {
+      display : none;
+
+      @at-root {
+        .test {
+          &:not(.innerHeader)
+          {
+            border-top: 0;
+          }
+
+          td {
+            width       : 0;
+            white-space : nowrap
+          }
+        }
+
+        .foldable {
+          cursor : pointer;
+
+          /* TODO why important */
+          &:hover {
+            background-color : $exception--table-foldable-background-color;
+            color: #DDD;
+            text-shadow : none;
+          }
+
+          &:hover .dummy::after, &.no-dummy:hover::after
+          {
+            /* display */
+            content: 'Foldable !';
+            display: table-cell;
+
+            /* text */
+            color : $exception--table-foldable-hover-color;
+            text-align: center;
+            text-shadow: none;
+            vertical-align : middle;
+          }
+        }
+
+        .dummy { width : 100% !important }/* TODO why important */
+      }
+    }
+  }
+}
+
+.text-center { text-align : center }
+
+.correct-display {
+  /* box */
+  height          : 100%;
+  margin          : auto;
+
+  /* text */
+  overflow        : hidden;
+  text-align      : left;
+  white-space     : pre-wrap;
+  -webkit-hyphens : auto;
+  -moz-hyphens    : auto;
+  -ms-hyphens     : auto;
+  -o-hyphens      : auto;
+  hyphens         : auto;
+  word-wrap       : break-word;
+  /* overflow:word-wrap; bientôt en css3 il faudra remplacer par cette valeur car ce sera la nouvelle norme */
+}
+
+/*.radius { border-radius : 10px }*/
+
+.noBorder { border : 0; }

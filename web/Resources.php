@@ -5,13 +5,17 @@
 $uri = $_SERVER['REDIRECT_URL'];
 define ('_DIR_', str_replace('\\', '/', __DIR__));
 
-if( false !== ($posDot = strpos($uri, '.')))
+$realPath = substr(_DIR_, 0, -4) . $uri;
+
+if ('/' !== $uri && true === file_exists($realPath))
 {
-  // Verifies that we went from the site and whether the file have an extension or not
-  $ext = substr($uri, $posDot + 1);
+  $posDot = strpos($uri, '.');
   // Comment it for debugging purposes
   if (true === isset($_SERVER['HTTP_REFERER']))
   {
+    // Verifies that we went from the site and whether the file have an extension or not
+    $ext = substr($uri, $posDot + 1);
+
     if('gz' === $ext)
     {
       if (false !== strpos($uri, 'css'))
@@ -28,11 +32,26 @@ if( false !== ($posDot = strpos($uri, '.')))
       {
         case 'css': header('Content-type:  text/css'); break;
         case 'js': header('Content-type: application/javascript'); break;
-        case 'woff': header('Content-type: application/x-font-woff');
+        default: // images or other things
+          // IE doesn't understand images correctly if there are a 'nosniff' header rule (for security)... -_-
+          $userAgent = $_SERVER['HTTP_USER_AGENT'];
+          preg_match('/MSIE (.*?);/', $userAgent, $matches);
+
+          if (count($matches) < 2)
+            preg_match('/Trident\/\d{1,2}.\d{1,2}; rv:([0-9]*)/', $userAgent, $matches);
+
+          if (count($matches) > 1 || false !== strpos($userAgent, 'Edge'))
+          {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            header('Content-type: ' . finfo_file($finfo, $realPath));
+            finfo_close($finfo);
+          }
       }
     }
 
-    die(file_get_contents(substr(_DIR_, 0, -4) . $uri));
+    /** TODO certain resources can be seen in a raw way via this line */
+    echo file_get_contents($realPath);
+    return 0;
   }
 
   // User can't see a resource directly so => 404
@@ -44,7 +63,11 @@ define('BASE_PATH', substr(_DIR_, 0, -3)); // Finit avec /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
 $uri = $_SERVER['REQUEST_URI'];
 define('DEBUG_KEY', 'debuglp_');
-session_start();
+session_name('__Secure-LPSESSID');
+session_start([
+  'cookie_secure' => true,
+  'cookie_httponly' => true
+]);
 
 // Will be the future translation feature
 function t(string $texte) : string { return $texte; }

@@ -185,7 +185,7 @@ class Sql
    * @param string $query SQL query.
    * The query string should not end with a semicolon. Data inside the query should be properly escaped.
    *
-   * @return bool|resource Returns a resource on success, or false on error
+   * @return resource Returns a resource on success, otherwise an exception is raised
    */
   public function query(string $query)
   {

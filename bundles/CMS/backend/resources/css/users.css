@@ -1,9 +1,0 @@
-#users-header th:nth-of-type(1) { width : 1em }
-
-#users-header th:nth-of-type(5) { width : 8.6em }
-
-#users-header th:nth-of-type(6) { min-width : 4em; width : 6.8em }
-
-#users-body td:nth-of-type(6) { white-space : nowrap }
-
-#users-body > tr:first-child input { margin : 3px; width : calc(100% - 5px) }

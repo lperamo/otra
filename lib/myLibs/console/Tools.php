@@ -1,10 +1,12 @@
 <?
+//namespace lib\myLibs\console\Tools;
+
 /** This sequence moves the cursor up by 1,
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)
  */
-if (!defined('ERASE_SEQUENCE')) define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-if (!defined('DOUBLE_ERASE_SEQUENCE')) define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
+if (false === defined('ERASE_SEQUENCE')) define('ERASE_SEQUENCE', "\033[1A\r\033[K");
+if (false === defined('DOUBLE_ERASE_SEQUENCE')) define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
 /**
  * Asks the user a question again and again until the answer was correct.
  *
@@ -44,14 +46,19 @@ function askQuestion(string $question) : string
 }
 
 /**
- * Execute a CLI command. (Passthru displays more things than system)
+ * Execute a CLI command.
  *
  * @param string  $cmd     Command to pass
- * @param integer $verbose Verbose mode (0,1 or 2)
  *
- * @return array [bool, string] Success, content
+ * @return array [bool, string] Failure, content
  */
-function cli(string $cmd, int $verbose = 1) { (0 < $verbose) ? passthru($cmd, $success) : exec($cmd, $return, $success); return [$success, $return ?? '']; }
+function cli(string $cmd) : array
+{
+  // We don't use 2>&1 after $cmd because there is a bug otherwise ... "The handle could not be duplicated when redirecting handle 1
+  exec($cmd, $return, $failure);
+
+  return [$failure, $return ? implode(PHP_EOL, $return) : ''];
+}
 
 /**
  * Loops through words to find the closest word
@@ -105,12 +112,16 @@ function showContext(string $file, int $errorLine, int $context)
   // Shows the context of the error
   for ($i = $errorLine - $midContext, $max = $errorLine + $midContext; $i < $max; ++$i)
   {
+    // if we are at the end because the portion is at the end of the file, we break the loop
+    if (false === isset($lines[$i]))
+      break;
+
     if(-1 !== $errorLine)
     {
       echo ($i === $errorLine
         ? red() . $i
         : green() . $i . lightGray()
-        ), ' ', $lines[$i];
+      ), ' ', $lines[$i];
     }
   }
 }

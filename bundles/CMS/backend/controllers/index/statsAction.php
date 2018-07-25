@@ -7,13 +7,15 @@
 namespace bundles\CMS\backend\controllers\index;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use \bundles\CMS\services\backendService;
+use bundles\CMS\services\backendService;
 
 class statsAction extends Controller
 {
   public function statsAction()
   {
-    backendService::checkConnection($this->action);
+    if (backendService::checkConnection($this->route) === false)
+      return false;
+
     Sql::getDB();
 
     // Retrieving the headers

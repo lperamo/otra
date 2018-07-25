@@ -7,13 +7,15 @@
 namespace bundles\CMS\backend\controllers\index;
 
 use lib\myLibs\{Controller, bdd\Sql};
-use \bundles\CMS\{models\GlobalConstants, models\Module, services\backendService};
+use bundles\CMS\{models\GlobalConstants, models\Module, services\backendService};
 
 class modulesAction extends Controller
 {
   public function modulesAction()
   {
-    backendService::checkConnection($this->action);
+    if (backendService::checkConnection($this->route) === false)
+      return false;
+
     Sql::getDB();
 
     echo $this->renderView('modules.phtml', [

@@ -25,7 +25,10 @@ define('XMODE', 'dev');
 /** CLASS MAPPING */
 require BASE_PATH . 'cache/php/ClassMap.php';
 
-spl_autoload_register(function($className)
+/** MAIN CONFIGURATION */
+require BASE_PATH . 'config/All_Config.php';
+
+spl_autoload_register(function(string $className)
 {
   if (false === isset(CLASSMAP[$className]))
     echo 'Path not found for the class name : ', $className, '<br>';
@@ -34,7 +37,7 @@ spl_autoload_register(function($className)
 });
 
 /** ERROR MANAGEMENT */
-function errorHandler($errno, $message, $file, $line, $context) { throw new lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context); }
+function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 
@@ -49,8 +52,6 @@ try
     header('Vary: Accept-Encoding,Accept-Language');
 
     $defaultRoute = config\Routes::$default['bundle'];
-    require BASE_PATH . 'bundles/' . $defaultRoute . '/Init.php';
-    call_user_func('bundles\\' . $defaultRoute . '\\Init::Init');
     Router::get($route[0], $route[1]);
   }
 } catch(Exception $e)

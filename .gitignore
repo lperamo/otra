@@ -1,6 +1,11 @@
 cache/*
 logs/*
+lib/myLibs/console/closure-compiler.log
 .idea
 bundles/CMS/config/data/sql/*
 *.sh
 tests/coverageHtml
+tests/coverageHtmlBackup
+**/css/*
+**/js/*
+**/devJs/*.js*

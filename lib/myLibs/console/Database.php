@@ -8,7 +8,8 @@ declare(strict_types=1);
 namespace { require_once CORE_PATH . 'console/Tools.php'; }
 namespace lib\myLibs\console {
 
-  use lib\ { sf2_yaml\Yaml, myLibs\bdd\Sql };
+  use lib\myLibs\bdd\Sql;
+  use Symfony\Component\Yaml\Yaml;
   use config\All_Config;
   use lib\myLibs\{Session, Lionel_Exception};
 
@@ -61,7 +62,12 @@ namespace lib\myLibs\console {
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
       if (false === isset($dbConn[$dbConnKey]))
-        throw new Lionel_Exception('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
+      {
+        if (null === $dbConnKey)
+          throw new Lionel_Exception('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
+
+        throw new Lionel_Exception('The configuration \'' . $dbConnKey . '\' doesn\'t exist in your configuration file.', E_CORE_WARNING);
+      }
 
       $infosDb = $dbConn[$dbConnKey];
 
@@ -115,9 +121,6 @@ namespace lib\myLibs\console {
     }
 
     /**
-     * @param bool   $boolSchema Do we retrieve all the information from YML schemas ?
-     * @param string $folder     Where to find the data folders
-     *
      * @return array
      */
     public static function getDirs() : array
@@ -164,7 +167,7 @@ namespace lib\myLibs\console {
           $content .= file_get_contents($schema);
         }
         var_dump($content);
-        die;
+        return $dirs;
       }
 
       return $dirs;
@@ -195,7 +198,7 @@ namespace lib\myLibs\console {
     }
 
     /**
-     * Runs or creates & runs the database schema file
+     * Creates the sql database schema file if it doesn't exist and runs it
      *
      * @param string $databaseName Database name
      * @param bool   $force        If true, we erase the database before the tables creation.
@@ -460,7 +463,7 @@ namespace lib\myLibs\console {
       $tableSql = substr($tableSql, 0, -1) . ';';
 
       // We create sql file that can generate the fixtures in the BDD.
-      // If the file exists because of anormal reasons, thanks to mode 'w' instead of 'x' it will not crash.
+      // If the file exists because of abnormal reasons, thanks to mode 'w' instead of 'x' it will not crash.
       file_put_contents($createdFile, $tableSql);
 
       echo lightGreenText('[SQL CREATION] ');
@@ -509,7 +512,7 @@ namespace lib\myLibs\console {
 
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
-      $fixtureFileNameBeginning = self::$pathSqlFixtures . '/' . $databaseName . '_';
+      $fixtureFileNameBeginning = self::$pathSqlFixtures . $databaseName . '_';
 
       // We clean the fixtures sql files whether it's needed
       if (2 === $mask)
@@ -838,6 +841,7 @@ namespace lib\myLibs\console {
         $sqlDropSection = ' `' . $sortedTable . '`,' . PHP_EOL . $sqlDropSection;
       }
 
+      /** DROP TABLE MANAGEMENT */
       /** TODO Test on unix systems if the value 3 is correct or not */
       $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -3) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
 
@@ -846,10 +850,9 @@ namespace lib\myLibs\console {
       if ($storeSortedTables)
       {
         file_put_contents(self::$tablesOrderFile, $tablesOrder);
-        echo lightGreenText('\'Tables order\' sql file created : '), lightCyanText(basename(self::$tablesOrderFile)), PHP_EOL;
+        echo lightGreenText('\'Tables order\' sql file created : '), brownText(basename(self::$tablesOrderFile)), PHP_EOL;
       }
 
-      /** DROP TABLE MANAGEMENT */
       // We create the SQL schema file with the generated content.
       file_put_contents($dbFile, $sql);
 

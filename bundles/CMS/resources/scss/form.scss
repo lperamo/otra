@@ -1,0 +1,89 @@
+$invalid-color: #ebb;
+
+@mixin input-placeholder()
+{
+  /* box */
+  padding       : 2px;
+
+  /* display */
+  border-radius : 5px;
+  opacity       : 1;
+
+  /* text */
+  color         : rgba(0, 0, 0, 0.4);
+  font-family   : arial, helvetica, sans-serif;
+}
+
+.mBot40{ margin:40px }
+
+.ML-form > .label { width : 200px }
+
+.label
+{
+  /* box */
+  margin       : 0 10px 10px 0;
+  padding-left : 2px;
+
+  /* text */
+  text-align   : right;
+}
+
+.label2
+{
+  /* box */
+  margin       : 0 10px 10px 0;
+  padding-left : 2px;
+
+  /* text */
+  text-align   : left;
+}
+
+.input {
+  /* background */
+  background    : transparent;
+
+  /* border */
+  border        : none;
+  border-radius : 3px;
+
+  /* box */
+  padding       : 4px 5px;
+
+  /* shadow */
+  box-shadow    : 0 0 3px rgba(0, 0, 0, .35);
+
+  /* text */
+  color         : rgba(0, 0, 0, 0.8);
+  font-size     : 0.875em;
+
+  /* others */
+  cursor        : pointer;
+
+  &:-ms-input-placeholder { @include input-placeholder; }
+  &::-moz-placeholder { @include input-placeholder; }
+  &::-webkit-input-placeholder { @include input-placeholder; }
+
+  &:required
+  {
+    &:valid { background-color : #beb }
+    &:focus:invalid { background-color : $invalid-color; color : #333 }
+    &:-moz-ui-invalid { background-color : $invalid-color }
+  }
+
+  &:hover { box-shadow : 0 0 4px 2px #779ba9 }
+  &:focus { box-shadow : 0 0 6px 0 #36f }
+}
+
+.email { width : 200px }
+
+input[type=submit]
+{
+  /* display */
+  background-color : inherit;
+  border           : 0;
+  -moz-appearance  : none;
+
+  /* text */
+  font-family      : "bookman old style", arial, helvetica, sans-serif;
+  font-size        : 1em
+}

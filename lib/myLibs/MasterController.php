@@ -107,26 +107,26 @@ class MasterController
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
-    if (true === isset($baseParams['controller']))
-    {
-      // Stores the bundle, module, controller and action for later use
-      list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, $this->chkJs, $this->chkCss) = array_values($baseParams);
+    if (false === isset($baseParams['controller']))
+      return;
 
-      $this->action = substr($baseParams['action'], 0, -6);
+    // Stores the bundle, module, controller and action for later use
+    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, $this->chkJs, $this->chkCss) = array_values($baseParams);
 
-      self::$id = $this->bundle . $this->module . $this->controller . $this->action;
-      $this->getParams = $getParams;
+    $this->action = substr($baseParams['action'], 0, -6);
 
-      $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
-      // Stores the templates' path of the calling controller
-      $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
-      $this->viewCSSPath = $mainPath .'resources/css/';
-      $this->viewJSPath = $mainPath . 'resources/js/';
+    self::$id = $this->bundle . $this->module . $this->controller . $this->action;
+    $this->getParams = $getParams;
 
-      self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
+    $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
+    // Stores the templates' path of the calling controller
+    $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
+    $this->viewCSSPath = $mainPath .'resources/css/';
+    $this->viewJSPath = $mainPath . 'resources/js/';
 
-      call_user_func_array([$this, $baseParams['action']], $getParams);
-    }
+    self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
+
+    call_user_func_array([$this, $baseParams['action']], $getParams);
   }
 
   /**
@@ -138,7 +138,7 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = '', string $extension = '.cache') {
+  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = '', string $extension = '.cache') : string {
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
@@ -169,8 +169,9 @@ class MasterController
     {
       self::$layoutOnce = true;
       return preg_replace('`(<body[^>]*>)(.*)`s', '$1' . str_replace('$','\\$', $content), self::$layout);
-    }else
-      return $content;
+    }
+
+    return $content;
   }
 
   /**
@@ -178,21 +179,21 @@ class MasterController
   *
   * @param string $attrs
   */
-  public static function bodyAttrs(string $attrs = '') { self::$bodyAttrs = $attrs; }
+  public static function bodyAttrs(string $attrs = '') : void { self::$bodyAttrs = $attrs; }
 
   /**
    * Sets the body content
    *
    * @param string $content
    */
-  private static function body(string $content = '') { self::$body = $content; }
+  private static function body(string $content = '') : void { self::$body = $content; }
 
   /**
    * Sets the title of the page
    *
    * @param string $title
    */
-  protected static function title(string $title)
+  protected static function title(string $title) : void
   {
     self::$layout = (isset(self::$layout))
       ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
@@ -205,7 +206,7 @@ class MasterController
    * @param string $filename
    * @param string $filenameIE
    */
-  protected static function favicon(string $filename = '', string $filenameIE = '')
+  protected static function favicon(string $filename = '', string $filenameIE = '') : void
   {
     echo '<link rel="icon" type="image/png" href="' , $filename , '" />
       <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
@@ -216,7 +217,7 @@ class MasterController
    *
    * @param array $css The css file to add (Array of string)
    */
-  protected static function css($css = [])
+  protected static function css($css = []) : void
   {
     array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
   }
@@ -228,7 +229,8 @@ class MasterController
    *
    * @return string The link to the js file or the script markup with the js inside
    */
-  protected static function js($js = []) {
+  protected static function js($js = []) : void
+  {
     self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
 }

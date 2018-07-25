@@ -1,5 +1,7 @@
 <?
 
+const CHUNKS_KEY_LENGTH = 10; // length of the string "chunks'=>["
+
 function writeConfigFile (string &$configFile, string &$content)
 {
   if (true === empty($content))
@@ -20,30 +22,66 @@ function writeConfigFile (string &$configFile, string &$content)
 }
 
 /**
- * We return a string that contains an array with a PHP7 array like notation.
+ * We return a string (by altering it not with 'return') that contains an array with a PHP7 array like notation.
  *
  * @param string $content
  * @param array  $array
+ * @param bool   $routeConfigFile
+ * @param string $actualRouteKey
  */
-function loopForEach(string &$content, array &$array)
+function loopForEach(string &$content, array &$array, bool $routeConfigFile = false, string $actualRouteKey = '')
 {
   foreach ($array as $key => &$arrayChunk)
   {
-    $key = is_numeric($key) ? '' : '\'' . $key . '\'' . '=>';
+    $key = (true === is_numeric($key)) ? '' : '\'' . $key . '\'' . '=>';
 
     if (false === is_array($arrayChunk))
     {
-      $content .= $key . (is_numeric($arrayChunk) ? $arrayChunk : '\'' . $arrayChunk . '\'') . ',';
+      if (true === is_numeric($arrayChunk))
+        $content .= $key . $arrayChunk . ',';
+      else
+      {
+        if (false === $routeConfigFile)
+          $content .= '\'' . addslashes($arrayChunk) . '\',';
+        else
+        {
+          $arrayChunk = (true === is_bool($arrayChunk))
+            ? (true === $arrayChunk) ? 'true' : 'false'
+            : addslashes($arrayChunk);
+
+          /* If it is a route config file then we search for the main pattern,
+            namely the route part that doesn't contain parameters.
+            Once found, we add it to the route configuration.
+            It will help the router to go faster to name the parameters. */
+
+          if ('\'chunks\'=>' === $actualRouteKey && false !== strpos($arrayChunk, '{'))
+          {
+            $bracketPosition = strpos($arrayChunk, '{');
+            $mainPattern = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);
+            $content = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' . $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
+          } else
+          {
+            $separator = ('true' === $arrayChunk || 'false' === $arrayChunk) ? ' ' : '\'';
+            $arrayChunk = $separator . $arrayChunk . $separator . ',';
+
+            $content .= $key . $arrayChunk;
+          }
+        }
+      }
+
       continue;
     }
 
+    // Case where the dev put, for example, 'bundle_js' => [] in the routes configuration file
+    if ([] === $arrayChunk)
+      continue;
+
     $content .= $key . '[';
 
-    loopForEach($content, $arrayChunk);
+    loopForEach($content, $arrayChunk, $routeConfigFile, $key);
     $content = substr($content, 0, -1);
     $content .= '],';
   }
-//  var_dump($content);die;
 }
 
 /** BEGINNING OF THE TASK */
@@ -54,8 +92,8 @@ $configs = $routes = $schemas = [];
 // we scan the bundles directory to retrieve all the bundles name ...
 while (false !== ($file = readdir($folderHandler)))
 {
-  // config is not a bundle ... just a configuration folder
-  if (true === in_array($file, ['.', '..', 'config']))
+  // 'config' and 'views' are not bundles ... just a configuration folder
+  if (true === in_array($file, ['.', '..', 'config', 'views']))
     continue;
 
   $bundleDir = $dir . $file;
@@ -104,7 +142,7 @@ foreach($routes as &$route)
 // Transforms the array in code that returns the array.
 
 $routesContent = '<? return [';
-loopForEach($routesContent, $routesArray);
+loopForEach($routesContent, $routesArray, true);
 $routesContent = substr($routesContent, 0, -1) . ']; ?>';
 
 writeConfigFile($routesFile, $routesContent);

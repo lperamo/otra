@@ -1,114 +1,183 @@
-var backend = (function(d)
-{
-  "use strict";
-
-  var tabs = 0;
-  function updateURL( event )
-  {
-    if (event.originalEvent.state)
-    {
-      $.get(
-        event.originalEvent.state.link,
-        function(response) {
-          d.getElementById('content').innerHTML = response;
-          d.getElementsByTagName('title')[0].textContent = event.originalEvent.state.title;
+var backend = (function (d) {
+    'use strict';
+    var tabs = 0, // mask for active tabs
+    $menus, $content;
+    function updateURL(event) {
+        if (event.originalEvent.state) {
+            toolsBase.fetch({
+                callback: updateURLSuccess.bind(null, event.originalEvent.state),
+                errorCallback: updateURLError,
+                href: event.originalEvent.state.link,
+                parameters: {}
+            });
         }
-      );
     }
-  }
-
-  /** Updates the tab CSS and updates the actual content */
-  function changeTab($this, index)
-  {
-   $('#tab' + index).show();
-   $('#tab' + $('.active-tab', '#menus').removeClass('active-tab').index()).hide();
-   $this.addClass('active-tab')
-  }
-
-  function activateTab()
-  {
-    var $this = $(this),
-    index = $this.index();
-
-    if (false === $this.hasClass('active-tab'))
-    {
-      var ajaxLink = this.dataset.href.replace('backend/', 'backend/ajax/'),
-          title = this.textContent + ' - Backend';
-
-      if (false === ((tabs & Math.pow(2, index)) >> index)) // if this tab isn't already loaded
-      {
-        $.get(
-          ajaxLink,
-          function(response)
-          {
-            try {
-                response = JSON.parse(response);
-                document.getElementsByTagName("html")[0].innerHTML = response.msg;
-            } catch (e) {
-                $('#content').append(response);
-            }
-            tabs += Math.pow(2, index);
-            changeTab($this, index);
-          }
-        );
-      } else
-        changeTab($this, index);
-
-      d.getElementsByTagName('title')[0].textContent = title;
-      history.pushState({link: ajaxLink, title: title}, title, this.dataset.href);
+    function updateURLSuccess(response, state) {
+        console.log('**************', response, '++++++++++++', state);
+        $content.innerHTML = response;
+        d.getElementsByTagName('title')[0].textContent = state.title;
     }
-  }
-
-  /** Allow to click on TDs and THs (and LABELs for custom checkboxes and custom radio buttons) instead of directly on checkboxes */
-  function triggerCheckbox(evt)
-  {
-    if('TD' !== evt.target.tagName && 'TH' !== evt.target.tagName && 'LABEL' !== evt.target.tagName)
-      return false;
-
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent(evt.originalEvent.type, true, false);
-    this.children[0].dispatchEvent(event);
-    // Acts here like a XOR, LABEL => checked, TD => !checked because of different behaviours depending on whether we click on the TD or the LABEL
-    this.children[0].checked = ('TD' === evt.target.tagName || 'TH' === evt.target.tagName) != this.children[0].checked;
-  }
-
-  /** Select/Deselect all the related checkboxes */
-  function selectAll() {
-    $(this).closest('table').find('input[type=checkbox]:not("._select-all")').prop('checked', !this.checked)
-  }
-
-  /** Make a check before launching a CRUD function via AJAX */
-  function beforeAction(text, callback)
-  {
-    var content = $('#content').find('table'),
-      checkboxesChecked = content.find('input[type=checkbox]:checked');
-
-    if(0 === checkboxesChecked.length) {
-      notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
-      return false
+    function updateURLError() {
+        // error TODO implement it
     }
-
-    if(true === confirm('Do you really want to validate all the changes ?'))
-    {
-      checkboxesChecked.closest('tr').each(function() {
-        callback.call(this, content)
-      });
+    /**
+     * Updates the tab CSS and updates the actual content
+     * TODO fix it to make it more generic, merge main and sub tabs behaviour
+     */
+    function changeTab(indexNumber) {
+        // For sub menu tabs only TODO ONLY FOR SUB TABS
+        document.getElementById('tab' + indexNumber).classList.remove('hidden');
+        // Deactivates the old active tabs TODO GENERIC => OK
+        this.parentElement.querySelector('.active-tab').classList.remove('active-tab');
+        // Hides the old active content TODO ONLY FOR MAIN TABS
+        // let oldContentActiveTab : Element = this.parentElement.querySelector('.active-tab')
+        var oldContentActiveTab = document.querySelector('tab-content.active-tab');
+        oldContentActiveTab.classList.remove('active-tab');
+        oldContentActiveTab.classList.add('hidden');
+        // Activates the new active li tab TODO GENERIC => OK
+        this.classList.add('active-tab');
+        // Shows the old active content TODO ONLY FOR MAIN TABS
+        var newActiveContentTab = document.getElementById('tab' + index(this));
+        newActiveContentTab.classList.remove('hidden');
+        newActiveContentTab.classList.add('active-tab');
     }
-  }
-
-  $(window).on('popstate', updateURL);
-
-  $(function()
-  {
-    tabs = Math.pow(2, $('.active-tab').index());
-    $('#menus').on('click', '.tab', activateTab);
-  });
-
-  var dummy = {
-    beforeAction: beforeAction,
-    triggerCheckbox: triggerCheckbox,
-    selectAll: selectAll
-  };
-
-  return dummy
+    /**
+     * Activates the section related to the tab and fetch data from network only if needed
+     */
+    function activateTab() {
+        // if the tab is already active, we left
+        if (true === this.classList.contains('active-tab'))
+            return;
+        var indexNumber = index(this), ajaxLink = this.dataset.href.replace('backend/', 'backend/ajax/');
+        // Checks the tab mask to see whether this tab is already loaded or not
+        if (false === Boolean(((tabs & Math.pow(2, indexNumber)) / indexNumber))) {
+            toolsBase.fetch({
+                callback: activateTabSuccess.bind(this, indexNumber),
+                errorCallback: activateTabError,
+                href: ajaxLink,
+                parameters: {}
+            });
+        }
+        else
+            changeTab.call(this, indexNumber);
+        // We update the browser history state
+        var title = this.textContent + ' - Backend';
+        d.getElementsByTagName('title')[0].textContent = title;
+        history.pushState({
+            link: ajaxLink,
+            title: title
+        }, title, this.dataset.href);
+    }
+    function activateTabSuccess(indexNumber, response) {
+        try {
+            response = JSON.parse(response);
+            document.getElementsByTagName('html')[0].innerHTML = response.msg;
+        }
+        catch (e) {
+            $content.innerHTML += response;
+        }
+        tabs += Math.pow(2, indexNumber);
+        changeTab.call(this, indexNumber);
+    }
+    function activateTabError() {
+        // error TODO implement it
+    }
+    /**
+     *  Allow to click on TDs and THs
+     * (and LABELs for custom checkboxes and custom radio buttons) instead of directly on checkboxes
+     */
+    function triggerCheckbox(evt) {
+        // We ensure us that it is really a checkbox
+        if ('TD' !== evt.target.tagName
+            && 'TH' !== evt.target.tagName
+            && 'LABEL' !== evt.target.tagName)
+            return false;
+        // Triggers an event that checks / unchecks all the checkboxes
+        var event = document.createEvent('HTMLEvents');
+        event.initEvent(evt.type, true, false);
+        evt.target.children[0].dispatchEvent(event);
+        // Check / uncheck the 'all' checkbox. Acts here like a XOR, LABEL => checked, TD => !checked
+        // because of different behaviours depending on whether we click on the TD or the LABEL
+        evt.target.children[0].checked =
+            ('TD' === evt.target.tagName || 'TH' === evt.target.tagName)
+                !== evt.target.children[0].checked;
+    }
+    /**
+     * Select/Deselect all the related checkboxes
+     */
+    function selectAll(evt) {
+        if (evt.target.nodeName === 'TH') {
+            var $checkAll = evt.target.querySelector('input[type=checkbox]');
+            $checkAll.checked = !$checkAll.checked;
+        }
+        [].map.call(evt.target.closest('table').querySelectorAll('input[type=checkbox]:not(._select-all)'), function (e) { e.checked = !e.checked; });
+    }
+    /**
+     * Make a check before launching a CRUD function via AJAX
+     */
+    function beforeAction(text, callback) {
+        var content = document.getElementById('content').querySelector('table'), checkboxesChecked = content.querySelectorAll('input[type=checkbox]:checked');
+        if (0 === checkboxesChecked.length) {
+            notif.run(content[0], 'Nothing was selected !', 'WARNING', notif.WARNING, 10000);
+            return false;
+        }
+        if (true === confirm('Do you really want to validate all the changes ?')) {
+            checkboxesChecked.closest('tr').each(function iterateTR() {
+                callback.call(this, content);
+            });
+        }
+    }
+    /**
+     * @param evt
+     */
+    function delegateMouseUpEvent(evt) {
+        // if we have a link then we get his parent LI in order to use the same markup in any case
+        var that = evt.target, parentElement = that.parentElement;
+        if (parentElement.classList.contains('tab') === true)
+            that = parentElement;
+        // if we don't clicked on a menu element then we return...
+        if (false === toolsBase.matches(that, 'li.tab'))
+            return;
+        // otherwise we change the page by activating the tab
+        activateTab.call(that);
+    }
+    /**
+     * Translation of index() from jQuery with an added filter.
+     *
+     * @param element
+     *
+     * @returns {number}
+     */
+    function index(element, filter) {
+        var sib = element.parentNode.childNodes, n = 0;
+        for (var i = 0, len = sib.length; i < len; i++) {
+            if (sib[i] === element)
+                return n;
+            if (sib[i].nodeType === 1
+                && (filter === undefined
+                    || true === toolsBase.matches(sib[i], filter)))
+                ++n;
+        }
+        return -1;
+    }
+    function pageReady() {
+        // caching
+        $menus = document.getElementById('menus');
+        tabs = Math.pow(2, index(document.getElementsByClassName('active-tab')[0]));
+        $content = document.getElementById('content');
+        // Events
+        window.addEventListener('popstate', updateURL);
+        $menus.addEventListener('mouseup', delegateMouseUpEvent);
+    }
+    'loading' !== document.readyState
+        ? pageReady()
+        : document.addEventListener('DOMContentLoaded', pageReady);
+    var dummy = {
+        $menus: $menus,
+        beforeAction: beforeAction,
+        selectAll: selectAll,
+        triggerCheckbox: triggerCheckbox
+    };
+    return dummy;
 })(document);
+//# sourceMappingURL=backend.js.map

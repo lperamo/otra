@@ -6,9 +6,9 @@
 
 namespace bundles\CMS\backend\controllers\index;
 
+use bundles\CMS\models\{Footer, Header};
 use lib\myLibs\{Controller, bdd\Sql, Router};
-use \bundles\CMS\models\{Header, Footer};
-use \bundles\CMS\services\backendService;
+use bundles\CMS\services\backendService;
 
 class indexAction extends Controller
 {

@@ -16,7 +16,7 @@ define('LOADED_DEBUG_PAD', 80);
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
   // Beginning of content
-  $contentToAdd = ('<?' === substr($contentToAdd, 0, 2))
+  $contentToAdd = '<?' === substr($contentToAdd, 0, 2)
     ? substr($contentToAdd, 2)
     : '?>' . $contentToAdd;
 
@@ -34,7 +34,7 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
  */
 function hasSyntaxErrors(string $file) : bool
 {
-  exec('php -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
+  exec($_SERVER['_'] . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
   $sortie = implode(PHP_EOL, $output);
 
   if(strlen($sortie) > 6 && false !== strpos($sortie, 'pars', 7))
@@ -261,7 +261,7 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
  */
 function showFile(int &$level, string &$file, string $otherText = ' first file')
 {
-  if (1 === VERBOSE)
+  if (0 < VERBOSE)
     echo str_pad(str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH), ANNOTATION_DEBUG_PAD, '.', STR_PAD_RIGHT), brownText($otherText), PHP_EOL;
 }
 
@@ -374,9 +374,9 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
 
   if (false !== strpos($match, 'require') &&
     0 !== substr_count($match, ')') % 2 &&
-    ';' === substr($contentToAdd, -1))
+    ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
-    $contentToAdd = substr_replace($contentToAdd, '', -1, 1);
+    $contentToAdd = substr_replace($contentToAdd, '', -4);
     $lengthToChange = strrpos($match, ')');
   } else
   {
@@ -446,7 +446,6 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
     if (false !== strpos($trimmedMatch, 'require'))
     {
-
       list($tempFile, $isTemplate) = getFileInfoFromRequireMatch($trimmedMatch, $file);
 
       /* we make an exception for this particular require statement because

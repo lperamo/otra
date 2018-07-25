@@ -1,9 +1,9 @@
-<tabContent id="tab0">
+<tab-content id="tab0" class="active-tab">
   <nav>
     <ul id="module-tabs" class="menus module-0__menus" role="tablist">
       <li id="modules-mgt" class="tab active-tab center" role="presentation" data-tooltip="Modules management" data-href="/backend/ajax/modules/search/module?search=" data-fn="replaceModulesContent"><?= t('Modules'); ?>
-      <li id="elements-mgt" class="tab center" role="presentation" data-tooltip="Elements management" data-href="/backend/ajax/modules/search/elements?search=" data-fn="replaceElementsContent"><?= t('Elements'); ?>
-      <li id="articles-mgt" class="tab center" role="presentation" data-tooltip="Articles Management" data-href="/backend/ajax/modules/search/articles?search=" data-fn="replaceArticlesContent"><?= t('Articles'); ?>
+      <li id="elements-mgt" class="tab center" role="presentation" data-tooltip="Elements management" data-href="/backend/ajax/modules/search/element?search=" data-fn="replaceElementsContent"><?= t('Elements'); ?>
+      <li id="articles-mgt" class="tab center" role="presentation" data-tooltip="Articles Management" data-href="/backend/ajax/modules/search/article?search=" data-fn="replaceArticlesContent"><?= t('Articles'); ?>
     </ul>
   </nav>
 	<input type="search" id="module-search" role="search" placeholder="<?= t('Search by module') ?>" class="input _generic-search" data-href="/backend/ajax/modules/search/module" data-fn="replaceModulesContent">
@@ -14,4 +14,4 @@
 	<table id="table0" role="tabpanel">
 			<? require __DIR__ . '/modulesPartial.phtml'; ?>
 	</table>
-</tabContent>
+</tab-content>

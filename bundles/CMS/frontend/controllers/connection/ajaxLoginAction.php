@@ -1,8 +1,8 @@
 <?
 namespace bundles\CMS\frontend\controllers\connection;
 
-use \lib\myLibs\{Controller, bdd\Sql, Lionel_Exception};
-use \bundles\CMS\models\User;
+use bundles\CMS\models\User;
+use lib\myLibs\{ bdd\Sql, Controller, Lionel_Exception, Router };
 
 /**
  * LPCMS - Frontend - Connection - AjaxLogin
@@ -40,12 +40,16 @@ class ajaxLoginAction extends Controller
       return;
     }
 
-    $_SESSION['sid'] = [
+    $_SESSION['sid'] =
+    [
       'uid' => $infosUser['id_user'],
       'role' => $infosUser['fk_id_role']
     ];
 
-    echo '{"status": 1}';
+    echo '{"status": 1, "url": "' . Router::getRouteUrl(isset($_SESSION['previousRoute']) === true
+      ? $_SESSION['previousRoute']
+      : 'backendModules') .
+      '"}';
   }
 }
 ?>

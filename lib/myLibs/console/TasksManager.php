@@ -22,27 +22,13 @@ class TasksManager
 
     $methods = get_class_methods('lib\myLibs\console\Tasks');
 
-    foreach ($methods as $method)
+    foreach ($methods as &$method)
     {
       if (false === strpos($method, 'Desc'))
       {
         $methodDesc = $method . 'Desc';
         $paramsDesc = Tasks::$methodDesc();
         echo lightGray(), '- ', white(), str_pad($method, 25, ' '), lightGray(), ': ', cyan(), $paramsDesc[0], PHP_EOL;
-
-        // If we have parameters for this command, displays them
-        if (isset($paramsDesc[1]))
-        {
-          $i = 0;
-          foreach ($paramsDesc[1] as $parameter => $paramDesc)
-          {
-            // + parameter : (required|optional) Description
-            echo lightCyan(), '   + ', str_pad($parameter, 22, ' '), lightGray();
-            echo ': ', lightCyan(), '(', $paramsDesc[2][$i], ') ', cyan(), $paramDesc, PHP_EOL;
-            ++$i;
-          }
-        }
-        echo PHP_EOL;
       }
     }
     echo endColor();
@@ -60,10 +46,14 @@ class TasksManager
 
     try
     {
-      if(false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
+      if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
       {
         echo yellowText('We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...'), PHP_EOL;
         Tasks::genClassMap();
+
+        // If the task was genClassMap...then we have nothing left to do !
+        if ($task === 'genClassMap')
+          exit(0);
       }
 
       require_once BASE_PATH . 'cache/php/ClassMap.php';
@@ -71,9 +61,10 @@ class TasksManager
       Tasks::$task($argv);
     } catch(\Exception $e)
     {
-      echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
-        ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
-        : $e->getMessage();
+      if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
+        echo '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}';
+
+      // no need for $e->getMessage if it's not the case ? i believe in this case $e->getMessage() is already used
 
       return;
     }

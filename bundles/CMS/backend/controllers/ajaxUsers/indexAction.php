@@ -8,7 +8,7 @@
 namespace bundles\CMS\backend\controllers\ajaxUsers;
 
 use lib\myLibs\Controller;
-use \bundles\CMS\services\{backendService, usersService};
+use bundles\CMS\services\{backendService, usersService};
 
 class indexAction extends Controller
 {

@@ -48,7 +48,7 @@ class Controller extends MasterController
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
+    $templateFile = true === $viewPath ? $this->viewPath . $file : $file;
 
     if (false === file_exists($templateFile))
     {
@@ -58,18 +58,20 @@ class Controller extends MasterController
     }
 
     // If we already have the template in memory and that it's not empty then we show it
-    self::$cache_used = isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
+    self::$cache_used = true === isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
     if (true === $ajax)
       self::$ajax = $ajax;
 
+    // If we already have the file in 'cache memory' then we serve it
     if (true === self::$cache_used)
       parent::$template = self::$rendered[$templateFile];
-    else
+    else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
       $cachedFile = parent::getCacheFileName($templateFile);
-      parent::$template = (!parent::getCachedFile($cachedFile)) ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
-                                                                : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
+      parent::$template = (false === parent::getCachedFile($cachedFile))
+        ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
+        : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
     return parent::$template;
@@ -80,7 +82,7 @@ class Controller extends MasterController
    * @param string $templateFilename
    * @param array  $variables  Variables to pass to the template
    * @param string $cachedFile The cache file name version of the file
-   * @param bool   $layout     If we add a layout or not
+   * @param bool   $layout     If we add a layout stored previously or not
    *
    * @return mixed|string
    */
@@ -89,18 +91,21 @@ class Controller extends MasterController
     extract($variables);
     ob_start();
     require $templateFilename;
-
     $content = $layout ? self::addLayout(ob_get_clean()) : ob_get_clean();
 
     $routeV = $this->route . VERSION;
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><',
-      (!$layout) ? str_replace('/title>', '/title>', $content)
-                 : (self::$ajax
-                   ? str_replace('/title>', '/title>'. $this->addCss($routeV), $content . $this->addJs($routeV))
-                   : $this->addCss($routeV) . $content . $this->addJs($routeV))
-                 ); // suppress useless spaces
+      ($layout === true)
+        ? false === self::$ajax
+        ? str_replace(
+          '/title>',
+          '/title>'. self::addCss($routeV),
+          $content . self::addJs($routeV))
+        : self::addCss($routeV) . $content . self::addJs($routeV)
+        : $content
+    ); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];

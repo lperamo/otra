@@ -39,16 +39,17 @@ class Pdomysql
    * @param string $query SQL query.
    *                      The query string should not end with a semicolon. Data inside the query should be properly escaped.
    * @param        $link_identifier
-   * @return bool|resource Returns a resource on success, or false on error
+   *
+   * @return resource Returns a resource on success, otherwise an exception is raised
+   *
    * @throws Lionel_Exception
    * @link http://php.net/manual/en/function.mysql-query.php
    */
   //public static function query($query, $link_identifier)
-  public static function query($query, $link_identifier)
+  public static function query($query)
   {
     $result = Sql::$_CURRENT_CONN->query($query);
 
-    //if (!$result = mysql_query($query, $link_identifier))
     if (false === $result)
     {
       $errorInfo = Sql::$_CURRENT_CONN->errorInfo();

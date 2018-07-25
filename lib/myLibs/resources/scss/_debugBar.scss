@@ -1,0 +1,151 @@
+.dbg- {
+  &fl { float : left }
+  &fr { float : right }
+
+  &bar {
+    // background
+    background : rgba(67, 67, 67, 0.8);
+    box-shadow : 0 0 10px rgba(67, 67, 67, 0.8), 0 0 10px 0 #000;
+
+    // box
+    margin-bottom : 7px;
+    padding       : 5px 5px 8px;
+
+    // text
+    color       : #eee;
+    font-family : $debug--font;
+    text-shadow : 0 0 3px $debug--text-shadow-color;
+  }
+
+  &on {
+    color       : $debug--on-color;
+    text-shadow : 0 0 3px $debug--on-text-shadow-color
+  }
+
+  &off {
+    color       : $debug--off-color;
+    text-shadow : 0 0 3px $debug--off-text-shadow-color;
+  }
+
+  &bar-xs {
+    // background
+    background : linear-gradient(#B8CDFF 0%, #D6D6FF 45%, #B8BEFF 100%);
+    border-top : solid #ddd 1px;
+    box-shadow : 0 0 6px #fff, 0 0 6px #645eea, 0 0 6px #645eea;
+    display    : none;
+    opacity    : 0.8;
+
+    // box
+    padding : 5px;
+
+    // positionining
+    float : right;
+  }
+
+  &btn:active {
+    box-shadow : 0 0 25px #fff inset;
+    position   : relative;
+    top        : 1px
+  }
+
+  &left-block { width : calc(100% - 60px) }
+
+  &file {
+    color       : $debug--file-color;
+    text-shadow : 0 0 3px $debug--file-text-shadow-color;
+  }
+
+  &line {
+    color       : $debug--line-color;
+    text-shadow : 0 0 3px $debug--line-text-shadow-color;
+  }
+
+  &sql-logs {
+
+    &::selection { background: $debug--logs-selection-color; }
+    &::-moz-selection { background: $debug--logs-selection-color; }
+
+    & > div {
+      // background
+      background : $debug--sql-logs-background-color;
+      box-shadow : 0 0 2px 0 #aaa;
+
+      // box
+      margin     : 0 5px 5px 0;
+      padding    : 5px;
+      width      : calc(100% - 5px);
+
+      // positioning
+      clear      : both;
+      display    : inline-block;
+
+      &:hover { background: $debug--sql-logs-background-hover-color; }
+    }
+  }
+}
+
+.dbg-btn,
+.profiler .lb-btn {
+  // animation
+  transition : color .2s, text-shadow .2s;
+
+  // background
+  background    : none repeat scroll 0 0 $debug--background-color;
+  border        : 1px solid $debug--border-color;
+  border-radius : 4px;
+  box-shadow    : none;
+
+  // box
+  height  : auto;
+  padding : 5px;
+  display : inline-block;
+
+  // text
+  color       : $debug-buttons-color;
+  font-weight : 400;
+  text-shadow : none;
+
+  // others
+  cursor     : pointer;
+
+
+
+  &:hover {
+    color       : $debug--hover-color;
+    text-shadow : 0 0 2px #7ac;
+  }
+}
+
+.toggle,
+.toggle-small {
+  // positioning
+  float        : right;
+  margin-right : 10px;
+  transition   : .25s;
+
+  // text
+  color        : $debug--toggle-color;
+  text-shadow  : 0 0 1px $debug--toggle-text-shadow-color;
+
+  // others
+  cursor       : pointer;
+
+  &:hover {
+    @include debugToggleHoverTextShadow;
+  }
+}
+
+.div-error {
+  // background
+  background : $debug-error-background-color;
+
+  // box
+  height : 100%;
+  width  : 100%;
+
+  // positioning
+  position : absolute;
+  top      : 0;
+}
+
+.profiler { padding : 1em }

@@ -13,7 +13,9 @@ class generalAction extends Controller
 {
   public function generalAction()
   {
-    backendService::checkConnection($this->action);
+    if (backendService::checkConnection($this->route) === false)
+      return false;
+
     echo $this->renderView('general.phtml', configService::getConfigTab());
   }
 }

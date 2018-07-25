@@ -81,12 +81,12 @@ class Lionel_Exception extends \Exception
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
     return $renderController->renderView('/exception.phtml', [
-      'message' => $this->message,
-      'code' => $code,
-      'file' => substr($this->file, strlen(BASE_PATH)),
-      'line' => $this->line,
-      'context' => $this->context,
-      'backtraces' => $this->getTrace()
+        'message' => $this->message,
+        'code' => $code,
+        'file' => substr($this->file, strlen(BASE_PATH)),
+        'line' => $this->line,
+        'context' => $this->context,
+        'backtraces' => $this->getTrace()
       ]
     );
   }
@@ -108,7 +108,15 @@ class Lionel_Exception extends \Exception
     $this->code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     $this->message = preg_replace('/\<br\s*\/?\>/i', '', $this->message);
 
-    LionelExceptionCLI::showMessage($this);
+    // If there is no ClassMap.php, we cannot use the 'use' statement
+    // so we are forced to use a 'require_once' statement
+    if (true === class_exists('lib\myLibs\console\LionelExceptionCLI'))
+      LionelExceptionCLI::showMessage($this);
+    else
+    {
+      require_once BASE_PATH . 'lib/myLibs/console/LionelExceptionCLI.php';
+      LionelExceptionCLI::showMessage($this);
+    }
 //    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
   }
 }

@@ -52,10 +52,10 @@ foreach(array_keys($routes) as &$route)
 
   ++$key;
 
-  if (isset($routes[$route]['resources']['template']))
+  if (true === isset($routes[$route]['resources']['template']))
     echo white() . str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . cyan() . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . white(), 94, '=', STR_PAD_BOTH), endColor(), PHP_EOL;
   else
-    passthru('php ' . CORE_PATH . 'console/OneBootstrap.php ' . $verbose . ' ' . $route);
+    passthru($_SERVER['_'] . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
 }
 
 // Final specific management for routes files
@@ -64,11 +64,12 @@ echo 'Create the specific routes management file... ';
 //require BASE_PATH . 'config/All_Config.php';
 
 define(
-'PATH_CONSTANTS',
-[
-  'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-  'driver' => config\All_Config::$dbConnections[key(config\All_Config::$dbConnections)]['driver']
-]);
+  'PATH_CONSTANTS',
+  [
+    'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+    'driver' => \config\All_Config::$dbConnections[key(\config\All_Config::$dbConnections)]['driver']
+  ]
+);
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 

@@ -1,52 +1,50 @@
-(function(d)
-{
-	'use strict';
-
-	var matches = function matches(el, selector)
-	{
-		el = el[0];
-	  return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
-	},
-		baseUrl = location.protocol + '//' + location.hostname + (location.port && ':' + location.port),
-		changeArticle = function changeArticle()
-		{
-			if(window.location.href != baseUrl + this.dataset.href)
-			{
-				history.pushState(null, 'Welcome to the LPCMS -' + this.title, this.dataset.href);
-				$.get(
-					this.dataset.href.replace('article', 'ajaxArticle'),
-					function(response) { $('#article1').html(response) }
-				)
-			}
-		};
-
-	window.onload = function myOnload()
-	{
-		// Protection against console.log IE problems
-		if (false === window.console)
-			window.console = {log:function(){}};
-
-		var html = d.getElementsByTagName('html');
-
-		if (false === matches(html, '.cli') && true === matches(html, '.ie6, .ie7, .ie8'))
-		{
-			var xmlhttp;
-
-	    xmlhttp = (window.XMLHttpRequest)
-        ? new XMLHttpRequest() // code for IE7+, Firefox, Chrome, Opera, Safari
-	    	: new ActiveXObject('Microsoft.XMLHTTP'); // code for IE6, IE5
-
-	    xmlhttp.onreadystatechange = function() {
-        if (4 === xmlhttp.readyState && 200 === xmlhttp.status) {
-          d.body.innerHTML += xmlhttp.responseText;
-          d.getElementById('container').className += ' animate'
+(function (d, window) {
+    'use strict';
+    var baseUrl = location.protocol + '//' + location.hostname + (location.port && ':' + location.port), boolMenuH = false;
+    function changeArticle(response) {
+        document.getElementsByClassName('article1')[0].innerHTML = response;
+        boolMenuH = false;
+    }
+    /** Avoids to block the menu if there is any error */
+    function menuErrorCallback() { boolMenuH = false; }
+    /**
+     * Fetch the article and shows it.
+     *
+     * @param {Event} evt
+     */
+    function fetchArticle(evt) {
+        if (false === toolsBase.matches(evt.target, 'li.menu-h-li, .header-title'))
+            return;
+        if (true === boolMenuH)
+            return;
+        boolMenuH = true;
+        if (window.location.href !== baseUrl + evt.target.dataset.href) {
+            history.pushState(null, 'Welcome to the LPCMS -' + evt.target.title, evt.target.dataset.href);
+            toolsBase.fetch({
+                callback: changeArticle,
+                errorCallback: menuErrorCallback,
+                href: evt.target.dataset.href.replace('article', 'ajaxArticle')
+            });
         }
-	    }
-
-	    xmlhttp.open('GET', '/bundles/CMS/views/jsTpls/deprecatedBrowser.phtml', true);
-	    xmlhttp.send();
-		}
-
-		//$('#headerTitle, .menuHLi').click(this, changeArticle)
-	};
-})(document);
+    }
+    function animateDeprecated(xmlhttp) {
+        if (4 === xmlhttp.readyState && 200 === xmlhttp.status) {
+            d.body.innerHTML += xmlhttp.responseText;
+            d.getElementById('container').className += ' animate';
+        }
+    }
+    function pageReady() {
+        var html = d.getElementsByTagName('html')[0];
+        if (false === toolsBase.matches(html, '.cli') && true === toolsBase.matches(html, '.ie6, .ie7, .ie8')) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = animateDeprecated.bind(this, xmlhttp);
+            xmlhttp.open('GET', '/bundles/CMS/views/jsTpls/deprecatedBrowser.phtml', true);
+            xmlhttp.send();
+        }
+        document.getElementsByClassName('main-frame')[0].addEventListener('mouseup', fetchArticle);
+    }
+    'loading' !== document.readyState
+        ? pageReady()
+        : document.addEventListener('DOMContentLoaded', pageReady);
+})(document, window);
+//# sourceMappingURL=main.js.map

@@ -1,7 +1,7 @@
 <thead>
 <tr>
   <th>
-    <input id="modules_all" class="_selectAll noLabel" type="checkbox">
+    <input id="modules_all" class="_select-all no-label" type="checkbox">
     <label for="modules_all"></label>
   </th>
   <th><?= t('Content') ?></th>
@@ -17,7 +17,7 @@ foreach($items as $item)
 {?>
   <tr>
     <td>
-      <input type="checkbox" id="element_<?= $item['id'] ?>" class="noLabel"><!-- change THAT WITH A CORRECT ID !!! -->
+      <input type="checkbox" id="element_<?= $item['id'] ?>" class="no-label"><!-- change THAT WITH A CORRECT ID !!! -->
       <label for="element_<?= $item['id'] ?>"></label><!-- SAME HERE -->
     </td>
     <td><?= $item['contenu'] ?></td>

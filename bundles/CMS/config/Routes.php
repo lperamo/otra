@@ -5,8 +5,8 @@ return [
     'chunks' => ['/article/show', 'CMS', 'frontend', 'article', 'showAction'],
     'resources' => [
       'template' => true,
-      'bundle_css' => ['header', 'Footer', 'generic', 'main', 'form'],
-      'bundle_js' => ['jquery', 'main', 'connection']
+      'bundle_css' => ['showArticle'],
+      'bundle_js' => ['base', 'main', 'connection']
     ],
   ],
   'logout' => [
@@ -30,19 +30,12 @@ return [
     'resources' => [
       '_js' => ['modules'],
       '_css' => ['modules'],
-      'bundle_css' => ['generic', 'interface', 'form', 'checkbox'],
-      'bundle_js' => ['jquery', 'backend']
+      'bundle_css' => ['backendModules'],
+      'bundle_js' => ['base', 'backend']
     ],
     'session' => ['sid' => '1']
   ],
 
-  'backendAjaxModules' => [
-    'chunks' => ['/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction'],
-    'resources' => [
-      '_css' => ['modules'],
-      '_js' => ['modules']
-    ]
-  ],
   'moduleSearch' => [
     'chunks' => ['/backend/ajax/modules/search/module', 'CMS', 'backend', 'ajaxModules', 'searchModuleAction'],
     'get' => ['search' => '']
@@ -59,15 +52,23 @@ return [
     'chunks' => ['/backend/ajax/modules/get/elements', 'CMS', 'backend', 'ajaxModules', 'getElementsAction']
   ],
 
+  'backendAjaxModules' => [
+    'chunks' => ['/backend/ajax/modules', 'CMS', 'backend', 'ajaxModules', 'indexAction'],
+    'resources' => [
+      '_css' => ['modules'],
+      '_js' => ['modules']
+    ]
+  ],
+
   // -----------
 
   'backendGeneral' => [
     'chunks' => ['/backend/general', 'CMS', 'backend', 'index', 'generalAction'],
     'resources' => [
       '_css' => ['general'],
-      'bundle_css' => ['generic', 'interface', 'form', 'checkbox', 'radio'],
+      'bundle_css' => ['backendGeneral'],
       '_js' => ['general'],
-      'bundle_js' => ['jquery', 'backend']
+      'bundle_js' => ['base', 'backend']
     ]
   ],
   'backendAjaxGeneral' => [
@@ -80,8 +81,8 @@ return [
   'backendStats' => [
     'chunks' => ['/backend/stats', 'CMS', 'backend', 'index', 'statsAction'],
     'resources' => [
-      'bundle_css' => ['generic', 'interface', 'form'],
-      'bundle_js' => ['jquery','backend']
+      'bundle_css' => ['backendStats'],
+      'bundle_js' => ['base', 'backend']
     ]
   ],
 
@@ -90,10 +91,10 @@ return [
     'chunks' => ['/backend/users', 'CMS', 'backend', 'index', 'usersAction'],
     'resources' => [
       '_css' => ['users'],
-      'bundle_css' => ['generic', 'interface', 'form', 'notifications', 'checkbox'],
+      'bundle_css' => ['backendUsers'],
       'core_css' => ['lightbox'],
       '_js' => ['_5'=>'users'],
-      'bundle_js' => ['jquery', 'backend', 'form', 'notifications'],
+      'bundle_js' => ['base', 'backend', 'form', 'notifications'],
       'core_js' => ['_4' => 'lightbox']
     ]
   ],
@@ -138,16 +139,16 @@ return [
     'chunks' => ['/backend', 'CMS', 'backend', 'index', 'indexAction'],
     'resources' => [
       'template' => true,
-      'bundle_css' => ['header', 'footer', 'generic', 'main', 'form'],
-      'bundle_js' => ['jquery', 'main', 'connection']
+      'bundle_css' => ['showArticle'],
+      'bundle_js' => ['base', 'main', 'connection']
     ]
   ],
   'index' => [
     'chunks' => ['/', 'CMS', 'frontend', 'article', 'showAction'],
     'resources' => [
       'template' => true,
-      'bundle_css' => ['header', 'footer', 'generic', 'main', 'form'],
-      'bundle_js' => ['jquery', 'main', 'connection']
+      'bundle_css' => ['showArticle'],
+      'bundle_js' => ['base', 'main', 'connection']
     ]
   ]
 ];

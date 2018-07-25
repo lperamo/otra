@@ -1,87 +1,104 @@
-(function(d, w, undef)
-{
-  "use strict";
-  var __table0 = d.getElementById('table0'),
-      __modulesMgt = d.getElementById('modules-mgt'),
-      __elementsMgt = d.getElementById('elements-mgt'),
-      __articlesMgt = d.getElementById('articles-mgt'),
-      ajaxInit = {
-        method: 'post',
+(function (d, w, undef) {
+    'use strict';
+    var $content, localTable0, localModulesManagement, localElementsManagement, localArticlesManagement, ajaxInit = {
+        credentials: 'same-origin',
         headers: {
-          'Accept': 'application/json, text/plain, */*',
-          "Content-Type": "application/x-www-form-urlencoded"
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
-        credentials: 'same-origin'
-      },
-      s = {
-        replaceModulesContent(data) {
-          changeModuleTab.call(__modulesMgt);
-          __table0.innerHTML = data
+        method: 'post'
+    }, s = {
+        replaceModulesContent: function (data) {
+            localTable0.innerHTML = data;
         },
-
-        checkStatus(response)
-        {
-        console.log('checkStatus');
-        //console.log(response.headers.get("content-type"));
-        //console.log(response.text());
-        console.log(response.ok);
-          if (true !== response.ok)
-          {
-          console.log('test1');
-            response.text().then(text => function()
-            {
-              console.log('test2');
-              d.getElementsByTagName('html')[0].innerHTML = text;
-              console.log('Looks like there was a problem. Status Code: ' + response.status);
-              return
-            });
-          }
-
-          return response.text()
+        replaceElementsContent: function (data) {
+            localTable0.innerHTML = data;
         },
-
-        replaceElementsContent(data)
-        {
-          changeModuleTab.call(__elementsMgt);
-          __table0.innerHTML = data
-        },
-
-        replaceArticlesContent(data)
-        {
-          changeModuleTab.call(__articlesMgt);
-          __table0.innerHTML = data
+        replaceArticlesContent: function (data) {
+            localTable0.innerHTML = data;
         }
-      };
-
-      function moduleSearch(e)
-      {
-        if(13 === e.which)
-          w.fetch(this.dataset.href, { search: this.value }).then(s.checkStatus).then(s[this.dataset.fn])
-      }
-
-      function getElements()
-      {
-        w.fetch('/backend/ajax/modules/get/elements', { id: this.dataset.id}).then(s.checkStatus).then(function(){
-          console.log('coucou')
-        })
-      }
-
-      function changeModuleTab(evt)
-      {
-        console.log('changeModuleTab');
-        $('.active-tab', '#content').removeClass('active-tab');
-        this.classList.add('active-tab');
-
-        if(undef !== evt)
-          w.fetch(new Request(this.dataset.href, ajaxInit)).then(s.checkStatus).then(s[this.dataset.fn])
-      }
-
-  $(function()
-  {
-    $('#content').on('keyup', '._generic-search', moduleSearch)
-                 .on('mouseup', '.see-details', getElements)
-                 .on('mouseup', '.tab', changeModuleTab)
-                 .on('mouseup', 'th:nth-child(1), td:nth-child(1)', backend.triggerCheckbox)
-    $('#modules_all').on('mouseup', backend.selectAll);
-  })
-})(document, window)
+    };
+    /**
+     *
+     * @param {MouseEvent} e
+     */
+    function moduleSearch(e) {
+        if (13 === e.which)
+            w.fetch(this.dataset.href, { search: this.value }).then(toolsBase.checkStatus).then(s[this.dataset.fn]);
+    }
+    function getElements() {
+        w.fetch('/backend/ajax/modules/get/elements', { id: this.dataset.id }).then(toolsBase.checkStatus)
+            .then(function () { });
+    }
+    /**
+     * Menu management. (all menus)
+     *
+     * @param {MouseEvent|HTMLElement} evt
+     */
+    function changeModuleTab(evt) {
+        var that;
+        if (evt.target === undef)
+            that = evt;
+        else
+            that = (evt.target.nodeName === 'LI') ? evt.target : evt.target.parentElement;
+        that.parentElement.querySelector('li.active-tab').classList.remove('active-tab');
+        that.classList.add('active-tab');
+        // if (undef !== evt)
+        w.fetch(new Request(that.dataset.href, ajaxInit))
+            .then(toolsBase.checkStatus)
+            .then(s[that.dataset.fn]);
+    }
+    /**
+     *
+     * @param {KeyboardEvent} evt
+     */
+    function delegateKeyUpEvents(evt) {
+        if (false === toolsBase.matches(evt.target, 'input._generic-search'))
+            return;
+        moduleSearch.call(this, evt);
+    }
+    /**
+     *
+     * @param {MouseEvent} evt
+     */
+    function delegateMouseUpEvents(evt) {
+        if (false === toolsBase.matches(evt.target, 'a.see-details, li.tab, th:nth-child(1), td:nth-child(1), label[for=modules-all]'))
+            return;
+        if (true === toolsBase.matches(evt.target, 'a.see-details'))
+            getElements.call(this, evt);
+        if (true === toolsBase.matches(evt.target, 'li.tab'))
+            changeModuleTab.call(this, evt);
+        if (true === toolsBase.matches(evt.target, 'td:nth-child(1)'))
+            backend.triggerCheckbox.call(this, evt);
+        if (true === toolsBase.matches(evt.target, 'th:nth-child(1), label[for=modules-all]'))
+            backend.selectAll.call(this, evt);
+    }
+    /**
+     *
+     * @param {MouseEvent} evt
+     */
+    function delegateMouseUpEventsForMenu(evt) {
+        if (false === toolsBase.matches(evt.target, 'a, li.tab'))
+            return;
+        if (true === toolsBase.matches(evt.target, 'a, li.tab'))
+            changeModuleTab.call(this, evt);
+    }
+    function pageReady() {
+        /** CACHING */
+        if (backend.$menus === undefined)
+            backend.$menus = document.getElementById('menus');
+        $content = document.getElementById('content');
+        localTable0 = d.getElementById('table0');
+        localModulesManagement = d.getElementById('modules-mgt');
+        localElementsManagement = d.getElementById('elements-mgt');
+        localArticlesManagement = d.getElementById('articles-mgt');
+        /** EVENTS */
+        $content.addEventListener('keyup', delegateKeyUpEvents);
+        $content.addEventListener('mouseup', delegateMouseUpEvents);
+        backend.$menus.addEventListener('mouseup', delegateMouseUpEventsForMenu);
+    }
+    'loading' !== document.readyState
+        ? pageReady()
+        : document.addEventListener('DOMContentLoaded', pageReady);
+})(document, window, undefined);
+//# sourceMappingURL=modules.js.map

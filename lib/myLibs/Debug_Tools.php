@@ -9,15 +9,36 @@ function lg(string $message)
 }
 
 /**
- * A nice dump function that takes as much parameters as we want to put. Somewhat disables XDebug.
+ * A nice dump function that takes as much parameters as we want to put.
+ * Somewhat disables XDebug if some parameters are true.
+ *
+ * @param bool $maxData     Affects the maximum string length that is shown when variables are displayed
+ * @param bool $maxChildren Affects the amount of array children and object's properties are shown
+ *                          when variables are displayed
+ * @param array ...$args
  */
-function dump()
-{
-  $oldXDebug = ini_get('xdebug.var_display_max_data');
-  ini_set('xdebug.var_display_max_data', -1);
 
-	call_user_func_array('dumpSmall', func_get_args());
-  ini_set('xdebug.var_display_max_data', $oldXDebug);
+function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
+{
+  if (true === $maxData)
+  {
+    $oldXDebugMaxData = ini_get('xdebug.var_display_max_data');
+    ini_set('xdebug.var_display_max_data', -1);
+  }
+
+  if (true === $maxChildren)
+  {
+    $oldXDebugMaxChildren = ini_get('xdebug.var_display_max_children');
+    ini_set('xdebug.var_display_max_children', -1);
+  }
+
+  call_user_func_array('dumpSmall', $args);
+
+  if (true === $maxData)
+    ini_set('xdebug.var_display_max_data', $oldXDebugMaxData);
+
+  if (true === $maxChildren)
+    ini_set('xdebug.var_display_max_children', $oldXDebugMaxChildren);
 }
 
 /**
