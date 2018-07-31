@@ -1,9 +1,10 @@
 <?
 define('PATTERN', '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
-        (?:(?<!//\\s)extends\s[^\{]{1,})\s{0,}
+        (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
+        (?:renderView\s{0,}\([^\),]{1,})
         @mx');
-        // a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
+// a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
 define('ANNOTATION_DEBUG_PAD', 80);
 define('LOADED_DEBUG_PAD', 80);
@@ -25,6 +26,8 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
     $contentToAdd = substr($contentToAdd, 0, -2);
   else
     $contentToAdd .= '<?';
+
+  return '<?' === substr($contentToAdd, 0, 2);
 }
 
 /**
@@ -56,8 +59,8 @@ function hasSyntaxErrors(string $file) : bool
 function compressPHPFile(string $fileToCompress, string $outputFile)
 {
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-   file_put_contents($outputFile . '.php', rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
-//  file_put_contents($outputFile . '.php', file_get_contents($fileToCompress));
+  //file_put_contents($outputFile . '.php', rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
+  file_put_contents($outputFile . '.php', file_get_contents($fileToCompress));
   unlink($fileToCompress);
 }
 
@@ -111,7 +114,23 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
 
   // dealing with / at the beginning of the use
   if (false === isset(CLASSMAP[$class]))
-    $class = substr($class, 1);
+  {
+    if ('/' === substr($class, 1))
+      $class = substr($class, 1);
+    else
+    {
+      // It can be a SwiftMailer class for example.
+      /**
+       * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation style like
+       * use test/
+       * {
+       *  class/test,
+       *  class/test2
+       * } */
+      echo brownText('EXTERNAL LIBRARY CLASS : ' . $class), PHP_EOL;
+      return ;
+    }
+  }
 
   $tempFile = CLASSMAP[$class];
 
@@ -418,7 +437,16 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 
   // then we can easily extract the namespace (10 = strlen('namespace'))
   // and concatenates it with a '\' and the class to get our file name
-  return CLASSMAP[substr($tempContent, 10, strpos($tempContent, ';') - 10) . '\\' . $class];
+  $newClass = substr($tempContent, 10, strpos($tempContent, ';') - 10) . '\\' . $class;
+
+  if (isset(CLASSMAP[$newClass]) === false)
+  {
+    echo brown(), 'Notice : Please check if you use a class ', cyan(), $class, brown(), ' in this file that you don\'t include and fix it ! Maybe it\'s only in a comment though.', endColor(), PHP_EOL;
+
+    return false;
+  }
+
+  return CLASSMAP[$newClass];
 }
 
 /**
@@ -453,12 +481,21 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
          (so no need to include it because html templates management is not totally functional right now) */
       if (false === $isTemplate) // if the file to include is not a template
       {
-        // str_replace to ensure us that the same character is used each time
+        // If we find __DIR__ in the include/require statement then we replace it with the good folder and not the actual folder (...console ^^)
+        $posDir = strpos($tempFile, '__DIR__ .');
+
+        if ($posDir !== false)
+          $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
+
+        // str_replace to ensure us that the same character '/' is used each time
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
+
+        if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
+          echo PHP_EOL, brown(), 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ', $file, endColor(), PHP_EOL;
 
         if (false === file_exists($tempFile))
         {
-          echo redText('There is a problem with ' . $trimmedMatch . ' (' . $tempFile . ' ?) in ' . $file. ' !');
+          echo PHP_EOL, red(), 'There is a problem with ', brown(), $trimmedMatch, red(), ' => ', brown(), $tempFile, red(), ' in ', brown(), $file, red(), ' !', endColor(), PHP_EOL, PHP_EOL;
           exit(1);
         }
 
@@ -470,15 +507,17 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } else /** EXTENDS */
+    } else if(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
     {
-      // Extracts the file name in the extends statement ... (7 = strlen('extends '))
+      // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
 
       // if the class begin by \ then it is a standard class and then we do nothing otherwise we do this ...
       if ('\\' !== $class[0])
         $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, $match[1]);
-      else if (true === in_array($tempFile, $parsedFiles)) // if we already have this class
+//      else if (true === in_array($tempFile, $parsedFiles)) // if we already have this class
+//        $tempFile = false;
+      else
         $tempFile = false;
 
       // If we already have included the class
@@ -486,6 +525,50 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
         continue;
 
       $filesToConcat['php']['extends'][] = $tempFile;
+    } else if(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+    {
+      $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
+
+      // If the template file parameter supplied for renderView method is just a string
+      if ($trimmedMatch[0] === '\'')
+      {
+        $trimmedMatch = substr($trimmedMatch, 1, -1);
+      } else // More complicated...
+      {
+        /** TODO Maybe a case then with an expression, variable or something */
+      }
+
+      $tempDir = '';
+
+      if (file_exists($trimmedMatch) === false)
+      {
+        $tempDir = str_replace('\\', '/', dirname($file));
+
+        if (file_exists($tempDir . $trimmedMatch) === false)
+        {
+          // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
+          $tempDir = realpath($tempDir . '/../../views' . substr($tempDir, strrpos($tempDir, '/'))) . '/';
+
+          if (file_exists($tempDir . $trimmedMatch) === false)
+          {
+            if ($trimmedMatch === '/exception.phtml')
+              $tempDir = CORE_PATH . 'views/' ;
+            else // no ? so where is that file ?
+            {
+              if (strpos($trimmedMatch, 'html') === false)
+              {
+                echo red(), '/!\\ We cannot find the file ', brown(), $trimmedMatch, red(), ' seen in ' . brown(), $file, red(), '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, endColor();
+                die;
+              }
+            }
+          }
+        }
+      }
+
+      //$templateFile = $tempDir . $trimmedMatch;
+
+      //if (in_array($templateFile, $filesToConcat['template']) === false)
+      //  $filesToConcat['template'][] = $templateFile;
     }
 
     // if we have to add a file that we don't have yet...
@@ -521,12 +604,13 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
     'template' => []
   ];
 
+
   $classesFromFile = getFileNamesFromUses($level, $contentToAdd, $filesToConcat, $parsedFiles);
 
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
   getFileInfoFromRequiresAndExtends($contentToAdd, $file, $filesToConcat, $parsedFiles, $classesFromFile);
 
-  processStaticCalls($contentToAdd, $filesToConcat, $parsedFiles, $classesFromFile);
+  processStaticCalls($level, $contentToAdd, $filesToConcat, $parsedFiles, $classesFromFile);
 
   $finalContentParts = [];
 
@@ -562,21 +646,38 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
                 $method = ' via static direct call';
             }
 
+            // If it is a class from an external library (not from the framework)
+            if (false !== strpos($tempFile, 'vendor'))
+            {
+              echo brownText('EXTERNAL LIBRARY : ' . $tempFile), PHP_EOL; // It can be a SwiftMailer class for example
+              unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
+              continue;
+            }
+
+            if ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php')
+            {
+              echo brownText('This file will be already loaded by default for each route : ' . substr($tempFile, strlen(BASE_PATH))), PHP_EOL; // It can be a SwiftMailer class for example
+              unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
+              continue;
+            }
+
             $nextContentToAdd = file_get_contents($tempFile);
 
             // we remove comments to facilitate the search and replace operations that follow
             $nextContentToAdd = preg_replace('@(//.*)|(/\\*(.|\\s)*?\\*/)@', '', $nextContentToAdd);
 
-//            echo $tempFile, PHP_EOL;
-//            echo $nextContentToAdd;
-//            echo PHP_EOL,PHP_EOL,PHP_EOL,PHP_EOL,PHP_EOL,PHP_EOL,PHP_EOL;
-
             $isReturn = false;
 
+            //if (substr($tempFile, strlen(BASE_PATH)) === 'bundles/config/Routes.php')
+            //  echo redText(substr(preg_replace('@\\s@', ' ', $contentToAdd),0, 750)), PHP_EOL;
+            //echo redText(substr($tempFile, strlen(BASE_PATH))), PHP_EOL;
             if ('require' === $inclusionMethod)
             {
+              //if (strpos($tempFile, 'bundles/config/Routes') !== false)
+              //  echo strpos(substr($nextContentToAdd, 3, 9), 'return');
+
               /* if the file has contents that begin by a return statement then we apply a particular process*/
-              if (true === strpos(substr($contentToAdd, 3, 9), 'return'))
+              if (false !== strpos(substr($nextContentToAdd, 3, 9), 'return'))
               {
                 $isReturn = true;
                 processReturn($contentToAdd, $nextContentToAdd, $nextFileOrInfo['match'], $nextFileOrInfo['posMatch']);
@@ -594,6 +695,15 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
         }
       } else // it is a template
       {
+        foreach ($entries as $templateEntry)
+        {
+        //var_dump($templateEntries);die;
+          showFile($level, $templateEntry, ' via renderView');
+          $nextContentToAdd = file_get_contents($templateEntry);
+          ++$inc;
+          assembleFiles($inc, $level, $templateEntry, $nextContentToAdd, $parsedFiles);
+        }
+
 //        foreach($entries as $nextFileOrInfo => $matchesInfo)
 //        {
 //          processTemplate($finalContent, $contentToAdd, $match, $posMatch);
@@ -612,22 +722,28 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
   //  ****** // Either we begin the process, either we return to the roots of the process so ... (DEBUG)
   --$level;
-
+  
   return $finalContent;
 }
 
 /**
  * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
  *
+ * @param int    $level
  * @param string $contentToAdd    Content actually parsed
  * @param array  $filesToConcat   Files to parse after have parsed this one
  * @param array  $parsedFiles     Files already parsed
  * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
-function processStaticCalls(string &$contentToAdd, array &$filesToConcat, array $parsedFiles, array $classesFromFile)
+function processStaticCalls(int $level, string &$contentToAdd, array &$filesToConcat, array $parsedFiles, array $classesFromFile)
 {
-  preg_match_all('@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@', $contentToAdd, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+  preg_match_all(
+    '@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@',
+    $contentToAdd,
+    $matches,
+    PREG_SET_ORDER | PREG_OFFSET_CAPTURE
+  );
 
   $lengthAdjustment = 0;
 
@@ -670,8 +786,15 @@ function processStaticCalls(string &$contentToAdd, array &$filesToConcat, array 
         continue;
     }
 
-    $parsedFiles[] = $newFile;
-    $filesToConcat['php']['static'][] = $newFile;
+    // We add the file found in the use statement only if we don't have it yet
+    if (false === in_array($newFile, $parsedFiles))
+    {
+      $parsedFiles[] = $newFile;
+      $filesToConcat['php']['static'][] = $newFile;
+    } else if (1 < VERBOSE)
+    {
+      showFile($level, $newFile, ' ALREADY PARSED');
+    }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
     $length = strlen($classPath . $classAndFunction);
@@ -689,16 +812,19 @@ function processStaticCalls(string &$contentToAdd, array &$filesToConcat, array 
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
+ * @param $bundle        string
+ * @param $route         string
  * @param $content       string Content to fix
  * @param $verbose       bool
- * @param $fileToInclude mixed Files to merge
+ * @param $fileToInclude mixed  Files to merge
  *
  * @return mixed
  */
 //function fixFiles(&$content, &$verbose, &$filesToConcat = [])
-function fixFiles(string $content, &$verbose, &$fileToInclude = '')
+function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$fileToInclude = '')
 {
-  define('VERBOSE', (int) $verbose);
+  if (defined('VERBOSE') === false)
+    define('VERBOSE', (int) $verbose);
 
   if (0 < VERBOSE)
     define('BASE_PATH_LENGTH', strlen(BASE_PATH));
@@ -748,12 +874,15 @@ function fixFiles(string $content, &$verbose, &$fileToInclude = '')
 
   /* We add the namespace cache\php at the beginning of the file
     then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments like 'becaUSE'
- */
+  */
 
-  return preg_replace(
-    '@\buse\b@', '', ('<?' == substr($finalContent, 0, 2))
-    ? '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . substr($finalContent, 2)
-    : '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ?>' . $finalContent
-  );
+  $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
+  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
+  $patternRemoveUse = '@\buse\b@';
+
+  return '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?' == substr($finalContent, 0, 2)
+      ? preg_replace($patternRemoveUse, '', substr($finalContent, 2))
+      : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)
+    );
 }
 ?>

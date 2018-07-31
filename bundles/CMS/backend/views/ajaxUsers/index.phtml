@@ -1,4 +1,31 @@
-<tabContent id="tab3">
+<?
+$roleTxt = '';
+
+foreach ($roles as &$role)
+{
+  $roleTxt .= '<li class="select-choice" data-value="' . $role['id'] . '">' .
+    $role['nom'] .
+    '</li>';
+}
+
+function roleTxt(array $roles, string $roleTxt)
+{?>
+  <div class="select">
+    <span class="fl input actual-select-value">
+      <a data-value="<?= $roles[0]['id'] ?>" class="actual-select-value__link">
+        <?= $roles[0]['nom'] ?>
+      </a>
+      <span class="fr select-arrow"></span>
+    </span>
+    <div class="clear-both"></div>
+    <ul class="fl select-choices">
+      <?= $roleTxt ?>
+    </ul>
+  </div>
+<?
+} ?>
+
+<tab-content id="tab3" class="active-tab">
 	<table>
 		<thead class="users-header">
 			<tr>
@@ -28,8 +55,10 @@
 					<a role="button" aria-labelledby="<?= t('Previous users'); ?>" id="prev" class="soft-btn circle-border small-btn font-btn paging disabled" data-tooltip="<?= t('Previous users'); ?>">&laquo;</a><!--
 					--><a role="button" aria-labelledby="<?= t('Next users'); ?>" id="next" class="soft-btn circle-border small-btn font-btn paging<? if($count <= $limit) echo ' disabled'; ?>" data-tooltip="<?= t('Next users'); ?>">&raquo;</a>
 					<span id="page-ind" data-realcount="<?= $count ?>" data-actualcount="<?= $count ?>"><?= t('Page'); ?> <span id="current-page">1</span> / <span id="last-page"><?= (0 === $count) ? '1' : ceil($count / $limit) ?></span> (<?= $count . t(' users'); ?>)</span>
-					<div id="limit" class="select" data-first="<?= true === isset($users[0]) ? $users[0]['id_user'] : 'No user' ?>" data-last="<?= true === isset($users[0]) ? $users[count($users) - 1]['id_user'] : 'No user' ?>" >
-			      <span class="fl input actual-select-value" data-tooltip="Users per page">
+					<!-- USERS BY PAGE -->
+					<? $noUser = t('No user'); ?>
+					<div id="limit" class="select" data-first="<?= true === isset($users[0]) ? $users[0]['id_user'] : $noUser ?>" data-last="<?= true === isset($users[0]) ? $users[count($users) - 1]['id_user'] : $noUser ?>" >
+			      <span class="fl input actual-select-value" data-tooltip="<?= t('Users per page') ?>">
 			        <a id="limit-value" class="actual-select-value__link"><?= $limit ?></a>
 			        <span class="fr select-arrow"></span>
 			      </span>
@@ -40,13 +69,50 @@
 			      	<li data-value="10" class="select-choice">10
 		      	</ul>
     			</div>
+    			<!-- END - USERS BY PAGE -->
 					<span role="button" aria-labelledby="<?= t('Add a new user'); ?>" id="add" class="fl soft-btn circle-border small-btn font-btn" data-tooltip="<?= t('Add a new user'); ?>">+</span>
-					<span role="button" aria-labelledby="<?= t('Delete all the selected users !'); ?>"id="del-all" class="fl soft-btn circle-border" data-tooltip="<?= t('Delete all the selected users !'); ?>"></span>
-					<span role="button" aria-labelledby="<?= t('Validate all the selected users !'); ?>"id="users-val-all" class="fl soft-btn validate circle-border" data-tooltip="<?= t('Validate all the selected users !'); ?>"></span>
+					<span role="button" aria-labelledby="<?= t('Delete all the selected users !'); ?>" id="users-del-all" class="fl soft-btn circle-border del-all" data-tooltip="<?= t('Delete all the selected users !'); ?>"></span>
+					<span role="button" aria-labelledby="<?= t('Validate all the selected users !'); ?> "id="users-val-all" class="fl soft-btn validate circle-border" data-tooltip="<?= t('Validate all the selected users !'); ?>"></span>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-</tabContent>
+</tab-content>
 
-<? echo '<script> window.roles = window.roles || ' . json_encode($roles) . ';</script>'; ?>
+<template id="template-user">
+  <tr id="template-user-tr" class="editable">
+    <td>
+         <input id="chk" type="checkbox" role="checkbox" class="no-label" />
+         <label for="chk">
+    </td>
+    <?
+      $beginField = 'class="input field" required="required" title=""';
+      $beginBtn =  'class="soft-btn circle-border tttl';
+    ?>
+    <td class="mail">
+      <input <?= $beginField ?> type="email" autocomplete="on" data-tooltip="<?= t('Please complete this field.') ?>" />
+    </td>
+    <td>
+      <input <?= $beginField ?> type="password" data-tooltip="<?= t('Please complete this field. (at least 8 characters)') ?>" />
+    </td>
+    <td>
+      <input <?= $beginField ?> data-tooltip="<?= t('Please complete this field.') ?>" />
+    </td>
+    <td><? roleTxt($roles, $roleTxt) ?></td>
+    <td>
+      <button <?= $beginBtn ?> validate _validate" aria-labelledby="<?= t('Validate the user'); ?>" data-tooltip="<?= t('Validate the user') ?>"></a><!--
+      --><button <?= $beginBtn ?> del-all" aria-labelledby="<?= t('Delete the user'); ?>" data-tooltip="<?= t('Delete the user') ?>"></a>
+    </td>
+  </tr>
+</template>
+
+<template id="template-role-txt">
+  <? roleTxt($roles, $roleTxt) ?>
+</template>
+
+<template id="template-user-validation">
+  <a class="_edit-end soft-btn circle-border validate tttl" data-tooltip="Validates the new user"></a>
+  <a class="soft-btn circle-border cancel _cancel tttl" data-tooltip="Cancels changes"></a>
+</template>
+
+<!--<script nonce="dXNlcnNDTVM=">window.roles = window.roles || --><?//= json_encode($roles) ?><!--;</script>-->

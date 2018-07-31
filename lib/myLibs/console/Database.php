@@ -26,7 +26,7 @@ namespace lib\myLibs\console {
       $init = false,
 
       // commands beginning
-      $initCommand = '',
+      //$initCommand = '',
 
       // paths
       $baseDirs = [],
@@ -85,22 +85,22 @@ namespace lib\myLibs\console {
       self::$user = $infosDb['login'];
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
 
-      // If we haven't store the database identifiers yet, store them ... only asking for password.
-      if ('' === cli('mysql_config_editor print --login-path=' . self::$projectName, 0))
-      {
-        echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
-        cli('mysql_config_editor set --login-path=' . self::$projectName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
-      }
+      //// If we haven't store the database identifiers yet, store them ... only asking for password.
+      //if ([] === cli('mysql_config_editor print --login-path=' . self::$projectName, 0)[1])
+      //{
+      //  echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
+      //  cli('mysql_config_editor set --login-path=' . self::$projectName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
+      //}
 
       self::$init = true;
     }
 
     /** Sets the self::initCommand variable that allows to execute SQL files */
-    public static function initCommand()
-    {
-      self::$initCommand = 'mysql --login-path=' . self::$projectName . (VERBOSE ? ' --show-warnings' : '') .
-        ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ');
-    }
+    //public static function initCommand()
+    //{
+    //  self::$initCommand = 'mysql --login-path=' . self::$projectName . (VERBOSE ? ' --show-warnings' : '') .
+    //    ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ');
+    //}
 
     /**
      * Initializes main paths :
@@ -208,14 +208,29 @@ namespace lib\myLibs\console {
       if (false === self::$init)
         self::init();
 
-      self::initCommand();
+      //self::initCommand();
 
       if (true === $force)
         self::dropDatabase($databaseName);
 
-      cli(self::$initCommand . self::generateSqlSchema($databaseName, $force) .'"', VERBOSE);
+      Sql::getDB();
+      $inst = &Sql::$instance;
+      $inst->beginTransaction();
+      $databaseFile = self::generateSqlSchema($databaseName, $force);
 
-      /** TODO Find a solution on how to inform the final user that there is problems or not via the mysql command. */
+      try
+      {
+        $dbResult = $inst->query(file_get_contents($databaseFile));
+        $inst->freeResult($dbResult);
+      } catch(\Exception $e)
+      {
+        $inst->rollBack();
+        throw new Lionel_Exception('Procedure aborted when executing ' . $e->getMessage());
+      }
+
+      $inst->commit();
+
+      /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
       echo lightGreen(), 'Database ', lightCyanText($databaseName), lightGreenText(' created.'), PHP_EOL;
     }
 
@@ -612,17 +627,38 @@ namespace lib\myLibs\console {
      *
      * @throws Lionel_Exception if the file to execute doesn't exist
      */
-    public static function executeFile( string $file, string $databaseName = null)
+    public static function executeFile(string $file, string $databaseName = null)
     {
-      if (true === file_exists($file))
-      {
-        if (false === self::$init)
-          self::init($databaseName);
-
-        self::initCommand();
-        cli(self::$initCommand . $file, VERBOSE);
-      } else
+      if (false === file_exists($file))
         throw new Lionel_Exception('The file "' . $file . '" doesn\'t exist !', E_CORE_ERROR, __FILE__, __LINE__);
+
+      if (false === self::$init)
+        self::init();
+
+      Sql::getDB();
+
+      $inst = &Sql::$instance;
+      $inst->beginTransaction();
+
+      if (null !== $databaseName)
+      {
+        // Selects the database by precaution
+        $dbResult = $inst->query('USE ' . $databaseName);
+        $inst->freeResult($dbResult);
+      }
+
+      try
+      {
+        // Runs the file
+        $dbResult = $inst->query(file_get_contents($file));
+        $inst->freeResult($dbResult);
+      } catch(\Exception $e)
+      {
+        $inst->rollBack();
+        throw new Lionel_Exception('Procedure aborted. ' . $e->getMessage());
+      }
+
+      $inst->commit();
     }
 
     /**
@@ -633,8 +669,7 @@ namespace lib\myLibs\console {
      */
     private static function _executeFixture(string $databaseName, string $table)
     {
-      self::initCommand();
-      cli(self::$initCommand . self::$pathSqlFixtures . '/' . $databaseName . '_' . $table . '.sql "', VERBOSE);
+      self::executeFile(self::$pathSqlFixtures . $databaseName . '_' . $table . '.sql', $databaseName);
       echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
     }
 
@@ -645,20 +680,20 @@ namespace lib\myLibs\console {
      */
     public static function dropDatabase(string $databaseName)
     {
-      $file = 'drop_' . $databaseName . '.sql';
-      $pathAndFile = self::$pathSql . $file;
+      Sql::getDB();
+      SQL::$instance->beginTransaction();
 
-      // If the file that drops database doesn't exist yet...creates it.
-      if (false === file_exists($pathAndFile))
+      try
       {
-        exec('echo DROP DATABASE IF EXISTS ' . $databaseName . '; > ' . $pathAndFile);
-        echo lightGreenText('Drop database sql file created : '), lightCyanText($file), PHP_EOL;
+        $result = Sql::$instance->query('DROP DATABASE IF EXISTS ' . $databaseName);
+        Sql::$instance->freeResult($result);
+      } catch (\Exception $e)
+      {
+        SQL::$instance->rollback();
+        throw new Lionel_Exception('Procedure aborted. ' . $e->getMessage());
       }
 
-      self::initCommand();
-
-      // And drops the database
-      cli(self::$initCommand . $file . '"', VERBOSE);
+      SQL::$instance->commit();
 
       echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
     }
@@ -667,26 +702,31 @@ namespace lib\myLibs\console {
      * Generates the sql schema
      *
      * @param string $databaseName Database name
-     * @param bool   $force        If true, we erase the existing tables
+     * @param bool   $force        If true, we erase the existing tables TODO it is not true anymore
      *
      * @return string $dbFile Name of the sql file generated
      *
      * @throws Lionel_Exception If the YAML schema doesn't exist.
      *   If there is a missing foreign/local key
      */
-    public static function generateSqlSchema( string $databaseName, bool $force = false)
+    public static function generateSqlSchema( string $databaseName, bool $force = false) : string
     {
       $dbFile = self::$pathSql . self::$_databaseFile . ($force ? '_force.sql' : '.sql');
 
+      // We keep only the end of the path for a cleaner display
+      $dbFileLong = substr($dbFile, strlen(BASE_PATH));
+
+      $msgBeginning = 'The \'SQL schema\' file ' . brown() . $dbFileLong . endColor();
+
       if (true === file_exists($dbFile))
       {
-        echo 'The \'SQL schema\' file already exists.';
+        echo $msgBeginning, ' already exists.';
 
         return $dbFile;
       }
 
-      echo 'The \'sql schema\' file doesn\'t exist. Creates the file...', PHP_EOL;
-      $sql = ($force) ? 'CREATE DATABASE ' : 'CREATE DATABASE IF NOT EXISTS ';
+      echo $msgBeginning, ' doesn\'t exist. Creates the file...', PHP_EOL;
+      $sql = 'CREATE DATABASE IF NOT EXISTS ';
 
       $sql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
 
@@ -898,16 +938,10 @@ namespace lib\myLibs\console {
         echo greenText('[SQL CREATION] ');
       }
 
-      self::initCommand();
+      //self::initCommand();
 
       // And truncates the table
-      try
-      {
-        cli(self::$initCommand . $truncatePath . $file . '"', VERBOSE);
-      } catch(\Exception $e)
-      {
-        throw new Lionel_Exception($e->getMessage());
-      }
+      self::executeFile($truncatePath . $file);
 
       echo greenText('[TRUNCATED]'), PHP_EOL;
     }

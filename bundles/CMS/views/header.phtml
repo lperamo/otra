@@ -1,3 +1,11 @@
 <div class="center" style="background: url('/images/<?= $headers[0]['fichierImage'] ?>') no-repeat; background-size: cover">
-		<h1 class="header-title" data-tooltip="Main page" data-href="/" ><?= $headers[0]['titre'] ?></h1>
+  <h1 class="header-title" data-tooltip="Main page"<?
+  if (isset($modules) === true) {
+    echo 'data-href="/article/show/', $modules[0][key($modules[0])][key($modules[0][key($modules[0])])][0]['a_contenu'], '"';
+  }
+  ?>>
+    <? if (isset($modules) === false) { ?> <a href="/"> <? } ?>
+      <?= $headers[0]['titre'] ?>
+      <? if (isset($modules) === false) { ?> </a> <? } ?>
+  </h1>
 </div>

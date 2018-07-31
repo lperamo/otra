@@ -25,27 +25,25 @@ self::title('Save our space - Accueil !');
   }
 </style>
 <![endif]-->
-<div id="container" class="container">
-  <div class="main-bgd"></div>
-  <div class="background-spe"></div>
-  <div class="main-frame">
-  <? require CMS_VIEWS_PATH . 'header.phtml'; ?>
-    <div class="bg-middle">
-      <div>
-        <? for($i=0; $i<2; $i += 1)
+<div class="main-bgd"></div>
+<div class="background-spe"></div>
+<div class="main-frame">
+<? require CMS_VIEWS_PATH . 'header.phtml'; ?>
+  <div class="bg-middle">
+    <div>
+      <? for ($i = 0; $i < 2; $i += 1)
+      {
+        echo '<div id="location' , $i , '">';
+        if (empty($modules) === false)
         {
-          echo '<div id="location' , $i , '">';
-          if(!empty($modules))
-          {
-            foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } } ?>
-          </div><?
-        }?>
-        <article class="article1" class="fl" role="main"><?= $article ?></article>
-      </div>
-    <div class="clear-both"></div>
-
-    <? require CMS_VIEWS_PATH . 'footer.phtml';  ?>
+          foreach($modules[$i] as $type => $module) { require CMS_VIEWS_PATH . 'module.phtml'; } } ?>
+        </div><?
+      }?>
+      <article class="article1" class="fl" role="main"><?= $article ?></article>
     </div>
-    <p class="design-by" class="center" data-tooltip="Main page">Designed by Péramo Lionel.</p>
+  <div class="clear-both"></div>
+
+  <? require CMS_VIEWS_PATH . 'footer.phtml';  ?>
   </div>
+  <p class="design-by" class="center" data-tooltip="Main page">Designed by Péramo Lionel.</p>
 </div>

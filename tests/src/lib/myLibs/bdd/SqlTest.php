@@ -62,7 +62,11 @@ class SqlTest extends TestCase
    */
   public function fetch(string $fetchMethod, $column = null)
   {
-    session_start();
+    session_name('__Secure-LPSESSID');
+    session_start([
+      'cookie_secure' => true,
+      'cookie_httponly' => true
+    ]);
     Sql::getDB();
     $dbConfig = Sql::$instance->query('SELECT 1');
 

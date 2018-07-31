@@ -177,14 +177,14 @@ class DatabaseTest extends TestCase
    */
   public function testInit() { Database::init(self::$databaseConnection); }
 
-  /**
-   * @author Lionel Péramo
-   */
-  public function testInitCommand()
-  {
-    define('VERBOSE', 2);
-    Database::initCommand();
-  }
+  ///**
+  // * @author Lionel Péramo
+  // */
+  //public function testInitCommand()
+  //{
+  //  define('VERBOSE', 2);
+  //  Database::initCommand();
+  //}
 
   /**
    * @author Lionel Péramo
@@ -215,7 +215,7 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * @throws Lionel_Exception If the original YAML schema can't be copied.
-   * depends on testInit, testInitCommand
+   * depends on testInit, testInitCommand, testDropDatabase
    */
   public function testCreateDatabase()
   {
@@ -234,7 +234,7 @@ class DatabaseTest extends TestCase
 
     // Assertions
     $endPath = $_databaseFile->getValue() . '.sql';
-    $this->assertStringEqualsFile(self::$configFolderSql . $endPath, file_get_contents(self::$configFolderSqlBackup . $endPath));
+    $this->assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
   }
 
 
@@ -319,7 +319,6 @@ class DatabaseTest extends TestCase
     }
 
     // launching task
-
     Database::createFixtures(self::$databaseName, 1);
   }
 

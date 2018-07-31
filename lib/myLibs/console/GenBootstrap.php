@@ -1,32 +1,37 @@
 <?
+declare(strict_types=1);
+namespace lib\myLibs\console;
 
-$verbose = $argv[3] ?? 0;
+$verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 
 // We generate the class mapping file if we need it.
-if(false === (isset($argv[2]) && '0' == $argv[2]))
+if (false === (isset($argv[2]) === true && '0' == $argv[2]))
 {
   // Generation of the class mapping
-  require CORE_PATH . 'console/GenClassMap.php';
+  Tasks::genClassMap([null, null, $verbose]);
 
   // Re-execute our task now that we have a correct class mapping
-  require CORE_PATH . 'console/Tools.php';
   echo PHP_EOL;
-  list($success) = cli('php ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''), $verbose);
-  exit($success);
+  require CORE_PATH . 'console/Tools.php';
+
+  list($status, $return) = cli($_SERVER['_'] . ' ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  echo $return;
+
+  return $status;
 }
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
 // Checks that the folder of micro bootstraps exists
-if(!file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
+if (false === file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
-if (isset($argv[4]))
+if (true === isset($argv[4]))
 {
   $route = $argv[4];
-  if(isset(\config\Routes::$_[$route]))
+  if (true === isset(\config\Routes::$_[$route]))
     $routes = [$route => \config\Routes::$_[$route]];
   else
   {
@@ -77,13 +82,15 @@ require CORE_PATH . 'console/TaskFileOperation.php';
 
 contentToFile(
   fixFiles(
+    $routes[$route]['chunks'][1],
+    $route,
     file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php'),
     $verbose
   ),
   $routesManagementFile
 );
 
-if (hasSyntaxErrors($routesManagementFile, $verbose))
+if (true === hasSyntaxErrors($routesManagementFile, $verbose))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
