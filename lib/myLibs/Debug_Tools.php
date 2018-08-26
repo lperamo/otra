@@ -20,25 +20,28 @@ function lg(string $message)
 
 function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
 {
+
   if (true === $maxData)
   {
-    $oldXDebugMaxData = ini_get('xdebug.var_display_max_data');
-    ini_set('xdebug.var_display_max_data', -1);
+    define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
+    $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
   }
 
   if (true === $maxChildren)
   {
-    $oldXDebugMaxChildren = ini_get('xdebug.var_display_max_children');
-    ini_set('xdebug.var_display_max_children', -1);
+    define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
+    $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, -1);
   }
 
   call_user_func_array('dumpSmall', $args);
 
   if (true === $maxData)
-    ini_set('xdebug.var_display_max_data', $oldXDebugMaxData);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, $oldXDebugMaxData);
 
   if (true === $maxChildren)
-    ini_set('xdebug.var_display_max_children', $oldXDebugMaxChildren);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, $oldXDebugMaxChildren);
 }
 
 /**
@@ -76,7 +79,6 @@ function reformatSource(string $stringToFormat) : string
  */
 function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = null)
 {
-//var_dump($dataToShow);
     ob_start();?>
     <table class="test innerHeader">
       <thead>
@@ -118,9 +120,9 @@ function getArgumentType(&$index, &$value)
   switch($index)
   {
     case 0:
-      if (true === is_int($value) && true === isset(lib\myLibs\Lionel_Exception::$codes[$value]))
+      if (true === is_int($value) && true === isset(lib\myLibs\LionelException::$codes[$value]))
       {
-        $value = lib\myLibs\Lionel_Exception::$codes[$value];
+        $value = lib\myLibs\LionelException::$codes[$value];
         return 'Error type';
       }
 
@@ -188,11 +190,11 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
       if (true === is_array($donnee))
         $donnee = 'Empty';
 
-//      if (0 === $loop)
-        echo '<tr class="no-dummy" >',
-               '<td>', getArgumentType($index, $donnee), '</td>',
-               '<td colspan="2">', $donnee , '</td>',
-             '</tr>';
+//    if (0 === $loop)
+      echo '<tr class="no-dummy" >',
+             '<td>', getArgumentType($index, $donnee), '</td>',
+             '<td colspan="2">', $donnee , '</td>',
+           '</tr>';
 
     }
 

@@ -28,12 +28,14 @@ class Controller extends MasterController
 
   /**
    * Renders a view. NB: Even is cache is activated, the template can be not fresh !
+   *
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
    * @param bool        $ajax      Is this an ajax partial ?
    * @param bool|string $viewPath  Using the view path or not
    * @return string parent::$template Content of the template
-   * @throws Lionel_Exception
+   *
+   * @throws LionelException
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
@@ -41,7 +43,7 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 
     if (false === file_exists($templateFile))
-      throw new Lionel_Exception('File not found ! : ' . $templateFile);
+      throw new LionelException('File not found ! : ' . $templateFile);
 
     if (true === $ajax)
       self::$ajax = $ajax;
@@ -58,10 +60,10 @@ class Controller extends MasterController
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string $templateFilename The file name
-   * @param array  $variables        Variables to pass to the template
-   * @param sting  $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
-   * @param bool   $layout           If we add a layout or not
+   * @param string  $templateFilename The file name
+   * @param array   $variables        Variables to pass to the template
+   * @param string  $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
+   * @param bool    $layout           If we add a layout or not
    *
    * @return mixed|string
    */

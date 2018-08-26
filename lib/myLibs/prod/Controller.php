@@ -137,7 +137,7 @@ class Controller extends MasterController
   private function addCss(string $routeV) : string
   {
     // If we have CSS files to load, then we load them
-    return $this->chkCss ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
+    return self::$hasCssToLoad ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
 //    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
 //      return '<style>' . $allCss . '</style>';
   }
@@ -151,7 +151,7 @@ class Controller extends MasterController
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = ($this->chkJs) ? '<script type="application/javascript" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script type="application/javascript" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
     if (true === empty(self::$js))
       return $content;
@@ -175,9 +175,6 @@ class Controller extends MasterController
       }
       $allJs .= ob_get_clean();
     }
-
-//    if (true === $firstTime)
-//      $allJs .= file_get_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '', '.js'));
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
       return '<script async defer>' + $allJs + '</script>';

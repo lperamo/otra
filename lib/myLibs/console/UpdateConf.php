@@ -116,11 +116,10 @@ while (false !== ($file = readdir($folderHandler)))
 }
 closedir($folderHandler);
 
-// now we have all the informations, we can create the files in 'bundles/config';
+// now we have all the informations, we can create the files in 'bundles/config'
 $configDir = $dir . 'config/';
 $configFile = $configDir . 'Config.php';
 $routesFile = $configDir . 'Routes.php';
-//$schemasFile = $configDir . 'Schemas.php';
 
 if (false === file_exists($configDir))
   mkdir($configDir, 0755);

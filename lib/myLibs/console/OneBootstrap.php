@@ -27,7 +27,9 @@ spl_autoload_register(function($className)
     require CLASSMAP[$className];
   } else {
 
-  echo red(), 'CLASSMAP PROBLEM !!', PHP_EOL, debug_print_backtrace(), PHP_EOL;
+  echo red(), 'CLASSMAP PROBLEM !!', PHP_EOL;
+  debug_print_backtrace();
+  echo PHP_EOL;
   var_dump(CLASSMAP);
   echo PHP_EOL, endColor();
 
@@ -35,7 +37,7 @@ spl_autoload_register(function($className)
 
 });
 
-require BASE_PATH . 'config/All_Config.php';
+require BASE_PATH . 'config/AllConfig.php';
 
 $params = \config\Routes::$_[$route];
 
@@ -44,7 +46,7 @@ require CORE_PATH . 'Session.php';
 require CORE_PATH . 'bdd/Sql.php';
 $defaultRoute = \config\Routes::$default['bundle'];
 
-// in order to pass some conditions;
+// in order to pass some conditions
 $_SERVER['REMOTE_ADDR'] = 'console';
 $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
 $_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // TODO to put into a file to configure for each project ?
@@ -90,7 +92,7 @@ define(
   ]);
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
-  throw new \lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context);
+  throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];

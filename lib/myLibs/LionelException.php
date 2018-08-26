@@ -12,7 +12,7 @@ use config\Routes;
 // Sometimes it is already defined ! so we put '_once' ...
 require_once BASE_PATH . 'lib\myLibs\Debug_Tools.php';
 
-class Lionel_Exception extends \Exception
+class LionelException extends \Exception
 {
   public static $codes = [
     E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
@@ -33,7 +33,7 @@ class Lionel_Exception extends \Exception
   ];
 
   /**
-   * Lionel_Exception constructor.
+   * LionelException constructor.
    *
    * @param string $message
    * @param int    $code
@@ -58,7 +58,7 @@ class Lionel_Exception extends \Exception
    */
   public function errorMessage() : string
   {
-    require_once BASE_PATH . 'config/All_Config.php';
+    require_once BASE_PATH . 'config/AllConfig.php';
     $route = 'exception';
 
     ob_clean();

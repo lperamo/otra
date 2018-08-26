@@ -42,7 +42,9 @@ class Router
 
     $action = ('prod' === XMODE && 'cli' !== php_sapi_name())
       ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
-      : (true === isset(Routes::$_[$route]['core']) ? '' : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . $action;
+      : (true === isset(Routes::$_[$route]['core'])
+        ? ''
+        : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . $action;
 
     if (false === $launch)
       return $action;

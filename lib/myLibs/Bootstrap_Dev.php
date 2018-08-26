@@ -26,7 +26,7 @@ define('XMODE', 'dev');
 require BASE_PATH . 'cache/php/ClassMap.php';
 
 /** MAIN CONFIGURATION */
-require BASE_PATH . 'config/All_Config.php';
+require BASE_PATH . 'config/AllConfig.php';
 
 spl_autoload_register(function(string $className)
 {
@@ -36,8 +36,17 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-/** ERROR MANAGEMENT */
-function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\Lionel_Exception($message, $errno, $file, $line, $context); }
+/** ERROR MANAGEMENT
+ *
+ * @param int    $errno
+ * @param string $message
+ * @param string $file
+ * @param int    $line
+ * @param array  $context
+ *
+ * @throws \lib\myLibs\LionelException
+ */
+function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\LionelException($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 

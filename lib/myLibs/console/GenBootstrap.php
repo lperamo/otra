@@ -66,8 +66,6 @@ foreach(array_keys($routes) as &$route)
 // Final specific management for routes files
 echo 'Create the specific routes management file... ';
 
-//require BASE_PATH . 'config/All_Config.php';
-
 define(
   'PATH_CONSTANTS',
   [

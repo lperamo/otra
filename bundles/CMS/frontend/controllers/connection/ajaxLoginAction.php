@@ -2,7 +2,7 @@
 namespace bundles\CMS\frontend\controllers\connection;
 
 use bundles\CMS\models\User;
-use lib\myLibs\{ bdd\Sql, Controller, Lionel_Exception, Router };
+use lib\myLibs\{ bdd\Sql, Controller, LionelException, Router };
 
 /**
  * LPCMS - Frontend - Connection - AjaxLogin
@@ -22,12 +22,12 @@ class ajaxLoginAction extends Controller
     $email = $_POST['email'];
 
     if (true === empty($email))
-      throw new Lionel_Exception('Missing email !');
+      throw new LionelException('Missing email !');
 
     $pwd = $_POST['pwd'];
 
     if (true === empty($pwd))
-      throw new Lionel_Exception('Missing password !');
+      throw new LionelException('Missing password !');
 
     Sql::getDB();
 

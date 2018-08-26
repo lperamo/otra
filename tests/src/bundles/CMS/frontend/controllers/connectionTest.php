@@ -22,7 +22,7 @@ class ConnectionTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage Missing email !
    */
   public function testAjaxLoginActionMissingEmail()
@@ -33,7 +33,7 @@ class ConnectionTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage Missing password !
    */
   public function testAjaxLoginActionMissingPassword()

@@ -9,7 +9,7 @@ define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../..') . '/
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 define('XMODE', 'dev');
 
-require BASE_PATH . 'config/All_Config.php';
+require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'Router.php';
 
 // Loads the class mapping

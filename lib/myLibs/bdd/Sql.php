@@ -5,7 +5,7 @@
 
 namespace lib\myLibs\bdd;
 
-use lib\myLibs\{ Lionel_Exception, Session, bdd\Mysql, Logger };
+use lib\myLibs\{ LionelException, Session, bdd\Mysql, Logger };
 use config\All_Config;
 
 class Sql
@@ -36,13 +36,15 @@ class Sql
 
   /**
    * @param string $sgbd
+   *
+   * @throws LionelException
    */
   public function __construct(string $sgbd)
   {
     $theSgbd = ucfirst(strtolower($sgbd));
     // Is this driver available ?
     if (false === in_array($theSgbd, self::$_sgbds))
-      throw new Lionel_Exception('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+      throw new LionelException('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
 
     self::$_currentSGBD = __NAMESPACE__ . '\\' . $theSgbd;
   }
@@ -57,7 +59,7 @@ class Sql
    *
    * @return bool|Sql|resource
    *
-   * @throws Lionel_Exception
+   * @throws LionelException
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $sgbd     Kind of sgbd
    * @internal param string $conn     Connection used (see All_Config files)
@@ -78,7 +80,7 @@ class Sql
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
       } else
-        throw new Lionel_Exception('There is no ' . $conn . ' configuration available in the All_Config file !');
+        throw new LionelException('There is no ' . $conn . ' configuration available in the All_Config file !');
 
     } else
     {
@@ -141,10 +143,10 @@ class Sql
         self::$_CURRENT_CONN = $activeConn['conn'];
       }catch(\Exception $e)
       {
-        throw new Lionel_Exception($e->getMessage());
+        throw new LionelException($e->getMessage());
       }
     }else
-      throw new Lionel_Exception('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+      throw new LionelException('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }
@@ -190,7 +192,7 @@ class Sql
   public function query(string $query)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     if(isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_'])
     {
@@ -216,7 +218,7 @@ class Sql
   public function fetchAssoc(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchAssoc', $params);
   }
@@ -231,7 +233,7 @@ class Sql
   public function fetchArray(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchArray', $params);
   }
@@ -246,7 +248,7 @@ class Sql
   public function fetchField(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchField', $params);
   }
@@ -261,7 +263,7 @@ class Sql
   public function fetchObject(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchObject', $params);
   }
@@ -276,7 +278,7 @@ class Sql
   public static function fetchRow(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::fetchRow', $params);
   }
@@ -291,7 +293,7 @@ class Sql
   public function values(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::values', $params);
   }
@@ -306,7 +308,7 @@ class Sql
   public function valuesOneCol(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::valuesOneCol', $params);
   }
@@ -320,7 +322,7 @@ class Sql
    */
   public function single(...$params){
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::single', $params);
   }
@@ -345,7 +347,7 @@ class Sql
   public function freeResult(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
-      return;
+      return null;
 
     return call_user_func_array(self::$_currentSGBD . '::freeResult', $params);
   }

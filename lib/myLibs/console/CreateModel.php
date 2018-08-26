@@ -1,5 +1,9 @@
 <?
 declare(strict_types=1);
+
+define('DEFAULT_BDD_SCHEMA_NAME', 'schema.yml');
+define('MODEL_DIRECTORY', 'models/');
+
 /**
  * If we do not have the information of the type of this property in schema.yml,
  * we notice the user of that and we stop the script
@@ -94,7 +98,7 @@ function modelCreationSuccess(string $bundleName, string $modelName, string $pro
 function writeModelFile(string $bundlePath, string $modelName, string $modelFullName, string $propertiesCode, string $functions)
 {
   // If the 'models' folder doesn't exist => creates it.
-  $modelsPath = $bundlePath . 'models/';
+  $modelsPath = $bundlePath . MODEL_DIRECTORY;
 
   if (false === file_exists($modelsPath))
     mkdir($modelsPath, 0755);
@@ -126,11 +130,9 @@ function getModelFullNameAndModelExists(string $modelName, string $modelNameQues
 /**
  * Asks the user in order to know if he wants a BUNDLE model or a MODULE model.
  *
- * @param string $bundleName
- *
  * @return string '1' => bundle or '2' => model
  */
-function getBundleModule(string $bundleName) : string
+function getBundleModule() : string
 {
   $bundleModule = promptUser('Is it a bundle model or a module model ? (1 => bundle, 2 => module)');
 
@@ -198,8 +200,8 @@ if (false === isset($argv[3]) || false === in_array($argv[3], $possibleChoices))
 {
   echo brown(), 'You did not specified how do you want to create it or this creation mode doesn\'t exist. How do you want to create it ?', PHP_EOL, PHP_EOL,
     '1 => only one model from nothing', PHP_EOL,
-    '2 => one specific model from the ', cyan(), 'schema.yml', brown(), PHP_EOL,
-    '3 => all from the ', cyan(), 'schema.yml', brown(), PHP_EOL, PHP_EOL;
+    '2 => one specific model from the ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), PHP_EOL,
+    '3 => all from the ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), PHP_EOL, PHP_EOL;
 
   $argv[3] = promptUser('Your choice ?');
 
@@ -239,7 +241,7 @@ if ('1' === $argv[3])
   $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion);
   list($modelFullName, $modelExists) = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
 
-  while (true === file_exists($path . 'models/' . $modelFullName))
+  while (true === file_exists($path . MODEL_DIRECTORY . $modelFullName))
   {
     echo DOUBLE_ERASE_SEQUENCE;
     $modelName = promptUser($modelExists, $modelExists);
@@ -293,7 +295,7 @@ if ('1' === $argv[3])
   if('2' === $argv[3])
   {
     $functions = $propertiesCode = '';
-    echo 'We will create one model from ', cyan(), 'schema.yml', brown(), '.', PHP_EOL;
+    echo 'We will create one model from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
     $bundleModule = getBundleModule($bundleName);
     $modelNameQuestion = 'What is the name of the model that you want to create from \'schema.yml\' ? (camelCase, no need to put .php)';
     // We cleans the bundle/module question
@@ -315,7 +317,7 @@ if ('1' === $argv[3])
     $modelFullName = $modelName . '.php';
 
     $availableTables = array_keys($schemaData);
-    $modelExists = file_exists($path . 'models/' . $modelFullName);
+    $modelExists = file_exists($path . MODEL_DIRECTORY . $modelFullName);
     $tableExists = in_array($modelName, $availableTables, true);
 
     // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
@@ -335,7 +337,7 @@ if ('1' === $argv[3])
       $modelName = promptUser($errorLabel, $errorLabel);
       $modelFullName = $modelName . '.php';
 
-      $modelExists = file_exists($path . 'models/' . $modelFullName);
+      $modelExists = file_exists($path . MODEL_DIRECTORY . $modelFullName);
       $tableExists = in_array($modelName, $availableTables, true);
     }
 
@@ -369,7 +371,7 @@ if ('1' === $argv[3])
    ******************************/
   else
   {
-    echo 'We will create all models from ', cyan(), 'schema.yml', brown(), '.', PHP_EOL;
+    echo 'We will create all models from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
     $bundleModule = getBundleModule($bundleName);
 
     if ('1' === $bundleModule) /** BUNDLE */

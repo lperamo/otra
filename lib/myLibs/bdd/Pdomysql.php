@@ -5,7 +5,7 @@
  * @author Lionel Péramo */
 
 namespace lib\myLibs\bdd;
-use lib\myLibs\Lionel_Exception;
+use lib\myLibs\LionelException;
 
 class Pdomysql
 {
@@ -14,12 +14,12 @@ class Pdomysql
   /**
    * Connects to PDO_MySql
    *
-   * @param string $server   Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
+   * @param string $server Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
    * @param string $username Username
    * @param string $password Password
    *
-   * @return bool|resource Returns a MySQL link identifier on success, or false on error
-   * @link http://php.net/manual/en/function.mysql-connect.php
+   * @return bool|\PDO Returns a MySQL link identifier on success, or false on error
+   * @throws LionelException
    */
   public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
   {
@@ -28,7 +28,7 @@ class Pdomysql
       $conn = new \PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
-      throw new Lionel_Exception('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
+      throw new LionelException('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
     }
 
     return $conn;
@@ -42,7 +42,7 @@ class Pdomysql
    *
    * @return resource Returns a resource on success, otherwise an exception is raised
    *
-   * @throws Lionel_Exception
+   * @throws LionelException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
   //public static function query($query, $link_identifier)
@@ -53,7 +53,7 @@ class Pdomysql
     if (false === $result)
     {
       $errorInfo = Sql::$_CURRENT_CONN->errorInfo();
-      throw new Lionel_Exception('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
+      throw new LionelException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
     } else
       return $result;
   }
@@ -61,57 +61,59 @@ class Pdomysql
   /**
    * Returns the results
    *
-   * @param resource $result The query result in an associative array
+   * @param \PDOStatement $statement   The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
-  public static function fetchAssoc($result) { return $result->fetch(\PDO::FETCH_ASSOC); }
+  public static function fetchAssoc(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_ASSOC); }
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
    *
-   * @param resource $result      The query result
-   * @param int      $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
+   * @param \PDOStatement $statement   The query statement
+   * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchArray($result, $fetch_style = \PDO::FETCH_BOTH) { return $result->fetch($fetch_style); }
+  public static function fetchArray(\PDOStatement $statement, int $fetch_style = \PDO::FETCH_BOTH) { return $statement->fetch($fetch_style); }
 
   /**
    * Returns the results
    *
-   * @param resource $result The query result
+   * @param \PDOStatement $statement The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchRow($result) { return $result->fetch(\PDO::FETCH_NUM); }
+  public static function fetchRow(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_NUM); }
 
   /**
    * Returns the results as an object (simplified version of the existing one)
    *
-   * @param resource $result The query result
+   * @param \PDOStatement $statement The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchObject($result) { return $result->fetch(\PDO::FETCH_OBJ); }
+  public static function fetchObject(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_OBJ); }
 
   /**
    * Returns all the results in an associative array
    *
-   * @param resource $result The query result
+   * @param \PDOStatement $statement The query statement
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function values($result)
+  public static function values($statement)
   {
-    if (0 == $result->rowCount())
+    if (0 == $statement->rowCount())
       return [];
 
-    while ($row = $result->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row; }
+    $results = [];
+
+    while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row; }
 
     return $results;
   }
@@ -119,19 +121,20 @@ class Pdomysql
   /**
    * Returns all the results in an associative array
    *
-   * @param resource $result The query result
+   * @param \PDOStatement $statement The query statement
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function valuesOneCol($result)
+  public static function valuesOneCol(\PDOStatement $statement)
   {
-    if (0 == $result->rowCount())
+    if (0 == $statement->rowCount())
       return false;
 
-    $row = $result->fetch(\PDO::FETCH_ASSOC);
+    $row = $statement->fetch(\PDO::FETCH_ASSOC);
+    $results = [];
     $results[] = $row[($key = key($row))];
 
-    while ($row = $result->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
+    while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
 
     return $results;
   }
@@ -139,36 +142,37 @@ class Pdomysql
   /**
    * Returns the only expected result.
    *
-   * @param resource $result The query result
+   * @param \PDOStatement $statement The query statement
    *
    * @return bool|mixed The result. Returns false if there are no result.
    */
-  public static function single($result)
+  public static function single(\PDOStatement $statement)
   {
-    if (0 == $result->rowCount())
+    if (0 == $statement->rowCount())
       return false;
 
-    return current($result->fetch(\PDO::FETCH_ASSOC));
+    return current($statement->fetch(\PDO::FETCH_ASSOC));
   }
 
   /**
    * Free result memory
    *
-   * @param resource $result
+   * @param \PDOStatement $statement The query statement
    *
    * @return bool Returns true on success or false on failure.
    * @link http://php.net/manual/en/function.mysql-free-result.php
    */
-  public static function freeResult($result) { return $result->closeCursor(); }
+  public static function freeResult(\PDOStatement $statement) { return $statement->closeCursor(); }
 
-    /**
+  /**
    * Returns the results
    *
-   * @param resource $result The query result in an object
+   * @param \PDOStatement $statement The query statement
+   * @param int $column
    *
    * @return array The results
    */
-  public static function fetchField($result, $column) { return $result->getColumnMeta($column); }
+  public static function fetchField(\PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
 
   /**
    * Closes connection.

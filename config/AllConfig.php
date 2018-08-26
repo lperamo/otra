@@ -20,8 +20,8 @@ define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n');
 
-// require_once 'cause maybe the class Lionel_Exception will attempt to load it too !
-require_once BASE_PATH . 'config/' . XMODE . '/All_Config.php';
+// require_once 'cause maybe the class LionelException will attempt to load it too !
+require_once BASE_PATH . 'config/' . XMODE . '/AllConfig.php';
 
 $externalConfigFile = BASE_PATH . 'bundles/config/Config.php';
 

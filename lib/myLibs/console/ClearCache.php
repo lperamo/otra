@@ -1,7 +1,6 @@
 <?
 
 use config\All_Config;
- //use function lib\myLibs\console\Tools\{guessWords, promptUser};
 
 $route = $argv[2] ?? null;
 
@@ -44,7 +43,7 @@ if (isset($route) === true)
   echo 'The cache for the route ' . $route . ' has been cleared.', PHP_EOL;
 
   return;
-};
+}
 
 // Otherwise we clear all the other routes.
 array_map('unlink', glob(All_Config::$cache_path . '*.cache'));

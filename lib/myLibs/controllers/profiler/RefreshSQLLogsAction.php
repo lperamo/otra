@@ -8,7 +8,7 @@ namespace lib\myLibs\controllers\profiler;
 
 use lib\myLibs\{Controller, services\profilerService};
 
-class refreshSQLLogsAction extends Controller
+class RefreshSQLLogsAction extends Controller
 {
   public function refreshSQLLogsAction()
   {

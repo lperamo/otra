@@ -25,6 +25,8 @@ class MasterController
     $js = [],
     $rendered = [],
     $ajax = false,
+    $hasJsToLoad,
+    $hasCssToLoad,
     $id,
   /* @var string $template The actual template being processed */
     $template,
@@ -111,7 +113,7 @@ class MasterController
       return;
 
     // Stores the bundle, module, controller and action for later use
-    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, $this->chkJs, $this->chkCss) = array_values($baseParams);
+    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);
 
     $this->action = substr($baseParams['action'], 0, -6);
 
@@ -133,8 +135,9 @@ class MasterController
    * Encodes the value passed as parameter in order to create a cache file name
    *
    * @param string $filename File name to modify
-   * @param string $path     File's path
-   * @param string $prefix   Prefix of the file name
+   * @param string $path File's path
+   * @param string $prefix Prefix of the file name
+   * @param string $extension
    *
    * @return string The cache file name version of the file
    */

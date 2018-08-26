@@ -1,5 +1,5 @@
 <?
-require_once BASE_PATH . '/config/All_Config.php';
+require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';
 // require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';

@@ -764,7 +764,7 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     // match[3][0] is like class
 
     // no need to include self or parent !!
-    // renderController is an edge case present in Lionel_Exception.php
+    // renderController is an edge case present in LionelException.php
     // PDO is a native class, no need to import it !
     if (true === in_array($class, ['self', 'parent', 'renderController', 'PDO']))
       continue;

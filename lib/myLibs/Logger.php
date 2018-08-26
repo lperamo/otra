@@ -15,21 +15,26 @@ class Logger
    */
   private static function logIpTest() : string
   {
-    if (false === isset($_SESSION['_date']))
-      $_SESSION['_date'] = $_SESSION['_ip'] = $_SESSION['_browser'] = '';
+    // Only needed to ease maintainability
+    define('SESSION_DATE', '_date');
+    define('HTTP_USER_AGENT', 'HTTP_USER_AGENT');
+    define('SESSION_BROWSER', '_browser');
+
+    if (false === isset($_SESSION[SESSION_DATE]))
+      $_SESSION[SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[SESSION_BROWSER] = '';
 
     $infos = '';
     $date = date(DATE_ATOM, time());
 
-    if ($date !== $_SESSION['_date'])
-      $infos .= '[' . ($_SESSION['_date'] = $date) . '] ';
+    if ($date !== $_SESSION[SESSION_DATE])
+      $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
 
     if ($_SERVER['REMOTE_ADDR'] !== $_SESSION['_ip'])
       $infos .= '[' . ($_SESSION['_ip'] = $_SERVER['REMOTE_ADDR']) . '] ';
 
     // user agent not set if we come from the console
-    if (true === isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT'] != $_SESSION['_browser'])
-      return $infos . '[' .  ($_SESSION['_browser'] = $_SERVER['HTTP_USER_AGENT']) . '] ';
+    if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
+      return $infos . '[' .  ($_SESSION[SESSION_BROWSER] = $_SERVER[HTTP_USER_AGENT]) . '] ';
 
     return $infos;
   }

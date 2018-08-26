@@ -16,7 +16,7 @@ class addAction extends Controller
     $email = $_POST['email'];
 
     if (true === empty($email))
-      throw new Lionel_Exception('Missing login !');
+      throw new LionelException('Missing login !');
 
 //    $db = Session::get('dbConn');
 //    $db->selectDb();

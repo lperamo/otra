@@ -2,7 +2,7 @@
 use phpunit\framework\TestCase;
 use lib\myLibs\bdd\Sql;
 use config\All_Config;
-use lib\myLibs\Lionel_Exception;
+use lib\myLibs\LionelException;
 
 /**
  * @runTestsInSeparateProcesses
@@ -16,7 +16,7 @@ class SqlTest extends TestCase
 
   /**
    * @author                         Lionel Péramo
-   * @expectedException              \lib\myLibs\Lionel_Exception
+   * @expectedException              \lib\myLibs\LionelException
    * @expectedExceptionMessageRegExp @This SGBD 'test' doesn't exist...yet ! Available SGBD are : (?:\w|,|\s)*@
    * @expectedExceptionCode          E_CORE_ERROR
    */
@@ -169,10 +169,10 @@ class SqlTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @expectedException \lib\myLibs\Lionel_Exception
+   * @expectedException \lib\myLibs\LionelException
    * @expectedExceptionMessage This function does not exist with PDO and mysql driver is now deprecated !
    *
-   * @throws Lionel_Exception
+   * @throws LionelException
    */
   public function testSelectDB()
   {
@@ -182,7 +182,7 @@ class SqlTest extends TestCase
       $sql->selectDb();
     }catch(Exception $e)
     {
-      throw new Lionel_Exception('This function does not exist with PDO and mysql driver is now deprecated !');
+      throw new LionelException('This function does not exist with PDO and mysql driver is now deprecated !');
     }
   }
 

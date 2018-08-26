@@ -1,6 +1,4 @@
 <?
-//namespace lib\myLibs\console\Tools;
-
 /** This sequence moves the cursor up by 1,
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)

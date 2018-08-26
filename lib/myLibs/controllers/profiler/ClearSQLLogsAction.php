@@ -8,7 +8,7 @@ namespace lib\myLibs\controllers\profiler;
 
 use lib\myLibs\{Controller, services\profilerService};
 
-class clearSQLLogsAction extends Controller
+class ClearSQLLogsAction extends Controller
 {
   public function clearSQLLogsAction()
   {

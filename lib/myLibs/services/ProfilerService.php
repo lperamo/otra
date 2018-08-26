@@ -7,7 +7,7 @@
 
 namespace lib\myLibs\services;
 
-class profilerService
+class ProfilerService
 {
   public static function securityCheck()
   {

@@ -5,7 +5,7 @@
  * @author Lionel Péramo */
 
 namespace lib\myLibs\bdd;
-use lib\myLibs\Lionel_Exception;
+use lib\myLibs\LionelException;
 
 class Mysql
 {
@@ -31,13 +31,13 @@ class Mysql
    *                      The query string should not end with a semicolon. Data inside the query should be properly escaped.
    * @param        $link_identifier
    * @return resource Returns a resource on success, otherwise an exception is raised
-   * @throws Lionel_Exception
+   * @throws LionelException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
   public static function query(string $query, $link_identifier)
   {
     if (!$result = mysql_query($query, $link_identifier))
-      throw new Lionel_Exception('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
+      throw new LionelException('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
     else
       return $result;
   }

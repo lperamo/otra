@@ -1,6 +1,6 @@
 <?
 use phpunit\framework\TestCase;
-use lib\myLibs\{Lionel_Exception, console\Database, bdd\Sql};
+use lib\myLibs\{LionelException, console\Database, bdd\Sql};
 use config\All_Config;
 use lib\sf2_yaml\Yaml;
 
@@ -66,7 +66,7 @@ class DatabaseTest extends TestCase
    *
    * @param array $fileOrFolders
    *
-   * @throws Lionel_Exception If we cannot remove a file or a folder
+   * @throws LionelException If we cannot remove a file or a folder
    */
   private function cleanFileAndFolders(array $fileOrFolders)
   {
@@ -85,7 +85,7 @@ class DatabaseTest extends TestCase
           $method = true === $file->isDir() ? 'rmdir' : 'unlink';
 
           if (false === $method($realPath))
-            throw new Lionel_Exception('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
+            throw new LionelException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
         }
 
         $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
@@ -93,10 +93,10 @@ class DatabaseTest extends TestCase
         try
         {
           if (false === rmdir($folder))
-            throw new Lionel_Exception($exceptionMessage, E_CORE_ERROR);
+            throw new LionelException($exceptionMessage, E_CORE_ERROR);
         }catch(Exception $e)
         {
-          throw new Lionel_Exception('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
       }
     }
@@ -108,7 +108,7 @@ class DatabaseTest extends TestCase
    * @param array $filesOrFoldersSrc  Must be the absolute path
    * @param array $filesOrFoldersDest Must be the absolute path
    *
-   * @throws Lionel_Exception If we can't create a folder or copy a file.
+   * @throws LionelException If we can't create a folder or copy a file.
    */
   private function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest)
   {
@@ -119,7 +119,7 @@ class DatabaseTest extends TestCase
       $initialFolder = $isDirFileOrFolderSrc ? $fileOrFolderDest : dirname($fileOrFolderDest);
 
       if (false === file_exists($initialFolder) && false === mkdir($initialFolder, 0007, true))
-        throw new Lionel_Exception('Cannot create the folder ' . $initialFolder);
+        throw new LionelException('Cannot create the folder ' . $initialFolder);
 
       if (true === file_exists($fileOrFolderSrc))
       {
@@ -153,11 +153,11 @@ class DatabaseTest extends TestCase
           if (true === is_dir($file))
           {
             if (false === mkdir($newPath))
-              throw new Lionel_Exception('Cannot create the folder \'' . $newPath . '\'.', E_CORE_ERROR);
+              throw new LionelException('Cannot create the folder \'' . $newPath . '\'.', E_CORE_ERROR);
           } else
           {
             if (false === copy($file, $newPath))
-              throw new Lionel_Exception('Cannot copy the file \'' . $basename . ' to ' . $newPath . '\'.', E_CORE_ERROR);
+              throw new LionelException('Cannot copy the file \'' . $basename . ' to ' . $newPath . '\'.', E_CORE_ERROR);
           }
         }
       }
@@ -214,7 +214,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws Lionel_Exception If the original YAML schema can't be copied.
+   * @throws LionelException If the original YAML schema can't be copied.
    * depends on testInit, testInitCommand, testDropDatabase
    */
   public function testCreateDatabase()
@@ -276,7 +276,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author                   Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage You have to create a database schema file in config/data/schema.yml before using fixtures.
    */
   public function testCreateFixtures_TruncateOnly_NoSchema()
@@ -313,7 +313,7 @@ class DatabaseTest extends TestCase
     try
     {
       Database::createDatabase(self::$databaseName);
-    } catch(Lionel_Exception $le)
+    } catch(LionelException $le)
     {
       echo 'Schema already exists', PHP_EOL;
     }
@@ -324,7 +324,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author                   Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage You must use the database generation task before using the fixtures (no tests/bundles/core/config/data/yml/tables_order.yml file)
    */
   public function testCreateFixtures_TruncateOnly_NoTablesOrderFile()
@@ -385,7 +385,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author                   Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage The file "blabla" doesn't exist !
    */
   public function testExecuteFile_DoesNotExist() { Database::executeFile('blabla'); }
@@ -439,7 +439,7 @@ class DatabaseTest extends TestCase
     } catch(Exception $e)
     {
       Sql::$instance->rollBack();
-      throw new Lionel_Exception($e->getMessage());
+      throw new LionelException($e->getMessage());
     }
 
     //    $schema = Yaml::parse(file_get_contents(self::$schemaFile));
@@ -475,7 +475,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage The file 'tests/bundles/core/config/data/yml/Schema.yml' doesn't exist. We can't generate the SQL schema without it.
    *
    * depends on testInitBase
@@ -546,7 +546,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage The database 'testDB' doesn't exist.
    */
   public function testInitImports_DatabaseNull()
@@ -569,7 +569,7 @@ class DatabaseTest extends TestCase
     try
     {
       Database::createDatabase(self::$databaseName);
-    } catch(Lionel_Exception $le)
+    } catch(LionelException $le)
     {
       echo 'Schema already exists', PHP_EOL;
     }
@@ -584,7 +584,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @author                   Lionel Péramo
-   * @expectedException        \lib\myLibs\Lionel_Exception
+   * @expectedException        \lib\myLibs\LionelException
    * @expectedExceptionMessage The database 'noBDD' doesn't exist.
    */
   public function testInitImports_BadDatabase()

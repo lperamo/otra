@@ -92,7 +92,7 @@ class Tasks
     if (true === isset($argv[3]))
       define(FWK_HASH, $argv[3]);
     else
-      require BASE_PATH . 'config/All_Config.php';
+      require BASE_PATH . 'config/AllConfig.php';
 
     echo crypt($argv[2], FWK_HASH), PHP_EOL;
   }
@@ -284,7 +284,13 @@ class Tasks
     ];
   }
 
-  /** (sql_generate_basic) Database creation, tables creation. */
+  /**
+   * (sql_generate_basic) Database creation, tables creation.
+   *
+   * @param array $argv
+   *
+   * @throws \lib\myLibs\LionelException
+   */
   public static function sql_gdb(array $argv)
   {
       Database::createDatabase(
@@ -310,7 +316,12 @@ class Tasks
     ];
   }
 
-  /** (sql_generate_fixtures) Generates fixtures. */
+  /** (sql_generate_fixtures) Generates fixtures.
+   *
+   * @param array $argv
+   *
+   * @throws \lib\myLibs\LionelException
+   */
   public static function sql_gf(array $argv)
   {
     Database::createFixtures(
@@ -337,6 +348,8 @@ class Tasks
 
   /**
    * @param array $argv
+   *
+   * @throws \lib\myLibs\LionelException
    */
   public static function sql_is(array $argv)
   {
@@ -362,6 +375,8 @@ class Tasks
 
   /**
    * @param array $argv
+   *
+   * @throws \lib\myLibs\LionelException
    */
   public static function sql_if(array $argv)
   {

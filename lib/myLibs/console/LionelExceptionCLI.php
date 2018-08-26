@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
-use lib\myLibs\Lionel_Exception;
+use lib\myLibs\LionelException;
 
 class LionelExceptionCLI extends \Exception
 {
@@ -18,9 +18,9 @@ class LionelExceptionCLI extends \Exception
   /**
    * Shows an exception 'colorful' display for command line commands.
    *
-   * @param Lionel_Exception $exception
+   * @param LionelException $exception
    */
-  public static function showMessage(Lionel_Exception $exception)
+  public static function showMessage(LionelException $exception)
   {
     echo redText(PHP_EOL . 'PHP exception' . PHP_EOL . '=============' . PHP_EOL . PHP_EOL);
 

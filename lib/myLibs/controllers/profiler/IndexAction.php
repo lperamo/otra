@@ -8,7 +8,7 @@ namespace lib\myLibs\controllers\profiler;
 
 use lib\myLibs\{Controller, services\profilerService};
 
-class indexAction extends Controller
+class IndexAction extends Controller
 {
   public function indexAction()
   {
