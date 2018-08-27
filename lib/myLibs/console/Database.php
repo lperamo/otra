@@ -10,7 +10,7 @@ namespace lib\myLibs\console {
 
   use lib\myLibs\bdd\Sql;
   use Symfony\Component\Yaml\Yaml;
-  use config\All_Config;
+  use config\AllConfig;
   use lib\myLibs\{Session, LionelException};
 
   class Database
@@ -58,7 +58,7 @@ namespace lib\myLibs\console {
      */
     public static function init(string $dbConnKey = null)
     {
-      $dbConn = All_Config::$dbConnections;
+      $dbConn = AllConfig::$dbConnections;
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
       if (false === isset($dbConn[$dbConnKey]))
@@ -77,7 +77,7 @@ namespace lib\myLibs\console {
       self::initBase(self::$boolSchema, self::$folder);
 
       if (false === defined('VERBOSE'))
-        define('VERBOSE', All_Config::$verbose);
+        define('VERBOSE', AllConfig::$verbose);
 
       self::$base = $infosDb['db'];
       self::$motor = $infosDb['motor'];
@@ -982,10 +982,10 @@ namespace lib\myLibs\console {
     private static function _initImports(&$database, &$confToUse)
     {
       if (null === $confToUse)
-        $confToUse = key(All_Config::$dbConnections);
+        $confToUse = key(AllConfig::$dbConnections);
 
       if (null === $database)
-        $database = All_Config::$dbConnections[$confToUse]['db'];
+        $database = AllConfig::$dbConnections[$confToUse]['db'];
 
       Session::set('db', $confToUse);
       $db = Sql::getDB();

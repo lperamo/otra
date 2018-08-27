@@ -146,7 +146,7 @@ class MasterController
   }
 
   /**
-   * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE All_Config::$cache TO TRUE !!
+   * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE AllConfig::$cache TO TRUE !!
    *
    * @param string $cachedFile The cache file name version of the file
    * @param bool   $exists     True if we know that the file exists.

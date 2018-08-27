@@ -1,6 +1,6 @@
 <?
 
-use config\All_Config;
+use config\AllConfig;
 
 $route = $argv[2] ?? null;
 
@@ -34,7 +34,7 @@ if (isset($route) === true)
     }
   }
 
-  $cacheFileName = All_Config::$cache_path . sha1('ca' . $route . VERSION . 'che');
+  $cacheFileName = AllConfig::$cache_path . sha1('ca' . $route . VERSION . 'che');
 
   // Is there a cache for this route ? If yes, clears it.
   if (file_exists($cacheFileName) === true)
@@ -46,7 +46,7 @@ if (isset($route) === true)
 }
 
 // Otherwise we clear all the other routes.
-array_map('unlink', glob(All_Config::$cache_path . '*.cache'));
+array_map('unlink', glob(AllConfig::$cache_path . '*.cache'));
 echo 'Cache cleared.', PHP_EOL;
 
 ?>

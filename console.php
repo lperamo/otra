@@ -3,11 +3,6 @@
 declare(strict_types=1);
 use lib\myLibs\console\TasksManager;
 
-// Workaround for Babun on Windows otherwise Babun doesn't find PHP !
-if (true === isset($_SERVER['_']) && false !== strpos($_SERVER['_'], 'cygdrive')
-  || false === isset($_SERVER['_']))
-  $_SERVER['_'] = $_SERVER['PHP_PEAR_PHP_BIN'];
-
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
 define('XMODE', 'dev');
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');

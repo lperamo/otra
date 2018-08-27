@@ -10,8 +10,8 @@ class AllConfig
   public static $verbose = 1,
     $debug = true,
     $cache = false,
-    /* In order to not make new All_Config::$blabla before calling CACHE_PATH, use directly All_Config::$cache_path in this case
-    (if we not use All_Config::$blabla it will not load All_Config even if it's in the use statement so the "defines" aren't accessible ) */
+    /* In order to not make new AllConfig::$blabla before calling CACHE_PATH, use directly AllConfig::$cache_path in this case
+    (if we not use AllConfig::$blabla it will not load AllConfig even if it's in the use statement so the "defines" aren't accessible ) */
     $cache_path = CACHE_PATH,
     $version = 'v1',
     $defaultConn = 'CMS', // mandatory

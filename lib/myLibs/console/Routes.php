@@ -22,7 +22,7 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
 $alt = 0;
 const WIDTH_LEFT = 25;
 const WIDTH_MIDDLE = 10;
-const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\All_Config::$version . 'che'))]
+const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
 
 // Check if we want one or all the routes
 if (true === isset($argv[2]))
@@ -51,7 +51,7 @@ foreach($routes as $route => &$details)
       PHP_EOL;
 
   // shaName is the encrypted key that match a particular route / version
-  $shaName = sha1('ca' . $route . config\All_Config::$version . 'che');
+  $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
 
   $basePath = substr(__DIR__, 0, -strlen('lib/myLibs/console')) . 'cache/';
 

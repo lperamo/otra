@@ -1,7 +1,7 @@
 <?
 declare(strict_types=1);
 
-use config\All_Config;
+use config\AllConfig;
 
 $verbose = $argv[1];
 $route = $argv[2];
@@ -88,7 +88,7 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => All_Config::$dbConnections[key(All_Config::$dbConnections)]['driver']
+    'driver' => AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
   ]);
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {

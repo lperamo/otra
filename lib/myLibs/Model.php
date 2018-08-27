@@ -2,7 +2,7 @@
 
 namespace lib\myLibs;
 
-use config\All_Config;
+use config\AllConfig;
 use lib\myLibs\Session;
 
 /**
@@ -50,7 +50,7 @@ class Model
 
     if ($update === true)
     { // It's an update
-      $query = 'UPDATE `'. All_Config::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
+      $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
       $idValue = $properties[$id];
       unset($properties[$id]);
 
@@ -64,7 +64,7 @@ class Model
     } else // we add a entry
     {
       unset($properties[$id]);
-      $query = 'INSERT INTO `'. All_Config::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
+      $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
       $values = '';
 
       foreach($properties as $name => &$value)

@@ -14,7 +14,7 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   echo PHP_EOL;
   require CORE_PATH . 'console/Tools.php';
 
-  list($status, $return) = cli($_SERVER['_'] . ' ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  list($status, $return) = cli(PHP_BINARY . ' ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
   echo $return;
 
   return $status;
@@ -60,7 +60,7 @@ foreach(array_keys($routes) as &$route)
   if (true === isset($routes[$route]['resources']['template']))
     echo white() . str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . cyan() . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . white(), 94, '=', STR_PAD_BOTH), endColor(), PHP_EOL;
   else
-    passthru($_SERVER['_'] . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
+    passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
 }
 
 // Final specific management for routes files
@@ -70,7 +70,7 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => \config\All_Config::$dbConnections[key(\config\All_Config::$dbConnections)]['driver']
+    'driver' => \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
   ]
 );
 

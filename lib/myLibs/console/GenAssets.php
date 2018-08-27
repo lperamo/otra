@@ -147,7 +147,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
     else
     {
       // Generates the gzipped template files
-      passthru($_SERVER['_'] . ' "' . CORE_PATH . 'console/GenAsset.php" "' .
+      passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/GenAsset.php" "' .
         CACHE_PATH . '" "' .
         $routeName . '" ' .
         $shaName . ' "' .

@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace lib\myLibs;
 
-use config\All_Config;
+use config\AllConfig;
 
 class Controller extends MasterController
 {

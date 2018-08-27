@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace lib\myLibs;
 
-use config\{All_Config, Routes};
+use config\{AllConfig, Routes};
 use lib\myLibs\{Logger, MasterController};
 
 class Controller extends MasterController

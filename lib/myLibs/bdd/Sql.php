@@ -6,7 +6,7 @@
 namespace lib\myLibs\bdd;
 
 use lib\myLibs\{ LionelException, Session, bdd\Mysql, Logger };
-use config\All_Config;
+use config\AllConfig;
 
 class Sql
 {
@@ -62,7 +62,7 @@ class Sql
    * @throws LionelException
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $sgbd     Kind of sgbd
-   * @internal param string $conn     Connection used (see All_Config files)
+   * @internal param string $conn     Connection used (see AllConfig files)
    */
   public static function getDB($conn = false) : Sql // $selectDb = true, $sgbd = false, $conn = false
   {
@@ -75,19 +75,19 @@ class Sql
       if (true === isset(self::$_activeConn[$conn]))
       {
         self::$_currentConn = $conn;
-      } else if (true === isset(All_Config::$dbConnections[$conn]))
+      } else if (true === isset(AllConfig::$dbConnections[$conn]))
       {
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
       } else
-        throw new LionelException('There is no ' . $conn . ' configuration available in the All_Config file !');
+        throw new LionelException('There is no ' . $conn . ' configuration available in the AllConfig file !');
 
     } else
     {
-      if (false === isset(All_Config::$defaultConn))
+      if (false === isset(AllConfig::$defaultConn))
         throw new LionelException('Default connection not available ! Check your configuration.', E_CORE_ERROR);
 
-      $conn = All_Config::$defaultConn;
+      $conn = AllConfig::$defaultConn;
 
       // If it's not already added, we add it
       if (false === isset(self::$_activeConn[$conn]))
@@ -96,7 +96,7 @@ class Sql
       self::$_currentConn = $conn;
     }
 
-    extract(All_Config::$dbConnections[$conn]);
+    extract(AllConfig::$dbConnections[$conn]);
 
     /**
      * Extractions give those variables
@@ -120,7 +120,7 @@ class Sql
         require CORE_PATH . 'bdd/' . $driver . '.php';
       }
 
-      extract(All_Config::$dbConnections[$conn ?: All_Config::$defaultConn]);
+      extract(AllConfig::$dbConnections[$conn ?: AllConfig::$defaultConn]);
       /**
        *  Extractions give those variables
        * @type string $db

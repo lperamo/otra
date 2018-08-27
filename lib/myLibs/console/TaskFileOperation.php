@@ -37,7 +37,7 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
  */
 function hasSyntaxErrors(string $file) : bool
 {
-  exec($_SERVER['_'] . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
+  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
   $sortie = implode(PHP_EOL, $output);
 
   if(strlen($sortie) > 6 && false !== strpos($sortie, 'pars', 7))

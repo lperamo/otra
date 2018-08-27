@@ -1,7 +1,7 @@
 <?
 use phpunit\framework\TestCase;
 use lib\myLibs\bdd\Sql;
-use config\All_Config;
+use config\AllConfig;
 use lib\myLibs\LionelException;
 
 /**
@@ -80,12 +80,12 @@ class SqlTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * depends on testConstruct, All_Config
+   * depends on testConstruct, AllConfig
    */
   public function testConnect()
   {
     $sql = new Sql('PDOMySql');
-    extract(All_Config::$dbConnections[All_Config::$defaultConn]);
+    extract(AllConfig::$dbConnections[AllConfig::$defaultConn]);
 
     /**
      *  Extractions give those variables

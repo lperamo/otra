@@ -1,7 +1,7 @@
 <?
 use phpunit\framework\TestCase;
 use lib\myLibs\{LionelException, console\Database, bdd\Sql};
-use config\All_Config;
+use config\AllConfig;
 use lib\sf2_yaml\Yaml;
 
 /**
@@ -578,7 +578,7 @@ class DatabaseTest extends TestCase
     $_initImports = new ReflectionMethod(Database::class, '_initImports');
     $_initImports->setAccessible(true);
     $confToUse = self::$databaseConnection;
-    $database = All_Config::$dbConnections[$confToUse]['db'];
+    $database = AllConfig::$dbConnections[$confToUse]['db'];
     $_initImports->invokeArgs(null, [&$database, &$confToUse]);
   }
 
