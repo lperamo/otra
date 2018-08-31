@@ -23,6 +23,7 @@ function promptUser(string $question, string $altQuestion = '') : string
   $line = askQuestion($question);
 
   while ('' === $line) {
+    // TODO Bug with wsl ? it always loops and does not wait the input !
     $line = askQuestion($questionAlt);
   }
 

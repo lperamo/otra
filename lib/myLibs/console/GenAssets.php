@@ -2,6 +2,7 @@
 require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';
+require BASE_PATH . '/lib/myLibs/tools/Compression.php';
 // require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
 
 $routes = \config\Routes::$_;
@@ -104,7 +105,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
   {
     if (strpos(implode(array_keys($resources)), 'css') !== false)
     {
-      exec('gzip -f -9 "' . loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName) . '"');
+      gzCompressFile(loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName), null,9);
       echo status('CSS');
     } else
       echo status('NO CSS', 'cyan');
@@ -121,17 +122,22 @@ for($i = 0; $i < $cptRoutes; ++$i)
       if (false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
       {
         if (true === empty(exec('which java'))) // JAMVM CASE
-          exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js; gzip -f -9 "' . $pathAndFile . '"');
+        {
+          exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
+          gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
+        }
       } else if (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
       {
-        exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js & gzip -f -9 "' . $pathAndFile . '"');
+        exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
+        gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
       } else
       {
         // JAVA CASE
 
         /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
         exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT & gzip -f -9 "' . $pathAndFile . '"');
+          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+        gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
       }
 
       echo status('JS');
@@ -213,7 +219,12 @@ function loadAndSaveResources(array $resources, array $routeInfos, string $type,
   if ('' === $allResources)
     return status('No ' . strtoupper($type), 'cyan');
 
-  $pathAndFile = CACHE_PATH . $type . '/' . $shaName;
+  $resourceFolderPath = CACHE_PATH . $type . '/';
+  $pathAndFile = $resourceFolderPath . $shaName;
+
+  if (file_exists($resourceFolderPath) === false)
+    mkdir($resourceFolderPath, 0755, true);
+
   file_put_contents($pathAndFile, $allResources);
 
   return $pathAndFile;
@@ -262,6 +273,6 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
      **/
 
     if ($content[-1] === 'p')
-       echo PHP_EOL;
+      echo PHP_EOL;
   }
 }

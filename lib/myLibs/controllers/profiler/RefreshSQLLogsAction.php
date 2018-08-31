@@ -6,14 +6,14 @@
 
 namespace lib\myLibs\controllers\profiler;
 
-use lib\myLibs\{Controller, services\profilerService};
+use lib\myLibs\{Controller, services\ProfilerService};
 
 class RefreshSQLLogsAction extends Controller
 {
   public function refreshSQLLogsAction()
   {
-    profilerService::securityCheck();
-    profilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
+    ProfilerService::securityCheck();
+    ProfilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
   }
 }
 ?>

@@ -6,13 +6,13 @@
 
 namespace lib\myLibs\controllers\profiler;
 
-use lib\myLibs\{Controller, services\profilerService};
+use lib\myLibs\{Controller, services\ProfilerService};
 
 class ClearSQLLogsAction extends Controller
 {
   public function clearSQLLogsAction()
   {
-    profilerService::securityCheck();
+    ProfilerService::securityCheck();
     $file = BASE_PATH . 'logs/' . XMODE . '/sql.txt';
     $handle = fopen($file, 'r+');
     ftruncate($handle, 0);

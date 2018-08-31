@@ -26,12 +26,17 @@ self::title('Exception !');
 		  		<td></td>
 		  	 	<td><?= (true === isset($now['function'])) ? $now['function'] : '-' ?></td>
 				<td><?= (true === isset($now['line'])) ? $now['line'] : '-' ?></td>
-				<td><?= (true === isset($now['file']))
-					? (false !== strpos($now['file'], BASE_PATH)
-						? substr($now['file'], strlen(BASE_PATH))
-						: $now['file'])
-					: '-'
-				?></td>
+        <td><? if (true === isset($now['file']))
+          {
+            $traceFile = str_replace('\\', '/', $now['file']);
+            echo (false !== strpos($traceFile, BASE_PATH)
+              ? '<span title="' . $traceFile . '">' . substr($traceFile, strlen(BASE_PATH)) . '</span>'
+              : $traceFile);
+          } else
+          {
+            echo '-';
+          }
+        ?></td>
 				<? if (true === empty($now['args']))
 				{ ?> <td></td></tr> <? } else { ?>
 				<td class="show-args">

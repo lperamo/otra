@@ -49,7 +49,7 @@ class Pdomysql
   public static function query($query)
   {
     $result = Sql::$_CURRENT_CONN->query($query);
-
+    // TODO use PDOStatement::debugDumpParams() ?
     if (false === $result)
     {
       $errorInfo = Sql::$_CURRENT_CONN->errorInfo();

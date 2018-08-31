@@ -17,11 +17,15 @@ if (VERBOSE === 1)
   echo "\x0d\033[K", 'Processed directories : ', $processedDir, '.';
 
 $classMap = var_export($classes, true);
+$classMapPath = BASE_PATH . 'cache/php/';
+
+if (file_exists($classMapPath) === false)
+  mkdir($classMapPath, 0755, true);
 
 // We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file.
 // Here, we take care of the spaces contained into folders and files names.
 file_put_contents(
-  BASE_PATH . 'cache/php/ClassMap.php',
+  $classMapPath . 'ClassMap.php',
   '<? define(\'CLASSMAP\',' . substr(
     str_replace(
       ['\\\\', ' => ', '  \'', "\n", 'array ('],

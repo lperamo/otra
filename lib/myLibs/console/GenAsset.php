@@ -11,6 +11,7 @@ define('XMODE', 'dev');
 
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'Router.php';
+require BASE_PATH . '/lib/myLibs/tools/Compression.php';
 
 // Loads the class mapping
 require BASE_PATH . 'cache/php/ClassMap.php';
@@ -33,6 +34,11 @@ $content = ob_get_clean();
 error_reporting($oldErrorReporting);
 
 // We generate the file and gzip it
+$tplPath = $argv[1] . 'tpl/';
+
+if (false === file_exists($tplPath))
+  mkdir($tplPath, 0755, true);
+
 $pathAndFile = $argv[1] . 'tpl/' . $argv[3];
 file_put_contents($pathAndFile, preg_replace('@\s{2,}@', ' ', $content));
-exec('gzip -f -9 "' . $pathAndFile . '"');
+gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);

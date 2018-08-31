@@ -50,7 +50,9 @@ function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
 function dumpSmall()
 {
   echo '<pre>';
-  foreach (func_get_args() as &$param)
+  $args = func_get_args();
+
+  foreach ($args as &$param)
   {
     var_dump(is_string($param) ? htmlspecialchars($param) : $param);
     echo '<br />';

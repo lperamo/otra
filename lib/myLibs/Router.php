@@ -44,7 +44,7 @@ class Router
       ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
       : (true === isset(Routes::$_[$route]['core'])
         ? ''
-        : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . $action;
+        : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . ucfirst($action);
 
     if (false === $launch)
       return $action;

@@ -6,13 +6,13 @@
 
 namespace lib\myLibs\controllers\profiler;
 
-use lib\myLibs\{Controller, services\profilerService};
+use lib\myLibs\{Controller, services\ProfilerService};
 
 class IndexAction extends Controller
 {
   public function indexAction()
   {
-    profilerService::securityCheck();
+    ProfilerService::securityCheck();
     echo '<div id="profiler" class="profiler">
       <div>
         <a id="dbg-hide-profiler" role="button" class="lb-btn dbg-marginR5">' . t('Hide the profiler') . '</a>
@@ -21,7 +21,7 @@ class IndexAction extends Controller
       </div>
       <div id="dbg-sql-logs" class="dbg-sql-logs">';
 
-    profilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
+    ProfilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
 
     echo '</div></div>';
   }

@@ -56,7 +56,11 @@ foreach($routes as $route => &$details)
   $basePath = substr(__DIR__, 0, -strlen('lib/myLibs/console')) . 'cache/';
 
   echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
-  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? lightGreen() : lightRed(), '[PHP]', $altColor;
+
+  if (true === isset($resources['template']))
+    echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true)
+      ? lightGreen()
+      : lightRed(), '[PHP]', $altColor;
 
   // Resources management : show the state of each ressource. Red => missing, green => exists
   if (true === isset($details['resources']))
