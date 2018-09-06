@@ -2,7 +2,7 @@
 define('PATTERN', '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
-        (?:renderView\s{0,}\([^\),]{1,})
+        (?:->renderView\s{0,}\([^\),]{1,})
         @mx');
 // a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
@@ -99,6 +99,8 @@ function contentToFile(string $content, string $outputFile)
 }
 
 /**
+ * We analyze the use statement in order to retrieve the name of each class which is included in it.
+ *
  * @param int    $level
  * @param array  $filesToConcat Files to parse after have parsed this one
  * @param string $class
@@ -179,6 +181,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
         // simplifies the usage of classes by passing from FQCN to class name ... lib\myLibs\bdd\Sql => Sql
         str_replace($classToReplace, $lastChunk, $contentToAdd);
 
+        // We analyze the use statement in order to retrieve the name of each class which is included in it.
         analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
       } else
       {
@@ -210,6 +213,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
           str_replace($classToReplace, $lastChunk, $contentToAdd);
         }
 
+        // We analyze the use statement in order to retrieve the name of each class which is included in it.
         analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
       }
 
@@ -654,6 +658,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
               continue;
             }
 
+            // Files already loaded by default will not be added
             if ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php')
             {
               echo brownText('This file will be already loaded by default for each route : ' . substr($tempFile, strlen(BASE_PATH))), PHP_EOL; // It can be a SwiftMailer class for example

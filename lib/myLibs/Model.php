@@ -1,4 +1,4 @@
-<?php
+<?
 
 namespace lib\myLibs;
 
@@ -80,3 +80,4 @@ class Model
     return $db->lastInsertedId();
   }
 }
+?>

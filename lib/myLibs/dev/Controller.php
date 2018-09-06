@@ -27,7 +27,7 @@ class Controller extends MasterController
   public function checkCache(array $filesToCheck) : bool { return false; }
 
   /**
-   * Renders a view. NB: Even is cache is activated, the template can be not fresh !
+   * Renders a view. NB: Even if the cache is activated, the template can be not fresh !
    *
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
@@ -52,7 +52,7 @@ class Controller extends MasterController
     parent::$template = $this->buildCachedFile($templateFile, $variables);
 
     if (false === $ajax)
-      self::addDebugBar(CORE_VIEWS_PATH . '/debugBar.phtml');
+      self::addDebugBar();
 
     return parent::$template;
   }
@@ -96,14 +96,12 @@ class Controller extends MasterController
 
   /**
    * Adds a debug bar at the top of the template
-   *
-   * @param string $debugBar Debug bar template
    */
-  private function addDebugBar(string $debugBar)
+  private function addDebugBar()
   {
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
-    require $debugBar;
+    require CORE_VIEWS_PATH . '/debugBar.phtml';
     parent::$template = (false === strpos(parent::$template, 'body'))
                         ? ob_get_clean() . parent::$template
                         : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);

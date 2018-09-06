@@ -975,8 +975,6 @@ namespace lib\myLibs\console {
     /**
      * Ensures that the configuration to use and the database name are correct. Ensures also that the specified database exists.
      *
-     * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
-     *
      * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
@@ -984,7 +982,7 @@ namespace lib\myLibs\console {
      *
      * @return mixed Returns a SQL instance.
      */
-    private static function _initImports(&$database, &$confToUse)
+    private static function _initImports(?string &$database, ?string &$confToUse)
     {
       if (null === $confToUse)
         $confToUse = key(AllConfig::$dbConnections);
@@ -1006,7 +1004,6 @@ namespace lib\myLibs\console {
 
     /**
      * Creates the database schema from a database.
-     * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
      *
      * @param string $database  (optional)
      * @param string $confToUse (optional)
@@ -1015,7 +1012,7 @@ namespace lib\myLibs\console {
      *
      * @return bool
      */
-    public static function importSchema( string $database = null, string $confToUse = null)
+    public static function importSchema(?string $database = null, ?string $confToUse = null)
     {
       if (false === self::$init)
         self::init();
@@ -1096,14 +1093,13 @@ namespace lib\myLibs\console {
 
     /**
      * Creates the database fixtures from a database.
-     * TODO Think to (re)add the HHVM like notation ?string to allow either a string either a null variable for the two parameters
      *
      * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
      * @return bool
      */
-    public static function importFixtures( string $database = null, string $confToUse = null)
+    public static function importFixtures(?string $database = null, ?string $confToUse = null)
     {
       if (false === self::$init)
         self::init();
