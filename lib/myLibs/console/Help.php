@@ -1,5 +1,4 @@
 <?
-
 $method = $argv[2];
 $methods = get_class_methods('lib\myLibs\console\Tasks');
 
@@ -30,18 +29,18 @@ if (false === in_array($method, $methods, true))
 /** WE DISPLAY HERE THE COMMAND HELP */
 $methodDesc = $method . 'Desc';
 $paramsDesc = self::$methodDesc();
-echo white(), str_pad($method, 27, ' '), lightGray(), ': ', cyan(), $paramsDesc[0], PHP_EOL;
+echo white(), str_pad($method, 27, ' '), lightGray(), ': ', cyan(), $paramsDesc[TASK_DESCRIPTION], PHP_EOL;
 
 // If we have parameters for this command, displays them
-if (isset($paramsDesc[1]) === true)
+if (isset($paramsDesc[TASK_PARAMETERS]) === true)
 {
   $i = 0;
 
-  foreach ($paramsDesc[1] as $parameter => &$paramDesc)
+  foreach ($paramsDesc[TASK_PARAMETERS] as $parameter => &$paramDesc)
   {
     // + parameter : (required|optional) Description
     echo lightCyan(), '   + ', str_pad($parameter, 22, ' '), lightGray();
-    echo ': ', lightCyan(), '(', $paramsDesc[2][$i], ') ', cyan(), $paramDesc, PHP_EOL;
+    echo ': ', lightCyan(), '(', $paramsDesc[TASK_STATUS][$i], ') ', cyan(), $paramDesc, PHP_EOL;
     ++$i;
   }
 }

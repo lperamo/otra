@@ -5,31 +5,14 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
+define('TASK_DESCRIPTION', 0);
+define('TASK_PARAMETERS', 1);
+define('TASK_STATUS', 2);
+define('TASK_CATEGORY', 3);
+
 class Tasks
 {
   protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
-
-  /**
-   * @param array|null $argv
-   */
-  public static function cc(?array $argv = null)
-  {
-    require CORE_PATH . 'console/ClearCache.php';
-  }
-
-  /**
-   * @return array
-   */
-  public static function ccDesc(): array
-  {
-    return [
-      'Clears the cache',
-      [
-        'route name' => 'If you want to clear cache for only one route.'
-      ],
-      ['optional']
-    ];
-  }
 
   /**
    * @param array $argv
@@ -56,7 +39,8 @@ class Tasks
       [
         'optional',
         'optional'
-      ]
+      ],
+      'Architecture'
     ];
   }
 
@@ -80,35 +64,31 @@ class Tasks
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. brown() . 'schema.yml' . cyan(). PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . brown() .'schema.yml' . cyan()
       ],
-      ['optional', 'optional']
+      ['optional', 'optional'],
+      'Architecture'
     ];
   }
 
   /**
-   * @param array $argv
+   * @param array|null $argv
    */
-  public static function crypt(array $argv)
+  public static function cc(?array $argv = null)
   {
-    if (true === isset($argv[3]))
-      define(FWK_HASH, $argv[3]);
-    else
-      require BASE_PATH . 'config/AllConfig.php';
-
-    echo crypt($argv[2], FWK_HASH), PHP_EOL;
+    require CORE_PATH . 'console/ClearCache.php';
   }
 
   /**
    * @return array
    */
-  public static function cryptDesc() : array
+  public static function ccDesc(): array
   {
     return [
-      'Crypts a password and shows it.',
+      'Clears the cache',
       [
-        'password' => 'The password to crypt.',
-        'hash' => 'The hash to use.'
+        'route name' => 'If you want to clear cache for only one route.'
       ],
-      ['required', 'optional']
+      ['optional'],
+      'Deployment'
     ];
   }
 
@@ -127,36 +107,8 @@ class Tasks
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => Same as 2 + class mapping',
         'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
       ],
-      ['optional', 'optional']
-    ];
-  }
-
-  /**
-   * @param array $argv
-   */
-  public static function hash(array $argv)
-  {
-    $argv[2] = isset($argv[2]) ? $argv[2] : 7;
-    $salt = '';
-    $salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
-
-    for($i = 0; $i < 22; ++$i)
-    {
-      $salt .= $salt_chars[array_rand($salt_chars)];
-    }
-
-    echo '$2y$0', $argv[2], '$', $salt, PHP_EOL;
-  }
-
-  /**
-   * @return array
-   */
-  public static function hashDesc() : array
-  {
-    return [
-      'Returns a random hash.',
-      ['rounds' => 'The numbers of round for the blowfish salt. Default: 7.'],
-      ['optional']
+      ['optional', 'optional'],
+      'Deployment'
     ];
   }
 
@@ -179,7 +131,8 @@ class Tasks
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '7 => all',
         'route' => 'The route for which you want to generate resources.'
       ],
-      ['optional', 'optional']
+      ['optional', 'optional'],
+      'Deployment'
     ];
   }
 
@@ -200,7 +153,8 @@ class Tasks
         'verbose' => 'If set to 1, we print all the main warnings when the task fails. Put 2 to get every warning.',
         'route' => 'The route for which you want to generate the micro bootstrap.'
       ],
-      ['optional', 'optional', 'optional']
+      ['optional', 'optional', 'optional'],
+      'Deployment'
     ];
   }
 
@@ -215,26 +169,8 @@ class Tasks
     return [
       'Generates a class mapping file that will be used to replace the autoloading method.',
       ['verbose' => 'If set to 1 => Show all the classes that will be used. Default to 0.'],
-      ['optional']
-    ];
-  }
-
-  /**
-   * Show the help for the specified command.
-   *
-   * @param array $argv
-   */
-  public static function help(array $argv) { require CORE_PATH . 'console/Help.php'; }
-
-  /**
-   * @return array
-   */
-  public static function helpDesc() : array
-  {
-    return [
-      'Shows the extended help for the specified command.',
-      ['command' => 'The command which you need help for.'],
-      ['required']
+      ['optional'],
+      'Deployment'
     ];
   }
 
@@ -243,7 +179,7 @@ class Tasks
   /**
    * @return array
    */
-  public static function upConfDesc() : array { return ['Updates the files related to bundles and routes.']; }
+  public static function upConfDesc() : array { return ['Updates the files related to bundles and routes.', null, null, 'Deployment']; }
 
   /**
    * Executes the sql script
@@ -263,7 +199,8 @@ class Tasks
         'file' => 'File that will be executed',
         'database' => 'Database to use for this script'
       ],
-      ['required', 'optional']
+      ['required', 'optional'],
+      'Database'
     ];
   }
 
@@ -280,7 +217,8 @@ class Tasks
     return [
       'Removes sql and yml files in the case where there are problems that had corrupted files.',
       ['cleaningLevel' => 'Type 1 in order to also remove the file that describes the tables order.'],
-      ['optional']
+      ['optional'],
+      'Database'
     ];
   }
 
@@ -312,7 +250,8 @@ class Tasks
         'databaseName' => 'The database name !',
         'force' => 'If true, we erase the database !'
       ],
-      ['required', 'optional']
+      ['required', 'optional'],
+      'Database'
     ];
   }
 
@@ -342,7 +281,8 @@ class Tasks
         'mask' => '1 => We erase the database' . PHP_EOL .
                   str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => We clean the fixtures sql files and we erase the database.'
       ],
-      ['required', 'optional']
+      ['required', 'optional'],
+      'Database'
     ];
   }
 
@@ -369,7 +309,8 @@ class Tasks
         'databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
         'configuration' => 'The configuration that you want to use from your configuration file.'
       ],
-      ['optional', 'optional']
+      ['optional', 'optional'],
+      'Database'
     ];
   }
 
@@ -396,7 +337,87 @@ class Tasks
         'databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
         'configuration' => 'The configuration that you want to use from your configuration file.'
       ],
-      ['optional', 'optional']
+      ['optional', 'optional'],
+      'Database'
+    ];
+  }
+
+  /**
+   * Show the help for the specified command.
+   *
+   * @param array $argv
+   */
+  public static function help(array $argv) { require CORE_PATH . 'console/Help.php'; }
+
+  /**
+   * @return array
+   */
+  public static function helpDesc() : array
+  {
+    return [
+      'Shows the extended help for the specified command.',
+      ['command' => 'The command which you need help for.'],
+      ['required'],
+      'Help and tools'
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
+  public static function crypt(array $argv)
+  {
+    if (true === isset($argv[3]))
+      define(FWK_HASH, $argv[3]);
+    else
+      require BASE_PATH . 'config/AllConfig.php';
+
+    echo crypt($argv[2], FWK_HASH), PHP_EOL;
+  }
+
+  /**
+   * @return array
+   */
+  public static function cryptDesc() : array
+  {
+    return [
+      'Crypts a password and shows it.',
+      [
+        'password' => 'The password to crypt.',
+        'hash' => 'The hash to use.'
+      ],
+      ['required', 'optional'],
+      'Help and tools'
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
+  public static function hash(array $argv)
+  {
+    $argv[2] = isset($argv[2]) ? $argv[2] : 7;
+    $salt = '';
+    $salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+
+    for($i = 0; $i < 22; ++$i)
+    {
+      $salt .= $salt_chars[array_rand($salt_chars)];
+    }
+
+    echo '$2y$0', $argv[2], '$', $salt, PHP_EOL;
+  }
+
+  /**
+   * @return array
+   */
+  public static function hashDesc() : array
+  {
+    return [
+      'Returns a random hash.',
+      ['rounds' => 'The numbers of round for the blowfish salt. Default: 7.'],
+      ['optional'],
+      'Help and tools'
     ];
   }
 
@@ -413,7 +434,8 @@ class Tasks
     return [
       'Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)',
       ['route' => 'The name of the route that we want information from, if we wish only one route description.'],
-      ['optional']
+      ['optional'],
+      'Help and tools'
     ];
   }
 
@@ -424,7 +446,7 @@ class Tasks
   /**
    * @return array
    */
-  public static function versionDesc() : array { return ['Shows the framework version.']; }
+  public static function versionDesc() : array { return ['Shows the framework version.', null, null, 'Help and tools']; }
 }
 ?>
 

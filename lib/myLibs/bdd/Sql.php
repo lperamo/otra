@@ -14,20 +14,13 @@ class Sql
    * @type array  $_sgbds       Available sgbds
    * @type array  $_activeConn
    * @type string $_currentConn
-//   * @type string $_db
-//   * @type string $_chosenSgbd
    */
   private static
     $_sgbds = ['Mysql', 'Pdomysql'],
     $_currentConn,
     $_currentSGBD,
-    //$_activeSGBD = [],
     /** @type array Available active connections */
     $_activeConn = [];
-
-//  private
-//    $_db,
-//    $_chosenSgbd;
 
   public static
     $instance,
@@ -53,24 +46,26 @@ class Sql
   public function __destruct() { $this->close(); }
 
   /**
-   * Retrieves an instance of this class or creates it if it not exists yet
+   * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param $params
+   * @param $conn
+   * @param bool $haveDatabase Do we have a database ? Can be no, if we want to CREATE a database.
    *
    * @return bool|Sql|resource
    *
    * @throws LionelException
+   *
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $sgbd     Kind of sgbd
    * @internal param string $conn     Connection used (see AllConfig files)
    */
-  public static function getDB($conn = false) : Sql // $selectDb = true, $sgbd = false, $conn = false
+  public static function getDB($conn = false, bool $haveDatabase = true) : Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
      */
-    if (true === $conn)
+    if (false !== $conn)
     {
       if (true === isset(self::$_activeConn[$conn]))
       {
@@ -81,11 +76,10 @@ class Sql
         self::$_activeConn[$conn] = null;
       } else
         throw new LionelException('There is no ' . $conn . ' configuration available in the AllConfig file !');
-
     } else
     {
       if (false === isset(AllConfig::$defaultConn))
-        throw new LionelException('Default connection not available ! Check your configuration.', E_CORE_ERROR);
+        throw new LionelException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
 
       $conn = AllConfig::$defaultConn;
 
@@ -123,6 +117,7 @@ class Sql
       extract(AllConfig::$dbConnections[$conn ?: AllConfig::$defaultConn]);
       /**
        *  Extractions give those variables
+       *
        * @type string $db
        * @type int    $port
        * @type string $host
@@ -137,8 +132,12 @@ class Sql
       try
       {
         $activeConn['conn'] = $activeConn['instance']->connect(
-          strtolower(substr($driver, 3)) . ':dbname=' . $db . ';host=' .
-          ('' == $port ? $host : $host . ':' . $port), $login, $password);
+          strtolower(substr($driver, 3))
+            . (true === $haveDatabase  ? ':dbname=' . $db . ';' : ':')
+            . 'host=' . ('' == $port ? $host : $host . ':' . $port),
+          $login,
+          $password
+        );
 
         self::$_CURRENT_CONN = $activeConn['conn'];
       }catch(\Exception $e)
@@ -160,10 +159,7 @@ class Sql
    */
   public static function connect(...$params)
   {
-    //return call_user_func_array(self::$_currentSGBD . '::connect', $params);
     return call_user_func_array([self::$_currentSGBD, 'connect'], $params);
-
-/*    return call_user_func_array(array(self::$_activeConn[self::$_currentConn]['instance'], 'connect'), $params);*/
   }
 
   /**

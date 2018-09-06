@@ -15,10 +15,13 @@ class Logger
    */
   private static function logIpTest() : string
   {
-    // Only needed to ease maintainability
-    define('SESSION_DATE', '_date');
-    define('HTTP_USER_AGENT', 'HTTP_USER_AGENT');
-    define('SESSION_BROWSER', '_browser');
+    // Only needed to ease maintainability, maybe pass those to class static variables on order to get rid of the condition ?
+    if (defined('SESSION_DATE') === false)
+    {
+      define('SESSION_DATE', '_date');
+      define('HTTP_USER_AGENT', 'HTTP_USER_AGENT');
+      define('SESSION_BROWSER', '_browser');
+    }
 
     if (false === isset($_SESSION[SESSION_DATE]))
       $_SESSION[SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[SESSION_BROWSER] = '';

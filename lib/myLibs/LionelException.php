@@ -10,7 +10,7 @@ use lib\myLibs\{Controller, console\LionelExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once BASE_PATH . 'lib\myLibs\Debug_Tools.php';
+require_once BASE_PATH . 'lib\myLibs\DebugTools.php';
 
 class LionelException extends \Exception
 {

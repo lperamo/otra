@@ -1,6 +1,6 @@
 <?
 use phpunit\framework\TestCase,
-  bundles\CMS\services\usersService;
+  bundles\CMS\services\UsersService;
 
 /**
  * @runTestsInSeparateProcesses
@@ -18,7 +18,7 @@ class UsersServiceTest extends TestCase
   public function testGetUsersTab()
   {
     require CORE_PATH . 'Router.php';
-    usersService::getUsersTab();
+    UsersService::getUsersTab();
   }
 }
 ?>

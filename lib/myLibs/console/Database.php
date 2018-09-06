@@ -5,7 +5,7 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace { require_once CORE_PATH . 'console/Tools.php'; }
+//namespace { require_once CORE_PATH . 'tools/Cli.php'; }
 namespace lib\myLibs\console {
 
   use lib\myLibs\bdd\Sql;
@@ -208,12 +208,11 @@ namespace lib\myLibs\console {
       if (false === self::$init)
         self::init();
 
-      //self::initCommand();
+      // No need to get DB twice (getDB is already used in dropDatabase function)
+      (true === $force)
+        ? self::dropDatabase($databaseName)
+        : Sql::getDB(false, false);
 
-      if (true === $force)
-        self::dropDatabase($databaseName);
-
-      Sql::getDB();
       $inst = &Sql::$instance;
       $inst->beginTransaction();
       $databaseFile = self::generateSqlSchema($databaseName, $force);
@@ -677,10 +676,14 @@ namespace lib\myLibs\console {
      * Drops the database.
      *
      * @param string $databaseName Database name !
+     *
+     * @return Sql
+     *
+     * @throws LionelException
      */
-    public static function dropDatabase(string $databaseName)
+    public static function dropDatabase(string $databaseName) : Sql
     {
-      Sql::getDB();
+      $sqlInstance = Sql::getDB();
       SQL::$instance->beginTransaction();
 
       try
@@ -696,6 +699,8 @@ namespace lib\myLibs\console {
       SQL::$instance->commit();
 
       echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
+
+      return $sqlInstance;
     }
 
     /**

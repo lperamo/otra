@@ -24,16 +24,33 @@ const WIDTH_LEFT = 25;
 const WIDTH_MIDDLE = 10;
 const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
 
+$route = $argv[2];
+
 // Check if we want one or all the routes
-if (true === isset($argv[2]))
+if (true === isset($route))
 {
-  if (false === isset(\config\Routes::$_[$argv[2]]))
+  // If the route does not exist
+  if (false === isset(\config\Routes::$_[$route]))
   {
-    echo redText('There are no route with the name \'' . $argv[2] . '\'.'), PHP_EOL;
-    exit(1);
+    // We try to find a route which the name is similar
+    require CORE_PATH . 'console/Tools.php';
+    list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
+
+    // And asks the user whether we find what he wanted or not
+    $choice = promptUser('There are no route with the name ' . white() . $route . brown()
+      . ' ! Do you mean ' . white() . $newRoute . brown() . ' ? (y/n)');
+
+    // If our guess is wrong, we apologise and exit !
+    if ('n' === $choice)
+    {
+      echo redText('Sorry then !'), PHP_EOL;
+      exit(1);
+    }
+
+    $route = $newRoute;
   }
 
-  $routes = [$argv[2] => \config\Routes::$_[$argv[2]]];
+  $routes = [$route => \config\Routes::$_[$route]];
 } else
   $routes = \config\Routes::$_;
 

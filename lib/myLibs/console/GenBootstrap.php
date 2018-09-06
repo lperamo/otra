@@ -11,8 +11,7 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   Tasks::genClassMap([null, null, $verbose]);
 
   // Re-execute our task now that we have a correct class mapping
-  echo PHP_EOL;
-  require CORE_PATH . 'console/Tools.php';
+  require CORE_PATH . 'tools/Cli.php';
 
   list($status, $return) = cli(PHP_BINARY . ' ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
   echo $return;
@@ -31,13 +30,29 @@ if (false === file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
 if (true === isset($argv[4]))
 {
   $route = $argv[4];
-  if (true === isset(\config\Routes::$_[$route]))
-    $routes = [$route => \config\Routes::$_[$route]];
-  else
+
+  if (false === isset(\config\Routes::$_[$route]))
   {
-    echo 'This route doesn\'t exist !', PHP_EOL;
-    return;
+    // We try to find a route which the name is similar
+    // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this lib !
+    require_once CORE_PATH . 'console/Tools.php';
+    list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
+
+    // And asks the user whether we find what he wanted or not
+    $choice = promptUser('There are no route with the name ' . white() . $route . brown()
+      . ' ! Do you mean ' . white() . $newRoute . brown() . ' ? (y/n)');
+
+    // If our guess is wrong, we apologise and exit !
+    if ('n' === $choice)
+    {
+      echo redText('Sorry then !'), PHP_EOL;
+      exit(1);
+    }
+
+    $route = $newRoute;
   }
+
+  $routes = [$route => \config\Routes::$_[$route]];
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else
 {

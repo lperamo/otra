@@ -42,10 +42,18 @@ function launchTask(array $argv, int $argc)
   }
 
   if ($argc > $total + 2)
-    dieC('lightRed', 'There are too much parameters ! The total number of existing parameters is : ' . $total . PHP_EOL);
+  {
+    echo lightRedText('There are too much parameters ! The total number of existing parameters is : ' . $total . PHP_EOL . PHP_EOL);
+    TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
+    exit(1);
+  }
 
   if ($argc < $required + 2)
-    dieC('lightRed', 'Not enough parameters ! The total number of required parameters is : ' . $required . PHP_EOL);
+  {
+    echo lightRedText('Not enough parameters ! The total number of required parameters is : ' . $required . PHP_EOL . PHP_EOL);
+    TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
+    exit(1);
+  }
 
   // And we runs the task if all is correct
   TasksManager::execute($argv[1], $argv);
@@ -83,7 +91,8 @@ else // otherwise we'll try to guess if it looks like an existing one
   }
 
   // Otherwise, we suggest the closest name that we have found.
-  $choice = promptUser('> There is no task named ' . $method . ' ! Do you mean ' . lightBlue() . $newTask . brown() . ' ? (y/n)');
+  $choice = promptUser('> There is no task named '. white() . $method . brown() .
+    ' ! Do you mean ' . white() . $newTask . brown() . ' ? (y/n)');
 
   if ('y' === $choice)
   {

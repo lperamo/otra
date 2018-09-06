@@ -1,0 +1,26 @@
+<?
+/**
+ * Configuration service
+ *
+ * @author Lionel Péramo */
+
+namespace bundles\CMS\services;
+
+use lib\myLibs\bdd\Sql,
+    bundles\CMS\models\Config;
+
+class ConfigService
+{
+  /**
+   * @return array $configuration
+  */
+  public static function getConfigTab()
+  {
+    Sql::getDB();
+
+    return [
+      'config' => Config::getAllConfigurablesByUserId($_SESSION['sid']['uid'])
+    ];
+  }
+}
+?>

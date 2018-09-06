@@ -2,7 +2,7 @@
 /** Bootstrap of the framework (redirection)
  *
  * @author Lionel Péramo */
-$uri = $_SERVER['REDIRECT_URL'];
+$uri = $_SERVER['REDIRECT_URL'] ?? strtok($_SERVER["REQUEST_URI"],'?');
 define ('_DIR_', str_replace('\\', '/', __DIR__));
 
 $realPath = substr(_DIR_, 0, -4) . $uri;
@@ -74,7 +74,7 @@ function t(string $texte) : string { return $texte; }
 
 if (true === isset($_SESSION[DEBUG_KEY]) && 'Dev' == $_SESSION[DEBUG_KEY]
   || true === isset($_GET[DEBUG_KEY]) && 'Dev' == $_GET[DEBUG_KEY])
-  require CORE_PATH . 'Bootstrap_Dev.php';
+  require CORE_PATH . 'BootstrapDev.php';
 else // mode Prod
 {
   // We ensure that the debug bar is no more active

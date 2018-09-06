@@ -1,6 +1,6 @@
 <?
 use phpunit\framework\TestCase,
-    bundles\CMS\services\configService;
+    bundles\CMS\services\ConfigService;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,7 +19,7 @@ class ConfigServiceTest extends TestCase
   {
     session_start();
     $_SESSION['sid']['uid'] = 1;
-    configService::getConfigTab();
+    ConfigService::getConfigTab();
   }
 }
 ?>

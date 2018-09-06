@@ -61,9 +61,16 @@ foreach($classes as $startClassName => &$finalClassName)
 
 echo endColor();
 
-return;
+return null;
 
-function iterateCM($classes, $dir, $processedDir)
+/**
+ * @param array  $classes
+ * @param string $dir
+ * @param int    $processedDir
+ *
+ * @return array
+ */
+function iterateCM(array $classes, string $dir, int $processedDir)
 {
   if ($folderHandler = opendir($dir))
   {
@@ -85,8 +92,17 @@ function iterateCM($classes, $dir, $processedDir)
         if ('.php' !== substr($entry, $posDot) )
           continue;
 
-        $classes[substr(str_replace('/', '\\', $dir), strlen(BASE_PATH)) . '\\' . substr($entry, 0, $posDot)]
-          = str_replace('\\', '/',realpath($_entry)); // we calculate the shortest string of path with realpath and str_replace function
+        $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
+        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+
+        if (isset($matches[1][0]) === true && $matches[1][0] !== '')
+        {
+          $classesKey = trim($matches[1][0]) . '\\' . substr($entry, 0, $posDot);
+
+          if (isset($classes[$classesKey]) === false)
+            $classes[$classesKey] // $classes[$cleanDir . '\\' . substr($entry, 0, $posDot)]
+              = str_replace('\\', '/', realpath($_entry)); // we calculate the shortest string of path with realpath and str_replace function
+        }
       }
 
       closedir($folderHandler);

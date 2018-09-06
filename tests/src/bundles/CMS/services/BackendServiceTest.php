@@ -1,6 +1,6 @@
 <?
 use phpunit\framework\TestCase,
-    bundles\CMS\services\backendService;
+    bundles\CMS\services\BackendService;
 
 /**
  * @runTestsInSeparateProcesses
@@ -18,7 +18,7 @@ class BackendServiceTest extends TestCase
   public function testCheckConnection()
   {
     require CORE_PATH . 'Router.php';
-    backendService::checkConnection('backendModules');
+    BackendService::checkConnection('backendModules');
   }
 }
 ?>
