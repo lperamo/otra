@@ -108,6 +108,9 @@ lpcms_elements_menu:
     fk_id_article:
       type: int(11)
       notnull: true
+    fk_id_module:
+      type: int(11)
+      notnull: true
     parent:
       type: int(11)
     aEnfants:
@@ -116,9 +119,13 @@ lpcms_elements_menu:
     droit:
       type: int(1)
       notnull: true
+    ordre:
+      type: int(11)
+      notnull: true
     contenu:
       type: varchar(255)
       notnull: true
+
   relations:
     lpcms_article:
       local: fk_id_article
@@ -128,6 +135,10 @@ lpcms_elements_menu:
       local: parent
       foreign: id
       constraint_name: lpcms_elements_menu_towards_lpcms_elements_menu
+    lpcms_module:
+        local: fk_id_module
+        foreign: id
+        constraint_name: lpcms_elements_menu_towards_lpcms_module
 
 lpcms_footer: 
   columns:

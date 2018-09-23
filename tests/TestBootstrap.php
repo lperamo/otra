@@ -13,8 +13,10 @@ spl_autoload_register(function($className)
 
 define('BASE_PATH', substr(_DIR_, 0, -5)); // Finit avec /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
-define('DEBUG_KEY', 'debuglp_');
+//define('DEBUG_KEY', 'debuglp_');
+
 require CORE_PATH . 'console/Colors.php';
+require CORE_PATH . 'Tools/RemovesFieldProtection.php';
 
 // Will be the future translation feature
 function t(string $texte) : string { return $texte; }

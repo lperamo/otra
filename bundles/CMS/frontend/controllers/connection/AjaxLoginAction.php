@@ -11,6 +11,9 @@ use lib\myLibs\{ bdd\Sql, Controller, LionelException, Router };
  */
 class ajaxLoginAction extends Controller
 {
+  /**
+   * @throws LionelException
+   */
   public function ajaxLoginAction()
   {
     if (false === isset($_POST['email'], $_POST['pwd']) || 2 < count($_POST))
@@ -42,7 +45,7 @@ class ajaxLoginAction extends Controller
 
     $_SESSION['sid'] =
     [
-      'uid' => $infosUser['id_user'],
+      'uid' => (int) $infosUser['id_user'],
       'role' => $infosUser['fk_id_role']
     ];
 

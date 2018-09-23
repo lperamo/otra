@@ -3,6 +3,8 @@ use phpunit\framework\TestCase,
     \lib\myLibs\Router;
 
 /**
+ * @author Lionel Péramo
+ * @doesNotPerformAssertions
  * @runTestsInSeparateProcesses
  */
 class AjaxUsersTest extends TestCase
@@ -13,7 +15,9 @@ class AjaxUsersTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testAddAction()
   {
@@ -26,7 +30,9 @@ class AjaxUsersTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testDeleteAction()
   {
@@ -34,7 +40,9 @@ class AjaxUsersTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testEditAction()
   {
@@ -43,7 +51,9 @@ class AjaxUsersTest extends TestCase
 
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testIndexAction()
   {
@@ -53,7 +63,9 @@ class AjaxUsersTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testSearchAction()
   {

@@ -1,3 +1,18 @@
+// Mixins
+@mixin glowingRed()
+{
+  color       : $debug--file-color;
+  text-shadow : 0 0 3px $debug--file-text-shadow-color;
+}
+
+@mixin glowingYellowGreen()
+{
+  color       : $debug--line-color;
+  text-shadow : 0 0 3px $debug--line-text-shadow-color;
+}
+
+// Rules
+
 .dbg- {
   &fl { float : left }
   &fr { float : right }
@@ -50,15 +65,9 @@
 
   &left-block { width : calc(100% - 60px) }
 
-  &file {
-    color       : $debug--file-color;
-    text-shadow : 0 0 3px $debug--file-text-shadow-color;
-  }
+  &file { @include glowingRed(); }
 
-  &line {
-    color       : $debug--line-color;
-    text-shadow : 0 0 3px $debug--line-text-shadow-color;
-  }
+  &line { @include glowingYellowGreen(); }
 
   &sql-logs {
 
@@ -80,6 +89,12 @@
       display    : inline-block;
 
       &:hover { background: $debug--sql-logs-background-hover-color; }
+    }
+
+    @at-root {
+      .sql-request { white-space : pre-wrap; }
+      .sql-field { color : #88F; }
+      .sql-clause { @include glowingRed(); }
     }
   }
 }
@@ -107,8 +122,6 @@
 
   // others
   cursor     : pointer;
-
-
 
   &:hover {
     color       : $debug--hover-color;
@@ -149,3 +162,4 @@
 }
 
 .profiler { padding : 1em }
+

@@ -21,6 +21,7 @@ class Logger
       define('SESSION_DATE', '_date');
       define('HTTP_USER_AGENT', 'HTTP_USER_AGENT');
       define('SESSION_BROWSER', '_browser');
+      define('REMOTE_ADDR', 'REMOTE_ADDR');
     }
 
     if (false === isset($_SESSION[SESSION_DATE]))
@@ -32,8 +33,9 @@ class Logger
     if ($date !== $_SESSION[SESSION_DATE])
       $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
 
-    if ($_SERVER['REMOTE_ADDR'] !== $_SESSION['_ip'])
-      $infos .= '[' . ($_SESSION['_ip'] = $_SERVER['REMOTE_ADDR']) . '] ';
+    // remote address ip is not set if we come from the console
+    if (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
+      $infos .= '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] ';
 
     // user agent not set if we come from the console
     if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
@@ -58,7 +60,7 @@ class Logger
    * @param string $path
    */
   public static function logToPath(string $message, string $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . $path . '.txt');
+    error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . '/' . $path . '.txt');
   }
 
   /**

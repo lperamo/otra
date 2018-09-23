@@ -8,6 +8,8 @@
  */
 
 /**
+ * Show [RESOURCE_NAME] in green if the resource file exists, in red otherwise.
+ *
  * @param string $resourceExtension
  * @param string $resourceType
  * @param string $basePath
@@ -19,16 +21,28 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
   echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[', $resourceType, ']', $altColor;
 }
 
+/**
+ * Show [PHP] in green if the PHP file exists, in red otherwise.
+ *
+ * @param string $basePath
+ * @param string $route
+ * @param string $altColor
+ */
+function showPHPState(string &$basePath, string &$route, string &$altColor)
+{
+  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? lightGreen() : lightRed(), '[PHP]' . $altColor;
+}
+
 $alt = 0;
 const WIDTH_LEFT = 25;
 const WIDTH_MIDDLE = 10;
 const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
 
-$route = $argv[2];
-
 // Check if we want one or all the routes
-if (true === isset($route))
+if (true === isset($argv[2]))
 {
+  $route = $argv[2];
+
   // If the route does not exist
   if (false === isset(\config\Routes::$_[$route]))
   {
@@ -56,16 +70,18 @@ if (true === isset($route))
 
 foreach($routes as $route => &$details)
 {
+  if ('exception' === $route )
+    continue;
+
   // Routes and paths management
   $chunks = $details['chunks'];
   $altColor = ($alt % 2) ? cyan() : lightCyan();
   echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route), str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[0], PHP_EOL;
 
-  if ('exception' !== $route )
-    echo str_pad(' ', WIDTH_LEFT, ' '),
-      str_pad('Path', WIDTH_MIDDLE, ' '),
-      ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4],
-      PHP_EOL;
+  echo str_pad(' ', WIDTH_LEFT, ' '),
+    str_pad('Path', WIDTH_MIDDLE, ' '),
+    ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4],
+    PHP_EOL;
 
   // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
@@ -74,15 +90,13 @@ foreach($routes as $route => &$details)
 
   echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
 
-  if (true === isset($resources['template']))
-    echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true)
-      ? lightGreen()
-      : lightRed(), '[PHP]', $altColor;
-
   // Resources management : show the state of each ressource. Red => missing, green => exists
   if (true === isset($details['resources']))
   {
     $resources = $details['resources'];
+
+    if (false === isset($resources['template']))
+      showPHPState($basePath, $route, $altColor);
 
     if (true === isset($resources['_css']) || true === isset($resources['bundle_css']) ||true === isset($resources['module_css']))
       showResourceState('css', 'CSS', $basePath, $shaName, $altColor);
@@ -93,9 +107,18 @@ foreach($routes as $route => &$details)
     if (true === isset($resources['template']))
       showResourceState('tpl', 'TEMPLATE', $basePath, $shaName, $altColor);
   } else
+  {
+    showPHPState($basePath, $route, $altColor);
     echo ' No other resources. ';
+  }
 
-  echo '[', $shaName, ']', PHP_EOL, endColor(), str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT), PHP_EOL;
+  echo '[', $shaName, ']', PHP_EOL, endColor();
+
+  // We only show a decoration line if it's not the last route
+  end($routes);
+
+  if ($route !== key($routes))
+    echo str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT), PHP_EOL;
 
   ++$alt;
 }

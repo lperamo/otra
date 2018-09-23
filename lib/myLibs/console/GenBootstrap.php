@@ -107,7 +107,4 @@ if (true === hasSyntaxErrors($routesManagementFile, $verbose))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
-
-//echo PHP_EOL, 'Generation of the associated templates...' , PHP_EOL;
-//passthru('php console.php genAssets 1 ' . (isset($argv[4]) ? $argv[4] : ''));
 ?>

@@ -3,6 +3,7 @@
   "extends": "tslint:recommended",
   "rules": {
     "curly": false,
+    "no-angle-bracket-type-assertion": false,
     "no-bitwise": false,
     "no-trailing-whitespace": false,
     "object-literal-key-quotes": [true, "as-needed"],

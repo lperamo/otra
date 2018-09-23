@@ -1,54 +1,60 @@
 @keyframes lightbox-start {
-  from { opacity:0; left: -100% }
-  to { opacity:1; left: 0 }
+  from { opacity : 0; left : -100% }
+  to { opacity : 1; left : 0 }
 }
 
 .lightbox {
-  background-image: url('../img/footer_lodyas_guetzli.jpg');
-  background-size: contain;
-  border-radius: 5px;
+  background-image : url('../img/footer_lodyas_guetzli.jpg');
+  background-size  : contain;
+  border-radius    : 5px;
+  overflow         : hidden;
 
   &-container {
-    align-items: center;
-    animation: lightboxStart .25s ease-out 0s;
-    border-radius: 3px;
-    color:#EEE;
-    display:flex;
-    justify-content:center;
-    left:0;
-    min-height: 100%;
-    opacity: 1;
-    position:absolute;
-    overflow: hidden;
-    text-shadow:0 0 3px #777;
-    top:0;
-    transition: opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
-    width:100%;
-    z-index:10000
+    align-items     : center;
+    animation       : lightboxStart .25s ease-out 0s;
+    border-radius   : 3px;
+    color           : #EEE;
+    display         : flex;
+    justify-content : center;
+    left            : 0;
+    min-height      : 100%;
+    opacity         : 1;
+    position        : absolute;
+    overflow        : hidden;
+    text-shadow     : 0 0 3px #777;
+    top             : 0;
+    transition      : opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
+    width           : 100%;
+    z-index         : 10000
   }
 
   /* Class for the exit animation */
-  &-ending
-  {
-    left: 100%;
-    opacity: 0;
+  &-ending {
+    left    : 100%;
+    opacity : 0;
   }
 }
 
 .final-div {
-  display: inline-block;
-  text-align: left;
-  animation-name: lightboxStart;
-  animation-duration: 1s;
+  // layout
+  display    : inline-block;
+  text-align : left;
+
+  // size
+  width : 100%;
+
+  // animation
+  animation-duration : 1s;
+  animation-name     : lightboxStart;
 }
 
 .confirm {
-  padding: 10px 20px;
+  padding : 10px 20px;
 
   &-button {
-    border-radius: 3px;
-    color: #444;
-    float: right;
+    border-radius : 3px;
+    color         : #444;
+    float         : right;
   }
 }
 

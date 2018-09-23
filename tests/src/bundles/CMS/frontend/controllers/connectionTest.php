@@ -14,6 +14,9 @@ class ConnectionTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testAjaxLoginActionHack()
   {
@@ -53,27 +56,30 @@ class ConnectionTest extends TestCase
     $this->expectOutputString('{"0": "Bad credentials."}');
     Router::get('ajaxConnection');
   }
+
   /**
    * @author Lionel Péramo
    */
   public function testAjaxLoginActionOK()
   {
-    $_POST['pwd'] = 'lpcms';
+    $_POST['pwd'] = 'pgmail';
     $_POST['email'] = 'peramo.lionel@gmail.com';
-    $this->expectOutputString('{"status": 1}');
+    $this->expectOutputString('{"status": 1, "url": "/backend/modules"}');
     Router::get('ajaxConnection');
   }
 
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testLogoutAction()
   {
-//    session_start();
-//    $_SESSION['sid']['uid'] = 1;
-    $_SERVER['REQUEST_SCHEME'] = 'HTTP';
-    $_SERVER['HTTP_HOST'] = 'dev.save-our-space.com';
+    session_start();
+    $_SESSION['sid']['uid'] = 1;
+    $_SERVER['HTTP_REFERER'] = 'https://dev.frameworkcms.com';
     Router::get('logout');
   }
 }

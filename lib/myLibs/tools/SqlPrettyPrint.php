@@ -1,8 +1,12 @@
 <?
+// TODO Not fully tested !
+
 define('SQL_CLAUSES', [
   '(SELECT ',
   'SELECT ',
   'FROM ',
+  'LEFT OUTER JOIN',
+  'RIGHT OUTER JOIN',
   'LEFT JOIN',
   'INNER JOIN',
   ' ON ',
@@ -37,6 +41,8 @@ function sqlReplacements(
     '(' . "\n" . $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
     $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
+    "\n" . $leftStyleClauseCode . 'LEFT OUTER JOIN' . $rightStyleClauseCode,
+    "\n" . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'LEFT JOIN' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'INNER JOIN' . $rightStyleClauseCode,
     $leftStyleClauseCode . ' ON ' . $rightStyleClauseCode,
@@ -66,8 +72,8 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
 
   // If we want to style the SQL with HTML markup + CSS
   if ($raw === false) {
-    $output = '<pre>';
-    $leftStyleClauseCode = XMODE === 'dev' ? '<span class="dbg-file">' : LEFT_STYLE_CLAUSE_CODE;
+    $output = '<pre class="sql-request">';
+    $leftStyleClauseCode = XMODE === 'dev' ? '<span class="sql-clause">' : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
@@ -76,7 +82,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   if ($raw === false) {
     $output = preg_replace(
       '/(:?\.)[^ (]{1,}/',
-      '<span style="color:#44F">$0</span>',
+      '<span class="sql-field">$0</span>',
       preg_replace(
         '/:[^ )]{1,}/',
         '<span style="color:#4B4">$0</span>',

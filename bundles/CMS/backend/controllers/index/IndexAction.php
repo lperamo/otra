@@ -23,7 +23,7 @@ class indexAction extends Controller
       return;
     }
 
-    BackendService::checkConnection($this->action);
+    BackendService::checkConnection($this->route);
 
     Sql::getDB();
 

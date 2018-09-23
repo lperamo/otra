@@ -4,7 +4,7 @@ declare(strict_types=1);
 use lib\myLibs\console\TasksManager;
 
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('XMODE', 'dev');
+define('XMODE', 'prod');
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 
 require CORE_PATH . 'console/TasksManager.php';
@@ -35,9 +35,11 @@ function launchTask(array $argv, int $argc)
   {
     $result = array_count_values($paramsDesc[2]);
 
+    // Retrieves the number of required parameters
     if (true === isset($result['required']))
       $required = $result['required'];
 
+    // Retrieves the number of required parameters and then the final total of parameters
     $total = $required + (true === isset($result['optional']) ? $result['optional'] : 0);
   }
 

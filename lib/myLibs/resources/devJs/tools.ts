@@ -24,7 +24,7 @@
 
   function showArgs() : void
   {
-    let eltTemp : HTMLElement = this.parentNode;
+    const eltTemp : HTMLElement = this.parentNode;
     eltTemp.nextElementSibling.className = (eltTemp.nextElementSibling.className === 'deep-content')
       ? ''
       : 'deep-content';
@@ -35,4 +35,4 @@
 
   [].forEach.call( doc.querySelectorAll('.foldable'), addUnfoldListener);
   [].forEach.call( doc.querySelectorAll('.show-args'), addShowArgsListener)
-})(document)
+})(document);

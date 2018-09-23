@@ -11,9 +11,11 @@ class IndexTest extends TestCase
   {
     define('XMODE', 'PROD');
   }
-  
+
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testGeneralAction()
   {
@@ -23,7 +25,9 @@ class IndexTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testIndexAction()
   {
@@ -33,7 +37,9 @@ class IndexTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testModulesAction()
   {
@@ -41,7 +47,9 @@ class IndexTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testStatsAction()
   {
@@ -49,7 +57,9 @@ class IndexTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testUsersAction()
   {

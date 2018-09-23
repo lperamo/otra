@@ -14,6 +14,9 @@ class BackendServiceTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation
    */
   public function testCheckConnection()
   {

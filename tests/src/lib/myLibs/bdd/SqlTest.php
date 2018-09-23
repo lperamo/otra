@@ -15,6 +15,46 @@ class SqlTest extends TestCase
   }
 
   /**
+   * Creates an empty temporary table that have to be removed later.
+   */
+  protected function createTemporaryTestTable() : void
+  {
+    Sql::$instance->freeResult(
+      Sql::$instance->query('CREATE TEMPORARY TABLE CustomerData (
+        `firstName` VARCHAR(50),
+        `lastName` VARCHAR(50)
+      );      
+      ')
+    );
+  }
+
+  /**
+   * Creates test fixtures into the empty temporary table that have to be removed later.
+   */
+  protected function createTemporaryTestValues() : void
+  {
+    Sql::$instance->freeResult(
+      Sql::$instance->query('INSERT INTO CustomerData (`firstname`, `lastname`)
+        VALUES ("john", "smith"),
+        ("paul", "miller");
+      ')
+    );
+  }
+
+  /**
+   * Drops the temporary table (with test fixtures) created by 'createTemporaryTestData' function,
+   * that have to be removed.
+   */
+  protected function dropTemporaryTestTable() : void
+  {
+    Sql::$instance->freeResult(
+      Sql::$instance->query('DROP TEMPORARY TABLE CustomerData')
+    );
+  }
+
+
+
+  /**
    * @author                         Lionel Péramo
    * @expectedException              \lib\myLibs\LionelException
    * @expectedExceptionMessageRegExp @This SGBD 'test' doesn't exist...yet ! Available SGBD are : (?:\w|,|\s)*@
@@ -30,13 +70,12 @@ class SqlTest extends TestCase
    */
   public function test__Construct()
   {
-    $sql = new Sql('PDOMySql');
+    new Sql('PDOMySql');
 
-    $class = new ReflectionClass(Sql::class);
-    $_currentSGBD = $class->getProperty('_currentSGBD');
-    $_currentSGBD->setAccessible(true);
-
-    $this->assertEquals($_currentSGBD->getValue(), 'lib\\myLibs\\bdd\\Pdomysql');
+    $this->assertEquals(
+      removesFieldScopeProtection(Sql::class, '_currentSGBD')->getValue(),
+      'lib\\myLibs\\bdd\\Pdomysql'
+    );
   }
 
   /**
@@ -46,6 +85,7 @@ class SqlTest extends TestCase
   public function test__Destruct()
   {
     $sql = new Sql('PDOMySql');
+    $this->assertInstanceOf(\lib\myLibs\bdd\Sql::class, $sql);
     $sql->__destruct($sql);
   }
 
@@ -54,28 +94,35 @@ class SqlTest extends TestCase
    */
   public function testGetDB()
   {
-    Sql::getDB();
+    $sqlInstance = Sql::getDB();
+    $this->assertInstanceOf(Sql::class, $sqlInstance);
   }
 
   /**
    * @param string $fetchMethod
+   *
+   * @return
+   *
+   * @throws LionelException
    */
   public function fetch(string $fetchMethod, $column = null)
   {
-    session_name('__Secure-LPSESSID');
-    session_start([
-      'cookie_secure' => true,
-      'cookie_httponly' => true
-    ]);
     Sql::getDB();
-    $dbConfig = Sql::$instance->query('SELECT 1');
 
-    if (null === $column)
-      Sql::$instance->{$fetchMethod}($dbConfig);
-    else
-      Sql::$instance->{$fetchMethod}($dbConfig, $column);
+    $this->createTemporaryTestTable();
+    $this->createTemporaryTestValues();
+
+    $dbConfig = Sql::$instance->query('SELECT `firstName`, `lastName` FROM CustomerData');
+
+    $result = (null === $column)
+      ? Sql::$instance->{$fetchMethod}($dbConfig)
+      : Sql::$instance->{$fetchMethod}($dbConfig, $column);
 
     Sql::$instance->freeResult($dbConfig);
+
+    $this->dropTemporaryTestTable();
+
+    return $result;
   }
 
   /**
@@ -96,8 +143,10 @@ class SqlTest extends TestCase
      * @type string $password
      */
 
-    $sql->connect('mysql:dbname=' . $db . ';host=' .
+    $PDOInstance = $sql->connect('mysql:dbname=' . $db . ';host=' .
       ('' == $port ? $host : $host . ':' . $port), $login, $password);
+
+    $this->assertInstanceOf(PDO::class, $PDOInstance);
   }
 
   /**
@@ -116,7 +165,7 @@ class SqlTest extends TestCase
    */
   public function testFetchArray()
   {
-    $this->fetch('fetchArray');
+    $this->assertInternalType('array', $this->fetch('fetchArray'));
   }
 
   /**
@@ -125,7 +174,7 @@ class SqlTest extends TestCase
    */
   public function testFetchAssoc()
   {
-    $this->fetch('fetchAssoc');
+    $this->assertInternalType('array', $this->fetch('fetchAssoc'));
   }
 
   /**
@@ -134,16 +183,16 @@ class SqlTest extends TestCase
    */
   public function testFetchRow()
   {
-    $this->fetch('fetchRow');
+    $this->assertInternalType('array', $this->fetch('fetchRow'));
   }
 
   /**
    * @author Lionel Péramo
    * depends on testGetDB, testFreeResult, testQuery
    */
-  public function testFetchField()
+  public function testGetColumnMeta()
   {
-    $this->fetch('fetchField', 0);
+    $this->assertInternalType('array', $this->fetch('getColumnMeta', 0));
   }
 
   /**
@@ -152,7 +201,7 @@ class SqlTest extends TestCase
    */
   public function testFetchObject()
   {
-    $this->fetch('fetchObject');
+    $this->assertInternalType('object', $this->fetch('fetchObject'));
   }
 
   // Already tested with the fetched methods !
@@ -164,7 +213,7 @@ class SqlTest extends TestCase
   public function testLastInsertedId()
   {
     Sql::getDB();
-    Sql::$instance->lastInsertedId();
+    $this->assertInternalType('int', Sql::$instance->lastInsertedId());
   }
 
   /**
@@ -204,7 +253,7 @@ class SqlTest extends TestCase
   public function testSingle()
   {
     SQL::getDB();
-    Sql::$instance->single(Sql::$instance->query('SELECT 1'));
+    $this->assertInternalType('string', Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
 
@@ -215,12 +264,15 @@ class SqlTest extends TestCase
   public function testValues()
   {
     SQL::getDB();
-    Sql::$instance->values(Sql::$instance->query('SELECT 1'));
+    $this->assertInternalType('array', Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
   /**
    * @author Lionel Péramo
    * depends on testGetDB, testQuery
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
    */
   public function testValuesOneCol()
   {

@@ -100,6 +100,8 @@ for($i = 0; $i < $cptRoutes; ++$i)
     : CORE_PATH
   );
 
+  $noErrors = true;
+
   /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
   if (($mask & 2) >> 1)
   {
@@ -160,14 +162,21 @@ for($i = 0; $i < $cptRoutes; ++$i)
         'bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init"'
       );
 
-      echo status('TEMPLATE');
+      if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
+        echo status('TEMPLATE');
+      else
+      {
+        status('TEMPLATE', 'red');
+        $noErrors = false;
+      }
     }
   }
 
-  echo ' => ', lightGreenText('OK'), '[', cyanText($shaName), ']', PHP_EOL;
+  echo ' => ', $noErrors === true ? lightGreenText('OK') : redText('ERROR'), '[', cyanText($shaName), ']', PHP_EOL;
 }
 
 /**
+ *
  * @param string $status
  * @param string $color
  *

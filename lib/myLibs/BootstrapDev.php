@@ -63,11 +63,15 @@ try
     $defaultRoute = config\Routes::$default['bundle'];
     Router::get($route[0], $route[1]);
   }
-} catch(Exception $e)
+} catch(Exception $e) // in order to catch fatal errors
 {
   echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
     : $e->getMessage();
 
+  exit(1);
+} catch(Error $e)
+{
+  echo "fatal error T_T";
   exit(1);
 }

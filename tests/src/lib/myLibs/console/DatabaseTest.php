@@ -167,15 +167,58 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testGetDirs
+   *
    */
-  public function testInitBase() { Database::initBase(); }
+  public function testInitBase() {
+    Database::initBase();
+
+    // We test each private static variable that has been set by Database::initBase()
+    $this->assertEquals(
+      Database::getDirs(Database::$boolSchema, Database::$folder),
+      removesFieldScopeProtection(Database::class, 'baseDirs')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/yml/',
+      removesFieldScopeProtection(Database::class, 'pathYml')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'fixtures/',
+      removesFieldScopeProtection(Database::class, 'pathYmlFixtures')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/sql/',
+      removesFieldScopeProtection(Database::class, 'pathSql')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'pathSql')->getValue() . 'fixtures/',
+      removesFieldScopeProtection(Database::class, 'pathSqlFixtures')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'Schema.yml',
+      removesFieldScopeProtection(Database::class, 'schemaFile')->getValue()
+    );
+
+    $this->assertEquals(
+      removesFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'tables_order.yml',
+      removesFieldScopeProtection(Database::class, 'tablesOrderFile')->getValue()
+    );
+  }
 
   /**
    * @author                         Lionel Péramo
    *
+   * TODO Put assertions and remove the related annotation!
    * depends on testInitBase
+   * @doesNotPerformAssertions
    */
-  public function testInit() { Database::init(self::$databaseConnection); }
+  public function testInit() {
+    Database::init(self::$databaseConnection);
+  }
 
   ///**
   // * @author Lionel Péramo
@@ -189,7 +232,10 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testGetDirs() { Database::getDirs(); }
+  public function testGetDirs() {
+    $dirs = Database::getDirs();
+    $this->assertInternalType('array', $dirs);
+  }
 
   /**
    * @author Lionel Péramo
@@ -210,6 +256,9 @@ class DatabaseTest extends TestCase
     );
 
     Database::clean();
+    $sqlPath = removesFieldScopeProtection(Database::class, 'pathSql')->getValue();
+    $this->assertEquals([], glob($sqlPath . '/*.sql'));
+    $this->assertEquals([], glob($sqlPath . 'truncate/*.sql'));
   }
 
   /**
@@ -240,11 +289,18 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * TODO Do a complete test, not just on the type
    */
-  public function testGetAttr() { Database::getAttr('test'); }
+  public function testGetAttr() {
+    $attrTest = Database::getAttr('test');
+    $this->assertInternalType('string', $attrTest);
+  }
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function test_SortTableByForeignKeysEmpty()
   {
@@ -256,6 +312,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function test_SortTableByForeignKeys()
   {
@@ -267,6 +326,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testCreateFixture()
   {
@@ -292,6 +354,9 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testInit, testInitCommand, testCreateDatabase, testTruncateTable, testCreateFixture, test_ExecuteFixture
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testCreateFixtures_TruncateOnly()
   {
@@ -344,6 +409,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testCreateFixtures_CleanAndTruncate()
   {
@@ -364,8 +432,21 @@ class DatabaseTest extends TestCase
   }
 
   /**
+   * @author                   Lionel Péramo
+   * @expectedException        \lib\myLibs\LionelException
+   * @expectedExceptionMessage The file "blabla" doesn't exist !
+   */
+  public function testExecuteFile_DoesNotExist()
+  {
+    Database::executeFile('blabla');
+  }
+
+  /**
    * @author Lionel Péramo
    * depends on testInitBase, testCreateDatabase
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testTruncateTable()
   {
@@ -384,14 +465,10 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @author                   Lionel Péramo
-   * @expectedException        \lib\myLibs\LionelException
-   * @expectedExceptionMessage The file "blabla" doesn't exist !
-   */
-  public function testExecuteFile_DoesNotExist() { Database::executeFile('blabla'); }
-
-  /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testExecuteFile_Exists()
   {
@@ -404,6 +481,10 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testInit, testInitCommand
+   *
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testExecuteFixture()
   {
@@ -466,11 +547,14 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   *
+   * TODO Do a complete test not just a type assertion
    */
   public function testDropDatabase()
   {
     define('VERBOSE', 2);
-    Database::dropDatabase(self::$databaseName);
+    $sqlInstance = Database::dropDatabase(self::$databaseName);
+    $this->assertInstanceOf(Sql::class, $sqlInstance);
   }
 
   /**
@@ -492,6 +576,10 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testInitBase
+   *
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testGenerateSqlSchema_DontForce()
   {
@@ -506,6 +594,10 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testInitBase
+   *
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testGenerateSqlSchema_Force()
   {
@@ -521,6 +613,9 @@ class DatabaseTest extends TestCase
    * @author Lionel Péramo
    *
    * TODO Create a test fixture file in order to test that function !
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testAnalyzeFixtures()
   {
@@ -535,6 +630,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testInitImports_AllNull()
   {
@@ -560,6 +658,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testInitImports_NoNull()
   {
@@ -598,6 +699,9 @@ class DatabaseTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testImportSchema()
   {
@@ -607,6 +711,9 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    * depends on testInit, testInitImports
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotations
    */
   public function testImportFixtures()
   {

@@ -1,4 +1,4 @@
-const FWK_DEBUG = (function (w : Window, d : Document, u : undefined)
+const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 {
   'use strict';
   let bar : HTMLElement, barXS : HTMLElement;
@@ -17,44 +17,47 @@ const FWK_DEBUG = (function (w : Window, d : Document, u : undefined)
 
   function clearLogs() : void
   {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function ()
+    xhr.onreadystatechange = function()
     {
       if (4 === xhr.readyState && 200 === xhr.status)
       {
-        let SQLLogsSel = d.getElementById('dbg-sql-logs');
+        const SQLLogsSel = d.getElementById('dbg-sql-logs');
         SQLLogsSel.innerHTML = xhr.responseText + '</div></div></div>';
       }
-    }
+    };
 
     xhr.open('GET', '/dbg/clearSQLLogs', true), xhr.send()
   }
 
+  /**
+   * Shows the actual SQL logs instead of the SQL logs that were showed when we opened the profiler.
+   */
   function refreshLogs() : void
   {
-    let xhr = new XMLHttpRequest;
+    const xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function () : void
+    xhr.onreadystatechange = function() : void
     {
       if (4 === xhr.readyState && 200 === xhr.status)
       {
-        let SQLLogsSel = d.getElementById('dbg-sql-logs');
+        const SQLLogsSel = d.getElementById('dbg-sql-logs');
         SQLLogsSel.innerHTML = xhr.responseText + '</div></div></div>';
       }
-    }
+    };
 
     xhr.open('GET', '/dbg/refreshSQLLogs', true), xhr.send()
   }
 
   function copySqlToClipBoard() : void
   {
-    let elt = this.previousSibling.children[2]
+    const elt = this.previousSibling.children[2];
 
     if (w.getSelection)
     {
-      let selection = w.getSelection(),
-          range = d.createRange();
+      const selection = w.getSelection(),
+            range = d.createRange();
 
       range.selectNodeContents(elt);
       selection.removeAllRanges();
@@ -62,18 +65,22 @@ const FWK_DEBUG = (function (w : Window, d : Document, u : undefined)
     }
   }
 
+  /**
+   * Initialize the events of the three buttons of the profiler :
+   * 'Hide the profiler', 'Clear SQL logs' and 'Refresh SQL logs'/
+   */
   function initEvents() : void
   {
-    let btns : any = d.querySelectorAll('#profiler .lb-btn');
+    const btns : any = d.querySelectorAll('#profiler .lb-btn');
 
     for (let i : number = 3, len = btns.length; i < len; ++i)
     {
-      btns[i].addEventListener('click', copySqlToClipBoard)
+      btns[i].addEventListener('mouseup', copySqlToClipBoard)
     }
 
-    d.getElementById('dbg-hide-profiler').addEventListener('click', hideProfiler);
-    d.getElementById('dbg-clear-sql-logs').addEventListener('click', clearLogs)
-    d.getElementById('dbg-refresh-sql-logs').addEventListener('click', refreshLogs)
+    d.getElementById('dbg-hide-profiler').addEventListener('mouseup', hideProfiler);
+    d.getElementById('dbg-clear-sql-logs').addEventListener('mouseup', clearLogs);
+    d.getElementById('dbg-refresh-sql-logs').addEventListener('mouseup', refreshLogs)
   }
 
   function initLightBox() : void
@@ -83,12 +90,12 @@ const FWK_DEBUG = (function (w : Window, d : Document, u : undefined)
 
   function runProfiler() : void
   {
-    let profilerlightbox : HTMLElement = d.getElementById('profiler-light-box')
+    const profilerlightbox : HTMLElement = d.getElementById('profiler-light-box');
 
     // Takes into account that lightbox can already be loaded by the site
     if (null === profilerlightbox && u === LIB_LIGHTBOX)
     {
-      let s = d.createElement('script');
+      const s = d.createElement('script');
       s.src = '/lib/myLibs/core/js/lightbox.js';
       s.id = 'profiler-light-box';
       s.onload = initLightBox;
@@ -117,18 +124,18 @@ const FWK_DEBUG = (function (w : Window, d : Document, u : undefined)
     d.getElementsByTagName('body')[0].innerHTML += '<div class="divError">' + data + '</div>'
   }
 
-  w.onload = function () : void
+  w.onload = function() : void
   {
     bar = d.getElementById('dbg-bar');
     barXS = <HTMLElement> bar.nextSibling;
-    let toggleElt : HTMLElement = d.getElementById('toggle'),
+    const toggleElt : HTMLElement = d.getElementById('toggle'),
         toggleXSElt : HTMLElement = d.getElementById('toggle-small');
 
     toggleXSElt.onmouseup = toggleElt.onmouseup = toggle;
-    d.getElementById('show-sql').addEventListener('click', runProfiler)
-  }
+    d.getElementById('show-sql').addEventListener('mouseup', runProfiler)
+  };
 
-  let dummy : any = {postLog};
+  const dummy : any = {postLog};
 
   return dummy
-})(window, document, undefined)
+})(window, document, undefined);

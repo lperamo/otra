@@ -57,6 +57,7 @@ function dumpSmall()
     var_dump(is_string($param) ? htmlspecialchars($param) : $param);
     echo '<br />';
   }
+
   echo '</pre>';
 }
 

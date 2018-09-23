@@ -77,46 +77,82 @@ if (true === isset($_SESSION[DEBUG_KEY]) && 'Dev' == $_SESSION[DEBUG_KEY]
   require CORE_PATH . 'BootstrapDev.php';
 else // mode Prod
 {
-  // We ensure that the debug bar is no more active
-  if (true === isset($_SESSION[DEBUG_KEY])) unset($_SESSION[DEBUG_KEY]);
-
-  require BASE_PATH . 'cache/php/RouteManagement.php';
-
-  if ($route = \cache\php\Router::getByPattern($uri))
+  try
   {
-    header('Content-Type: text/html; charset=utf-8');
-    header('Vary: Accept-Encoding,Accept-Language');
+    // We ensure that the debug bar is no more active
+    if (true === isset($_SESSION[DEBUG_KEY])) unset($_SESSION[DEBUG_KEY]);
 
-    // Static page ?
-    if('cli' !== PHP_SAPI && true === isset(\cache\php\Routes::$_[$route[0]]['resources']['template']))
+    require BASE_PATH . 'cache/php/RouteManagement.php';
+
+    if ($route = \cache\php\Router::getByPattern($uri))
     {
-      header('Content-Encoding: gzip');
-      echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . 'v1che') . '.gz'); // version to change
-      exit;
+      header('Content-Type: text/html; charset=utf-8');
+      header('Vary: Accept-Encoding,Accept-Language');
+
+      // Is it a static page
+      if ('cli' !== PHP_SAPI && true === isset(\cache\php\Routes::$_[$route[0]]['resources']['template']))
+      {
+        header('Content-Encoding: gzip');
+        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . 'v1che') . '.gz'); // version to change
+        exit;
+      }
+
+      // Otherwise for dynamic pages...
+      define('XMODE', 'prod');
+
+      error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+      ini_set('display_errors', 1);
+      ini_set('html_errors', 1);
+
+      /** CLASS MAPPING */
+      require BASE_PATH . 'cache/php/ClassMap.php';
+
+      spl_autoload_register(function ($className) {
+        if (false === isset(CLASSMAP[$className]))
+        {
+          require_once CORE_PATH . 'Logger.php';
+          \lib\myLibs\Logger::logTo(
+            'Path not found for the class name : ' . $className . PHP_EOL .
+              'Stack trace : ' . PHP_EOL .
+              print_r(debug_backtrace(), true),
+            'classNotFound'
+          );
+        } else
+          require CLASSMAP[$className];
+      });
+
+      //// Init' the database and loads the found route
+      // Loads the found route
+      require BASE_PATH . 'cache/php/' . $route[0] . '.php';
+      //    call_user_func('\cache\php\Init::Init');
+
+      \cache\php\Router::get($route[0], $route[1]);
     }
+  }catch(Exception $e)
+  {
+    // Logs the error for developers...
+    require_once CORE_PATH . 'Logger.php';
+    \lib\myLibs\Logger::logTo(
+      'Exception : ' . $e->getMessage() . PHP_EOL .
+      'Stack trace : '. PHP_EOL .
+      print_r(debug_backtrace(), true),
+      'unknownExceptions'
+    );
 
-    define('XMODE', 'prod');
+    // and shows a message for users !
+    echo 'Server in trouble. Please come back later !';
+  }catch(Error $e)
+  {
+    // Logs the error for developers...
+    require_once CORE_PATH . 'Logger.php';
+    \lib\myLibs\Logger::logTo(
+      'Fatal error : ' . $e->getMessage() . PHP_EOL .
+        'Stack trace : '. PHP_EOL .
+        print_r(debug_backtrace(), true),
+      'unknownFatalErrors'
+    );
 
-    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-    ini_set('display_errors', 1);
-    ini_set('html_errors', 1);
-
-    /** CLASS MAPPING */
-    require BASE_PATH . 'cache/php/ClassMap.php';
-
-    spl_autoload_register(function($className)
-    {
-      if (false === isset(CLASSMAP[$className]))
-        echo 'Path not found for the class name : ', $className, '<br>';
-      else
-        require CLASSMAP[$className];
-    });
-
-    //// Init' the database and loads the found route
-    // Loads the found route
-    require BASE_PATH . 'cache/php/' . $route[0] . '.php';
-//    call_user_func('\cache\php\Init::Init');
-
-    \cache\php\Router::get($route[0], $route[1]);
+    // and shows a message for users !
+    echo 'Server in great trouble. Please come back later !';
   }
 }

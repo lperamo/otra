@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
-define('XMODE', 'dev');
+define('XMODE', 'prod');
 
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'Router.php';

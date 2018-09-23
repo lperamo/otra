@@ -39,7 +39,7 @@ $debug--line-text-shadow-color : #cc3;
 $debug--logs-selection-color : #667;
 $debug--logs-selection-color : #667;
 
-$debug--sql-logs-background-color : #3a3a3a;
+$debug--sql-logs-background-color : transparentize(#000, 0.7);
 $debug--sql-logs-background-hover-color : #303030;
 
 // ERROR

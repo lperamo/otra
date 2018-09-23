@@ -6,8 +6,7 @@
 declare(strict_types=1);
 namespace lib\myLibs;
 
-use lib\myLibs\Controller,
-  config\Routes;
+use config\Routes;
 
 class Router
 {
@@ -22,12 +21,9 @@ class Router
    */
   public static function get(string $route = 'index', array $params = [], bool $launch = true)
   {
-    if (false === is_array($params))
-      $params = [$params];
-
     // We ensure that our input array really contains 5 parameters in order to make array_combine works
     /**
-     * We extract potentially those variables from $chunks
+     * We extract potentially those variables from $baseParams
      *
      * @var $action
      * @var $bundle
@@ -35,7 +31,7 @@ class Router
      * @var $module
      * @var $pattern
      */
-    extract($chunks = array_combine(
+    extract($baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
       array_pad(Routes::$_[$route]['chunks'], 5, null)
     ));
@@ -49,30 +45,57 @@ class Router
     if (false === $launch)
       return $action;
 
-    $chunks['route'] = $route;
-    $chunks['css'] = $chunks['js'] = false;
+    $baseParams['route'] = $route;
+    $baseParams['css'] = $baseParams['js'] = false;
 
     // Do we have some resources for this route...
     if (true === isset(Routes::$_[$route]['resources']))
     {
       $resources = Routes::$_[$route]['resources'];
-      $chunks['js'] = (
+      $baseParams['js'] = (
         isset($resources['bundle_js'])
         || isset($resources['module_js'])
         || isset($resources['_js'])
       );
-      $chunks['css'] = (
+      $baseParams['css'] = (
         isset($resources['bundle_css'])
         || isset($resources['module_css'])
         || isset($resources['_css'])
       );
     }
 
-    new $action($chunks, $params);
+    if (false === is_array($params))
+      $params = [$params];
+
+    /** Preventing redirections from crashing the application (the caller function is more or less far depending on
+     * the development mode (named XMODE) so we have :
+     * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0] for dev mode
+     * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1] for prod mode
+     */
+    if ('cli' !== PHP_SAPI
+      && str_replace(
+        ['\\', BASE_PATH],
+        ['/', ''],
+        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[(int) !(XMODE === 'PROD')]['file']
+      ) !== 'web/Resources.php')
+    {
+      // Is it a static page
+      if (true === isset(Routes::$_[$route]['resources']['template']))
+      {
+        header('Content-Encoding: gzip');
+        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
+        exit;
+      }
+
+      // Otherwise for dynamic pages...
+      require_once CACHE_PATH . 'php/' . $route . '.php';
+    }
+
+    new $action($baseParams, $params);
   }
 
   /**
-   * Check if the pattern is present among the routes
+   * Check if the pattern is present among the routes. TODO fix the named parameters system
    *
    * @param string $pattern The pattern to check
    *
@@ -99,6 +122,10 @@ class Router
       $derParam = count($params) - 1;
       $paramsFinal = explode('?', $params[$derParam]);
       $params[$derParam] = $paramsFinal[0];
+
+      // Zero parameters once we remove the parameters after '?' ? => we have all we need.
+      if ('' === $params[0])
+        return [$routeName, []];
 
       // If there are named parameters in the route configuration
       if (true === isset($routeData['mainPattern']))

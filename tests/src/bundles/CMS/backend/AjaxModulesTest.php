@@ -3,6 +3,7 @@ use phpunit\framework\TestCase,
     \lib\myLibs\Router;
 
 /**
+ * @author Lionel Péramo
  * @runTestsInSeparateProcesses
  */
 class AjaxModulesTest extends TestCase
@@ -13,16 +14,32 @@ class AjaxModulesTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
    */
-  public function testGetElementsAction()
+  public function testGetElementsAction_NotConnected()
   {
     $_GET['id'] = 1;
     Router::get('getElements');
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
+   */
+  public function testGetElementsAction_Connected()
+  {
+    $_SESSION['sid'] = 1;
+    $_GET['id'] = 1;
+    Router::get('getElements');
+  }
+
+  /**
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
    */
   public function testIndexAction()
   {
@@ -30,7 +47,9 @@ class AjaxModulesTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
    */
   public function testsearchArticleAction()
   {
@@ -38,12 +57,22 @@ class AjaxModulesTest extends TestCase
     Router::get('articleSearch');
   }
 
+  /**
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
+   */
   public function testsearchElementAction()
   {
     $_GET['search'] = 'test';
     Router::get('elementSearch');
   }
 
+  /**
+   * @doesNotPerformAssertions
+   *
+   * TODO Do assertions and remove the related annotation !
+   */
   public function testsearchModuleAction()
   {
     $_GET['search'] = 'test';

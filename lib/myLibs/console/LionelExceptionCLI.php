@@ -10,10 +10,11 @@ use lib\myLibs\LionelException;
 
 class LionelExceptionCLI extends \Exception
 {
-  const TYPE_WIDTH = 16, // the longest type is E_RECOVERABLE_ERROR
-    FUNCTION_WIDTH = 40,
-    LINE_WIDTH = 4,
-    FILE_WIDTH = 80;
+  const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
+    FUNCTION_WIDTH = 49,
+    LINE_WIDTH = 9,
+    FILE_WIDTH = 85,
+    ARGUMENTS_WIDTH = 51;
 
   /**
    * Shows an exception 'colorful' display for command line commands.
@@ -24,20 +25,24 @@ class LionelExceptionCLI extends \Exception
   {
     echo redText(PHP_EOL . 'PHP exception' . PHP_EOL . '=============' . PHP_EOL . PHP_EOL);
 
-    if (true === isset($exception->code)) echo 'Error type ' , cyanText($exception->code), ' in ' , cyanText($exception->file), ' at line ' , cyanText($exception->line), PHP_EOL, $exception->message, PHP_EOL;
+    if (true === isset($exception->scode)) echo 'Error type ' , cyanText($exception->scode), ' in ' , cyanText($exception->file), ' at line ' , cyanText($exception->line), PHP_EOL, $exception->message, PHP_EOL;
 
     /******************************
      * Write HEADERS of the table *
      ******************************/
     echo PHP_EOL,
-    lightBlueText(str_repeat('-', self::TYPE_WIDTH + self::FUNCTION_WIDTH + self::LINE_WIDTH + self::FILE_WIDTH + 80)), PHP_EOL,
-    self::consoleHeader(' TYPE', self::TYPE_WIDTH),
-    self::consoleHeader(' Function', self::FUNCTION_WIDTH),
-    self::consoleHeader(' Line', self::LINE_WIDTH),
-    self::consoleHeader(' File', self::FILE_WIDTH),
-    self::consoleHeader(' Arguments', 0),
+    lightBlueText('┌' . str_repeat('─', self::TYPE_WIDTH)
+      . '┬' . str_repeat('─', self::FUNCTION_WIDTH)
+      . '┬' . str_repeat('─', self::LINE_WIDTH)
+      . '┬' . str_repeat('─', self::FILE_WIDTH)
+      . '┬' . str_repeat('─', self::ARGUMENTS_WIDTH)), PHP_EOL,
+    self::consoleHeaders(['Type', 'Function', 'Line', 'File', 'Arguments']),
     PHP_EOL,
-    lightBlueText(str_repeat('-', self::TYPE_WIDTH + self::FUNCTION_WIDTH + self::LINE_WIDTH + self::FILE_WIDTH + 80)), endColor(), PHP_EOL;
+    lightBlueText('├' . str_repeat('─', self::TYPE_WIDTH) .
+      '┼' . str_repeat('─', self::FUNCTION_WIDTH) .
+      '┼' . str_repeat('─', self::LINE_WIDTH) .
+      '┼' . str_repeat('─',self::FILE_WIDTH) .
+      '┼' . str_repeat('─',self::ARGUMENTS_WIDTH)), endColor(), PHP_EOL;
 
     /*******************************
      * Write the BODY of the table *
@@ -53,18 +58,18 @@ class LionelExceptionCLI extends \Exception
       if (isset($now['file']))
         $now['file'] = str_replace('\\', '/', $now['file']);
 
-      echo lightBlueText('| '), str_pad(0 === $i ? $exception->code : '', self::TYPE_WIDTH + 4, ' '),
-      self::consoleLine($now, 'function', self::FUNCTION_WIDTH + 9),
-      self::consoleLine($now, 'line', self::LINE_WIDTH + 5),
+      echo lightBlueText('| '), str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
+      self::consoleLine($now, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
       self::consoleLine(
         $now,
         'file',
-        self::FILE_WIDTH + 5,
+        self::FILE_WIDTH,
         true === isset($now['file'])
-          ? (false === strpos($now['file'], BASE_PATH)
+          ? (false === mb_strpos($now['file'], BASE_PATH)
           ? $now['file'] :
-          substr($now['file'], strlen(BASE_PATH)))
+          mb_substr($now['file'], mb_strlen(BASE_PATH)))
           : ''
       ),
         /** ARGUMENTS */
@@ -76,21 +81,31 @@ class LionelExceptionCLI extends \Exception
       // echo $now['args']; after args has been converted
     }
 
-    echo lightBlueText(str_repeat('-', self::TYPE_WIDTH + self::FUNCTION_WIDTH + self::LINE_WIDTH + self::FILE_WIDTH + 80)), PHP_EOL;
+    echo lightBlueText('└' . str_repeat('─', self::TYPE_WIDTH)
+      . '┴' . str_repeat('─', self::FUNCTION_WIDTH)
+      . '┴' . str_repeat('─', self::LINE_WIDTH)
+      . '┴' . str_repeat('─', self::FILE_WIDTH)
+      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH)), PHP_EOL;
     // echo $this->context ...too big for console output !
   }
 
   /**
-   * Returns the content of a stack trace header in a console style.
+   * Returns the text that shows the headers for a unicode table (command line style)
    *
-   * @param string $headerName
-   * @param int    $width
+   * @param array $headers
    *
    * @return string
    */
-  private static function consoleHeader(string $headerName, int $width) : string
+  private static function consoleHeaders(array $headers) : string
   {
-    return lightBlueText('|') . brown() . $headerName . str_repeat(' ', $width);
+    $output = '';
+
+    foreach($headers as &$value)
+    {
+      $output .= lightBlueText('│') . brown() . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) . '_WIDTH'));
+    }
+
+    return $output;
   }
 
   /**
@@ -105,12 +120,12 @@ class LionelExceptionCLI extends \Exception
    */
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
-    return lightBlueText('|') .
-    str_pad(true === isset($rowData[$columnName])
-      ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
-      : ' -',
-      $width
-    );
+    return lightBlueText('│') .
+      str_pad(true === isset($rowData[$columnName])
+        ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
+        : ' -',
+        $width
+      );
   }
 }
 ?>

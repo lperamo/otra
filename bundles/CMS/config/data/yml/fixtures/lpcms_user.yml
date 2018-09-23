@@ -3,7 +3,7 @@ lpcms_user:
     id_user: '1'
     lpcms_role: lpcms_role_0
     mail: 'peramo.lionel@gmail.com'
-    pwd: '$2y$07$hu3yJ9cEtjFXwzpHoMdv5ebsC0nEFn..JdJcMzrdVHb6vA0LqDlsq'
+    pwd: '$2y$07$hu3yJ9cEtjFXwzpHoMdv5eSn.vMSANyrWapCp7ZwZfqy/xfm0l4yW'
     pseudo: 'pgmail'
   lpcms_user_1:
     id_user: '2'

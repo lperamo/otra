@@ -241,12 +241,12 @@ class Sql
    *
    * @return array The results
    */
-  public function fetchField(...$params)
+  public function getColumnMeta(...$params)
   {
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::fetchField', $params);
+    return call_user_func_array(self::$_currentSGBD . '::getColumnMeta', $params);
   }
 
   /**

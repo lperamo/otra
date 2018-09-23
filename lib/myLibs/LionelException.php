@@ -32,6 +32,10 @@ class LionelException extends \Exception
     E_WARNING           => 'E_WARNING'
   ];
 
+  private $context;
+  // String version of error code
+  public $scode;
+
   /**
    * LionelException constructor.
    *
@@ -44,13 +48,13 @@ class LionelException extends \Exception
   public function __construct(string $message = 'Error !', int $code = NULL, string $file = '', int $line = NULL, $context = '')
   {
     $this->message = str_replace('<br>', PHP_EOL, $message);
-    $this->code = ('' != $code) ? $code : $this->getCode();
+    $this->code = (null !== $code) ? $code : $this->getCode();
     $this->file = str_replace('\\', '/', (('' == $file) ? $this->getFile() : $file));
-    $this->line = ('' == $line) ? $this->getLine() : $line;
+    $this->line = ('' === $line) ? $this->getLine() : $line;
     $this->context = $context;
 
     echo 'cli' == php_sapi_name() ? $this->consoleMessage() : $this->errorMessage();
-    return;
+    return null;
   }
 
   /**
@@ -83,7 +87,7 @@ class LionelException extends \Exception
     return $renderController->renderView('/exception.phtml', [
         'message' => $this->message,
         'code' => $code,
-        'file' => substr($this->file, strlen(BASE_PATH)),
+        'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
         'context' => $this->context,
         'backtraces' => $this->getTrace()
@@ -105,7 +109,7 @@ class LionelException extends \Exception
     $this->backtraces = $this->getTrace();
 
     // Is the error code a native error code ?
-    $this->code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $this->scode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     $this->message = preg_replace('/\<br\s*\/?\>/i', '', $this->message);
 
     // If there is no ClassMap.php, we cannot use the 'use' statement

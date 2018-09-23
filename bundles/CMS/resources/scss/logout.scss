@@ -1,0 +1,12 @@
+a.logout {
+  /*background: linear-gradient(#E8E1D4 0%, #FCD484 100%) #EAEAEA;*/
+  background   : url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2222%22%20height%3D%2222%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%3Cdefs%3E%3Cpath%20id%3D%22a%22%20d%3D%22M0%2022h22V6h-6.5v2H20v12H2V8h4.5V6H0v16zM6%203v2l4-2.5V14h2V2.5L16%205V3l-5-3-5%203z%22%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cuse%20fill%3D%22%23f1ac46%22%20transform%3D%22rotate(90%2011%2011)%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E') no-repeat 7px center / 16px 16px rgba(255, 255, 255, 0.6);
+
+  /* box */
+  margin-right : 15px;
+  height       : 26px; width : 26px;
+
+  &:hover {
+    background-image : url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2222%22%20height%3D%2222%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%3Cdefs%3E%3Cpath%20id%3D%22a%22%20d%3D%22M0%2022h22V6h-6.5v2H20v12H2V8h4.5V6H0v16zM6%203v2l4-2.5V14h2V2.5L16%205V3l-5-3-5%203z%22%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cuse%20fill%3D%22%237984f8%22%20transform%3D%22rotate(90%2011%2011)%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  }
+}

@@ -10,7 +10,7 @@ use lib\myLibs\Session;
  *
  * @author Lionel Péramo
  */
-class Model
+abstract class Model
 {
   public function get($property) { return $this->$property; }
 
@@ -24,13 +24,12 @@ class Model
   public function save()
   {
     $dbName = Session::get('db');
-    /* @var $db lib\myLibs\bdd\Sql */
+    /* @var $db \lib\myLibs\bdd\Sql */
     $db = Session::get('dbConn');
-    $db->selectDb();
 
     $refl = new \ReflectionObject($this);
     $props = $refl->getProperties();
-    $properties = array();
+    $properties = [];
     $update = false;
 
     foreach($props as &$prop)
@@ -49,7 +48,7 @@ class Model
     unset($properties['table'], $props, $prop, $refl);
 
     if ($update === true)
-    { // It's an update
+    { // It's an update of the model
       $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
       $idValue = $properties[$id];
       unset($properties[$id]);

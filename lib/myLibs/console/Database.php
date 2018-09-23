@@ -5,7 +5,6 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-//namespace { require_once CORE_PATH . 'tools/Cli.php'; }
 namespace lib\myLibs\console {
 
   use lib\myLibs\bdd\Sql;

@@ -163,14 +163,14 @@ class Pdomysql
   public static function freeResult(\PDOStatement $statement) { return $statement->closeCursor(); }
 
   /**
-   * Returns the results
+   * Returns metadata for a column in a result set
    *
    * @param \PDOStatement $statement The query statement
    * @param int $column
    *
    * @return array The results
    */
-  public static function fetchField(\PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
+  public static function getColumnMeta(\PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
 
   /**
    * Closes connection.
@@ -197,7 +197,7 @@ class Pdomysql
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) { return Sql::$_CURRENT_CONN->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) : int { return Sql::$_CURRENT_CONN->lastInsertId($sequenceName); }
 
   /**
    * @param string $string

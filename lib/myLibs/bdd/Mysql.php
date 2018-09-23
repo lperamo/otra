@@ -162,7 +162,7 @@ class Mysql
    *
    * @return array The results
    */
-  public static function fetchField($result) { return mysql_fetch_field($result); }
+  public static function getColumnMeta($result) { return mysql_fetch_field($result); }
 
   /**
    * Close MySQL connection

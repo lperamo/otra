@@ -38,13 +38,13 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
 function hasSyntaxErrors(string $file) : bool
 {
   exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
-  $sortie = implode(PHP_EOL, $output);
+  $output = implode(PHP_EOL, $output);
 
-  if(strlen($sortie) > 6 && false !== strpos($sortie, 'pars', 7))
+  if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
-    echo PHP_EOL, lightRed(), $sortie, PHP_EOL, PHP_EOL;
+    echo PHP_EOL, lightRed(), $output, PHP_EOL, PHP_EOL;
     require CORE_PATH . 'console/Tools.php';
-    showContextByError($file, $sortie, 10);
+    showContextByError($file, $output, 10);
 
     return true;
   }
@@ -59,8 +59,12 @@ function hasSyntaxErrors(string $file) : bool
 function compressPHPFile(string $fileToCompress, string $outputFile)
 {
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-  //file_put_contents($outputFile . '.php', rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($fileToCompress)) . "\n"));
-  file_put_contents($outputFile . '.php', file_get_contents($fileToCompress));
+  $contentToCompress = rtrim(preg_replace('@\s{1,}@', ' ', php_strip_whitespace($fileToCompress)) . PHP_EOL);
+
+  file_put_contents(
+    $outputFile . '.php',
+    preg_replace('@;\s(class\s[^\s]{1,}) { @', ';$1{', $contentToCompress, -1, $count)
+  );
   unlink($fileToCompress);
 }
 

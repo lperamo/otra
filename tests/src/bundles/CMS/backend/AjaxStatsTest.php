@@ -14,6 +14,7 @@ class AjaxStatsTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
    */
   public function testIndexAction()
   {

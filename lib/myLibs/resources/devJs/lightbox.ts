@@ -4,8 +4,9 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
 
   let container,
       callbackYes,
-      callbackNo,
-      beginning = '<div class="lightbox-container"><div class="lightbox old-lightbox t-center"><div class="final-div',
+      callbackNo;
+
+  const beginning = '<div class="lightbox-container"><div class="lightbox old-lightbox t-center"><div class="final-div',
       lightboxBeginning = beginning + '">',
       confirmBeginning = beginning + ' confirm">',
       ending = '</div></div></div>',
@@ -34,7 +35,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
       u !== params.callback && params.callback()
     } else
     {
-      let xhr : XMLHttpRequest = new XMLHttpRequest();
+      const xhr : XMLHttpRequest = new XMLHttpRequest();
 
       xhr.onreadystatechange = function() : void
       {
@@ -79,7 +80,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
 
   function exit() : void
   {
-    let lightboxContainer : HTMLElement = this.parentNode.parentNode.parentNode;
+    const lightboxContainer : HTMLElement = this.parentNode.parentNode.parentNode;
     lightboxContainer.classList.add('lightbox-ending'); // animates the end
     setTimeout(function removeLightBoxContainer() : void
     {
@@ -138,7 +139,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
       createConfirmDialog(confirmBeginning + params.html + confirmEnding);
     else // URL content
     {
-      let xhr : XMLHttpRequest = new XMLHttpRequest();
+      const xhr : XMLHttpRequest = new XMLHttpRequest();
 
       xhr.onreadystatechange = function() : void
       {
@@ -153,7 +154,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
 
   /* END Confirm functions ******/
 
-  let dummy : any = {
+  const dummy : any = {
     advConfirm,
     basic: lightbox,
     confirm,
