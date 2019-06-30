@@ -10,7 +10,7 @@ use lib\myLibs\{Controller, console\LionelExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once BASE_PATH . 'lib\myLibs\DebugTools.php';
+require_once BASE_PATH . 'lib/myLibs/DebugTools.php';
 
 class LionelException extends \Exception
 {
@@ -43,9 +43,11 @@ class LionelException extends \Exception
    * @param int    $code
    * @param string $file
    * @param int    $line
-   * @param string $context
+   * @param array  $context
+   *
+   * @throws LionelException
    */
-  public function __construct(string $message = 'Error !', int $code = NULL, string $file = '', int $line = NULL, $context = '')
+  public function __construct(string $message = 'Error !', int $code = NULL, string $file = '', int $line = NULL, $context = [])
   {
     $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->code = (null !== $code) ? $code : $this->getCode();
@@ -59,6 +61,8 @@ class LionelException extends \Exception
 
   /**
    * Shows a custom exception page.
+   *
+   * @throws LionelException
    */
   public function errorMessage() : string
   {

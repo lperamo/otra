@@ -11,7 +11,7 @@ class ProfilerService
 {
   public static function securityCheck()
   {
-    if ('Dev' !== $_SESSION['debuglp_'])
+    if ('dev' !== $_SERVER['APP_ENV'])
     {
       echo 'No hacks.';
       exit (1);

@@ -1,12 +1,10 @@
 // Mixins
-@mixin glowingRed()
-{
+@mixin glowingRed() {
   color       : $debug--file-color;
   text-shadow : 0 0 3px $debug--file-text-shadow-color;
 }
 
-@mixin glowingYellowGreen()
-{
+@mixin glowingYellowGreen() {
   color       : $debug--line-color;
   text-shadow : 0 0 3px $debug--line-text-shadow-color;
 }
@@ -14,22 +12,54 @@
 // Rules
 
 .dbg- {
-  &fl { float : left }
-  &fr { float : right }
+  &fl {
+    float : left
+  }
+
+  &fr {
+    float : right
+  }
+
+  &hide {
+    display : none !important;
+  }
 
   &bar {
     // background
-    background : rgba(67, 67, 67, 0.8);
-    box-shadow : 0 0 10px rgba(67, 67, 67, 0.8), 0 0 10px 0 #000;
+    background    : rgba(67, 67, 67, 0.8);
+    box-shadow    : 0 0 30px 0 #555 inset;
 
     // box
-    margin-bottom : 7px;
     padding       : 5px 5px 8px;
 
+    // positioning
+    display       : flex;
+    align-items   : center;
+
     // text
-    color       : #eee;
-    font-family : $debug--font;
-    text-shadow : 0 0 3px $debug--text-shadow-color;
+    color         : #eee;
+    font-family   : $debug--font;
+    text-shadow   : 0 0 3px $debug--text-shadow-color;
+
+    @at-root {
+      .dbg--toggle,
+      .dbg--toggle-small {
+        // positioning
+        margin      : 0 10px 0 auto;
+        transition  : .25s;
+
+        // text
+        color       : $debug--toggle-color;
+        text-shadow : 0 0 1px $debug--toggle-text-shadow-color;
+
+        // others
+        cursor      : pointer;
+
+        &:hover {
+          @include debugToggleHoverTextShadow;
+        }
+      }
+    }
   }
 
   &on {
@@ -44,17 +74,16 @@
 
   &bar-xs {
     // background
-    background : linear-gradient(#B8CDFF 0%, #D6D6FF 45%, #B8BEFF 100%);
+    background : linear-gradient(#b8cdff 0%, #d6d6ff 45%, #b8beff 100%);
     border-top : solid #ddd 1px;
     box-shadow : 0 0 6px #fff, 0 0 6px #645eea, 0 0 6px #645eea;
-    display    : none;
     opacity    : 0.8;
 
     // box
-    padding : 5px;
+    padding    : 5px;
 
-    // positionining
-    float : right;
+    // positioning
+    float      : right;
   }
 
   &btn:active {
@@ -63,16 +92,27 @@
     top        : 1px
   }
 
-  &left-block { width : calc(100% - 60px) }
+  &left-block {
+    width : calc(100% - 60px)
+  }
 
-  &file { @include glowingRed(); }
+  &file {
+    @include glowingRed();
+  }
 
-  &line { @include glowingYellowGreen(); }
+  &line {
+    @include glowingYellowGreen();
+  }
 
   &sql-logs {
 
-    &::selection { background: $debug--logs-selection-color; }
-    &::-moz-selection { background: $debug--logs-selection-color; }
+    &::selection {
+      background : $debug--logs-selection-color;
+    }
+
+    &::-moz-selection {
+      background : $debug--logs-selection-color;
+    }
 
     & > div {
       // background
@@ -88,13 +128,23 @@
       clear      : both;
       display    : inline-block;
 
-      &:hover { background: $debug--sql-logs-background-hover-color; }
+      &:hover {
+        background : $debug--sql-logs-background-hover-color;
+      }
     }
 
     @at-root {
-      .sql-request { white-space : pre-wrap; }
-      .sql-field { color : #88F; }
-      .sql-clause { @include glowingRed(); }
+      .sql-request {
+        white-space : pre-wrap;
+      }
+
+      .sql-field {
+        color : #88f;
+      }
+
+      .sql-clause {
+        @include glowingRed();
+      }
     }
   }
 }
@@ -102,7 +152,7 @@
 .dbg-btn,
 .profiler .lb-btn {
   // animation
-  transition : color .2s, text-shadow .2s;
+  transition    : color .2s, text-shadow .2s;
 
   // background
   background    : none repeat scroll 0 0 $debug--background-color;
@@ -111,40 +161,21 @@
   box-shadow    : none;
 
   // box
-  height  : auto;
-  padding : 5px;
-  display : inline-block;
+  height        : auto;
+  padding       : 5px;
+  display       : inline-block;
 
   // text
-  color       : $debug-buttons-color;
-  font-weight : 400;
-  text-shadow : none;
+  color         : $debug-buttons-color;
+  font-weight   : 400;
+  text-shadow   : none;
 
   // others
-  cursor     : pointer;
+  cursor        : pointer;
 
   &:hover {
     color       : $debug--hover-color;
     text-shadow : 0 0 2px #7ac;
-  }
-}
-
-.toggle,
-.toggle-small {
-  // positioning
-  float        : right;
-  margin-right : 10px;
-  transition   : .25s;
-
-  // text
-  color        : $debug--toggle-color;
-  text-shadow  : 0 0 1px $debug--toggle-text-shadow-color;
-
-  // others
-  cursor       : pointer;
-
-  &:hover {
-    @include debugToggleHoverTextShadow;
   }
 }
 
@@ -153,13 +184,14 @@
   background : $debug-error-background-color;
 
   // box
-  height : 100%;
-  width  : 100%;
+  height     : 100%;
+  width      : 100%;
 
   // positioning
-  position : absolute;
-  top      : 0;
+  position   : absolute;
+  top        : 0;
 }
 
-.profiler { padding : 1em }
-
+.profiler {
+  padding : 1em
+}

@@ -13,7 +13,7 @@ class RefreshSQLLogsAction extends Controller
   public function refreshSQLLogsAction()
   {
     ProfilerService::securityCheck();
-    ProfilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
+    ProfilerService::writeLogs(BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt');
   }
 }
 ?>

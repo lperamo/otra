@@ -42,9 +42,11 @@ class Controller extends MasterController
    * @param string $file      The file to render
    * @param array  $variables Variables to pass
    * @param bool   $ajax      Is this an ajax partial ?
-   * @param string $viewPath  Using the view path or not
+   * @param bool   $viewPath  Using the view path or not
    *
    * return string parent::$template Content of the template
+   *
+   * @return string
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {

@@ -13,6 +13,8 @@ define('LOADED_DEBUG_PAD', 80);
  * We have to manage differently the code that we put into an eval either it is PHP code or not
  *
  * @param string $contentToAdd
+ *
+ * @return bool
  */
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
@@ -240,7 +242,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
  * @param string $file
  * @param string $trimmedMatch
  *
- * @return bool $isTemplate
+ * @return array $isTemplate
  */
 function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatch) : array
 {
@@ -248,8 +250,8 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
   if (false === strpos($trimmedMatch, '$'))
     return [$tempFile, false];
 
-  // the flag is necessary in order to validate correctly the next condition (with empty($pathVariables) i mean)
-  preg_match_all('@\\$([^\\s]+)@', $tempFile, $pathVariables);
+  // the flag is necessary in order to validate correctly the next condition (with empty($pathVariables) I mean)
+  preg_match_all('@\\$([^\\s\\)\\(]+)@', $tempFile, $pathVariables);
   $isTemplate = false;
 
   if (false === empty($pathVariables))

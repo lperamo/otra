@@ -50,6 +50,10 @@ class TasksManager
     echo endColor();
   }
 
+  /**
+   * @param string $task
+   * @param array  $argv
+   */
   public static function execute(string $task, array $argv)
   {
     ini_set('display_errors', '1');

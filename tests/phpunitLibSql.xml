@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
+    <testsuite name="Framework tests">
+        <file>./src/lib/myLibs/database/SqlTest.php</file>
+    </testsuite>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <exclude>
+                <directory>./</directory>
+                <directory>./bundles/</directory>
+                <directory>../.git</directory>
+                <directory>../.idea</directory>
+                <directory>../bundles</directory>
+                <directory>../cache</directory>
+                <directory>../logs</directory>
+                <directory>./coverageHtml</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <!--<logging>-->
+        <!--<log type="coverage-html" target="./coverageHtml" title="LP Framework" />-->
+    <!--</logging>-->
+</phpunit>

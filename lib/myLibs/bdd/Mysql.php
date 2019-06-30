@@ -27,10 +27,13 @@ class Mysql
 
   /**
    * Sends a SQL query !
+   *
    * @param string $query SQL query.
    *                      The query string should not end with a semicolon. Data inside the query should be properly escaped.
    * @param        $link_identifier
+   *
    * @return resource Returns a resource on success, otherwise an exception is raised
+   *
    * @throws LionelException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
@@ -167,6 +170,8 @@ class Mysql
   /**
    * Close MySQL connection
    *
+   * @param null $link_identifier
+   *
    * @return bool Returns true on success or false on failure
    */
   public static function close($link_identifier = null) { return \mysql_close($link_identifier); }
@@ -174,7 +179,10 @@ class Mysql
   /**
    * Get the ID generated in the last query
    *
+   * @param $link_identifier
+   *
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
+   *
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
   public static function lastInsertedId($link_identifier) { return mysql_insert_id($link_identifier); }

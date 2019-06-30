@@ -21,7 +21,7 @@ class IndexAction extends Controller
       </div>
       <div id="dbg-sql-logs" class="dbg-sql-logs">';
 
-    ProfilerService::writeLogs(BASE_PATH . 'logs/' . XMODE . '/sql.txt');
+    ProfilerService::writeLogs(BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt');
 
     echo '</div></div>';
   }

@@ -185,6 +185,8 @@ class Tasks
    * Executes the sql script
    *
    * @param array $argv
+   *
+   * @throws \lib\myLibs\LionelException
    */
   public static function sql(array $argv)
   {

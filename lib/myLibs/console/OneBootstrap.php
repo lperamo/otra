@@ -10,7 +10,7 @@ define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 require CORE_PATH . 'console/Colors.php';
 
 echo white(), str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, endColor();
-define('XMODE', 'prod');
+$_SERVER['APP_ENV'] = 'prod';
 
 require BASE_PATH . 'cache/php/ClassMap.php';
 
@@ -88,14 +88,20 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
-  ]);
+    'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
+      && array_key_exists('driver', \config\AllConfig::$dbConnections) === true
+      ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+      : '',
+    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
+  ]
+);
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
   throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];
+
 try
 {
   contentToFile(fixFiles($chunks[1], $route, file_get_contents($fileToInclude), $verbose, $fileToInclude), $file_);

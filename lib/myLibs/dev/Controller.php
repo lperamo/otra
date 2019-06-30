@@ -33,6 +33,7 @@ class Controller extends MasterController
    * @param array       $variables Variables to pass
    * @param bool        $ajax      Is this an ajax partial ?
    * @param bool|string $viewPath  Using the view path or not
+   *
    * @return string parent::$template Content of the template
    *
    * @throws LionelException

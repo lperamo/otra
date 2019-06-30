@@ -11,11 +11,11 @@ class Routes
 {
   public static $default = [
     'pattern' => '/frontend/index',
-    'bundle' => 'CMS',
+    'bundle' => 'App',
     'module' => 'frontend',
     'controller' => 'index',
     'action' => 'indexAction',
-    'route' => 'showArticle'
+    'route' => 'homePage'
   ],
 
   $_ = [
@@ -23,7 +23,7 @@ class Routes
       'chunks' => ['exception'],
       'core' => true,
       'resources' => [
-        'core_css' => ['LionelException'],
+        'core_css' => ['lionelException'],
         'core_js' => ['tools']
       ]
     ],
@@ -47,7 +47,7 @@ class Routes
   {
     self::$_ = array_merge(
       self::$_,
-      require BASE_PATH . 'bundles/config/Routes.php'); // TODO find a way to allow the parenthese to be correctly placed ! For now, change it breaks the production task code :/
+      require BASE_PATH . 'bundles/config/Routes.php'); // TODO find a way to allow the parenthesis to be correctly placed ! For now, change it breaks the production task code :/
   }
 }
 

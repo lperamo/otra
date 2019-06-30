@@ -40,10 +40,7 @@ namespace lib\myLibs\console {
       $tablesOrderFile,
 
       // just in order to simplify the code
-      $attributeInfos = [];
-
-    // Useful only for PHPUnit tests purposes
-    public static
+      $attributeInfos = [],
       $boolSchema = false,
       $folder = 'bundles/';
 
@@ -73,7 +70,7 @@ namespace lib\myLibs\console {
       if (false === isset($infosDb['motor']))
         throw new LionelException('You haven\'t specified the database engine in your configuration file.', E_CORE_WARNING);
 
-      self::initBase(self::$boolSchema, self::$folder);
+      self::initBase();
 
       if (false === defined('VERBOSE'))
         define('VERBOSE', AllConfig::$verbose);
@@ -110,12 +107,12 @@ namespace lib\myLibs\console {
      */
     public static function initBase()
     {
-      self::$baseDirs = self::getDirs(self::$boolSchema, self::$folder);
+      self::$baseDirs = self::getDirs();
       self::$pathYml = self::$baseDirs[0] . 'config/data/yml/';
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
       self::$pathSql = self::$baseDirs[0] . 'config/data/sql/';
       self::$pathSqlFixtures = self::$pathSql . 'fixtures/';
-      self::$schemaFile = self::$pathYml . 'Schema.yml';
+      self::$schemaFile = self::$pathYml . 'schema.yml';
       self::$tablesOrderFile = self::$pathYml . 'tables_order.yml';
     }
 
@@ -134,8 +131,8 @@ namespace lib\myLibs\console {
       // We scan the bundles directory to retrieve all the bundles name ...
       while (false !== ($file = readdir($folderHandler)))
       {
-        // config is not a bundle ... just a configuration folder
-        if (true === in_array($file, ['.', '..', 'config']))
+        // 'config' and 'views' are not bundles ...
+        if (true === in_array($file, ['.', '..', 'config', 'views']))
           continue;
 
         $bundleDir = $dir . $file;
@@ -165,8 +162,6 @@ namespace lib\myLibs\console {
         {
           $content .= file_get_contents($schema);
         }
-        var_dump($content);
-        return $dirs;
       }
 
       return $dirs;
@@ -174,6 +169,8 @@ namespace lib\myLibs\console {
 
     /**
      * Cleans sql and yml files in the case where there are problems that had corrupted files.
+     *
+     * @param bool $extensive
      */
     public static function clean(bool $extensive = false)
     {
@@ -200,7 +197,9 @@ namespace lib\myLibs\console {
      * Creates the sql database schema file if it doesn't exist and runs it
      *
      * @param string $databaseName Database name
-     * @param bool   $force        If true, we erase the database before the tables creation.
+     * @param bool $force If true, we erase the database before the tables creation.
+     *
+     * @throws LionelException
      */
     public static function createDatabase(string $databaseName, bool $force = false)
     {
@@ -493,12 +492,13 @@ namespace lib\myLibs\console {
      *  If we cannot open the YAML fixtures folder
      *  If there is no YAML schema
      *  If the file that describe the table priority/order doesn't exist
-     *  If we cannot create fixtures folder
+     *  If we cannot create fixtures sql folder
      *  If we attempt to create an already existing file
      */
     public static function createFixtures(string $databaseName, int $mask)
     {
-      self::initBase();
+      if (false === self::$init)
+        self::init();
 
       // Analyzes the database schema in order to guess the properties types
       if (false === file_exists(self::$schemaFile))
@@ -510,6 +510,8 @@ namespace lib\myLibs\console {
         closedir($folder);
         throw new LionelException('Cannot open the YAML fixtures folder ' . self::$pathYmlFixtures . ' !', E_CORE_ERROR);
       }
+
+      $folder = opendir(self::$pathYmlFixtures);
 
       if (false === file_exists(self::$tablesOrderFile))
       {
@@ -664,6 +666,8 @@ namespace lib\myLibs\console {
      *
      * @param string $databaseName The database name
      * @param string $table        The table name
+     *
+     * @throws LionelException
      */
     private static function _executeFixture(string $databaseName, string $table)
     {
@@ -703,7 +707,7 @@ namespace lib\myLibs\console {
     }
 
     /**
-     * Generates the sql schema
+     * Generates the sql schema. A YAML schema is required.
      *
      * @param string $databaseName Database name
      * @param bool   $force        If true, we erase the existing tables TODO it is not true anymore
@@ -851,8 +855,7 @@ namespace lib\myLibs\console {
 
         // We add the default character set (UTF8) and the ENGINE define in the framework configuration
         $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
-
-        $tableSql[$table] .= ';' . PHP_EOL . PHP_EOL;
+        $tableSql[$table] .= ';';
 
         /**
          * We separate
@@ -872,7 +875,7 @@ namespace lib\myLibs\console {
       $storeSortedTables = ($force || false === file_exists(self::$tablesOrderFile));
 
       // We use the information on the order in which the tables have to be created / used to create correctly the final SQL schema file.
-      foreach ($sortedTables as $sortedTable)
+      foreach ($sortedTables as $key => $sortedTable)
       {
         // We store the names of the sorted tables into a file in order to use it later
         if ($storeSortedTables)
@@ -881,13 +884,17 @@ namespace lib\myLibs\console {
         /* We create the 'create' section of the sql schema file */
         $sqlCreateSection .= $tableSql[$sortedTable];
 
+        if($key !== array_key_last($sortedTables))
+        {
+          $sqlCreateSection .= PHP_EOL . PHP_EOL;
+        }
+
         /* We create the 'drop' section of the sql schema file */
         $sqlDropSection = ' `' . $sortedTable . '`,' . PHP_EOL . $sqlDropSection;
       }
 
       /** DROP TABLE MANAGEMENT */
-      /** TODO Test on unix systems if the value 3 is correct or not */
-      $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -3) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
+      $sql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -strlen(',' . PHP_EOL)) . ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
 
       // We generates the file that precise the order in which the tables have to be created / used if needed.
       // (asked explicitly by user when overwriting the database or when the file simply doesn't exist)
@@ -990,12 +997,13 @@ namespace lib\myLibs\console {
         $database = AllConfig::$dbConnections[$confToUse]['db'];
 
       Session::set('db', $confToUse);
-      $db = Sql::getDB();
+      $db = Sql::getDB(false, false);
 
-      // Checks if the database concerned exists, strtolower because if we put uppercase, the database have lowercase so ...
-      if (false === in_array(strtolower($database), $db->valuesOneCol(
-        $db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA')))
-      )
+      $schemaInformations = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
+
+      // Checks if the database concerned exists.
+      // We check lowercase in case the database has converted the name to lowercase
+      if (false === in_array(strtolower($database), $schemaInformations) && false === in_array($database, $schemaInformations))
         throw new LionelException('The database \'' . $database . '\' doesn\'t exist.', E_CORE_ERROR);
 
       return $db;
@@ -1008,20 +1016,19 @@ namespace lib\myLibs\console {
      * @param string $confToUse (optional)
      *
      * @throws LionelException If we cannot create the folder that will contain the schema
-     *
-     * @return bool
      */
-    public static function importSchema(?string $database = null, ?string $confToUse = null)
+    public static function importSchema(?string $database = null, ?string $confToUse = null) : void
     {
       if (false === self::$init)
         self::init();
 
       $db = self::_initImports($database, $confToUse);
       $content = '';
+      $tables = $db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\''));
 
-      foreach ($db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\'')) as $table)
+      foreach ($tables as $key => &$table)
       {
-        $content .= $table . ': ' . PHP_EOL;
+        $content .= $table . ':' . PHP_EOL;
         $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
 
         // If there are columns ...
@@ -1029,12 +1036,12 @@ namespace lib\myLibs\console {
           $content .= '  columns:' . PHP_EOL;
 
         // For each column in this table, we set the different properties
-        foreach ($cols as $col)
+        foreach ($cols as $colKey => &$col)
         {
           $content .= '    ' . $col['COLUMN_NAME'] . ':' . PHP_EOL;
           $content .= '      type: ' . $col['COLUMN_TYPE'] . PHP_EOL;
 
-          if ('NO' == $col['IS_NULLABLE'])
+          if ('NO' === $col['IS_NULLABLE'])
             $content .= '      notnull: true' . PHP_EOL;
 
           if (false !== strpos($col['EXTRA'],
@@ -1056,7 +1063,7 @@ namespace lib\myLibs\console {
           $content .= '  relations:' . PHP_EOL;
 
           // For each constraint of this table
-          foreach ($constraints as $constraint)
+          foreach ($constraints as $constraintKey => &$constraint)
           {
             if (false === isset($constraint['REFERENCED_TABLE_NAME']))
               echo 'There is no REFERENCED_TABLE_NAME on ' . (isset($constraint['CONSTRAINT_NAME']) ? $constraint['CONSTRAINT_NAME'] : '/NO CONSTRAINT NAME/') . '.' . PHP_EOL;
@@ -1064,11 +1071,15 @@ namespace lib\myLibs\console {
             $content .= '    ' . $constraint['REFERENCED_TABLE_NAME'] . ':' . PHP_EOL;
             $content .= '      local: ' . $constraint['COLUMN_NAME'] . PHP_EOL;
             $content .= '      foreign: ' . $constraint['REFERENCED_COLUMN_NAME'] . PHP_EOL;
-            $content .= '      constraint_name: ' . $constraint['CONSTRAINT_NAME'] . PHP_EOL;
+            $content .= '      constraint_name: ' . $constraint['CONSTRAINT_NAME'];
+
+            $content .= PHP_EOL;
           }
         }
 
-        $content .= PHP_EOL;
+        // avoids to have 2 PHP_EOL at the end of the file (we put only one of it)
+        if ($key !== array_key_last($tables))
+          $content .= PHP_EOL;
       }
 
       $saveFolder = dirname(self::$schemaFile);
@@ -1093,12 +1104,12 @@ namespace lib\myLibs\console {
     /**
      * Creates the database fixtures from a database.
      *
-     * @param string $database  (optional)
+     * @param string $database (optional)
      * @param string $confToUse (optional)
      *
-     * @return bool
+     * @throws LionelException
      */
-    public static function importFixtures(?string $database = null, ?string $confToUse = null)
+    public static function importFixtures(?string $database = null, ?string $confToUse = null) : void
     {
       if (false === self::$init)
         self::init();
@@ -1130,8 +1141,8 @@ namespace lib\myLibs\console {
       }
 
       /** REAL BEGINNING OF THE TASK */
-
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
+
       $foreignKeysMemory = [];
 
       foreach ($tablesOrder as &$table)

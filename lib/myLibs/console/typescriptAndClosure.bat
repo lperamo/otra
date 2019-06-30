@@ -9,5 +9,3 @@ if "%6" == "NO" (
 ) else (
   (%APPDATA%\npm\tsc.cmd %1/%3.ts --typeRoots %5/node_modules/@types --sourcemap %1/%2 --out %1/%3.js || echo 'Errors to fix but these are not blocking.') && java -jar %5/lib/myLibs/console/compiler.jar --compilation_level %6 --rewrite_polyfills=false --js %1/%3.js --js_output_file %4/js/%3.js
 )
-
-

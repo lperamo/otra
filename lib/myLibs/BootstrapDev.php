@@ -1,6 +1,4 @@
 <?
-$_SESSION['debuglp_'] = 'Dev';
-
 define ('BEFORE', microtime(true));
 
 if (false === defined('BASE_PATH'))
@@ -8,19 +6,9 @@ if (false === defined('BASE_PATH'))
 
 require CORE_PATH . 'DebugTools.php';
 
-// User wants to get out from the dev mode, so we do it and we refresh (more a redirect) the page
-if (true === isset($_GET['d']) && 'out' === $_GET['d'])
-{
-  unset($_SESSION['debuglp_']);
-  header('Location: ' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REDIRECT_URL']);
-}
-
 ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('error_reporting', -1 & ~E_DEPRECATED);
-
-// We are now in dev mode
-define('XMODE', 'dev');
 
 /** CLASS MAPPING */
 require BASE_PATH . 'cache/php/ClassMap.php';

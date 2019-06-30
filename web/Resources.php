@@ -19,7 +19,7 @@ if ('/' !== $uri && true === file_exists($realPath))
     if('gz' === $ext)
     {
       if (false !== strpos($uri, 'css'))
-        header('Content-type:  text/css');
+        header('Content-type: text/css');
       else if (false !== strpos($uri, 'js'))
         header('Content-type: application/javascript');
       else
@@ -30,7 +30,9 @@ if ('/' !== $uri && true === file_exists($realPath))
     {
       switch($ext)
       {
-        case 'css': header('Content-type:  text/css'); break;
+        case 'css': header('Content-type: text/css'); break;
+        case 'css.map':
+        case 'js.map': header('Content-type: application/json'); break;
         case 'js': header('Content-type: application/javascript'); break;
         default: // images or other things
           // IE doesn't understand images correctly if there are a 'nosniff' header rule (for security)... -_-
@@ -59,10 +61,9 @@ if ('/' !== $uri && true === file_exists($realPath))
   return 0;
 }
 
-define('BASE_PATH', substr(_DIR_, 0, -3)); // Finit avec /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
+define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Ends with /
 $uri = $_SERVER['REQUEST_URI'];
-define('DEBUG_KEY', 'debuglp_');
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -70,18 +71,14 @@ session_start([
 ]);
 
 // Will be the future translation feature
-function t(string $texte) : string { return $texte; }
+function t(string $text) : string { return $text; }
 
-if (true === isset($_SESSION[DEBUG_KEY]) && 'Dev' == $_SESSION[DEBUG_KEY]
-  || true === isset($_GET[DEBUG_KEY]) && 'Dev' == $_GET[DEBUG_KEY])
+if ('dev' === $_SERVER['APP_ENV'])
   require CORE_PATH . 'BootstrapDev.php';
 else // mode Prod
 {
   try
   {
-    // We ensure that the debug bar is no more active
-    if (true === isset($_SESSION[DEBUG_KEY])) unset($_SESSION[DEBUG_KEY]);
-
     require BASE_PATH . 'cache/php/RouteManagement.php';
 
     if ($route = \cache\php\Router::getByPattern($uri))
@@ -98,7 +95,7 @@ else // mode Prod
       }
 
       // Otherwise for dynamic pages...
-      define('XMODE', 'prod');
+      $_SERVER['APP_ENV'] = 'prod';
 
       error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
       ini_set('display_errors', 1);
@@ -121,10 +118,8 @@ else // mode Prod
           require CLASSMAP[$className];
       });
 
-      //// Init' the database and loads the found route
       // Loads the found route
       require BASE_PATH . 'cache/php/' . $route[0] . '.php';
-      //    call_user_func('\cache\php\Init::Init');
 
       \cache\php\Router::get($route[0], $route[1]);
     }

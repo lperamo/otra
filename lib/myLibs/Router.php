@@ -36,7 +36,7 @@ class Router
       array_pad(Routes::$_[$route]['chunks'], 5, null)
     ));
 
-    $action = ('prod' === XMODE && 'cli' !== php_sapi_name())
+    $action = ('prod' === $_SERVER['APP_ENV'] && 'cli' !== php_sapi_name())
       ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
       : (true === isset(Routes::$_[$route]['core'])
         ? ''
@@ -68,7 +68,7 @@ class Router
       $params = [$params];
 
     /** Preventing redirections from crashing the application (the caller function is more or less far depending on
-     * the development mode (named XMODE) so we have :
+     * the development mode ($_SERVER['APP_ENV']) so we have :
      * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0] for dev mode
      * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1] for prod mode
      */
@@ -76,7 +76,7 @@ class Router
       && str_replace(
         ['\\', BASE_PATH],
         ['/', ''],
-        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[(int) !(XMODE === 'PROD')]['file']
+        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[(int) !($_SERVER['APP_ENV'] === 'prod')]['file']
       ) !== 'web/Resources.php')
     {
       // Is it a static page

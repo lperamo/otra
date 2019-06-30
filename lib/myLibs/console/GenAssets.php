@@ -96,7 +96,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
   }
 
   $bundlePath = (true === isset($chunks[1])
-    ? BASE_PATH . '/bundles/' . $chunks[1] . '/'
+    ? BASE_PATH . 'bundles/' . $chunks[1] . '/'
     : CORE_PATH
   );
 
@@ -123,8 +123,15 @@ for($i = 0; $i < $cptRoutes; ++$i)
       // Linux or Windows ? We have java or jamvm ?
       if (false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
       {
-        if (true === empty(exec('which java'))) // JAMVM CASE
+        if (true !== empty(exec('which java'))) // JAVA CASE
         {
+          // JAVA CASE
+          /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+          gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
+        } else {
+          // JAMVM CASE
           exec('jamvm -Xmx32m -jar ../lib/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
         }
@@ -135,7 +142,6 @@ for($i = 0; $i < $cptRoutes; ++$i)
       } else
       {
         // JAVA CASE
-
         /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
         exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
           $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');

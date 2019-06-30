@@ -6,6 +6,7 @@
 
 namespace lib\myLibs\bdd;
 use lib\myLibs\LionelException;
+use PDO, PDOStatement;
 
 class Pdomysql
 {
@@ -14,18 +15,18 @@ class Pdomysql
   /**
    * Connects to PDO_MySql
    *
-   * @param string $server Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
+   * @param string $dsn      Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
    * @param string $username Username
    * @param string $password Password
    *
-   * @return bool|\PDO Returns a MySQL link identifier on success, or false on error
+   * @return bool|PDO Returns a MySQL link identifier on success, or false on error
    * @throws LionelException
    */
   public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
   {
     try
     {
-      $conn = new \PDO($dsn, $username, $password);
+      $conn = new PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
       throw new LionelException('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
@@ -59,48 +60,48 @@ class Pdomysql
   /**
    * Returns the results
    *
-   * @param \PDOStatement $statement   The query statement
+   * @param PDOStatement $statement   The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
-  public static function fetchAssoc(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_ASSOC); }
+  public static function fetchAssoc(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_ASSOC); }
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
    *
-   * @param \PDOStatement $statement   The query statement
+   * @param PDOStatement $statement   The query statement
    * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchArray(\PDOStatement $statement, int $fetch_style = \PDO::FETCH_BOTH) { return $statement->fetch($fetch_style); }
+  public static function fetchArray(PDOStatement $statement, int $fetch_style = PDO::FETCH_BOTH) { return $statement->fetch($fetch_style); }
 
   /**
    * Returns the results
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchRow(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_NUM); }
+  public static function fetchRow(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_NUM); }
 
   /**
    * Returns the results as an object (simplified version of the existing one)
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchObject(\PDOStatement $statement) { return $statement->fetch(\PDO::FETCH_OBJ); }
+  public static function fetchObject(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_OBJ); }
 
   /**
    * Returns all the results in an associative array
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return bool|array The results. Returns false if there are no results.
    */
@@ -111,7 +112,7 @@ class Pdomysql
 
     $results = [];
 
-    while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row; }
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $row; }
 
     return $results;
   }
@@ -119,20 +120,20 @@ class Pdomysql
   /**
    * Returns all the results in an associative array
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function valuesOneCol(\PDOStatement $statement)
+  public static function valuesOneCol(PDOStatement $statement)
   {
     if (0 == $statement->rowCount())
       return false;
 
-    $row = $statement->fetch(\PDO::FETCH_ASSOC);
+    $row = $statement->fetch(PDO::FETCH_ASSOC);
     $results = [];
     $results[] = $row[($key = key($row))];
 
-    while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
 
     return $results;
   }
@@ -140,37 +141,37 @@ class Pdomysql
   /**
    * Returns the only expected result.
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return bool|mixed The result. Returns false if there are no result.
    */
-  public static function single(\PDOStatement $statement)
+  public static function single(PDOStatement $statement)
   {
     if (0 == $statement->rowCount())
       return false;
 
-    return current($statement->fetch(\PDO::FETCH_ASSOC));
+    return current($statement->fetch(PDO::FETCH_ASSOC));
   }
 
   /**
    * Free result memory
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    *
    * @return bool Returns true on success or false on failure.
    * @link http://php.net/manual/en/function.mysql-free-result.php
    */
-  public static function freeResult(\PDOStatement $statement) { return $statement->closeCursor(); }
+  public static function freeResult(PDOStatement $statement) { return $statement->closeCursor(); }
 
   /**
    * Returns metadata for a column in a result set
    *
-   * @param \PDOStatement $statement The query statement
+   * @param PDOStatement $statement The query statement
    * @param int $column
    *
    * @return array The results
    */
-  public static function getColumnMeta(\PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
+  public static function getColumnMeta(PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
 
   /**
    * Closes connection.

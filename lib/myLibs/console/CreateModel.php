@@ -48,7 +48,7 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
     return 'Date';
 
   // If we don't know this type !
-  echo redText(), 'We don\'t know the type ', brown(), $type, red(), ' in ', brown(), $modelName, red(), ' for the property ', brown(), $columnName, redText(' !');
+  echo red(), 'We don\'t know the type ', brown(), $type, red(), ' in ', brown(), $modelName, red(), ' for the property ', brown(), $columnName, redText(' !');
   exit(1);
 }
 
@@ -225,7 +225,7 @@ if (false === isset($argv[3]) || false === in_array($argv[3], $possibleChoices))
 if ('1' === $argv[3])
 {
   echo 'We will create one model from nothing.', PHP_EOL;
-  $bundleModule = getBundleModule($bundleName);
+  $bundleModule = getBundleModule();
   $modelNameQuestion = 'What is the name of your new model ? (camelCase, no need to put .php)';
   echo DOUBLE_ERASE_SEQUENCE;
 
@@ -297,7 +297,7 @@ if ('1' === $argv[3])
   {
     $functions = $propertiesCode = '';
     echo 'We will create one model from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
-    $bundleModule = getBundleModule($bundleName);
+    $bundleModule = getBundleModule();
     $modelNameQuestion = 'What is the name of the model that you want to create from \'schema.yml\' ? (camelCase, no need to put .php)';
     // We cleans the bundle/module question
     echo DOUBLE_ERASE_SEQUENCE;
@@ -373,7 +373,7 @@ if ('1' === $argv[3])
   else
   {
     echo 'We will create all models from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
-    $bundleModule = getBundleModule($bundleName);
+    $bundleModule = getBundleModule();
 
     if ('1' === $bundleModule) /** BUNDLE */
     {

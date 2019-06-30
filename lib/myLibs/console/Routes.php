@@ -90,7 +90,7 @@ foreach($routes as $route => &$details)
 
   echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
 
-  // Resources management : show the state of each ressource. Red => missing, green => exists
+  // Resources management : show the state of each resource. Red => missing, green => exists
   if (true === isset($details['resources']))
   {
     $resources = $details['resources'];

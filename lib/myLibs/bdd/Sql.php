@@ -5,7 +5,7 @@
 
 namespace lib\myLibs\bdd;
 
-use lib\myLibs\{ LionelException, Session, bdd\Mysql, Logger };
+use lib\myLibs\{ LionelException, bdd\Mysql, Logger };
 use config\AllConfig;
 
 class Sql
@@ -22,9 +22,10 @@ class Sql
     /** @type array Available active connections */
     $_activeConn = [];
 
+  /** @var $instance Sql */
   public static
     $instance,
-    /** @type sqlResource Shortcut */
+    /** @var string */
     $_CURRENT_CONN;
 
   /**
@@ -171,10 +172,11 @@ class Sql
    */
   public function selectDb(...$params)
   {
-    $retour = call_user_func_array(self::$_currentSGBD . '::selectDb', $params);
+    $return = call_user_func_array(self::$_currentSGBD . '::selectDb', $params);
+
     $this->query('SET NAMES UTF8');
 
-    return $retour;
+    return $return;
   }
 
   /**
@@ -190,7 +192,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    if(isset($_SESSION['debuglp_']) && 'Dev' == $_SESSION['debuglp_'])
+    if('dev' === $_SERVER['APP_ENV'])
     {
       $trace = debug_backtrace();
 

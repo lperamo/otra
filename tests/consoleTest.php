@@ -6,13 +6,14 @@ use phpunit\framework\TestCase;
  */
 class ConsoleTest extends TestCase
 {
-  protected function setUp()
+  protected function setUp() : void
   {
-    define('XMODE', 'PROD');
+    $_SERVER['APP_ENV'] = 'prod';
   }
 
   /**
    * @author Lionel Péramo
+   * @doesNotPerformAssertions
    */
   public function testExecConsole()
   {

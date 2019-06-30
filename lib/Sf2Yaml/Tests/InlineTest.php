@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class InlineTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         Inline::initialize(0, 0);
     }
@@ -539,9 +539,10 @@ class InlineTest extends TestCase
         $this->assertSame(gmmktime($hour, $minute, $second, $month, $day, $year), Inline::parse($yaml));
     }
 
-    /**
-     * @dataProvider getTimestampTests
-     */
+  /**
+   * @dataProvider getTimestampTests
+   * @throws \Exception
+   */
     public function testParseTimestampAsDateTimeObject($yaml, $year, $month, $day, $hour, $minute, $second, $timezone)
     {
         $expected = new \DateTime($yaml);
@@ -564,9 +565,10 @@ class InlineTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider getTimestampTests
-     */
+  /**
+   * @dataProvider getTimestampTests
+   * @throws \Exception
+   */
     public function testParseNestedTimestampListAsDateTimeObject($yaml, $year, $month, $day, $hour, $minute, $second)
     {
         $expected = new \DateTime($yaml);
@@ -588,6 +590,11 @@ class InlineTest extends TestCase
         $this->assertSame($expected, Inline::dump($dateTime));
     }
 
+  /**
+   * @return array
+   *
+   * @throws \Exception
+   */
     public function getDateTimeDumpTests()
     {
         $tests = array();

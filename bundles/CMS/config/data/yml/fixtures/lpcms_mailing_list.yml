@@ -1,9 +1,0 @@
-lpcms_mailing_list: 
-  lpcms_mailing_list_0:
-    id_mailing_list: '1'
-    name: 'mailing list de test'
-    descr: 'Notre première mailing list'
-  lpcms_mailing_list_1:
-    id_mailing_list: '2'
-    name: 'mailing list de test2'
-    descr: 'Notre deuxième mailing list'

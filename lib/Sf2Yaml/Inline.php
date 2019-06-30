@@ -529,13 +529,14 @@ class Inline
         throw new ParseException(sprintf('Malformed inline YAML string: %s.', $mapping), self::$parsedLineNumber + 1, null, self::$parsedFilename);
     }
 
-    /**
-     * Evaluates scalars and replaces magic values.
-     *
-     * @return mixed The evaluated YAML string
-     *
-     * @throws ParseException when object parsing support was disabled and the parser detected a PHP object or when a reference could not be resolved
-     */
+  /**
+   * Evaluates scalars and replaces magic values.
+   *
+   * @return mixed The evaluated YAML string
+   *
+   * @throws ParseException when object parsing support was disabled and the parser detected a PHP object or when a reference could not be resolved
+   * @throws \Exception
+   */
     private static function evaluateScalar(string $scalar, int $flags, array $references = array())
     {
         $scalar = trim($scalar);

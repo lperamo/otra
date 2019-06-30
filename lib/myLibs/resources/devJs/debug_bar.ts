@@ -5,9 +5,8 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 
   function toggle()
   {
-    'none' === bar.style.display
-      ? (bar.style.display = 'block', barXS.style.display = 'none')
-      : (bar.style.display = 'none', barXS.style.display = 'block')
+    bar.classList.toggle('dbg-hide');
+    barXS.classList.toggle('dbg-hide');
   }
 
   function hideProfiler() : void
@@ -128,8 +127,8 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
   {
     bar = d.getElementById('dbg-bar');
     barXS = <HTMLElement> bar.nextSibling;
-    const toggleElt : HTMLElement = d.getElementById('toggle'),
-        toggleXSElt : HTMLElement = d.getElementById('toggle-small');
+    const toggleElt : HTMLElement = d.getElementById('dbg--toggle'),
+        toggleXSElt : HTMLElement = d.getElementById('dbg--toggle-small');
 
     toggleXSElt.onmouseup = toggleElt.onmouseup = toggle;
     d.getElementById('show-sql').addEventListener('mouseup', runProfiler)

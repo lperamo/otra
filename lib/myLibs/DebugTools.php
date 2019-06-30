@@ -62,7 +62,7 @@ function dumpSmall()
 }
 
 /**
- * Puts new lines in order to add lisibility to a code in debug mode
+ * Puts new lines in order to add legibility to a code in debug mode
  *
  * @param string $stringToFormat The ... (e.g. : self::$template
  *
@@ -139,23 +139,23 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $donnees        array|object  Array or object to convert
+ * @param $data        array|object  Array or object to convert
  * @param $indexToExclude string        Index to exclude from the render
  * @param $loop           int           Number of recursions
  * @return int
  */
-function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
+function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
 {
   $i = 0;
   $oldLoop = $loop;
   ++$loop;
 
-  foreach ($donnees as $index => &$donnee)
+  foreach ($data as $index => &$datum)
   {
     if ($index === $indexToExclude)
       continue;
 
-    $donnee = (true === is_array($donnee) || true === is_object($donnee) || true === is_numeric($donnee)) ? $donnee : '\'' . $donnee . '\'';
+    $datum = (true === is_array($datum) || true === is_object($datum) || true === is_numeric($datum)) ? $datum : '\'' . $datum . '\'';
 
     // End of the table that shows the inner headers
     if (0 === $loop)
@@ -163,7 +163,7 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
       ?> </tbody></table><table class="test"><tbody><?
     }
 
-    if ((true === is_array($donnee) || true === is_object($donnee)) && false === empty($donnee))
+    if ((true === is_array($datum) || true === is_object($datum)) && false === empty($datum))
     {
         if (1 === $loop)
         {
@@ -185,18 +185,18 @@ function recurArrayConvertTab($donnees, $indexToExclude = null, int $loop = -1)
                '</tr>';
         else
           echo '<tr class="foldable no-dummy">',
-                 '<td colspan="">Index:' , getArgumentType($index, $donnee), ', Loop:' . $loop . '</td>';
+                 '<td colspan="">Index:' , getArgumentType($index, $datum), ', Loop:' . $loop . '</td>';
 
-        $oldLoop = recurArrayConvertTab($donnee, $indexToExclude, $loop);
+        $oldLoop = recurArrayConvertTab($datum, $indexToExclude, $loop);
     } else
     {
-      if (true === is_array($donnee))
-        $donnee = 'Empty';
+      if (true === is_array($datum))
+        $datum = 'Empty';
 
 //    if (0 === $loop)
       echo '<tr class="no-dummy" >',
-             '<td>', getArgumentType($index, $donnee), '</td>',
-             '<td colspan="2">', $donnee , '</td>',
+             '<td>', getArgumentType($index, $datum), '</td>',
+             '<td colspan="2">', $datum , '</td>',
            '</tr>';
 
     }
@@ -217,6 +217,6 @@ function debug(bool $noErrors = true) : bool
   if (true === $noErrors)
     error_reporting(0);
 
-  return true === isset($_SESSION['debuglp_']) && 'Dev' === $_SESSION['debuglp_'];
+  return 'dev' === $_SERVER['APP_ENV'];
 }
 ?>

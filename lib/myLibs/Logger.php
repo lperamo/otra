@@ -50,7 +50,7 @@ class Logger
    * @param string $message
    */
   public static function log(string $message) {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . XMODE . '/log.txt');
+    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt');
   }
 
   /**
@@ -70,7 +70,7 @@ class Logger
    * @param string $path
    */
   public static function logTo(string $message, string  $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . XMODE . '/' . $path . '.txt');
+    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt');
   }
 
   /**
@@ -83,7 +83,7 @@ class Logger
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
-    $path = BASE_PATH . 'logs/' . XMODE . '/' . $path . '.txt';
+    $path = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt';
     error_log(
       ((file_exists($path) === false || ($content = file_get_contents($path)) === false || '' === $content) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .

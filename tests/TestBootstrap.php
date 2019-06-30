@@ -4,19 +4,22 @@ require _DIR_ . '/../cache/php/ClassMap.php';
 
 spl_autoload_register(function($className)
 {
-  if (false === isset(CLASSMAP[$className])){
-    echo PHP_EOL, 'Path not found for the class name : ', $className, PHP_EOL;
-//    var_dump(debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-}else
+  if (false === isset(CLASSMAP[$className]))
+  {
+    // Handle the particular test configuration
+    if('AllConfig' === $className)
+      require BASE_PATH . 'tests/config/AllConfig.php';
+    else
+      echo PHP_EOL, 'Path not found for the class name : ', $className, PHP_EOL;
+  }else
     require CLASSMAP[$className];
 });
 
-define('BASE_PATH', substr(_DIR_, 0, -5)); // Finit avec /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Finit avec /
-//define('DEBUG_KEY', 'debuglp_');
+define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 
 require CORE_PATH . 'console/Colors.php';
-require CORE_PATH . 'Tools/RemovesFieldProtection.php';
+require CORE_PATH . 'tools/RemoveFieldProtection.php';
 
 // Will be the future translation feature
 function t(string $texte) : string { return $texte; }

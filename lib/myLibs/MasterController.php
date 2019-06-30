@@ -229,8 +229,6 @@ class MasterController
    * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
-   *
-   * @return string The link to the js file or the script markup with the js inside
    */
   protected static function js($js = []) : void
   {

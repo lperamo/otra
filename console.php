@@ -4,11 +4,16 @@ declare(strict_types=1);
 use lib\myLibs\console\TasksManager;
 
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('XMODE', 'prod');
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
+$_SERVER['APP_ENV']= 'prod';
 
 require CORE_PATH . 'console/TasksManager.php';
 require CORE_PATH . 'console/Colors.php';
+
+if (exec('whoami') === 'root')
+{
+  echo redText('You should not be root to execute this ! It will probably change the rights of your files and folders.'), PHP_EOL;
+}
 
 /**
  * Launch a task if there is a description for it and if the parameters are correctly set.
@@ -105,4 +110,3 @@ else // otherwise we'll try to guess if it looks like an existing one
 }
 
 ?>
-

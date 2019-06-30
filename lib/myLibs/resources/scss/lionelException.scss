@@ -51,7 +51,7 @@ body {
     }
 
     td, th {
-      border       : 1px solid $exception--table-cell-color;
+      border       : solid $exception--table-cell-color;
       border-width : 0 0 1px 1px;
       padding      : 3px 6px;
       transition   : background .25s
@@ -145,7 +145,7 @@ body {
   -o-hyphens      : auto;
   hyphens         : auto;
   word-wrap       : break-word;
-  /* overflow:word-wrap; bientôt en css3 il faudra remplacer par cette valeur car ce sera la nouvelle norme */
+  /* overflow:word-wrap; we must replace this value because it will be the new standard */
 }
 
 /*.radius { border-radius : 10px }*/

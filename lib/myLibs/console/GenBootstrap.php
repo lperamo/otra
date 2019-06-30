@@ -60,6 +60,9 @@ if (true === isset($argv[4]))
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
+// In CLI mode, the $_SERVER variable is not set so we set it !
+$_SERVER['APP_ENV'] = 'prod';
+
 $key = 0;
 
 foreach(array_keys($routes) as &$route)
@@ -85,7 +88,11 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+    'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
+      && array_key_exists('driver', \config\AllConfig::$dbConnections) === true
+      ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+      : '',
+    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
   ]
 );
 
@@ -103,7 +110,7 @@ contentToFile(
   $routesManagementFile
 );
 
-if (true === hasSyntaxErrors($routesManagementFile, $verbose))
+if (true === hasSyntaxErrors($routesManagementFile))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');

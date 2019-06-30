@@ -73,7 +73,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   // If we want to style the SQL with HTML markup + CSS
   if ($raw === false) {
     $output = '<pre class="sql-request">';
-    $leftStyleClauseCode = XMODE === 'dev' ? '<span class="sql-clause">' : LEFT_STYLE_CLAUSE_CODE;
+    $leftStyleClauseCode = $_SERVER['APP_ENV'] === 'dev' ? '<span class="sql-clause">' : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
