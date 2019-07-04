@@ -6,6 +6,8 @@ bundles/CMS/config/data/sql/*
 *.sh
 tests/coverageHtml
 tests/coverageHtmlBackup
+tests/coverage.xml
+tests/.phpunit.result.cache
 **/css/*
 **/js/*
 **/devJs/*.js*
