@@ -1,6 +1,6 @@
 cache/*
-logs/*
-!logs/.gitkeep
+logs/*.
+!.gitkeep
 lib/myLibs/console/closure-compiler.log
 .idea
 bundles/CMS/config/data/sql/*
