@@ -421,10 +421,11 @@ while (true)
             $generatedCssFile = $fileInformations[0] . '.css';
 
             // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            list(, $return) = cli('sass ' . $resourceName . ':' . realPath($resourceFolder . '/css') . '/' . $generatedCssFile);
+            $cssPath = realPath($resourceFolder . '/css') . '/' . $generatedCssFile;
+            list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
-              returnLegiblePath($generatedCssFile) . ' and ', returnLegiblePath($generatedCssFile . '.map'), '.',
+              returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
             PHP_EOL . PHP_EOL;
 
             if (GEN_WATCHER_VERBOSE > 0)
