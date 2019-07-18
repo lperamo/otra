@@ -1,4 +1,5 @@
 cache/*
+cert/*
 logs/**
 !logs/
 !logs/dev/
@@ -6,7 +7,6 @@ logs/**
 !**.gitkeep
 lib/myLibs/console/closure-compiler.log
 .idea
-*.sh
 tests/coverageHtml
 tests/coverage.xml
 tests/.phpunit.result.cache
