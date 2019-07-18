@@ -19,4 +19,4 @@ Previous section : [PHP side](php.md)
 
 - Use `border: 0` and not `border: none` (shorter).
 
-Previous section : [PHP side](php.md)
+Next section : [JavaScript side](js.md)
