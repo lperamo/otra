@@ -76,7 +76,7 @@ function isNotInThePath(array $paths, string &$realPath) : bool
  *
  * @return string
  */
-function returnLegiblePath(string $resource, ?string &$name = '') : string
+function returnLegiblePath(string $resource, ?string $name = '') : string
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
   if ($name !== '')
@@ -371,7 +371,6 @@ while (true)
         } else if (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
-          $resourceFilename = $foldersWatchedIds[$wd] . '/' . $name;
           $resourceFolder  = dirname($foldersWatchedIds[$wd]);
 
           if ($fileInformations[1] === 'ts')
@@ -389,7 +388,7 @@ while (true)
 
               // Creating a temporary typescript json configuration file suited for the OTRA watcher.
               // We need to recreate it each time because the user can alter his original configuration file
-              $typescriptConfig['files']                      = [$resourceFilename];
+              $typescriptConfig['files']                      = [$resourceName];
               $typescriptConfig['compilerOptions']['outFile'] = $generatedJsFile;
               unset($typescriptConfig['compilerOptions']['watch']);
 
@@ -408,7 +407,7 @@ while (true)
 
               unlink($temporaryTypescriptConfig);
 
-              echo 'Typescript file ', returnLegiblePath($resourceFilename) . ' have generated ',
+              echo 'Typescript file ', returnLegiblePath($resourceName) . ' have generated ',
                 returnLegiblePath($generatedJsFile) . ' and ', returnLegiblePath($generatedJsFile . '.map'), '.',
               PHP_EOL;
 
@@ -422,9 +421,9 @@ while (true)
             $generatedCssFile = $fileInformations[0] . '.css';
 
             // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            list(, $return) = cli('sass ' . $resourceFilename . ':' . realPath($resourceFolder . '/css') . '/' . $generatedCssFile);
+            list(, $return) = cli('sass ' . $resourceName . ':' . realPath($resourceFolder . '/css') . '/' . $generatedCssFile);
 
-            echo 'SASS / SCSS file ', returnLegiblePath($resourceFilename) . ' have generated ',
+            echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($generatedCssFile) . ' and ', returnLegiblePath($generatedCssFile . '.map'), '.',
             PHP_EOL;
 
