@@ -7,7 +7,8 @@ $dirs = ['bundles', 'config', 'lib'];
 $classes = [];
 $processedDir = 0;
 
-define('VERBOSE', isset($argv[2]) === true ? (int) $argv[2] : 0);
+if (defined('VERBOSE') === false)
+  define('VERBOSE', isset($argv[2]) === true ? (int) $argv[2] : 0);
 
 $additionalClassesFilesPath = BASE_PATH . 'config/AdditionalClassFiles.php';
 $additionalClassesFiles = [];
@@ -17,6 +18,74 @@ if (file_exists($additionalClassesFilesPath) === true)
 
 $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
 $classesThatMayHaveToBeAdded = [];
+
+if (empty($dirs) === false && function_exists('iterateCM') === false)
+{
+  /**
+   * @param array  $classes
+   * @param string $dir
+   * @param array  $additionalClassesFilesKeys
+   * @param int    $processedDir
+   * @param array  $classesThatMayHaveToBeAdded
+   *
+   * @return array
+   */
+  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, &$classesThatMayHaveToBeAdded)
+  {
+    if ($folderHandler = opendir($dir))
+    {
+      while (false !== ($entry = readdir($folderHandler)))
+      {
+        // We check that we process interesting things
+        if ('.' === $entry || '..' === $entry)
+          continue;
+
+        $_entry = $dir . '/' . $entry;
+
+        // recursively...
+        if (is_dir($_entry) === true)
+          list($classes, $processedDir) = iterateCM($classes, $_entry, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
+
+        // Only php files are interesting
+        $posDot = strrpos($entry, '.');
+
+        if ('.php' !== substr($entry, $posDot))
+          continue;
+
+        $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
+        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+
+        // we calculate the shortest string of path with realpath and str_replace function
+        $fullFilePath = str_replace('\\', '/', realpath($_entry));
+        $className    = substr($entry, 0, $posDot);
+
+        if (isset($matches[1][0]) === true && $matches[1][0] !== '')
+        {
+          // We put the namespace into $classesKey
+          $classesKey = trim($matches[1][0]) . '\\' . $className;
+
+          if (isset($classes[$classesKey]) === false)
+            $classes[$classesKey] = $fullFilePath;
+          else if (in_array($classesKey, $additionalClassesFilesKeys) === false)
+            $classesThatMayHaveToBeAdded[$classesKey] = str_replace(BASE_PATH, '', $fullFilePath);
+        }
+      }
+
+      closedir($folderHandler);
+      ++$processedDir;
+
+      if (VERBOSE === 1)
+        echo "\x0d\033[K", 'Processed directories : ', $processedDir, '...';
+
+      return [$classes, $processedDir, $classesThatMayHaveToBeAdded];
+    }
+
+    closedir($folderHandler);
+
+    echo redText('Problem encountered with the directory : ' . $dir . ' !');
+    exit(1);
+  }
+}
 
 foreach ($dirs as &$dir) {
   list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, BASE_PATH . $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
@@ -86,68 +155,3 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 }
 
 return null;
-
-/**
- * @param array  $classes
- * @param string $dir
- * @param array  $additionalClassesFilesKeys
- * @param int    $processedDir
- * @param array  $classesThatMayHaveToBeAdded
- *
- * @return array
- */
-function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, &$classesThatMayHaveToBeAdded)
-{
-  if ($folderHandler = opendir($dir))
-  {
-      while (false !== ($entry = readdir($folderHandler)))
-      {
-        // We check that we process interesting things
-        if ('.' === $entry || '..' === $entry)
-          continue;
-
-        $_entry = $dir . '/' . $entry;
-
-        // recursively...
-        if (is_dir($_entry) === true)
-          list($classes, $processedDir) = iterateCM($classes, $_entry, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
-
-        // Only php files are interesting
-        $posDot = strrpos($entry, '.');
-
-        if ('.php' !== substr($entry, $posDot) )
-          continue;
-
-        $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
-        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
-
-        // we calculate the shortest string of path with realpath and str_replace function
-        $fullFilePath = str_replace('\\', '/', realpath($_entry));
-        $className = substr($entry, 0, $posDot);
-
-        if (isset($matches[1][0]) === true && $matches[1][0] !== '')
-        {
-           // We put the namespace into $classesKey
-          $classesKey = trim($matches[1][0]) . '\\' . $className;
-
-          if (isset($classes[$classesKey]) === false)
-            $classes[$classesKey] = $fullFilePath;
-          else if (in_array($classesKey, $additionalClassesFilesKeys) === false)
-            $classesThatMayHaveToBeAdded[$classesKey] = str_replace(BASE_PATH, '', $fullFilePath);
-        }
-      }
-
-      closedir($folderHandler);
-      ++$processedDir;
-
-      if (VERBOSE === 1)
-        echo "\x0d\033[K", 'Processed directories : ', $processedDir, '...';
-
-      return [$classes, $processedDir, $classesThatMayHaveToBeAdded];
-  }
-
-  closedir($folderHandler);
-
-  echo redText('Problem encountered with the directory : ' . $dir . ' !');
-  exit(1);
-}
