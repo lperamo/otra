@@ -9,7 +9,7 @@ use lib\myLibs\console\Tasks;
 
 // TODO Add parameter(s)? to add folder(s) to exclude from watching
 // TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
-// TODO We need to allow classic javascript files if the developers do not want to use typescript for their project.
+// TODO We need to allow classic JavaScript files if the developers do not want to use TypeScript for their project.
 // TODO Handle the "rename" event
 
 // Initialization
@@ -261,7 +261,7 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 // ******************** INTRODUCTION TEXT ********************
 
 if (GEN_WATCHER_VERBOSE > 0)
-  echo lightBlueText('BASE_PATH') . ' is equal to ' . cyanText(BASE_PATH) . PHP_EOL;
+  echo lightBlueText('BASE_PATH') . ' is equal to ' . cyanText(BASE_PATH) . PHP_EOL . PHP_EOL;
 
 // ******************** Watching ! ********************
 while (true)
@@ -354,7 +354,7 @@ while (true)
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          echo PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) . ' modified! We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
+          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) . ' modified! We launch the appropriate tasks.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
@@ -407,9 +407,9 @@ while (true)
 
               unlink($temporaryTypescriptConfig);
 
-              echo 'Typescript file ', returnLegiblePath($resourceName) . ' have generated ',
+              echo 'TypeScript file ', returnLegiblePath($resourceName) . ' have generated ',
                 returnLegiblePath($generatedJsFile) . ' and ', returnLegiblePath($generatedJsFile . '.map'), '.',
-              PHP_EOL;
+              PHP_EOL . PHP_EOL;
 
               if (GEN_WATCHER_VERBOSE > 0)
                 $eventsDebug .= $return;
@@ -425,7 +425,7 @@ while (true)
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($generatedCssFile) . ' and ', returnLegiblePath($generatedCssFile . '.map'), '.',
-            PHP_EOL;
+            PHP_EOL . PHP_EOL;
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
@@ -440,13 +440,12 @@ while (true)
       $headers = false;
     }
 
-    if (GEN_WATCHER_VERBOSE > 0)
-    {
+    if (GEN_WATCHER_VERBOSE > 0 && $eventsDebug !== '')
       echo $eventsDebug . PHP_EOL;
-    }
   }
 
   // Avoid watching too much to avoid performance issues
   sleep(0.1);
 }
 ?>
+
