@@ -6,3 +6,4 @@
 - [PHP side](contributing/php.md)
 - [CSS side or SCSS side](contributing/css.md)
 - [JavaScript side](contributing/js.md)
+- [HTML side](contributing/html.md)

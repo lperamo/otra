@@ -16,3 +16,5 @@ Previous section : [CSS side or SCSS side](css.md)
 - When you want to use jQuery, learn how jQuery do it and then use vanilla js instead. To help you : 
   
   [You might not need jQuery](http://youmightnotneedjquery.com/)
+  
+Next section : [HTML side](html.md)
