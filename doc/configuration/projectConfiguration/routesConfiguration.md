@@ -1,29 +1,22 @@
-[Home](../../README.md) / [Installation](../mainConfiguration.md) /
+[Home](/README.md) / [Installation](../projectConfiguration.md) / [Project configuration](../projectConfiguration.md) / Routes configuration
 
-### Setting client configuration
+Previous section : [Main configuration file](mainConfiguration.md)
 
-#### Main configuration file
-
-You could use the file `tests/config/AllConfig.php` to know how you can configure it.<br>
-Do not touch `bundles/config/Config.php`, it is a generated file.<br>
-This file can be moved in a later version of the framework.<br>
-The file you have to configure is `bundles/App/config/` where `App` is the name of ... your application.
-
-#### Routes configuration file
+#### Routes configuration
 
 The file can be as simple as this one. 
-
-    <?php
-        return [
-          'index' => [
-            'chunks' => ['/', 'App', 'frontend', 'index', 'IndexAction'],
-            'resources' => [
-              'template' => true
-            ]
-          ]
-        ];
-    ?>
-    
+```php
+<?php
+    return [
+      'index' => [
+        'chunks' => ['/', 'App', 'frontend', 'index', 'IndexAction'],
+        'resources' => [
+          'template' => true
+        ]
+      ]
+    ];
+?>
+```
 * `index` is the name of the route.
 
 * `chunks` contains many parameters :
@@ -60,3 +53,20 @@ The file can be as simple as this one.
   * `session` default SESSION parameters
   
 The route order is important so be sure to put the most generic ones at the end.
+
+When we specify resources files, we can order them by telling their loading position like that :
+
+```php
+'resources' => [
+  '_css' => ['users'],
+  'bundle_css' => ['backendUsers'],
+  'core_css' => ['lightbox'],
+  '_js' => ['_5'=>'users'],
+  'bundle_js' => ['base', 'backend', 'form', 'notifications'],
+  'core_js' => ['_4' => 'lightbox']
+]
+```
+
+`lightbox.js` will be loaded before `users.js`.
+
+Next section : [Watching files](watchingFiles.md)
