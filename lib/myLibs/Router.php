@@ -135,7 +135,7 @@ class Router
         // We check the number of parameters ...
         if (count($parametersName) !== count($params))
         {
-          echo 'The number of parameters doesn\'t match !';
+          echo 'The number of parameters does not match !';
           exit(1);
         }
 

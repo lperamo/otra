@@ -139,10 +139,6 @@ body {
   overflow        : hidden;
   text-align      : left;
   white-space     : pre-wrap;
-  -webkit-hyphens : auto;
-  -moz-hyphens    : auto;
-  -ms-hyphens     : auto;
-  -o-hyphens      : auto;
   hyphens         : auto;
   word-wrap       : break-word;
   /* overflow:word-wrap; we must replace this value because it will be the new standard */

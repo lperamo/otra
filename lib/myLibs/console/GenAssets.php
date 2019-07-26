@@ -132,7 +132,8 @@ for($i = 0; $i < $cptRoutes; ++$i)
         if (true !== empty(exec('which java'))) // JAVA CASE
         {
           // JAVA CASE
-          /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+          /** TODO Find a way to store the logs (and then remove -W QUIET), put a parameter to chose the wished compilation
+           * level -O ADVANCED */
           exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
             $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
@@ -148,7 +149,8 @@ for($i = 0; $i < $cptRoutes; ++$i)
       } else
       {
         // JAVA CASE
-        /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+        /** TODO Find a way to store the logs (and then remove -W QUIET), put a parameter to chose the wished compilation
+         * level -O ADVANCED */
         exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
           $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
         gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);

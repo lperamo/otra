@@ -262,7 +262,7 @@ class Controller extends MasterController
    *
    * @param bool $firstTime If it's not the layout, often the first time we arrive at that function.
    *
-   * @return The links to the js files or the script markup with the js inside
+   * @return string The links to the js files or the script markup with the js inside
    */
   private function addJs(bool $firstTime) : string
   {

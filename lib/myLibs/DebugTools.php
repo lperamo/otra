@@ -76,7 +76,7 @@ function reformatSource(string $stringToFormat) : string
 /**
  * Converts a php array into stylish html table
  *
- * @param        $dataToShow     Array to convert
+ * @param array  $dataToShow     Array to convert
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
  */

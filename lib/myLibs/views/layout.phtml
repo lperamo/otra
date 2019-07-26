@@ -3,6 +3,9 @@
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <title> Welcome to OTRA!</title>
-<? self::favicon('favicon.png', 'favicon.ico'); ?>
+<?
+/** @var \lib\myLibs\MasterController $this */
+$this::favicon('favicon.png', 'favicon.ico');
+?>
 <html lang="en">
 <body>Hello!</body>
