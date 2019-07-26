@@ -1,4 +1,6 @@
-const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
+/// <reference path="./lightbox.ts" />
+
+const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
 {
   'use strict';
   let bar : HTMLElement, barXS : HTMLElement;
@@ -11,7 +13,8 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 
   function hideProfiler() : void
   {
-    LIB_LIGHTBOX.exit.apply(d.getElementById('profiler'));
+    /** @var Lib_LightboxInterface LIB_LIGHTBOX */
+    window['LIB_LIGHTBOX'].exit.apply(d.getElementById('profiler'));
   }
 
   function clearLogs() : void
@@ -27,7 +30,8 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
       }
     };
 
-    xhr.open('GET', '/dbg/clearSQLLogs', true), xhr.send()
+    xhr.open('GET', '/dbg/clearSQLLogs', true);
+    xhr.send()
   }
 
   /**
@@ -46,7 +50,8 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
       }
     };
 
-    xhr.open('GET', '/dbg/refreshSQLLogs', true), xhr.send()
+    xhr.open('GET', '/dbg/refreshSQLLogs', true);
+    xhr.send()
   }
 
   function copySqlToClipBoard() : void
@@ -84,7 +89,7 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 
   function initLightBox() : void
   {
-    LIB_LIGHTBOX.basic({url: '/dbg', callback: initEvents})
+    window['LIB_LIGHTBOX'].basic({url: '/dbg', callback: initEvents})
   }
 
   function runProfiler() : void
@@ -92,7 +97,7 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
     const profilerlightbox : HTMLElement = d.getElementById('profiler-light-box');
 
     // Takes into account that lightbox can already be loaded by the site
-    if (null === profilerlightbox && u === LIB_LIGHTBOX)
+    if (null === profilerlightbox && u === window['LIB_LIGHTBOX'])
     {
       const s = d.createElement('script');
       s.src = '/lib/myLibs/core/js/lightbox.js';
@@ -136,5 +141,5 @@ const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 
   const dummy : any = {postLog};
 
-  return dummy
+  return dummy;
 })(window, document, undefined);
