@@ -463,7 +463,7 @@ class Tasks
   }
 
   public static function version() {
-    echo file_get_contents(CORE_PATH . 'console/LICENSE2.txt'), endColor(), PHP_EOL, brownText('Version 1.0 ALPHA.');
+    require CORE_PATH . 'console/Version.php';
   }
 
   /**
