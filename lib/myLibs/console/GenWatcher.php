@@ -11,16 +11,20 @@ use lib\myLibs\console\Tasks;
 // TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
 // TODO We need to allow classic JavaScript files if the developers do not want to use TypeScript for their project.
 // TODO Handle the "rename" event
+// TODO Generate a new root css fileRoot.css when a sass dependency like _fileName.scss has been modified.
+// TODO Allow to not optimize via Google Closure Compiler (slow)
 
 // Initialization
-const GEN_WATCHER_ARG_VERBOSE = 2;
-const GEN_WATCHER_ARG_MASK = 3;
-const GEN_WATCHER_MASK_SCSS = 1;
-const GEN_WATCHER_MASK_TS = 2;
-const GEN_WATCHER_MASK_ROUTES = 4;
-const GEN_WATCHER_MASK_PHP = 8;
-const EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
-  RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
+const GEN_WATCHER_ARG_VERBOSE = 2,
+ GEN_WATCHER_ARG_MASK = 3,
+ GEN_WATCHER_ARG_GCC = 4,
+ GEN_WATCHER_MASK_SCSS = 1,
+ GEN_WATCHER_MASK_TS = 2,
+ GEN_WATCHER_MASK_ROUTES = 4,
+ GEN_WATCHER_MASK_PHP = 8,
+ GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
+ EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
+ RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
 
   PATHS_TO_HAVE_PHP =
   [
@@ -46,59 +50,15 @@ const EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
 define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 0);
 
-/**
- * @param array  $paths
- * @param string $realPath
- *
- * @return bool
- */
-function isNotInThePath(array $paths, string &$realPath) : bool
+define(
+  'GEN_WATCHER_GCC',
+  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true' ? true : false
+);
+
+if (GEN_WATCHER_VERBOSE > 1 )
 {
-  $continue = true;
-
-  foreach ($paths as &$path)
-  {
-    // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false){
-      $continue = false;
-    }
-  }
-
-  return $continue;
-}
-
-/**
- * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
- * otherwise returns resource name as is.
- *
- * @param string $resource Most of the time the name of a folder
- * @param string $name     Most of the time the name of a file
- *
- * @return string
- */
-function returnLegiblePath(string $resource, ?string $name = '') : string
-{
-  // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
-  if ($name !== '')
-    $name = '/' . $name;
-
-  return strpos($resource, BASE_PATH) !== false
-    ? lightBlueText('BASE_PATH ') . cyanText(substr($resource, strlen(BASE_PATH)) . $name)
-    : cyanText($resource . $name);
-}
-
-/**
- * @param int    $mask
- * @param int    $cookie
- * @param string $name     Folder or file name
- * @param string $resource Folder of file watched
- * @param bool   $headers  Do we have to show the headers
- *
- * @return string The debug output
- */
-function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, bool &$headers = false) : string
-{
-  $wd_constants = [
+  // Those constants are used in the maximum verbose mode only when we show the main events triggered
+  define('WD_CONSTANTS', [
     IN_ACCESS => 'IN_ACCESS',
     IN_MODIFY => 'IN_MODIFY',
     IN_ATTRIB => 'IN_ATTRIB',
@@ -126,24 +86,95 @@ function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, 
     IN_DONT_FOLLOW => 'IN_DONT_FOLLOW',
     IN_MASK_ADD => 'IN_MASK_ADD',
     IN_ONESHOT => 'IN_ONESHOT'
-  ];
+  ]);
 
+  // Normal length + 11 (length of the color codes)
+  define('HEADER_EVENT_PADDING', 33);
+  define('HEADER_COOKIE_PADDING', 22);
+  define('HEADER_NAME_PADDING', 45);
+  define('HEADER_WATCHED_RESOURCE_PADDING', 75);
+
+  define('DATA_EVENT_PADDING', 22);
+  define('DATA_COOKIE_PADDING', 11);
+  define('DATA_NAME_PADDING', 34);
+  define('DATA_WATCHED_RESOURCE_PADDING', 64);
+}
+
+/**
+ * @param array  $paths
+ * @param string $realPath
+ *
+ * @return bool
+ */
+function isNotInThePath(array $paths, string &$realPath) : bool
+{
+  $continue = true;
+
+  foreach ($paths as &$path)
+  {
+    // If we found a valid base path in the actual path
+    if (mb_strpos($realPath, $path) !== false){
+      $continue = false;
+    }
+  }
+
+  return $continue;
+}
+
+/**
+ * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
+ * otherwise returns resource name as is.
+ *
+ * @param string    $resource Most of the time the name of a folder
+ * @param string    $name     Most of the time the name of a file
+ * @param bool|null $endColor Do we have to reset color at the end ?
+ *
+ * @return string
+ */
+function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
+{
+  // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
+  if ($name !== '')
+    $name = '/' . $name;
+
+  return (strpos($resource, BASE_PATH) !== false
+    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $name . END_COLOR
+    : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
+    . ($endColor ? END_COLOR : '');
+}
+
+function debugHeader(string $header, int $padding)
+{
+  return str_pad('│ ' . CLI_BOLD_LIGHT_GRAY . $header . END_COLOR, HEADER_COOKIE_PADDING);
+}
+
+/**
+ * @param int    $mask
+ * @param int    $cookie
+ * @param string $name     Folder or file name
+ * @param string $resource Folder of file watched
+ * @param bool   $headers  Do we have to show the headers
+ *
+ * @return string The debug output
+ */
+function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, bool &$headers = false) : string
+{
   $debugToPrint = '';
 
   if ($headers === true)
     // Headers
-    $debugToPrint .= str_pad('event', 18)
-       . str_pad('cookie', 7)
-       . str_pad('name', 30)
-       . str_pad('resource watched', 60)
-       . PHP_EOL;
+    $debugToPrint .= debugHeader('Event',HEADER_EVENT_PADDING)
+       . debugHeader('Cookie',HEADER_COOKIE_PADDING)
+       . debugHeader('Name',HEADER_NAME_PADDING)
+       . debugHeader('Watched resource',HEADER_WATCHED_RESOURCE_PADDING)
+       . END_COLOR . PHP_EOL;
 
   // Data
-  $debugToPrint .= str_pad($wd_constants[$mask], 18)
-    . str_pad($cookie, 7)
-    . str_pad($name, 30);
+  $debugToPrint .= str_pad('│ ' . WD_CONSTANTS[$mask], DATA_EVENT_PADDING)
+    . str_pad('│ ' . $cookie, DATA_COOKIE_PADDING)
+    . str_pad('│ ' . $name, DATA_NAME_PADDING);
 
-  return $debugToPrint . str_pad(returnLegiblePath($resource), 60) . PHP_EOL;
+  return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) . PHP_EOL;
 }
 
 /**
@@ -163,6 +194,13 @@ $isWatched = function (array &$argv, bool &$maskExists, int $genWatcherMask) : b
 };
 
 $maskExists = array_key_exists(GEN_WATCHER_ARG_MASK, $argv);
+
+// Check if the binary mask is numeric
+if ($maskExists === true && is_numeric($argv[GEN_WATCHER_ARG_MASK]) === false)
+{
+  echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
+  exit(1);
+}
 
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_SCSS));
 define('WATCH_FOR_TS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_TS));
@@ -354,7 +392,8 @@ while (true)
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) . ' modified! We launch the appropriate tasks.' . PHP_EOL;
+          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name)
+            . ' modified! We launch the appropriate tasks.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
@@ -371,7 +410,7 @@ while (true)
         } else if (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
-          $resourceFolder  = dirname($foldersWatchedIds[$wd]);
+          $resourceFolder = dirname($foldersWatchedIds[$wd]);
 
           if ($fileInformations[1] === 'ts')
           {
@@ -384,40 +423,82 @@ while (true)
 
             if ($typescriptConfig !== null)
             {
+              // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
+              // and remove the dummy file ...
+              $generatedTemporaryJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '_viaTypescript.js';
               $generatedJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '.js';
 
               // Creating a temporary typescript json configuration file suited for the OTRA watcher.
               // We need to recreate it each time because the user can alter his original configuration file
               $typescriptConfig['files']                      = [$resourceName];
-              $typescriptConfig['compilerOptions']['outFile'] = $generatedJsFile;
+              $typescriptConfig['compilerOptions']['outFile'] = $generatedTemporaryJsFile;
               unset($typescriptConfig['compilerOptions']['watch']);
 
               $temporaryTypescriptConfig = BASE_PATH . '/tsconfig_tmp.json';
-              $fp                        = fopen($temporaryTypescriptConfig, 'w');
-              fwrite($fp, json_encode($typescriptConfig));
+              $fp = fopen($temporaryTypescriptConfig, 'w');
+              // JSON_PRETTY_PRINT allows better debugging
+              // (otherwise tsc will say that the bug is on the first line ..and the first line represents ALL the json)
+              fwrite($fp, json_encode($typescriptConfig, JSON_PRETTY_PRINT));
               fclose($fp);
 
               /* Launches typescript compilation on the file with project json configuration
                  and launches Google Closure Compiler on the output just after */
-              list(, $return) = cli(
-                '(/usr/bin/tsc --typeRoots ' . BASE_PATH . 'node_modules/@types --project '
-                . $temporaryTypescriptConfig . ' || echo \'Errors to fix but these are not blocking.\') && java -jar '
-                . BASE_PATH . 'lib/myLibs/console/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --rewrite_polyfills=false --js '
-                . $generatedJsFile . ' --js_output_file ' . $generatedJsFile);
+              list($return, $output) = cli('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
 
               unlink($temporaryTypescriptConfig);
 
-              echo 'TypeScript file ', returnLegiblePath($resourceName) . ' have generated ',
-                returnLegiblePath($generatedJsFile) . ' and ', returnLegiblePath($generatedJsFile . '.map'), '.',
-              PHP_EOL . PHP_EOL;
+              $legibleGeneratedTemporaryJsFile = returnLegiblePath($generatedTemporaryJsFile);
+              $jsFileExists = file_exists($generatedTemporaryJsFile);
 
-              if (GEN_WATCHER_VERBOSE > 0)
-                $eventsDebug .= $return;
+              if ($return === 0 && $jsFileExists === true)
+                echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
+                  false), CLI_GREEN, ' have generated the temporary files ', $legibleGeneratedTemporaryJsFile, ' and ',
+                  returnLegiblePath($generatedTemporaryJsFile . '.map', '', false), CLI_GREEN, '.',
+                  END_COLOR, PHP_EOL, PHP_EOL;
+              else
+              {
+                if ($jsFileExists === true)
+                  echo CLI_BROWN, 'Something was wrong during typescript compilation but this may not be blocking.',
+                    END_COLOR, PHP_EOL, $output, 'Launching Google Closure Compiler...', PHP_EOL;
+                else
+                  echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
+                  CLI_LIGHT_CYAN,
+                    'tsconfig.json', CLI_RED,  ' file.', END_COLOR, PHP_EOL, $output;
+              }
+
+              // We launch Google Closure Compiler only if a file has been generated with success
+              if ($jsFileExists === true)
+              {
+                // Should we launch Google Closure Compiler ?
+                if (GEN_WATCHER_GCC === true)
+                {
+                  // TODO add those lines to handle class map and fix the resulting issue
+                  // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
+                  list($return, $output) = cli('java -jar ' . BASE_PATH . 'lib/myLibs/console/compiler.jar -W '
+                    . GOOGLE_CLOSURE_COMPILER_VERBOSITY[GEN_WATCHER_VERBOSE]
+                    . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
+                    . $generatedJsFile);
+
+                  if (GEN_WATCHER_VERBOSE > 0)
+                  {
+                    echo ($return === 0) ?
+                      $output . CLI_GREEN . 'Javascript ' . returnLegiblePath($generatedJsFile) . ' has been optimized.'
+                      . PHP_EOL : CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL;
+                  }
+
+                  // Cleaning temporary files ...(js and the mapping)
+                  unlink($generatedTemporaryJsFile);
+                  unlink($generatedTemporaryJsFile . '.map');
+                } else {
+                  rename($generatedTemporaryJsFile, $generatedJsFile);
+                  rename($generatedTemporaryJsFile . '.map', $generatedJsFile . '.map');
+                }
+              }
             } else
               echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
                 , CLI_RED, json_last_error_msg(), PHP_EOL;
 
-          } else
+          } elseif (substr($name, 0, 1) !== '_')
           {
             $generatedCssFile = $fileInformations[0] . '.css';
 

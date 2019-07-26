@@ -5,5 +5,5 @@
 if [[ "$6" == "NO" ]]; then
   tsc $1/$3.ts --pretty --typeRoots $5/node_modules/@types --sourcemap $1/$2 --out $4/js/$3.js || echo 'Errors to fix but these are not blocking.' && exit 1;
 else
-  (/usr/bin/tsc $1/$3.ts --pretty --typeRoots $5/node_modules/@types --sourcemap $1/$2 --out $4/js/$3.js --project $5/tsconfig.json || echo 'Errors to fix but these are not blocking.') && java -jar $5/lib/myLibs/console/compiler.jar --compilation_level $6 --rewrite_polyfills=false --js $4/js/$3.js --js_output_file $4/js/$3.js;
+  (tsc $1/$3.ts --pretty --typeRoots $5/node_modules/@types --sourcemap $1/$2 --out $4/js/$3.js --project $5/tsconfig.json || echo 'Errors to fix but these are not blocking.') && java -jar $5/lib/myLibs/console/compiler.jar -W VERBOSE -O $6 --rewrite_polyfills=false --js $4/js/$3.js --js_output_file $4/js/$3.js;
 fi
