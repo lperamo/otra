@@ -1,4 +1,6 @@
-<? self::css(CORE_CSS_PATH . 'devMode'); ?>
+<?
+/** @var \lib\myLibs\MasterController $this */
+$this::css(CORE_CSS_PATH . 'devMode'); ?>
 <div id="dbg-bar" class="dbg-bar">
    <? echo '\'', $this->route, '\' | ', $this->bundle, '/', $this->module, '/', $this->controller, '/', $this->action,
    ' | ', round(microtime(true) - BEFORE, 3) ?>s&nbsp;&nbsp;|&nbsp;&nbsp;<span class="<?= (isset($_SESSION['sid'])) ? 'dbg-on' : 'dbg-off'?>">Connected</span>
@@ -7,5 +9,5 @@
 </div><div class="dbg-bar-xs dbg-hide">
 	<p id="dbg--toggle-small" class="dbg--toggle-small">▼</p>
 </div>
-<?php self::js(CORE_JS_PATH . 'debug_bar');
-  self::js(CORE_JS_PATH . 'lightbox'); ?>
+<?php $this::js(CORE_JS_PATH . 'debug_bar');
+  $this::js(CORE_JS_PATH . 'lightbox'); ?>
