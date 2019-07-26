@@ -23,26 +23,28 @@ class LionelExceptionCLI extends \Exception
    */
   public static function showMessage(LionelException $exception)
   {
-    echo redText(PHP_EOL . 'PHP exception' . PHP_EOL . '=============' . PHP_EOL . PHP_EOL);
+    echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
-    if (true === isset($exception->scode)) echo 'Error type ' , cyanText($exception->scode), ' in ' , cyanText($exception->file), ' at line ' , cyanText($exception->line), PHP_EOL, $exception->message, PHP_EOL;
+    if (true === isset($exception->scode))
+      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exception->file, END_COLOR,
+        ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
 
     /******************************
      * Write HEADERS of the table *
      ******************************/
     echo PHP_EOL,
-    lightBlueText('┌' . str_repeat('─', self::TYPE_WIDTH)
+      CLI_LIGHT_BLUE, '┌' . str_repeat('─', self::TYPE_WIDTH)
       . '┬' . str_repeat('─', self::FUNCTION_WIDTH)
       . '┬' . str_repeat('─', self::LINE_WIDTH)
       . '┬' . str_repeat('─', self::FILE_WIDTH)
-      . '┬' . str_repeat('─', self::ARGUMENTS_WIDTH)), PHP_EOL,
-    self::consoleHeaders(['Type', 'Function', 'Line', 'File', 'Arguments']),
-    PHP_EOL,
-    lightBlueText('├' . str_repeat('─', self::TYPE_WIDTH) .
+      . '┬' . str_repeat('─', self::ARGUMENTS_WIDTH), END_COLOR, PHP_EOL,
+      self::consoleHeaders(['Type', 'Function', 'Line', 'File', 'Arguments']),
+      PHP_EOL,
+      CLI_LIGHT_BLUE, '├' . str_repeat('─', self::TYPE_WIDTH) .
       '┼' . str_repeat('─', self::FUNCTION_WIDTH) .
       '┼' . str_repeat('─', self::LINE_WIDTH) .
       '┼' . str_repeat('─',self::FILE_WIDTH) .
-      '┼' . str_repeat('─',self::ARGUMENTS_WIDTH)), endColor(), PHP_EOL;
+      '┼' . str_repeat('─',self::ARGUMENTS_WIDTH), END_COLOR, END_COLOR, PHP_EOL;
 
     /*******************************
      * Write the BODY of the table *
@@ -58,7 +60,7 @@ class LionelExceptionCLI extends \Exception
       if (isset($now['file']))
         $now['file'] = str_replace('\\', '/', $now['file']);
 
-      echo lightBlueText('| '), str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
       self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
       self::consoleLine($now, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
@@ -73,7 +75,7 @@ class LionelExceptionCLI extends \Exception
           : ''
       ),
         /** ARGUMENTS */
-      lightBlueText('|'),
+      CLI_LIGHT_BLUE, '|', END_COLOR,
       ' NOT IMPLEMENTED YET',
 
       PHP_EOL;
@@ -81,11 +83,11 @@ class LionelExceptionCLI extends \Exception
       // echo $now['args']; after args has been converted
     }
 
-    echo lightBlueText('└' . str_repeat('─', self::TYPE_WIDTH)
+    echo CLI_LIGHT_BLUE, '└' . str_repeat('─', self::TYPE_WIDTH)
       . '┴' . str_repeat('─', self::FUNCTION_WIDTH)
       . '┴' . str_repeat('─', self::LINE_WIDTH)
       . '┴' . str_repeat('─', self::FILE_WIDTH)
-      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH)), PHP_EOL;
+      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH), END_COLOR, PHP_EOL;
     // echo $this->context ...too big for console output !
   }
 
@@ -102,7 +104,8 @@ class LionelExceptionCLI extends \Exception
 
     foreach($headers as &$value)
     {
-      $output .= lightBlueText('│') . brown() . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) . '_WIDTH'));
+      $output .= CLI_LIGHT_BLUE . '│' . CLI_BROWN . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) .
+      '_WIDTH'));
     }
 
     return $output;
@@ -120,7 +123,7 @@ class LionelExceptionCLI extends \Exception
    */
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
-    return lightBlueText('│') .
+    return CLI_LIGHT_BLUE . '│' .
       str_pad(true === isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
         : ' -',

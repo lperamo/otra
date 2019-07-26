@@ -39,7 +39,7 @@ function promptUser(string $question, string $altQuestion = '') : string
  */
 function askQuestion(string $question) : string
 {
-  echo brownText($question), PHP_EOL;
+  echo CLI_BROWN, $question, END_COLOR, PHP_EOL;
 
   return trim(fgets(fopen('php://stdin', 'r')));
 }
@@ -103,8 +103,8 @@ function showContext(string $file, int $errorLine, int $context)
     if(-1 !== $errorLine)
     {
       echo ($i === $errorLine
-        ? red() . $i
-        : green() . $i . lightGray()
+        ? CLI_RED . $i
+        : CLI_GREEN . $i . CLI_LIGHT_GRAY
       ), ' ', $lines[$i];
     }
   }

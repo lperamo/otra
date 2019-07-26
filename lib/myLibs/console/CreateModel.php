@@ -16,7 +16,8 @@ function checkDataType(string $modelName, string $columnName, string $type)
 {
   if (false === isset($type))
   {
-    echo red(), 'SCHEMA.YML => Model ', brown(), $modelName, red(), ' : There are no type for the property ', brown(), $columnName, redText('.');
+    echo CLI_RED, 'SCHEMA.YML => Model ', CLI_BROWN, $modelName, CLI_RED, ' : There are no type for the property ', CLI_BROWN,
+    $columnName, CLI_RED, '.', END_COLOR;
     exit (1);
   }
 }
@@ -48,7 +49,8 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
     return 'Date';
 
   // If we don't know this type !
-  echo red(), 'We don\'t know the type ', brown(), $type, red(), ' in ', brown(), $modelName, red(), ' for the property ', brown(), $columnName, redText(' !');
+  echo CLI_RED, 'We don\'t know the type ', CLI_BROWN, $type, CLI_RED, ' in ', CLI_BROWN, $modelName, CLI_RED, ' for the property 
+  ', CLI_BROWN, $columnName, CLI_RED, ' !', END_COLOR;
   exit(1);
 }
 
@@ -78,12 +80,13 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
  */
 function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null)
 {
-  echo green(), 'The model ', brown(), $modelName, green(), ' has been created in the bundle ', brown(), $bundleName, green();
+  echo CLI_GREEN, 'The model ', CLI_BROWN, $modelName, CLI_GREEN, ' has been created in the bundle ', CLI_BROWN, $bundleName,
+  CLI_GREEN;
 
   if (null !== $propertiesTxt)
     echo ' with those properties [', substr($propertiesTxt, 0, strlen($propertiesTxt) - 2), ']';
 
-  echo '.', PHP_EOL, endColor();
+  echo '.', END_COLOR, PHP_EOL;
 }
 
 /**
@@ -165,7 +168,8 @@ function getModuleName(string $bundleName, string $bundlePath) : string
     $moduleName = promptUser('This module doesn\'t exist.' . $question);
   }
 
-  echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', brownText($bundleName), ' for the module ', brownText($moduleName), ' ...', PHP_EOL;
+  echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_BROWN, $bundleName, END_COLOR, ' for the module ', CLI_BROWN,
+  $moduleName, END_COLOR, ' ...', PHP_EOL;
 
   return $moduleName;
 }
@@ -193,16 +197,16 @@ if (false === isset($argv[2]) || false === file_exists($bundlesPath . $argv[2]))
 $bundleName = $argv[2];
 $bundlePath = $bundlesPath . $bundleName . '/';
 
-echo 'We use the ', cyanText($argv[2]), ' bundle.', PHP_EOL;
+echo 'We use the ', CLI_CYAN, $argv[2], END_COLOR, ' bundle.', PHP_EOL;
 $possibleChoices = [1,2,3];
 
 /** 2. MODEL CREATION MODE ... if we don't have it via the given console parameters */
 if (false === isset($argv[3]) || false === in_array($argv[3], $possibleChoices))
 {
-  echo brown(), 'You did not specified how do you want to create it or this creation mode doesn\'t exist. How do you want to create it ?', PHP_EOL, PHP_EOL,
+  echo CLI_BROWN, 'You did not specified how do you want to create it or this creation mode does not exist. How do you want to create it ?', PHP_EOL, PHP_EOL,
     '1 => only one model from nothing', PHP_EOL,
-    '2 => one specific model from the ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), PHP_EOL,
-    '3 => all from the ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), PHP_EOL, PHP_EOL;
+    '2 => one specific model from the ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_BROWN, PHP_EOL,
+    '3 => all from the ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_BROWN, PHP_EOL, PHP_EOL;
 
   $argv[3] = promptUser('Your choice ?');
 
@@ -231,7 +235,7 @@ if ('1' === $argv[3])
 
   if('1' === $bundleModule) /** BUNDLE */
   {
-    echo 'A model for the bundle ', brownText($bundleName), ' ...', PHP_EOL;
+    echo 'A model for the bundle ', CLI_BROWN, $bundleName, END_COLOR, ' ...', PHP_EOL;
     $path = $bundlePath;
   } else /** MODULE */
   {
@@ -250,7 +254,8 @@ if ('1' === $argv[3])
     list($modelFullName, $modelExists) = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
   }
 
-  echo DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, 'The model ', brownText($modelName), ' will be created from nothing.', PHP_EOL;
+  echo DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, 'The model ', CLI_BROWN, $modelName, END_COLOR, ' will be created from nothing.',
+  PHP_EOL;
 
   $propertiesTxt = $functions = $propertiesCode = '';
 
@@ -296,7 +301,7 @@ if ('1' === $argv[3])
   if('2' === $argv[3])
   {
     $functions = $propertiesCode = '';
-    echo 'We will create one model from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
+    echo 'We will create one model from ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_BROWN, '.', PHP_EOL;
     $bundleModule = getBundleModule();
     $modelNameQuestion = 'What is the name of the model that you want to create from \'schema.yml\' ? (camelCase, no need to put .php)';
     // We cleans the bundle/module question
@@ -342,7 +347,8 @@ if ('1' === $argv[3])
       $tableExists = in_array($modelName, $availableTables, true);
     }
 
-    echo DOUBLE_ERASE_SEQUENCE, ERASE_SEQUENCE, 'Creating the model ', brownText($modelName), ' for the bundle ', brownText($bundleName), ' ...', PHP_EOL;
+    echo DOUBLE_ERASE_SEQUENCE, ERASE_SEQUENCE, 'Creating the model ', CLI_BROWN, $modelName, END_COLOR, ' for the bundle ',
+    CLI_BROWN,     ($bundleName), ' ...', PHP_EOL;
 
     $functions = $propertiesCode = $propertiesTxt = '';
 
@@ -372,13 +378,14 @@ if ('1' === $argv[3])
    ******************************/
   else
   {
-    echo 'We will create all models from ', cyan(), DEFAULT_BDD_SCHEMA_NAME, brown(), '.', PHP_EOL;
+    echo 'We will create all models from ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_BROWN, '.', PHP_EOL;
     $bundleModule = getBundleModule();
 
     if ('1' === $bundleModule) /** BUNDLE */
     {
       // We cleans the bundle/module question
-      echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', brownText($bundleName), ' ...', PHP_EOL;
+      echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_BROWN, $bundleName, END_COLOR, ' ...',
+      PHP_EOL;
 
       $path = $bundlePath;
     } else /** MODULE */
@@ -390,7 +397,8 @@ if ('1' === $argv[3])
       $path = $bundlePath . $moduleName . '/';
 
       // We cleans the module name question
-      echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', brownText($bundleName), ' in the module ', brownText($moduleName), ' ...', PHP_EOL;
+      echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_BROWN, $bundleName, END_COLOR, ' in the module ',
+      CLI_BROWN, $moduleName, END_COLOR, ' ...', PHP_EOL;
     }
 
     foreach ($schemaData as $modelName => &$model)

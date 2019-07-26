@@ -82,7 +82,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
 
     closedir($folderHandler);
 
-    echo redText('Problem encountered with the directory : ' . $dir . ' !');
+    echo CLI_RED, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
     exit(1);
   }
 }
@@ -117,29 +117,29 @@ file_put_contents(
   ) . ']);?>'
 );
 
-echo lightGreen() , ' Class mapping finished.', endColor(), PHP_EOL, PHP_EOL;
+echo CLI_LIGHT_GREEN , ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
 
 // If we want verbose output, then we display the files found related to the classes
 if (VERBOSE !== 1)
   return;
 
 define('FIRST_CLASS_PADDING', 80);
-echo brown(), 'BASE_PATH = ', BASE_PATH, PHP_EOL;
-echo lightBlue(), 'Class path', green(), ' => ', lightBlue(), 'Related file path', PHP_EOL, PHP_EOL;
+echo CLI_BROWN, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
+echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 
 foreach($classes as $startClassName => &$finalClassName)
 {
-  echo lightBlue(), str_pad($startClassName, FIRST_CLASS_PADDING, '.'), green(), ' => ';
+  echo CLI_LIGHT_BLUE, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_GREEN, ' => ';
   echo (strpos($finalClassName, BASE_PATH) !== false
     // for classes inside the BASE_PATH
-    ? white() . '[BASE_PATH]' . lightBlue() . substr($finalClassName, strlen(BASE_PATH))
+    ? CLI_WHITE . '[BASE_PATH]' . CLI_LIGHT_BLUE . substr($finalClassName, strlen(BASE_PATH))
     // for classes outside the BASE_PATH
-    : lightBlue() . $finalClassName),
+    : CLI_LIGHT_BLUE . $finalClassName),
     // and we pass to the next line !
     PHP_EOL;
 }
 
-echo endColor();
+echo END_COLOR;
 
 /** Shows an help to find classes that may have to be added to the custom configuration in order to complete
  *  this automatic task */
@@ -150,7 +150,8 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 
   foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
   {
-    echo str_pad('Class ' . brownText($key), FIRST_CLASS_PADDING, '.'), '=> possibly related file ', brownText($namespace), PHP_EOL;
+    echo str_pad('Class ' . CLI_BROWN . $key . END_COLOR . FIRST_CLASS_PADDING,
+      '.'), '=> possibly related file ', CLI_BROWN, $namespace, END_COLOR, PHP_EOL;
   }
 }
 

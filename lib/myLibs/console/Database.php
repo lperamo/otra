@@ -190,7 +190,7 @@ namespace lib\myLibs\console {
       if (true === $extensive && true === file_exists(self::$tablesOrderFile))
         unlink(self::$tablesOrderFile);
 
-      echo lightGreenText(($extensive) ? 'Full cleaning done.' : 'Cleaning done.'), PHP_EOL;
+      echo CLI_LIGHT_GREEN, ($extensive) ? 'Full cleaning done.' : 'Cleaning done.', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -228,7 +228,8 @@ namespace lib\myLibs\console {
       $inst->commit();
 
       /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
-      echo lightGreen(), 'Database ', lightCyanText($databaseName), lightGreenText(' created.'), PHP_EOL;
+      echo CLI_LIGHT_GREEN, 'Database ', CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' created.', END_COLOR,
+      PHP_EOL;
     }
 
     /**
@@ -371,7 +372,7 @@ namespace lib\myLibs\console {
 
       file_put_contents($fixtureFolder . $databaseName . '_' . $table . '.yml', $ymlIdentifiers);
 
-      echo 'Data  ', lightGreenText('[YML IDENTIFIERS] ');
+      echo 'Data  ', CLI_LIGHT_GREEN, '[YML IDENTIFIERS] ', END_COLOR;
 
       /**
        * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
@@ -478,7 +479,7 @@ namespace lib\myLibs\console {
       // If the file exists because of abnormal reasons, thanks to mode 'w' instead of 'x' it will not crash.
       file_put_contents($createdFile, $tableSql);
 
-      echo lightGreenText('[SQL CREATION] ');
+      echo CLI_LIGHT_GREEN, '[SQL CREATION] ', END_COLOR;
     }
 
     /**
@@ -533,7 +534,7 @@ namespace lib\myLibs\console {
       if (2 === $mask)
       {
         array_map('unlink', glob($fixtureFileNameBeginning . '*.sql'));
-        echo lightGreenText('Fixtures sql files cleaned.'), PHP_EOL;
+        echo CLI_LIGHT_GREEN, 'Fixtures sql files cleaned.', END_COLOR, PHP_EOL;
       }
 
       $tablesToCreate = [];
@@ -574,7 +575,7 @@ namespace lib\myLibs\console {
 
       foreach ($tablesOrder as $table)
       {
-        echo PHP_EOL, $color % 2 ? cyan() : lightCyan();
+        echo PHP_EOL, $color % 2 ? CLI_CYAN : CLI_LIGHT_CYAN;
 
         // We truncate the tables
         if (true === $weNeedToTruncate)
@@ -588,14 +589,15 @@ namespace lib\myLibs\console {
             $createdFile = $fixtureFileNameBeginning . $table . '.sql';
 
             if (true === file_exists($createdFile))
-              echo 'Fixture file creation aborted : the file ', brownText($databaseName . '_' . $table . '.sql'), 'already exists.', PHP_EOL;
+              echo 'Fixture file creation aborted : the file ', CLI_BROWN, $databaseName . '_' . $table . '.sql', END_COLOR,
+            'already exists.', PHP_EOL;
 
             // Gets the fixture data
             $fixturesData = Yaml::parse(file_get_contents($file));
 
             if (false === isset($fixturesData[$table]))
             {
-              echo brownText('No fixtures available for this table \'' . $table . '\'.'), PHP_EOL;
+              echo CLI_BROWN, 'No fixtures available for this table \'', $table, '\'.', END_COLOR, PHP_EOL;
 
               break;
             }
@@ -618,7 +620,7 @@ namespace lib\myLibs\console {
         ++$color;
       }
 
-      echo endColor();
+      echo END_COLOR;
     }
 
     /**
@@ -672,7 +674,7 @@ namespace lib\myLibs\console {
     private static function _executeFixture(string $databaseName, string $table)
     {
       self::executeFile(self::$pathSqlFixtures . $databaseName . '_' . $table . '.sql', $databaseName);
-      echo lightGreenText('[SQL EXECUTION]'), PHP_EOL;
+      echo CLI_LIGHT_GREEN, '[SQL EXECUTION]', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -701,7 +703,8 @@ namespace lib\myLibs\console {
 
       SQL::$instance->commit();
 
-      echo lightGreenText('Database '), lightCyanText($databaseName), lightGreenText(' dropped.'), PHP_EOL;
+      echo CLI_LIGHT_GREEN, 'Database ', END_COLOR, CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' dropped.',
+        END_COLOR, PHP_EOL;
 
       return $sqlInstance;
     }
@@ -724,7 +727,7 @@ namespace lib\myLibs\console {
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
 
-      $msgBeginning = 'The \'SQL schema\' file ' . brown() . $dbFileLong . endColor();
+      $msgBeginning = 'The \'SQL schema\' file ' . CLI_BROWN . $dbFileLong . END_COLOR;
 
       if (true === file_exists($dbFile))
       {
@@ -901,13 +904,14 @@ namespace lib\myLibs\console {
       if ($storeSortedTables)
       {
         file_put_contents(self::$tablesOrderFile, $tablesOrder);
-        echo lightGreenText('\'Tables order\' sql file created : '), brownText(basename(self::$tablesOrderFile)), PHP_EOL;
+        echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_BROWN, basename
+          (self::$tablesOrderFile), END_COLOR, PHP_EOL;
       }
 
       // We create the SQL schema file with the generated content.
       file_put_contents($dbFile, $sql);
 
-      echo lightGreenText('SQL schema file created.'), PHP_EOL;
+      echo CLI_LIGHT_GREEN, 'SQL schema file created.', END_COLOR, PHP_EOL;
 
       return $dbFile;
     }
@@ -936,7 +940,7 @@ namespace lib\myLibs\console {
       $file = $databaseName . '_' . $tableName . '.sql';
       $pathAndFile = $truncatePath . $file;
 
-      echo lightCyanText($databaseName . '.' . $tableName), PHP_EOL, 'Table ';
+      echo CLI_LIGHT_CYAN, $databaseName, '.', $tableName, END_COLOR, PHP_EOL, 'Table ';
 
       // If the file that truncates the table doesn't exist yet...creates it.
       if (false === file_exists($pathAndFile))
@@ -946,7 +950,7 @@ namespace lib\myLibs\console {
           'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
           'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
           'SET FOREIGN_KEY_CHECKS = 1;');
-        echo greenText('[SQL CREATION] ');
+        echo CLI_GREEN, '[SQL CREATION] ', END_COLOR;
       }
 
       //self::initCommand();
@@ -954,7 +958,7 @@ namespace lib\myLibs\console {
       // And truncates the table
       self::executeFile($truncatePath . $file);
 
-      echo greenText('[TRUNCATED]'), PHP_EOL;
+      echo CLI_GREEN, '[TRUNCATED]', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -1118,7 +1122,7 @@ namespace lib\myLibs\console {
 
       if (false === file_exists(self::$tablesOrderFile))
       {
-        echo brownText('You must create the tables order file (' . self::$tablesOrderFile . ') before using this task !');
+        echo CLI_BROWN, 'You must create the tables order file (', self::$tablesOrderFile . ') before using this task !', END_COLOR;
         exit(1);
       }
 
@@ -1233,7 +1237,7 @@ namespace lib\myLibs\console {
         // We can now create the fixture file...
         file_put_contents(self::$pathYmlFixtures . $table . '.yml', $content);
 
-        echo green(), 'File ', cyan(), $table . '.yml', greenText(' created'), PHP_EOL;
+        echo CLI_GREEN, 'File ', CLI_CYAN, $table . '.yml', CLI_GREEN, ' created', END_COLOR, PHP_EOL;
       }
     }
   }

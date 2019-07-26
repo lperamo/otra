@@ -8,7 +8,8 @@ if (function_exists('writeConfigFile') === false)
   {
     if (true === empty($content))
     {
-      echo brown(), 'Nothing to put into ', lightBlue(), $configFile, brown(), ' so we\'ll delete the main file if it exists.', endColor(), PHP_EOL;
+      echo CLI_BROWN, 'Nothing to put into ', CLI_LIGHT_BLUE, $configFile, CLI_BROWN,
+        ' so we\'ll delete the main file if it exists.', END_COLOR, PHP_EOL;
 
       if (true === file_exists($configFile))
         unlink($configFile);
@@ -19,8 +20,11 @@ if (function_exists('writeConfigFile') === false)
     file_put_contents($configFile, $content);
 
     // Compresses the file
-    file_put_contents($configFile, rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($configFile))) . PHP_EOL);
-    echo greenText($configFile . ' updated.'), PHP_EOL;
+    file_put_contents(
+      $configFile,
+      rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($configFile))) . PHP_EOL
+    );
+    echo CLI_GREEN, $configFile, ' updated.', END_COLOR, PHP_EOL;
   }
 
   /**

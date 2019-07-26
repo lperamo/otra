@@ -39,13 +39,13 @@ if (true === isset($argv[4]))
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . white() . $route . brown()
-      . ' ! Do you mean ' . white() . $newRoute . brown() . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_BROWN
+      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_BROWN . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)
     {
-      echo redText('Sorry then !'), PHP_EOL;
+      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
       exit(1);
     }
 
@@ -76,7 +76,8 @@ foreach(array_keys($routes) as &$route)
   ++$key;
 
   if (true === isset($routes[$route]['resources']['template']))
-    echo white() . str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . cyan() . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . white(), 94, '=', STR_PAD_BOTH), endColor(), PHP_EOL;
+    echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
+        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
     passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
 }

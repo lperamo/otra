@@ -27,7 +27,7 @@ class Tasks
    */
   public static function createBundleDesc(): array {
     return [
-      'Creates a bundle.' . brownText('[PARTIALLY IMPLEMENTED]'),
+      'Creates a bundle.' . CLI_BROWN . '[PARTIALLY IMPLEMENTED]' . END_COLOR,
       [
         'bundle name' => 'The name of the bundle !',
         'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
@@ -61,8 +61,11 @@ class Tasks
       [
         'bundle' => 'The bundle in which the model',
         'how' => '1 => Creates from nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. brown() . 'schema.yml' . cyan(). PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . brown() .'schema.yml' . cyan()
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_BROWN . 'schema.yml' .
+          CLI_CYAN .
+          PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . CLI_BROWN .'schema.yml' .
+          CLI_CYAN
       ],
       ['optional', 'optional'],
       'Architecture'
@@ -99,7 +102,7 @@ class Tasks
 
   public static function deployDesc() : array {
     return [
-      'Deploy the site. ' . brownText('[WIP - Do not use yet !]'),
+      'Deploy the site. ' . CLI_BROWN . '[WIP - Do not use yet !]' . END_COLOR,
       [
         'mode' => '0 => Nothing to do (default)' . PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => Generates php production files.' . PHP_EOL .
@@ -352,7 +355,7 @@ class Tasks
   public static function sql_ifDesc() : array
   {
     return [
-      'Import the fixtures from database into ' . brown() . 'config/data/yml/fixtures' . cyan() . '.',
+      'Import the fixtures from database into ' . CLI_BROWN . 'config/data/yml/fixtures' . CLI_CYAN . '.',
       [
         'databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
         'configuration' => 'The configuration that you want to use from your configuration file.'

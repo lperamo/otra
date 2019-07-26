@@ -46,7 +46,7 @@ if (false === isset($argv[3]) || $argv[3] < 0 || $argv[3] > 7)
 
 $moduleBasePath = $bundlesPath . $argv[2];
 mkdir($moduleBasePath, 755);
-echo ERASE_SEQUENCE, green(), 'Bundle \'', cyan(), $argv[2], greenText('\' created.'), PHP_EOL;
+echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle \'', CLI_CYAN, $argv[2], CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
 
 $mask = $argv[3];
 
@@ -56,7 +56,7 @@ foreach ($folders as $key => &$folder)
   if ($mask & pow(2, $key))
   {
     mkdir($moduleBasePath . '/' . $folder, 755);
-    echo green(), 'Folder \'', cyan(), $folder, greenText('\' created.'), PHP_EOL;
+    echo CLI_GREEN, 'Folder \'', CLI_CYAN, $folder, CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
   }
 }
 ?>

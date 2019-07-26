@@ -20,7 +20,10 @@ function unlinkResourceFile(string $folder, string $shaName)
 }
 
 if (true === isset($argv[2]) && false === is_numeric($argv[2]))
-  dieC('red', 'This not a valid mask ! It must be between 1 and 7.');
+{
+  echo CLI_RED, 'This not a valid mask ! It must be between 1 and 7.', END_COLOR;
+  exit(1);
+}
 
 // If we ask just for only one route
 if (true === isset($argv[3]))
@@ -28,7 +31,10 @@ if (true === isset($argv[3]))
   $theRoute = $argv[3];
 
   if (false === isset($routes[$theRoute]))
-    dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
+  {
+    echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
+    exit(1);
+  }
 
   echo 'Cleaning the resources cache...';
   $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
@@ -63,7 +69,7 @@ if (true === isset($argv[3]))
     array_map('unlink', glob(CACHE_PATH . 'js/*'));
 }
 
-echo lightGreenText(' OK'), PHP_EOL;
+echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
 
 /*************** PROCESSING THE ROUTES ************/
 
@@ -76,11 +82,11 @@ for($i = 0; $i < $cptRoutes; ++$i)
   $route = current($routes);
   $routeName = key($routes);
   next($routes);
-  echo lightCyan(), str_pad($routeName, 25, ' '), lightGray();
+  echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
 
   if (false === isset($route['resources']))
   {
-    echo status('Nothing to do', 'cyan'), ' =>', lightGreenText(' OK'), PHP_EOL;
+    echo status('Nothing to do', 'cyan'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
     continue;
   }
 
@@ -178,7 +184,8 @@ for($i = 0; $i < $cptRoutes; ++$i)
     }
   }
 
-  echo ' => ', $noErrors === true ? lightGreenText('OK') : redText('ERROR'), '[', cyanText($shaName), ']', PHP_EOL;
+  echo ' => ', $noErrors === true ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
+    CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
 }
 
 /**
@@ -188,7 +195,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
  *
  * @return string
  */
-function status(string $status, string $color = 'lightGreen') : string { return ' [' . $color() . $status . lightGray(). ']'; }
+function status(string $status, string $color = 'lightGreen') : string { return ' [' . $color() . $status . CLI_LIGHT_GRAY. ']'; }
 
 /**
  * Cleans the css (spaces and comments)

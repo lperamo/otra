@@ -261,7 +261,7 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 // ******************** INTRODUCTION TEXT ********************
 
 if (GEN_WATCHER_VERBOSE > 0)
-  echo lightBlueText('BASE_PATH') . ' is equal to ' . cyanText(BASE_PATH) . PHP_EOL . PHP_EOL;
+  echo CLI_LIGHT_BLUE, 'BASE_PATH', ' is equal to ', CLI_LIGHT_CYAN, BASE_PATH, END_COLOR, PHP_EOL, PHP_EOL;
 
 // ******************** Watching ! ********************
 while (true)
@@ -414,7 +414,8 @@ while (true)
               if (GEN_WATCHER_VERBOSE > 0)
                 $eventsDebug .= $return;
             } else
-              echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : ' . redText(json_last_error_msg()), PHP_EOL;
+              echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
+                , CLI_RED, json_last_error_msg(), PHP_EOL;
 
           } else
           {
