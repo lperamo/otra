@@ -165,7 +165,7 @@ function getModuleName(string $bundleName, string $bundlePath) : string
   while(false === file_exists($bundlePath . $moduleName))
   {
     echo DOUBLE_ERASE_SEQUENCE;
-    $moduleName = promptUser('This module doesn\'t exist.' . $question);
+    $moduleName = promptUser('This module does not exist.' . $question);
   }
 
   echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_BROWN, $bundleName, END_COLOR, ' for the module ', CLI_BROWN,
@@ -181,12 +181,12 @@ $bundlesPath = BASE_PATH . 'bundles/';
 /** 1. BUNDLE NAME ... if we don't have it via the given console parameters */
 if (false === isset($argv[2]) || false === file_exists($bundlesPath . $argv[2]))
 {
-  $argv[2] = promptUser('You did not specified the name of the bundle or the bundle doesn\'t exist. What is it ?');
+  $argv[2] = promptUser('You did not specified the name of the bundle or the bundle does not exist. What is it ?');
 
   while(false === file_exists($bundlesPath . $argv[2]))
   {
     echo DOUBLE_ERASE_SEQUENCE;
-    $argv[2] = promptUser('This bundle doesn\'t exist ! Try once again :');
+    $argv[2] = promptUser('This bundle does not exist ! Try once again :');
   }
 
   // We clean the screen
@@ -210,7 +210,7 @@ if (false === isset($argv[3]) || false === in_array($argv[3], $possibleChoices))
 
   $argv[3] = promptUser('Your choice ?');
 
-  $wrongMode = 'This creation mode doesn\'t exist ! Try once again :';
+  $wrongMode = 'This creation mode does not exist ! Try once again :';
 
   // If the creation mode requested is incorrect, we ask once more until we are satisfied with the user answer
   while(false === in_array($argv[3], $possibleChoices))
@@ -260,7 +260,7 @@ if ('1' === $argv[3])
   $propertiesTxt = $functions = $propertiesCode = '';
 
   $propertyText = 'Which property do you want to add ? (lowercase, type \'no!more\' if you don\'t want any other property)';
-  $propertyErrorText = 'You didn\'t type anything. ' . $propertyText;
+  $propertyErrorText = 'You did not type anything. ' . $propertyText;
   $property = promptUser($propertyText, $propertyErrorText);
   $functionStart = '  public protected function ';
 
@@ -288,8 +288,8 @@ if ('1' === $argv[3])
 } else
 {
   $schemaPath = realpath(BASE_PATH . 'config/data/yml/schema.yml');
-  require BASE_PATH . 'lib\sf2_yaml\Yaml.php';
-  $schemaData = lib\sf2_yaml\Yaml::parse(file_get_contents($schemaPath));
+  require BASE_PATH . 'lib\Sf2Yaml\Yaml.php';
+  $schemaData = Symfony\Component\Yaml\Yaml::parse(file_get_contents($schemaPath));
 
   // Those variables are used for code creation
   $functionStart = '  public protected function ';
@@ -336,7 +336,7 @@ if ('1' === $argv[3])
         $errorLabel .= 'This model \'' . $modelName . '\' already exists. ';
 
       if (false === $tableExists)
-        $errorLabel .= 'The schema doesn\'t contains this table (maybe ... check the case).';
+        $errorLabel .= 'The schema does not contains this table (maybe ... check the case).';
 
       $errorLabel .= $modelNameQuestion;
 
