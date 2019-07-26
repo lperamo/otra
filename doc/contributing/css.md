@@ -6,7 +6,7 @@ Previous section : [PHP side](php.md)
 
 #### Coding style
 
-- Do not use uppercases in classes, the css rules and properties do not do that => consistency.
+- Do not use uppercase in classes, the css rules and properties do not do that => consistency.
 
 - Use the BEM (Block Element Modifier) syntax. [Documentation](http://getbem.com/introduction/)
 

@@ -1,4 +1,4 @@
-[Home](../README.md) / [Database](../database.md) / Database fixtures
+[Home](../../README.md) / [Database](../database.md) / Database fixtures
 
 Previous section : [Database schema](schema.md)
 

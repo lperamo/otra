@@ -15,7 +15,7 @@ php console.php genWatcher
 
 This command only work on unix systems because it uses the _inotify_ command.
 
-Do not hesitate to look the [following section](projectConfiguration/synchronizationTips.md) to improve synchronization
+Do not hesitate to look the [following section](synchronizationTips.md) to improve synchronization
  speed if needed.
  
 As usual, you can filter what you want to watch with parameters, see the command help for more 

@@ -1,4 +1,4 @@
-[Home](../README.md) / [Database](../database.md) / Database schema
+[Home](../../README.md) / [Database](../database.md) / Database schema
 
 ## Database schema
 
