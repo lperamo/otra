@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Code inspection" pattern="(file[OTRA]:bundles//*||file[OTRA]:config//*||file[OTRA]:doc//*||file[OTRA]:lib//*||file[OTRA]:tests//*||file[OTRA]:web//*)&amp;&amp;!file[OTRA]:tests/coverageHtml//*&amp;&amp;!file:tests/.phpunit.result.cache&amp;&amp;!file[OTRA]:lib/Sf2Yaml//*&amp;&amp;!file:lib/yuicompressor-2.4.8.jar&amp;&amp;!file:tests/coverage.xml&amp;&amp;!file:**/*.map" />
+</component>
