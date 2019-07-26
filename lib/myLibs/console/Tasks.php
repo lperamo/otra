@@ -188,9 +188,10 @@ class Tasks
            str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) .
            '2 => Tells which file has been updated and the most important events that have been triggered.' . PHP_EOL .
            str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . 'Default to 1.',
-         'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.'
+         'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.',
+         'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ?'
        ],
-       ['optional', 'optional'],
+       ['optional', 'optional', 'optional'],
        'Deployment'
      ];
   }
