@@ -744,7 +744,7 @@ namespace lib\myLibs\console {
 
       $sql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
 
-      // Gets the database schema if the YML schema exists.
+      // We checks if the YML schema exists
       if (false === file_exists(self::$schemaFile))
         throw new LionelException('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' does not exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
 
@@ -930,7 +930,8 @@ namespace lib\myLibs\console {
      */
     public static function truncateTable( string $databaseName, string $tableName)
     {
-      self::initBase();
+      if (false === self::$init)
+        self::initBase();
 
       $truncatePath = self::$pathSql . 'truncate/';
 
@@ -1156,7 +1157,7 @@ namespace lib\myLibs\console {
 
       foreach ($tablesOrder as &$table)
       {
-        $content = $table . ': ' . PHP_EOL;
+        $content = $table . ':' . PHP_EOL;
         $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
 
         // If there are columns ...
