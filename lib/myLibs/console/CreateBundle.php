@@ -1,6 +1,6 @@
 <?
 declare(strict_types=1);
-require CORE_PATH . 'console\Tools.php';
+require CORE_PATH . 'console/Tools.php';
 
 if (false === isset($argv[2]))
 {
@@ -45,7 +45,7 @@ if (false === isset($argv[3]) || $argv[3] < 0 || $argv[3] > 7)
 }
 
 $moduleBasePath = $bundlesPath . $argv[2];
-mkdir($moduleBasePath, 755);
+mkdir($moduleBasePath, 0755);
 echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle \'', CLI_CYAN, $argv[2], CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
 
 $mask = $argv[3];
@@ -55,7 +55,7 @@ foreach ($folders as $key => &$folder)
   // Checks if the folder have to be created or not.
   if ($mask & pow(2, $key))
   {
-    mkdir($moduleBasePath . '/' . $folder, 755);
+    mkdir($moduleBasePath . '/' . $folder, 0755);
     echo CLI_GREEN, 'Folder \'', CLI_CYAN, $folder, CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
   }
 }
