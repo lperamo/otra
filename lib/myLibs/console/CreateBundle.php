@@ -2,18 +2,6 @@
 declare(strict_types=1);
 require CORE_PATH . 'console/Tools.php';
 
-/**
- * @param string $bundleBasePath The path where we put modules
- * @param string $moduleName
- */
-function createModule(string $bundleBasePath, string $moduleName) : void
-{
-  mkdir($bundleBasePath . $moduleName, 0755);
-  mkdir($bundleBasePath . $moduleName . '/controllers', 0755);
-  mkdir($bundleBasePath . $moduleName . '/views', 0755);
-  echo CLI_GREEN, 'Basic folder architecture created for ', CLI_LIGHT_CYAN, $moduleName, CLI_GREEN, PHP_EOL;
-}
-
 $bundleName = $argv[2];
 const ARG_MASK = 3;
 

@@ -79,6 +79,23 @@ class Tasks
     ];
   }
 
+  public static function createModule(array $argv)
+  {
+    require CORE_PATH . 'console/CreateModule.php';
+  }
+
+  public static function createModuleDesc() : array
+  {
+    return [
+      'Creates modules.',
+      [
+        'bundle' => 'The name of the bundle in which you want to put modules'
+      ],
+      ['required'],
+      'Architecture'
+    ];
+  }
+
   /**
    * @param array|null $argv
    */
