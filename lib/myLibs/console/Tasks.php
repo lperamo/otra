@@ -25,16 +25,23 @@ class Tasks
   /**
    * @return array
    */
-  public static function createBundleDesc(): array {
+  public static function createBundleDesc(): array
+  {
+    $showMaskOption = static function (string $text) : string
+    {
+      return str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . $text;
+    };
+
     return [
-      'Creates a bundle.' . CLI_BROWN . '[PARTIALLY IMPLEMENTED]' . END_COLOR,
+      'Creates a bundle.',
       [
         'bundle name' => 'The name of the bundle !',
         'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '0 => nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => models' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => resources' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => views'
+          $showMaskOption('0 => nothing') . PHP_EOL .
+          $showMaskOption('1 => config') . PHP_EOL .
+          $showMaskOption('2 = > models') . PHP_EOL .
+          $showMaskOption('4 => resources') . PHP_EOL .
+          $showMaskOption('8 => views')
       ],
       [
         'optional',

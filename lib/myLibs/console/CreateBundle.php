@@ -2,61 +2,83 @@
 declare(strict_types=1);
 require CORE_PATH . 'console/Tools.php';
 
-if (false === isset($argv[2]))
+/**
+ * @param string $bundleBasePath The path where we put modules
+ * @param string $moduleName
+ */
+function createModule(string $bundleBasePath, string $moduleName) : void
 {
-  $argv[2] = promptUser('You did not specified a name for the bundle. What is it ?');
+  mkdir($bundleBasePath . $moduleName, 0755);
+  mkdir($bundleBasePath . $moduleName . '/controllers', 0755);
+  mkdir($bundleBasePath . $moduleName . '/views', 0755);
+  echo CLI_GREEN, 'Basic folder architecture created for ', CLI_LIGHT_CYAN, $moduleName, CLI_GREEN, PHP_EOL;
+}
+
+$bundleName = $argv[2];
+const ARG_MASK = 3;
+
+if (false === isset($bundleName))
+{
+  $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
 
   // We clean the screen
   echo ERASE_SEQUENCE;
 }
 
-$bundlesPath = BASE_PATH . 'bundles/';
+$bundlesRootPath = BASE_PATH . 'bundles/';
 
-while (true === file_exists($bundlesPath . $argv[2]))
+while (true === file_exists($bundlesRootPath . $bundleName))
 {
   // Erases the previous question before we ask...
-  $argv[2] = promptUser('This folder \'' . $argv[2] . '\' already exist. Try once again :');
+  $bundleName = promptUser('This folder ' . CLI_LIGHT_CYAN . $bundleName . CLI_BROWN. ' already exist. Try another folder name :');
 
   // We clean the screen
   echo ERASE_SEQUENCE;
 }
 
-$folders = ['models', 'resources', 'views'];
+$folders = ['config', 'models', 'resources', 'views'];
 
-if (false === isset($argv[3]) || $argv[3] < 0 || $argv[3] > 7)
+if (false === isset($argv[ARG_MASK])
+  || $argv[ARG_MASK] < 0
+  || $argv[ARG_MASK] > pow(2, count($folders)) - 1
+)
 {
-  $begin = 'You don\'t have specified which directories you want to create or the mask is incorrect. Do you want to associate ';
-  $end = ' with that bundle (0 or 1)?';
-  $argv[3] = 0; // By default, we create 0 additional folders
+  echo CLI_BROWN, 'You don\'t have specified which directories you want to create or the mask is incorrect.', PHP_EOL;
+  $begin = 'Do you want to associate ';
+  $end = ' with that bundle ' . END_COLOR . CLI_LIGHT_CYAN . $bundleName . CLI_BROWN . ' (n or y)?';
+  $argv[ARG_MASK] = 0; // By default, we create 0 additional folders
+
 
   foreach($folders as $key => &$folder)
   {
-    $answer = promptUser($begin . $folder . $end);
+    $question = $begin . CLI_LIGHT_CYAN . $folder . CLI_BROWN . $end;
+    $answer = promptUser($question);
 
-    while ('0' !== $answer && '1' !== $answer)
+    while ('n' !== $answer && 'y' !== $answer)
     {
-      $answer = promptUser('Bad answer. ' . $begin . $folder . $end);
+      $answer = promptUser('Bad answer. ' . $question);
       // We clean the screen
       echo ERASE_SEQUENCE;
     }
 
-    $argv[3] += pow(2, $key) * $answer;
+    $argv[ARG_MASK] += pow(2, $key) * $answer;
   }
 }
 
-$moduleBasePath = $bundlesPath . $argv[2];
-mkdir($moduleBasePath, 0755);
-echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle \'', CLI_CYAN, $argv[2], CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
+$bundleBasePath = $bundlesRootPath . $bundleName . '/';
+mkdir($bundleBasePath, 0755);
+echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_CYAN, $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
 
-$mask = $argv[3];
+$mask = $argv[ARG_MASK];
 
 foreach ($folders as $key => &$folder)
 {
   // Checks if the folder have to be created or not.
   if ($mask & pow(2, $key))
   {
-    mkdir($moduleBasePath . '/' . $folder, 0755);
-    echo CLI_GREEN, 'Folder \'', CLI_CYAN, $folder, CLI_GREEN, '\' created.', END_COLOR, PHP_EOL;
+    mkdir($bundleBasePath . $folder, 0755);
+    echo CLI_GREEN, 'Folder ', CLI_CYAN, $folder, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
   }
 }
+
 ?>
