@@ -66,7 +66,7 @@ class Tasks
     return [
       'Creates a model.',
       [
-        'bundle' => 'The bundle in which the model',
+        'bundle' => 'The bundle in which the model is created',
         'how' => '1 => Creates from nothing' . PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_BROWN . 'schema.yml' .
           CLI_CYAN .
