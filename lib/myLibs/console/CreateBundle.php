@@ -2,15 +2,16 @@
 declare(strict_types=1);
 require CORE_PATH . 'console/Tools.php';
 
-$bundleName = $argv[2];
 const ARG_MASK = 3;
 
-if (false === isset($bundleName))
+if (false === isset($argv[2]))
 {
   $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
 
   // We clean the screen
   echo ERASE_SEQUENCE;
+} else {
+  $bundleName = $argv[2];
 }
 
 $bundlesRootPath = BASE_PATH . 'bundles/';
@@ -36,7 +37,6 @@ if (false === isset($argv[ARG_MASK])
   $end = ' with that bundle ' . END_COLOR . CLI_LIGHT_CYAN . $bundleName . CLI_BROWN . ' (n or y)?';
   $argv[ARG_MASK] = 0; // By default, we create 0 additional folders
 
-
   foreach($folders as $key => &$folder)
   {
     $question = $begin . CLI_LIGHT_CYAN . $folder . CLI_BROWN . $end;
@@ -49,7 +49,7 @@ if (false === isset($argv[ARG_MASK])
       echo ERASE_SEQUENCE;
     }
 
-    $argv[ARG_MASK] += pow(2, $key) * $answer;
+    $argv[ARG_MASK] += pow(2, $key) * ($answer === 'y' ? 1 : 0);
   }
 }
 
