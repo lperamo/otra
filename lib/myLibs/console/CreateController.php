@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
-use SebastianBergmann\CodeCoverage\Report\PHP;
-
 require CORE_PATH . 'console/Tools.php';
 const BUNDLE_NAME = 2,
   MODULE_NAME = 3,
