@@ -51,6 +51,29 @@ class Tasks
     ];
   }
 
+  public static function createController(array $argv)
+  {
+    require CORE_PATH . 'console/CreateController.php';
+  }
+
+  public static function createControllerDesc() : array
+  {
+    return [
+      'Creates controllers.',
+      [
+        'bundle' => 'The bundle where you want to put controllers',
+        'module' => 'The module where you want to put controllers',
+        'controller' => 'The name of the controller!',
+      ],
+      [
+        'required',
+        'required',
+        'required'
+      ],
+      'Architecture'
+    ];
+  }
+
   /**
    * @param array $argv
    */
