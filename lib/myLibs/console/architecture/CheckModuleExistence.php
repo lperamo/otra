@@ -5,7 +5,7 @@ namespace lib\myLibs\console;
 require CORE_PATH . 'console/architecture/CreateModule.php';
 
 // MODULE STEP
-$bundleName = $argv[BUNDLE_NAME];
+$bundleName = ucfirst($argv[BUNDLE_NAME]);
 $moduleName = $argv[MODULE_NAME];
 $moduleRelativePath = 'bundles/' . $bundleName . '/' . $moduleName;
 $modulePath = BASE_PATH . $moduleRelativePath;
