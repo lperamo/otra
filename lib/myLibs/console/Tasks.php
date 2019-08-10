@@ -14,12 +14,39 @@ class Tasks
 {
   protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
 
+  public static function createAction(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateActionTask.php';
+  }
+
+  public static function createActionDesc() : array
+  {
+    return [
+      'Creates actions.',
+      [
+        'bundle' => 'The bundle where you want to put actions',
+        'module' => 'The module where you want to put actions',
+        'controller' => 'The controller where you want to put actions',
+        'action' => 'The name of the action!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
+      ],
+      [
+        'required',
+        'required',
+        'required',
+        'required',
+        'optional'
+      ],
+      'Architecture'
+    ];
+  }
+
   /**
    * @param array $argv
    */
   public static function createBundle(array $argv)
   {
-    require CORE_PATH . 'console/CreateBundle.php';
+    require CORE_PATH . 'console/architecture/CreateBundleTask.php';
   }
 
   /**
@@ -53,7 +80,7 @@ class Tasks
 
   public static function createController(array $argv)
   {
-    require CORE_PATH . 'console/CreateController.php';
+    require CORE_PATH . 'console/architecture/CreateControllerTask.php';
   }
 
   public static function createControllerDesc() : array
@@ -64,11 +91,13 @@ class Tasks
         'bundle' => 'The bundle where you want to put controllers',
         'module' => 'The module where you want to put controllers',
         'controller' => 'The name of the controller!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
       ],
       [
         'required',
         'required',
-        'required'
+        'required',
+        'optional'
       ],
       'Architecture'
     ];
@@ -79,7 +108,7 @@ class Tasks
    */
   public static function createModel(array $argv)
   {
-    require CORE_PATH . 'console/CreateModel.php';
+    require CORE_PATH . 'console/architecture/CreateModel.php';
   }
 
   /**
@@ -104,7 +133,7 @@ class Tasks
 
   public static function createModule(array $argv)
   {
-    require CORE_PATH . 'console/CreateModule.php';
+    require CORE_PATH . 'console/architecture/CreateModuleTask.php';
   }
 
   public static function createModuleDesc() : array
@@ -112,9 +141,15 @@ class Tasks
     return [
       'Creates modules.',
       [
-        'bundle' => 'The name of the bundle in which you want to put modules'
+        'bundle' => 'The name of the bundle in which you want to put modules',
+        'module' => 'The name of the module!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
       ],
-      ['required'],
+      [
+        'required',
+        'required',
+        'optional'
+      ],
       'Architecture'
     ];
   }
