@@ -15,6 +15,7 @@ if (false === isset($argv[ARG_BUNDLE_NAME]))
   $bundleName = $argv[ARG_BUNDLE_NAME];
 }
 
+$bundleName = ucfirst($bundleName);
 define('BUNDLE_ROOT_PATH', BASE_PATH . 'bundles/');
 
 while (true === file_exists(BUNDLE_ROOT_PATH . $bundleName))
@@ -24,6 +25,8 @@ while (true === file_exists(BUNDLE_ROOT_PATH . $bundleName))
 
   if ($bundleName === 'n')
     exit(0);
+
+  $bundleName = ucfirst($bundleName);
 
   // We clean the screen
   echo ERASE_SEQUENCE;
