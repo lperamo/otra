@@ -1,5 +1,7 @@
 <?php
 
+require CORE_PATH . 'console/architecture/CreateFolder.php';
+
 /**
  * Create the folders that contains all the controllers folders.
  *
@@ -26,29 +28,9 @@ function createController(string $controllersFolder, string $controllerName, boo
 {
   $controllerPath = $controllersFolder . $controllerName;
 
-  $controllerAlreadyExistsSentence = CLI_RED . 'The controller ' . CLI_LIGHT_CYAN . $controllerName . CLI_RED . ' already exists.';
-
   // If the folder does not exist and we are not in interactive mode, we exit the program.
-  while (file_exists($controllerPath) === true)
-  {
-    if ($interactive === false)
-    {
-      echo $controllerAlreadyExistsSentence, PHP_EOL;
-      exit(1);
-    }
+  createFolder($controllerPath, $controllersFolder, $controllerName, 'controller', $interactive);
 
-    $controllerName = promptUser($controllerAlreadyExistsSentence . ' Try another folder name (type n to stop):');
-
-    if ($controllerName === 'n')
-      exit(0);
-
-    $controllerPath = $controllersFolder . $controllerName;
-
-    // We clean the screen
-    echo DOUBLE_ERASE_SEQUENCE;
-  }
-
-  mkdir($controllerPath, 0755);
   echo CLI_LIGHT_GREEN, 'Folder ', CLI_LIGHT_CYAN, substr($controllersFolder, strlen(BASE_PATH),
     -1), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
 }

@@ -1,4 +1,7 @@
 <?php
+
+require CORE_PATH . 'console/architecture/CreateFolder.php';
+
 if (function_exists('createModule') === false)
 {
   /**
@@ -9,29 +12,10 @@ if (function_exists('createModule') === false)
   function createModule(string $bundleBasePath, string &$moduleName, bool &$interactive): void
   {
     $modulePath = $bundleBasePath . $moduleName;
-    $moduleAlreadyExistsSentence = CLI_RED . 'The module ' . CLI_LIGHT_CYAN . $moduleName . CLI_RED . ' already exists.';
 
     // If the folder does not exist and we are not in interactive mode, we exit the program.
-    while (file_exists($modulePath) === true)
-    {
-      if ($interactive === false)
-      {
-        echo $moduleAlreadyExistsSentence, PHP_EOL;
-        exit(1);
-      }
+    createFolder($modulePath, $bundleBasePath, $moduleName, 'module', $interactive);
 
-      $moduleName = promptUser($moduleAlreadyExistsSentence . ' Try another folder name (type n to stop):');
-
-      if ($moduleName === 'n')
-        exit(0);
-
-      $modulePath = $bundleBasePath . $moduleName;
-
-      // We clean the screen
-      echo DOUBLE_ERASE_SEQUENCE;
-    }
-
-    mkdir($modulePath, 0755);
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);
     echo CLI_GREEN, 'Basic folder architecture created for ', CLI_LIGHT_CYAN, substr($modulePath,

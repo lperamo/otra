@@ -2,12 +2,12 @@
 
 namespace lib\myLibs\console;
 
-$bundlePath = BASE_PATH . 'bundles/' . $argv[BUNDLE_NAME] . '/';
+$bundleName = ucfirst($argv[BUNDLE_NAME]);
+$bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';
 
 // BUNDLE STEP
 if (file_exists($bundlePath) === false)
 {
-  $bundleName = $argv[BUNDLE_NAME];
   echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
 
   /** @var $interactive */
