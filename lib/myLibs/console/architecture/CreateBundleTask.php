@@ -5,6 +5,7 @@ require CORE_PATH . 'console/Tools.php';
 const ARG_BUNDLE_NAME = 2;
 const ARG_MASK = 3;
 
+// Checking argument : bundle name
 if (false === isset($argv[ARG_BUNDLE_NAME]))
 {
   $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
@@ -34,6 +35,7 @@ while (true === file_exists(BUNDLE_ROOT_PATH . $bundleName))
 
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 
+// Checking argument : folder mask
 if (false === isset($argv[ARG_MASK])
   || $argv[ARG_MASK] < 0
   || $argv[ARG_MASK] > pow(2, count(BUNDLE_FOLDERS)) - 1
