@@ -62,6 +62,9 @@ class ' . $upperActionName . 'Action extends Controller
 
 /**
  * @param bool   $interactive
+ * @param string $bundleName
+ * @param string $moduleName
+ * @param string $controllerName
  * @param string $controllerPath
  * @param string $actionName
  */

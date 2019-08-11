@@ -2,7 +2,7 @@
 
 namespace lib\myLibs\console;
 
-$bundleName = ucfirst($argv[BUNDLE_NAME]);
+$bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';
 
 // BUNDLE STEP
@@ -11,7 +11,7 @@ if (file_exists($bundlePath) === false)
   echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
 
   /** @var $interactive */
-  if ($interactive === 'false')
+  if ($interactive === false)
     exit(1);
 
   $answer = promptUser('Do we create it ?(y or n)');
@@ -27,6 +27,7 @@ if (file_exists($bundlePath) === false)
   if ($answer === 'n')
     exit (0);
 
-  Tasks::createBundle(['console.php', 'createBundle', $bundleName]);
+  require CORE_PATH . 'console/architecture/CreateBundle.php';
+  bundleHandling($bundleName, null);
 }
 ?>

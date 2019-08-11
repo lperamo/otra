@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-const BUNDLE_NAME = 2,
-  MODULE_NAME = 3,
-  CONTROLLER_NAME = 4,
-  INTERACTIVE = 5;
+const ARG_BUNDLE_NAME = 2,
+  ARG_MODULE_NAME = 3,
+  ARG_CONTROLLER_NAME = 4,
+  ARG_INTERACTIVE = 5;
 
 require CORE_PATH . 'console/Tools.php';
 require CORE_PATH . 'console/architecture/CheckInteractiveMode.php';
@@ -14,7 +14,7 @@ require CORE_PATH . 'console/architecture/CreateController.php';
 
 /** @var string $modulePath */
 $controllersFolder = $modulePath . '/controllers/';
-$controllerName = $argv[CONTROLLER_NAME];
+$controllerName = $argv[ARG_CONTROLLER_NAME];
 
 controllerHandling($interactive, $controllersFolder, $controllerName);
 ?>

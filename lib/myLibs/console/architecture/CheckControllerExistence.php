@@ -5,12 +5,12 @@ namespace lib\myLibs\console;
 require CORE_PATH . 'console/architecture/CreateController.php';
 
 // MODULE STEP
-$bundleName = ucfirst($argv[BUNDLE_NAME]);
-$moduleName = $argv[MODULE_NAME];
+$bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
+$moduleName = $argv[ARG_MODULE_NAME];
 $moduleRelativePath = 'bundles/' . $bundleName . '/' . $moduleName;
 $modulePath = BASE_PATH . $moduleRelativePath;
 $controllersFolder = $modulePath . '/controllers/';
-$controllerName = $argv[CONTROLLER_NAME];
+$controllerName = $argv[ARG_CONTROLLER_NAME];
 $controllerPath = $controllersFolder . $controllerName . '/';
 
 if (file_exists($controllerPath) === false)
