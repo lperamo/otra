@@ -23,4 +23,7 @@ your application.
 
 It will contains additional configuration that you want to pass like paths for example.
 
+In the file `config/AdditionalClassFiles.php`, must contains the paths of OTRA classes that are included dynamically via
+require(_once)/include(_once) directives. Most of the time, you do not have to touch this file.
+
 Next section : [Routes configuration files](routesConfigurationFiles.md)
