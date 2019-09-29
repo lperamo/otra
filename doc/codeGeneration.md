@@ -1,4 +1,4 @@
-[Home](../README.md) / 
+[Home](../README.md) / Generating all you needed
 
 ## Generating all you needed
 
