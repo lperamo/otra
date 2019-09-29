@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../mainConfiguration.md) /
+[Home](../../README.md) / [Installation](../mainConfiguration.md) / Setting Server configuration
 
 ### Setting server configuration
 
