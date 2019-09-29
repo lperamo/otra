@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace lib\myLibs\console {
 
   use lib\myLibs\bdd\Sql;
+  use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
   use lib\myLibs\{Session, LionelException};
@@ -16,7 +17,7 @@ namespace lib\myLibs\console {
   {
     // Database connection
     private static $base,
-      $host,
+//      $host,
       $motor,
       $pwd,
       $user,
@@ -35,7 +36,7 @@ namespace lib\myLibs\console {
       $pathSqlFixtures,
       $pathYml = '',
       $pathYmlFixtures,
-      $projectName = 'lpframework',
+//      $projectName = 'lpframework',
       $schemaFile,
       $tablesOrderFile,
 
@@ -62,7 +63,7 @@ namespace lib\myLibs\console {
         if (null === $dbConnKey)
           throw new LionelException('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
 
-        throw new LionelException('The configuration \'' . $dbConnKey . '\' doesn\'t exist in your configuration file.', E_CORE_WARNING);
+        throw new LionelException('The configuration \'' . $dbConnKey . '\' does not exist in your configuration file.', E_CORE_WARNING);
       }
 
       $infosDb = $dbConn[$dbConnKey];
@@ -125,6 +126,7 @@ namespace lib\myLibs\console {
       $folderHandler = opendir($dir);
       $dirs = [];
 
+      /** @var array $schemas Database schemas */
       if (true === self::$boolSchema)
         $schemas = [];
 
@@ -363,7 +365,7 @@ namespace lib\myLibs\console {
         {
           if (false === mkdir($fixtureFolder, 0777, true))
             throw new LionelException($exceptionMessage, E_CORE_ERROR);
-        } catch(Exception $e)
+        } catch(\Exception $e)
         {
           throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -381,7 +383,14 @@ namespace lib\myLibs\console {
       {
         foreach (array_keys($tableData['relations']) as &$relation)
         {
-          $data = Yaml::parse(file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml'));
+          try
+          {
+            $data = Yaml::parse(file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml'));
+          } catch(ParseException $e)
+          {
+            echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+            exit(1);
+          }
 
           foreach ($data as $otherTable => &$otherTableData)
           {
@@ -415,7 +424,7 @@ namespace lib\myLibs\console {
         foreach ($properties as $property => $value)
         {
           if (true === in_array($property, $sortedTables) && false === isset($tableData['relations'][$property]))
-            throw new LionelException('It lacks a relation to the table `' . $table . '` for a `' . $property . '` like property', E_CORE_ERROR);
+            throw new LionelException('Either it lacks a relation to the table `' . $table . '` for a `' . $property . '` like property or you have put this property name by error in file `' . $table . '.yml.', E_CORE_ERROR);
 
           // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
           $theProperties .= '`' .
@@ -475,7 +484,9 @@ namespace lib\myLibs\console {
       $tableSql = substr($tableSql, 0, -1) . ';';
 
       // We create sql file that can generate the fixtures in the BDD.
-      // If the file exists because of abnormal reasons, thanks to mode 'w' instead of 'x' it will not crash.
+      if (file_exists(self::$pathSqlFixtures) === false)
+        mkdir(self::$pathSqlFixtures, 0777, true);
+
       file_put_contents($createdFile, $tableSql);
 
       echo lightGreenText('[SQL CREATION] ');
@@ -525,7 +536,14 @@ namespace lib\myLibs\console {
         throw new LionelException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
       }
 
-      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+      try {
+        $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+      } catch(ParseException $e)
+      {
+        echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+        exit(1);
+      }
+
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
       $fixtureFileNameBeginning = self::$pathSqlFixtures . $databaseName . '_';
 
@@ -630,7 +648,7 @@ namespace lib\myLibs\console {
     public static function executeFile(string $file, string $databaseName = null)
     {
       if (false === file_exists($file))
-        throw new LionelException('The file "' . $file . '" doesn\'t exist !', E_CORE_ERROR, __FILE__, __LINE__);
+        throw new LionelException('The file "' . $file . '" does not exist !', E_CORE_ERROR, __FILE__, __LINE__);
 
       if (false === self::$init)
         self::init();
@@ -733,14 +751,14 @@ namespace lib\myLibs\console {
         return $dbFile;
       }
 
-      echo $msgBeginning, ' doesn\'t exist. Creates the file...', PHP_EOL;
+      echo $msgBeginning, ' does not exist. Creates the file...', PHP_EOL;
       $sql = 'CREATE DATABASE IF NOT EXISTS ';
 
       $sql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
 
-      // Gets the database schema if the YML schema exists.
+      // We checks if the YML schema exists
       if (false === file_exists(self::$schemaFile))
-        throw new LionelException('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' doesn\'t exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
+        throw new LionelException('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' does not exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
 
       // We ensure us that all the needed folders exist
       if (false === file_exists(self::$pathSql))
@@ -923,7 +941,8 @@ namespace lib\myLibs\console {
      */
     public static function truncateTable( string $databaseName, string $tableName)
     {
-      self::initBase();
+      if (false === self::$init)
+        self::initBase();
 
       $truncatePath = self::$pathSql . 'truncate/';
 
@@ -967,7 +986,16 @@ namespace lib\myLibs\console {
     private static function _analyzeFixtures(string $file)
     {
       // Gets the fixture data
-      $fixturesData = Yaml::parse(file_get_contents($file));
+      try
+      {
+        $fixturesData = Yaml::parse(file_get_contents($file));
+      } catch(ParseException $e)
+      {
+        echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+        exit(1);
+      }
+
+      $tablesToCreate = [];
 
       // For each table
       foreach (array_keys($fixturesData) as $table)
@@ -1004,7 +1032,7 @@ namespace lib\myLibs\console {
       // Checks if the database concerned exists.
       // We check lowercase in case the database has converted the name to lowercase
       if (false === in_array(strtolower($database), $schemaInformations) && false === in_array($database, $schemaInformations))
-        throw new LionelException('The database \'' . $database . '\' doesn\'t exist.', E_CORE_ERROR);
+        throw new LionelException('The database \'' . $database . '\' does not exist.', E_CORE_ERROR);
 
       return $db;
     }
@@ -1092,7 +1120,7 @@ namespace lib\myLibs\console {
         {
           if (false === mkdir($saveFolder, 0777, true))
             throw new LionelException($exceptionMessage, E_CORE_ERROR);
-        } catch(Exception $e)
+        } catch(\Exception $e)
         {
           throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1134,7 +1162,7 @@ namespace lib\myLibs\console {
         {
           if (false === mkdir(self::$pathYmlFixtures, 0777, true))
             throw new LionelException($exceptionMessage, E_CORE_ERROR);
-        } catch(Exception $e)
+        } catch(\Exception $e)
         {
           throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1147,7 +1175,7 @@ namespace lib\myLibs\console {
 
       foreach ($tablesOrder as &$table)
       {
-        $content = $table . ': ' . PHP_EOL;
+        $content = $table . ':' . PHP_EOL;
         $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
 
         // If there are columns ...
