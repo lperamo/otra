@@ -7,7 +7,18 @@ namespace lib\myLibs;
 
 class MasterController
 {
-  public static $path;
+  public static $path,
+    $blocksStack = [],
+    $currentBlock = [
+      'content' => '',
+      'index' => 0,
+      'name' => 'root',
+      'parent' => null
+    ],
+    $currentBlocksStackIndex = 0,
+    $blockNames = [],
+    $blocksToUnset = [];
+
   public $route,
         $bundle = '',
         $module = '',
@@ -159,60 +170,6 @@ class MasterController
       return file_get_contents ($cachedFile);
 
     return false;
-  }
-
-  /**
-   * Replaces the layout body content by the template body content if the layout is set
-   * @param string $content Content of the template to process
-   * @return mixed|string
-   */
-  protected static function addLayout(string $content)
-  {
-    if (true === isset(self::$layout))
-    {
-      self::$layoutOnce = true;
-      return preg_replace('`(<body[^>]*>)(.*)`s', '$1' . str_replace('$','\\$', $content), self::$layout);
-    }
-
-    return $content;
-  }
-
-  /**
-   * Sets the body attributes
-  *
-  * @param string $attrs
-  */
-  public static function bodyAttrs(string $attrs = '') : void { self::$bodyAttrs = $attrs; }
-
-  /**
-   * Sets the body content
-   *
-   * @param string $content
-   */
-  private static function body(string $content = '') : void { self::$body = $content; }
-
-  /**
-   * Sets the title of the page
-   *
-   * @param string $title
-   */
-  protected static function title(string $title) : void
-  {
-    self::$layout = (isset(self::$layout))
-      ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
-      : '<title>' . $title . '</title><body>';
-  }
-
-  /**
-   * Sets the favicons of the site
-   *
-   * @param string $filename
-   * @param string $filenameIE
-   */
-  protected static function favicon(string $filename = '', string $filenameIE = '') : void
-  {
-    echo '<link rel="icon" type="image/png" href="' , $filename , '" />
-      <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
   }
 
   /**
