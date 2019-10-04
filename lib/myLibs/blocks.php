@@ -29,10 +29,10 @@ function block(string $name, string $inline = '')
   // Is there another block of the same type
   if (array_key_exists($name, MasterController::$blockNames) === true)
   {
+    // We retrieve it
     $previousSameKindBlock = &MasterController::$blocksStack[MasterController::$blockNames[$name]];
 
-    if (array_key_exists($name, MasterController::$blockNames) === true
-      && $currentBlock['index'] > $previousSameKindBlock['index'])
+    if ($currentBlock['index'] > $previousSameKindBlock['index'])
     {
       // Handles the block replacement system (parent replaced by child)
       $previousSameKindBlock['replacedBy'] = $actualKey;
