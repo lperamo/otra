@@ -1,0 +1,27 @@
+<?php require CORE_PATH . 'blocks.php' ?>
+<!DOCTYPE html>
+<title>
+  <?php block('title'); ?>
+  Welcome to OTRA!
+  <?php endblock(); ?>
+</title>
+
+<html>
+<body>
+<?php block('body'); ?>
+  Hello!
+  <?php block('test'); ?>
+    exact
+      <?php block('body'); ?>
+      test
+      <?php endblock(); ?>
+  <?php endblock(); ?>
+<?php endblock(); ?>
+</body>
+<?php
+block('title', 'Welcome to the OTRA!');
+block('body');
+?>
+  Hello World!
+  <?php parent();
+endblock(); ?>
