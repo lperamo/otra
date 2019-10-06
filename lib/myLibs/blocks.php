@@ -4,6 +4,8 @@
 use lib\myLibs\MasterController;
 
 /**
+ * Begins a template block.
+ *
  * @param string $name
  * @param string $inline If we just want an inline block then we echo this string and close the block directly.
  */
@@ -30,15 +32,16 @@ function block(string $name, string $inline = '')
   if (array_key_exists($name, MasterController::$blockNames) === true)
   {
     // We retrieve it
-    $previousSameKindBlock = &MasterController::$blocksStack[MasterController::$blockNames[$name]];
+    $firstPreviousSameKindBlockKey = MasterController::$blockNames[$name];
 
-    if ($currentBlock['index'] > $previousSameKindBlock['index'])
+    for ($stackKey = MasterController::$blockNames[$name]; $stackKey < $actualKey; ++$stackKey)
     {
-      // Handles the block replacement system (parent replaced by child)
-      $previousSameKindBlock['replacedBy'] = $actualKey;
+      $previousSameKindBlock = &MasterController::$blocksStack[$stackKey];
 
-      // Handles the parent content for parent() function
-      $currentBlock['parentContent'] = $previousSameKindBlock['content'];
+      // Handles the block replacement system (parent replaced by child)
+      if ($currentBlock['index'] > $previousSameKindBlock['index']
+        && $stackKey === $firstPreviousSameKindBlockKey)
+        MasterController::$blocksStack[$firstPreviousSameKindBlockKey]['replacedBy'] = $actualKey;
     }
   }
 
@@ -56,10 +59,14 @@ function block(string $name, string $inline = '')
   }
 }
 
+/**
+ * Ends a template block.
+ */
 function endblock()
 {
   // Storing previous content before doing anything else
   $currentBlock = &MasterController::$currentBlock;
+  $currentBlock['endingBlock'] = true; // needed for processing parent function
   $currentBlock['content'] .= ob_get_clean();
 
   // Updates the list of block types with their position in the stack
@@ -67,9 +74,7 @@ function endblock()
     && (array_key_exists($currentBlock['name'], MasterController::$blockNames) === true
       && $currentBlock['index'] > MasterController::$blockNames[$currentBlock['name']])
   )
-  {
     MasterController::$blockNames[$currentBlock['name']] = count(MasterController::$blocksStack);
-  }
 
   array_push(MasterController::$blocksStack, $currentBlock);
 
@@ -87,15 +92,41 @@ function endblock()
 
 /**
  * Shows the content of the parent block of the same type.
- *
- * @throws \lib\myLibs\LionelException
  */
 function parent()
 {
-  if (array_key_exists('parentContent', MasterController::$currentBlock) === false)
-    throw new \lib\myLibs\LionelException('There is no parent for this block ' .
-      MasterController::$currentBlock['name']);
+  // $key is the key of the first block of the same type
+  $key = array_search(
+    MasterController::$currentBlock['name'],
+    array_column(MasterController::$blocksStack, 'name')
+  );
 
-  echo MasterController::$currentBlock['parentContent'];
+  // We put the first block of the same type
+  $parentBlock = MasterController::$blocksStack[$key];
+
+  // If this block has been replaced, we jump to replacing block if it is not our current block
+  while (array_key_exists('replacedBy', $parentBlock) === true
+    && array_key_exists($parentBlock['replacedBy'], MasterController::$blocksStack) === true)
+  {
+    $key = $parentBlock['replacedBy'];
+    $parentBlock = MasterController::$blocksStack[$key];
+  }
+
+  $content = $parentBlock['content'];
+
+  if (array_key_exists('endingBlock', $parentBlock) === false)
+  {
+    // We gather all the content of the last same type block before this one
+    do
+    {
+      if (isset(MasterController::$blocksStack[$key + 1]) === false)
+        break;
+
+      $block = MasterController::$blocksStack[++$key];
+      $content .= $block['content'];
+    } while ($block['index'] !== $parentBlock['index']);
+  }
+
+  echo $content;
 }
 ?>

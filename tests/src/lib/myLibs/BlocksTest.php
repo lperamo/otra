@@ -63,8 +63,8 @@ class BlocksTest extends TestCase
     $this->assertEquals("<!DOCTYPE html><title>
   Welcome to the OTRA!</title><html><body>
   Hello World!
-    test
-        </body>
+        test
+      </body>
 ", $content);
   }
 }
