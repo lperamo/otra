@@ -17,6 +17,6 @@ class ConsoleTest extends TestCase
    */
   public function testExecConsole()
   {
-    exec('php ' . _DIR_ . '/../console.php');
+    exec('php ' . _DIR_ . '/../otra.php');
   }
 }
