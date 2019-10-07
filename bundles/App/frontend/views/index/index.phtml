@@ -1,5 +1,9 @@
 <?php
-$this->layout();
-self::title('Welcome to OTRA!');
+require BASE_PATH . 'bundles/views/layout.phtml';
+
+block('title', 'Welcome to the OTRA!');
+block('body');
 ?>
-Hello World !
+  <?php parent(); ?><br/>
+  It's the basic template.
+<?php endblock(); ?>
