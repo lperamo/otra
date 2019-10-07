@@ -79,6 +79,7 @@ class Controller extends MasterController
     self::$currentBlock['content'] .= ob_get_clean();
     array_push(self::$blocksStack, self::$currentBlock);
     $content = '';
+    $indexesToUnset = [];
 
     // Loops through the block stack to compile the final content that have to be shown
     foreach(self::$blocksStack as $key => &$block)
@@ -94,19 +95,24 @@ class Controller extends MasterController
         while(array_key_exists('replacedBy', $goodBlock) === true)
         {
           $goodBlock['content'] = '';
+          $indexesToUnset[$goodBlock['index']] = true;
           $tmpKey = $key;
           $tmpBlock = &MasterController::$blocksStack[$tmpKey + 1];
 
           while ($tmpBlock['parent'] === MasterController::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
           {
             $tmpBlock['content'] = '';
+            $indexesToUnset[$tmpBlock['index']] = true;
             $tmpBlock = &MasterController::$blocksStack[++$tmpKey + 1];
           }
 
           $goodBlock = &MasterController::$blocksStack[$goodBlock['replacedBy']];
         }
 
-        $content .= $goodBlock['content'];
+        // We must also not show the endings blocks that have been replaced
+        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
+          $content .= $goodBlock['content'];
+
         $goodBlock['content'] = '';
       } else
         $content .= $block['content'];

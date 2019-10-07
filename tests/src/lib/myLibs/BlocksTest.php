@@ -51,7 +51,10 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use overridden blocks, an inline block, alternate blocks between blocks override and a parent block call.
+   * Use :
+   * - overridden blocks,
+   * - an inline title block,
+   * - alternate blocks between blocks override and a parent block call.
    *
    * @throws LionelException
    * @author Lionel Péramo
@@ -65,6 +68,29 @@ class BlocksTest extends TestCase
   Hello World!
         test
       </body>
+", $content);
+  }
+
+  /**
+   * Use :
+   * - overridden blocks,
+   * - an inline title block,
+   * - alternate blocks between blocks override
+   * - parent block call
+   * - the end of the content after a child block is not empty
+   *
+   * @throws LionelException
+   * @author Lionel Péramo
+   */
+  public function testCompleteLayout()
+  {
+    $controller = new Controller();
+    $content = $controller->renderView(BASE_PATH . 'tests/src/bundles/views/completeLayout.phtml');
+    $this->assertEquals("<!DOCTYPE html><title>
+  Welcome to the OTRA!</title><html><body>
+  Hello World!
+        test
+      Hello World!after</body>
 ", $content);
   }
 }

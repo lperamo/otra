@@ -111,24 +111,27 @@ class Controller extends MasterController
         while(array_key_exists('replacedBy', $goodBlock) === true)
         {
           $goodBlock['content'] = '';
+          $indexesToUnset[$goodBlock['index']] = true;
           $tmpKey = $key;
           $tmpBlock = &MasterController::$blocksStack[$tmpKey + 1];
 
           while ($tmpBlock['parent'] === MasterController::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
           {
             $tmpBlock['content'] = '';
-
+            $indexesToUnset[$tmpBlock['index']] = true;
             $tmpBlock = &MasterController::$blocksStack[++$tmpKey + 1];
           }
 
           $goodBlock = &MasterController::$blocksStack[$goodBlock['replacedBy']];
         }
 
-        $content .= $goodBlock['content'];
+        // We must also not show the endings blocks that have been replaced
+        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
+          $content .= $goodBlock['content'];
+
         $goodBlock['content'] = '';
-      } else {
+      } else
         $content .= $block['content'];
-      }
     }
 
     $routeV = $this->route . VERSION;
