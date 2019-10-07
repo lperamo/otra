@@ -54,12 +54,14 @@ try
 } catch(Exception $e) // in order to catch fatal errors
 {
   echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
+    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}' // json sent if it was an AJAX request
     : $e->getMessage();
 
   exit(1);
 } catch(Error $e)
 {
-  echo "fatal error T_T";
+    echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+        ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}' // json sent if it was an AJAX request
+        : $e->getMessage();
   exit(1);
 }
