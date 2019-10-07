@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace lib\myLibs\console {
 
   use lib\myLibs\bdd\Sql;
+  use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
   use lib\myLibs\{Session, LionelException};
@@ -383,7 +384,14 @@ namespace lib\myLibs\console {
       {
         foreach (array_keys($tableData['relations']) as &$relation)
         {
-          $data = Yaml::parse(file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml'));
+          try
+          {
+            $data = Yaml::parse(file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml'));
+          } catch(ParseException $e)
+          {
+            echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+            exit(1);
+          }
 
           foreach ($data as $otherTable => &$otherTableData)
           {
@@ -417,7 +425,7 @@ namespace lib\myLibs\console {
         foreach ($properties as $property => $value)
         {
           if (true === in_array($property, $sortedTables) && false === isset($tableData['relations'][$property]))
-            throw new LionelException('It lacks a relation to the table `' . $table . '` for a `' . $property . '` like property', E_CORE_ERROR);
+            throw new LionelException('Either it lacks a relation to the table `' . $table . '` for a `' . $property . '` like property or you have put this property name by error in file `' . $table . '.yml.', E_CORE_ERROR);
 
           // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
           $theProperties .= '`' .
@@ -529,7 +537,14 @@ namespace lib\myLibs\console {
         throw new LionelException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
       }
 
-      $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+      try {
+        $schema = Yaml::parse(file_get_contents(self::$schemaFile));
+      } catch(ParseException $e)
+      {
+        echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+        exit(1);
+      }
+
       $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
       $fixtureFileNameBeginning = self::$pathSqlFixtures . $databaseName . '_';
 
@@ -975,7 +990,16 @@ namespace lib\myLibs\console {
     private static function _analyzeFixtures(string $file)
     {
       // Gets the fixture data
-      $fixturesData = Yaml::parse(file_get_contents($file));
+      try
+      {
+        $fixturesData = Yaml::parse(file_get_contents($file));
+      } catch(ParseException $e)
+      {
+        echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+        exit(1);
+      }
+
+      $tablesToCreate = [];
 
       $tablesToCreate = [];
 

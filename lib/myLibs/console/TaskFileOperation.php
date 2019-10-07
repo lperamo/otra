@@ -327,6 +327,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
 
 /**
  * Extracts the file name and the 'isTemplate' information from the require/include statement.
+ * Potentially replaces dynamic $variables by their value to know which file to use.
  *
  * @param string $trimmedMatch
  * @param string $file
@@ -459,7 +460,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 
   if (isset(CLASSMAP[$newClass]) === false)
   {
-    echo CLI_BROWN, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_BROWN, ' in this file that you don\'t include and fix it ! Maybe it\'s only in a comment though.', END_COLOR, PHP_EOL;
+    echo CLI_BROWN, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_BROWN, ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', END_COLOR, PHP_EOL;
 
     return false;
   }
@@ -468,6 +469,8 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 }
 
 /**
+ * Retrieves informations about what kind of file inclusion we have, the related code and its position.
+ *
  * @param string $contentToAdd    Content actually parsed
  * @param string $file            Name of the file actually parsed
  * @param array  $filesToConcat   Files to parse after have parsed this one
@@ -629,7 +632,6 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
     'template' => []
   ];
 
-
   $classesFromFile = getFileNamesFromUses($level, $contentToAdd, $filesToConcat, $parsedFiles);
 
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
@@ -671,7 +673,8 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
                 $method = ' via static direct call';
             }
 
-            // If it is a class from an external library (not from the framework)
+            // If it is a class from an external library (not from the framework),
+            // we let the inclusion code and we do not add the content to the bootstrap file.
             if (false !== strpos($tempFile, 'vendor'))
             {
               echo CLI_BROWN, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
@@ -893,6 +896,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     preg_replace('@\?>\s*<\?@', '', $finalContent)
   );
 
+  // replace FQCN by CN (TODO is it still necessary after "processStaticCalls" calls ?)
   $finalContent = preg_replace(
     '@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@',
     '$4',

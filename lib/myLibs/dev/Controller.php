@@ -52,8 +52,8 @@ class Controller extends MasterController
     // we use self::ajax in this function (it is why we cannot merge the two if with self::$ajax
     parent::$template = $this->buildCachedFile($templateFile, $variables);
 
-    if (false === $ajax)
-      self::addDebugBar();
+//    if (false === $ajax)
+//      self::addDebugBar();
 
     return parent::$template;
   }
@@ -76,7 +76,47 @@ class Controller extends MasterController
 
     ob_start();
     require $templateFilename;
-    $content = (true === $layout && false === parent::$layoutOnce) ? parent::addLayout(ob_get_clean()) : ob_get_clean();
+    self::$currentBlock['content'] .= ob_get_clean();
+    array_push(self::$blocksStack, self::$currentBlock);
+    $content = '';
+    $indexesToUnset = [];
+
+    // Loops through the block stack to compile the final content that have to be shown
+    foreach(self::$blocksStack as $key => &$block)
+    {
+      $blockExists = array_key_exists($block['name'], MasterController::$blockNames);
+
+      // If there are other blocks with this name...
+      if ($blockExists === true)
+      {
+        $goodBlock = &$block;
+
+        // We seeks for the last block with this name and we adds its content
+        while(array_key_exists('replacedBy', $goodBlock) === true)
+        {
+          $goodBlock['content'] = '';
+          $indexesToUnset[$goodBlock['index']] = true;
+          $tmpKey = $key;
+          $tmpBlock = &MasterController::$blocksStack[$tmpKey + 1];
+
+          while ($tmpBlock['parent'] === MasterController::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
+          {
+            $tmpBlock['content'] = '';
+            $indexesToUnset[$tmpBlock['index']] = true;
+            $tmpBlock = &MasterController::$blocksStack[++$tmpKey + 1];
+          }
+
+          $goodBlock = &MasterController::$blocksStack[$goodBlock['replacedBy']];
+        }
+
+        // We must also not show the endings blocks that have been replaced
+        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
+          $content .= $goodBlock['content'];
+
+        $goodBlock['content'] = '';
+      } else
+        $content .= $block['content'];
+    }
 
     // We log the template file name into logs/trace.txt
     Logger::logTo("\t" . 'File : ' . $templateFilename, 'trace');
@@ -114,10 +154,6 @@ class Controller extends MasterController
       parent::$template . self::addJs(false)
     );
   }
-
-
-  /** Includes the layout */
-  private function layout() { parent::$layout = $this->buildCachedFile(LAYOUT, [], null, false); }
 
   /**
    * Puts the css into the template
