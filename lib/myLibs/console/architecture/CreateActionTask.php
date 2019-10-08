@@ -16,5 +16,12 @@ require CORE_PATH . 'console/architecture/CheckModuleExistence.php';
 require CORE_PATH . 'console/architecture/CheckControllerExistence.php';
 require CORE_PATH . 'console/architecture/CreateAction.php';
 
-actionHandling($interactive, $bundleName, $moduleName, $controllerName, $controllerPath, $argv[ARG_ACTION_NAME]);
+actionHandling(
+  $interactive,
+  $bundleName,
+  $moduleName,
+  $controllerName,
+  $controllerPath,
+  $argv[ARG_ACTION_NAME]
+);
 ?>
