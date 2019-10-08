@@ -106,6 +106,27 @@ class Tasks
   /**
    * @param array $argv
    */
+  public static function createHelloWorld(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateHelloWorld.php';
+  }
+
+  /**
+   * @return array
+   */
+  public static function createHelloWorldDesc() : array
+  {
+    return [
+      'Creates a hello world starter application.',
+      [],
+      [],
+      'Architecture'
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
   public static function createModel(array $argv)
   {
     require CORE_PATH . 'console/architecture/CreateModel.php';
