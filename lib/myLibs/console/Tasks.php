@@ -14,30 +14,27 @@ class Tasks
 {
   protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
 
-  /**
-   * @param array $argv
-   */
-  public static function createBundle(array $argv)
+  public static function createAction(array $argv)
   {
-    require CORE_PATH . 'console/CreateBundle.php';
+    require CORE_PATH . 'console/architecture/CreateActionTask.php';
   }
 
-  /**
-   * @return array
-   */
-  public static function createBundleDesc(): array {
+  public static function createActionDesc() : array
+  {
     return [
-      'Creates a bundle.' . brownText('[PARTIALLY IMPLEMENTED]'),
+      'Creates actions.',
       [
-        'bundle name' => 'The name of the bundle !',
-        'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '0 => nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => models' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => resources' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => views'
+        'bundle' => 'The bundle where you want to put actions',
+        'module' => 'The module where you want to put actions',
+        'controller' => 'The controller where you want to put actions',
+        'action' => 'The name of the action!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
       ],
       [
-        'optional',
+        'required',
+        'required',
+        'required',
+        'required',
         'optional'
       ],
       'Architecture'
@@ -47,9 +44,92 @@ class Tasks
   /**
    * @param array $argv
    */
+  public static function createBundle(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateBundleTask.php';
+  }
+
+  /**
+   * @return array
+   */
+  public static function createBundleDesc(): array
+  {
+    $showMaskOption = static function (string $text) : string
+    {
+      return str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . $text;
+    };
+
+    return [
+      'Creates a bundle.',
+      [
+        'bundle name' => 'The name of the bundle!',
+        'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
+          $showMaskOption('0 => nothing') . PHP_EOL .
+          $showMaskOption('1 => config') . PHP_EOL .
+          $showMaskOption('2 => models') . PHP_EOL .
+          $showMaskOption('4 => resources') . PHP_EOL .
+          $showMaskOption('8 => views')
+      ],
+      [
+        'optional',
+        'optional'
+      ],
+      'Architecture'
+    ];
+  }
+
+  public static function createController(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateControllerTask.php';
+  }
+
+  public static function createControllerDesc() : array
+  {
+    return [
+      'Creates controllers.',
+      [
+        'bundle' => 'The bundle where you want to put controllers',
+        'module' => 'The module where you want to put controllers',
+        'controller' => 'The name of the controller!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
+      ],
+      [
+        'required',
+        'required',
+        'required',
+        'optional'
+      ],
+      'Architecture'
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
+  public static function createHelloWorld(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateHelloWorld.php';
+  }
+
+  /**
+   * @return array
+   */
+  public static function createHelloWorldDesc() : array
+  {
+    return [
+      'Creates a hello world starter application.',
+      [],
+      [],
+      'Architecture'
+    ];
+  }
+
+  /**
+   * @param array $argv
+   */
   public static function createModel(array $argv)
   {
-    require CORE_PATH . 'console/CreateModel.php';
+    require CORE_PATH . 'console/architecture/CreateModel.php';
   }
 
   /**
@@ -59,13 +139,64 @@ class Tasks
     return [
       'Creates a model.',
       [
-        'bundle' => 'The bundle in which the model',
+        'bundle' => 'The bundle in which the model is created',
         'how' => '1 => Creates from nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. brown() . 'schema.yml' . cyan(). PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . brown() .'schema.yml' . cyan()
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_BROWN . 'schema.yml' .
+          CLI_CYAN .
+          PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . CLI_BROWN .'schema.yml' .
+          CLI_CYAN
       ],
       ['optional', 'optional'],
       'Architecture'
+    ];
+  }
+
+  public static function createModule(array $argv)
+  {
+    require CORE_PATH . 'console/architecture/CreateModuleTask.php';
+  }
+
+  public static function createModuleDesc() : array
+  {
+    return [
+      'Creates modules.',
+      [
+        'bundle' => 'The name of the bundle in which you want to put modules',
+        'module' => 'The name of the module!',
+        'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
+      ],
+      [
+        'required',
+        'required',
+        'optional'
+      ],
+      'Architecture'
+    ];
+  }
+
+  /**
+   * @param array|null $argv
+   */
+  public static function buildDev(?array $argv = null)
+  {
+    require CORE_PATH . 'console/BuildDev.php';
+  }
+
+  /**
+   * @return array
+   */
+  public static function buildDevDesc() : array
+  {
+    return [
+      'Compiles the typescripts, sass and php configuration files (modulo the binary mask).',
+      [
+        'verbose' => '0 => Quite silent, 1 => Tells which file has been updated.',
+        'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.',
+        'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ? Defaults to false.'
+      ],
+      ['optional', 'optional', 'optional'],
+      'Deployment'
     ];
   }
 
@@ -99,7 +230,7 @@ class Tasks
 
   public static function deployDesc() : array {
     return [
-      'Deploy the site. ' . brownText('[WIP - Do not use yet !]'),
+      'Deploy the site. ' . CLI_BROWN . '[WIP - Do not use yet !]' . END_COLOR,
       [
         'mode' => '0 => Nothing to do (default)' . PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => Generates php production files.' . PHP_EOL .
@@ -172,6 +303,25 @@ class Tasks
       ['optional'],
       'Deployment'
     ];
+  }
+
+  public static function genWatcher(?array $argv = null) { require CORE_PATH . 'console/GenWatcher.php'; }
+
+  public static function genWatcherDesc() : array
+  {
+     return [
+       'Launches a watcher that will update the PHP class mapping, the ts files and the scss files.',
+       [
+         'verbose' => '1 => Tells which file has been updated.' . PHP_EOL .
+           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) .
+           '2 => Tells which file has been updated and the most important events that have been triggered.' . PHP_EOL .
+           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . 'Default to 1.',
+         'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.',
+         'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ?'
+       ],
+       ['optional', 'optional', 'optional'],
+       'Deployment'
+     ];
   }
 
   public static function upConf() { require CORE_PATH . 'console/UpdateConf.php'; }
@@ -334,7 +484,7 @@ class Tasks
   public static function sql_ifDesc() : array
   {
     return [
-      'Import the fixtures from database into ' . brown() . 'config/data/yml/fixtures' . cyan() . '.',
+      'Import the fixtures from database into ' . CLI_BROWN . 'config/data/yml/fixtures' . CLI_CYAN . '.',
       [
         'databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
         'configuration' => 'The configuration that you want to use from your configuration file.'
@@ -442,7 +592,7 @@ class Tasks
   }
 
   public static function version() {
-    echo file_get_contents(CORE_PATH . 'console/LICENSE2.txt'), endColor(), PHP_EOL, brownText('Version 1.0 ALPHA.');
+    require CORE_PATH . 'console/Version.php';
   }
 
   /**

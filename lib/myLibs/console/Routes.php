@@ -18,7 +18,8 @@
  */
 function showResourceState(string $resourceExtension, string $resourceType, string &$basePath, string &$shaName, string &$altColor)
 {
-  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? lightGreen() : lightRed(), '[', $resourceType, ']', $altColor;
+  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[',
+  $resourceType, ']', $altColor;
 }
 
 /**
@@ -30,7 +31,7 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
  */
 function showPHPState(string &$basePath, string &$route, string &$altColor)
 {
-  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? lightGreen() : lightRed(), '[PHP]' . $altColor;
+  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[PHP]' . $altColor;
 }
 
 $alt = 0;
@@ -51,13 +52,13 @@ if (true === isset($argv[2]))
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . white() . $route . brown()
-      . ' ! Do you mean ' . white() . $newRoute . brown() . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_BROWN
+      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_BROWN . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)
     {
-      echo redText('Sorry then !'), PHP_EOL;
+      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
       exit(1);
     }
 
@@ -75,7 +76,7 @@ foreach($routes as $route => &$details)
 
   // Routes and paths management
   $chunks = $details['chunks'];
-  $altColor = ($alt % 2) ? cyan() : lightCyan();
+  $altColor = ($alt % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
   echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route), str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[0], PHP_EOL;
 
   echo str_pad(' ', WIDTH_LEFT, ' '),
@@ -112,7 +113,7 @@ foreach($routes as $route => &$details)
     echo ' No other resources. ';
   }
 
-  echo '[', $shaName, ']', PHP_EOL, endColor();
+  echo '[', $shaName, ']', PHP_EOL, END_COLOR;
 
   // We only show a decoration line if it's not the last route
   end($routes);

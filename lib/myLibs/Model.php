@@ -12,6 +12,8 @@ use lib\myLibs\Session;
  */
 abstract class Model
 {
+  private $table;
+
   public function get($property) { return $this->$property; }
 
   public function set($property, $value) { $this->$property = $value; }

@@ -9,7 +9,7 @@ define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) -
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 require CORE_PATH . 'console/Colors.php';
 
-echo white(), str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, endColor();
+echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
 
 require BASE_PATH . 'cache/php/ClassMap.php';
@@ -27,11 +27,11 @@ spl_autoload_register(function($className)
     require CLASSMAP[$className];
   } else {
 
-  echo red(), 'CLASSMAP PROBLEM !!', PHP_EOL;
+  echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
   debug_print_backtrace();
   echo PHP_EOL;
   var_dump(CLASSMAP);
-  echo PHP_EOL, endColor();
+  echo PHP_EOL, END_COLOR;
 
 }
 

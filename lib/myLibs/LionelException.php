@@ -32,6 +32,7 @@ class LionelException extends \Exception
     E_WARNING           => 'E_WARNING'
   ];
 
+  public $backtraces;
   private $context;
   // String version of error code
   public $scode;

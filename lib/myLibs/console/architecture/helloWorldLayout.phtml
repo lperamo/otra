@@ -1,0 +1,41 @@
+<?php require CORE_PATH . 'blocks.php' ?>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" />
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name=viewport content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>
+  <?php
+  $title = 'Starter template homepage';
+  block('title');
+  echo $title;
+  endBlock();
+  ?>
+</title>
+
+<!--  Color of my app-->
+<meta name="theme-color" content="#444">
+
+<!-- Google SEO-->
+<meta name=author content=https://plus.google.com/u/0/112398144630021094708?rel=author>
+<meta name=description content="<?= $title ?>">
+<meta name=robots content="index,follow,noodp">
+<meta name=googlebot content="index,follow">
+<meta name=google content=notranslate>
+
+<!-- IE Mobile-->
+<meta name="application-name" content="<?= $title ?>"/>
+<meta name="msapplication-TileColor" content="#444"/>
+
+<!-- Facebook Open Graph -->
+<meta property="og:title" content="Want to develop faster websites ?">
+<meta property="og:url" content="https://otra.tech/">
+<meta property="og:site_name" content="<?= $title ?>>">
+
+<html lang="en">
+<body>
+<?php block('body'); ?>
+Hello!
+<?php endBlock(); ?>
+</body>

@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-//    only for Node.JS
-//    "module": "commonjs",
     "target": "es5",
+    "module": "none",
     "sourceMap": true,
-    "module" : "commonjs",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "noResolve": true,
+    "pretty": true,
     "removeComments": true,
     "noImplicitUseStrict": true,
     "watch": true
-  },
-  "exclude": [
-//    "node_modules"
-  ]
+  }
 }

@@ -12,7 +12,8 @@ require CORE_PATH . 'console/Colors.php';
 
 if (exec('whoami') === 'root')
 {
-  echo redText('You should not be root to execute this ! It will probably change the rights of your files and folders.'), PHP_EOL;
+  echo CLI_RED, 'You should not be root to execute this ! It will probably change the rights of your files and folders.',
+  END_COLOR, PHP_EOL;
 }
 
 /**
@@ -26,7 +27,7 @@ function launchTask(array $argv, int $argc)
   // Checks if a task description is missing
   if (false === method_exists('lib\myLibs\console\Tasks', $argv[1] . 'Desc'))
   {
-    echo redText('There is no description for that command !');
+    echo CLI_RED, 'There is no description for that command !', END_COLOR;
     exit(1);
   }
 
@@ -50,14 +51,16 @@ function launchTask(array $argv, int $argc)
 
   if ($argc > $total + 2)
   {
-    echo lightRedText('There are too much parameters ! The total number of existing parameters is : ' . $total . PHP_EOL . PHP_EOL);
+    echo CLI_LIGHT_RED . 'There are too much parameters ! The total number of existing parameters is : ' . $total
+      . END_COLOR . PHP_EOL . PHP_EOL;
     TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
     exit(1);
   }
 
   if ($argc < $required + 2)
   {
-    echo lightRedText('Not enough parameters ! The total number of required parameters is : ' . $required . PHP_EOL . PHP_EOL);
+    echo CLI_LIGHT_RED . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
+      . PHP_EOL . PHP_EOL;
     TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
     exit(1);
   }
@@ -93,13 +96,13 @@ else // otherwise we'll try to guess if it looks like an existing one
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
-    echo red(), 'There is no task named ', brown(), $method, redText(' !'), PHP_EOL;
+    echo CLI_RED, 'There is no task named ', CLI_BROWN, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
     exit(1);
   }
 
   // Otherwise, we suggest the closest name that we have found.
-  $choice = promptUser('> There is no task named '. white() . $method . brown() .
-    ' ! Do you mean ' . white() . $newTask . brown() . ' ? (y/n)');
+  $choice = promptUser('> There is no task named '. CLI_WHITE . $method . CLI_BROWN .
+    ' ! Do you mean ' . CLI_WHITE . $newTask . CLI_BROWN . ' ? (y/n)');
 
   if ('y' === $choice)
   {

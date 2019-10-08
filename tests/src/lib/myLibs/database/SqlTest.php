@@ -54,6 +54,9 @@ class SqlTest extends TestCase
     );
   }
 
+  /**
+   * @throws LionelException
+   */
   private function createDatabaseForTest() {
     require(BASE_PATH . 'tests/config/AllConfig.php');
 
@@ -146,8 +149,9 @@ class SqlTest extends TestCase
   }
 
   /**
+   * @throws LionelException
    * @author Lionel Péramo
-   * depends on testConstruct, AllConfig
+   *         depends on testConstruct, AllConfig
    */
   public function testConnect()
   {

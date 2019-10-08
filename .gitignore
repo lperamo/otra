@@ -1,4 +1,5 @@
 cache/*
+cert/*
 logs/**
 !logs/
 !logs/dev/
@@ -8,6 +9,6 @@ lib/myLibs/console/closure-compiler.log
 .idea
 tests/coverageHtml
 tests/coverage.xml
-tests/.phpunit.result.cache
+tests/**/.phpunit.result.cache
 **/css/*.css*
 **/js/*.js*

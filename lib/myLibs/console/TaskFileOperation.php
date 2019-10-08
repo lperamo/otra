@@ -44,7 +44,7 @@ function hasSyntaxErrors(string $file) : bool
 
   if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
-    echo PHP_EOL, lightRed(), $output, PHP_EOL, PHP_EOL;
+    echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
     require CORE_PATH . 'console/Tools.php';
     showContextByError($file, $output, 10);
 
@@ -76,7 +76,7 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
  */
 function contentToFile(string $content, string $outputFile)
 {
-  echo PHP_EOL, PHP_EOL, cyan(), 'FINAL CHECKINGS => ';
+  echo PHP_EOL, PHP_EOL, CLI_CYAN, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
@@ -85,23 +85,24 @@ function contentToFile(string $content, string $outputFile)
   // Test each part of the process in order to precisely detect where there is an error.
   if (true === hasSyntaxErrors($tempFile))
   {
-    echo PHP_EOL, PHP_EOL, lightRedText('[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]'), PHP_EOL;
+    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]',
+      END_COLOR, PHP_EOL;
     exit(1);
   }
 
   $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
 
-  echo lightGreen(), '[CLASSIC SYNTAX]';
+  echo CLI_LIGHT_GREEN, '[CLASSIC SYNTAX]';
 
   file_put_contents($outputFile, $content);
 
   if (true === hasSyntaxErrors($outputFile))
   {
-    echo PHP_EOL, PHP_EOL, lightRedText('[NAMESPACES ERRORS in ' . $smallOutputFile . '!]'), PHP_EOL;
+    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
     exit(1);
   }
 
-  echo lightGreen(), '[NAMESPACES]', PHP_EOL;
+  echo CLI_LIGHT_GREEN, '[NAMESPACES]', PHP_EOL;
 }
 
 /**
@@ -135,7 +136,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
        *  class/test,
        *  class/test2
        * } */
-      echo brownText('EXTERNAL LIBRARY CLASS : ' . $class), PHP_EOL;
+      echo CLI_BROWN, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
       return ;
     }
   }
@@ -271,7 +272,9 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
           $isTemplate = true;
         else
         {
-          echo red(), 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', brown(), '$', $pathVariable[0], red(), ' in ', brown(), $trimmedMatch, red(), ' in the file ', brown(), $file, red(), ' !', endColor(), PHP_EOL;
+          echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_BROWN,
+            '$', $pathVariable[0], CLI_RED, ' in ', CLI_BROWN, $trimmedMatch, CLI_RED, ' in the file ', CLI_BROWN,
+            $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
           exit(1);
         }
       }
@@ -291,7 +294,12 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
 function showFile(int &$level, string &$file, string $otherText = ' first file')
 {
   if (0 < VERBOSE)
-    echo str_pad(str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH), ANNOTATION_DEBUG_PAD, '.', STR_PAD_RIGHT), brownText($otherText), PHP_EOL;
+    echo str_pad(
+      str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH),
+      ANNOTATION_DEBUG_PAD,
+      '.',
+      STR_PAD_RIGHT
+    ), CLI_BROWN, $otherText, END_COLOR, PHP_EOL;
 }
 
 /**
@@ -452,7 +460,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 
   if (isset(CLASSMAP[$newClass]) === false)
   {
-    echo brown(), 'Notice : Please check if you use a class ', cyan(), $class, brown(), ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', endColor(), PHP_EOL;
+    echo CLI_BROWN, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_BROWN, ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', END_COLOR, PHP_EOL;
 
     return false;
   }
@@ -504,11 +512,15 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
 
         if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
-          echo PHP_EOL, brown(), 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ', $file, endColor(), PHP_EOL;
+          echo PHP_EOL, CLI_BROWN, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ',
+          $file, END_COLOR, PHP_EOL;
 
         if (false === file_exists($tempFile))
         {
-          echo PHP_EOL, red(), 'There is a problem with ', brown(), $trimmedMatch, red(), ' => ', brown(), $tempFile, red(), ' in ', brown(), $file, red(), ' !', endColor(), PHP_EOL, PHP_EOL;
+          echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_BROWN, $trimmedMatch, CLI_RED, ' => ', CLI_BROWN,
+          $tempFile,
+          CLI_RED
+          , ' in ', CLI_BROWN, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
           exit(1);
         }
 
@@ -570,7 +582,10 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
             {
               if (strpos($trimmedMatch, 'html') === false)
               {
-                echo red(), '/!\\ We cannot find the file ', brown(), $trimmedMatch, red(), ' seen in ' . brown(), $file, red(), '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, endColor();
+                echo CLI_RED, '/!\\ We cannot find the file ', CLI_BROWN, $trimmedMatch, CLI_RED, ' seen in ' .
+                  CLI_BROWN,
+                $file,
+                CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
                 die;
               }
             }
@@ -662,7 +677,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             // we let the inclusion code and we do not add the content to the bootstrap file.
             if (false !== strpos($tempFile, 'vendor'))
             {
-              echo brownText('EXTERNAL LIBRARY : ' . $tempFile), PHP_EOL; // It can be a SwiftMailer class for example
+              echo CLI_BROWN, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
+              // for
+              // example
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -670,7 +687,8 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             // Files already loaded by default will not be added
             if ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php')
             {
-              echo brownText('This file will be already loaded by default for each route : ' . substr($tempFile, strlen(BASE_PATH))), PHP_EOL; // It can be a SwiftMailer class for example
+              echo CLI_BROWN, 'This file will be already loaded by default for each route : ' . substr($tempFile,
+                  strlen(BASE_PATH)), END_COLOR, PHP_EOL; // It can be a SwiftMailer class for example
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -865,7 +883,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     }
   }
 
-  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.', STR_PAD_RIGHT), greenText(' [LOADED]');
+  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.', STR_PAD_RIGHT),
+    CLI_GREEN, ' [LOADED]', END_COLOR;
 
   /** We remove all the declare strict types declarations */
   $finalContent = str_replace('declare(strict_types=1);', '', $finalContent);

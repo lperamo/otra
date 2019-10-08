@@ -76,7 +76,7 @@ function reformatSource(string $stringToFormat) : string
 /**
  * Converts a php array into stylish html table
  *
- * @param        $dataToShow     Array to convert
+ * @param array  $dataToShow     Array to convert
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
  */
@@ -112,9 +112,9 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
   return;
 
   echo $title, PHP_EOL,
-    lightBlueText('|'), ' Name' ,
-    lightBlueText('|'), ' Index or value if array',
-    lightBlueText('|'), ' Value if array', PHP_EOL;
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 

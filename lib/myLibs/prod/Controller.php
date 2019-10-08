@@ -56,7 +56,7 @@ class Controller extends MasterController
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
-      die('Server problem : the file requested doesn\'t exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
+      die('Server problem : the file requested does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
     }
 
     // If we already have the template in memory and that it's not empty then we show it
@@ -187,7 +187,7 @@ class Controller extends MasterController
    *
    * @param string $routeV Route name plus the version
    *
-   * @return The links to the js files or the script markup with the js inside
+   * @return string The links to the js files or the script markup with the js inside
    */
   private function addJs(string $routeV) : string
   {

@@ -10,26 +10,26 @@ if (false === in_array($method, $methods, true))
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
-    echo red(), 'There is no task named ', brown(), $method, redText(' !'), PHP_EOL;
+    echo CLI_RED, 'There is no task named ', CLI_BROWN, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
     exit(1);
   }
 
   // Otherwise, we suggest the closest name that we have found.
-  $choice = promptUser('There is no task named ' . $method . ' ! Do you mean ' . white() . $newTask . brown() . ' ? (y/n)');
+  $choice = promptUser('There is no task named ' . $method . ' ! Do you mean ' . CLI_WHITE . $newTask . CLI_BROWN . ' ? (y/n)');
 
   if ('y' === $choice)
     $method = $newTask;
   else
   {
-    echo redText('Sorry then !'), PHP_EOL;
+    echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
     exit(1);
   }
 }
 
 /** WE DISPLAY HERE THE COMMAND HELP */
 $methodDesc = $method . 'Desc';
-$paramsDesc = self::$methodDesc();
-echo white(), str_pad($method, 27, ' '), lightGray(), ': ', cyan(), $paramsDesc[TASK_DESCRIPTION], PHP_EOL;
+$paramsDesc = \lib\myLibs\console\Tasks::$methodDesc();
+echo CLI_WHITE, str_pad($method, 27, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN, $paramsDesc[TASK_DESCRIPTION], PHP_EOL;
 
 // If we have parameters for this command, displays them
 if (isset($paramsDesc[TASK_PARAMETERS]) === true)
@@ -39,12 +39,12 @@ if (isset($paramsDesc[TASK_PARAMETERS]) === true)
   foreach ($paramsDesc[TASK_PARAMETERS] as $parameter => &$paramDesc)
   {
     // + parameter : (required|optional) Description
-    echo lightCyan(), '   + ', str_pad($parameter, 22, ' '), lightGray();
-    echo ': ', lightCyan(), '(', $paramsDesc[TASK_STATUS][$i], ') ', cyan(), $paramDesc, PHP_EOL;
+    echo CLI_LIGHT_CYAN, '   + ', str_pad($parameter, 22, ' '), CLI_LIGHT_GRAY;
+    echo ': ', CLI_LIGHT_CYAN, '(', $paramsDesc[TASK_STATUS][$i], ') ', CLI_CYAN, $paramDesc, PHP_EOL;
     ++$i;
   }
 }
 
-echo endColor();
+echo END_COLOR;
 
 ?>
