@@ -33,6 +33,7 @@ if (file_exists($bundlePath) === false)
   }
 
   require CORE_PATH . 'console/architecture/CreateBundle.php';
-  bundleHandling($bundleName, $consoleForce ? 15 : null);
+  /** @var int $bundleMask */
+  bundleHandling($bundleName, $consoleForce ? $bundleMask : null);
 }
 ?>
