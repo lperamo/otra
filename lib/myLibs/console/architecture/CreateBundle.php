@@ -46,7 +46,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
   mkdir(BUNDLE_BASE_PATH, 0755);
-  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_CYAN, $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
+  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
 
@@ -56,7 +56,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
     if (BUNDLE_FOLDERS_MASK & pow(2, $key))
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);
-      echo CLI_GREEN, 'Folder ', CLI_CYAN, $folder, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
+      echo CLI_GREEN, 'Folder ', CLI_LIGHT_CYAN, $bundleName, '/', $folder, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
     }
   }
 }
