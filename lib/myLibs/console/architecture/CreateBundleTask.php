@@ -6,6 +6,8 @@ require CORE_PATH . 'console/architecture/CreateBundle.php';
 const ARG_BUNDLE_NAME = 2,
   ARG_BUNDLE_MASK = 3;
 
+$consoleForce = false;
+
 // Checking argument : bundle name
 if (false === isset($argv[ARG_BUNDLE_NAME]))
 {
