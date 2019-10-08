@@ -39,25 +39,43 @@ function createAction(string $bundleName, string $moduleName,
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  $fileHandle = fopen($actionPath, 'x');
-  fwrite($fileHandle, '<?php
+  file_put_contents(
+    $actionPath,
+    '<?php
 namespace bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName . ';
 
 use lib\myLibs\Controller;
 
 class ' . $upperActionName . 'Action extends Controller
 {
-  
   public function ' . $actionName . 'Action() {
     
   }
 }
 ?>
 ');
-  fclose($fileHandle);
 
   echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
+
+  $viewFolder = BASE_PATH . 'bundles/' . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
+
+  // If the action folder does not exist
+  if (file_exists($viewFolder) === false)
+    mkdir($viewFolder);
+  else
+    echo CLI_YELLOW, 'For your information, the folder ', CLI_LIGHT_CYAN, $viewFolder, CLI_YELLOW, ' already existed.',
+      END_COLOR, PHP_EOL;
+
+  $template = $viewFolder . '/' . $actionName . '.phtml';
+
+  // If the template file already exists
+  if (file_exists($template) === true)
+    echo CLI_YELLOW, 'For your information, the template file ', CLI_LIGHT_CYAN, $template, CLI_YELLOW,
+      ' already existed.', END_COLOR, PHP_EOL;
+
+  // We just create an empty template file
+  touch($template);
 }
 
 /**
