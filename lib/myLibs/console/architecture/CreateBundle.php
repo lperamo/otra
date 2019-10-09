@@ -5,6 +5,7 @@ const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 /**
  * @param string      $bundleName
  * @param string|null $bundleMask
+ * @param bool        $bundleTask
  */
 function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTask = false)
 {
@@ -14,7 +15,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
   while (true === file_exists(BUNDLE_ROOT_PATH . $bundleName))
   {
     // Erases the previous question before we ask...
-    $bundleName = promptUser('The bundle ' . CLI_LIGHT_CYAN . $bundleName . CLI_BROWN
+    $bundleName = promptUser('The bundle ' . CLI_LIGHT_CYAN . 'bundles/' . $bundleName . CLI_BROWN
       . ' already exist. Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
@@ -46,7 +47,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
   mkdir(BUNDLE_BASE_PATH, 0755);
-  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
+  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, 'bundles/', $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
 

@@ -16,7 +16,7 @@ function createAction(string $bundleName, string $moduleName,
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
 
-  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN . $upperActionName . CLI_RED . ' already exists.';
+  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN . substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
 
   while (file_exists($actionPath) === true)
   {

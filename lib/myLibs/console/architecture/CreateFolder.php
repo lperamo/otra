@@ -13,7 +13,7 @@ if (function_exists('createFolder') === false)
   {
     while (file_exists($absoluteFolderPath) === true)
     {
-      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN . $folderName . CLI_RED . ' already exists.';
+      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN . substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
 
       if ($interactive === false)
       {
