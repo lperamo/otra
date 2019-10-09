@@ -145,6 +145,16 @@ $routesArray = [];
 foreach($routes as &$route)
   $routesArray = array_merge($routesArray, require $route);
 
+// We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
+// front of them
+define ('ROUTE_PATH', 0);
+function sortRoutes(array $routeA, array $routeB) : bool
+{
+  return (strlen($routeA['chunks'][ROUTE_PATH]) <= strlen($routeB['chunks'][ROUTE_PATH])) ? 1 : -1;
+}
+
+usort($routesArray, 'sortRoutes');
+
 // Transforms the array in code that returns the array.
 
 $routesContent = '<? return [';
