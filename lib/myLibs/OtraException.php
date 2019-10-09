@@ -6,13 +6,13 @@
 declare(strict_types=1);
 namespace lib\myLibs;
 
-use lib\myLibs\{Controller, console\LionelExceptionCLI};
+use lib\myLibs\{Controller, console\OtraExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
 require_once BASE_PATH . 'lib/myLibs/DebugTools.php';
 
-class LionelException extends \Exception
+class OtraException extends \Exception
 {
   public static $codes = [
     E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
@@ -38,7 +38,7 @@ class LionelException extends \Exception
   public $scode;
 
   /**
-   * LionelException constructor.
+   * OtraException constructor.
    *
    * @param string $message
    * @param int    $code
@@ -46,7 +46,7 @@ class LionelException extends \Exception
    * @param int    $line
    * @param array  $context
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   public function __construct(string $message = 'Error !', int $code = NULL, string $file = '', int $line = NULL, $context = [])
   {
@@ -63,7 +63,7 @@ class LionelException extends \Exception
   /**
    * Shows a custom exception page.
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   public function errorMessage() : string
   {
@@ -119,12 +119,12 @@ class LionelException extends \Exception
 
     // If there is no ClassMap.php, we cannot use the 'use' statement
     // so we are forced to use a 'require_once' statement
-    if (true === class_exists('lib\myLibs\console\LionelExceptionCLI'))
-      LionelExceptionCLI::showMessage($this);
+    if (true === class_exists('lib\myLibs\console\OtraExceptionCLI'))
+      OtraExceptionCLI::showMessage($this);
     else
     {
-      require_once BASE_PATH . 'lib/myLibs/console/LionelExceptionCLI.php';
-      LionelExceptionCLI::showMessage($this);
+      require_once BASE_PATH . 'lib/myLibs/console/OtraExceptionCLI.php';
+      OtraExceptionCLI::showMessage($this);
     }
 //    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
   }

@@ -59,7 +59,7 @@ use lib\myLibs\Controller;
 class ' . $upperActionName . 'Action extends Controller
 {
   /**
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public function ' . $actionName . 'Action() {
     echo $this->renderView(\'' . $actionName . '.phtml\', []);

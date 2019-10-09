@@ -11,7 +11,7 @@ namespace lib\myLibs\console {
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
-  use lib\myLibs\{Session, LionelException};
+  use lib\myLibs\{Session, OtraException};
 
   class Database
   {
@@ -49,7 +49,7 @@ namespace lib\myLibs\console {
      *
      * @param string $dbConnKey Database connection key from the general configuration
      *
-     * @throws LionelException If there are no database or database engine configured.
+     * @throws OtraException If there are no database or database engine configured.
      *
      * @return bool | void
      */
@@ -61,15 +61,15 @@ namespace lib\myLibs\console {
       if (false === isset($dbConn[$dbConnKey]))
       {
         if (null === $dbConnKey)
-          throw new LionelException('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
+          throw new OtraException('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
 
-        throw new LionelException('The configuration \'' . $dbConnKey . '\' does not exist in your configuration file.', E_CORE_WARNING);
+        throw new OtraException('The configuration \'' . $dbConnKey . '\' does not exist in your configuration file.', E_CORE_WARNING);
       }
 
       $infosDb = $dbConn[$dbConnKey];
 
       if (false === isset($infosDb['motor']))
-        throw new LionelException('You haven\'t specified the database engine in your configuration file.', E_CORE_WARNING);
+        throw new OtraException('You haven\'t specified the database engine in your configuration file.', E_CORE_WARNING);
 
       self::initBase();
 
@@ -201,7 +201,7 @@ namespace lib\myLibs\console {
      * @param string $databaseName Database name
      * @param bool $force If true, we erase the database before the tables creation.
      *
-     * @throws LionelException
+     * @throws OtraException
      */
     public static function createDatabase(string $databaseName, bool $force = false)
     {
@@ -224,7 +224,7 @@ namespace lib\myLibs\console {
       } catch(\Exception $e)
       {
         $inst->rollBack();
-        throw new LionelException('Procedure aborted when executing ' . $e->getMessage());
+        throw new OtraException('Procedure aborted when executing ' . $e->getMessage());
       }
 
       $inst->commit();
@@ -326,7 +326,7 @@ namespace lib\myLibs\console {
      * @param array  $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
      * @param string $createdFile    Name of the fixture file that will be created.
      *
-     * @throws LionelException If a database relation is missing or if we can't create the fixtures folder
+     * @throws OtraException If a database relation is missing or if we can't create the fixtures folder
      */
     public static function createFixture(
       string $databaseName,
@@ -365,10 +365,10 @@ namespace lib\myLibs\console {
         try
         {
           if (false === mkdir($fixtureFolder, 0777, true))
-            throw new LionelException($exceptionMessage, E_CORE_ERROR);
+            throw new OtraException($exceptionMessage, E_CORE_ERROR);
         } catch(\Exception $e)
         {
-          throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
       }
 
@@ -425,7 +425,7 @@ namespace lib\myLibs\console {
         foreach ($properties as $property => $value)
         {
           if (true === in_array($property, $sortedTables) && false === isset($tableData['relations'][$property]))
-            throw new LionelException('Either it lacks a relation to the table `' . $table . '` for a `' . $property . '` like property or you have put this property name by error in file `' . $table . '.yml.', E_CORE_ERROR);
+            throw new OtraException('Either it lacks a relation to the table `' . $table . '` for a `' . $property . '` like property or you have put this property name by error in file `' . $table . '.yml.', E_CORE_ERROR);
 
           // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
           $theProperties .= '`' .
@@ -500,7 +500,7 @@ namespace lib\myLibs\console {
      * @param int    $mask         1 => we truncate the table before inserting the fixtures,
      *                             2 => we clean the fixtures sql files and THEN we truncate the table before inserting the fixtures
      *
-     * @throws LionelException
+     * @throws OtraException
      *  If we cannot open the YAML fixtures folder
      *  If there is no YAML schema
      *  If the file that describe the table priority/order doesn't exist
@@ -514,13 +514,13 @@ namespace lib\myLibs\console {
 
       // Analyzes the database schema in order to guess the properties types
       if (false === file_exists(self::$schemaFile))
-        throw new LionelException('You have to create a database schema file in config/data/schema.yml before using fixtures. Searching for : ' . self::$schemaFile, E_NOTICE);
+        throw new OtraException('You have to create a database schema file in config/data/schema.yml before using fixtures. Searching for : ' . self::$schemaFile, E_NOTICE);
 
       // Looks for the fixtures file
       if (false === ($folder = opendir(self::$pathYmlFixtures)))
       {
         closedir($folder);
-        throw new LionelException('Cannot open the YAML fixtures folder ' . self::$pathYmlFixtures . ' !', E_CORE_ERROR);
+        throw new OtraException('Cannot open the YAML fixtures folder ' . self::$pathYmlFixtures . ' !', E_CORE_ERROR);
       }
 
       $folder = opendir(self::$pathYmlFixtures);
@@ -528,13 +528,13 @@ namespace lib\myLibs\console {
       if (false === file_exists(self::$tablesOrderFile))
       {
         closedir($folder);
-        throw new LionelException('You must use the database generation task before using the fixtures (no ' . substr(self::$tablesOrderFile, strlen(BASE_PATH)) . ' file)', E_CORE_WARNING);
+        throw new OtraException('You must use the database generation task before using the fixtures (no ' . substr(self::$tablesOrderFile, strlen(BASE_PATH)) . ' file)', E_CORE_WARNING);
       }
 
       if (false === file_exists(self::$pathSqlFixtures) && false === mkdir(self::$pathSqlFixtures, 0777, true))
       {
         closedir($folder);
-        throw new LionelException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
+        throw new OtraException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
       }
 
       try {
@@ -588,7 +588,7 @@ namespace lib\myLibs\console {
       if (true === $weNeedToTruncate && false === file_exists($truncatePath))
       {
         if (false === mkdir($truncatePath))
-          throw new LionelException('Cannot create the folder ' . $truncatePath);
+          throw new OtraException('Cannot create the folder ' . $truncatePath);
       }
 
       foreach ($tablesOrder as $table)
@@ -645,12 +645,12 @@ namespace lib\myLibs\console {
      * @param string $file
      * @param string $databaseName Where to execute the SQL file ?
      *
-     * @throws LionelException if the file to execute doesn't exist
+     * @throws OtraException if the file to execute doesn't exist
      */
     public static function executeFile(string $file, string $databaseName = null)
     {
       if (false === file_exists($file))
-        throw new LionelException('The file "' . $file . '" does not exist !', E_CORE_ERROR, __FILE__, __LINE__);
+        throw new OtraException('The file "' . $file . '" does not exist !', E_CORE_ERROR, __FILE__, __LINE__);
 
       if (false === self::$init)
         self::init();
@@ -675,7 +675,7 @@ namespace lib\myLibs\console {
       } catch(\Exception $e)
       {
         $inst->rollBack();
-        throw new LionelException('Procedure aborted. ' . $e->getMessage());
+        throw new OtraException('Procedure aborted. ' . $e->getMessage());
       }
 
       $inst->commit();
@@ -687,7 +687,7 @@ namespace lib\myLibs\console {
      * @param string $databaseName The database name
      * @param string $table        The table name
      *
-     * @throws LionelException
+     * @throws OtraException
      */
     private static function _executeFixture(string $databaseName, string $table)
     {
@@ -702,7 +702,7 @@ namespace lib\myLibs\console {
      *
      * @return Sql
      *
-     * @throws LionelException
+     * @throws OtraException
      */
     public static function dropDatabase(string $databaseName) : Sql
     {
@@ -716,7 +716,7 @@ namespace lib\myLibs\console {
       } catch (\Exception $e)
       {
         SQL::$instance->rollback();
-        throw new LionelException('Procedure aborted. ' . $e->getMessage());
+        throw new OtraException('Procedure aborted. ' . $e->getMessage());
       }
 
       SQL::$instance->commit();
@@ -735,7 +735,7 @@ namespace lib\myLibs\console {
      *
      * @return string $dbFile Name of the sql file generated
      *
-     * @throws LionelException If the YAML schema doesn't exist.
+     * @throws OtraException If the YAML schema doesn't exist.
      *   If there is a missing foreign/local key
      */
     public static function generateSqlSchema( string $databaseName, bool $force = false) : string
@@ -761,7 +761,7 @@ namespace lib\myLibs\console {
 
       // We checks if the YML schema exists
       if (false === file_exists(self::$schemaFile))
-        throw new LionelException('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' does not exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
+        throw new OtraException('The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) . '\' does not exist. We can\'t generate the SQL schema without it.', E_CORE_ERROR, __FILE__, __LINE__);
 
       // We ensure us that all the needed folders exist
       if (false === file_exists(self::$pathSql))
@@ -860,10 +860,10 @@ namespace lib\myLibs\console {
           foreach ($properties['relations'] as $key => &$relation)
           {
             if (false === isset($relation['local']))
-              throw new LionelException('You don\'t have specified a local key for the constraint concerning table ' . $key, E_CORE_ERROR);
+              throw new OtraException('You don\'t have specified a local key for the constraint concerning table ' . $key, E_CORE_ERROR);
 
             if (false === isset($relation['foreign']))
-              throw new LionelException('You don\'t have specified a foreign key for the constraint concerning table '  . $key, E_CORE_ERROR);
+              throw new OtraException('You don\'t have specified a foreign key for the constraint concerning table '  . $key, E_CORE_ERROR);
 
             // No problems. We can add the relations to the SQL.
             $tableSql[$table] .= ',' . PHP_EOL . '  CONSTRAINT ' .
@@ -940,7 +940,7 @@ namespace lib\myLibs\console {
      * @param string $databaseName Database name
      * @param string $tableName    Table name
      *
-     * @throws LionelException If we cannot create the truncate folder.
+     * @throws OtraException If we cannot create the truncate folder.
      * If we cannot truncate the table.
      */
     public static function truncateTable( string $databaseName, string $tableName)
@@ -953,7 +953,7 @@ namespace lib\myLibs\console {
       if (false === file_exists($truncatePath))
       {
         if (false === mkdir($truncatePath, 0777, true))
-          throw new LionelException('Cannot create the folder ' . $truncatePath);
+          throw new OtraException('Cannot create the folder ' . $truncatePath);
       }
 
       $file = $databaseName . '_' . $tableName . '.sql';
@@ -1018,7 +1018,7 @@ namespace lib\myLibs\console {
      * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
-     * @throws LionelException If the database doesn't exist.
+     * @throws OtraException If the database doesn't exist.
      *
      * @return mixed Returns a SQL instance.
      */
@@ -1038,7 +1038,7 @@ namespace lib\myLibs\console {
       // Checks if the database concerned exists.
       // We check lowercase in case the database has converted the name to lowercase
       if (false === in_array(strtolower($database), $schemaInformations) && false === in_array($database, $schemaInformations))
-        throw new LionelException('The database \'' . $database . '\' does not exist.', E_CORE_ERROR);
+        throw new OtraException('The database \'' . $database . '\' does not exist.', E_CORE_ERROR);
 
       return $db;
     }
@@ -1049,7 +1049,7 @@ namespace lib\myLibs\console {
      * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
-     * @throws LionelException If we cannot create the folder that will contain the schema
+     * @throws OtraException If we cannot create the folder that will contain the schema
      */
     public static function importSchema(?string $database = null, ?string $confToUse = null) : void
     {
@@ -1125,10 +1125,10 @@ namespace lib\myLibs\console {
         try
         {
           if (false === mkdir($saveFolder, 0777, true))
-            throw new LionelException($exceptionMessage, E_CORE_ERROR);
+            throw new OtraException($exceptionMessage, E_CORE_ERROR);
         } catch(\Exception $e)
         {
-          throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
       }
 
@@ -1141,7 +1141,7 @@ namespace lib\myLibs\console {
      * @param string $database (optional)
      * @param string $confToUse (optional)
      *
-     * @throws LionelException
+     * @throws OtraException
      */
     public static function importFixtures(?string $database = null, ?string $confToUse = null) : void
     {
@@ -1167,10 +1167,10 @@ namespace lib\myLibs\console {
         try
         {
           if (false === mkdir(self::$pathYmlFixtures, 0777, true))
-            throw new LionelException($exceptionMessage, E_CORE_ERROR);
+            throw new OtraException($exceptionMessage, E_CORE_ERROR);
         } catch(\Exception $e)
         {
-          throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
       }
 

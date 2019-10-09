@@ -6,9 +6,9 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
-use lib\myLibs\LionelException;
+use lib\myLibs\OtraException;
 
-class LionelExceptionCLI extends \Exception
+class OtraExceptionCLI extends \Exception
 {
   const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,
@@ -19,9 +19,9 @@ class LionelExceptionCLI extends \Exception
   /**
    * Shows an exception 'colorful' display for command line commands.
    *
-   * @param LionelException $exception
+   * @param OtraException $exception
    */
-  public static function showMessage(LionelException $exception)
+  public static function showMessage(OtraException $exception)
   {
     echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 

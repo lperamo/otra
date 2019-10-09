@@ -5,7 +5,7 @@
 
 namespace lib\myLibs\bdd;
 
-use lib\myLibs\{ LionelException, bdd\Mysql, Logger };
+use lib\myLibs\{ OtraException, bdd\Mysql, Logger };
 use config\AllConfig;
 
 class Sql
@@ -31,14 +31,14 @@ class Sql
   /**
    * @param string $sgbd
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   public function __construct(string $sgbd)
   {
     $theSgbd = ucfirst(strtolower($sgbd));
     // Is this driver available ?
     if (false === in_array($theSgbd, self::$_sgbds))
-      throw new LionelException('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+      throw new OtraException('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
 
     self::$_currentSGBD = __NAMESPACE__ . '\\' . $theSgbd;
   }
@@ -54,7 +54,7 @@ class Sql
    *
    * @return bool|Sql|resource
    *
-   * @throws LionelException
+   * @throws OtraException
    *
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $sgbd     Kind of sgbd
@@ -76,11 +76,11 @@ class Sql
         self::$_currentConn = $conn;
         self::$_activeConn[$conn] = null;
       } else
-        throw new LionelException('There is no ' . $conn . ' configuration available in the AllConfig file !');
+        throw new OtraException('There is no ' . $conn . ' configuration available in the AllConfig file !');
     } else
     {
       if (false === isset(AllConfig::$defaultConn))
-        throw new LionelException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
+        throw new OtraException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
 
       $conn = AllConfig::$defaultConn;
 
@@ -143,10 +143,10 @@ class Sql
         self::$_CURRENT_CONN = $activeConn['conn'];
       }catch(\Exception $e)
       {
-        throw new LionelException($e->getMessage());
+        throw new OtraException($e->getMessage());
       }
     }else
-      throw new LionelException('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+      throw new OtraException('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }

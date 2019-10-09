@@ -336,7 +336,7 @@ class Tasks
    *
    * @param array $argv
    *
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public static function sql(array $argv)
   {
@@ -379,7 +379,7 @@ class Tasks
    *
    * @param array $argv
    *
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public static function sql_gdb(array $argv)
   {
@@ -411,7 +411,7 @@ class Tasks
    *
    * @param array $argv
    *
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public static function sql_gf(array $argv)
   {
@@ -441,7 +441,7 @@ class Tasks
   /**
    * @param array $argv
    *
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public static function sql_is(array $argv)
   {
@@ -469,7 +469,7 @@ class Tasks
   /**
    * @param array $argv
    *
-   * @throws \lib\myLibs\LionelException
+   * @throws \lib\myLibs\OtraException
    */
   public static function sql_if(array $argv)
   {

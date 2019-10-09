@@ -1,6 +1,6 @@
 <?
 
-use lib\myLibs\{Controller, LionelException};
+use lib\myLibs\{Controller, OtraException};
 use phpunit\framework\TestCase;
 
 /**
@@ -18,7 +18,7 @@ class BlocksTest extends TestCase
   /**
    * Use of blocks without override
    *
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testSimpleBlockSystem()
@@ -36,7 +36,7 @@ class BlocksTest extends TestCase
   /**
    * Use of overridden blocks and an inline block.
    *
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testAdvancedBlockSystem()
@@ -56,7 +56,7 @@ class BlocksTest extends TestCase
    * - an inline title block,
    * - alternate blocks between blocks override and a parent block call.
    *
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testComplexLayout()
@@ -79,7 +79,7 @@ class BlocksTest extends TestCase
    * - parent block call
    * - the end of the content after a child block is not empty
    *
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCompleteLayout()

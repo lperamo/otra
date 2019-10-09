@@ -5,7 +5,7 @@
  * @author Lionel Péramo */
 
 namespace lib\myLibs\bdd;
-use lib\myLibs\LionelException;
+use lib\myLibs\OtraException;
 use PDO, PDOStatement;
 
 class Pdomysql
@@ -20,7 +20,7 @@ class Pdomysql
    * @param string $password Password
    *
    * @return bool|PDO Returns a MySQL link identifier on success, or false on error
-   * @throws LionelException
+   * @throws OtraException
    */
   public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
   {
@@ -29,7 +29,7 @@ class Pdomysql
       $conn = new PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
-      throw new LionelException('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
+      throw new OtraException('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
     }
 
     return $conn;
@@ -42,7 +42,7 @@ class Pdomysql
    *
    * @return resource Returns a resource on success, otherwise an exception is raised
    *
-   * @throws LionelException
+   * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
   public static function query($query)
@@ -52,7 +52,7 @@ class Pdomysql
     if (false === $result)
     {
       $errorInfo = Sql::$_CURRENT_CONN->errorInfo();
-      throw new LionelException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
+      throw new OtraException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
     } else
       return $result;
   }

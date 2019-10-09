@@ -123,9 +123,9 @@ function getArgumentType(&$index, &$value)
   switch($index)
   {
     case 0:
-      if (true === is_int($value) && true === isset(lib\myLibs\LionelException::$codes[$value]))
+      if (true === is_int($value) && true === isset(lib\myLibs\OtraException::$codes[$value]))
       {
-        $value = lib\myLibs\LionelException::$codes[$value];
+        $value = lib\myLibs\OtraException::$codes[$value];
         return 'Error type';
       }
 

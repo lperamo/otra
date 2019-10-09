@@ -36,7 +36,7 @@ class Controller extends MasterController
    *
    * @return string parent::$template Content of the template
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
@@ -44,7 +44,7 @@ class Controller extends MasterController
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 
     if (false === file_exists($templateFile))
-      throw new LionelException('File not found ! : ' . $templateFile);
+      throw new OtraException('File not found ! : ' . $templateFile);
 
     if (true === $ajax)
       self::$ajax = $ajax;

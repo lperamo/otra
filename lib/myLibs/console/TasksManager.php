@@ -61,10 +61,10 @@ class TasksManager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    require CORE_PATH . 'LionelException.php';
+    require CORE_PATH . 'OtraException.php';
 
     set_error_handler(function ($errno, $message, $file, $line, $context) {
-      throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
+      throw new \lib\myLibs\OtraException($message, $errno, $file, $line, $context);
     });
 
     try

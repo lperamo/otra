@@ -2,7 +2,7 @@
 
 use phpunit\framework\TestCase;
 use config\AllConfig;
-use lib\myLibs\{bdd\Sql,LionelException};
+use lib\myLibs\{bdd\Sql,OtraException};
 
 /**
  * @runTestsInSeparateProcesses
@@ -14,6 +14,7 @@ class SqlTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
+    define('CACHE_PATH', BASE_PATH . 'cache/');
   }
 
   /**
@@ -55,7 +56,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    */
   private function createDatabaseForTest() {
     require(BASE_PATH . 'tests/config/AllConfig.php');
@@ -72,7 +73,7 @@ class SqlTest extends TestCase
    */
   public function testConstructBadSGBD()
   {
-    $this->expectException(LionelException :: class);
+    $this->expectException(OtraException :: class);
     $this->expectExceptionCode(E_CORE_ERROR);
     $this->expectExceptionMessageRegExp("@This SGBD 'test' doesn't exist...yet ! Available SGBD are : (?:\w|,|\s)*@");
     new Sql('test');
@@ -80,7 +81,7 @@ class SqlTest extends TestCase
 
   /**
    * @throws ReflectionException
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    */
@@ -106,7 +107,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    */
@@ -126,7 +127,7 @@ class SqlTest extends TestCase
    *
    * @return mixed
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   public function fetch(string $fetchMethod, $column = null)
   {
@@ -149,7 +150,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    *         depends on testConstruct, AllConfig
    */
@@ -178,7 +179,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -195,7 +196,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -211,7 +212,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -227,7 +228,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -243,7 +244,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -259,7 +260,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -278,7 +279,7 @@ class SqlTest extends TestCase
   //public function testFreeResult(){}
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    */
@@ -293,12 +294,12 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testSelectDB()
   {
-    $this->expectException(LionelException :: class);
+    $this->expectException(OtraException :: class);
     $this->expectExceptionMessage('This function does not exist with PDO and mysql driver is now deprecated !');
 
     try
@@ -307,12 +308,12 @@ class SqlTest extends TestCase
       $sql->selectDb();
     } catch (Exception $e)
     {
-      throw new LionelException('This function does not exist with PDO and mysql driver is now deprecated !');
+      throw new OtraException('This function does not exist with PDO and mysql driver is now deprecated !');
     }
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -330,7 +331,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -348,7 +349,7 @@ class SqlTest extends TestCase
 
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -365,7 +366,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *

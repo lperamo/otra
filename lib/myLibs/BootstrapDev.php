@@ -32,9 +32,9 @@ spl_autoload_register(function(string $className)
  * @param int    $line
  * @param array  $context
  *
- * @throws \lib\myLibs\LionelException
+ * @throws \lib\myLibs\OtraException
  */
-function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\LionelException($message, $errno, $file, $line, $context); }
+function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 

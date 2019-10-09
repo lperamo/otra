@@ -2,7 +2,7 @@
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
 use lib\myLibs\
-{LionelException, console\Database, bdd\Sql};
+{OtraException, console\Database, bdd\Sql};
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -41,6 +41,7 @@ class DatabaseTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
+    define('CACHE_PATH', BASE_PATH . 'cache/');
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
@@ -59,7 +60,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    */
   protected function tearDown(): void
   {
@@ -69,7 +70,7 @@ class DatabaseTest extends TestCase
   /**
    * Clean files and the database that are created for tests.
    *
-   * @throws LionelException
+   * @throws OtraException
    */
   protected function cleanAll()
   {
@@ -89,7 +90,7 @@ class DatabaseTest extends TestCase
    *
    * @param array $fileOrFolders
    *
-   * @throws LionelException If we cannot remove a file or a folder
+   * @throws OtraException If we cannot remove a file or a folder
    */
   private function cleanFileAndFolders(array $fileOrFolders)
   {
@@ -108,7 +109,7 @@ class DatabaseTest extends TestCase
           $method = true === $file->isDir() ? 'rmdir' : 'unlink';
 
           if (false === $method($realPath))
-            throw new LionelException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
+            throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
         }
 
         $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
@@ -116,10 +117,10 @@ class DatabaseTest extends TestCase
         try
         {
           if (false === rmdir($folder))
-            throw new LionelException($exceptionMessage, E_CORE_ERROR);
+            throw new OtraException($exceptionMessage, E_CORE_ERROR);
         } catch (Exception $e)
         {
-          throw new LionelException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
       }
     }
@@ -131,7 +132,7 @@ class DatabaseTest extends TestCase
    * @param array $filesOrFoldersSrc Must be the absolute path
    * @param array $filesOrFoldersDest Must be the absolute path
    *
-   * @throws LionelException If we can't create a folder or copy a file.
+   * @throws OtraException If we can't create a folder or copy a file.
    */
   private function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest)
   {
@@ -142,7 +143,7 @@ class DatabaseTest extends TestCase
       $initialFolder = $isDirFileOrFolderSrc ? $fileOrFolderDest : dirname($fileOrFolderDest);
 
       if (false === file_exists($initialFolder) && false === mkdir($initialFolder, 0777, true))
-        throw new LionelException('Cannot create the folder ' . $initialFolder);
+        throw new OtraException('Cannot create the folder ' . $initialFolder);
 
       if (true === file_exists($fileOrFolderSrc))
       {
@@ -176,11 +177,11 @@ class DatabaseTest extends TestCase
           if (true === is_dir($file))
           {
             if (false === mkdir($newPath))
-              throw new LionelException('Cannot create the folder \'' . $newPath . '\'.', E_CORE_ERROR);
+              throw new OtraException('Cannot create the folder \'' . $newPath . '\'.', E_CORE_ERROR);
           } else
           {
             if (false === copy($file, $newPath))
-              throw new LionelException('Cannot copy the file \'' . $basename . ' to ' . $newPath . '\'.', E_CORE_ERROR);
+              throw new OtraException('Cannot copy the file \'' . $basename . ' to ' . $newPath . '\'.', E_CORE_ERROR);
           }
         }
       }
@@ -246,7 +247,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    *
    * TODO Put assertions and remove the related annotation!
    * depends on testInitBase
@@ -269,7 +270,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * TODO add files before the test to test if they are cleaned
@@ -297,7 +298,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException If the original YAML schema can't be copied.
+   * @throws OtraException If the original YAML schema can't be copied.
    * @throws ReflectionException
    * depends on testInit, testInitCommand, testDropDatabase
    * @author Lionel Péramo
@@ -367,7 +368,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @doesNotPerformAssertions
@@ -404,7 +405,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateFixtures_TruncateOnly_NoSchema()
@@ -419,14 +420,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     // Launching the task
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage('You have to create a database schema file in config/data/' . self::$schemaFile . ' before using fixtures. Searching for : ');
     Database::createFixtures(self::$databaseName, 1);
   }
 
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * depends on testInit, testInitCommand, testCreateDatabase, testTruncateTable, testCreateFixture, test_ExecuteFixture
@@ -462,7 +463,7 @@ class DatabaseTest extends TestCase
     try
     {
       Database::createDatabase(self::$databaseName);
-    } catch (LionelException $le)
+    } catch (OtraException $le)
     {
       echo 'Schema already exists', PHP_EOL;
     }
@@ -479,7 +480,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @author Lionel Péramo
@@ -505,7 +506,7 @@ class DatabaseTest extends TestCase
     removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
 
     // assertions
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage('You must use the database generation task before using the fixtures (no ' .
       substr(self::$tablesOrderFilePath, strlen(BASE_PATH)) . ' file)');
 
@@ -514,7 +515,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @doesNotPerformAssertions
@@ -556,7 +557,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @author Lionel Péramo
@@ -565,13 +566,13 @@ class DatabaseTest extends TestCase
   {
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
 
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage('The file "blabla" does not exist !');
     Database::executeFile('blabla');
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    * depends on testInitBase, testCreateDatabase
    * @doesNotPerformAssertions
@@ -615,7 +616,7 @@ class DatabaseTest extends TestCase
 
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    * depends on testInit, testInitCommand
    *
@@ -665,7 +666,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * TODO Do a complete test not just a type assertion
@@ -696,7 +697,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * depends on testInitBase
@@ -711,13 +712,13 @@ class DatabaseTest extends TestCase
     removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
 
     // launching the task
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The file '" . substr(self::$schemaAbsolutePath, strlen(BASE_PATH)) . "' does not exist. We can't generate the SQL schema without it.");
     Database::generateSqlSchema(self::$databaseName);
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * depends on testInitBase
@@ -742,7 +743,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * depends on testInitBase
@@ -767,7 +768,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * TODO Create a test fixture file in order to test that function !
@@ -788,7 +789,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws ReflectionException
-   * @throws LionelException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    *
@@ -835,7 +836,7 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'testDB' does not exist.");
 
     removeMethodScopeProtection(Database::class, INIT_IMPORTS_FUNCTION)
@@ -843,7 +844,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @doesNotPerformAssertions
@@ -887,7 +888,7 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     // assertions about exceptions
-    $this->expectException(LionelException::class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'noBDD' does not exist.");
 
     // launching task
@@ -896,7 +897,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * @author Lionel Péramo
@@ -926,7 +927,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws LionelException
+   * @throws OtraException
    * @throws ReflectionException
    *
    * depends on testInit, testInitImports

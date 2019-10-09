@@ -97,7 +97,7 @@ define(
 );
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
-  throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
+  throw new \lib\myLibs\OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];
