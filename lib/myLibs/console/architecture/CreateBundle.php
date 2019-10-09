@@ -46,7 +46,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
   }
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
-  mkdir(BUNDLE_BASE_PATH, 0755);
+  mkdir(BUNDLE_BASE_PATH, 0755, true);
   echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, 'bundles/', $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
