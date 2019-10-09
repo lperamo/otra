@@ -7,15 +7,18 @@ This file can be moved in a later version of the framework.<br>
 
 The main configuration file is `config/AllConfig.php`.<br>
 It contains generic configuration that will work for development and production environments.<br>
-The related environment specific configuration files are in `config/dev/AllConfig.php` and `config/prod/AllConfig.php`
-respectively.
 
-Values that can be modified : 
+Values that can be modified in this file :
 - `CACHE_PATH` : location of the generated files, especially the productions files for now
 - `LAYOUT` (will be removed in future versions)
 - `VERSION` : used for dynamic caching of CSS/JS resources
 - `RESOURCE_FILE_MIN_SIZE` : aimed to load CSS/JS resources directly into the templates if their size is under this size.
 - `FWK_HASH` : hash used to secure paths to the generated production files.
+
+The related environment specific configuration files are in `config/dev/AllConfig.php` and `config/prod/AllConfig.php`
+respectively.
+
+Beware, in this file, the driver name must match with the related class name in OTRA (e.g. : `Pdomysql`). 
 
 You must, even empty (for the time being), have a file `bundles/App/config/Config.php` where `App` is the name of ... 
 your application.
