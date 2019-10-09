@@ -147,10 +147,14 @@ foreach($routes as &$route)
 
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
-define ('ROUTE_PATH', 0);
-function sortRoutes(array $routeA, array $routeB) : bool
+if (function_exists('sortRoutes') === false)
 {
-  return (strlen($routeA['chunks'][ROUTE_PATH]) <= strlen($routeB['chunks'][ROUTE_PATH])) ? 1 : -1;
+  define ('ROUTE_PATH', 0);
+
+  function sortRoutes(array $routeA, array $routeB): bool
+  {
+    return (strlen($routeA['chunks'][ROUTE_PATH]) <= strlen($routeB['chunks'][ROUTE_PATH])) ? 1 : -1;
+  }
 }
 
 usort($routesArray, 'sortRoutes');

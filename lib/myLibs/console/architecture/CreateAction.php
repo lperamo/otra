@@ -9,9 +9,10 @@
  * @param string $controllerPath Absolute path to the controller
  * @param string $actionName
  * @param bool   $interactive
+ * @param bool   $consoleForce
  */
-function createAction(string $bundleName, string $moduleName,
-                      string $controllerName, string &$controllerPath, string $actionName, bool $interactive)
+function createAction(string $bundleName, string $moduleName, string $controllerName,
+                      string &$controllerPath, string $actionName, bool $interactive, bool $consoleForce)
 {
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -76,6 +77,96 @@ class ' . $upperActionName . 'Action extends Controller
 
   // We just create an empty template file
   touch($template);
+
+  if ($consoleForce === false)
+  {
+    $routesConfigFolder = BASE_PATH . 'bundles/' . $bundleName . '/config';
+    $routeConfigurationFile = BASE_PATH . 'bundles/' . $bundleName . '/config/Routes.php';
+    $routeConfiguration = $controllerName . $upperActionName . "' => [
+        'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '" . $moduleName
+      . "', '" . $controllerName . "', '" . $upperActionName . "Action'],
+        'resources' => [
+          'template' => true
+        ]
+      ]";
+
+    // If there already are actions for this bundle, we have to complete the configuration file not replace it
+    if (file_exists($routesConfigFolder) === true)
+    {
+      $routesArray = file_exists($routeConfigurationFile) === true ? require $routeConfigurationFile : [];
+      $routesArray[$controllerName . $upperActionName] = [
+        'chunks' => [
+          '/' . $controllerName . $upperActionName,
+          $bundleName,
+          $moduleName,
+          $controllerName,
+          $upperActionName . 'Action'
+        ],
+        'resources' => [
+          'template' => true
+        ]
+      ];
+      $routesArray = var_export($routesArray, true);
+
+      // replaces by short array notation
+      $routesArray = str_replace(
+        [
+          'array (',
+          ')',
+          '=> ' . PHP_EOL . '    [' . PHP_EOL . '      ',
+          ',' . PHP_EOL . '    ]',
+          '],' . PHP_EOL . '  ]'
+        ],
+        [
+          '[',
+          ']',
+          '=> [ ',
+          ']',
+          ']' . PHP_EOL . '  ]'
+        ],
+        $routesArray
+      );
+
+      // removes useless numerical indexes
+      $routesArray = preg_replace('/[0-9]{1,} => /', '', $routesArray);
+
+      // now we can detect safely some other unwanted line breaks
+      $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'',$routesArray);
+
+      file_put_contents(
+        $routeConfigurationFile,
+        '<?php
+  return ' . $routesArray . ';
+?>'
+      );
+    } else
+    { // If it's not the case, we replace it
+      // First, we create the folder that will hold the routes configuration file
+      mkdir($routesConfigFolder);
+
+      // Adds a routes config file
+      file_put_contents(
+        $routeConfigurationFile,
+        "<?php
+      return [
+        '" . $routeConfiguration . "
+      ];
+    ?>"
+      );
+    }
+
+    echo 'Route configuration file ', CLI_LIGHT_CYAN, $routeConfigurationFile, CLI_GREEN, ' created.',
+      PHP_EOL;
+
+    // We update the routes configuration as we just add one route.
+    require CORE_PATH . 'console/UpdateConf.php';
+
+    // We update the class mapping since we have one action more.
+    if (defined('VERBOSE') === false)
+      define('VERBOSE', 0);
+
+    require CORE_PATH . 'console/GenClassMap.php';
+  }
 }
 
 /**
@@ -85,19 +176,20 @@ class ' . $upperActionName . 'Action extends Controller
  * @param string $controllerName
  * @param string $controllerPath
  * @param string $actionName
+ * @param bool   $consoleForce
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string &$controllerPath, string &$actionName)
+                        string &$controllerPath, string &$actionName, bool $consoleForce = false)
 {
   /** @var string $interactive */
   if ($interactive === true)
   {
     while($actionName !== 'n')
     {
-      createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive);
+      createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
       $actionName = promptUser('What is the name of the next action ? (type n to stop)');
     }
   } else
-    createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive);
+    createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
 }
 ?>
