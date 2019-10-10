@@ -86,7 +86,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
 
   if (false === isset($route['resources']))
   {
-    echo status('Nothing to do', 'cyan'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
+    echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
     continue;
   }
 
@@ -113,10 +113,16 @@ for($i = 0; $i < $cptRoutes; ++$i)
   {
     if (strpos(implode(array_keys($resources)), 'css') !== false)
     {
-      gzCompressFile(loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName), null,9);
-      echo status('CSS');
+      $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
+
+      if ($pathAndFile !== null)
+      {
+        gzCompressFile(loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName), null, 9);
+        echo status('CSS');
+      } else
+        echo status('NO CSS', 'CLI_CYAN');
     } else
-      echo status('NO CSS', 'cyan');
+      echo status('NO CSS', 'CLI_CYAN');
   }
 
   /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -158,14 +164,14 @@ for($i = 0; $i < $cptRoutes; ++$i)
 
       echo status('JS');
     } else
-      echo status('NO JS', 'cyan');
+      echo status('NO JS', 'CLI_CYAN');
   }
 
   /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
   if ($mask & 1)
   {
     if (false === isset($resources['template']))
-      echo status('No TEMPLATE', 'cyan');
+      echo status('No TEMPLATE', 'CLI_CYAN');
     else
     {
       // Generates the gzipped template files
@@ -180,7 +186,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
         echo status('TEMPLATE');
       else
       {
-        status('TEMPLATE', 'red');
+        status('TEMPLATE', 'CLI_RED');
         $noErrors = false;
       }
     }
@@ -197,7 +203,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
  *
  * @return string
  */
-function status(string $status, string $color = 'lightGreen') : string { return ' [' . $color() . $status . CLI_LIGHT_GRAY. ']'; }
+function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
 
 /**
  * Cleans the css (spaces and comments)
@@ -225,11 +231,11 @@ function cleanCss(string $content) : string
  * @param string $bundlePath
  * @param string $shaName
  *
- * @return string Return the path of the 'macro' resource file
+ * @return null|string Return the path of the 'macro' resource file
  */
 function loadAndSaveResources(array $resources, array $routeInfos, string $type, string $bundlePath, string $shaName)
+: ?string
 {
-
   ob_start();
   loadResource($resources, $routeInfos, 'first_' . $type, $bundlePath);
   loadResource($resources, $routeInfos, 'bundle_' . $type, $bundlePath, '');
@@ -241,7 +247,7 @@ function loadAndSaveResources(array $resources, array $routeInfos, string $type,
 
   // If there was no resources to optimize
   if ('' === $allResources)
-    return status('No ' . strtoupper($type), 'cyan');
+    return null;
 
   $resourceFolderPath = CACHE_PATH . $type . '/';
   $pathAndFile = $resourceFolderPath . $shaName;
