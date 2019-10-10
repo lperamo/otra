@@ -241,5 +241,13 @@ class Pdomysql
   {
     return Sql::$_CURRENT_CONN->rollBack();
   }
+
+  /**
+   * @return array
+   */
+  public static function errorInfo() : array
+  {
+    return Sql::$_CURRENT_CONN->errorInfo();
+  }
 }
 ?>
