@@ -52,6 +52,11 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         if ('.php' !== substr($entry, $posDot))
           continue;
 
+        // We only need files that match with the actual environment
+        // so, for example, we'll not include dev config if we are in prod mode !
+        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER['APP_ENV'] === 'prod')
+          continue;
+
         $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
         preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
 
