@@ -22,7 +22,7 @@ echo CLI_BGD_LIGHT_BLACK . str_repeat(' ', END_PADDING + 39) . "\n" .
   PHP_EOL
 . BLUE_ON_LIGHT_BLACK . "'|.     || " . LIGHTBLUE_ON_LIGHT_BLACK . "   ||    " . BLUE_ON_LIGHT_BLACK . " ||   |.  " . LIGHTBLUE_ON_LIGHT_BLACK . " |''''|. " . str_repeat(' ', END_PADDING) .
   PHP_EOL
-. BLUE_ON_LIGHT_BLACK . " ''|...|'  " . LIGHTBLUE_ON_LIGHT_BLACK . "  .||.   " . BLUE_ON_LIGHT_BLACK . ".||.  '|' " . LIGHTBLUE_ON_LIGHT_BLACK . ".'    '|'" . str_repeat(' ', 21) . "
+. BLUE_ON_LIGHT_BLACK . " ''|...|'  " . LIGHTBLUE_ON_LIGHT_BLACK . "  .||.   " . BLUE_ON_LIGHT_BLACK . ".||.  '|' " . LIGHTBLUE_ON_LIGHT_BLACK . ".'    '|'" . str_repeat(' ', END_PADDING) . "
                                                             
                        By Péramo Lionel.                    
                                                             
