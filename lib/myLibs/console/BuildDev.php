@@ -218,7 +218,7 @@ foreach($iterator as $entry)
         else
         {
           if ($jsFileExists === true)
-            echo CLI_BROWN, 'Something was wrong during typescript compilation but this may not be blocking.',
+            echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
             END_COLOR, PHP_EOL, $output, 'Launching Google Closure Compiler...', PHP_EOL;
           else
             echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',

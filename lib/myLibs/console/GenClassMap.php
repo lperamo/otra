@@ -139,7 +139,7 @@ if (VERBOSE !== 1)
   return;
 
 define('FIRST_CLASS_PADDING', 80);
-echo CLI_BROWN, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
+echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 
 foreach($classes as $startClassName => &$finalClassName)
@@ -165,8 +165,8 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 
   foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
   {
-    echo str_pad('Class ' . CLI_BROWN . $key . END_COLOR . FIRST_CLASS_PADDING,
-      '.'), '=> possibly related file ', CLI_BROWN, $namespace, END_COLOR, PHP_EOL;
+    echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR . FIRST_CLASS_PADDING,
+      '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;
   }
 }
 

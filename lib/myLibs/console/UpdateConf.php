@@ -8,7 +8,7 @@ if (function_exists('writeConfigFile') === false)
   {
     if (true === empty($content))
     {
-      echo CLI_BROWN, 'Nothing to put into ', CLI_LIGHT_BLUE, $configFile, CLI_BROWN,
+      echo CLI_YELLOW, 'Nothing to put into ', CLI_LIGHT_BLUE, $configFile, CLI_YELLOW,
         ' so we\'ll delete the main file if it exists.', END_COLOR, PHP_EOL;
 
       if (true === file_exists($configFile))

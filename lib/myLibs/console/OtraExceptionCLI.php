@@ -104,7 +104,7 @@ class OtraExceptionCLI extends \Exception
 
     foreach($headers as &$value)
     {
-      $output .= CLI_LIGHT_BLUE . '│' . CLI_BROWN . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) .
+      $output .= CLI_LIGHT_BLUE . '│' . CLI_YELLOW . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) .
       '_WIDTH'));
     }
 

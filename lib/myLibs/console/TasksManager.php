@@ -16,7 +16,7 @@ class TasksManager
    */
   public static function showCommands(string $message)
   {
-    echo PHP_EOL, CLI_BROWN, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
+    echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', 25, ' '),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
@@ -36,7 +36,7 @@ class TasksManager
           if ($category !== $paramsDesc[TASK_CATEGORY])
           {
             $category = $paramsDesc[TASK_CATEGORY];
-            echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
+            echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
           }
         } else
         {

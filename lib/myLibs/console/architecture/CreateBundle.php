@@ -15,7 +15,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
   while (true === file_exists(BUNDLE_ROOT_PATH . $bundleName))
   {
     // Erases the previous question before we ask...
-    $bundleName = promptUser('The bundle ' . CLI_LIGHT_CYAN . 'bundles/' . $bundleName . CLI_BROWN
+    $bundleName = promptUser('The bundle ' . CLI_LIGHT_CYAN . 'bundles/' . $bundleName . CLI_YELLOW
       . ' already exist. Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
@@ -35,7 +35,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
   {
     if ($bundleTask === true)
     {
-      echo CLI_BROWN,
+      echo CLI_YELLOW,
         (null === $bundleMask)
           ? 'You don\'t have specified which directories you want to create.'
           : 'The mask is incorrect.',

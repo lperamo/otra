@@ -39,7 +39,7 @@ if (function_exists('promptUser') === false)
    */
   function askQuestion(string $question): string
   {
-    echo CLI_BROWN, $question, END_COLOR, PHP_EOL;
+    echo CLI_YELLOW, $question, END_COLOR, PHP_EOL;
 
     return trim(fgets(fopen('php://stdin', 'r')));
   }

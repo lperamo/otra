@@ -17,15 +17,15 @@ if (isset($route) === true)
 
     if ($newRoute === null)
     {
-      echo CLI_RED, 'The route ', CLI_BROWN, $route, CLI_RED, ' does not exist.', END_COLOR;
+      echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
 
       return null;
     }
 
     // Otherwise, we suggest the closest name that we have found.
-    $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_BROWN. ' ! Do you mean ' . CLI_WHITE .
+    $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' . CLI_WHITE .
       $newRoute
-      . CLI_BROWN . ' ? (y/n)');
+      . CLI_YELLOW . ' ? (y/n)');
 
     if ('n' === $choice)
     {

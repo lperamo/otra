@@ -39,8 +39,8 @@ if (true === isset($argv[4]))
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_BROWN
-      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_BROWN . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
+      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)

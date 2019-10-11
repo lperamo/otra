@@ -141,10 +141,10 @@ class Tasks
       [
         'bundle' => 'The bundle in which the model is created',
         'how' => '1 => Creates from nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_BROWN . 'schema.yml' .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_YELLOW . 'schema.yml' .
           CLI_CYAN .
           PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . CLI_BROWN .'schema.yml' .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . CLI_YELLOW .'schema.yml' .
           CLI_CYAN
       ],
       ['optional', 'optional'],
@@ -230,7 +230,7 @@ class Tasks
 
   public static function deployDesc() : array {
     return [
-      'Deploy the site. ' . CLI_BROWN . '[WIP - Do not use yet !]' . END_COLOR,
+      'Deploy the site. ' . CLI_YELLOW . '[WIP - Do not use yet !]' . END_COLOR,
       [
         'mode' => '0 => Nothing to do (default)' . PHP_EOL .
           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => Generates php production files.' . PHP_EOL .
@@ -484,7 +484,7 @@ class Tasks
   public static function sql_ifDesc() : array
   {
     return [
-      'Import the fixtures from database into ' . CLI_BROWN . 'config/data/yml/fixtures' . CLI_CYAN . '.',
+      'Import the fixtures from database into ' . CLI_YELLOW . 'config/data/yml/fixtures' . CLI_CYAN . '.',
       [
         'databaseName' => 'The database name ! If not specified, we use the database specified in the configuration file.',
         'configuration' => 'The configuration that you want to use from your configuration file.'

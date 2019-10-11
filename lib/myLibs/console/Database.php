@@ -607,7 +607,7 @@ namespace lib\myLibs\console {
             $createdFile = $fixtureFileNameBeginning . $table . '.sql';
 
             if (true === file_exists($createdFile))
-              echo 'Fixture file creation aborted : the file ', CLI_BROWN, $databaseName . '_' . $table . '.sql', END_COLOR,
+              echo 'Fixture file creation aborted : the file ', CLI_YELLOW, $databaseName . '_' . $table . '.sql', END_COLOR,
             'already exists.', PHP_EOL;
 
             // Gets the fixture data
@@ -615,7 +615,7 @@ namespace lib\myLibs\console {
 
             if (false === isset($fixturesData[$table]))
             {
-              echo CLI_BROWN, 'No fixtures available for this table \'', $table, '\'.', END_COLOR, PHP_EOL;
+              echo CLI_YELLOW, 'No fixtures available for this table \'', $table, '\'.', END_COLOR, PHP_EOL;
 
               break;
             }
@@ -745,7 +745,7 @@ namespace lib\myLibs\console {
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
 
-      $msgBeginning = 'The \'SQL schema\' file ' . CLI_BROWN . $dbFileLong . END_COLOR;
+      $msgBeginning = 'The \'SQL schema\' file ' . CLI_YELLOW . $dbFileLong . END_COLOR;
 
       if (true === file_exists($dbFile))
       {
@@ -922,7 +922,7 @@ namespace lib\myLibs\console {
       if ($storeSortedTables)
       {
         file_put_contents(self::$tablesOrderFile, $tablesOrder);
-        echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_BROWN, basename
+        echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_YELLOW, basename
           (self::$tablesOrderFile), END_COLOR, PHP_EOL;
       }
 
@@ -1152,7 +1152,7 @@ namespace lib\myLibs\console {
 
       if (false === file_exists(self::$tablesOrderFile))
       {
-        echo CLI_BROWN, 'You must create the tables order file (', self::$tablesOrderFile . ') before using this task !', END_COLOR;
+        echo CLI_YELLOW, 'You must create the tables order file (', self::$tablesOrderFile . ') before using this task !', END_COLOR;
         exit(1);
       }
 
