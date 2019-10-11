@@ -3,7 +3,11 @@
  * Class mapping generation task
  *
  * @author Lionel Péramo */
-$dirs = ['bundles', 'config', 'lib'];
+$dirs = [
+  BASE_PATH . 'bundles',
+  BASE_PATH . 'config',
+  BASE_PATH . 'lib'
+];
 $classes = [];
 $processedDir = 0;
 
@@ -30,7 +34,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
    *
    * @return array
    */
-  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, &$classesThatMayHaveToBeAdded)
+  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, array &$classesThatMayHaveToBeAdded)
   {
     if ($folderHandler = opendir($dir))
     {
@@ -92,8 +96,14 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   }
 }
 
-foreach ($dirs as &$dir) {
-  list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, BASE_PATH . $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
+foreach ($dirs as &$dir)
+{
+  // if the user wants to launch tasks in an empty project when there are not a class map yet
+  // we need to check if the needed folders exist
+  if (file_exists($dir) === false)
+    mkdir($dir);
+
+  list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
 }
 
 if (VERBOSE === 1)

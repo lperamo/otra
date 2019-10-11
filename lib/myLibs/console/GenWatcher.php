@@ -143,6 +143,12 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
     . ($endColor ? END_COLOR : '');
 }
 
+/**
+ * @param string $header
+ * @param int    $padding
+ *
+ * @return string
+ */
 function debugHeader(string $header, int $padding)
 {
   return str_pad('│ ' . CLI_BOLD_LIGHT_GRAY . $header . END_COLOR, HEADER_COOKIE_PADDING);
@@ -425,8 +431,14 @@ while (true)
             {
               // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
               // and remove the dummy file ...
-              $generatedTemporaryJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '_viaTypescript.js';
-              $generatedJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '.js';
+              $jsFolder = $resourceFolder . '/js/';
+
+              // if the js folder corresponding to the ts folder does not exist yet, we create it
+              if (file_exists($jsFolder) === false)
+                mkdir($jsFolder);
+
+              $generatedTemporaryJsFile = $jsFolder . $fileInformations[0] . '_viaTypescript.js';
+              $generatedJsFile = $jsFolder . $fileInformations[0] . '.js';
 
               // Creating a temporary typescript json configuration file suited for the OTRA watcher.
               // We need to recreate it each time because the user can alter his original configuration file
@@ -503,7 +515,14 @@ while (true)
             $generatedCssFile = $fileInformations[0] . '.css';
 
             // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            $cssPath = realPath($resourceFolder . '/css') . '/' . $generatedCssFile;
+            $cssFolder = $resourceFolder . '/css';
+
+            // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+            if (file_exists($cssFolder) === false)
+              mkdir($cssFolder);
+
+            $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+
             list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
