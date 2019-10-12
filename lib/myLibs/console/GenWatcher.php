@@ -48,7 +48,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 0);
+define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
 
 define(
   'GEN_WATCHER_GCC',
@@ -298,8 +298,10 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 
 // ******************** INTRODUCTION TEXT ********************
 
-if (GEN_WATCHER_VERBOSE > 0)
-  echo CLI_LIGHT_BLUE, 'BASE_PATH', ' is equal to ', CLI_LIGHT_CYAN, BASE_PATH, END_COLOR, PHP_EOL, PHP_EOL;
+  echo CLI_LIGHT_BLUE, (GEN_WATCHER_VERBOSE > 0
+    ? 'BASE_PATH' . ' is equal to ' . CLI_LIGHT_CYAN . BASE_PATH . END_COLOR . PHP_EOL
+    : 'Watcher started.' . END_COLOR)
+    , PHP_EOL;
 
 // ******************** Watching ! ********************
 while (true)
