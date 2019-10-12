@@ -48,8 +48,9 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 0);
+define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
 
+// Defines if we want to use Google Closure Compiler or not
 define(
   'GEN_WATCHER_GCC',
   array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true' ? true : false
@@ -136,8 +137,8 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
   if ($name !== '')
     $name = '/' . $name;
 
-  return (strpos($resource, BASE_PATH) !== false
-    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $name . END_COLOR
+  return (mb_strpos($resource, BASE_PATH) !== false
+    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $name . END_COLOR
     : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
     . ($endColor ? END_COLOR : '');
 }
@@ -150,7 +151,7 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  */
 function debugHeader(string $header, int $padding)
 {
-  return '│ ' . CLI_BOLD_LIGHT_GRAY . str_pad($header, $padding) .  END_COLOR;
+  return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
 }
 
 /**
@@ -241,6 +242,9 @@ $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
+// SASS/SCSS resources (that have dependencies) that we have to watch
+$sassMainResources = [];
+
 /** @var \SplFileInfo $entry */
 foreach($iterator as $entry)
 {
@@ -296,16 +300,23 @@ foreach($iterator as $entry)
           $realPath,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $realPath;
+      else {
+        $mainResourceFilename = $entry->getFilename();
+
+        if (substr($mainResourceFilename, 0,1) !== '_')
+          $sassMainResources[$mainResourceFilename]= $realPath;
+      }
     }
   }
 }
-
-unset($dir_iterator, $iterator, $entry, $realPath);
+unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
 // ******************** INTRODUCTION TEXT ********************
 
-if (GEN_WATCHER_VERBOSE > 0)
-  echo CLI_LIGHT_BLUE, 'BASE_PATH', ' is equal to ', CLI_LIGHT_CYAN, BASE_PATH, END_COLOR, PHP_EOL, PHP_EOL;
+  echo CLI_LIGHT_BLUE, (GEN_WATCHER_VERBOSE > 0
+    ? 'BASE_PATH' . ' is equal to ' . CLI_LIGHT_CYAN . BASE_PATH . END_COLOR . PHP_EOL
+    : 'Watcher started.' . END_COLOR)
+    , PHP_EOL;
 
 // ******************** Watching ! ********************
 while (true)
@@ -523,7 +534,7 @@ while (true)
 
             $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
-            list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
+            list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
@@ -531,6 +542,45 @@ while (true)
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
+          } else {
+            $stringToTest = substr($fileInformations[0], 1);
+
+            foreach($sassMainResources as $key => &$mainResource)
+            {
+                $fileContent = file_get_contents($mainResource);
+                preg_match('@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
+
+                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources files.
+                if (empty($matches) === true)
+                  continue;
+
+                $slashPosition = strrpos($mainResource, '/');
+                $mainResourceFolder = realpath(substr($mainResource, 0, $slashPosition) . '/..');
+                $mainResourceWithoutExtension = substr(
+                  $mainResource,
+                  $slashPosition + 1,
+                  strrpos($mainResource, '.') - $slashPosition - 1
+                );
+                $generatedCssFile = $mainResourceWithoutExtension . '.css';
+
+                // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
+                $mainResourceCssFolder = $mainResourceFolder . '/css';
+
+                // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+                if (file_exists($mainResourceCssFolder) === false)
+                  mkdir($mainResourceCssFolder);
+
+                $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
+
+                list(, $return) = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
+
+                echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
+                  returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
+                  PHP_EOL . PHP_EOL;
+
+                if (GEN_WATCHER_VERBOSE > 0)
+                  $eventsDebug .= $return;
+            }
           }
         }
       } else

@@ -157,9 +157,20 @@ class Router
 
   /**
    * @param string $route
+   * @param array  $params
    *
    * @return string
    */
-  public static function getRouteUrl(string $route) : string { return Routes::$_[$route]['chunks'][0]; }
+  public static function getRouteUrl(string $route, array $params = []) : string {
+
+    $paramsString = '';
+
+    foreach($params as $param => &$value)
+    {
+      $paramsString .= '/' . $value;
+    }
+
+    return Routes::$_[$route]['chunks'][0] . $paramsString;
+  }
 }
 ?>
