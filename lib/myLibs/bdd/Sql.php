@@ -402,5 +402,13 @@ class Sql
   {
     return call_user_func(self::$_currentSGBD . '::rollBack');
   }
+
+  /**
+   * @return array
+   */
+  public function errorInfo() : array
+  {
+    return call_user_func(self::$_currentSGBD . '::errorInfo');
+  }
 }
 ?>
