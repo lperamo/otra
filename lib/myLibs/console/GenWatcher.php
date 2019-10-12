@@ -89,11 +89,10 @@ if (GEN_WATCHER_VERBOSE > 1 )
     IN_ONESHOT => 'IN_ONESHOT'
   ]);
 
-  // Normal length + 11 (length of the color codes)
-  define('HEADER_EVENT_PADDING', 33);
-  define('HEADER_COOKIE_PADDING', 22);
-  define('HEADER_NAME_PADDING', 45);
-  define('HEADER_WATCHED_RESOURCE_PADDING', 75);
+  define('HEADER_EVENT_PADDING', 18);
+  define('HEADER_COOKIE_PADDING', 7);
+  define('HEADER_NAME_PADDING', 30);
+  define('HEADER_WATCHED_RESOURCE_PADDING', 60);
 
   define('DATA_EVENT_PADDING', 22);
   define('DATA_COOKIE_PADDING', 11);
@@ -144,9 +143,15 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
     . ($endColor ? END_COLOR : '');
 }
 
+/**
+ * @param string $header
+ * @param int    $padding
+ *
+ * @return string
+ */
 function debugHeader(string $header, int $padding)
 {
-  return str_pad('│ ' . CLI_BOLD_LIGHT_GRAY . $header . END_COLOR, HEADER_COOKIE_PADDING);
+  return '│ ' . CLI_BOLD_LIGHT_GRAY . str_pad($header, $padding) .  END_COLOR;
 }
 
 /**
@@ -171,9 +176,10 @@ function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, 
        . END_COLOR . PHP_EOL;
 
   // Data
-  $debugToPrint .= str_pad('│ ' . WD_CONSTANTS[$mask], DATA_EVENT_PADDING)
+  $debugToPrint .= CLI_LIGHT_GRAY . str_pad('│ ' . WD_CONSTANTS[$mask], DATA_EVENT_PADDING)
     . str_pad('│ ' . $cookie, DATA_COOKIE_PADDING)
-    . str_pad('│ ' . $name, DATA_NAME_PADDING);
+    . str_pad('│ ' . $name, DATA_NAME_PADDING)
+    . END_COLOR;
 
   return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) . PHP_EOL;
 }
@@ -428,8 +434,14 @@ while (true)
             {
               // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
               // and remove the dummy file ...
-              $generatedTemporaryJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '_viaTypescript.js';
-              $generatedJsFile = $resourceFolder . '/js/' . $fileInformations[0] . '.js';
+              $jsFolder = $resourceFolder . '/js/';
+
+              // if the js folder corresponding to the ts folder does not exist yet, we create it
+              if (file_exists($jsFolder) === false)
+                mkdir($jsFolder);
+
+              $generatedTemporaryJsFile = $jsFolder . $fileInformations[0] . '_viaTypescript.js';
+              $generatedJsFile = $jsFolder . $fileInformations[0] . '.js';
 
               // Creating a temporary typescript json configuration file suited for the OTRA watcher.
               // We need to recreate it each time because the user can alter his original configuration file
@@ -461,7 +473,7 @@ while (true)
               else
               {
                 if ($jsFileExists === true)
-                  echo CLI_BROWN, 'Something was wrong during typescript compilation but this may not be blocking.',
+                  echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
                     END_COLOR, PHP_EOL, $output, 'Launching Google Closure Compiler...', PHP_EOL;
                 else
                   echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
@@ -506,7 +518,14 @@ while (true)
             $generatedCssFile = $fileInformations[0] . '.css';
 
             // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            $cssPath = realPath($resourceFolder . '/css') . '/' . $generatedCssFile;
+            $cssFolder = $resourceFolder . '/css';
+
+            // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+            if (file_exists($cssFolder) === false)
+              mkdir($cssFolder);
+
+            $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+
             list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',

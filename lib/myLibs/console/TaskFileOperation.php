@@ -136,7 +136,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
        *  class/test,
        *  class/test2
        * } */
-      echo CLI_BROWN, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
+      echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
       return ;
     }
   }
@@ -272,8 +272,8 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
           $isTemplate = true;
         else
         {
-          echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_BROWN,
-            '$', $pathVariable[0], CLI_RED, ' in ', CLI_BROWN, $trimmedMatch, CLI_RED, ' in the file ', CLI_BROWN,
+          echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
+            '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
             $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
           exit(1);
         }
@@ -299,7 +299,7 @@ function showFile(int &$level, string &$file, string $otherText = ' first file')
       ANNOTATION_DEBUG_PAD,
       '.',
       STR_PAD_RIGHT
-    ), CLI_BROWN, $otherText, END_COLOR, PHP_EOL;
+    ), CLI_YELLOW, $otherText, END_COLOR, PHP_EOL;
 }
 
 /**
@@ -460,7 +460,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 
   if (isset(CLASSMAP[$newClass]) === false)
   {
-    echo CLI_BROWN, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_BROWN, ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', END_COLOR, PHP_EOL;
+    echo CLI_YELLOW, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_YELLOW, ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', END_COLOR, PHP_EOL;
 
     return false;
   }
@@ -512,15 +512,15 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
 
         if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
-          echo PHP_EOL, CLI_BROWN, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ',
+          echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ',
           $file, END_COLOR, PHP_EOL;
 
         if (false === file_exists($tempFile))
         {
-          echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_BROWN, $trimmedMatch, CLI_RED, ' => ', CLI_BROWN,
+          echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' => ', CLI_YELLOW,
           $tempFile,
           CLI_RED
-          , ' in ', CLI_BROWN, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
+          , ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
           exit(1);
         }
 
@@ -582,8 +582,8 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
             {
               if (strpos($trimmedMatch, 'html') === false)
               {
-                echo CLI_RED, '/!\\ We cannot find the file ', CLI_BROWN, $trimmedMatch, CLI_RED, ' seen in ' .
-                  CLI_BROWN,
+                echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
+                  CLI_YELLOW,
                 $file,
                 CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
                 die;
@@ -677,7 +677,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             // we let the inclusion code and we do not add the content to the bootstrap file.
             if (false !== strpos($tempFile, 'vendor'))
             {
-              echo CLI_BROWN, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
+              echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
               // for
               // example
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
@@ -687,7 +687,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             // Files already loaded by default will not be added
             if ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php')
             {
-              echo CLI_BROWN, 'This file will be already loaded by default for each route : ' . substr($tempFile,
+              echo CLI_YELLOW, 'This file will be already loaded by default for each route : ' . substr($tempFile,
                   strlen(BASE_PATH)), END_COLOR, PHP_EOL; // It can be a SwiftMailer class for example
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;

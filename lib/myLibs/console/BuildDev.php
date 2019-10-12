@@ -179,8 +179,14 @@ foreach($iterator as $entry)
       {
         // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
         // and remove the dummy file ...
-        $generatedTemporaryJsFile = $resourceFolder . '/js/' . $baseName . '_viaTypescript.js';
-        $generatedJsFile = $resourceFolder . '/js/' . $baseName . '.js';
+        $jsFolder = $resourceFolder . '/js/';
+
+        // if the js folder corresponding to the ts folder does not exist yet, we create it
+        if (file_exists($jsFolder) === false)
+          mkdir($jsFolder);
+
+        $generatedTemporaryJsFile = $jsFolder . '/js/' . $baseName . '_viaTypescript.js';
+        $generatedJsFile = $jsFolder . '/js/' . $baseName . '.js';
 
         // Creating a temporary typescript json configuration file suited for the OTRA watcher.
         // We need to recreate it each time because the user can alter his original configuration file
@@ -212,7 +218,7 @@ foreach($iterator as $entry)
         else
         {
           if ($jsFileExists === true)
-            echo CLI_BROWN, 'Something was wrong during typescript compilation but this may not be blocking.',
+            echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
             END_COLOR, PHP_EOL, $output, 'Launching Google Closure Compiler...', PHP_EOL;
           else
             echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
@@ -257,7 +263,14 @@ foreach($iterator as $entry)
       $generatedCssFile = $baseName . '.css';
 
       // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-      $cssPath = realPath($resourceFolder . '/../css') . '/' . $generatedCssFile;
+      $cssFolder = $resourceFolder . '/css';
+
+      // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+      if (file_exists($cssFolder) === false)
+        mkdir($cssFolder);
+
+      $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+
       list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
       echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',

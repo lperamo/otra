@@ -96,13 +96,13 @@ else // otherwise we'll try to guess if it looks like an existing one
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
-    echo CLI_RED, 'There is no task named ', CLI_BROWN, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
+    echo CLI_RED, 'There is no task named ', CLI_YELLOW, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
     exit(1);
   }
 
   // Otherwise, we suggest the closest name that we have found.
-  $choice = promptUser('> There is no task named '. CLI_WHITE . $method . CLI_BROWN .
-    ' ! Do you mean ' . CLI_WHITE . $newTask . CLI_BROWN . ' ? (y/n)');
+  $choice = promptUser('> There is no task named '. CLI_WHITE . $method . CLI_YELLOW .
+    ' ! Do you mean ' . CLI_WHITE . $newTask . CLI_YELLOW . ' ? (y/n)');
 
   if ('y' === $choice)
   {

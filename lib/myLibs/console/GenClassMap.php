@@ -3,7 +3,11 @@
  * Class mapping generation task
  *
  * @author Lionel Péramo */
-$dirs = ['bundles', 'config', 'lib'];
+$dirs = [
+  BASE_PATH . 'bundles',
+  BASE_PATH . 'config',
+  BASE_PATH . 'lib'
+];
 $classes = [];
 $processedDir = 0;
 
@@ -30,7 +34,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
    *
    * @return array
    */
-  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, &$classesThatMayHaveToBeAdded)
+  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, array &$classesThatMayHaveToBeAdded)
   {
     if ($folderHandler = opendir($dir))
     {
@@ -50,6 +54,11 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         $posDot = strrpos($entry, '.');
 
         if ('.php' !== substr($entry, $posDot))
+          continue;
+
+        // We only need files that match with the actual environment
+        // so, for example, we'll not include dev config if we are in prod mode !
+        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER['APP_ENV'] === 'prod')
           continue;
 
         $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
@@ -87,8 +96,14 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   }
 }
 
-foreach ($dirs as &$dir) {
-  list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, BASE_PATH . $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
+foreach ($dirs as &$dir)
+{
+  // if the user wants to launch tasks in an empty project when there are not a class map yet
+  // we need to check if the needed folders exist
+  if (file_exists($dir) === false)
+    mkdir($dir);
+
+  list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
 }
 
 if (VERBOSE === 1)
@@ -124,7 +139,7 @@ if (VERBOSE !== 1)
   return;
 
 define('FIRST_CLASS_PADDING', 80);
-echo CLI_BROWN, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
+echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 
 foreach($classes as $startClassName => &$finalClassName)
@@ -150,8 +165,8 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 
   foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
   {
-    echo str_pad('Class ' . CLI_BROWN . $key . END_COLOR . FIRST_CLASS_PADDING,
-      '.'), '=> possibly related file ', CLI_BROWN, $namespace, END_COLOR, PHP_EOL;
+    echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR . FIRST_CLASS_PADDING,
+      '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;
   }
 }
 
