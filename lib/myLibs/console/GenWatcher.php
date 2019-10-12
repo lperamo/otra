@@ -526,7 +526,7 @@ while (true)
 
             $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
-            list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
+            list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
