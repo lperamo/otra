@@ -138,8 +138,8 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
   if ($name !== '')
     $name = '/' . $name;
 
-  return (strpos($resource, BASE_PATH) !== false
-    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $name . END_COLOR
+  return (mb_strpos($resource, BASE_PATH) !== false
+    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $name . END_COLOR
     : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
     . ($endColor ? END_COLOR : '');
 }
