@@ -151,7 +151,7 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  */
 function debugHeader(string $header, int $padding)
 {
-  return '│ ' . CLI_BOLD_LIGHT_GRAY . str_pad($header, $padding) .  END_COLOR;
+  return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
 }
 
 /**
