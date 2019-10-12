@@ -548,7 +548,7 @@ while (true)
             foreach($sassMainResources as $key => &$mainResource)
             {
                 $fileContent = file_get_contents($mainResource);
-                preg_match('@\@(import|use)\s(\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'([^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
+                preg_match('@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
 
                 // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources files.
                 if (empty($matches) === true)
