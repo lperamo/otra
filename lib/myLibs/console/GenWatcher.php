@@ -242,6 +242,9 @@ $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
+// SASS/SCSS resources (that have dependencies) that we have to watch
+$sassMainResources = [];
+
 /** @var \SplFileInfo $entry */
 foreach($iterator as $entry)
 {
@@ -297,11 +300,16 @@ foreach($iterator as $entry)
           $realPath,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $realPath;
+      else {
+        $mainResourceFilename = $entry->getFilename();
+
+        if (substr($mainResourceFilename, 0,1) !== '_')
+          $sassMainResources[$mainResourceFilename]= $realPath;
+      }
     }
   }
 }
-
-unset($dir_iterator, $iterator, $entry, $realPath);
+unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
 // ******************** INTRODUCTION TEXT ********************
 
@@ -534,6 +542,45 @@ while (true)
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
+          } else {
+            $stringToTest = substr($fileInformations[0], 1);
+
+            foreach($sassMainResources as $key => &$mainResource)
+            {
+                $fileContent = file_get_contents($mainResource);
+                preg_match('@\@(import|use)\s(\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'([^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
+
+                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources files.
+                if (empty($matches) === true)
+                  continue;
+
+                $slashPosition = strrpos($mainResource, '/');
+                $mainResourceFolder = realpath(substr($mainResource, 0, $slashPosition) . '/..');
+                $mainResourceWithoutExtension = substr(
+                  $mainResource,
+                  $slashPosition + 1,
+                  strrpos($mainResource, '.') - $slashPosition - 1
+                );
+                $generatedCssFile = $mainResourceWithoutExtension . '.css';
+
+                // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
+                $mainResourceCssFolder = $mainResourceFolder . '/css';
+
+                // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+                if (file_exists($mainResourceCssFolder) === false)
+                  mkdir($mainResourceCssFolder);
+
+                $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
+
+                list(, $return) = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
+
+                echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
+                  returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
+                  PHP_EOL . PHP_EOL;
+
+                if (GEN_WATCHER_VERBOSE > 0)
+                  $eventsDebug .= $return;
+            }
           }
         }
       } else
