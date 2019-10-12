@@ -50,6 +50,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
 define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
 
+// Defines if we want to use Google Closure Compiler or not
 define(
   'GEN_WATCHER_GCC',
   array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true' ? true : false
