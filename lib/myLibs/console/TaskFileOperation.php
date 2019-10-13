@@ -678,8 +678,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if (false !== strpos($tempFile, 'vendor'))
             {
               echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
-              // for
-              // example
+              // for example
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -852,7 +851,6 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
  *
  * @return mixed
  */
-//function fixFiles(&$content, &$verbose, &$filesToConcat = [])
 function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$fileToInclude = '')
 {
   if (defined('VERBOSE') === false)
@@ -862,8 +860,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     define('BASE_PATH_LENGTH', strlen(BASE_PATH));
 
   // we create these variables only for the reference pass
-  $inc = 0;
-  $level = 0;
+  $inc = 0; // process steps counter (more granular than $level variable)
+  $level = 0; //  depth level of require/include calls
   $parsedFiles = [];
   $contentToAdd = $content;
 
