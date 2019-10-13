@@ -5,44 +5,54 @@
   require CORE_PATH . 'tools/Cli.php';
   define('CLI_ERROR_CODE', 0);
   define('REQUIREMENTS_PADDING', 30);
+
+  // Requirement array
   define('REQ_PKG_NAME', 0);
   define('REQ_NAME', 1);
   define('REQ_DESC', 2);
-  define('REQ_PHP_LIB', 3);
+  define('REQ_CHECK_TYPE', 3);
+
+  // Checks types
+  define('REQ_PACKAGE', 0);
+  define('REQ_PHP_VERSION', 1);
+  define('REQ_PHP_LIB', 2);
 
   $requirements = [
     [
       'java',
       'JAVA',
-      'Software platform => https://www.java.com. Only needed for optimizations with Google Closure Compiler.'
+      'Software platform => https://www.java.com. Only needed for optimizations with Google Closure Compiler.',
+      REQ_PACKAGE
     ],
     [
       'tsc',
       'Typescript',
-      'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => http://www.typescriptlang.org/'
+      'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => http://www.typescriptlang.org/',
+      REQ_PACKAGE
     ],
     [
       'sass',
       'SASS/SCSS',
-      'Only needed to contribute. It is a stylesheet language that’s compiled to CSS => https://sass-lang.com/'
+      'Only needed to contribute. It is a stylesheet language that’s compiled to CSS => https://sass-lang.com/',
+      REQ_PACKAGE
     ],
     [
       'mbstring',
       'PHP extension \'mbstring\'',
       'Needed for string multibyte functions',
-      true
+      REQ_PHP_LIB
     ],
     [
       'inotify',
       'PHP extension \'inotify\'',
       'Needed for OTRA watcher on unix like systems.',
-      true
+      REQ_PHP_LIB
     ],
     [
       'PHP Version => 7.3',
       'PHP version 7.3.x',
       'PHP version must be 7.3.x, will be more flexible in the future.',
-      true
+      REQ_PHP_VERSION
     ]
   ];
 
@@ -53,12 +63,14 @@
     echo ADD_BOLD;
 
     // different check whether it's a PHP lib or a program
-    $error = cli(array_key_exists(REQ_PHP_LIB, $requirement) === true
-        ? 'php -i | grep "PHP Version => 7.3"'
-        : 'which ' . $requirement[REQ_PKG_NAME]
-      )[CLI_ERROR_CODE] === 0;
+    if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
+      $error = cli('which ' . $requirement[REQ_PKG_NAME]);
+    elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
+      $error = cli('php -v | grep "PHP 7.3"');
+    elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
+      $error = cli('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"');
 
-    echo $error === true
+    echo $error[CLI_ERROR_CODE] === 0
       ? CLI_GREEN . '  ✔  '
       : CLI_RED . '  ⨯  ', REMOVE_BOLD_INTENSITY, CLI_LIGHT_BLUE,
     str_pad($requirement[REQ_NAME] . ' ', REQUIREMENTS_PADDING, '.'), ' ',
