@@ -90,6 +90,7 @@ class Controller extends MasterController
       if ($blockExists === true)
       {
         $goodBlock = &$block;
+        $goodBlock = [];
 
         // We seeks for the last block with this name and we adds its content
         while(array_key_exists('replacedBy', $goodBlock) === true)
