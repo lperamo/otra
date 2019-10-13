@@ -27,6 +27,7 @@ typeset -a OTRA_COMMANDS=(
   'help'
   'crypt'
   'hash'
+  'requirements'
   'routes'
   'version'
 );
@@ -59,6 +60,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${HELP_AND_TOOLS} help             : ${CLI_CYAN}Shows the extended help for the specified command.${END_COLOR}"
   "${HELP_AND_TOOLS} crypt            : ${CLI_CYAN}Crypts a password and shows it.${END_COLOR}"
   "${HELP_AND_TOOLS} hash             : ${CLI_CYAN}Returns a random hash.${END_COLOR}"
+  "${HELP_AND_TOOLS} requirements     : ${CLI_CYAN}Shows the requirements to use OTRA at its maximum capabilities.${END_COLOR}"
   "${HELP_AND_TOOLS} routes           : ${CLI_CYAN}Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)${END_COLOR}"
   "${HELP_AND_TOOLS} version          : ${CLI_CYAN}Shows the framework version.${END_COLOR}"
 )
