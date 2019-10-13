@@ -852,7 +852,6 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
  *
  * @return mixed
  */
-//function fixFiles(&$content, &$verbose, &$filesToConcat = [])
 function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$fileToInclude = '')
 {
   if (defined('VERBOSE') === false)
