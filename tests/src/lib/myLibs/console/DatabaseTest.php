@@ -504,6 +504,7 @@ class DatabaseTest extends TestCase
     Database::init(self::$databaseConnection);
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
     removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
+    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
 
     // assertions
     $this->expectException(OtraException::class);
