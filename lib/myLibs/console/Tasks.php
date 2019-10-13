@@ -575,6 +575,21 @@ class Tasks
     ];
   }
 
+  public static function requirements() { require CORE_PATH . 'console/Requirements.php'; }
+
+  /**
+   * @return array
+   */
+  public static function requirementsDesc() : array
+  {
+    return [
+      'Shows the requirements to use OTRA at its maximum capabilities.',
+      [],
+      [],
+      'Help and tools'
+    ];
+  }
+
   /**
    * @param array $argv
    */
