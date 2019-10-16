@@ -17,16 +17,12 @@ namespace lib\myLibs\console {
   {
     // Database connection
     private static $base,
-//      $host,
       $motor,
       $pwd,
       $user,
 
       // true if we have initialized the class variables (paths essentially)
       $init = false,
-
-      // commands beginning
-      //$initCommand = '',
 
       // paths
       $baseDirs = [],
@@ -36,7 +32,6 @@ namespace lib\myLibs\console {
       $pathSqlFixtures,
       $pathYml = '',
       $pathYmlFixtures,
-//      $projectName = 'lpframework',
       $schemaFile,
       $tablesOrderFile,
 
@@ -81,23 +76,8 @@ namespace lib\myLibs\console {
       self::$pwd = $infosDb['password'];
       self::$user = $infosDb['login'];
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
-
-      //// If we haven't store the database identifiers yet, store them ... only asking for password.
-      //if ([] === cli('mysql_config_editor print --login-path=' . self::$projectName, 0)[1])
-      //{
-      //  echo 'You will have to type only one time your password by hand, it will be then stored and we\'ll never ask for it in the future.', PHP_EOL;
-      //  cli('mysql_config_editor set --login-path=' . self::$projectName . ' --host=' . self::$host . ' --user=' . self::$user . ' --password', VERBOSE);
-      //}
-
       self::$init = true;
     }
-
-    /** Sets the self::initCommand variable that allows to execute SQL files */
-    //public static function initCommand()
-    //{
-    //  self::$initCommand = 'mysql --login-path=' . self::$projectName . (VERBOSE ? ' --show-warnings' : '') .
-    //    ((VERBOSE > 1) ? ' -v -e "source ' : ' -e "source ');
-    //}
 
     /**
      * Initializes main paths :

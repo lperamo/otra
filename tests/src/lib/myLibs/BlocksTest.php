@@ -67,7 +67,7 @@ class BlocksTest extends TestCase
   Welcome to the OTRA!</title><html><body>
   Hello World!
         test
-      </body>
+    </body>
 ", $content);
   }
 

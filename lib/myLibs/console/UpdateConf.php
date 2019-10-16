@@ -151,13 +151,16 @@ if (function_exists('sortRoutes') === false)
 {
   define ('ROUTE_PATH', 0);
 
-  function sortRoutes(array $routeA, array $routeB): bool
+  $sortRoutes = function (string $routeA, string $routeB) use ($routesArray)
   {
-    return (strlen($routeA['chunks'][ROUTE_PATH]) <= strlen($routeB['chunks'][ROUTE_PATH])) ? 1 : -1;
-  }
+    /** @var array $routesArray */
+    return (strlen($routesArray[$routeA]['chunks'][ROUTE_PATH]) <= strlen($routesArray[$routeB]['chunks'][ROUTE_PATH]))
+      ? 1
+      : -1;
+  };
 }
 
-uksort($routesArray, 'sortRoutes');
+uksort($routesArray, $sortRoutes);
 
 // Transforms the array in code that returns the array.
 $routesContent = '<? return [';

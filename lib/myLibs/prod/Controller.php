@@ -96,6 +96,7 @@ class Controller extends MasterController
     self::$currentBlock['content'] .= ob_get_clean();
     array_push(self::$blocksStack, self::$currentBlock);
     $content = '';
+    $indexesToUnset = [];
 
     // Loops through the block stack to compile the final content that have to be shown
     foreach(self::$blocksStack as $key => &$block)
