@@ -149,7 +149,8 @@ foreach($routes as &$route)
 // front of them
 if (function_exists('sortRoutes') === false)
 {
-  define ('ROUTE_PATH', 0);
+  if(defined(ROUTE_PATH) === false)
+    define ('ROUTE_PATH', 0);
 
   $sortRoutes = function (string $routeA, string $routeB) use ($routesArray)
   {
