@@ -8,7 +8,7 @@ define('CACHE_TIME', 300); // 5 minutes(5*60)
 class AllConfig
 {
   public static $verbose = 1,
-    $debug = false,
+    $debug = true,
     $cache = false,
     /* In order to not make new AllConfig::foo before calling CACHE_PATH, use directly AllConfig::$cache_path in this
     case
