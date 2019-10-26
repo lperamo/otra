@@ -52,8 +52,8 @@ class Controller extends MasterController
     // we use self::ajax in this function (it is why we cannot merge the two if with self::$ajax
     parent::$template = $this->buildCachedFile($templateFile, $variables);
 
-//    if (false === $ajax)
-//      self::addDebugBar();
+    if (false === $ajax && AllConfig::$debug !== false)
+      self::addDebugBar();
 
     return parent::$template;
   }
