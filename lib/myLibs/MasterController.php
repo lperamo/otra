@@ -27,9 +27,11 @@ class MasterController
   protected $controller = '',
     $action = '',
     $getParams = '',
-    $viewCSSPath = '/', // CSS path for this module
-    $viewJSPath = '/', // JS path for this module
-    $pattern = '';
+    $pattern = '',
+    $viewResourcePath = [
+      'css' => '/', // CSS path for this module
+      'js' => '/'  // JS path for this module
+    ];
 
   protected static
     $css = [],
@@ -134,8 +136,10 @@ class MasterController
     $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
-    $this->viewCSSPath = $mainPath .'resources/css/';
-    $this->viewJSPath = $mainPath . 'resources/js/';
+    $this->viewResourcePath = [
+      'css' => $mainPath .'resources/css/',
+      'js' => $mainPath . 'resources/js/'
+    ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 

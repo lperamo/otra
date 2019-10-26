@@ -132,9 +132,9 @@ class Controller extends MasterController
     $content = false === self::$ajax
       ? str_replace(
         '/title>',
-        '/title>'. self::addCss(),
-        $content . self::addJs())
-      : self::addCss() . $content . self::addJs();
+        '/title>'. self::addResource('css'),
+        $content . self::addResource('js'))
+      : self::addResource('css') . $content . self::addResource('js');
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
     self::$js = self::$css = [];
@@ -158,16 +158,18 @@ class Controller extends MasterController
     parent::$template = str_replace(
       '/title>',
       '/title>'. self::addDebugCSS(),
-      parent::$template . self::addJs()
+      parent::$template . self::addResource('js')
     );
   }
 
   /**
-   * Puts the css into the template
+   * Adds resources file to the template. Can be 'css' or 'js' resources.
    *
-   * @return string The links to the css files or the style markup with the css inside
+   * @param string $assetType 'css' or 'js'
+   *
+   * @return string
    */
-  private function addCss() : string
+  private function addResource(string $assetType) : string
   {
     $route = Routes::$_;
 
@@ -177,11 +179,12 @@ class Controller extends MasterController
 
     $route = $route[$this->route];
 
-    // No resources section so no CSS to load
+    // No resources section so no CSS/JS to load
     if (false === array_key_exists('resources', $route))
       return '';
 
-    $cssContent = '';
+    $resourceContent = '';
+
     $chunks = $route['chunks'];
 
     // Bundle and module informations do not exist on exceptions
@@ -189,26 +192,33 @@ class Controller extends MasterController
       $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] = '';
 
     $resources = $route['resources'];
-    $debLink = "\n" . '<link rel="stylesheet" href="';
+    $debLink = "\n" . ($assetType === 'js'
+      ? '<script type="application/javascript" src="'
+      : '<link rel="stylesheet" href="'
+    );
+
+    $endLink = ($assetType === 'js')
+      ? '.js" ></script>'
+      : '.css" />';
+
     $i = 0;
     $unorderedArray = $orderedArray = [];
     $debLink2 = $debLink . '/bundles/';
 
-
     $resourcesType = [
-      'bundle_css' => $debLink2 . $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/css/',
-      'module_css' => $debLink2 . $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] . '/resources/css/',
-      '_css' => $debLink . $this->viewCSSPath,
-      'core_css' => $debLink . '/lib/myLibs/resources/css/'
+      'bundle_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
+      'module_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
+      '_' . $assetType => $debLink . $this->viewResourcePath[$assetType],
+      'core_' . $assetType => $debLink . '/lib/myLibs/resources/' . $assetType . '/'
     ];
 
-    // For each kind of CSS file, we will looks for them in their respective folders
+    // For each kind of JS file, we will looks for them in their respective folders
     foreach ($resourcesType as $resourceType => &$resourceTypeInfo)
     {
       if (true === array_key_exists($resourceType, $resources))
       {
-        // We add a link to the CSS array for each CSS we found
-        foreach ($resources[$resourceType] as $key => &$cssFile)
+        // We add a link to the CSS/JS array for each file we found
+        foreach($resources[$resourceType] as $key => &$file)
         {
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
@@ -216,21 +226,32 @@ class Controller extends MasterController
             $orderedArray,
             $i,
             $key,
-            $resourceTypeInfo . $cssFile . '.css" />'
+            $resourceTypeInfo . $file . $endLink
           );
         }
       }
     }
 
-    // Merges the two arrays into one final array respecting order of files
-    $cssArray = self::calculateArray($unorderedArray, $orderedArray);
+    $resourcesArray = self::calculateArray($unorderedArray, $orderedArray);
 
-    foreach ($cssArray as &$css)
+    foreach ($resourcesArray as &$file)
     {
-      $cssContent .= $css;
+      $resourceContent .= $file;
     }
 
-    return $cssContent;
+    if ($assetType === 'js')
+    {
+      foreach(self::$js as $key => &$js)
+      {
+        // If the key don't give info on async and defer then put them automatically
+        if (true === is_int($key))
+          $key = '';
+
+        $resourceContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
+      }
+    }
+
+    return $resourceContent;
   }
 
   /**
@@ -287,81 +308,6 @@ class Controller extends MasterController
       $unorderedArray[$i] = $code;
 
     ++$i;
-  }
-
-  /**
-   * Puts the js into the template. Updates parent::$template.
-   *
-   * @return string The links to the js files or the script markup with the js inside
-   */
-  private function addJs() : string
-  {
-    $route = Routes::$_;
-
-    // The route does not exist ?!
-    if (false === array_key_exists($this->route, $route))
-      return '';
-
-    $route = $route[$this->route];
-
-    // No resources section so no JS to load
-    if (false === array_key_exists('resources', $route))
-      return '';
-
-    $jsContent = '';
-
-    $chunks = $route['chunks'];
-
-    // Bundle and module informations do not exist on exceptions
-    if (array_key_exists(self::ROUTE_CHUNKS_BUNDLE_PARAM, $chunks) === false)
-      $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] = '';
-
-    $resources = $route['resources'];
-    $debLink = "\n" . '<script type="application/javascript" src="';
-    $i = 0;
-    $unorderedArray = $orderedArray = [];
-    $debLink2 = $debLink . '/bundles/';
-
-    $resourcesType = [
-      'bundle_js' => $debLink2 . $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/js/',
-      'module_js' => $debLink2 . $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] . '/resources/js/',
-      '_js' => $debLink . $this->viewJSPath,
-      'core_js' => $debLink . '/lib/myLibs/resources/js/'
-    ];
-
-    // For each kind of JS file, we will looks for them in their respective folders
-    foreach ($resourcesType as $resourceType => &$resourceTypeInfo)
-    {
-      if (true === array_key_exists($resourceType, $resources))
-      {
-        // We add a link to the CSS array for each CSS we found
-        foreach($resources[$resourceType] as $key => &$cssFile)
-        {
-          self::updateScriptsArray(
-            $unorderedArray,
-            $orderedArray,
-            $i,
-            $key,
-            $resourceTypeInfo . $cssFile . '.js" ></script>'
-          );
-        }
-      }
-    }
-
-    $jsArray = self::calculateArray($unorderedArray, $orderedArray);
-
-    foreach($jsArray as &$js) { $jsContent .= $js; }
-
-    foreach(self::$js as $key => &$js)
-    {
-      // If the key don't give info on async and defer then put them automatically
-      if (true === is_int($key))
-        $key = '';
-
-      $jsContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
-    }
-
-    return $jsContent;
   }
 }
 ?>
