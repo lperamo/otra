@@ -130,12 +130,12 @@ class MasterController
     self::$id = $this->bundle . $this->module . $this->controller . $this->action;
     $this->getParams = $getParams;
 
-    $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
+    $mainPath = 'bundles/' . $this->bundle . '/' . $this->module . '/';
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
     $this->viewResourcePath = [
-      'css' => $mainPath .'resources/css/',
-      'js' => $mainPath . 'resources/js/'
+      'css' => '/' . $mainPath .'resources/css/',
+      'js' => '/' . $mainPath . 'resources/js/'
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
