@@ -184,7 +184,7 @@ class MasterController
   }
 
   /**
-   * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
+   * Adds one or more javascript scripts to the existing ones. If the keys are string it will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
    */
