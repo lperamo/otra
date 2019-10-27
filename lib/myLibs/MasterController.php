@@ -43,10 +43,7 @@ class MasterController
     $id,
   /* @var string $template The actual template being processed */
     $template,
-    $layout,
-    $body,
-    $bodyAttrs,
-    $layoutOnce = false;
+    $layout;
 
   // HTTP codes !
   const HTTP_CONTINUE = 100;
