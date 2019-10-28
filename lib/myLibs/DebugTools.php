@@ -45,12 +45,26 @@ function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
 }
 
 /**
+ * Returns file and line of the caller for debugging purposes.
+ *
+ * @return string
+ */
+function getCaller()
+{
+  $secondTrace = debug_backtrace()[1];
+
+  return $secondTrace['file'] . ':' . $secondTrace['line'];
+}
+
+/**
  * A nice dump function that takes as much parameters as we want to put.
  */
 function dumpSmall()
 {
   echo '<pre>';
   $args = func_get_args();
+  $secondTrace = debug_backtrace()[1];
+  echo '<p style="color:#3377FF">OTRA DUMP - ', $secondTrace['file'], ':', $secondTrace['line'], '</p>';
 
   foreach ($args as &$param)
   {
