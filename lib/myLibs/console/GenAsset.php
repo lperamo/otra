@@ -26,6 +26,13 @@ $oldErrorReporting = error_reporting();
 error_reporting(0);
 ob_start();
 
+// We launch a session in all cases to avoid stuff not loaded based on condition on sessions
+session_name('__Secure-LPSESSID');
+session_start([
+  'cookie_secure' => true,
+  'cookie_httponly' => true
+]);
+
 // We launch the route
 \lib\myLibs\Router::get($argv[2]);
 $content = ob_get_clean();
