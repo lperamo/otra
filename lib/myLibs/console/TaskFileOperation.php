@@ -270,7 +270,10 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
         if ('templateFilename' === trim($pathVariable[0]))
           $isTemplate = true;
-        else
+        else if ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' === $trimmedMatch)
+        { // we must not change this line from CORE_PATH . Router.php !
+          continue;
+        } else
         {
           echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
             '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
@@ -408,7 +411,9 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
  */
 function processReturn(string &$finalContent, string &$contentToAdd, string &$match, int &$posMatch)
 {
-  $contentToAdd = trim(substr($contentToAdd, 9, -2)); // 9 means after the 'return' statement
+  // 9 means after the 'return' statement, -5 for the semicolon, the ending tag and the mandatory line break
+  // That way, we then only retrieve the needed array
+  $contentToAdd = trim(substr($contentToAdd, 9, -5));
 
   if (false !== strpos($match, 'require') &&
     0 !== substr_count($match, ')') % 2 &&
@@ -418,7 +423,9 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
     $lengthToChange = strrpos($match, ')');
   } else
   {
-    $lengthToChange = strlen($match);
+    // We change only the require but we keep the parenthesis and the semicolon
+    // (cf. BASE_PATH . config/Routes.php init function)
+    $lengthToChange = strlen(substr($match, 0, strpos($match, ');')));
   }
 
   // We remove the requires like statements before adding the content
@@ -507,6 +514,10 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
 
         if ($posDir !== false)
           $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
+
+        // we must not change this inclusion from CORE_PATH . Router.php !
+        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\'')
+          continue;
 
         // str_replace to ensure us that the same character '/' is used each time
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
@@ -684,10 +695,11 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             }
 
             // Files already loaded by default will not be added
-            if ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php')
+            if ($file !== CORE_PATH . 'Router.php'
+              && ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php'))
             {
               echo CLI_YELLOW, 'This file will be already loaded by default for each route : ' . substr($tempFile,
-                  strlen(BASE_PATH)), END_COLOR, PHP_EOL; // It can be a SwiftMailer class for example
+                  strlen(BASE_PATH)), END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -699,19 +711,18 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
             $isReturn = false;
 
-            //if (substr($tempFile, strlen(BASE_PATH)) === 'bundles/config/Routes.php')
-            //  echo redText(substr(preg_replace('@\\s@', ' ', $contentToAdd),0, 750)), PHP_EOL;
-            //echo redText(substr($tempFile, strlen(BASE_PATH))), PHP_EOL;
             if ('require' === $inclusionMethod)
             {
-              //if (strpos($tempFile, 'bundles/config/Routes') !== false)
-              //  echo strpos(substr($nextContentToAdd, 3, 9), 'return');
-
               /* if the file has contents that begin by a return statement then we apply a particular process*/
               if (false !== strpos(substr($nextContentToAdd, 3, 9), 'return'))
               {
                 $isReturn = true;
-                processReturn($contentToAdd, $nextContentToAdd, $nextFileOrInfo['match'], $nextFileOrInfo['posMatch']);
+                processReturn(
+                  $contentToAdd,
+                  $nextContentToAdd,
+                  $nextFileOrInfo['match'],
+                  $nextFileOrInfo['posMatch']
+                );
               }
             }
 
@@ -912,6 +923,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
   $patternRemoveUse = '@\buse\b@';
 
+  // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
+  // otherwise we add an ending PHP tag to begin the HTML code.
   return '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?' == substr($finalContent, 0, 2)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, 2))
       : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)

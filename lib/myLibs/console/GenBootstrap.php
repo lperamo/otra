@@ -83,14 +83,14 @@ foreach(array_keys($routes) as &$route)
 }
 
 // Final specific management for routes files
-echo 'Create the specific routes management file... ';
+echo 'Create the specific routes management file... ', PHP_EOL;
 
 define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
     'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
-    && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
+      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
@@ -101,12 +101,15 @@ $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
 
+$fileToInclude = CORE_PATH . 'Router.php';
+
 contentToFile(
   fixFiles(
     $routes[$route]['chunks'][1],
     $route,
-    file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php'),
-    $verbose
+    file_get_contents($fileToInclude),
+    $verbose,
+    $fileToInclude
   ),
   $routesManagementFile
 );
