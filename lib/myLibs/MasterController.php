@@ -208,7 +208,6 @@ class MasterController
     ob_start();
     require $templateFilename;
     self::$currentBlock['content'] .= ob_get_clean();
-//    var_dump(MasterController::$blocksStack);die;
     array_push(self::$blocksStack, self::$currentBlock);
     $content = '';
     $indexesToUnset = [];
