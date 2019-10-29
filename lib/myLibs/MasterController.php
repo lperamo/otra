@@ -215,7 +215,7 @@ class MasterController
     // Loops through the block stack to compile the final content that have to be shown
     foreach(self::$blocksStack as $key => &$block)
     {
-      $blockExists = array_key_exists($block['name'], MasterController::$blockNames);
+      $blockExists = array_key_exists($block['name'], self::$blockNames);
 
       // If there are other blocks with this name...
       if ($blockExists === true)
@@ -228,16 +228,16 @@ class MasterController
           $goodBlock['content'] = '';
           $indexesToUnset[$goodBlock['index']] = true;
           $tmpKey = $key;
-          $tmpBlock = &MasterController::$blocksStack[$tmpKey + 1];
+          $tmpBlock = &self::$blocksStack[$tmpKey + 1];
 
-          while ($tmpBlock['parent'] === MasterController::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
+          while ($tmpBlock['parent'] === self::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
           {
             $tmpBlock['content'] = '';
             $indexesToUnset[$tmpBlock['index']] = true;
-            $tmpBlock = &MasterController::$blocksStack[++$tmpKey + 1];
+            $tmpBlock = &self::$blocksStack[++$tmpKey + 1];
           }
 
-          $goodBlock = &MasterController::$blocksStack[$goodBlock['replacedBy']];
+          $goodBlock = &self::$blocksStack[$goodBlock['replacedBy']];
         }
 
         // We must also not show the endings blocks that have been replaced
