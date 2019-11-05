@@ -252,4 +252,9 @@ class MasterController
     return $content;
   }
 }
+
+// We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
+// allowing the block.php file of the template engine system to work in production mode,
+// by creating a class alias
+class_alias('\cache\php\MasterController', '\lib\myLibs\MasterController');
 ?>

@@ -704,6 +704,11 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
               continue;
             }
 
+            // The file CORE_PATH . blocks.php needs an alias for CORE_PATH . MasterController.php so we have to handle
+            // that case
+            if ($tempFile === CACHE_PATH . 'php/MasterController.php')
+              $tempFile = CORE_PATH . 'MasterController.php';
+
             $nextContentToAdd = file_get_contents($tempFile);
 
             // we remove comments to facilitate the search and replace operations that follow
