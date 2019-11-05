@@ -138,7 +138,7 @@ if (file_exists($classMapPath) === false)
  */
 function convertClassMapToPHPFile(string $classMap) : string
 {
-  $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH . \'', $classMap);
+  $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $classMap);
 
   return '<? define(\'CLASSMAP\',' . substr(
     str_replace(
