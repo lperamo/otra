@@ -416,7 +416,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
   $contentToAdd = trim(substr($contentToAdd, 9, -5));
 
   if (false !== strpos($match, 'require') &&
-    0 !== substr_count($match, ')') % 2 &&
+    0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
     ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
     $contentToAdd = substr_replace($contentToAdd, '', -4);
@@ -910,12 +910,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     preg_replace('@\?>\s*<\?@', '', $finalContent)
   );
 
-  // replace FQCN by CN (TODO is it still necessary after "processStaticCalls" calls ?)
-  $finalContent = preg_replace(
-    '@(\\\\){0,1}(([\\w]{1,}\\\\){1,})(\\w{1,}[:]{2}\\w{1,}\\()@',
-    '$4',
-    $finalContent
-  );
+  $finalContent = preg_replace('@\\\\{0,1}(PDO(?:Statement){0,1})@', '\\\\$1', $finalContent);
 
   // We suppress our markers that helped us for the eval()
   $finalContent = str_replace(['BOOTSTRAP###', '###BOOTSTRAP'], '', $finalContent);
