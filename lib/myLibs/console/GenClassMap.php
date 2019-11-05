@@ -111,17 +111,33 @@ if (VERBOSE === 1)
 
 $classes = array_merge($classes, $additionalClassesFiles);
 
+// Calculate "production" classes
+// classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
+$prodClasses = [];
+
+foreach($classes as &$class)
+{
+  if (strpos($class, BASE_PATH . 'bundles') === false && strpos($class, CORE_PATH) === false)
+    $prodClasses []= $class;
+}
+
 $classMap = var_export($classes, true);
+$prodClassMap = var_export($prodClasses, true);
 $classMapPath = BASE_PATH . 'cache/php/';
 
 if (file_exists($classMapPath) === false)
   mkdir($classMapPath, 0755, true);
 
-// We strip spaces, PHP7'izes the content and changes \\\\ by \\ ...before saving the file.
-// Here, we take care of the spaces contained into folders and files names.
-file_put_contents(
-  $classMapPath . 'ClassMap.php',
-  '<? define(\'CLASSMAP\',' . substr(
+/**
+ * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
+ * We take care of the spaces contained into folders and files names.
+ *
+ * @param string $classMap
+ *
+ * @return string
+ */
+function convertClassMapToPHPFile(string $classMap) : string {
+  return '<? define(\'CLASSMAP\',' . substr(
     str_replace(
       ['\\\\', ' => ', '  \'', "\n", 'array ('],
       ['\\', '=>', '\'', '', '['],
@@ -129,7 +145,19 @@ file_put_contents(
     ),
     0,
     -2
-  ) . ']);?>'
+  ) . ']);?>';
+}
+
+// Generating development class map
+file_put_contents(
+  $classMapPath . 'ClassMap.php',
+  convertClassMapToPHPFile($classMap)
+);
+
+// Generating production class map
+file_put_contents(
+  $classMapPath . 'ProdClassMap.php',
+  convertClassMapToPHPFile($prodClassMap)
 );
 
 echo CLI_LIGHT_GREEN , ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;

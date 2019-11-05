@@ -102,7 +102,7 @@ else // mode Prod
       ini_set('html_errors', 1);
 
       /** CLASS MAPPING */
-      require BASE_PATH . 'cache/php/ClassMap.php';
+      require BASE_PATH . 'cache/php/ProdClassMap.php';
 
       spl_autoload_register(function ($className) {
         if (false === isset(CLASSMAP[$className]))
