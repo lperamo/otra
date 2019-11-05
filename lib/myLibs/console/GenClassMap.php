@@ -199,3 +199,4 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 }
 
 return null;
+?>
