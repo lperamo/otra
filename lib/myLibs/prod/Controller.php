@@ -113,7 +113,9 @@ class Controller extends MasterController
     if ('cli' === PHP_SAPI)
       return $content;
 
-    if (null !== $cachedFile)
+    // If the cached filename is specified and if the cache is activated, we create a cached file.
+    if (null !== $cachedFile
+      && (property_exists(AllConfig::class, 'cache') === false || AllConfig::$cache === true))
       file_put_contents($cachedFile, $content);
 
     return $content;
