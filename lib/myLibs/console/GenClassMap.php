@@ -115,10 +115,10 @@ $classes = array_merge($classes, $additionalClassesFiles);
 // classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
 $prodClasses = [];
 
-foreach($classes as &$class)
+foreach($classes as $key => &$class)
 {
   if (strpos($class, BASE_PATH . 'bundles') === false && strpos($class, CORE_PATH) === false)
-    $prodClasses []= $class;
+    $prodClasses [$key]= $class;
 }
 
 $classMap = var_export($classes, true);
@@ -138,7 +138,8 @@ if (file_exists($classMapPath) === false)
  */
 function convertClassMapToPHPFile(string $classMap) : string
 {
-  $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $classMap);
+  $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
+  $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
   return '<? define(\'CLASSMAP\',' . substr(
     str_replace(
