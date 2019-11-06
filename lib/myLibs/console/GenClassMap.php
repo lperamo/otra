@@ -131,6 +131,7 @@ if (file_exists($classMapPath) === false)
 /**
  * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
  * We take care of the spaces contained into folders and files names.
+ * We also reduce paths using constants.
  *
  * @param string $classMap
  *
