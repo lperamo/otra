@@ -910,6 +910,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     preg_replace('@\?>\s*<\?@', '', $finalContent)
   );
 
+  // We fix PDO and PDOStatement namespaces
   $finalContent = preg_replace('@\\\\{0,1}(PDO(?:Statement){0,1})@', '\\\\$1', $finalContent);
 
   // We suppress our markers that helped us for the eval()
@@ -922,6 +923,24 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
   $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
   $patternRemoveUse = '@\buse\b@';
+
+  /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
+   *  START SECTION
+   */
+  $finalContent = str_replace(
+    [
+      // line from lib/myLibs/Controller.php
+      'require CORE_PATH . (\'cli\' === php_sapi_name() ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
+      // line at the top of lib/myLibs/OtraException.php
+      'require_once CORE_PATH . \'DebugTools.php\';',
+      // line 115 in getDB, Sql class => lib/myLibs/bdd/Sql.php
+      'require CORE_PATH . \'bdd/\' . $driver . \'.php\';',
+      // line in renderView, file lib/myLibs/prod/Controller.php:57
+      'require CORE_PATH . \'Logger.php\';'
+    ],
+    '',
+    $finalContent);
+  /** END SECTION */
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
