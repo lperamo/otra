@@ -10,7 +10,7 @@ use lib\myLibs\{Controller, console\OtraExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once BASE_PATH . 'lib/myLibs/DebugTools.php';
+require_once CORE_PATH . 'DebugTools.php';
 
 class OtraException extends \Exception
 {
