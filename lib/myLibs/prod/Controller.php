@@ -56,6 +56,7 @@ class Controller extends MasterController
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
+      // TODO Have a beautiful error page for that case !
       die('Server problem : the file requested does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
     }
 
