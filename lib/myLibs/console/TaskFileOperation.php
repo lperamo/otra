@@ -478,6 +478,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
 /**
  * Retrieves informations about what kind of file inclusion we have, the related code and its position.
  *
+ * @param int    $level           Only for debugging purposes.
  * @param string $contentToAdd    Content actually parsed
  * @param string $file            Name of the file actually parsed
  * @param array  $filesToConcat   Files to parse after have parsed this one
@@ -485,7 +486,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
  * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
-function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
+function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, string &$file, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
 {
   preg_match_all(PATTERN, $contentToAdd, $matches, PREG_OFFSET_CAPTURE);
 
@@ -551,14 +552,19 @@ function getFileInfoFromRequiresAndExtends(string &$contentToAdd, string &$file,
       // if the class begin by \ then it is a standard class and then we do nothing otherwise we do this ...
       if ('\\' !== $class[0])
         $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, $match[1]);
-//      else if (true === in_array($tempFile, $parsedFiles)) // if we already have this class
-//        $tempFile = false;
       else
         $tempFile = false;
 
       // If we already have included the class
       if (false === $tempFile)
         continue;
+      else if (in_array($tempFile, $parsedFiles) === true)
+      {
+        if (1 < VERBOSE)
+          showFile($level, $tempFile, ' ALREADY PARSED');
+
+        continue;
+      }
 
       $filesToConcat['php']['extends'][] = $tempFile;
     } else if(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
@@ -646,7 +652,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
   $classesFromFile = getFileNamesFromUses($level, $contentToAdd, $filesToConcat, $parsedFiles);
 
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
-  getFileInfoFromRequiresAndExtends($contentToAdd, $file, $filesToConcat, $parsedFiles, $classesFromFile);
+  getFileInfoFromRequiresAndExtends($level, $contentToAdd, $file, $filesToConcat, $parsedFiles, $classesFromFile);
 
   processStaticCalls($level, $contentToAdd, $filesToConcat, $parsedFiles, $classesFromFile);
 
@@ -783,7 +789,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
  * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
-function processStaticCalls(int $level, string &$contentToAdd, array &$filesToConcat, array $parsedFiles, array $classesFromFile)
+function processStaticCalls(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
 {
   preg_match_all(
     '@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@',
