@@ -942,7 +942,9 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
       // line 115 in getDB, Sql class => lib/myLibs/bdd/Sql.php
       'require CORE_PATH . \'bdd/\' . $driver . \'.php\';',
       // line in renderView, file lib/myLibs/prod/Controller.php:57
-      'require CORE_PATH . \'Logger.php\';'
+      'require CORE_PATH . \'Logger.php\';',
+      // line in OtraException at the beginning of the method errorMessage()
+      'require_once BASE_PATH . \'config/AllConfig.php\';'
     ],
     '',
     $finalContent);

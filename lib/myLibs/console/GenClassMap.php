@@ -117,7 +117,15 @@ $prodClasses = [];
 
 foreach($classes as $key => &$class)
 {
-  if (strpos($class, BASE_PATH . 'bundles') === false && strpos($class, CORE_PATH) === false)
+  // We only let external libraries
+  if (mb_strpos($class, BASE_PATH) !== false)
+  {
+    $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
+    $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
+
+    if (in_array($firstFolderAfterBasePath, ['lib', 'web']) === true && mb_strpos($tmpClass, 'lib/myLibs') === false)
+      $prodClasses [$key] = $class;
+  } else
     $prodClasses [$key]= $class;
 }
 
