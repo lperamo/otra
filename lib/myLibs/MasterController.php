@@ -192,5 +192,70 @@ class MasterController
   {
     self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
+
+  /**
+   * Use the template engine to render the final template. Fast if the blocks stack is not used.
+   *
+   * @param string $templateFilename
+   * @param array  $variables
+   *
+   * @return string
+   */
+  protected static function processFinalTemplate(string &$templateFilename, array &$variables)
+  {
+    extract($variables);
+
+    ob_start();
+    require $templateFilename;
+    self::$currentBlock['content'] .= ob_get_clean();
+    array_push(self::$blocksStack, self::$currentBlock);
+    $content = '';
+    $indexesToUnset = [];
+
+    // Loops through the block stack to compile the final content that have to be shown
+    foreach(self::$blocksStack as $key => &$block)
+    {
+      $blockExists = array_key_exists($block['name'], self::$blockNames);
+
+      // If there are other blocks with this name...
+      if ($blockExists === true)
+      {
+        $goodBlock = &$block;
+
+        // We seeks for the last block with this name and we adds its content
+        while(array_key_exists('replacedBy', $goodBlock) === true)
+        {
+          $goodBlock['content'] = '';
+          $indexesToUnset[$goodBlock['index']] = true;
+          $tmpKey = $key;
+          $tmpBlock = &self::$blocksStack[$tmpKey + 1];
+
+          while ($tmpBlock['parent'] === self::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
+          {
+            $tmpBlock['content'] = '';
+            $indexesToUnset[$tmpBlock['index']] = true;
+            $tmpBlock = &self::$blocksStack[++$tmpKey + 1];
+          }
+
+          $goodBlock = &self::$blocksStack[$goodBlock['replacedBy']];
+        }
+
+        // We must also not show the endings blocks that have been replaced
+        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
+          $content .= $goodBlock['content'];
+
+        $goodBlock['content'] = '';
+      } else
+        $content .= $block['content'];
+    }
+
+    return $content;
+  }
 }
+
+// We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
+// allowing the block.php file of the template engine system to work in production mode,
+// by creating a class alias. Disabled when passing via the command line tasks.
+if ($_SERVER['APP_ENV'] === 'prod' && PHP_SAPI !== 'cli')
+  class_alias('\cache\php\MasterController', '\lib\myLibs\MasterController');
 ?>

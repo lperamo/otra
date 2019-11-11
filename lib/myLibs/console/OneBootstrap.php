@@ -89,7 +89,7 @@ define(
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
     'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
-    && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
+      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
@@ -104,7 +104,16 @@ $chunks = $params['chunks'];
 
 try
 {
-  contentToFile(fixFiles($chunks[1], $route, file_get_contents($fileToInclude), $verbose, $fileToInclude), $file_);
+  contentToFile(
+    fixFiles(
+      $chunks[1],
+      $route,
+      file_get_contents($fileToInclude),
+      $verbose,
+      $fileToInclude
+    ),
+    $file_
+  );
 } catch(\Exception $e)
 {
   echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])

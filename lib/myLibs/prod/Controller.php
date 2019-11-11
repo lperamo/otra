@@ -56,6 +56,7 @@ class Controller extends MasterController
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
+      // TODO Have a beautiful error page for that case !
       die('Server problem : the file requested does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
     }
 
@@ -71,7 +72,8 @@ class Controller extends MasterController
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
       $cachedFile = parent::getCacheFileName($templateFile);
-      parent::$template = (false === parent::getCachedFile($cachedFile))
+      parent::$template = (false === parent::getCachedFile($cachedFile)
+        || (property_exists(AllConfig::class, 'cache') === true && AllConfig::$cache === false))
         ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
@@ -90,50 +92,7 @@ class Controller extends MasterController
    */
   private function buildCachedFile(string $templateFilename, array $variables, $cachedFile = null, bool $layout = true) : string
   {
-    extract($variables);
-    ob_start();
-    require $templateFilename;
-    self::$currentBlock['content'] .= ob_get_clean();
-    array_push(self::$blocksStack, self::$currentBlock);
-    $content = '';
-    $indexesToUnset = [];
-
-    // Loops through the block stack to compile the final content that have to be shown
-    foreach(self::$blocksStack as $key => &$block)
-    {
-      $blockExists = array_key_exists($block['name'], MasterController::$blockNames);
-
-      // If there are other blocks with this name...
-      if ($blockExists === true)
-      {
-        $goodBlock = &$block;
-
-        // We seeks for the last block with this name and we adds its content
-        while(array_key_exists('replacedBy', $goodBlock) === true)
-        {
-          $goodBlock['content'] = '';
-          $indexesToUnset[$goodBlock['index']] = true;
-          $tmpKey = $key;
-          $tmpBlock = &MasterController::$blocksStack[$tmpKey + 1];
-
-          while ($tmpBlock['parent'] === MasterController::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
-          {
-            $tmpBlock['content'] = '';
-            $indexesToUnset[$tmpBlock['index']] = true;
-            $tmpBlock = &MasterController::$blocksStack[++$tmpKey + 1];
-          }
-
-          $goodBlock = &MasterController::$blocksStack[$goodBlock['replacedBy']];
-        }
-
-        // We must also not show the endings blocks that have been replaced
-        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
-          $content .= $goodBlock['content'];
-
-        $goodBlock['content'] = '';
-      } else
-        $content .= $block['content'];
-    }
+    $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
     $routeV = $this->route . VERSION;
 
@@ -155,7 +114,9 @@ class Controller extends MasterController
     if ('cli' === PHP_SAPI)
       return $content;
 
-    if (null !== $cachedFile)
+    // If the cached filename is specified and if the cache is activated, we create a cached file.
+    if (null !== $cachedFile
+      && (property_exists(AllConfig::class, 'cache') === false || AllConfig::$cache === true))
       file_put_contents($cachedFile, $content);
 
     return $content;

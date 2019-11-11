@@ -1,4 +1,4 @@
-<?php
+<?
 /* Light templating engine */
 
 use lib\myLibs\MasterController;
