@@ -13,7 +13,19 @@
 
 This framework is in a very alpha stage so be indulgent :)
 
-It uses :
+There is still a lot of things to do :
+- bugs,
+- improving/adding unit tests,
+- fixing bad conceptual choices,
+- features
+- optimizations
+- compatibility
+- and so on ^^.
+ 
+I will working on giving to the community a list of tasks that I compiled until now.
+I am just wondering myself how I will present that to you, which service I will use etc.
+
+This framework uses :
 
 - a [Symfony YAML component](https://symfony.com/doc/current/components/yaml.html) ([License Creative Commons BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
 - the Google Closure Compiler ([Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0))
