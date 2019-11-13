@@ -169,7 +169,7 @@ foreach($iterator as $entry)
     $resourceFolder = realPath(dirname($resourceName) . '/..');
 
     if ($extension === 'ts')
-      generateJavaScript(BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
+      generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
     elseif (substr($baseName, 0, 1) !== '_')
     {
       $generatedCssFile = $baseName . '.css';

@@ -3,7 +3,7 @@
 use function lib\myLibs\console\returnLegiblePath;
 use const lib\myLibs\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
-function generateJavaScript(bool $launch, string &$resourceFolder, string &$baseName, string &$resourceName)
+function generateJavaScript(bool $verbose, bool $launch, string &$resourceFolder, string &$baseName, string &$resourceName)
 {
   /* TypeScript seems to not handle the compilation of one file using the json configuration file !
          * It is either the entire project with the json configuration file
@@ -72,11 +72,11 @@ function generateJavaScript(bool $launch, string &$resourceFolder, string &$base
         // TODO add those lines to handle class map and fix the resulting issue
         // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
         list($return, $output) = cli('java -jar ' . BASE_PATH . 'lib/myLibs/console/compiler.jar -W '
-          . GOOGLE_CLOSURE_COMPILER_VERBOSITY[BUILD_DEV_VERBOSE]
+          . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
           . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
           . $generatedJsFile);
 
-        if (BUILD_DEV_VERBOSE > 0)
+        if ($verbose > 0)
         {
           echo ($return === 0) ?
             $output . CLI_GREEN . 'Javascript ' . returnLegiblePath($generatedJsFile) . ' has been optimized.'
@@ -86,10 +86,24 @@ function generateJavaScript(bool $launch, string &$resourceFolder, string &$base
         // Cleaning temporary files ...(js and the mapping)
         unlink($generatedTemporaryJsFile);
         unlink($generatedTemporaryJsFile . '.map');
+
+        /** TODO side note, the class mapping is not present when we pass by Google Closure.
+         * We have to check if we can add it.
+         */
       } else
       {
         rename($generatedTemporaryJsFile, $generatedJsFile);
         rename($generatedTemporaryJsFile . '.map', $generatedJsFile . '.map');
+
+        // Fixing class mapping reference
+        file_put_contents(
+          $generatedJsFile,
+          str_replace(
+            $baseName . '_viaTypescript.js.map',
+            $baseName . '.js.map',
+            file_get_contents($generatedJsFile)
+          )
+        );
       }
     }
   } else

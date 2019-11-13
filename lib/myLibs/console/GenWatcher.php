@@ -433,7 +433,7 @@ while (true)
 
           if ($fileInformations[1] === 'ts')
           {
-            generateJavaScript(GEN_WATCHER_GCC, $resourceFolder, $fileInformations[0], $resourceName);
+            generateJavaScript(GEN_WATCHER_VERBOSE, GEN_WATCHER_GCC, $resourceFolder, $fileInformations[0], $resourceName);
           } elseif (substr($name, 0, 1) !== '_')
           {
             $generatedCssFile = $fileInformations[0] . '.css';
