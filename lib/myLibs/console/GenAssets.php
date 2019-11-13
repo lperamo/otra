@@ -117,7 +117,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
 
       if ($pathAndFile !== null)
       {
-        gzCompressFile(loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName), null, 9);
+        gzCompressFile($pathAndFile, null, 9);
         echo status('CSS');
       } else
         echo status('NO CSS', 'CLI_CYAN');
@@ -294,6 +294,15 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     }
 
     $content = ob_get_clean();
+
+    if ($type === 'css')
+    {
+      $content = str_replace(
+        ['  ', PHP_EOL, ' :', ': ', ', ', ' {', '{ ','; '],
+        [' ', '', ':', ':', ',', '{', '{', ';'],
+        $content
+      );
+    }
 
     echo $content;
     /** Workaround for google closure compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line feed after source map declaration like
