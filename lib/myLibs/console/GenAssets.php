@@ -206,25 +206,6 @@ for($i = 0; $i < $cptRoutes; ++$i)
 function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
 
 /**
- * Cleans the css (spaces and comments)
- *
- * @param $content string The css content to clean
- *
- * @return string The cleaned css
- */
-function cleanCss(string $content) : string
-{
-  $content = preg_replace('@/\*.*?\*/@s', '', $content);
-  $content = str_replace(["\r\n", "\r", "\n", "\t", '  '], '', $content);
-  $content = str_replace(['{ ',' {'], '{', $content);
-  $content = str_replace([' }','} '], '}', $content);
-  $content = str_replace(['; ',' ;'], ';', $content);
-  $content = str_replace([', ',' ,'], ',', $content);
-
-  return str_replace(': ', ':', $content);
-}
-
-/**
  * @param array  $resources
  * @param array  $routeInfos
  * @param string $type       'css' or 'js'
