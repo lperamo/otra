@@ -56,7 +56,8 @@ class Controller extends MasterController
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
-      die('Server problem : the file requested doesn\'t exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
+      // TODO Have a beautiful error page for that case !
+      die('Server problem : the file requested does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
     }
 
     // If we already have the template in memory and that it's not empty then we show it
@@ -71,7 +72,8 @@ class Controller extends MasterController
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
       $cachedFile = parent::getCacheFileName($templateFile);
-      parent::$template = (false === parent::getCachedFile($cachedFile))
+      parent::$template = (false === parent::getCachedFile($cachedFile)
+        || (property_exists(AllConfig::class, 'cache') === true && AllConfig::$cache === false))
         ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
@@ -90,10 +92,7 @@ class Controller extends MasterController
    */
   private function buildCachedFile(string $templateFilename, array $variables, $cachedFile = null, bool $layout = true) : string
   {
-    extract($variables);
-    ob_start();
-    require $templateFilename;
-    $content = $layout ? self::addLayout(ob_get_clean()) : ob_get_clean();
+    $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
     $routeV = $this->route . VERSION;
 
@@ -115,7 +114,9 @@ class Controller extends MasterController
     if ('cli' === PHP_SAPI)
       return $content;
 
-    if (null !== $cachedFile)
+    // If the cached filename is specified and if the cache is activated, we create a cached file.
+    if (null !== $cachedFile
+      && (property_exists(AllConfig::class, 'cache') === false || AllConfig::$cache === true))
       file_put_contents($cachedFile, $content);
 
     return $content;
@@ -148,7 +149,7 @@ class Controller extends MasterController
    *
    * @param string $routeV Route name plus the version
    *
-   * @return The links to the js files or the script markup with the js inside
+   * @return string The links to the js files or the script markup with the js inside
    */
   private function addJs(string $routeV) : string
   {

@@ -5,7 +5,7 @@
  * @author Lionel Péramo */
 
 namespace lib\myLibs\bdd;
-use lib\myLibs\LionelException;
+use lib\myLibs\OtraException;
 
 class Mysql
 {
@@ -34,13 +34,13 @@ class Mysql
    *
    * @return resource Returns a resource on success, otherwise an exception is raised
    *
-   * @throws LionelException
+   * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
   public static function query(string $query, $link_identifier)
   {
     if (!$result = mysql_query($query, $link_identifier))
-      throw new LionelException('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
+      throw new OtraException('Invalid SQL request : <br><br>' . nl2br($query) . '<br><br>' . mysql_error());
     else
       return $result;
   }

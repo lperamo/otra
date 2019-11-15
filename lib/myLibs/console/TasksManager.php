@@ -16,9 +16,10 @@ class TasksManager
    */
   public static function showCommands(string $message)
   {
-    echo PHP_EOL, brown(), $message, lightGray(), PHP_EOL, PHP_EOL;
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', white(), str_pad('no argument', 25, ' '), lightGray();
-    echo ': ', cyan(), 'Shows the available commands.', PHP_EOL;
+    echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
+    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', 25, ' '),
+    CLI_LIGHT_GRAY;
+    echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
     $methods = get_class_methods('lib\myLibs\console\Tasks');
     $category = '';
@@ -35,19 +36,21 @@ class TasksManager
           if ($category !== $paramsDesc[TASK_CATEGORY])
           {
             $category = $paramsDesc[TASK_CATEGORY];
-            echo lightCyan(), PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
+            echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
           }
         } else
         {
           $category = 'Other';
-          echo lightCyan(), PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
+          echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
         }
 
-        echo lightGray(), '  - ', white(), str_pad($method, 25, ' '), lightGray(), ': ', cyan(), $paramsDesc[TASK_DESCRIPTION], PHP_EOL;
+        echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, 25, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
+        $paramsDesc[TASK_DESCRIPTION],
+        PHP_EOL;
       }
     }
 
-    echo endColor();
+    echo END_COLOR;
   }
 
   /**
@@ -58,17 +61,19 @@ class TasksManager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    require CORE_PATH . 'LionelException.php';
+    require CORE_PATH . 'OtraException.php';
 
     set_error_handler(function ($errno, $message, $file, $line, $context) {
-      throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
+      throw new \lib\myLibs\OtraException($message, $errno, $file, $line, $context);
     });
 
     try
     {
       if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
       {
-        echo yellowText('We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...'), PHP_EOL;
+        echo CLI_YELLOW,
+          'We cannot use the console if the class mapping file doesn\'t exist ! We launch the generation of this file ...',
+          END_COLOR, PHP_EOL;
         Tasks::genClassMap();
 
         // If the task was genClassMap...then we have nothing left to do !

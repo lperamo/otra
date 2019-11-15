@@ -1,4 +1,4 @@
-const LIB_LIGHTBOX = (function(d : Document, u : undefined)
+window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
 {
   'use strict';
 
@@ -17,15 +17,15 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
    *
    * @param {Object} params
    */
-  let lightbox = function lightbox(params : any)
+  let lightbox = function lightbox(params : any) : void
   {
-    let params : any = {
+    params = {
       callback: params.callback,
       container: params.container || d.body,
       html: params.html,
       type: params.type,
       url: params.url
-    }
+    };
 
     container = params.container;
 
@@ -44,12 +44,12 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
           params.container.insertAdjacentHTML('beforeend', lightboxBeginning + xhr.responseText + ending);
           u !== params.callback && params.callback()
         }
-      }
+      };
 
       xhr.open('GET', params.url, true);
       xhr.send()
     }
-  }
+  };
 
   /* Confirm functions ******/
   function lightboxCancel() : void
@@ -69,8 +69,8 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
    */
   function confirmExit(callback : any)
   {
-    removeEventListener('mouseup', lightboxCancel, false);
-    removeEventListener('mouseup', lightboxOK, false);
+    d.removeEventListener('mouseup', lightboxCancel, false);
+   d. removeEventListener('mouseup', lightboxOK, false);
 
     exit.apply(this);
 
@@ -123,7 +123,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
    */
   function advConfirm(params : any)
   {
-    let params  : any = {
+    params = {
       callbackYes: params.callbackYes,
       container: params.container || d.body,
       callbackNo: params.callbackNo,
@@ -133,7 +133,7 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
 
     callbackYes = params.callbackYes;
     callbackNo = params.callbackNo;
-    container = params.container
+    container = params.container;
 
     if (u === params.url) // HTML content
       createConfirmDialog(confirmBeginning + params.html + confirmEnding);
@@ -145,13 +145,12 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
       {
         4 === xhr.readyState && 200 === xhr.status
           && createConfirmDialog(confirmBeginning + xhr.responseText + confirmEnding)
-      }
+      };
 
       xhr.open('GET', params.url, true);
       xhr.send()
     }
   }
-
   /* END Confirm functions ******/
 
   const dummy : any = {
@@ -163,4 +162,4 @@ const LIB_LIGHTBOX = (function(d : Document, u : undefined)
 
   return dummy
 
-})(document, undefined)
+})(document, undefined);

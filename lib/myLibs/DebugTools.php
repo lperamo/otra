@@ -45,12 +45,26 @@ function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
 }
 
 /**
+ * Returns file and line of the caller for debugging purposes.
+ *
+ * @return string
+ */
+function getCaller()
+{
+  $secondTrace = debug_backtrace()[1];
+
+  return $secondTrace['file'] . ':' . $secondTrace['line'];
+}
+
+/**
  * A nice dump function that takes as much parameters as we want to put.
  */
 function dumpSmall()
 {
   echo '<pre>';
   $args = func_get_args();
+  $secondTrace = debug_backtrace()[1];
+  echo '<p style="color:#3377FF">OTRA DUMP - ', $secondTrace['file'], ':', $secondTrace['line'], '</p>';
 
   foreach ($args as &$param)
   {
@@ -76,7 +90,7 @@ function reformatSource(string $stringToFormat) : string
 /**
  * Converts a php array into stylish html table
  *
- * @param        $dataToShow     Array to convert
+ * @param array  $dataToShow     Array to convert
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
  */
@@ -112,9 +126,9 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
   return;
 
   echo $title, PHP_EOL,
-    lightBlueText('|'), ' Name' ,
-    lightBlueText('|'), ' Index or value if array',
-    lightBlueText('|'), ' Value if array', PHP_EOL;
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
+    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
@@ -123,9 +137,9 @@ function getArgumentType(&$index, &$value)
   switch($index)
   {
     case 0:
-      if (true === is_int($value) && true === isset(lib\myLibs\LionelException::$codes[$value]))
+      if (true === is_int($value) && true === isset(lib\myLibs\OtraException::$codes[$value]))
       {
-        $value = lib\myLibs\LionelException::$codes[$value];
+        $value = lib\myLibs\OtraException::$codes[$value];
         return 'Error type';
       }
 

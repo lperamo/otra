@@ -7,7 +7,18 @@ namespace lib\myLibs;
 
 class MasterController
 {
-  public static $path;
+  public static $path,
+    $blocksStack = [],
+    $currentBlock = [
+      'content' => '',
+      'index' => 0,
+      'name' => 'root',
+      'parent' => null
+    ],
+    $currentBlocksStackIndex = 0,
+    $blockNames = [],
+    $blocksToUnset = [];
+
   public $route,
         $bundle = '',
         $module = '',
@@ -16,9 +27,11 @@ class MasterController
   protected $controller = '',
     $action = '',
     $getParams = '',
-    $viewCSSPath = '/', // CSS path for this module
-    $viewJSPath = '/', // JS path for this module
-    $pattern = '';
+    $pattern = '',
+    $viewResourcePath = [
+      'css' => '/', // CSS path for this module
+      'js' => '/'  // JS path for this module
+    ];
 
   protected static
     $css = [],
@@ -30,10 +43,7 @@ class MasterController
     $id,
   /* @var string $template The actual template being processed */
     $template,
-    $layout,
-    $body,
-    $bodyAttrs,
-    $layoutOnce = false;
+    $layout;
 
   // HTTP codes !
   const HTTP_CONTINUE = 100;
@@ -120,11 +130,13 @@ class MasterController
     self::$id = $this->bundle . $this->module . $this->controller . $this->action;
     $this->getParams = $getParams;
 
-    $mainPath = '/bundles/' . $this->bundle . '/' . $this->module . '/';
+    $mainPath = 'bundles/' . $this->bundle . '/' . $this->module . '/';
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
-    $this->viewCSSPath = $mainPath .'resources/css/';
-    $this->viewJSPath = $mainPath . 'resources/js/';
+    $this->viewResourcePath = [
+      'css' => '/' . $mainPath .'resources/css/',
+      'js' => '/' . $mainPath . 'resources/js/'
+    ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
@@ -162,60 +174,6 @@ class MasterController
   }
 
   /**
-   * Replaces the layout body content by the template body content if the layout is set
-   * @param string $content Content of the template to process
-   * @return mixed|string
-   */
-  protected static function addLayout(string $content)
-  {
-    if (true === isset(self::$layout))
-    {
-      self::$layoutOnce = true;
-      return preg_replace('`(<body[^>]*>)(.*)`s', '$1' . str_replace('$','\\$', $content), self::$layout);
-    }
-
-    return $content;
-  }
-
-  /**
-   * Sets the body attributes
-  *
-  * @param string $attrs
-  */
-  public static function bodyAttrs(string $attrs = '') : void { self::$bodyAttrs = $attrs; }
-
-  /**
-   * Sets the body content
-   *
-   * @param string $content
-   */
-  private static function body(string $content = '') : void { self::$body = $content; }
-
-  /**
-   * Sets the title of the page
-   *
-   * @param string $title
-   */
-  protected static function title(string $title) : void
-  {
-    self::$layout = (isset(self::$layout))
-      ? preg_replace('@(<title>)(.*)(</title>)@', '$1' . $title . '$3', self::$layout)
-      : '<title>' . $title . '</title><body>';
-  }
-
-  /**
-   * Sets the favicons of the site
-   *
-   * @param string $filename
-   * @param string $filenameIE
-   */
-  protected static function favicon(string $filename = '', string $filenameIE = '') : void
-  {
-    echo '<link rel="icon" type="image/png" href="' , $filename , '" />
-      <!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="' , $filenameIE . '" /><![endif]-->';
-  }
-
-  /**
    * Adds a css script to the existing ones
    *
    * @param array $css The css file to add (Array of string)
@@ -226,7 +184,7 @@ class MasterController
   }
 
   /**
-   * Adds one or more javascript scripts to the existing ones. If the keys are string il will add the string to the link.
+   * Adds one or more javascript scripts to the existing ones. If the keys are string it will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
    */
@@ -234,5 +192,70 @@ class MasterController
   {
     self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
   }
+
+  /**
+   * Use the template engine to render the final template. Fast if the blocks stack is not used.
+   *
+   * @param string $templateFilename
+   * @param array  $variables
+   *
+   * @return string
+   */
+  protected static function processFinalTemplate(string &$templateFilename, array &$variables)
+  {
+    extract($variables);
+
+    ob_start();
+    require $templateFilename;
+    self::$currentBlock['content'] .= ob_get_clean();
+    array_push(self::$blocksStack, self::$currentBlock);
+    $content = '';
+    $indexesToUnset = [];
+
+    // Loops through the block stack to compile the final content that have to be shown
+    foreach(self::$blocksStack as $key => &$block)
+    {
+      $blockExists = array_key_exists($block['name'], self::$blockNames);
+
+      // If there are other blocks with this name...
+      if ($blockExists === true)
+      {
+        $goodBlock = &$block;
+
+        // We seeks for the last block with this name and we adds its content
+        while(array_key_exists('replacedBy', $goodBlock) === true)
+        {
+          $goodBlock['content'] = '';
+          $indexesToUnset[$goodBlock['index']] = true;
+          $tmpKey = $key;
+          $tmpBlock = &self::$blocksStack[$tmpKey + 1];
+
+          while ($tmpBlock['parent'] === self::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
+          {
+            $tmpBlock['content'] = '';
+            $indexesToUnset[$tmpBlock['index']] = true;
+            $tmpBlock = &self::$blocksStack[++$tmpKey + 1];
+          }
+
+          $goodBlock = &self::$blocksStack[$goodBlock['replacedBy']];
+        }
+
+        // We must also not show the endings blocks that have been replaced
+        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
+          $content .= $goodBlock['content'];
+
+        $goodBlock['content'] = '';
+      } else
+        $content .= $block['content'];
+    }
+
+    return $content;
+  }
 }
+
+// We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
+// allowing the block.php file of the template engine system to work in production mode,
+// by creating a class alias. Disabled when passing via the command line tasks.
+if ($_SERVER['APP_ENV'] === 'prod' && PHP_SAPI !== 'cli')
+  class_alias('\cache\php\MasterController', '\lib\myLibs\MasterController');
 ?>

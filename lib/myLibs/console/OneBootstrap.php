@@ -9,7 +9,7 @@ define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) -
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 require CORE_PATH . 'console/Colors.php';
 
-echo white(), str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, endColor();
+echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
 
 require BASE_PATH . 'cache/php/ClassMap.php';
@@ -27,11 +27,11 @@ spl_autoload_register(function($className)
     require CLASSMAP[$className];
   } else {
 
-  echo red(), 'CLASSMAP PROBLEM !!', PHP_EOL;
+  echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
   debug_print_backtrace();
   echo PHP_EOL;
   var_dump(CLASSMAP);
-  echo PHP_EOL, endColor();
+  echo PHP_EOL, END_COLOR;
 
 }
 
@@ -89,7 +89,7 @@ define(
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
     'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
-      && array_key_exists('driver', \config\AllConfig::$dbConnections) === true
+      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
@@ -97,14 +97,23 @@ define(
 );
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
-  throw new \lib\myLibs\LionelException($message, $errno, $file, $line, $context);
+  throw new \lib\myLibs\OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];
 
 try
 {
-  contentToFile(fixFiles($chunks[1], $route, file_get_contents($fileToInclude), $verbose, $fileToInclude), $file_);
+  contentToFile(
+    fixFiles(
+      $chunks[1],
+      $route,
+      file_get_contents($fileToInclude),
+      $verbose,
+      $fileToInclude
+    ),
+    $file_
+  );
 } catch(\Exception $e)
 {
   echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])

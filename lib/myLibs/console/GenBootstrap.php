@@ -13,7 +13,7 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/Cli.php';
 
-  list($status, $return) = cli(PHP_BINARY . ' ./console.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  list($status, $return) = cli(PHP_BINARY . ' ./otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
   echo $return;
 
   return $status;
@@ -39,13 +39,13 @@ if (true === isset($argv[4]))
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . white() . $route . brown()
-      . ' ! Do you mean ' . white() . $newRoute . brown() . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
+      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)
     {
-      echo redText('Sorry then !'), PHP_EOL;
+      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
       exit(1);
     }
 
@@ -76,20 +76,21 @@ foreach(array_keys($routes) as &$route)
   ++$key;
 
   if (true === isset($routes[$route]['resources']['template']))
-    echo white() . str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . cyan() . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . white(), 94, '=', STR_PAD_BOTH), endColor(), PHP_EOL;
+    echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
+        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
     passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
 }
 
 // Final specific management for routes files
-echo 'Create the specific routes management file... ';
+echo 'Create the specific routes management file... ', PHP_EOL;
 
 define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
     'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
-      && array_key_exists('driver', \config\AllConfig::$dbConnections) === true
+      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
@@ -100,12 +101,15 @@ $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
 require CORE_PATH . 'console/TaskFileOperation.php';
 
+$fileToInclude = CORE_PATH . 'Router.php';
+
 contentToFile(
   fixFiles(
     $routes[$route]['chunks'][1],
     $route,
-    file_get_contents(CORE_PATH . 'Router.php') . file_get_contents(BASE_PATH . 'config/Routes.php'),
-    $verbose
+    file_get_contents($fileToInclude),
+    $verbose,
+    $fileToInclude
   ),
   $routesManagementFile
 );

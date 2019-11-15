@@ -18,9 +18,9 @@ define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layo
 
 define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
-define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n');
+define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n'); // TODO Put in an environment variable
 
-// require_once 'cause maybe the class LionelException will attempt to load it too !
+// require_once 'cause maybe the class OtraException will attempt to load it too !
 require_once BASE_PATH . 'config/' . $_SERVER['APP_ENV'] . '/AllConfig.php';
 
 $externalConfigFile = BASE_PATH . 'bundles/config/Config.php';

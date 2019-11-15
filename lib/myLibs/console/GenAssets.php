@@ -3,7 +3,10 @@ require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';
 require BASE_PATH . '/lib/myLibs/tools/Compression.php';
-// require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
+
+define('ASSET_MASK', 2);
+define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3]]);
+define('ROUTE', 4);
 
 $routes = \config\Routes::$_;
 
@@ -19,19 +22,25 @@ function unlinkResourceFile(string $folder, string $shaName)
     unlink($file);
 }
 
-if (true === isset($argv[2]) && false === is_numeric($argv[2]))
-  dieC('red', 'This not a valid mask ! It must be between 1 and 7.');
+if (true === isset($argv[ASSET_MASK]) && false === is_numeric($argv[ASSET_MASK]))
+{
+  echo CLI_RED, 'This not a valid mask ! It must be between 1 and 7.', END_COLOR;
+  exit(1);
+}
 
 // If we ask just for only one route
-if (true === isset($argv[3]))
+if (true === isset($argv[ROUTE]))
 {
-  $theRoute = $argv[3];
+  $theRoute = $argv[ROUTE];
 
   if (false === isset($routes[$theRoute]))
-    dieC('yellow', PHP_EOL . 'This route doesn\'t exist !' . PHP_EOL);
+  {
+    echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
+    exit(1);
+  }
 
   echo 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
 
   $routes = array($theRoute => $routes[$theRoute]);
 
@@ -51,7 +60,7 @@ if (true === isset($argv[3]))
 } else
 {
   echo PHP_EOL, 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
 
   if ($mask & 1)
     array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
@@ -63,7 +72,7 @@ if (true === isset($argv[3]))
     array_map('unlink', glob(CACHE_PATH . 'js/*'));
 }
 
-echo lightGreenText(' OK'), PHP_EOL;
+echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
 
 /*************** PROCESSING THE ROUTES ************/
 
@@ -76,11 +85,11 @@ for($i = 0; $i < $cptRoutes; ++$i)
   $route = current($routes);
   $routeName = key($routes);
   next($routes);
-  echo lightCyan(), str_pad($routeName, 25, ' '), lightGray();
+  echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
 
   if (false === isset($route['resources']))
   {
-    echo status('Nothing to do', 'cyan'), ' =>', lightGreenText(' OK'), PHP_EOL;
+    echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
     continue;
   }
 
@@ -107,10 +116,16 @@ for($i = 0; $i < $cptRoutes; ++$i)
   {
     if (strpos(implode(array_keys($resources)), 'css') !== false)
     {
-      gzCompressFile(loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName), null,9);
-      echo status('CSS');
+      $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
+
+      if ($pathAndFile !== null)
+      {
+        gzCompressFile($pathAndFile, null, 9);
+        echo status('CSS');
+      } else
+        echo status('NO CSS', 'CLI_CYAN');
     } else
-      echo status('NO CSS', 'cyan');
+      echo status('NO CSS', 'CLI_CYAN');
   }
 
   /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -126,9 +141,9 @@ for($i = 0; $i < $cptRoutes; ++$i)
         if (true !== empty(exec('which java'))) // JAVA CASE
         {
           // JAVA CASE
-          /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+          /** TODO Find a way to store the logs (and then remove -W QUIET) */
           exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
         } else {
           // JAMVM CASE
@@ -142,22 +157,22 @@ for($i = 0; $i < $cptRoutes; ++$i)
       } else
       {
         // JAVA CASE
-        /** TODO Find a way to store the logs (and then remove -W QUIET), other thing interesting --compilation_level ADVANCED_OPTIMIZATIONS */
+        /** TODO Find a way to store the logs (and then remove -W QUIET) */
         exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
         gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
       }
 
       echo status('JS');
     } else
-      echo status('NO JS', 'cyan');
+      echo status('NO JS', 'CLI_CYAN');
   }
 
   /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
   if ($mask & 1)
   {
     if (false === isset($resources['template']))
-      echo status('No TEMPLATE', 'cyan');
+      echo status('No TEMPLATE', 'CLI_CYAN');
     else
     {
       // Generates the gzipped template files
@@ -172,13 +187,14 @@ for($i = 0; $i < $cptRoutes; ++$i)
         echo status('TEMPLATE');
       else
       {
-        status('TEMPLATE', 'red');
+        status('TEMPLATE', 'CLI_RED');
         $noErrors = false;
       }
     }
   }
 
-  echo ' => ', $noErrors === true ? lightGreenText('OK') : redText('ERROR'), '[', cyanText($shaName), ']', PHP_EOL;
+  echo ' => ', $noErrors === true ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
+    CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
 }
 
 /**
@@ -188,26 +204,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
  *
  * @return string
  */
-function status(string $status, string $color = 'lightGreen') : string { return ' [' . $color() . $status . lightGray(). ']'; }
-
-/**
- * Cleans the css (spaces and comments)
- *
- * @param $content string The css content to clean
- *
- * @return string The cleaned css
- */
-function cleanCss(string $content) : string
-{
-  $content = preg_replace('@/\*.*?\*/@s', '', $content);
-  $content = str_replace(["\r\n", "\r", "\n", "\t", '  '], '', $content);
-  $content = str_replace(['{ ',' {'], '{', $content);
-  $content = str_replace([' }','} '], '}', $content);
-  $content = str_replace(['; ',' ;'], ';', $content);
-  $content = str_replace([', ',' ,'], ',', $content);
-
-  return str_replace(': ', ':', $content);
-}
+function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
 
 /**
  * @param array  $resources
@@ -216,11 +213,11 @@ function cleanCss(string $content) : string
  * @param string $bundlePath
  * @param string $shaName
  *
- * @return string Return the path of the 'macro' resource file
+ * @return null|string Return the path of the 'macro' resource file
  */
 function loadAndSaveResources(array $resources, array $routeInfos, string $type, string $bundlePath, string $shaName)
+: ?string
 {
-
   ob_start();
   loadResource($resources, $routeInfos, 'first_' . $type, $bundlePath);
   loadResource($resources, $routeInfos, 'bundle_' . $type, $bundlePath, '');
@@ -232,7 +229,7 @@ function loadAndSaveResources(array $resources, array $routeInfos, string $type,
 
   // If there was no resources to optimize
   if ('' === $allResources)
-    return status('No ' . strtoupper($type), 'cyan');
+    return null;
 
   $resourceFolderPath = CACHE_PATH . $type . '/';
   $pathAndFile = $resourceFolderPath . $shaName;
@@ -279,6 +276,15 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     }
 
     $content = ob_get_clean();
+
+    if ($type === 'css')
+    {
+      $content = str_replace(
+        ['  ', PHP_EOL, ' :', ': ', ', ', ' {', '{ ','; '],
+        [' ', '', ':', ':', ',', '{', '{', ';'],
+        $content
+      );
+    }
 
     echo $content;
     /** Workaround for google closure compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line feed after source map declaration like

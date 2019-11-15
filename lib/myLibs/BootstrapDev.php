@@ -32,9 +32,9 @@ spl_autoload_register(function(string $className)
  * @param int    $line
  * @param array  $context
  *
- * @throws \lib\myLibs\LionelException
+ * @throws \lib\myLibs\OtraException
  */
-function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\LionelException($message, $errno, $file, $line, $context); }
+function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 
@@ -54,12 +54,14 @@ try
 } catch(Exception $e) // in order to catch fatal errors
 {
   echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
+    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}' // json sent if it was an AJAX request
     : $e->getMessage();
 
   exit(1);
 } catch(Error $e)
 {
-  echo "fatal error T_T";
+    echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+        ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}' // json sent if it was an AJAX request
+        : $e->getMessage();
   exit(1);
 }
