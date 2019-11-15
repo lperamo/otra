@@ -3,7 +3,10 @@ require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';
 require BASE_PATH . '/lib/myLibs/tools/Compression.php';
-// require BASE_PATH . '/lib/packerjs/JavaScriptPacker.php';
+
+define('ASSET_MASK', 2);
+define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3]]);
+define('ROUTE', 4);
 
 $routes = \config\Routes::$_;
 
@@ -19,16 +22,16 @@ function unlinkResourceFile(string $folder, string $shaName)
     unlink($file);
 }
 
-if (true === isset($argv[2]) && false === is_numeric($argv[2]))
+if (true === isset($argv[ASSET_MASK]) && false === is_numeric($argv[ASSET_MASK]))
 {
   echo CLI_RED, 'This not a valid mask ! It must be between 1 and 7.', END_COLOR;
   exit(1);
 }
 
 // If we ask just for only one route
-if (true === isset($argv[3]))
+if (true === isset($argv[ROUTE]))
 {
-  $theRoute = $argv[3];
+  $theRoute = $argv[ROUTE];
 
   if (false === isset($routes[$theRoute]))
   {
@@ -37,7 +40,7 @@ if (true === isset($argv[3]))
   }
 
   echo 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
 
   $routes = array($theRoute => $routes[$theRoute]);
 
@@ -57,7 +60,7 @@ if (true === isset($argv[3]))
 } else
 {
   echo PHP_EOL, 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[2])) ? $argv[2] + 0 : 7;
+  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
 
   if ($mask & 1)
     array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
@@ -138,10 +141,9 @@ for($i = 0; $i < $cptRoutes; ++$i)
         if (true !== empty(exec('which java'))) // JAVA CASE
         {
           // JAVA CASE
-          /** TODO Find a way to store the logs (and then remove -W QUIET), put a parameter to chose the wished compilation
-           * level -O ADVANCED */
+          /** TODO Find a way to store the logs (and then remove -W QUIET) */
           exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
         } else {
           // JAMVM CASE
@@ -155,10 +157,9 @@ for($i = 0; $i < $cptRoutes; ++$i)
       } else
       {
         // JAVA CASE
-        /** TODO Find a way to store the logs (and then remove -W QUIET), put a parameter to chose the wished compilation
-         * level -O ADVANCED */
+        /** TODO Find a way to store the logs (and then remove -W QUIET) */
         exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT');
+          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
         gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
       }
 

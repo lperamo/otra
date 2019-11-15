@@ -12,7 +12,7 @@ define('TASK_CATEGORY', 3);
 
 class Tasks
 {
-  protected static $STRING_PAD_FOR_OPTIONAL_MASK = 40;
+  protected static $STRING_PAD_FOR_OPTION_FORMATTING = 40;
 
   public static function createAction(array $argv)
   {
@@ -257,12 +257,16 @@ class Tasks
       'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',
       [
         'mask' => '1 => templates' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => css' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '4 => js' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '7 => all',
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '2 => css' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '4 => js' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '7 => all (default)',
+        'js_level_compilation' =>  'Optimization level for Google Closure Compiler'. PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '0 for WHITESPACE_ONLY' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '1 for SIMPLE_OPTIMIZATIONS (default)' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '2 for ADVANCED_OPTIMIZATIONS',
         'route' => 'The route for which you want to generate resources.'
       ],
-      ['optional', 'optional'],
+      ['optional', 'optional', 'optional'],
       'Deployment'
     ];
   }
@@ -313,11 +317,11 @@ class Tasks
        'Launches a watcher that will update the PHP class mapping, the ts files and the scss files.',
        [
          'verbose' => '0 => Only tells that the watcher is started.' . PHP_EOL .
-           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) .
+           str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) .
            '1 => Tells which file has been updated (default).' . PHP_EOL .
-           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) .
+           str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) .
            '2 => Tells which file has been updated and the most important events that have been triggered.' . PHP_EOL .
-           str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . 'Default to 1.',
+           str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . 'Default to 1.',
          'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.',
          'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ?'
        ],
@@ -433,7 +437,7 @@ class Tasks
       [
         'databaseName' => 'The database name !',
         'mask' => '1 => We erase the database' . PHP_EOL .
-                  str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => We clean the fixtures sql files and we erase the database.'
+                  str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '2 => We clean the fixtures sql files and we erase the database.'
       ],
       ['required', 'optional'],
       'Database'
