@@ -3,7 +3,13 @@
 use function lib\myLibs\console\returnLegiblePath;
 use const lib\myLibs\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
-function generateJavaScript(bool $verbose, bool $launch, string &$resourceFolder, string &$baseName, string &$resourceName)
+function generateJavaScript(
+  bool $verbose,
+  bool $launch,
+  string &$resourceFolder,
+  string &$baseName,
+  string &$resourceName
+) : void
 {
   /* TypeScript seems to not handle the compilation of one file using the json configuration file !
          * It is either the entire project with the json configuration file
