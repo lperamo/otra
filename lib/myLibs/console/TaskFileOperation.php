@@ -19,7 +19,7 @@ define('LOADED_DEBUG_PAD', 80);
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
   // Beginning of content
-  $contentToAdd = '<?' === substr($contentToAdd, 0, 2)
+  $contentToAdd = '<?php' === substr($contentToAdd, 0, 2)
     ? substr($contentToAdd, 2)
     : '?>' . $contentToAdd;
 
@@ -27,9 +27,9 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
   if ('?>' === substr($contentToAdd, - 2))
     $contentToAdd = substr($contentToAdd, 0, -2);
   else
-    $contentToAdd .= '<?';
+    $contentToAdd .= '<?php';
 
-  return '<?' === substr($contentToAdd, 0, 2);
+  return '<?php' === substr($contentToAdd, 0, 2);
 }
 
 /**
@@ -314,7 +314,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
 {
   $offset = 0;
 
-  while (false !== ($posBeginPHP = strpos($contentToAdd, '<?', $offset)))
+  while (false !== ($posBeginPHP = strpos($contentToAdd, '<?php', $offset)))
   {
     $posFinPHP = strpos($contentToAdd, '?>', $posBeginPHP);
 
@@ -952,7 +952,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return '<? declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?' == substr($finalContent, 0, 2)
+  return '<?php declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?php' == substr($finalContent, 0, 2)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, 2))
       : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)
     );

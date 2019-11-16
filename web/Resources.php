@@ -1,4 +1,4 @@
-<? // 12ms of Apache before here
+<?php // 12ms of Apache before here
 /** Bootstrap of the framework (redirection)
  *
  * @author Lionel Péramo */

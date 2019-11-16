@@ -109,7 +109,7 @@ function writeModelFile(string $bundlePath, string $modelName, string $modelFull
   // Creates the model with all the content that we gathered.
   $fp = fopen($modelsPath . ucfirst($modelFullName), 'w');
   // TODO remove the CMS thing !!! this folder can be rename so it is a critical mistake !
-  fwrite($fp, '<?' . PHP_EOL .
+  fwrite($fp, '<?php' . PHP_EOL .
     'namespace bundles\CMS\models;' . PHP_EOL . PHP_EOL .
     'use lib\myLibs\bdd\Sql;' . PHP_EOL . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
