@@ -56,7 +56,7 @@ class Tasks
   {
     $showMaskOption = static function (string $text) : string
     {
-      return str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . $text;
+      return str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . $text;
     };
 
     return [
@@ -141,10 +141,10 @@ class Tasks
       [
         'bundle' => 'The bundle in which the model is created',
         'how' => '1 => Creates from nothing' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => One model from '. CLI_YELLOW . 'schema.yml' .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '2 => One model from '. CLI_YELLOW . 'schema.yml' .
           CLI_CYAN .
           PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => All models from ' . CLI_YELLOW .'schema.yml' .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '3 => All models from ' . CLI_YELLOW .'schema.yml' .
           CLI_CYAN
       ],
       ['optional', 'optional'],
@@ -233,9 +233,9 @@ class Tasks
       'Deploy the site. ' . CLI_YELLOW . '[WIP - Do not use yet !]' . END_COLOR,
       [
         'mode' => '0 => Nothing to do (default)' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '1 => Generates php production files.' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '2 => Same as 1 + resource production files.' . PHP_EOL .
-          str_repeat(' ', self::$STRING_PAD_FOR_OPTIONAL_MASK) . '3 => Same as 2 + class mapping',
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '1 => Generates php production files.' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '2 => Same as 1 + resource production files.' . PHP_EOL .
+          str_repeat(' ', self::$STRING_PAD_FOR_OPTION_FORMATTING) . '3 => Same as 2 + class mapping',
         'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
       ],
       ['optional', 'optional'],
