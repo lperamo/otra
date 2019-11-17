@@ -1,4 +1,4 @@
-<?
+<?php
 declare(strict_types=1);
 
 define('DEFAULT_BDD_SCHEMA_NAME', 'schema.yml');

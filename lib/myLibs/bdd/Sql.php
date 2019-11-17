@@ -1,4 +1,4 @@
-<?
+<?php
 /** Main sql management
  *
  * @author Lionel Péramo */

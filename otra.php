@@ -1,5 +1,5 @@
 #!/cygdrive/c/LPAMP/php-7.0.3/php -ddisplay_errors=E_ALL
-<?
+<?php
 declare(strict_types=1);
 use lib\myLibs\console\TasksManager;
 

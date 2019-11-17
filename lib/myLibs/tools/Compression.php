@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * GZIPs a file on disk. Based on function by Kioob at:
  * http://www.php.net/manual/en/function.gzwrite.php#34955

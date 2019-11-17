@@ -1,4 +1,4 @@
-<?
+<?php
 
 use lib\myLibs\{Controller, OtraException};
 use phpunit\framework\TestCase;

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';

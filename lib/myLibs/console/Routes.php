@@ -1,4 +1,4 @@
-<?
+<?php
 /** Task that show all or one of the routes available for the application.
  * It shows for each related route :
  * - the url

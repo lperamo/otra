@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Execute a CLI command.
  *

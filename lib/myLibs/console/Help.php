@@ -1,4 +1,4 @@
-<?
+<?php
 $method = $argv[2];
 $methods = get_class_methods('lib\myLibs\console\Tasks');
 

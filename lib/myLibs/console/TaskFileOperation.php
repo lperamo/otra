@@ -1,4 +1,4 @@
-<?
+<?php
 define('PATTERN', '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
@@ -8,6 +8,8 @@ define('PATTERN', '@\s{0,}
 
 define('ANNOTATION_DEBUG_PAD', 80);
 define('LOADED_DEBUG_PAD', 80);
+define('PHP_OPEN_TAG_LENGTH', 5);
+define('PHP_END_TAG_LENGTH', 2);
 
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
@@ -19,17 +21,17 @@ define('LOADED_DEBUG_PAD', 80);
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
   // Beginning of content
-  $contentToAdd = '<?php' === substr($contentToAdd, 0, 2)
-    ? substr($contentToAdd, 2)
+  $contentToAdd = '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+    ? substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
     : '?>' . $contentToAdd;
 
   // Ending of content
-  if ('?>' === substr($contentToAdd, - 2))
-    $contentToAdd = substr($contentToAdd, 0, -2);
+  if ('?>' === substr($contentToAdd, - PHP_END_TAG_LENGTH))
+    $contentToAdd = substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
     $contentToAdd .= '<?php';
 
-  return '<?php' === substr($contentToAdd, 0, 2);
+  return '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
 }
 
 /**
@@ -324,7 +326,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
       $posFinPHP - $posBeginPHP
     );
 
-    $offset = $posBeginPHP + 2 + $nbReplacements;
+    $offset = $posBeginPHP + PHP_OPEN_TAG_LENGTH + $nbReplacements;
   }
 }
 
@@ -379,7 +381,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
   if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent))
   {
     // We remove PHP tags
-    substr_replace($finalContent, $newMatch, $posMatch - 2, $posMatch);
+    substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
   } else if(1 === $inEval)
@@ -413,7 +415,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
 {
   // 9 means after the 'return' statement, -5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(substr($contentToAdd, 9, -5));
+  $contentToAdd = trim(substr($contentToAdd, PHP_OPEN_TAG_LENGTH + 7, -(3 + PHP_END_TAG_LENGTH)));
 
   if (false !== strpos($match, 'require') &&
     0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
@@ -725,7 +727,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if ('require' === $inclusionMethod)
             {
               /* if the file has contents that begin by a return statement then we apply a particular process*/
-              if (false !== strpos(substr($nextContentToAdd, 3, 9), 'return'))
+              if (false !== strpos(substr($nextContentToAdd, PHP_OPEN_TAG_LENGTH + 1, PHP_OPEN_TAG_LENGTH + 7), 'return'))
               {
                 $isReturn = true;
                 processReturn(
@@ -909,11 +911,14 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   /** We remove all the declare strict types declarations */
   $finalContent = str_replace('declare(strict_types=1);', '', $finalContent);
 
+  /** We stick the php files by removing end and open php tag between files */
+  $finalContent = preg_replace('@\?>\s*<\?php@', '', $finalContent);
+
   /** We suppress namespaces */
   $finalContent = preg_replace(
     '@\s*namespace [^;]{1,};\s*@',
     '',
-    preg_replace('@\?>\s*<\?@', '', $finalContent)
+    $finalContent
   );
 
   // We fix PDO and PDOStatement namespaces
@@ -952,8 +957,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return '<?php declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?php' == substr($finalContent, 0, 2)
-      ? preg_replace($patternRemoveUse, '', substr($finalContent, 2))
+  return '<?php declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?php' == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+      ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)
     );
 }

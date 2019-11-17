@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Class mapping generation task
  *

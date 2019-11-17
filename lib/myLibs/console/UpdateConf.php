@@ -1,4 +1,4 @@
-<?
+<?php
 if (defined('CHUNKS_KEY_LENGTH') === false)
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
 
