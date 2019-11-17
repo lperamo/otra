@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Profiler service
  *
@@ -40,7 +40,7 @@ class ProfilerService
           </div>
           <a role="button" class="dbg-fr lb-btn"><?= t('Copy') ?></a>
         </div>
-        <?
+        <?php
       }
     } else
       echo t('No stored queries in '), $file, '.';

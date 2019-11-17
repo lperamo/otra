@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Customized console exception class
  *

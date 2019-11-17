@@ -1,9 +1,9 @@
-<?
+<?php
 require CORE_PATH . 'views/layout.phtml';
 block('title', 'Exception !');
 ?>
 <div class="exception text-center">Exception</div>
-<div class="explications text-center correct-display"><?
+<div class="explications text-center correct-display"><?php
   if (true === isset($code))
   	echo 'Error code <span class="exception-brown">', $code , '</span> in <span class="exception-file">' , $file , '</span> at line <span class="exception-line">' , $line, '</span><br />', $message;
   ?>
@@ -19,14 +19,14 @@ block('title', 'Exception !');
 			</tr>
 		</thead>
 		<tbody>
-		  <? for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
+		  <?php for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
 		  {
 		  	$now = $trace[$i];
 		  	?><tr>
 		  		<td></td>
 		  	 	<td><?= (true === isset($now['function'])) ? $now['function'] : '-' ?></td>
 				<td><?= (true === isset($now['line'])) ? $now['line'] : '-' ?></td>
-        <td><? if (true === isset($now['file']))
+        <td><?php if (true === isset($now['file']))
           {
             $traceFile = str_replace('\\', '/', $now['file']);
             echo (false !== strpos($traceFile, BASE_PATH)
@@ -37,17 +37,17 @@ block('title', 'Exception !');
             echo '-';
           }
         ?></td>
-				<? if (true === empty($now['args']))
-				{ ?> <td></td></tr> <? } else { ?>
+				<?php if (true === empty($now['args']))
+				{ ?> <td></td></tr> <?php } else { ?>
 				<td class="show-args">
 						<i>Show</i>
 				</td>
 			</tr>
 			<tr class="deep-content">
-				<td colspan="5"><? if(0 === $i) unset($now['args']['variables']);
+				<td colspan="5"><?php if(0 === $i) unset($now['args']['variables']);
 				 convertArrayToShowable($now['args'], 'Arguments', 'variables'); echo $now['args']; ?></td>
 			</tr>
-			<? }
+			<?php }
       } ?>
 	  </tbody>
 	</table>

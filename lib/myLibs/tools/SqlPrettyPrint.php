@@ -1,4 +1,4 @@
-<?
+<?php
 // TODO Not fully tested !
 
 define('SQL_CLAUSES', [

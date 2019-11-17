@@ -1,4 +1,4 @@
-<?
+<?php
 /** MVC master controller class
  *
  * @author Lionel Péramo

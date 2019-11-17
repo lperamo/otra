@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * LPFramework - Core - Profiler - RefreshSQLLogs
  *

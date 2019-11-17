@@ -1,4 +1,4 @@
-<?
+<?php
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
 use lib\myLibs\

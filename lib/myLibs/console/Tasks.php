@@ -1,4 +1,4 @@
-<?
+<?php
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
  * @author Lionel Péramo */

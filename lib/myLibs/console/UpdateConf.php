@@ -1,4 +1,4 @@
-<?
+<?php
 if (defined('CHUNKS_KEY_LENGTH') === false)
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
 
@@ -164,7 +164,7 @@ if (function_exists('sortRoutes') === false)
 uksort($routesArray, $sortRoutes);
 
 // Transforms the array in code that returns the array.
-$routesContent = '<? return [';
+$routesContent = '<?php return [';
 loopForEach($routesContent, $routesArray, true);
 $routesContent = substr($routesContent, 0, -1) . ']; ?>';
 

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Framework database functions
  *

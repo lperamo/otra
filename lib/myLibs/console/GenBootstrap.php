@@ -1,4 +1,4 @@
-<?
+<?php
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
@@ -85,11 +85,15 @@ foreach(array_keys($routes) as &$route)
 // Final specific management for routes files
 echo 'Create the specific routes management file... ', PHP_EOL;
 
+// CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
+// configuration
+require BASE_PATH . 'config/AllConfig.php';
+
 define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
+    'driver' => empty(\config\AllConfig::$dbConnections) === false
       && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',

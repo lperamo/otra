@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * A classic MVC development controller class
  *

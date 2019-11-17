@@ -1,4 +1,4 @@
-<?
+<?php
 declare(strict_types=1);
 require CORE_PATH . 'console/Tools.php';
 require CORE_PATH . 'console/architecture/CreateBundle.php';

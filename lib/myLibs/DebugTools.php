@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @param string $message
  */
@@ -109,9 +109,9 @@ function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = n
         </tr>
       </thead>
       <tbody>
-    <?
+    <?php
       recurArrayConvertTab($dataToShow, $indexToExclude);
-    ?></tbody></table><?
+    ?></tbody></table><?php
     $dataToShow = ob_get_clean();
 }
 
@@ -174,7 +174,7 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
     // End of the table that shows the inner headers
     if (0 === $loop)
     {
-      ?> </tbody></table><table class="test"><tbody><?
+      ?> </tbody></table><table class="test"><tbody><?php
     }
 
     if ((true === is_array($datum) || true === is_object($datum)) && false === empty($datum))
