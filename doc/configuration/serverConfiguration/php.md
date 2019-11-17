@@ -2,8 +2,6 @@
 
 #### PHP requirements
 
-You need PHP 7.3.x to use this framework.
-It is planned that the framework will be compatible with PHP 7.4. 
 You also need to activate some libraries as :
 
 - mbstring 
