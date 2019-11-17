@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Framework database functions
  *
@@ -13,7 +13,7 @@ namespace lib\myLibs\console {
   use config\AllConfig;
   use lib\myLibs\{Session, OtraException};
 
-  class Database
+  abstract class Database
   {
     // Database connection
     private static $base,

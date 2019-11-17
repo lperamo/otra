@@ -1,4 +1,4 @@
-<?
+<?php
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
@@ -7,7 +7,7 @@ require_once CORE_PATH . 'console/Tasks.php';
 /** The 'Desc' functions explains the functions "without 'Desc'"
  *
  * @author Lionel Péramo */
-class TasksManager
+abstract class TasksManager
 {
   /**
    * List the available commands

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Class mapping generation task
  *
@@ -150,7 +150,7 @@ function convertClassMapToPHPFile(string $classMap) : string
   $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
   $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-  return '<? define(\'CLASSMAP\',' . substr(
+  return '<?php define(\'CLASSMAP\',' . substr(
     str_replace(
       ['\\\\', ' => ', '  \'', "\n", 'array ('],
       ['\\', '=>', '\'', '', '['],

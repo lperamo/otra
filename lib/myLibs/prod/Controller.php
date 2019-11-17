@@ -1,4 +1,4 @@
-<?
+<?php
 /** A classic MVC production controller class
  *
  * @author Lionel Péramo

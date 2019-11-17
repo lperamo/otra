@@ -1,4 +1,4 @@
-<?
+<?php
 define ('BEFORE', microtime(true));
 
 if (false === defined('BASE_PATH'))

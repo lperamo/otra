@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace lib\myLibs;
 

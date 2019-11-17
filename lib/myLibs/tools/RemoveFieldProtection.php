@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *

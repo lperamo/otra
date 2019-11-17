@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * THE framework global config
  *

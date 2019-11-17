@@ -48,7 +48,7 @@ $starterAction = BASE_PATH . 'bundles/' . $bundleName . '/' . $moduleName . '/co
 
 file_put_contents(
   $starterAction,
-  '<?
+  '<?php
 /**
  * OTRA starter action
  */

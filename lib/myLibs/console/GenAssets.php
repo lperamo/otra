@@ -1,11 +1,11 @@
-<?
+<?php
 require_once BASE_PATH . '/config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . '/config/Routes.php';
 require BASE_PATH . '/lib/myLibs/tools/Compression.php';
 
 define('ASSET_MASK', 2);
-define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3]]);
+define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3] ?? 1]);
 define('ROUTE', 4);
 
 $routes = \config\Routes::$_;
