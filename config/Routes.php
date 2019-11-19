@@ -23,7 +23,7 @@ class Routes
       'chunks' => ['exception'],
       'core' => true,
       'resources' => [
-        'core_css' => ['OtraException'],
+        'core_css' => ['otraException'],
         'core_js' => ['tools']
       ]
     ],
