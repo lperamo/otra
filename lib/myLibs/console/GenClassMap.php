@@ -94,6 +94,31 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
     echo CLI_RED, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
     exit(1);
   }
+
+  /**
+   * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
+   * We take care of the spaces contained into folders and files names.
+   * We also reduce paths using constants.
+   *
+   * @param string $classMap
+   *
+   * @return string
+   */
+  function convertClassMapToPHPFile(string $classMap) : string
+  {
+    $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
+    $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
+
+    return '<?php define(\'CLASSMAP\',' . substr(
+        str_replace(
+          ['\\\\', ' => ', '  \'', "\n", 'array ('],
+          ['\\', '=>', '\'', '', '['],
+          $withBasePathStripped
+        ),
+        0,
+        -2
+      ) . ']);?>';
+  }
 }
 
 foreach ($dirs as &$dir)
@@ -135,31 +160,6 @@ $classMapPath = BASE_PATH . 'cache/php/';
 
 if (file_exists($classMapPath) === false)
   mkdir($classMapPath, 0755, true);
-
-/**
- * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
- * We take care of the spaces contained into folders and files names.
- * We also reduce paths using constants.
- *
- * @param string $classMap
- *
- * @return string
- */
-function convertClassMapToPHPFile(string $classMap) : string
-{
-  $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
-  $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
-
-  return '<?php define(\'CLASSMAP\',' . substr(
-    str_replace(
-      ['\\\\', ' => ', '  \'', "\n", 'array ('],
-      ['\\', '=>', '\'', '', '['],
-      $withBasePathStripped
-    ),
-    0,
-    -2
-  ) . ']);?>';
-}
 
 // Generating development class map
 file_put_contents(
