@@ -12,4 +12,5 @@
 /tests/coverage.xml
 /tests/**/.phpunit.result.cache
 **/css/*.css*
+**/scss/.sass-cache/**
 **/js/*.js*
