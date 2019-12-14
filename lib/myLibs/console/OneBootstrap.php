@@ -88,7 +88,7 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => property_exists(\config\AllConfig::class, 'dbConnections')
+    'driver' => empty(\config\AllConfig::$dbConnections) === false
       && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
