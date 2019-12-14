@@ -206,7 +206,7 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 
   foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
   {
-    echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR . FIRST_CLASS_PADDING,
+    echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR, FIRST_CLASS_PADDING,
       '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;
   }
 }
