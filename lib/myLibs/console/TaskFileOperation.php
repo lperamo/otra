@@ -525,9 +525,14 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         // str_replace to ensure us that the same character '/' is used each time
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
 
+        // we must not take care of the bundles/config/Config.php as it is an optional config file.
+        if ($tempFile === BASE_PATH . 'bundles/config/Config.php')
+          continue;
+
         if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
-          echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile, '\' in ',
-          $file, END_COLOR, PHP_EOL;
+          echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
+          '\' in ', $file, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
+           outside of the project folder.', END_COLOR, PHP_EOL;
 
         if (false === file_exists($tempFile))
         {
@@ -673,6 +678,8 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             // We increase the process step (DEBUG)
             ++$inc;
 
+            /** @var string $tempFile */
+            /** @var string $method */
             switch($inclusionMethod)
             {
               case 'use' :
@@ -724,22 +731,30 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
             $isReturn = false;
 
-            if ('require' === $inclusionMethod)
-            {
+            if ('require' === $inclusionMethod
               /* if the file has contents that begin by a return statement then we apply a particular process*/
-              if (false !== strpos(substr($nextContentToAdd, PHP_OPEN_TAG_LENGTH + 1, PHP_OPEN_TAG_LENGTH + 7), 'return'))
-              {
-                $isReturn = true;
-                processReturn(
-                  $contentToAdd,
-                  $nextContentToAdd,
-                  $nextFileOrInfo['match'],
-                  $nextFileOrInfo['posMatch']
-                );
-              }
+              && false !== strpos(
+                substr($nextContentToAdd, PHP_OPEN_TAG_LENGTH + 1, PHP_OPEN_TAG_LENGTH + 7),
+                'return'
+              ))
+            {
+              $isReturn = true;
+              processReturn(
+                $contentToAdd,
+                $nextContentToAdd,
+                $nextFileOrInfo['match'],
+                $nextFileOrInfo['posMatch']
+              );
+            }
+
+            if (strpos($file, 'config/AllConfig') !== false)
+            {
+              $finalContentParts[]= $contentToAdd;
+              $_SESSION['finalContentParts'] = true;
             }
 
             showFile($level, $tempFile, $method);
+
             // If we have a "return type" PHP file then the file have already been included before,
             // in the 'processReturn' function
             if (false === $isReturn)
@@ -767,6 +782,17 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 //        }
       }
     }
+  }
+
+  /** TODO Code to remove once we have found a better fix for the fact that generic AllConfig must be loaded before the
+   * dev/prod configuration because of the generic constant declaration. This block is related with the previous block
+   * line 752 as I wrote those lines.
+   */
+  if (isset($_SESSION['finalContentParts']) === true && empty($finalContentParts) === false)
+  {
+    unset($_SESSION['finalContentParts']);
+    $contentToAdd = '';
+    echo CLI_BOLD_RED, $contentToAdd, END_COLOR, PHP_EOL;
   }
 
   // contentToAdd is "purged" we can add it to the finalContent
@@ -949,7 +975,9 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
       // line in renderView, file lib/myLibs/prod/Controller.php:57
       'require CORE_PATH . \'Logger.php\';',
       // line in OtraException at the beginning of the method errorMessage()
-      'require_once BASE_PATH . \'config/AllConfig.php\';'
+      'require_once BASE_PATH . \'config/AllConfig.php\';',
+      // line in generic AllConfig file
+      'require_once BASE_PATH . \'config/\' . $_SERVER[\'APP_ENV\'] . \'/AllConfig.php\';'
     ],
     '',
     $finalContent);
