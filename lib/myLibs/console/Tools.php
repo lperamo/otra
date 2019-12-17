@@ -82,6 +82,8 @@ if (function_exists('promptUser') === false)
   }
 
   /**
+   * TODO we must use fgets instead and create the array as you go in order to not store the entire file into an array
+   * to save memory.
    * Shows the context of the error found in a given file.
    *
    * @param string $file      Name of the file that contains the error
