@@ -77,6 +77,8 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
             $classes[$classesKey] = $fullFilePath;
           else if (in_array($classesKey, $additionalClassesFilesKeys) === false)
             $classesThatMayHaveToBeAdded[$classesKey] = str_replace(BASE_PATH, '', $fullFilePath);
+          else
+            $classes[$classesKey] = $fullFilePath;
         }
       }
 
