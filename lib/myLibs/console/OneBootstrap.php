@@ -26,15 +26,12 @@ spl_autoload_register(function($className)
   {
     require CLASSMAP[$className];
   } else {
-
-  echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
-  debug_print_backtrace();
-  echo PHP_EOL;
-  var_dump(CLASSMAP);
-  echo PHP_EOL, END_COLOR;
-
-}
-
+    echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
+    debug_print_backtrace();
+    echo PHP_EOL;
+    var_dump(CLASSMAP);
+    echo PHP_EOL, END_COLOR;
+  }
 });
 
 require BASE_PATH . 'config/AllConfig.php';
@@ -127,7 +124,4 @@ if (hasSyntaxErrors($file_) === true)
   return;
 
 compressPHPFile($file_, $file);
-
-// Declaration of the special translation t function for templates...
-function t(string $text) : string { return $text; }
 ?>
