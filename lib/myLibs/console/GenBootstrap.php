@@ -122,4 +122,6 @@ if (true === hasSyntaxErrors($routesManagementFile))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
+
+echo PHP_EOL;
 ?>
