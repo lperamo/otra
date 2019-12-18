@@ -41,7 +41,6 @@ class DatabaseTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('CACHE_PATH', BASE_PATH . 'cache/');
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
