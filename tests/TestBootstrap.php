@@ -1,8 +1,10 @@
 <?php
 define ('_DIR_', str_replace('\\', '/', __DIR__));
+define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 require _DIR_ . '/../cache/php/ClassMap.php';
 
-spl_autoload_register(function($className)
+spl_autoload_register(function(string $className)
 {
   if (false === isset(CLASSMAP[$className]))
   {
@@ -15,11 +17,5 @@ spl_autoload_register(function($className)
     require CLASSMAP[$className];
 });
 
-define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
-
 require CORE_PATH . 'console/Colors.php';
 require CORE_PATH . 'tools/RemoveFieldProtection.php';
-
-// Will be the future translation feature
-function t(string $texte) : string { return $texte; }

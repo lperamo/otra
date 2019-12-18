@@ -14,7 +14,6 @@ class SqlTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('CACHE_PATH', BASE_PATH . 'cache/');
   }
 
   /**

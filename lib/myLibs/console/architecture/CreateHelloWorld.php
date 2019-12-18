@@ -127,4 +127,6 @@ require CORE_PATH . 'console/UpdateConf.php';
 // We update the class mapping since we have one action more.
 define('VERBOSE', 0);
 require CORE_PATH . 'console/GenClassMap.php';
+
+echo 'The route is accessible via this url : http://dev.otra.tech/helloworld', PHP_EOL;
 ?>
