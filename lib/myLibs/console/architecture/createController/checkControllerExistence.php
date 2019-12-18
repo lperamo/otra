@@ -2,19 +2,23 @@
 
 namespace lib\myLibs\console;
 
-require CORE_PATH . 'console/architecture/CreateModule.php';
+require CORE_PATH . 'console/architecture/controller/CreateController.php';
 
 // MODULE STEP
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $moduleName = $argv[ARG_MODULE_NAME];
 $moduleRelativePath = 'bundles/' . $bundleName . '/' . $moduleName;
 $modulePath = BASE_PATH . $moduleRelativePath;
+$controllersFolder = $modulePath . '/controllers/';
+$controllerName = $argv[ARG_CONTROLLER_NAME];
+$controllerPath = $controllersFolder . $controllerName . '/';
 
-if (file_exists($modulePath) === false)
+if (file_exists($controllerPath) === false)
 {
   /** @var bool $consoleForce */
   if ($consoleForce === false)
-    echo CLI_RED, 'The module ', CLI_LIGHT_CYAN, $moduleRelativePath, CLI_RED, ' does not exist.' , END_COLOR, PHP_EOL;
+    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $controllerName, CLI_RED, ' does not exist.' , END_COLOR,
+      PHP_EOL;
 
   /** @var bool $interactive */
   if ($interactive === false)
@@ -35,9 +39,6 @@ if (file_exists($modulePath) === false)
       exit(0);
   }
 
-  if (defined('BUNDLE_BASE_PATH') === false)
-    define('BUNDLE_BASE_PATH', BASE_PATH . 'bundles/' . $bundleName . '/');
-
-  createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
+  createController($controllersFolder, $controllerName, $interactive);
 }
 ?>

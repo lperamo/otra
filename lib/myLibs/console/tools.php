@@ -127,5 +127,27 @@ if (function_exists('promptUser') === false)
       $context
     );
   }
+
+  /**
+   * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
+   * We take care of the spaces contained into folders and files names.
+   * Beware, this function do not cover all the possibles cases. It only works for the usages of this framework.
+   *
+   * @param string $code
+   *
+   * @return string
+   */
+  function convertArrayFromVarExportToShortVersion(string $code) : string
+  {
+    return
+      str_replace(
+        ['\\\\', ' => ', SPACE_INDENT . '\'', "\n", 'array (', ',' . SPACE_INDENT . SPACE_INDENT . '),',
+          ',' . SPACE_INDENT . '),', '[' . SPACE_INDENT . SPACE_INDENT . '),', SPACE_INDENT,
+          SPACE_INDENT . SPACE_INDENT, ',]'],
+        ['\\'  , '=>'  , '\''               , ''  , '['      , ',' . SPACE_INDENT . SPACE_INDENT . '],',
+          ',' . SPACE_INDENT . '],', '[],', '', '', ']'],
+        $code
+      );
+  }
 }
 ?>

@@ -25,10 +25,10 @@ require CORE_PATH . 'console/Tools.php';
 
 // creates bundles, modules, controllers, actions and their related folders
 require CORE_PATH . 'console/architecture/CheckInteractiveMode.php';
-require CORE_PATH . 'console/architecture/CheckBundleExistence.php';
-require CORE_PATH . 'console/architecture/CheckModuleExistence.php';
-require CORE_PATH . 'console/architecture/CheckControllerExistence.php';
-require CORE_PATH . 'console/architecture/CreateAction.php';
+require CORE_PATH . 'console/architecture/bundle/CheckBundleExistence.php';
+require CORE_PATH . 'console/architecture/module/CheckModuleExistence.php';
+require CORE_PATH . 'console/architecture/controller/CheckControllerExistence.php';
+require CORE_PATH . 'console/architecture/action/CreateAction.php';
 
 actionHandling(
   $interactive,
@@ -122,11 +122,11 @@ echo 'Starter template created in ', CLI_LIGHT_CYAN, substr($starterTemplate, st
   CLI_GREEN, '.', PHP_EOL;
 
 // We update the routes configuration as we just add one route.
-require CORE_PATH . 'console/UpdateConf.php';
+require CORE_PATH . 'console/deployment/updateConf.php';
 
 // We update the class mapping since we have one action more.
 define('VERBOSE', 0);
-require CORE_PATH . 'console/GenClassMap.php';
+require CORE_PATH . 'console/deployment/genClassMap.php';
 
 echo 'The route is accessible via this url : http://dev.otra.tech/helloworld', PHP_EOL;
 ?>

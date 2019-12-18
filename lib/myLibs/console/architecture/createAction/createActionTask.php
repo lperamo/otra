@@ -11,10 +11,10 @@ $consoleForce = false;
 
 require CORE_PATH . 'console/Tools.php';
 require CORE_PATH . 'console/architecture/CheckInteractiveMode.php';
-require CORE_PATH . 'console/architecture/CheckBundleExistence.php';
-require CORE_PATH . 'console/architecture/CheckModuleExistence.php';
-require CORE_PATH . 'console/architecture/CheckControllerExistence.php';
-require CORE_PATH . 'console/architecture/CreateAction.php';
+require CORE_PATH . 'console/architecture/bundle/CheckBundleExistence.php';
+require CORE_PATH . 'console/architecture/module/CheckModuleExistence.php';
+require CORE_PATH . 'console/architecture/controller/CheckControllerExistence.php';
+require CORE_PATH . 'console/architecture/action/CreateAction.php';
 
 actionHandling(
   $interactive,

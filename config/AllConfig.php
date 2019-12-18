@@ -15,6 +15,7 @@ define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
 define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
 
 define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layout
+define('SPACE_INDENT', '  ');
 
 define('VERSION', 'V1.0.0-alpha.1.1.1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters

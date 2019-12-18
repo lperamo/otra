@@ -129,11 +129,11 @@ unset($maskExists);
 if (WATCH_FOR_PHP_FILES === true)
 {
   // We generate the class mapping...
-  Tasks::genClassMap();
+  require CORE_PATH . 'console/deployment/genClassMap.php';
 
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
-  Tasks::upConf();
+  require CORE_PATH . 'console/deployment/updateConf.php';
 }
 
 require CORE_PATH . 'console/generateOptimizedJavaScript.php';

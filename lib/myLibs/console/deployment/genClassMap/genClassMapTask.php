@@ -23,6 +23,8 @@ if (file_exists($additionalClassesFilesPath) === true)
 $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
 $classesThatMayHaveToBeAdded = [];
 
+require CORE_PATH . 'console/tools.php';
+
 if (empty($dirs) === false && function_exists('iterateCM') === false)
 {
   /**
@@ -111,15 +113,11 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-    return '<?php define(\'CLASSMAP\',' . substr(
-        str_replace(
-          ['\\\\', ' => ', '  \'', "\n", 'array ('],
-          ['\\', '=>', '\'', '', '['],
-          $withBasePathStripped
-        ),
-        0,
-        -2
-      ) . ']);?>';
+    return substr(
+      '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped),
+      0,
+      -2
+    ) . ']);?>';
   }
 }
 
