@@ -159,13 +159,13 @@ class ' . $upperActionName . 'Action extends Controller
       PHP_EOL;
 
     // We update the routes configuration as we just add one route.
-    require CORE_PATH . 'console/UpdateConf.php';
+    require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
 
     // We update the class mapping since we have one action more.
     if (defined('VERBOSE') === false)
       define('VERBOSE', 0);
 
-    require CORE_PATH . 'console/GenClassMap.php';
+    require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
   }
 }
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-require CORE_PATH . 'console/Tools.php';
-require CORE_PATH . 'console/architecture/bundle/CreateBundle.php';
+require CORE_PATH . 'console/tools.php';
+require CORE_PATH . 'console/architecture/createBundle/createBundle.php';
 
 const ARG_BUNDLE_NAME = 2,
   ARG_BUNDLE_MASK = 3;

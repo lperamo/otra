@@ -8,11 +8,11 @@ const ARG_BUNDLE_NAME = 2,
 
 $consoleForce = false;
 
-require CORE_PATH . 'console/Tools.php';
-require CORE_PATH . 'console/architecture/CheckInteractiveMode.php';
-require CORE_PATH . 'console/architecture/bundle/CheckBundleExistence.php';
-require CORE_PATH . 'console/architecture/module/CheckModuleExistence.php';
-require CORE_PATH . 'console/architecture/controller/CreateController.php';
+require CORE_PATH . 'console/tools.php';
+require CORE_PATH . 'console/architecture/checkInteractiveMode.php';
+require CORE_PATH . 'console/architecture/createBundle/checkBundleExistence.php';
+require CORE_PATH . 'console/architecture/createModule/checkModuleExistence.php';
+require CORE_PATH . 'console/architecture/createController/createController.php';
 
 /** @var string $modulePath */
 $controllersFolder = $modulePath . '/controllers/';

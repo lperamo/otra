@@ -2,7 +2,7 @@
 
 namespace lib\myLibs\console;
 
-require CORE_PATH . 'console/architecture/module/CreateModule.php';
+require CORE_PATH . 'console/architecture/createModule/createModule.php';
 
 // MODULE STEP
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);

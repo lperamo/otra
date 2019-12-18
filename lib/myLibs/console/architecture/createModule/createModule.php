@@ -1,6 +1,6 @@
 <?php
 
-require CORE_PATH . 'console/architecture/CreateFolder.php';
+require CORE_PATH . 'console/architecture/createFolder.php';
 
 if (function_exists('createModule') === false)
 {

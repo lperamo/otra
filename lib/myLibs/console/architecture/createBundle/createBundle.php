@@ -42,7 +42,7 @@ function bundleHandling(string $bundleName, ?string $bundleMask, bool $bundleTas
         PHP_EOL;
     }
 
-    require CORE_PATH . 'console/architecture/BundleMaskCreation.php';
+    require CORE_PATH . 'console/architecture/createBundle/bundleMaskCreation.php';
   }
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');

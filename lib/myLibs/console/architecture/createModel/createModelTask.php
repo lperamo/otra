@@ -174,7 +174,7 @@ function getModuleName(string $bundleName, string $bundlePath) : string
   return $moduleName;
 }
 
-require CORE_PATH . 'console/Tools.php';
+require CORE_PATH . 'console/tools.php';
 
 $bundlesPath = BASE_PATH . 'bundles/';
 
@@ -428,6 +428,4 @@ if ('1' === $argv[3])
     }
   }
 }
-
-
 ?>
