@@ -1,5 +1,7 @@
 <?php
 define ('_DIR_', str_replace('\\', '/', __DIR__));
+define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 require _DIR_ . '/../cache/php/ClassMap.php';
 
 spl_autoload_register(function($className)
@@ -14,9 +16,6 @@ spl_autoload_register(function($className)
   }else
     require CLASSMAP[$className];
 });
-
-define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 
 require CORE_PATH . 'console/Colors.php';
 require CORE_PATH . 'tools/RemoveFieldProtection.php';

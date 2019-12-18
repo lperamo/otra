@@ -25,9 +25,9 @@ class BlocksTest extends TestCase
   {
     $controller = new Controller();
     $content = $controller->renderView(BASE_PATH . 'tests/src/bundles/views/simpleLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><title>
+    $this->assertEquals("<!DOCTYPE html><html><title>
     Welcome to OTRA!
-  </title><html><body>
+  </title><body>
   Hello!
 </body>
 ", $content);
@@ -43,8 +43,8 @@ class BlocksTest extends TestCase
   {
     $controller = new Controller();
     $content = $controller->renderView(BASE_PATH . 'tests/src/bundles/views/advancedLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><title>
-  Welcome to the OTRA!</title><html><body>
+    $this->assertEquals("<!DOCTYPE html><html><title>
+  Welcome to the OTRA!</title><body>
   Hello World!
 </body>
 ", $content);
@@ -63,8 +63,8 @@ class BlocksTest extends TestCase
   {
     $controller = new Controller();
     $content = $controller->renderView(BASE_PATH . 'tests/src/bundles/views/complexLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><title>
-  Welcome to the OTRA!</title><html><body>
+    $this->assertEquals("<!DOCTYPE html><html><title>
+  Welcome to the OTRA!</title><body>
   Hello World!
         test
     </body>
@@ -86,8 +86,8 @@ class BlocksTest extends TestCase
   {
     $controller = new Controller();
     $content = $controller->renderView(BASE_PATH . 'tests/src/bundles/views/completeLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><title>
-  Welcome to the OTRA!</title><html><body>
+    $this->assertEquals("<!DOCTYPE html><html><title>
+  Welcome to the OTRA!</title><body>
   Hello World!
         test
       Hello World!after</body>
