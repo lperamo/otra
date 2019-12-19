@@ -5,7 +5,7 @@ define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
 
-define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /
+define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
 $_SERVER['APP_ENV'] = 'prod';
 
