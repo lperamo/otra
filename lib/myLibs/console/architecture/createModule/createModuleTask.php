@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+
+// loading functions, not executing anything
 require CORE_PATH . 'console/tools.php';
 require CORE_PATH . 'console/architecture/createModule/createModule.php';
 
@@ -7,6 +9,7 @@ const ARG_BUNDLE_NAME = 2,
   ARG_MODULE_NAME = 3,
   ARG_INTERACTIVE = 4;
 
+$consoleForce = false;
 require CORE_PATH . 'console/architecture/checkInteractiveMode.php';
 require CORE_PATH . 'console/architecture/createBundle/checkBundleExistence.php';
 
