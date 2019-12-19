@@ -1,14 +1,19 @@
 #!/cygdrive/c/LPAMP/php-7.0.3/php -ddisplay_errors=E_ALL
 <?php
 declare(strict_types=1);
+
 use lib\myLibs\console\TasksManager;
 
+// TODO Centralize those constants that are already defined in AllConfig...
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
+define('SPACE_INDENT', '  ');
 $_SERVER['APP_ENV']= 'prod';
 
 require CORE_PATH . 'console/TasksManager.php';
-require CORE_PATH . 'console/Colors.php';
+require CORE_PATH . 'console/colors.php';
+
+//require CORE_PATH . 'console/deployment/genClassMapTask.php';
 
 if (exec('whoami') === 'root')
 {
@@ -19,20 +24,21 @@ if (exec('whoami') === 'root')
 /**
  * Launch a task if there is a description for it and if the parameters are correctly set.
  *
+ * @param array $tasksClassMap
  * @param array $argv
  * @param int   $argc
  */
-function launchTask(array $argv, int $argc)
+function launchTask(array $tasksClassMap, array $argv, int $argc)
 {
   // Checks if a task description is missing
-  if (false === method_exists('lib\myLibs\console\Tasks', $argv[1] . 'Desc'))
-  {
-    echo CLI_RED, 'There is no description for that command !', END_COLOR;
-    exit(1);
-  }
+//  if (false === method_exists('lib\myLibs\console\Tasks', $argv[1] . 'Desc'))
+//  {
+//    echo CLI_RED, 'There is no description for that command !', END_COLOR;
+//    exit(1);
+//  }
 
-  $methodDesc = $argv[1] . 'Desc';
-  $paramsDesc = lib\myLibs\console\Tasks::$methodDesc();
+  $task = $argv[TasksManager::$TASK_PARAMETERS];
+  $paramsDesc = require $tasksClassMap[$task][TasksManager::$TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Help.php';
 
   // We test if the number of parameters is correct
   $total = $required = 0;
@@ -53,7 +59,7 @@ function launchTask(array $argv, int $argc)
   {
     echo CLI_LIGHT_RED . 'There are too much parameters ! The total number of existing parameters is : ' . $total
       . END_COLOR . PHP_EOL . PHP_EOL;
-    TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
+    TasksManager::execute($tasksClassMap,'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
     exit(1);
   }
 
@@ -61,12 +67,12 @@ function launchTask(array $argv, int $argc)
   {
     echo CLI_LIGHT_RED . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
       . PHP_EOL . PHP_EOL;
-    TasksManager::execute('help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
+    TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $argv[1]]);
     exit(1);
   }
 
   // And we runs the task if all is correct
-  TasksManager::execute($argv[1], $argv);
+  TasksManager::execute($tasksClassMap, $argv[1], $argv);
 }
 
 // If we didn't specify any command, list the available commands
@@ -75,22 +81,17 @@ if ($argc < 2) {
   die;
 }
 
+$tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+
 // if the command exists, runs it
-if (true === method_exists('lib\myLibs\console\Tasks', $argv[1]))
-  launchTask($argv, $argc);
+if (true === isset($tasksClassMap[$argv[TasksManager::$TASK_PARAMETERS]]))
+  launchTask($tasksClassMap, $argv, $argc);
 else // otherwise we'll try to guess if it looks like an existing one
 {
-  $methods = get_class_methods('lib\myLibs\console\Tasks');
+  $methods = array_keys($tasksClassMap);
 
-  // We filter the 'description' methods from the class methods
-  foreach($methods as $key => &$method)
-  {
-    if (false !== strpos($method, 'Desc'))
-      unset($methods[$key]);
-  }
-
-  require CORE_PATH . 'console/Tools.php';
-  $method = $argv[1];
+  require CORE_PATH . 'console/tools.php';
+  $method = $argv[TasksManager::$TASK_PARAMETERS];
   list($newTask) = guessWords($method, $methods);
 
   // If there are no existing task with a close name ...
@@ -107,7 +108,7 @@ else // otherwise we'll try to guess if it looks like an existing one
   if ('y' === $choice)
   {
     $argv[1] = $newTask;
-    launchTask($argv, $argc);
+    launchTask($tasksClassMap, $argv, $argc);
   } else
     TasksManager::showCommands('This command doesn\'t exist. ');
 }
