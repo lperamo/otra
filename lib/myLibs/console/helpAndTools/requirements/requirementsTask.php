@@ -50,8 +50,8 @@
     ],
     [
       'PHP Version => 7.3',
-      'PHP version 7.3.x',
-      'PHP version must be 7.3.x, will be more flexible in the future.',
+      'PHP version 7.3.x+',
+      'PHP version must be at least 7.3.x.',
       REQ_PHP_VERSION
     ]
   ];
@@ -66,7 +66,7 @@
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
       $error = cli('which ' . $requirement[REQ_PKG_NAME]);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
-      $error = cli('php -v | grep "PHP 7.3"');
+      $error = cli('php -v | egrep -o "PHP\ [7-9]\.[0-9]{1,}\.[0-9]{1,}"');
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
       $error = cli('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"');
 
