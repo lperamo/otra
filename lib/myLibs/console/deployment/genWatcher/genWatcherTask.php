@@ -318,7 +318,7 @@ unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
     : 'Watcher started.' . END_COLOR)
     , PHP_EOL;
 
-require CORE_PATH . 'console/generateOptimizedJavaScript.php';
+require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
 
 // ******************** Watching ! ********************
 while (true)
