@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-typeset CLI_BOLD_LIGHT_CYAN="\033[1;96m"
-typeset CLI_WHITE="\033[0;38m"
-typeset CLI_CYAN="\033[0;36m"
-typeset END_COLOR="\033[0m"
+typeset BLC="\033[1;96m"
+typeset WHI="\033[0;38m"
+typeset CYA="\033[0;36m"
+typeset ECO="\033[0m"
 typeset -a OTRA_COMMANDS=(
   'createAction'
   'createBundle'
@@ -10,6 +10,12 @@ typeset -a OTRA_COMMANDS=(
   'createHelloWorld'
   'createModel'
   'createModule'
+  'sqlClean'
+  'sqlCreateDatabase'
+  'sqlCreateFixtures'
+  'sqlExecute'
+  'sqlImportFixtures'
+  'sqlImportSchema'
   'buildDev'
   'clearCache'
   'deploy'
@@ -18,14 +24,8 @@ typeset -a OTRA_COMMANDS=(
   'genClassMap'
   'genWatcher'
   'updateConf'
-  'sqlClean'
-  'sqlCreateDatabase'
-  'sqlCreateFixtures'
-  'sqlExecute'
-  'sqlImportFixtures'
-  'sqlImportSchema'
   'crypt'
-  'generateHelpAndTaskClassMap'
+  'generateTaskMetadata'
   'hash'
   'help'
   'requirements'
@@ -33,39 +33,39 @@ typeset -a OTRA_COMMANDS=(
   'version'
 );
 
-typeset OTRA_ARCHITECTURE="${CLI_BOLD_LIGHT_CYAN}[  Architecture  ]${CLI_WHITE}";
-typeset OTRA_DEPLOYMENT="${CLI_BOLD_LIGHT_CYAN}[   Deployment   ]${CLI_WHITE}";
-typeset OTRA_DATABASE="${CLI_BOLD_LIGHT_CYAN}[    Database    ]${CLI_WHITE}";
-typeset HELP_AND_TOOLS="${CLI_BOLD_LIGHT_CYAN}[ Help and tools ]${CLI_WHITE}";
+typeset CAT_ARCHITECTURE="${BLC}[  Architecture  ]${WHI}";
+typeset CAT_DATABASE="${BLC}[    Database    ]${WHI}";
+typeset CAT_DEPLOYMENT="${BLC}[   Deployment   ]${WHI}";
+typeset CAT_HELP_AND_TOOLS="${BLC}[ Help and tools ]${WHI}";
 
 typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
-  "${OTRA_ARCHITECTURE} createAction                : ${CLI_CYAN}Creates actions.${END_COLOR}"
-  "${OTRA_ARCHITECTURE} createBundle                : ${CLI_CYAN}Creates a bundle.${END_COLOR}"
-  "${OTRA_ARCHITECTURE} createController            : ${CLI_CYAN}Creates controllers.${END_COLOR}"
-  "${OTRA_ARCHITECTURE} createHelloWorld            : ${CLI_CYAN}Creates a hello world starter application.${END_COLOR}"
-  "${OTRA_ARCHITECTURE} createModel                 : ${CLI_CYAN}Creates a model.${END_COLOR}"
-  "${OTRA_ARCHITECTURE} createModule                : ${CLI_CYAN}Creates modules.${END_COLOR}"
-  "${OTRA_DEPLOYMENT} buildDev                    : ${CLI_CYAN}Compiles the typescripts, sass and php configuration files (modulo the binary mask).${END_COLOR}"
-  "${OTRA_DEPLOYMENT} clearCache                  : ${CLI_CYAN}Clears the cache${END_COLOR}"
-  "${OTRA_DEPLOYMENT} deploy                      : ${CLI_CYAN}Deploy the site. [ WIP - Do not use yet ! ] ${END_COLOR}"
-  "${OTRA_DEPLOYMENT} genAssets                   : ${CLI_CYAN}Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.${END_COLOR}"
-  "${OTRA_DEPLOYMENT} genBootstrap                : ${CLI_CYAN}Launch the genClassMap command and generates a file that contains all the necessary php files.${END_COLOR}"
-  "${OTRA_DEPLOYMENT} genClassMap                 : ${CLI_CYAN}Generates a class mapping file that will be used to replace the autoloading method.${END_COLOR}"
-  "${OTRA_DEPLOYMENT} genWatcher                  : ${CLI_CYAN}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${END_COLOR}"
-  "${OTRA_DEPLOYMENT} updateConf                  : ${CLI_CYAN}Updates the files related to bundles and routes. ${END_COLOR}"
-  "${OTRA_DATABASE} sqlClean                    : ${CLI_CYAN}Removes sql and yml files in the case where there are problems that had corrupted files.${END_COLOR}"
-  "${OTRA_DATABASE} sqlCreateDatabase           : ${CLI_CYAN}Database creation, tables creation.(sql_generate_basic)${END_COLOR}"
-  "${OTRA_DATABASE} sqlCreateFixtures           : ${CLI_CYAN}Generates fixtures sql files and executes them. (sql_generate_fixtures${END_COLOR}"
-  "${OTRA_DATABASE} sqlExecute                  : ${CLI_CYAN}Executes the sql script${END_COLOR}"
-  "${OTRA_DATABASE} sqlImportSchema             : ${CLI_CYAN}Creates the database schema from your database. (importSchema)${END_COLOR}"
-  "${OTRA_DATABASE} sqlImportFixtures           : ${CLI_CYAN}Import the fixtures from database into config/data/yml/fixtures.${END_COLOR}"
-  "${HELP_AND_TOOLS} crypt                       : ${CLI_CYAN}Crypts a password and shows it.${END_COLOR}"
-  "${HELP_AND_TOOLS} generateHelpAndTaskClassMap : ${CLI_CYAN}Crypts a password and shows it.${END_COLOR}"
-  "${HELP_AND_TOOLS} hash                        : ${CLI_CYAN}Returns a random hash.${END_COLOR}"
-  "${HELP_AND_TOOLS} help                        : ${CLI_CYAN}Shows the extended help for the specified command.${END_COLOR}"
-  "${HELP_AND_TOOLS} requirements                : ${CLI_CYAN}Shows the requirements to use OTRA at its maximum capabilities.${END_COLOR}"
-  "${HELP_AND_TOOLS} routes                      : ${CLI_CYAN}Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)${END_COLOR}"
-  "${HELP_AND_TOOLS} version                     : ${CLI_CYAN}Shows the framework version.${END_COLOR}"
+  "${CAT_ARCHITECTURE} createAction                : ${CYA}Creates actions.${ECO}"
+  "${CAT_ARCHITECTURE} createBundle                : ${CYA}Creates a bundle.${ECO}"
+  "${CAT_ARCHITECTURE} createController            : ${CYA}Creates controllers.${ECO}"
+  "${CAT_ARCHITECTURE} createHelloWorld            : ${CYA}Creates a hello world starter application.${ECO}"
+  "${CAT_ARCHITECTURE} createModel                 : ${CYA}Creates a model.${ECO}"
+  "${CAT_ARCHITECTURE} createModule                : ${CYA}Creates modules.${ECO}"
+  "${CAT_DATABASE} sqlClean                    : ${CYA}Removes sql and yml files in the case where there are problems that had corrupted files.${ECO}"
+  "${CAT_DATABASE} sqlCreateDatabase           : ${CYA}Database creation, tables creation.(sql_generate_basic)${ECO}"
+  "${CAT_DATABASE} sqlCreateFixtures           : ${CYA}Generates fixtures sql files and executes them. (sql_generate_fixtures)${ECO}"
+  "${CAT_DATABASE} sqlExecute                  : ${CYA}Executes the sql script${ECO}"
+  "${CAT_DATABASE} sqlImportFixtures           : ${CYA}Import the fixtures from database into [38;2;214;191;85mconfig/data/yml/fixtures[38;2;41;153;153m.${ECO}"
+  "${CAT_DATABASE} sqlImportSchema             : ${CYA}Creates the database schema from your database. (importSchema)${ECO}"
+  "${CAT_DEPLOYMENT} buildDev                    : ${CYA}Compiles the typescripts, sass and php configuration files (modulo the binary mask).${ECO}"
+  "${CAT_DEPLOYMENT} clearCache                  : ${CYA}Clears the cache${ECO}"
+  "${CAT_DEPLOYMENT} deploy                      : ${CYA}Deploy the site. [38;2;214;191;85m[WIP - Do not use yet !][0m${ECO}"
+  "${CAT_DEPLOYMENT} genAssets                   : ${CYA}Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.${ECO}"
+  "${CAT_DEPLOYMENT} genBootstrap                : ${CYA}Launch the genClassMap command and generates a file that contains all the necessary php files.${ECO}"
+  "${CAT_DEPLOYMENT} genClassMap                 : ${CYA}Generates a class mapping file that will be used to replace the autoloading method.${ECO}"
+  "${CAT_DEPLOYMENT} genWatcher                  : ${CYA}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${ECO}"
+  "${CAT_DEPLOYMENT} updateConf                  : ${CYA}Updates the files related to bundles and routes.${ECO}"
+  "${CAT_HELP_AND_TOOLS} crypt                       : ${CYA}Crypts a password and shows it.${ECO}"
+  "${CAT_HELP_AND_TOOLS} generateTaskMetadata        : ${CYA}Generates files that are used to show the help, finds quickly all the tasks and gives shell completions.${ECO}"
+  "${CAT_HELP_AND_TOOLS} hash                        : ${CYA}Returns a random hash.${ECO}"
+  "${CAT_HELP_AND_TOOLS} help                        : ${CYA}Shows the extended help for the specified command.${ECO}"
+  "${CAT_HELP_AND_TOOLS} requirements                : ${CYA}Shows the requirements to use OTRA at its maximum capabilities.${ECO}"
+  "${CAT_HELP_AND_TOOLS} routes                      : ${CYA}Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)${ECO}"
+  "${CAT_HELP_AND_TOOLS} version                     : ${CYA}Shows the framework version.${ECO}"
 )
 
 export OTRA_COMMANDS
