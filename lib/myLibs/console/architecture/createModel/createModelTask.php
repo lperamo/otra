@@ -111,7 +111,6 @@ function writeModelFile(string $bundlePath, string $modelName, string $modelFull
   // TODO remove the CMS thing !!! this folder can be rename so it is a critical mistake !
   fwrite($fp, '<?php' . PHP_EOL .
     'namespace bundles\CMS\models;' . PHP_EOL . PHP_EOL .
-    'use lib\myLibs\bdd\Sql;' . PHP_EOL . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
     '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL . '?>' . PHP_EOL);
   fclose($fp);
@@ -262,7 +261,7 @@ if ('1' === $argv[3])
   $propertyText = 'Which property do you want to add ? (lowercase, type \'no!more\' if you don\'t want any other property)';
   $propertyErrorText = 'You did not type anything. ' . $propertyText;
   $property = promptUser($propertyText, $propertyErrorText);
-  $functionStart = '  public protected function ';
+  $functionStart = SPACE_INDENT . 'public function ';
 
   // Ask until we don't want any other properties.
   while ('no!more' !== $property)
@@ -270,7 +269,7 @@ if ('1' === $argv[3])
     $functions .= PHP_EOL;
 
     // Adds property declaration
-    $propertiesCode .= '  public protected $' . $property . ';' . PHP_EOL;
+    $propertiesCode .= SPACE_INDENT . 'protected $' . $property . ';' . PHP_EOL;
     $propertiesTxt .= $property . ', ';
 
     // Adds getters and setters
@@ -292,8 +291,8 @@ if ('1' === $argv[3])
   $schemaData = Symfony\Component\Yaml\Yaml::parse(file_get_contents($schemaPath));
 
   // Those variables are used for code creation
-  $functionStart = '  public protected function ';
-  $startAccolade = PHP_EOL . '  {' . PHP_EOL;
+  $functionStart = SPACE_INDENT . 'public function ';
+  $startAccolade = PHP_EOL . SPACE_INDENT . '{' . PHP_EOL;
 
   /*****************************
    * ONE MODEL FROM SCHEMA.YML *
@@ -357,7 +356,7 @@ if ('1' === $argv[3])
       $functions .= PHP_EOL;
 
       // Adds property declaration
-      $propertiesCode .= '  public protected $' . $column . ';' . PHP_EOL;
+      $propertiesCode .= SPACE_INDENT . 'protected $' . $column . ';' . PHP_EOL;
       $propertiesTxt .= $column . ', ';
 
       checkDataType($modelName, $column, $columnData['type']);
@@ -411,7 +410,7 @@ if ('1' === $argv[3])
         $functions .= PHP_EOL;
 
         // Adds property declaration
-        $propertiesCode .= '  public protected $' . $column . ';' . PHP_EOL;
+        $propertiesCode .= SPACE_INDENT . 'protected $' . $column . ';' . PHP_EOL;
 
         checkDataType($modelName, $column, $columnData['type']);
         addGettersAndSetters(
