@@ -88,17 +88,10 @@ if (true === isset($tasksClassMap[$argv[TasksManager::$TASK_PARAMETERS]]))
   launchTask($tasksClassMap, $argv, $argc);
 else // otherwise we'll try to guess if it looks like an existing one
 {
-  $methods = get_class_methods('lib\myLibs\console\Tasks');
-
-  // We filter the 'description' methods from the class methods
-  foreach($methods as $key => &$method)
-  {
-    if (false !== strpos($method, 'Desc'))
-      unset($methods[$key]);
-  }
+  $methods = array_keys($tasksClassMap);
 
   require CORE_PATH . 'console/tools.php';
-  $method = $argv[1];
+  $method = $argv[TasksManager::$TASK_PARAMETERS];
   list($newTask) = guessWords($method, $methods);
 
   // If there are no existing task with a close name ...
@@ -115,7 +108,7 @@ else // otherwise we'll try to guess if it looks like an existing one
   if ('y' === $choice)
   {
     $argv[1] = $newTask;
-    launchTask($argv, $argc);
+    launchTask($tasksClassMap, $argv, $argc);
   } else
     TasksManager::showCommands('This command doesn\'t exist. ');
 }
