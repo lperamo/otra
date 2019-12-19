@@ -129,14 +129,14 @@ unset($maskExists);
 if (WATCH_FOR_PHP_FILES === true)
 {
   // We generate the class mapping...
-  require CORE_PATH . 'console/deployment/genClassMap.php';
+  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
-  require CORE_PATH . 'console/deployment/updateConf.php';
+  require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
 }
 
-require CORE_PATH . 'console/generateOptimizedJavaScript.php';
+require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
 
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 
