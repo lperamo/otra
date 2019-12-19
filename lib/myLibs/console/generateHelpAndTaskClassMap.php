@@ -1,6 +1,8 @@
 <?php
 
 // If we do not come from the 'otra' command...
+use lib\myLibs\console\TasksManager;
+
 if (defined('BASE_PATH') === false)
 {
   define('BASE_PATH', realpath(__DIR__ . '/../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /;
@@ -39,9 +41,16 @@ foreach($iterator as $entry)
   $helpFileContent [$task]= require $pathname;
   $taskClassMap[$task] = [
     dirname($pathname),
-    $helpFileContent[$task][\lib\myLibs\console\TasksManager::$TASK_STATUS]
+    $helpFileContent[$task][TasksManager::$TASK_STATUS]
   ];
 }
+
+// sorts alphabetically the tasks and grouping them by category
+array_multisort(
+  array_column($helpFileContent, TasksManager::$TASK_CATEGORY), SORT_ASC,
+  array_keys($helpFileContent), SORT_ASC,
+  $helpFileContent
+);
 
 require CORE_PATH . 'console/tools.php';
 
