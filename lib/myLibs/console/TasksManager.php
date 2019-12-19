@@ -21,8 +21,9 @@ abstract class TasksManager
    */
   public static function showCommands(string $message)
   {
+    define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', 25, ' '),
+    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
@@ -31,25 +32,22 @@ abstract class TasksManager
 
     foreach ($methods as $method => &$paramsDesc)
     {
-      if (false === strpos($method, 'Desc'))
+      if (isset($paramsDesc[self::$TASK_CATEGORY]) === true)
       {
-        if (isset($paramsDesc[self::$TASK_CATEGORY]) === true)
+        if ($category !== $paramsDesc[self::$TASK_CATEGORY])
         {
-          if ($category !== $paramsDesc[self::$TASK_CATEGORY])
-          {
-            $category = $paramsDesc[self::$TASK_CATEGORY];
-            echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
-          }
-        } else
-        {
-          $category = 'Other';
-          echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
+          $category = $paramsDesc[self::$TASK_CATEGORY];
+          echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
         }
-
-        echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, 25, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
-        $paramsDesc[self::$TASK_DESCRIPTION],
-        PHP_EOL;
+      } else
+      {
+        $category = 'Other';
+        echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
       }
+
+      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
+      $paramsDesc[self::$TASK_DESCRIPTION],
+      PHP_EOL;
     }
 
     echo END_COLOR;

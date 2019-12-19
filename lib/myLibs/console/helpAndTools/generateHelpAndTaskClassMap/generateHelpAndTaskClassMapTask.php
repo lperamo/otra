@@ -5,7 +5,7 @@ use lib\myLibs\console\TasksManager;
 
 if (defined('BASE_PATH') === false)
 {
-  define('BASE_PATH', realpath(__DIR__ . '/../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /;
+  define('BASE_PATH', realpath(__DIR__ . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /;
   define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
   define('SPACE_INDENT', '  ');
 
@@ -13,7 +13,7 @@ if (defined('BASE_PATH') === false)
 
   // Generating the class map if needed
   if (file_exists($pathToClassMap) === false)
-    require BASE_PATH . 'lib/myLibs/console/deployment/genClassMapTask.php';
+    require BASE_PATH . 'lib/myLibs/console/deployment/genClassMap/genClassMapTask.php';
 
   // loading the class map
   require $pathToClassMap;
@@ -33,11 +33,11 @@ foreach($iterator as $entry)
 {
   $pathname = $entry->getPathname();
 
-  if (mb_strpos($pathname, 'Help.') === false || mb_strpos($pathname, 'generateHelp') !== false)
+  if (mb_strpos($pathname, 'Help.') === false)
     continue;
 
   $task = mb_substr($pathname, mb_strrpos($pathname, '/') + 1);
-  $task = mb_substr($task, 0, mb_strpos($task, 'Help'));
+  $task = mb_substr($task, 0, mb_strrpos($task, 'Help'));
   $helpFileContent [$task]= require $pathname;
   $taskClassMap[$task] = [
     dirname($pathname),
@@ -71,4 +71,6 @@ file_put_contents(BASE_PATH . 'cache/php/tasksClassMap.php',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
     )
 );
-die;
+
+if (php_sapi_name() === 'cli')
+  echo CLI_GREEN, 'Generation of help and task class map done.', END_COLOR, PHP_EOL;
