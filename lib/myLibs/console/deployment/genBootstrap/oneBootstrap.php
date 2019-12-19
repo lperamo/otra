@@ -5,9 +5,9 @@ use config\AllConfig;
 
 $verbose = $argv[1];
 $route = $argv[2];
-define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) - strlen('lib/myLibs/console'))); // Fixes windows awful __DIR__, BASE_PATH ends with /.
+define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) - strlen('lib/myLibs/console/deployment/genBootstrap'))); // Fixes windows awful __DIR__, BASE_PATH ends with /.
 define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
-require CORE_PATH . 'console/Colors.php';
+require CORE_PATH . 'console/colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
@@ -70,7 +70,7 @@ if (true === isset($params['session']))
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
-require CORE_PATH . 'console/TaskFileOperation.php';
+require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = BASE_PATH . str_replace(
     '\\',
     '/',

@@ -8,7 +8,7 @@ $verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 if (false === (isset($argv[2]) === true && '0' == $argv[2]))
 {
   // Generation of the class mapping
-  Tasks::genClassMap([null, null, $verbose]);
+  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/Cli.php';
@@ -79,7 +79,7 @@ foreach(array_keys($routes) as &$route)
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
-    passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/OneBootstrap.php" ' . $verbose . ' ' . $route);
+    passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' . $route);
 }
 
 // Final specific management for routes files
@@ -103,7 +103,7 @@ define(
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
-require CORE_PATH . 'console/TaskFileOperation.php';
+require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
 
 $fileToInclude = CORE_PATH . 'Router.php';
 
