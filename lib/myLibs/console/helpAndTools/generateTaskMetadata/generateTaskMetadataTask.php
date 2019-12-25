@@ -45,12 +45,12 @@ foreach($iterator as $entry)
   $helpFileContent [$task]= require $pathname;
   $taskClassMap[$task] = [
     dirname($pathname),
-    $helpFileContent[$task][TasksManager::$TASK_STATUS]
+    $helpFileContent[$task][TasksManager::TASK_STATUS]
   ];
 }
 
 $tasks = array_keys($helpFileContent);
-$taskCategories = array_column($helpFileContent, TasksManager::$TASK_CATEGORY);
+$taskCategories = array_column($helpFileContent, TasksManager::TASK_CATEGORY);
 // sorts alphabetically the tasks and grouping them by category
 array_multisort($taskCategories, SORT_ASC, $tasks, SORT_ASC, $helpFileContent);
 
@@ -97,12 +97,12 @@ $taskCategoriesLong = $taskCategories = [];
 foreach($tasks as &$task)
 {
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
-  $taskCategory = ucfirst($helpFileContent[$task][TasksManager::$TASK_CATEGORY]);
+  $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
 
   if (in_array($taskCategory, $taskCategories) === false) {
     $taskCategories[] = $taskCategory;
     $taskCategoryLong = 'CAT_'
-      . str_replace(' ', '_', strtoupper($helpFileContent[$task][TasksManager::$TASK_CATEGORY]));
+      . str_replace(' ', '_', strtoupper($helpFileContent[$task][TasksManager::TASK_CATEGORY]));
     $taskCategoriesLong[] = $taskCategoryLong;
   }
 

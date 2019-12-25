@@ -13,20 +13,17 @@ class Sql
   /**
    * @type array  $_sgbds       Available sgbds
    * @type array  $_activeConn
-   * @type string $_currentConn
    */
-  private static
+  private static array
     $_sgbds = ['Mysql', 'Pdomysql'],
-    $_currentConn,
-    $_currentSGBD,
-    /** @type array Available active connections */
     $_activeConn = [];
 
-  /** @var $instance Sql */
-  public static
-    $instance,
-    /** @var string */
-    $_CURRENT_CONN;
+  public static string
+    $_currentConn,
+    $_currentSGBD;
+
+  public static Sql $instance;
+  public static string $_CURRENT_CONN;
 
   /**
    * @param string $sgbd

@@ -12,7 +12,7 @@ use lib\myLibs\Session;
  */
 abstract class Model
 {
-  private $table;
+  private string $table;
 
   public function get($property) { return $this->$property; }
 

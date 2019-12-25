@@ -14,7 +14,7 @@ require_once CORE_PATH . 'DebugTools.php';
 
 class OtraException extends \Exception
 {
-  public static $codes = [
+  public static array $codes = [
     E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
     E_COMPILE_WARNING   => 'E_COMPILE_WARNING',
     E_CORE_ERROR        => 'E_CORE_ERROR',
@@ -32,10 +32,10 @@ class OtraException extends \Exception
     E_WARNING           => 'E_WARNING'
   ];
 
-  public $backtraces;
-  private $context;
+  public array $backtraces;
+  private array $context;
   // String version of error code
-  public $scode;
+  public string $scode;
 
   /**
    * OtraException constructor.
@@ -83,7 +83,7 @@ class OtraException extends \Exception
       unset($this->context['variables']);
       convertArrayToShowable($this->context, 'Variables');
     } else
-      $this->context = '';
+      $this->context = [];
 
     // Is the error code a native error code ?
     $code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';

@@ -11,7 +11,7 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
  */
 class DatabaseTest extends TestCase
 {
-  protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
+  protected bool $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
   private static
     $configFolder = BASE_PATH . 'tests/config/data/',

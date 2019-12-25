@@ -10,7 +10,7 @@ use PDO, PDOStatement;
 
 class Pdomysql
 {
-  private $conn;
+  private PDO $conn;
 
   /**
    * Connects to PDO_MySql
@@ -19,7 +19,7 @@ class Pdomysql
    * @param string $username Username
    * @param string $password Password
    *
-   * @return bool|PDO Returns a MySQL link identifier on success, or false on error
+   * @return PDO Returns a MySQL link identifier on success, or false on error
    * @throws OtraException
    */
   public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')

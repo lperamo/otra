@@ -9,7 +9,7 @@ use lib\myLibs\{bdd\Sql,OtraException};
  */
 class SqlTest extends TestCase
 {
-  private static $databaseName = 'testDB';
+  private static string $databaseName = 'testDB';
 
   protected function setUp(): void
   {

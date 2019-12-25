@@ -54,15 +54,19 @@ try
   }
 } catch(Exception $e) // in order to catch fatal errors
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}' // json sent if it was an AJAX request
-    : new OtraException($e->getMessage());
+  if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+    // json sent if it was an AJAX request
+    echo '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}';
+  else
+    throw new OtraException($e->getMessage());
 
   exit(1);
 } catch(Error $e)
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}' // json sent if it was an AJAX request
-    : new OtraException($e->getMessage());
+  if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+    // json sent if it was an AJAX request
+    echo '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}';
+  else
+    throw new OtraException($e->getMessage());
   exit(1);
 }

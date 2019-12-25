@@ -16,29 +16,31 @@ namespace lib\myLibs\console {
   abstract class Database
   {
     // Database connection
-    private static $base,
-      $motor,
-      $pwd,
-      $user,
-
-      // true if we have initialized the class variables (paths essentially)
-      $init = false,
-
-      // paths
-      $baseDirs = [],
+    private static string
       $_databaseFile = 'database_schema',
+      $base,
       $fixturesFileIdentifiers = 'ids',
+      $folder = 'bundles/',
+      $motor,
       $pathSql = '',
-      $pathSqlFixtures,
       $pathYml = '',
+      $pathSqlFixtures,
       $pathYmlFixtures,
+      $pwd,
       $schemaFile,
       $tablesOrderFile,
+      $user;
 
+    private static bool
+      $boolSchema = false,
+      // true if we have initialized the class variables (paths essentially)
+      $init = false;
+
+    private static array
       // just in order to simplify the code
       $attributeInfos = [],
-      $boolSchema = false,
-      $folder = 'bundles/';
+      // paths
+      $baseDirs = [];
 
     /** Initializes paths, commands and connections
      *
