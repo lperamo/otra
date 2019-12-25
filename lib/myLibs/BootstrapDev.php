@@ -48,8 +48,6 @@ try
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');
-
-    $defaultRoute = config\Routes::$default['bundle'];
     Router::get($route[0], $route[1]);
   }
 } catch(Exception $e) // in order to catch fatal errors
