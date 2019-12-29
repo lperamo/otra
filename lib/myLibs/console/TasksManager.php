@@ -5,14 +5,14 @@ namespace lib\myLibs\console;
 /** @author Lionel Péramo */
 abstract class TasksManager
 {
-  public static $STRING_PAD_FOR_OPTION_FORMATTING = 40;
-  public static $TASK_CLASS_MAP_TASK_PATH = 0;
-  public static $TASK_CLASS_MAP_TASK_STATUS = 1;
-  public static $TASK_DESCRIPTION = 0;
-  public static $TASK_PARAMETERS = 1;
-  public static $TASK_STATUS = 2;
-  public static $TASK_CATEGORY = 3;
-  public static $TASK_PATH = 4;
+  const STRING_PAD_FOR_OPTION_FORMATTING = 40;
+  const TASK_CLASS_MAP_TASK_PATH = 0;
+  const TASK_CLASS_MAP_TASK_STATUS = 1;
+  const TASK_DESCRIPTION = 0;
+  const TASK_PARAMETERS = 1;
+  const TASK_STATUS = 2;
+  const TASK_CATEGORY = 3;
+  const TASK_PATH = 4;
 
   /**
    * List the available commands
@@ -32,11 +32,11 @@ abstract class TasksManager
 
     foreach ($methods as $method => &$paramsDesc)
     {
-      if (isset($paramsDesc[self::$TASK_CATEGORY]) === true)
+      if (isset($paramsDesc[self::TASK_CATEGORY]) === true)
       {
-        if ($category !== $paramsDesc[self::$TASK_CATEGORY])
+        if ($category !== $paramsDesc[self::TASK_CATEGORY])
         {
-          $category = $paramsDesc[self::$TASK_CATEGORY];
+          $category = $paramsDesc[self::TASK_CATEGORY];
           echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
         }
       } else
@@ -46,7 +46,7 @@ abstract class TasksManager
       }
 
       echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
-      $paramsDesc[self::$TASK_DESCRIPTION],
+      $paramsDesc[self::TASK_DESCRIPTION],
       PHP_EOL;
     }
 
@@ -75,7 +75,7 @@ abstract class TasksManager
         echo CLI_YELLOW,
           'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
           END_COLOR, PHP_EOL;
-        require $tasksClassMap['genClassMap'][TasksManager::$TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
+        require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
 
         // If the task was genClassMap...then we have nothing left to do !
         if ($task === 'genClassMap')
@@ -84,7 +84,7 @@ abstract class TasksManager
 
       require_once BASE_PATH . 'cache/php/ClassMap.php';
       spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
-      require $tasksClassMap[$task][TasksManager::$TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
+      require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
     } catch(\Exception $e)
     {
       if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])

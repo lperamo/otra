@@ -9,7 +9,7 @@ use lib\myLibs\{bdd\Sql,OtraException};
  */
 class SqlTest extends TestCase
 {
-  private static $databaseName = 'testDB';
+  private static string $databaseName = 'testDB';
 
   protected function setUp(): void
   {
@@ -60,49 +60,11 @@ class SqlTest extends TestCase
   private function createDatabaseForTest() {
     require(BASE_PATH . 'tests/config/AllConfig.php');
 
-    Sql::getDB(false, false);
+    Sql::getDB(null, false);
     Sql::$instance->beginTransaction();
     $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
     Sql::$instance->freeResult($dbResult);
     Sql::$instance->commit();
-  }
-
-  /**
-   * @author Lionel Péramo
-   */
-  public function testConstructBadSGBD()
-  {
-    $this->expectException(OtraException :: class);
-    $this->expectExceptionCode(E_CORE_ERROR);
-    $this->expectExceptionMessageRegExp("@This SGBD 'test' doesn't exist...yet ! Available SGBD are : (?:\w|,|\s)*@");
-    new Sql('test');
-  }
-
-  /**
-   * @throws ReflectionException
-   * @throws OtraException
-   *
-   * @author Lionel Péramo
-   */
-  public function test__Construct()
-  {
-    new Sql('PDOMySql');
-
-    $this->assertEquals(
-      removeFieldScopeProtection(Sql::class, '_currentSGBD')->getValue(),
-      'lib\\myLibs\\bdd\\Pdomysql'
-    );
-  }
-
-  /**
-   * @author Lionel Péramo
-   * depends on testConstruct
-   */
-  public function test__Destruct()
-  {
-    $sql = new Sql('PDOMySql');
-    $this->assertInstanceOf(Sql::class, $sql);
-    $sql->__destruct();
   }
 
   /**
@@ -116,7 +78,7 @@ class SqlTest extends TestCase
     require(BASE_PATH . 'tests/config/AllConfig.php');
 
     // launching task
-    $sqlInstance = Sql::getDB(false, false);
+    $sqlInstance = Sql::getDB(null, false);
     $this->assertInstanceOf(Sql::class, $sqlInstance);
   }
 
@@ -146,35 +108,6 @@ class SqlTest extends TestCase
     $this->dropTemporaryTestTable();
 
     return $result;
-  }
-
-  /**
-   * @throws OtraException
-   * @author Lionel Péramo
-   *         depends on testConstruct, AllConfig
-   */
-  public function testConnect()
-  {
-    // context
-    $this->createDatabaseForTest();
-
-    // launching task
-    $sql = new Sql('PDOMySql');
-    extract(AllConfig::$dbConnections[AllConfig::$defaultConn]);
-
-    /**
-     *  Extractions give those variables
-     * @type string $db
-     * @type int $port
-     * @type string $host
-     * @type string $login
-     * @type string $password
-     */
-
-    $PDOInstance = $sql->connect('mysql:dbname=' . $db . ';host=' .
-      ('' == $port ? $host : $host . ':' . $port), $login, $password);
-
-    $this->assertInstanceOf(PDO::class, $PDOInstance);
   }
 
   /**
@@ -296,19 +229,16 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSelectDB()
+  public function testSelectDBNoMethodSelectDb()
   {
-    $this->expectException(OtraException :: class);
-    $this->expectExceptionMessage('This function does not exist with PDO and mysql driver is now deprecated !');
+    // loading the test configuration
+    require(BASE_PATH . 'tests/config/AllConfig.php');
 
-    try
-    {
-      $sql = new SQL('Pdomysql');
-      $sql->selectDb();
-    } catch (Exception $e)
-    {
-      throw new OtraException('This function does not exist with PDO and mysql driver is now deprecated !');
-    }
+    $this->expectException(OtraException :: class);
+    $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
+
+    $sql = Sql::getDB('test');
+    $sql->selectDb();
   }
 
   /**

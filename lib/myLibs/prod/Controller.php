@@ -10,7 +10,7 @@ use config\AllConfig;
 
 class Controller extends MasterController
 {
-  private static $cache_used;
+  private static bool $cache_used;
 
   /** If the files are in cache, put them directly in $rendered
    *

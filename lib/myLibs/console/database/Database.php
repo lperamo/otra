@@ -16,29 +16,31 @@ namespace lib\myLibs\console {
   abstract class Database
   {
     // Database connection
-    private static $base,
-      $motor,
-      $pwd,
-      $user,
-
-      // true if we have initialized the class variables (paths essentially)
-      $init = false,
-
-      // paths
-      $baseDirs = [],
+    private static string
       $_databaseFile = 'database_schema',
+      $base,
       $fixturesFileIdentifiers = 'ids',
+      $folder = 'bundles/',
+      $motor,
       $pathSql = '',
-      $pathSqlFixtures,
       $pathYml = '',
+      $pathSqlFixtures,
       $pathYmlFixtures,
+      $pwd,
       $schemaFile,
       $tablesOrderFile,
+      $user;
 
+    private static bool
+      $boolSchema = false,
+      // true if we have initialized the class variables (paths essentially)
+      $init = false;
+
+    private static array
       // just in order to simplify the code
       $attributeInfos = [],
-      $boolSchema = false,
-      $folder = 'bundles/';
+      // paths
+      $baseDirs = [];
 
     /** Initializes paths, commands and connections
      *
@@ -72,7 +74,7 @@ namespace lib\myLibs\console {
         define('VERBOSE', AllConfig::$verbose);
 
       self::$base = $infosDb['db'];
-      self::$motor = $infosDb['motor'];
+      self::$motor = $infosDb['motor'] ?? (SQL::$_currentConn)::DEFAULT_MOTOR;
       self::$pwd = $infosDb['password'];
       self::$user = $infosDb['login'];
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
@@ -191,7 +193,7 @@ namespace lib\myLibs\console {
       // No need to get DB twice (getDB is already used in dropDatabase function)
       (true === $force)
         ? self::dropDatabase($databaseName)
-        : Sql::getDB(false, false);
+        : Sql::getDB(null, false);
 
       $inst = &Sql::$instance;
       $inst->beginTransaction();
@@ -720,6 +722,9 @@ namespace lib\myLibs\console {
      */
     public static function generateSqlSchema( string $databaseName, bool $force = false) : string
     {
+      if (false === self::$init)
+        self::init();
+
       $dbFile = self::$pathSql . self::$_databaseFile . ($force ? '_force.sql' : '.sql');
 
       // We keep only the end of the path for a cleaner display
@@ -1011,7 +1016,7 @@ namespace lib\myLibs\console {
         $database = AllConfig::$dbConnections[$confToUse]['db'];
 
       Session::set('db', $confToUse);
-      $db = Sql::getDB(false, false);
+      $db = Sql::getDB(null, false);
 
       $schemaInformations = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
 

@@ -2,7 +2,7 @@
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
 use lib\myLibs\
-{OtraException, console\Database, bdd\Sql};
+{OtraException, console\Database, bdd\Sql, Session};
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -11,10 +11,12 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
  */
 class DatabaseTest extends TestCase
 {
+  const TEST_CONFIG_PATH = 'tests/config/AllConfig.php';
   protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
   private static
-    $configFolder = BASE_PATH . 'tests/config/data/',
+    $configFolder = BASE_PATH . 'tests/src/bundles/HelloWorld/config/data/',
+    $configBackupFolder = BASE_PATH . 'tests/config/data/',
     $databaseConnection = 'test',
     $databaseFirstTableName = 'testDB_table',
     $databaseName = 'testDB',
@@ -44,12 +46,12 @@ class DatabaseTest extends TestCase
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
-    self::$configFolderSqlBackup = self::$configFolder . 'sqlBackup/';
+    self::$configFolderSqlBackup = self::$configBackupFolder . 'sqlBackup/';
     self::$configFolderSqlFixtures = self::$configFolderSql . 'fixtures/';
     self::$configFolderSqlFixturesBackup = self::$configFolderSqlBackup . 'fixtures/';
     self::$configFolderYml = self::$configFolder . 'yml/';
     self::$configFolderYmlFixtures = self::$configFolderYml . 'fixtures/';
-    self::$configFolderYmlBackup = self::$configFolder . 'ymlBackup/';
+    self::$configFolderYmlBackup = self::$configBackupFolder . 'ymlBackup/';
     self::$configFolderYmlFixturesBackup = self::$configFolderYmlBackup . 'fixtures/';
 
     self::$schemaFileBackup = self::$configFolderYmlBackup . self::$schemaFile;
@@ -78,9 +80,9 @@ class DatabaseTest extends TestCase
       self::$configFolderYml
     ]);
 
-    require_once(BASE_PATH . 'tests/config/AllConfig.php');
+    require_once(BASE_PATH . self::TEST_CONFIG_PATH);
 
-    Sql::getDb(false, false);
+    Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::$databaseName . '`;');
   }
 
@@ -192,7 +194,7 @@ class DatabaseTest extends TestCase
    */
   private function loadConfig()
   {
-    require(BASE_PATH . 'tests/config/AllConfig.php');
+    require(BASE_PATH . self::TEST_CONFIG_PATH);
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -706,6 +708,8 @@ class DatabaseTest extends TestCase
   public function testGenerateSqlSchema_NoSchema()
   {
     // Creating the context
+    $this->loadConfig();
+
     Database::initBase();
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
     removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
@@ -732,7 +736,10 @@ class DatabaseTest extends TestCase
   {
     // Creating the context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
-    Database::initBase();
+
+    $this->loadConfig();
+
+    Database::init(self::$databaseConnection);
 
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
     removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
@@ -757,7 +764,10 @@ class DatabaseTest extends TestCase
   {
     // Creating the context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
-    Database::initBase();
+
+    $this->loadConfig();
+
+    Database::init(self::$databaseConnection);
 
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
     removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
@@ -807,6 +817,9 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
+    // Initialize OTRA session
+    Session::init();
+
     Database::init(self::$databaseConnection);
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
     removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
@@ -836,6 +849,9 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
+    // Initialize OTRA session
+    Session::init();
+
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'testDB' does not exist.");
 
@@ -858,6 +874,9 @@ class DatabaseTest extends TestCase
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
+
+    // Initialize OTRA session
+    Session::init();
 
     Database::init(self::$databaseConnection);
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
@@ -887,6 +906,9 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
+    // Initialize OTRA session
+    Session::init();
+
     // assertions about exceptions
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'noBDD' does not exist.");
@@ -908,6 +930,9 @@ class DatabaseTest extends TestCase
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
+
+    // Initialize OTRA session
+    Session::init();
 
     Database::init(self::$databaseConnection);
 
@@ -948,6 +973,9 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
+    // Initialize OTRA session
+    Session::init();
+
     Database::init(self::$databaseConnection);
 
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
@@ -980,4 +1008,3 @@ class DatabaseTest extends TestCase
     }
   }
 }
-
