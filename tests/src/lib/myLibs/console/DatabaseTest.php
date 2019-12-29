@@ -202,7 +202,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws ReflectionException
-   * depends on testGetDirs
+   * @depends testGetDirs
    *
    * @author Lionel Péramo
    */
@@ -251,7 +251,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    *
    * TODO Put assertions and remove the related annotation!
-   * depends on testInitBase
+   * @depends testInitBase
    * @doesNotPerformAssertions
    * @author                         Lionel Péramo
    */
@@ -301,7 +301,8 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException If the original YAML schema can't be copied.
    * @throws ReflectionException
-   * depends on testInit, testInitCommand, testDropDatabase
+   * @depends testInit
+   * @depends testDropDatabase
    * @author Lionel Péramo
    */
   public function testCreateDatabase()
@@ -431,7 +432,11 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * depends on testInit, testInitCommand, testCreateDatabase, testTruncateTable, testCreateFixture, test_ExecuteFixture
+   * @depends testInit
+   * @depends testCreateDatabase
+   * @depends testTruncateTable
+   * @depends testCreateFixture
+   * @depends testExecuteFixture
    * @doesNotPerformAssertions
    *
    * TODO Do assertions and remove the related annotations
@@ -576,7 +581,8 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   * depends on testInitBase, testCreateDatabase
+   * @depends testInitBase
+   * @depends testCreateDatabase
    * @doesNotPerformAssertions
    *
    * TODO Do assertions and remove the related annotations
@@ -620,7 +626,7 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   * depends on testInit, testInitCommand
+   * @depends testInit
    *
    * @doesNotPerformAssertions
    *
@@ -702,7 +708,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * depends on testInitBase
+   * @depends testInitBase
    * @author Lionel Péramo
    */
   public function testGenerateSqlSchema_NoSchema()
@@ -725,7 +731,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * depends on testInitBase
+   * @depends testInitBase
    *
    * @doesNotPerformAssertions
    *
@@ -753,7 +759,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * depends on testInitBase
+   * @depends testInitBase
    *
    * @doesNotPerformAssertions
    *
@@ -955,7 +961,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * depends on testInit, testInitImports
+   * @depends testInit
    *
    * @author Lionel Péramo
    */

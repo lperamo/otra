@@ -181,9 +181,9 @@ class Pdomysql
    *
    * @return bool Returns true on success or false on failure
    */
-  public static function close($instanceToClose = true)
+  public static function close(&$instanceToClose = true)
   {
-    if ($instanceToClose)
+    if ($instanceToClose === true)
       Sql::$_currentConn = null;
     else
       $instanceToClose = null;

@@ -9,6 +9,7 @@ use lib\myLibs\{bdd\Sql,OtraException};
  */
 class SqlTest extends TestCase
 {
+  const TEST_CONFIG_PATH = 'tests/config/AllConfig.php';
   private static string $databaseName = 'testDB';
 
   protected function setUp(): void
@@ -58,7 +59,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    */
   private function createDatabaseForTest() {
-    require(BASE_PATH . 'tests/config/AllConfig.php');
+    require(BASE_PATH . self::TEST_CONFIG_PATH);
 
     Sql::getDB(null, false);
     Sql::$instance->beginTransaction();
@@ -75,7 +76,7 @@ class SqlTest extends TestCase
   public function testGetDB()
   {
     // context
-    require(BASE_PATH . 'tests/config/AllConfig.php');
+    require BASE_PATH . self::TEST_CONFIG_PATH;
 
     // launching task
     $sqlInstance = Sql::getDB(null, false);
@@ -115,7 +116,7 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDb
+   * @depends testGetDB
    */
   public function testQuery()
   {
@@ -132,7 +133,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testFreeResult, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testFetchArray()
   {
@@ -148,7 +150,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testFreeResult, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testFetchAssoc()
   {
@@ -164,7 +167,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testFreeResult, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testFetchRow()
   {
@@ -180,7 +184,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testFreeResult, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testGetColumnMeta()
   {
@@ -196,7 +201,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testFreeResult, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testFetchObject()
   {
@@ -206,9 +212,6 @@ class SqlTest extends TestCase
     // launching task
     $this->assertIsObject($this->fetch('fetchObject'));
   }
-
-  // Already tested with the fetched methods !
-  //public function testFreeResult(){}
 
   /**
    * @throws OtraException
@@ -232,7 +235,7 @@ class SqlTest extends TestCase
   public function testSelectDBNoMethodSelectDb()
   {
     // loading the test configuration
-    require(BASE_PATH . 'tests/config/AllConfig.php');
+    require BASE_PATH . self::TEST_CONFIG_PATH;
 
     $this->expectException(OtraException :: class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
@@ -246,7 +249,7 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB
+   * @depends testGetDB
    */
   public function testQuote()
   {
@@ -264,7 +267,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testSingle()
   {
@@ -282,7 +286,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    */
   public function testValues()
   {
@@ -299,7 +304,8 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    *
-   * depends on testGetDB, testQuery
+   * @depends testGetDB
+   * @depends testQuery
    * @doesNotPerformAssertions
    *
    * TODO Do assertions and remove the related annotation !
@@ -312,5 +318,20 @@ class SqlTest extends TestCase
     // launching task
     SQL::getDB();
     Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1'));
+  }
+
+  /**
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   */
+  public function test__destruct()
+  {
+    require BASE_PATH . self::TEST_CONFIG_PATH;
+
+    $sql = Sql::getDB();
+    $sql->__destruct();
+
+    self::assertEquals(null, Sql::$_currentConn);
   }
 }

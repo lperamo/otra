@@ -335,7 +335,7 @@ class Sql
   private static function close()
   {
     if (isset(self::$instance) === true)
-      return call_user_func(self::$_currentDBMS . '::close', self::$_currentConn);
+      return call_user_func_array(self::$_currentDBMS . '::close', [&self::$_currentConn]);
   }
 
     /**
