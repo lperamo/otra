@@ -7,7 +7,8 @@ namespace lib\myLibs;
 
 class MasterController
 {
-  public static $path,
+  public static string $path;
+  public static array
     $blocksStack = [],
     $currentBlock = [
       'content' => '',
@@ -15,31 +16,39 @@ class MasterController
       'name' => 'root',
       'parent' => null
     ],
-    $currentBlocksStackIndex = 0,
     $blockNames = [],
     $blocksToUnset = [];
 
-  public $route,
+  public static int
+    $currentBlocksStackIndex = 0;
+
+  public string $route,
         $bundle = '',
         $module = '',
         $viewPath = '/'; // index/index/ for indexController and indexAction
 
-  protected $controller = '',
+  protected string $controller = '',
     $action = '',
-    $getParams = '',
-    $pattern = '',
+    $pattern = '';
+
+  protected array
     $viewResourcePath = [
       'css' => '/', // CSS path for this module
       'js' => '/'  // JS path for this module
-    ];
+    ],
+    $getParams = [];
 
-  protected static
+  protected static array
     $css = [],
     $js = [],
-    $rendered = [],
+    $rendered = [];
+
+  protected static bool
     $ajax = false,
     $hasJsToLoad,
-    $hasCssToLoad,
+    $hasCssToLoad;
+
+  protected static string
     $id,
   /* @var string $template The actual template being processed */
     $template,

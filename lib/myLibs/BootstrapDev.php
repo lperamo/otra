@@ -34,7 +34,7 @@ spl_autoload_register(function(string $className)
  *
  * @throws OtraException
  */
-function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
+function errorHandler(int $errno, string $message, string $file, int $line, ?array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 
@@ -48,21 +48,23 @@ try
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');
-
-    $defaultRoute = config\Routes::$default['bundle'];
     Router::get($route[0], $route[1]);
   }
 } catch(Exception $e) // in order to catch fatal errors
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}' // json sent if it was an AJAX request
-    : new OtraException($e->getMessage());
+  if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+    // json sent if it was an AJAX request
+    echo '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}';
+  else
+    throw new OtraException($e->getMessage());
 
   exit(1);
 } catch(Error $e)
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}' // json sent if it was an AJAX request
-    : new OtraException($e->getMessage());
+  if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+    // json sent if it was an AJAX request
+    echo '{"success": "exception", "msg":' . json_encode(new OtraException($e->getMessage())) . '}';
+  else
+    throw new OtraException($e->getMessage());
   exit(1);
 }

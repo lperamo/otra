@@ -6,7 +6,7 @@ namespace lib\myLibs;
 
 class Session
 {
-  private static $id;
+  private static string $id;
 
   public static function init() { self::$id = \sha1(\time()); }
 

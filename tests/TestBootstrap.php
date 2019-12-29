@@ -17,5 +17,5 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-require CORE_PATH . 'console/Colors.php';
+require CORE_PATH . 'console/colors.php';
 require CORE_PATH . 'tools/RemoveFieldProtection.php';

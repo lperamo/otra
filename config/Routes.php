@@ -9,7 +9,7 @@ namespace config;
 
 class Routes
 {
-  public static $default = [
+  public static array $default = [
     'pattern' => '/frontend/index',
     'bundle' => 'App',
     'module' => 'frontend',
