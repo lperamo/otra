@@ -334,4 +334,22 @@ class SqlTest extends TestCase
 
     self::assertEquals(null, Sql::$_currentConn);
   }
+
+  /**
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   */
+  public function testGetDBAlreadyExistingConnection()
+  {
+    // Creating the context (having a SQL connection active named 'test')
+    require BASE_PATH . self::TEST_CONFIG_PATH;
+    $sql = Sql::getDB('test');
+
+    // Launching the task
+    $sql2 = Sql::getDB('test');
+
+    // Testing !
+    $this->assertEquals($sql, $sql2);
+  }
 }
