@@ -11,6 +11,7 @@ use PDO, PDOStatement;
 class Pdomysql
 {
   private PDO $conn;
+  const DEFAULT_MOTOR = 'InnoDB';
 
   /**
    * Connects to PDO_MySql
@@ -47,11 +48,11 @@ class Pdomysql
    */
   public static function query($query)
   {
-    $result = Sql::$_CURRENT_CONN->query($query);
+    $result = Sql::$_currentConn->query($query);
     // TODO use PDOStatement::debugDumpParams() ?
     if (false === $result)
     {
-      $errorInfo = Sql::$_CURRENT_CONN->errorInfo();
+      $errorInfo = Sql::$_currentConn->errorInfo();
       throw new OtraException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
     } else
       return $result;
@@ -183,7 +184,7 @@ class Pdomysql
   public static function close($instanceToClose = true)
   {
     if ($instanceToClose)
-      Sql::$_CURRENT_CONN = null;
+      Sql::$_currentConn = null;
     else
       $instanceToClose = null;
 
@@ -198,7 +199,7 @@ class Pdomysql
    * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) : int { return Sql::$_CURRENT_CONN->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) : int { return Sql::$_currentConn->lastInsertId($sequenceName); }
 
   /**
    * @param string $string
@@ -207,7 +208,7 @@ class Pdomysql
    */
   public static function quote(string $string)
   {
-    return trim(Sql::$_CURRENT_CONN->quote($string), '\'');
+    return trim(Sql::$_currentConn->quote($string), '\'');
   }
 
   /**
@@ -215,7 +216,7 @@ class Pdomysql
  */
   public static function beginTransaction() : bool
   {
-    return Sql::$_CURRENT_CONN->beginTransaction();
+    return Sql::$_currentConn->beginTransaction();
   }
 
   /**
@@ -223,7 +224,7 @@ class Pdomysql
    */
   public static function inTransaction() : bool
   {
-    return Sql::$_CURRENT_CONN->inTransaction();
+    return Sql::$_currentConn->inTransaction();
   }
 
   /**
@@ -231,7 +232,7 @@ class Pdomysql
    */
   public static function commit() : bool
   {
-    return Sql::$_CURRENT_CONN->commit();
+    return Sql::$_currentConn->commit();
   }
 
   /**
@@ -239,7 +240,7 @@ class Pdomysql
    */
   public static function rollBack() : bool
   {
-    return Sql::$_CURRENT_CONN->rollBack();
+    return Sql::$_currentConn->rollBack();
   }
 
   /**
@@ -247,7 +248,7 @@ class Pdomysql
    */
   public static function errorInfo() : array
   {
-    return Sql::$_CURRENT_CONN->errorInfo();
+    return Sql::$_currentConn->errorInfo();
   }
 }
 ?>

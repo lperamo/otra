@@ -11,37 +11,28 @@ use config\AllConfig;
 class Sql
 {
   /**
-   * @type array  $_sgbds       Available sgbds
+   * @type array  $_dbmsCollection       Available dbmsCollection
    * @type array  $_activeConn
    */
   private static array
-    $_sgbds = ['Mysql', 'Pdomysql'],
+    $_dbmsCollection = ['Pdomysql'],
     $_activeConn = [];
 
+  public static ?\PDO $_currentConn = null;
   public static string
-    $_currentConn,
-    $_currentSGBD;
+    $_currentDBMS = '',
+    $_currentConnectionName;
 
   public static Sql $instance;
-  public static string $_CURRENT_CONN;
 
-  /**
-   * @param string $sgbd
-   *
-   * @throws OtraException
-   */
-  public function __construct(string $sgbd)
+  private function __construct()
   {
-    $theSgbd = ucfirst(strtolower($sgbd));
-    // Is this driver available ?
-    if (false === in_array($theSgbd, self::$_sgbds))
-      throw new OtraException('This SGBD \'' . $sgbd . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
-
-    self::$_currentSGBD = __NAMESPACE__ . '\\' . $theSgbd;
   }
 
   /** Destructor that closes the connection */
-  public function __destruct() { $this->close(); }
+  public function __destruct() {
+    $this->close();
+  }
 
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
@@ -54,26 +45,26 @@ class Sql
    * @throws OtraException
    *
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
-   * @internal param string $sgbd     Kind of sgbd
+   * @internal param string $dbms     Kind of dbms
    * @internal param string $conn     Connection used (see AllConfig files)
    */
-  public static function getDB($conn = false, bool $haveDatabase = true) : Sql
+  public static function getDB($conn = null, bool $haveDatabase = true) : Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
      */
-    if (false !== $conn)
+    if (null !== $conn)
     {
       if (true === isset(self::$_activeConn[$conn]))
       {
-        self::$_currentConn = $conn;
+        $currentConnection = $conn;
       } else if (true === isset(AllConfig::$dbConnections[$conn]))
       {
-        self::$_currentConn = $conn;
+        $currentConnection = $conn;
         self::$_activeConn[$conn] = null;
       } else
-        throw new OtraException('There is no ' . $conn . ' configuration available in the AllConfig file !');
+        throw new OtraException('There is no \'' . $conn . '\' configuration available in the AllConfig file !');
     } else
     {
       if (false === isset(AllConfig::$defaultConn))
@@ -85,7 +76,7 @@ class Sql
       if (false === isset(self::$_activeConn[$conn]))
         self::$_activeConn[$conn] = null;
 
-      self::$_currentConn = $conn;
+      $currentConnection = $conn;
     }
 
     extract(AllConfig::$dbConnections[$conn]);
@@ -104,11 +95,12 @@ class Sql
     $driver = ucfirst(strtolower($driver));
 
     // Is this driver available ?
-    if (true === in_array($driver, self::$_sgbds))
+    if (true === in_array($driver, self::$_dbmsCollection))
     {
-      if (null == self::$_activeConn[self::$_currentConn])
+      if (null == self::$_activeConn[$currentConnection])
       {
-        self::$_activeConn[self::$_currentConn]['instance'] = new Sql($driver);
+        self::$_currentDBMS = __NAMESPACE__ . '\\' . ucfirst(strtolower($driver));
+        self::$_activeConn[$currentConnection]['instance'] = new Sql;
         require CORE_PATH . 'bdd/' . $driver . '.php';
       }
 
@@ -123,7 +115,7 @@ class Sql
        * @type string $password
        */
 
-      $activeConn = &self::$_activeConn[self::$_currentConn];
+      $activeConn = &self::$_activeConn[$currentConnection];
       $activeConn['db'] = $db;
       self::$instance = $activeConn['instance'];
 
@@ -137,13 +129,14 @@ class Sql
           $password
         );
 
-        self::$_CURRENT_CONN = $activeConn['conn'];
+        self::$_currentConn = $activeConn['conn'];
+        self::$_currentConnectionName = $currentConnection;
       }catch(\Exception $e)
       {
         throw new OtraException($e->getMessage());
       }
     }else
-      throw new OtraException('This SGBD \'' . $driver . '\' doesn\'t exist...yet ! Available SGBD are : ' . implode(', ', self::$_sgbds), E_CORE_ERROR);
+      throw new OtraException('This DBMS \'' . $driver . '\' doesn\'t exist...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }
@@ -157,7 +150,7 @@ class Sql
    */
   public static function connect(...$params)
   {
-    return call_user_func_array([self::$_currentSGBD, 'connect'], $params);
+    return call_user_func_array([self::$_currentDBMS, 'connect'], $params);
   }
 
   /**
@@ -166,14 +159,26 @@ class Sql
    * @param mixed $params See the driver for more info.
    *
    * @return bool True if successful
+   * @throws OtraException
    */
   public function selectDb(...$params)
   {
-    $return = call_user_func_array(self::$_currentSGBD . '::selectDb', $params);
+    try
+    {
+      $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
+      $this->query('SET NAMES UTF8');
 
-    $this->query('SET NAMES UTF8');
+      return $return;
+    } catch (\Exception $exception)
+    {
+      $currentDriver = AllConfig::$dbConnections[self::$_currentConnectionName]['driver'];
+      $message = 'This function does not exist with \'' . $currentDriver . '\'.';
 
-    return $return;
+      if ($currentDriver === 'PDOMySQL')
+        throw new OtraException($message . '.. and mysql driver is now deprecated !');
+      else
+        throw new OtraException($message);
+    }
   }
 
   /**
@@ -200,7 +205,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func(self::$_currentSGBD . '::query', $query, self::$_CURRENT_CONN);
+    return call_user_func(self::$_currentDBMS . '::query', $query, self::$_currentConn);
   }
 
   /**
@@ -215,7 +220,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::fetchAssoc', $params);
+    return call_user_func_array(self::$_currentDBMS . '::fetchAssoc', $params);
   }
 
     /**
@@ -230,7 +235,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::fetchArray', $params);
+    return call_user_func_array(self::$_currentDBMS . '::fetchArray', $params);
   }
 
   /**
@@ -245,7 +250,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::getColumnMeta', $params);
+    return call_user_func_array(self::$_currentDBMS . '::getColumnMeta', $params);
   }
 
   /**
@@ -260,7 +265,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::fetchObject', $params);
+    return call_user_func_array(self::$_currentDBMS . '::fetchObject', $params);
   }
 
   /**
@@ -275,7 +280,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::fetchRow', $params);
+    return call_user_func_array(self::$_currentDBMS . '::fetchRow', $params);
   }
 
   /**
@@ -290,7 +295,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::values', $params);
+    return call_user_func_array(self::$_currentDBMS . '::values', $params);
   }
 
   /**
@@ -305,7 +310,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::valuesOneCol', $params);
+    return call_user_func_array(self::$_currentDBMS . '::valuesOneCol', $params);
   }
 
   /**
@@ -319,7 +324,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::single', $params);
+    return call_user_func_array(self::$_currentDBMS . '::single', $params);
   }
 
   /**
@@ -329,7 +334,8 @@ class Sql
    */
   private static function close()
   {
-    return call_user_func(self::$_currentSGBD . '::close', self::$_CURRENT_CONN);
+    if (isset(self::$instance) === true)
+      return call_user_func(self::$_currentDBMS . '::close', self::$_currentConn);
   }
 
     /**
@@ -344,7 +350,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentSGBD . '::freeResult', $params);
+    return call_user_func_array(self::$_currentDBMS . '::freeResult', $params);
   }
 
   /**
@@ -356,7 +362,7 @@ class Sql
    */
   public function lastInsertedId(string $sequenceName = null)
   {
-    return call_user_func(self::$_currentSGBD . '::lastInsertedId', $sequenceName);
+    return call_user_func(self::$_currentDBMS . '::lastInsertedId', $sequenceName);
   }
 
  /**
@@ -365,7 +371,7 @@ class Sql
  */
   public function quote(string $string)
   {
-    return call_user_func(self::$_currentSGBD . '::quote', $string);
+    return call_user_func(self::$_currentDBMS . '::quote', $string);
   }
 
   /**
@@ -373,7 +379,7 @@ class Sql
    */
   public function beginTransaction() : bool
   {
-    return call_user_func(self::$_currentSGBD . '::beginTransaction');
+    return call_user_func(self::$_currentDBMS . '::beginTransaction');
   }
 
   /**
@@ -381,7 +387,7 @@ class Sql
    */
   public function inTransaction() : bool
   {
-    return call_user_func(self::$_currentSGBD . '::inTransaction');
+    return call_user_func(self::$_currentDBMS . '::inTransaction');
   }
 
   /**
@@ -389,7 +395,7 @@ class Sql
    */
   public function commit() : bool
   {
-    return call_user_func(self::$_currentSGBD . '::commit');
+    return call_user_func(self::$_currentDBMS . '::commit');
   }
 
   /**
@@ -397,7 +403,7 @@ class Sql
    */
   public function rollBack() : bool
   {
-    return call_user_func(self::$_currentSGBD . '::rollBack');
+    return call_user_func(self::$_currentDBMS . '::rollBack');
   }
 
   /**
@@ -405,7 +411,7 @@ class Sql
    */
   public function errorInfo() : array
   {
-    return call_user_func(self::$_currentSGBD . '::errorInfo');
+    return call_user_func(self::$_currentDBMS . '::errorInfo');
   }
 }
 ?>

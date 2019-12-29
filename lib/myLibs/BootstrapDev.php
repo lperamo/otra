@@ -34,7 +34,7 @@ spl_autoload_register(function(string $className)
  *
  * @throws OtraException
  */
-function errorHandler(int $errno, string $message, string $file, int $line, array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
+function errorHandler(int $errno, string $message, string $file, int $line, ?array $context) { throw new lib\myLibs\OtraException($message, $errno, $file, $line, $context); }
 
 set_error_handler('errorHandler');
 
