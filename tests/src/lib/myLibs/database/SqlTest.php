@@ -10,11 +10,22 @@ use lib\myLibs\{bdd\Sql,OtraException};
 class SqlTest extends TestCase
 {
   const TEST_CONFIG_PATH = 'tests/config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = 'tests/config/AllConfigGood.php';
+  const TEST_CONFIG_NO_DEFAULT_CONNECTION = 'tests/config/AllConfigNoDefaultConnection.php';
   private static string $databaseName = 'testDB';
 
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
+  }
+
+  protected function tearDown(): void
+  {
+    try {
+      Sql::getDB()->__destruct();
+    } catch (Exception $e) {
+      // If it crashes, it means that there is no default connection and probably no instance to destruct !
+    }
   }
 
   /**
@@ -59,7 +70,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    */
   private function createDatabaseForTest() {
-    require(BASE_PATH . self::TEST_CONFIG_PATH);
+    require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
 
     Sql::getDB(null, false);
     Sql::$instance->beginTransaction();
@@ -77,6 +88,7 @@ class SqlTest extends TestCase
   {
     // context
     require BASE_PATH . self::TEST_CONFIG_PATH;
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 
     // launching task
     $sqlInstance = Sql::getDB(null, false);
@@ -121,6 +133,7 @@ class SqlTest extends TestCase
   public function testQuery()
   {
     // context
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
 
     // launching task
@@ -235,9 +248,9 @@ class SqlTest extends TestCase
   public function testSelectDBNoMethodSelectDb()
   {
     // loading the test configuration
-    require BASE_PATH . self::TEST_CONFIG_PATH;
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 
-    $this->expectException(OtraException :: class);
+    $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
 
     $sql = Sql::getDB('test');
@@ -327,7 +340,7 @@ class SqlTest extends TestCase
    */
   public function test__destruct()
   {
-    require BASE_PATH . self::TEST_CONFIG_PATH;
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 
     $sql = Sql::getDB();
     $sql->__destruct();
@@ -343,7 +356,7 @@ class SqlTest extends TestCase
   public function testGetDBAlreadyExistingConnection()
   {
     // Creating the context (having a SQL connection active named 'test')
-    require BASE_PATH . self::TEST_CONFIG_PATH;
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
     $sql = Sql::getDB('test');
 
     // Launching the task
@@ -351,5 +364,20 @@ class SqlTest extends TestCase
 
     // Testing !
     $this->assertEquals($sql, $sql2);
+  }
+
+  /**
+   * @throws OtraException
+   * @author  Lionel Péramo
+   *
+   * @depends testGetDB
+   */
+  public function testGetDBNoDefaultConnection()
+  {
+    $this->expectException(OtraException::class);
+    $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
+// Workaround to avoid PHPUnit say that there is an exception that we are very aware of because we expect it -_-
+    // Launching the task
+    $sql = Sql::getDB();
   }
 }

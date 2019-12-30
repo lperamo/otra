@@ -37,16 +37,16 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param $conn
+   * @param      $conn
    * @param bool $haveDatabase Do we have a database ? Can be no, if we want to CREATE a database.
    *
    * @return bool|Sql|resource
    *
    * @throws OtraException
    *
-   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $dbms     Kind of dbms
    * @internal param string $conn     Connection used (see AllConfig files)
+   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    */
   public static function getDB($conn = null, bool $haveDatabase = true) : Sql
   {
@@ -67,7 +67,7 @@ class Sql
         throw new OtraException('There is no \'' . $conn . '\' configuration available in the AllConfig file !');
     } else
     {
-      if (false === isset(AllConfig::$defaultConn))
+      if (AllConfig::$defaultConn === '')
         throw new OtraException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
 
       $conn = AllConfig::$defaultConn;

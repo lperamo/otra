@@ -3,8 +3,14 @@
          <!--convertErrorsToExceptions="true"-->
          <!--convertNoticesToExceptions="true"-->
          <!--convertWarningsToExceptions="true"-->
-    <testsuite name="Framework tests">
-        <directory suffix="Test.php">./src/</directory>
+    <testsuite name="Block templating system">
+        <directory suffix="BlocksTest.php">./src/</directory>
+    </testsuite>
+    <testsuite name="Database console tasks">
+        <directory suffix="DatabaseTest.php">./src/</directory>
+    </testsuite>
+    <testsuite name="SQL DBAL">
+        <directory suffix="SqlTest.php">./src/</directory>
     </testsuite>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="false">

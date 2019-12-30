@@ -14,7 +14,6 @@ define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n');
 
 define('CACHE_TIME', 300); // 5 minutes(5*60)
-
 class AllConfig
 {
   public static int $verbose = 0;

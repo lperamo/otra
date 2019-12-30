@@ -12,6 +12,7 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
 class DatabaseTest extends TestCase
 {
   const TEST_CONFIG_PATH = 'tests/config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = 'tests/config/AllConfigGood.php';
   protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
   private static
@@ -80,7 +81,7 @@ class DatabaseTest extends TestCase
       self::$configFolderYml
     ]);
 
-    require_once(BASE_PATH . self::TEST_CONFIG_PATH);
+    require_once(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::$databaseName . '`;');
@@ -194,7 +195,7 @@ class DatabaseTest extends TestCase
    */
   private function loadConfig()
   {
-    require(BASE_PATH . self::TEST_CONFIG_PATH);
+    require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -266,6 +267,7 @@ class DatabaseTest extends TestCase
    */
   public function testGetDirs()
   {
+    require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
     $dirs = Database::getDirs();
     $this->assertIsArray($dirs);
   }
