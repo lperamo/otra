@@ -5,6 +5,7 @@ use lib\myLibs\{bdd\Sql,OtraException};
 
 /**
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class SqlTest extends TestCase
 {
