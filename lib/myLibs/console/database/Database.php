@@ -74,7 +74,7 @@ namespace lib\myLibs\console {
         define('VERBOSE', AllConfig::$verbose);
 
       self::$base = $infosDb['db'];
-      self::$motor = $infosDb['motor'] ?? (SQL::$_currentConn)::DEFAULT_MOTOR;
+      self::$motor = $infosDb['motor'] ?? (Sql::$_currentConn)::DEFAULT_MOTOR;
       self::$pwd = $infosDb['password'];
       self::$user = $infosDb['login'];
       self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
@@ -689,7 +689,7 @@ namespace lib\myLibs\console {
     public static function dropDatabase(string $databaseName) : Sql
     {
       $sqlInstance = Sql::getDB();
-      SQL::$instance->beginTransaction();
+      Sql::$instance->beginTransaction();
 
       try
       {
@@ -697,11 +697,11 @@ namespace lib\myLibs\console {
         Sql::$instance->freeResult($result);
       } catch (\Exception $e)
       {
-        SQL::$instance->rollback();
+        Sql::$instance->rollback();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
       }
 
-      SQL::$instance->commit();
+      Sql::$instance->commit();
 
       echo CLI_LIGHT_GREEN, 'Database ', END_COLOR, CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' dropped.',
         END_COLOR, PHP_EOL;

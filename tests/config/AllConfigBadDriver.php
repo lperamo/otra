@@ -3,17 +3,11 @@ namespace config;
 AllConfig::$defaultConn = 'test';
 AllConfig::$dbConnections = [ // mandatory
   'test' => [ // do not modify this key name
-    'driver' => 'PDOMySQL',
+    'driver' => 'hello',
     'host' => 'localhost',
     'port' => '',
     'db' => 'testDB', // do not modify this !
     'motor' => 'InnoDB'
-  ],
-  'testOtherDriver' => [ // do not modify this key name
-    'driver' => 'OtherDriver',
-    'host' => 'localhost',
-    'port' => '',
-    'db' => 'testDB', // do not modify this !
   ]
 ];
 AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];

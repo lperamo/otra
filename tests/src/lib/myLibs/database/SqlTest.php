@@ -9,9 +9,12 @@ use lib\myLibs\{bdd\Sql,OtraException};
  */
 class SqlTest extends TestCase
 {
-  const TEST_CONFIG_PATH = 'tests/config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = 'tests/config/AllConfigGood.php';
-  const TEST_CONFIG_NO_DEFAULT_CONNECTION = 'tests/config/AllConfigNoDefaultConnection.php';
+  const TEST_CONFIG_PATH = BASE_PATH . 'tests/config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = BASE_PATH . 'tests/config/AllConfigGood.php';
+  const TEST_CONFIG_BAD_DRIVER_PATH = BASE_PATH . 'tests/config/AllConfigBadDriver.php';
+  const TEST_CONFIG_NO_DEFAULT_CONNECTION = BASE_PATH . 'tests/config/AllConfigNoDefaultConnection.php';
+  const LOG_PATH = BASE_PATH . 'logs/';
+
   private static string $databaseName = 'testDB';
 
   protected function setUp(): void
@@ -21,6 +24,11 @@ class SqlTest extends TestCase
 
   protected function tearDown(): void
   {
+    if (isset($_SESSION['bootstrap']) === true)
+      unset($_SESSION['bootstrap']);
+
+    $_SERVER['APP_ENV'] = 'prod';
+
     try {
       Sql::getDB()->__destruct();
     } catch (Exception $e) {
@@ -70,7 +78,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    */
   private function createDatabaseForTest() {
-    require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
+    require(self::TEST_CONFIG_GOOD_PATH);
 
     Sql::getDB(null, false);
     Sql::$instance->beginTransaction();
@@ -87,8 +95,8 @@ class SqlTest extends TestCase
   public function testGetDB()
   {
     // context
-    require BASE_PATH . self::TEST_CONFIG_PATH;
-    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+    require self::TEST_CONFIG_PATH;
+    require self::TEST_CONFIG_GOOD_PATH;
 
     // launching task
     $sqlInstance = Sql::getDB(null, false);
@@ -133,12 +141,49 @@ class SqlTest extends TestCase
   public function testQuery()
   {
     // context
-    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+    require self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
 
     // launching task
-    SQL::getDB();
-    $this->assertInstanceOf(\PDOStatement::class, SQL::$instance->query('SELECT 1'));
+    Sql::getDB();
+    $this->assertInstanceOf(\PDOStatement::class, Sql::$instance->query('SELECT 1'));
+  }
+
+  /**
+   * @author  Lionel Péramo
+   */
+  public function testQuery_BootstrapKeyInSession()
+  {
+    // context
+    require self::TEST_CONFIG_GOOD_PATH;
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    Sql::getDB();
+    $this->assertEquals(null, Sql::$instance->query('SELECT 1'));
+  }
+
+  /**
+   * @author Lionel Péramo
+   */
+  public function testQuery_DevEnvironment()
+  {
+    // context
+    require self::TEST_CONFIG_GOOD_PATH;
+    $this->createDatabaseForTest();
+    $_SERVER['APP_ENV'] = 'dev';
+
+    // launching task
+    Sql::getDB();
+    $sqlLogPath = self::LOG_PATH . 'dev/sql.txt';
+    $sqlLogContent = file_get_contents($sqlLogPath);
+    $this->assertInstanceOf(\PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    $this->assertEquals(
+      $sqlLogContent
+        . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
+      file_get_contents($sqlLogPath)
+    );
   }
 
   /**
@@ -166,6 +211,24 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
+  public function testFetchArray_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    $this->assertNull($this->fetch('fetchArray'));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
   public function testFetchAssoc()
   {
     // context
@@ -173,6 +236,24 @@ class SqlTest extends TestCase
 
     // launching task
     $this->assertIsArray($this->fetch('fetchAssoc'));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testFetchAssoc_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    $this->assertNull($this->fetch('fetchAssoc'));
   }
 
   /**
@@ -200,6 +281,24 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
+  public function testFetchRow_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    $this->assertNull($this->fetch('fetchRow'));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
   public function testGetColumnMeta()
   {
     // context
@@ -207,6 +306,24 @@ class SqlTest extends TestCase
 
     // launching task
     $this->assertIsArray($this->fetch('getColumnMeta', 0));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testGetColumnMeta_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    $this->assertNull($this->fetch('getColumnMeta', 0));
   }
 
   /**
@@ -230,6 +347,24 @@ class SqlTest extends TestCase
    * @throws OtraException
    *
    * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testFetchObject_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    $this->assertNull($this->fetch('fetchObject'));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
    */
   public function testLastInsertedId()
   {
@@ -245,15 +380,32 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSelectDBNoMethodSelectDb()
+  public function testSelectDB_NoMethodSelectDb()
   {
     // loading the test configuration
-    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+    require self::TEST_CONFIG_GOOD_PATH;
 
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
 
     $sql = Sql::getDB('test');
+    $sql->selectDb();
+  }
+
+  /**
+   * @covers
+   * @author Lionel Péramo
+   */
+  public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL()
+  {
+    $this->markTestIncomplete('We have to create more drivers classes to be able to test this condition');
+    // loading the test configuration
+    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+
+    $this->expectException(OtraException::class);
+    $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'.');
+
+    $sql = Sql::getDB('testOtherDriver');
     $sql->selectDb();
   }
 
@@ -289,10 +441,28 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    SQL::getDB();
+    Sql::getDB();
     $this->assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testSingle_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    Sql::getDB();
+    $this->assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+  }
 
   /**
    * @throws OtraException
@@ -308,8 +478,27 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    SQL::getDB();
+    Sql::getDB();
     $this->assertIsArray(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testValues_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    Sql::getDB();
+    $this->assertNull(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
   /**
@@ -329,8 +518,27 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    SQL::getDB();
+    Sql::getDB();
     Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1'));
+  }
+
+  /**
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   *
+   * @depends testGetDB
+   * @depends testQuery
+   */
+  public function testValuesOneCol_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    Sql::getDB();
+    $this->assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -340,7 +548,7 @@ class SqlTest extends TestCase
    */
   public function test__destruct()
   {
-    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+    require self::TEST_CONFIG_GOOD_PATH;
 
     $sql = Sql::getDB();
     $sql->__destruct();
@@ -353,10 +561,10 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testGetDBAlreadyExistingConnection()
+  public function testGetDB_AlreadyExistingConnection()
   {
     // Creating the context (having a SQL connection active named 'test')
-    require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
+    require self::TEST_CONFIG_GOOD_PATH;
     $sql = Sql::getDB('test');
 
     // Launching the task
@@ -372,12 +580,108 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testGetDBNoDefaultConnection()
+  public function testGetDB_NoDefaultConnection()
   {
+    // assertions
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
 
     // Launching the task
-    $sql = Sql::getDB();
+    Sql::getDB();
+  }
+
+  /**
+   * @author  Lionel Péramo
+   *
+   * @depends testGetDB
+   */
+  public function testGetDB_DbmsNotAvailable()
+  {
+    // context
+    require self::TEST_CONFIG_BAD_DRIVER_PATH;
+
+    // assertions
+    $this->expectException(OtraException::class);
+    $this->expectExceptionMessage('This DBMS \'Hello\' is not available...yet ! Available DBMS are : Pdomysql');
+
+    // Launching the task
+    Sql::getDB('test');
+  }
+
+  /**
+   * @author  Lionel Péramo
+   *
+   * @depends testGetDB
+   */
+  public function testFreeResult_BootstrapKeyInSession()
+  {
+    // context
+    $this->createDatabaseForTest();
+    $_SESSION['bootstrap'] = true;
+
+    // launching task
+    Sql::getDB();
+    $sql = Sql::$instance->query('SELECT 1');
+    $this->assertNull(Sql::$instance->freeResult($sql));
+  }
+
+  /**
+   * @author Lionel Péramo
+   *
+   * @throws OtraException
+   */
+  public function testInTransaction()
+  {
+    // context
+    $this->createDatabaseForTest();
+
+    // launching task
+    Sql::getDB();
+    Sql::$instance->beginTransaction();
+    $this->assertTrue(Sql::$instance->inTransaction());
+    Sql::$instance->commit();
+  }
+
+  /**
+   * @author Lionel Péramo
+   *
+   * @throws OtraException
+   */
+  public function testRollBack()
+  {
+    // context
+    $this->createDatabaseForTest();
+
+    // launching task
+    Sql::getDB();
+    Sql::$instance->beginTransaction();
+    $this->assertTrue(Sql::$instance->rollBack());
+  }
+
+  /**
+   * @author Lionel Péramo
+   *
+   * @throws OtraException
+   */
+  public function testErrorInfo()
+  {
+    // context
+    $this->createDatabaseForTest();
+
+    // launching task
+    Sql::getDB();
+
+    try {
+      Sql::$instance->query('bogus sql');
+    } catch (Exception $e) {
+      $this->assertEquals(
+      [
+        0 => '42000',
+        1 => '1064',
+        2 => 'You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'bogus sql\' at line 1'
+      ],
+        Sql::$instance->errorInfo()
+      );
+    }
   }
 }

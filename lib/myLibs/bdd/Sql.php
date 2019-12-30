@@ -136,7 +136,7 @@ class Sql
         throw new OtraException($e->getMessage());
       }
     }else
-      throw new OtraException('This DBMS \'' . $driver . '\' doesn\'t exist...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
+      throw new OtraException('This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }
@@ -166,9 +166,11 @@ class Sql
     try
     {
       $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
+      // @codeCoverageIgnoreStart
       $this->query('SET NAMES UTF8');
 
       return $return;
+      // @codeCoverageIgnoreEnd
     } catch (\Exception $exception)
     {
       $currentDriver = AllConfig::$dbConnections[self::$_currentConnectionName]['driver'];
@@ -177,7 +179,7 @@ class Sql
       if ($currentDriver === 'PDOMySQL')
         throw new OtraException($message . '.. and mysql driver is now deprecated !');
       else
-        throw new OtraException($message);
+        throw new OtraException($message); // @codeCoverageIgnore
     }
   }
 
