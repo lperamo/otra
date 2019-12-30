@@ -1,7 +1,6 @@
 <?php
 
 use phpunit\framework\TestCase;
-use config\AllConfig;
 use lib\myLibs\{bdd\Sql,OtraException};
 
 /**
