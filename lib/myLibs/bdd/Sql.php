@@ -5,7 +5,7 @@
 
 namespace lib\myLibs\bdd;
 
-use lib\myLibs\{ OtraException, bdd\Mysql, Logger };
+use lib\myLibs\{ OtraException, Logger };
 use config\AllConfig;
 
 class Sql

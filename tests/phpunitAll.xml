@@ -9,8 +9,9 @@
     <testsuite name="Database console tasks">
         <directory suffix="DatabaseTest.php">./src/</directory>
     </testsuite>
-    <testsuite name="SQL DBAL">
+    <testsuite name="SQL DBAL and the SQL drivers">
         <directory suffix="SqlTest.php">./src/</directory>
+        <directory suffix="PdomysqlTest.php">./src/</directory>
     </testsuite>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="false">

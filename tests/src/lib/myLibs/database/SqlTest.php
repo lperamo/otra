@@ -5,7 +5,6 @@ use lib\myLibs\{bdd\Sql,OtraException};
 
 /**
  * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
 class SqlTest extends TestCase
 {
@@ -150,6 +149,7 @@ class SqlTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author  Lionel Péramo
    */
   public function testQuery_BootstrapKeyInSession()
@@ -165,6 +165,7 @@ class SqlTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testQuery_DevEnvironment()
@@ -394,6 +395,7 @@ class SqlTest extends TestCase
 
   /**
    * @covers
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL()
@@ -508,9 +510,6 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    * @depends testQuery
-   * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotation !
    */
   public function testValuesOneCol()
   {
@@ -519,7 +518,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1'));
+    $this->assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -542,6 +541,7 @@ class SqlTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    *
    * @depends testGetDB
@@ -557,6 +557,7 @@ class SqlTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    *
    * @depends testGetDB
@@ -576,7 +577,7 @@ class SqlTest extends TestCase
 
   /**
    * @throws OtraException
-   * @author  Lionel Péramo
+   * @author Lionel Péramo
    *
    * @depends testGetDB
    */
@@ -591,7 +592,8 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @author  Lionel Péramo
+   * @throws OtraException
+   * @author Lionel Péramo
    *
    * @depends testGetDB
    */
@@ -609,7 +611,8 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @author  Lionel Péramo
+   * @throws OtraException
+   * @author Lionel Péramo
    *
    * @depends testGetDB
    */
