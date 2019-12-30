@@ -684,4 +684,22 @@ class SqlTest extends TestCase
       );
     }
   }
+
+  /**
+   * @throws ReflectionException
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   */
+  public function testClose_noInstance()
+  {
+    // context
+    require self::TEST_CONFIG_GOOD_PATH;
+    Sql::getDB();
+
+    // testing
+    Sql::$instance = null;
+    $this->assertFalse(removeMethodScopeProtection(Sql::class, 'close')
+      ->invokeArgs(null, [&Sql::$instance]));
+  }
 }

@@ -23,7 +23,7 @@ class Sql
     $_currentDBMS = '',
     $_currentConnectionName;
 
-  public static Sql $instance;
+  public static ?Sql $instance;
 
   private function __construct()
   {
@@ -332,12 +332,16 @@ class Sql
   /**
    * Close MySQL connection
    *
+   * @param bool $instanceToClose
+   *
    * @return bool Returns true on success or false on failure
    */
-  private static function close()
+  private static function close($instanceToClose = true) : bool
   {
     if (isset(self::$instance) === true)
-      return call_user_func_array(self::$_currentDBMS . '::close', [&self::$_currentConn]);
+      return call_user_func_array(self::$_currentDBMS . '::close', [&$instanceToClose]);
+
+    return false;
   }
 
     /**
