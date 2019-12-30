@@ -876,7 +876,7 @@ namespace lib\myLibs\console {
 
       // We sort tables that need sorting
       self::_sortTableByForeignKeys($tablesWithRelations, $sortedTables);
-//
+
       $sqlCreateSection = $sqlDropSection = $tablesOrder = '';
       $storeSortedTables = ($force || false === file_exists(self::$tablesOrderFile));
 
