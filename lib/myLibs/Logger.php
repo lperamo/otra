@@ -8,6 +8,8 @@ namespace lib\myLibs;
 
 class Logger
 {
+  const APPEND_LOG = 3;
+
   /**
    * Returns the date or also the ip address and the browser if different
    *
@@ -84,6 +86,8 @@ class Logger
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
     $path = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt';
+
+    // If there is no SQL content logged, we start with '[', otherwise with ''
     error_log(
       ((file_exists($path) === false || ($content = file_get_contents($path)) === false || '' === $content) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .
@@ -92,7 +96,7 @@ class Logger
         ' ',
         str_replace(["\r", "\r\n", "\n"], '', trim($message))
       ) . '"},',
-      3,
+      self::APPEND_LOG,
       $path);
   }
 }
