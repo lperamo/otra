@@ -376,7 +376,7 @@ class SqlTest extends TestCase
   {
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
-// Workaround to avoid PHPUnit say that there is an exception that we are very aware of because we expect it -_-
+
     // Launching the task
     $sql = Sql::getDB();
   }
