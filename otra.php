@@ -37,8 +37,8 @@ function launchTask(array $tasksClassMap, array $argv, int $argc)
 //    exit(1);
 //  }
 
-  $task = $argv[TasksManager::$TASK_PARAMETERS];
-  $paramsDesc = require $tasksClassMap[$task][TasksManager::$TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Help.php';
+  $task = $argv[TasksManager::TASK_PARAMETERS];
+  $paramsDesc = require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Help.php';
 
   // We test if the number of parameters is correct
   $total = $required = 0;
@@ -84,14 +84,14 @@ if ($argc < 2) {
 $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
 
 // if the command exists, runs it
-if (true === isset($tasksClassMap[$argv[TasksManager::$TASK_PARAMETERS]]))
+if (true === isset($tasksClassMap[$argv[TasksManager::TASK_PARAMETERS]]))
   launchTask($tasksClassMap, $argv, $argc);
 else // otherwise we'll try to guess if it looks like an existing one
 {
   $methods = array_keys($tasksClassMap);
 
   require CORE_PATH . 'console/tools.php';
-  $method = $argv[TasksManager::$TASK_PARAMETERS];
+  $method = $argv[TasksManager::TASK_PARAMETERS];
   list($newTask) = guessWords($method, $methods);
 
   // If there are no existing task with a close name ...
