@@ -69,4 +69,39 @@ class PdomysqlTest extends TestCase
 
     $this->assertFalse(Sql::$instance->valuesOneCol(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
   }
+
+  /**
+   * @throws OtraException
+   * @author Lionel Péramo
+   */
+  public function testSingle_NoRows()
+  {
+    // context
+    $this->createDatabaseForTest();
+
+    // launching task
+    Sql::getDB();
+    Sql::$instance->freeResult(
+      Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
+    );
+
+    $this->assertFalse(Sql::$instance->single(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
+  }
+
+  /**
+   * @throws ReflectionException
+   * @throws OtraException
+   *
+   * @author Lionel Péramo
+   */
+  public function testClose_InstancePassed()
+  {
+    // context
+    require self::TEST_CONFIG_GOOD_PATH;
+    Sql::getDB();
+
+    // testing
+    $this->assertTrue(\lib\myLibs\bdd\Pdomysql::close(Sql::$instance));
+    $this->assertNull(Sql::$instance);
+  }
 }
