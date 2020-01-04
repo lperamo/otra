@@ -74,7 +74,7 @@ class DatabaseTest extends TestCase
    *
    * @throws OtraException
    */
-  protected function cleanAll()
+  protected function cleanAll() : void
   {
     $this->cleanFileAndFolders([
       self::$configFolderSql,
@@ -94,7 +94,7 @@ class DatabaseTest extends TestCase
    *
    * @throws OtraException If we cannot remove a file or a folder
    */
-  private function cleanFileAndFolders(array $fileOrFolders)
+  private function cleanFileAndFolders(array $fileOrFolders) : void
   {
     foreach ($fileOrFolders as &$folder)
     {
@@ -136,7 +136,7 @@ class DatabaseTest extends TestCase
    *
    * @throws OtraException If we can't create a folder or copy a file.
    */
-  private function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest)
+  private function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest) : void
   {
     foreach ($filesOrFoldersSrc as $key => &$fileOrFolderSrc)
     {
@@ -193,7 +193,7 @@ class DatabaseTest extends TestCase
   /**
    * Loads a main configuration specific to test purposes.
    */
-  private function loadConfig()
+  private function loadConfig() : void
   {
     require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
 
@@ -207,7 +207,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testInitBase()
+  public function testInitBase() : void
   {
     Database::initBase();
 
@@ -256,7 +256,7 @@ class DatabaseTest extends TestCase
    * @doesNotPerformAssertions
    * @author                         Lionel Péramo
    */
-  public function testInit()
+  public function testInit() : void
   {
     $this->loadConfig();
     Database::init(self::$databaseConnection);
@@ -265,7 +265,7 @@ class DatabaseTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testGetDirs()
+  public function testGetDirs() : void
   {
     require(BASE_PATH . self::TEST_CONFIG_GOOD_PATH);
     $dirs = Database::getDirs();
@@ -280,7 +280,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testClean()
+  public function testClean() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -307,7 +307,7 @@ class DatabaseTest extends TestCase
    * @depends testDropDatabase
    * @author Lionel Péramo
    */
-  public function testCreateDatabase()
+  public function testCreateDatabase() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -335,7 +335,7 @@ class DatabaseTest extends TestCase
    * @author Lionel Péramo
    * TODO Do a complete test, not just on the type
    */
-  public function testGetAttr()
+  public function testGetAttr() : void
   {
     $attrTest = Database::getAttr('test');
     $this->assertIsString($attrTest);
@@ -350,7 +350,7 @@ class DatabaseTest extends TestCase
    *
    * TODO Do assertions and remove the related annotations
    */
-  public function test_SortTableByForeignKeysEmpty()
+  public function test_SortTableByForeignKeysEmpty() : void
   {
     $sortedTables = [];
     removeMethodScopeProtection(Database::class, '_sortTableByForeignKeys')
@@ -363,7 +363,7 @@ class DatabaseTest extends TestCase
    *
    * TODO Do assertions and remove the related annotations
    */
-  public function test_SortTableByForeignKeys()
+  public function test_SortTableByForeignKeys() : void
   {
 //    $_sortTableByForeignKeys = new ReflectionMethod(Database::class, '_sortTableByForeignKeys');
 //    $_sortTableByForeignKeys->setAccessible(true);
@@ -380,7 +380,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testCreateFixture()
+  public function testCreateFixture() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -412,7 +412,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testCreateFixtures_TruncateOnly_NoSchema()
+  public function testCreateFixtures_TruncateOnly_NoSchema() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -444,7 +444,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testCreateFixtures_TruncateOnly()
+  public function testCreateFixtures_TruncateOnly() : void
   {
     // context
     define('VERBOSE', 2);
@@ -493,7 +493,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testCreateFixtures_TruncateOnly_NoTablesOrderFile()
+  public function testCreateFixtures_TruncateOnly_NoTablesOrderFile() : void
   {
     // context
     $this->copyFileAndFolders(
@@ -532,7 +532,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testCreateFixtures_CleanAndTruncate()
+  public function testCreateFixtures_CleanAndTruncate() : void
   {
     $this->copyFileAndFolders(
       [
@@ -571,7 +571,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testExecuteFile_DoesNotExist()
+  public function testExecuteFile_DoesNotExist() : void
   {
     removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
 
@@ -590,7 +590,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testTruncateTable()
+  public function testTruncateTable() : void
   {
     $this->copyFileAndFolders(
       [self::$schemaFileBackup],
@@ -618,7 +618,7 @@ class DatabaseTest extends TestCase
    *
    * TODO Do assertions and remove the related annotations
    */
-  public function testExecuteFile_Exists()
+  public function testExecuteFile_Exists() : void
   {
     echo _DIR_;
     //    Database::executeFile();
@@ -635,7 +635,7 @@ class DatabaseTest extends TestCase
    * TODO Modify the code that create the fixture, do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testExecuteFixture()
+  public function testExecuteFixture() : void
   {
     // context - copying the needed configuration files
     $this->copyFileAndFolders(
@@ -682,7 +682,7 @@ class DatabaseTest extends TestCase
    * TODO Do a complete test not just a type assertion
    * @author Lionel Péramo
    */
-  public function testDropDatabase()
+  public function testDropDatabase() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -713,7 +713,7 @@ class DatabaseTest extends TestCase
    * @depends testInitBase
    * @author Lionel Péramo
    */
-  public function testGenerateSqlSchema_NoSchema()
+  public function testGenerateSqlSchema_NoSchema() : void
   {
     // Creating the context
     $this->loadConfig();
@@ -740,7 +740,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testGenerateSqlSchema_DontForce()
+  public function testGenerateSqlSchema_DontForce() : void
   {
     // Creating the context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
@@ -768,7 +768,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testGenerateSqlSchema_Force()
+  public function testGenerateSqlSchema_Force() : void
   {
     // Creating the context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
@@ -795,7 +795,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testAnalyzeFixtures()
+  public function testAnalyzeFixtures() : void
   {
     // context
     $this->copyFileAndFolders([self::$configFolderYmlFixturesBackup], [self::$configFolderYmlFixtures]);
@@ -815,7 +815,7 @@ class DatabaseTest extends TestCase
    *
    * TODO Do assertions and remove the related annotations
    */
-  public function testInitImports_AllNull()
+  public function testInitImports_AllNull() : void
   {
     // Creating the context
     $this->copyFileAndFolders(
@@ -849,7 +849,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testInitImports_DatabaseNull()
+  public function testInitImports_DatabaseNull() : void
   {
     // context
     $confToUse = self::$databaseConnection;
@@ -876,7 +876,7 @@ class DatabaseTest extends TestCase
    * TODO Do assertions and remove the related annotations
    * @author Lionel Péramo
    */
-  public function testInitImports_NoNull()
+  public function testInitImports_NoNull() : void
   {
     // context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
@@ -906,7 +906,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testInitImports_BadDatabase()
+  public function testInitImports_BadDatabase() : void
   {
     // context
     $confToUse = self::$databaseConnection;
@@ -932,7 +932,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testImportSchema()
+  public function testImportSchema() : void
   {
     // context
     $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
@@ -967,7 +967,7 @@ class DatabaseTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testImportFixtures()
+  public function testImportFixtures() : void
   {
     //context
     $this->copyFileAndFolders(

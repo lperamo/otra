@@ -969,7 +969,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
       // line from lib/myLibs/Controller.php
       'require CORE_PATH . (\'cli\' === php_sapi_name() ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
       // line at the top of lib/myLibs/OtraException.php
-      'require_once CORE_PATH . \'DebugTools.php\';',
+      'require_once CORE_PATH . \'debugTools.php\';',
       // line 115 in getDB, Sql class => lib/myLibs/bdd/Sql.php
       'require CORE_PATH . \'bdd/\' . $driver . \'.php\';',
       // line in renderView, file lib/myLibs/prod/Controller.php:57

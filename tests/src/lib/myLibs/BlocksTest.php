@@ -31,7 +31,7 @@ class BlocksTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSimpleBlockSystem()
+  public function testSimpleBlockSystem() : void
   {
     $content = self::$controller->renderView(BASE_PATH . 'tests/src/bundles/views/simpleLayout.phtml');
     $this->assertEquals("<!DOCTYPE html><html><title>
@@ -48,7 +48,7 @@ class BlocksTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testAdvancedBlockSystem()
+  public function testAdvancedBlockSystem() : void
   {
     $content = self::$controller->renderView(BASE_PATH . 'tests/src/bundles/views/advancedLayout.phtml');
     $this->assertEquals("<!DOCTYPE html><html><title>
@@ -67,7 +67,7 @@ class BlocksTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testComplexLayout()
+  public function testComplexLayout() : void
   {
     $content = self::$controller->renderView(BASE_PATH . 'tests/src/bundles/views/complexLayout.phtml');
     $this->assertEquals("<!DOCTYPE html><html><title>
@@ -89,7 +89,7 @@ class BlocksTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testCompleteLayout()
+  public function testCompleteLayout() : void
   {
     $content = self::$controller->renderView(BASE_PATH . 'tests/src/bundles/views/completeLayout.phtml');
     $this->assertEquals("<!DOCTYPE html><html><title>

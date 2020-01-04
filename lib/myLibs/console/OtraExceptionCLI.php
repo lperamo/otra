@@ -55,7 +55,7 @@ class OtraExceptionCLI extends \Exception
 
       if(0 === $i) unset($now['args']['variables']);
 
-      convertArrayToShowableConsole($now['args'], 'Arguments', 'variables');
+      createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
 
       if (isset($now['file']))
         $now['file'] = str_replace('\\', '/', $now['file']);

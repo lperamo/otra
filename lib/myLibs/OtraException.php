@@ -10,7 +10,7 @@ use lib\myLibs\{Controller, console\OtraExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'DebugTools.php';
+require_once CORE_PATH . 'debugTools.php';
 
 class OtraException extends \Exception
 {
@@ -70,31 +70,38 @@ class OtraException extends \Exception
     require_once BASE_PATH . 'config/AllConfig.php';
     $route = 'exception';
 
+    // Cleans all the things processed before in order to not perturb the exception page
     ob_clean();
-    $renderController = new Controller();
-    $renderController->route = $route;
-    $renderController->bundle = Routes::$_[$route]['chunks'][1] ?? '';
-    $renderController->module = Routes::$_[$route]['chunks'][2] ?? '';
+
+    $renderController = new Controller(
+      [
+        'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
+        'module' =>  Routes::$_[$route]['chunks'][2] ?? '',
+        'route' => $route,
+      ]
+    );
     $renderController->viewPath = CORE_VIEWS_PATH;
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
     if (false === empty($this->context))
     {
       unset($this->context['variables']);
-      convertArrayToShowable($this->context, 'Variables');
+      $showableContext = createShowableFromArray($this->context, 'Variables');
     } else
-      $this->context = [];
+      $showableContext = '';
 
     // Is the error code a native error code ?
     $code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
-    return $renderController->renderView('/exception.phtml', [
+    return $renderController->renderView(
+      '/exception.phtml',
+      [
         'message' => $this->message,
         'code' => $code,
         'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
-        'context' => $this->context,
+        'context' => $showableContext,
         'backtraces' => $this->getTrace()
       ]
     );
@@ -108,7 +115,7 @@ class OtraException extends \Exception
     if (false === empty($this->context))
     {
       unset($this->context['variables']);
-//      convertArrayToShowableConsole($this->context, 'Variables');
+//      createShowableFromArrayConsole($this->context, 'Variables');
     }
 
     $this->backtraces = $this->getTrace();

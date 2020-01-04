@@ -29,7 +29,7 @@ class MasterController
 
   protected string $controller = '',
     $action = '',
-    $pattern = '';
+    $pattern = ''; // path to the action, eg. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
 
   protected array
     $viewResourcePath = [
@@ -127,6 +127,13 @@ class MasterController
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {
+    if ($baseParams['route'] === 'exception')
+    {
+      // Stores the bundle, module, controller and action for later use
+      list($this->bundle, $this->module, $this->route) = array_values($baseParams);
+      return;
+    }
+
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if (false === isset($baseParams['controller']))
       return;

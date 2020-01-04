@@ -4,7 +4,7 @@ define ('BEFORE', microtime(true));
 if (false === defined('BASE_PATH'))
   define('BASE_PATH', substr(__DIR__, 0, -15)); // Ends with /
 
-require CORE_PATH . 'DebugTools.php';
+require CORE_PATH . 'debugTools.php';
 
 ini_set('display_errors', 1);
 ini_set('html_errors', 1);

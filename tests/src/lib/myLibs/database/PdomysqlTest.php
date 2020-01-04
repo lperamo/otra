@@ -42,7 +42,8 @@ class PdomysqlTest extends TestCase
   /**
    * @throws OtraException
    */
-  private function createDatabaseForTest() {
+  private function createDatabaseForTest() : void
+  {
     require(self::TEST_CONFIG_GOOD_PATH);
 
     Sql::getDB(null, false);
@@ -56,7 +57,7 @@ class PdomysqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testValuesOneCol_NoRows()
+  public function testValuesOneCol_NoRows() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -74,7 +75,7 @@ class PdomysqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSingle_NoRows()
+  public function testSingle_NoRows() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -94,7 +95,7 @@ class PdomysqlTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testClose_InstancePassed()
+  public function testClose_InstancePassed() : void
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;

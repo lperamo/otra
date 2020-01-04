@@ -36,8 +36,9 @@ class Logger
       $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
 
     // remote address ip is not set if we come from the console
-    if (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
-      $infos .= '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] ';
+    $infos .= (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
+      ? '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] '
+      : '[OTRA_CONSOLE] ';
 
     // user agent not set if we come from the console
     if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
@@ -51,8 +52,13 @@ class Logger
    *
    * @param string $message
    */
-  public static function log(string $message) {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt');
+  public static function log(string $message)
+  {
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt'
+    );
   }
 
   /**
@@ -61,8 +67,13 @@ class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logToPath(string $message, string $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . '/' . $path . '.txt');
+  public static function logToPath(string $message, string $path = '')
+  {
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      __DIR__ . '/' . $path . '.txt'
+    );
   }
 
   /**
@@ -72,7 +83,11 @@ class Logger
    * @param string $path
    */
   public static function logTo(string $message, string  $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt');
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt'
+    );
   }
 
   /**

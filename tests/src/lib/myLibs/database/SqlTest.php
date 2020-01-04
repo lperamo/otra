@@ -16,7 +16,7 @@ class SqlTest extends TestCase
 
   private static string $databaseName = 'testDB';
 
-  protected function setUp(): void
+  protected function setUp() : void
   {
     $_SERVER['APP_ENV'] = 'prod';
   }
@@ -38,7 +38,7 @@ class SqlTest extends TestCase
   /**
    * Creates an empty temporary table that have to be removed later.
    */
-  protected function createTemporaryTestTable(): void
+  protected function createTemporaryTestTable() : void
   {
     Sql::$instance->freeResult(
       Sql::$instance->query('CREATE TEMPORARY TABLE CustomerData (
@@ -52,7 +52,7 @@ class SqlTest extends TestCase
   /**
    * Creates test fixtures into the empty temporary table that have to be removed later.
    */
-  protected function createTemporaryTestValues(): void
+  protected function createTemporaryTestValues() : void
   {
     Sql::$instance->freeResult(
       Sql::$instance->query('INSERT INTO CustomerData (`firstname`, `lastname`)
@@ -66,7 +66,7 @@ class SqlTest extends TestCase
    * Drops the temporary table (with test fixtures) created by 'createTemporaryTestData' function,
    * that have to be removed.
    */
-  protected function dropTemporaryTestTable(): void
+  protected function dropTemporaryTestTable() : void
   {
     Sql::$instance->freeResult(
       Sql::$instance->query('DROP TEMPORARY TABLE CustomerData')
@@ -76,7 +76,7 @@ class SqlTest extends TestCase
   /**
    * @throws OtraException
    */
-  private function createDatabaseForTest() {
+  private function createDatabaseForTest() : void {
     require(self::TEST_CONFIG_GOOD_PATH);
 
     Sql::getDB(null, false);
@@ -91,7 +91,7 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testGetDB()
+  public function testGetDB() : void
   {
     // context
     require self::TEST_CONFIG_PATH;
@@ -137,7 +137,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testQuery()
+  public function testQuery() : void
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
@@ -152,7 +152,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author  Lionel Péramo
    */
-  public function testQuery_BootstrapKeyInSession()
+  public function testQuery_BootstrapKeyInSession() : void
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
@@ -168,7 +168,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testQuery_DevEnvironment()
+  public function testQuery_DevEnvironment() : void
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
@@ -195,7 +195,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchArray()
+  public function testFetchArray() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -212,7 +212,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchArray_BootstrapKeyInSession()
+  public function testFetchArray_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -230,7 +230,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchAssoc()
+  public function testFetchAssoc() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -247,7 +247,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchAssoc_BootstrapKeyInSession()
+  public function testFetchAssoc_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -265,7 +265,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchRow()
+  public function testFetchRow() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -282,7 +282,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchRow_BootstrapKeyInSession()
+  public function testFetchRow_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -300,7 +300,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testGetColumnMeta()
+  public function testGetColumnMeta() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -317,7 +317,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testGetColumnMeta_BootstrapKeyInSession()
+  public function testGetColumnMeta_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -335,7 +335,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchObject()
+  public function testFetchObject() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -352,7 +352,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testFetchObject_BootstrapKeyInSession()
+  public function testFetchObject_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -367,7 +367,7 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testLastInsertedId()
+  public function testLastInsertedId() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -381,7 +381,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSelectDB_NoMethodSelectDb()
+  public function testSelectDB_NoMethodSelectDb() : void
   {
     // loading the test configuration
     require self::TEST_CONFIG_GOOD_PATH;
@@ -398,7 +398,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    * @author Lionel Péramo
    */
-  public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL()
+  public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL() : void
   {
     $this->markTestIncomplete('We have to create more drivers classes to be able to test this condition');
     // loading the test configuration
@@ -418,7 +418,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testQuote()
+  public function testQuote() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -437,7 +437,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testSingle()
+  public function testSingle() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -455,7 +455,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testSingle_BootstrapKeyInSession()
+  public function testSingle_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -474,7 +474,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testValues()
+  public function testValues() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -492,7 +492,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testValues_BootstrapKeyInSession()
+  public function testValues_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -511,7 +511,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testValuesOneCol()
+  public function testValuesOneCol() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -529,7 +529,7 @@ class SqlTest extends TestCase
    * @depends testGetDB
    * @depends testQuery
    */
-  public function testValuesOneCol_BootstrapKeyInSession()
+  public function testValuesOneCol_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -546,7 +546,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function test__destruct()
+  public function test__destruct() : void
   {
     require self::TEST_CONFIG_GOOD_PATH;
 
@@ -562,7 +562,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testGetDB_AlreadyExistingConnection()
+  public function testGetDB_AlreadyExistingConnection() : void
   {
     // Creating the context (having a SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
@@ -581,7 +581,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testGetDB_NoDefaultConnection()
+  public function testGetDB_NoDefaultConnection() : void
   {
     // assertions
     $this->expectException(OtraException::class);
@@ -597,7 +597,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testGetDB_DbmsNotAvailable()
+  public function testGetDB_DbmsNotAvailable() : void
   {
     // context
     require self::TEST_CONFIG_BAD_DRIVER_PATH;
@@ -616,7 +616,7 @@ class SqlTest extends TestCase
    *
    * @depends testGetDB
    */
-  public function testFreeResult_BootstrapKeyInSession()
+  public function testFreeResult_BootstrapKeyInSession() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -633,7 +633,7 @@ class SqlTest extends TestCase
    *
    * @throws OtraException
    */
-  public function testInTransaction()
+  public function testInTransaction() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -650,7 +650,7 @@ class SqlTest extends TestCase
    *
    * @throws OtraException
    */
-  public function testRollBack()
+  public function testRollBack() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -666,7 +666,7 @@ class SqlTest extends TestCase
    *
    * @throws OtraException
    */
-  public function testErrorInfo()
+  public function testErrorInfo() : void
   {
     // context
     $this->createDatabaseForTest();
@@ -694,7 +694,7 @@ class SqlTest extends TestCase
    *
    * @author Lionel Péramo
    */
-  public function testClose_noInstance()
+  public function testClose_noInstance() : void
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
