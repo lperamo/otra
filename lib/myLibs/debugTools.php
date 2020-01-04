@@ -118,11 +118,11 @@ function createShowableFromArray(array &$dataToShow, string $title, $indexToExcl
 
 /** Converts a php array into stylish console table. TODO finish it !
  *
- * @param $dataToShow array  Array to convert
- * @param $title      string Table name to show in the header
- * @param $indexToExclude string Index to exclude from the render
+ * @param $dataToShow     null|array Array to convert
+ * @param $title          string     Table name to show in the header
+ * @param $indexToExclude string     Index to exclude from the render
  */
-function createShowableFromArrayConsole(array &$dataToShow, string $title, $indexToExclude = null)
+function createShowableFromArrayConsole(?array &$dataToShow, string $title, $indexToExclude = null)
 {
   return;
 

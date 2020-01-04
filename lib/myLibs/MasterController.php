@@ -127,16 +127,15 @@ class MasterController
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {
-    if ($baseParams['route'] === 'exception')
-    {
-      // Stores the bundle, module, controller and action for later use
-      list($this->bundle, $this->module, $this->route) = array_values($baseParams);
-      return;
-    }
-
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if (false === isset($baseParams['controller']))
+    {
+      if (isset($baseParams['route']) === true && $baseParams['route'] === 'exception')
+        // Stores the bundle, module, controller and action for later use
+        list($this->bundle, $this->module, $this->route) = array_values($baseParams);
+
       return;
+    }
 
     // Stores the bundle, module, controller and action for later use
     list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);

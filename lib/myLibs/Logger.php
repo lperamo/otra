@@ -67,7 +67,7 @@ class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logToPath(string $message, string $path = '')
+  public static function logToRelativePath(string $message, string $path = '')
   {
     error_log(
       self::logIpTest() . $message . "\n",

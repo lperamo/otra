@@ -14,8 +14,9 @@
       <directory suffix="SqlTest.php">./src/</directory>
       <directory suffix="PdomysqlTest.php">./src/</directory>
     </testsuite>
-    <testsuite name="Debug tools">
+    <testsuite name="Debug and log tools">
       <directory suffix="DebugToolsTest.php">./src/</directory>
+      <directory suffix="LoggerTest.php">./src/</directory>
     </testsuite>
   </testsuites>
   <filter>

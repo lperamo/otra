@@ -192,8 +192,8 @@ class DebugToolsTest extends TestCase
   public function testConvertArrayToShowable() : void
   {
     $dataToShow = ['test' => 'autre test'];
-    createShowableFromArray($dataToShow, 'title');
-    $this->assertEquals('    <table class="test innerHeader">
+    $this->assertEquals(
+      '    <table class="test innerHeader">
       <thead>
         <tr>
           <th colspan="3">title</th>
@@ -205,7 +205,9 @@ class DebugToolsTest extends TestCase
         </tr>
       </thead>
       <tbody>
-     </tbody></table><table class="test"><tbody><tr class="no-dummy" ><td>test</td><td colspan="2">\'autre test\'</td></tr></tbody></table>', $dataToShow);
+     </tbody></table><table class="test"><tbody><tr class="no-dummy" ><td>test</td><td colspan="2">\'autre test\'</td></tr></tbody></table>',
+      createShowableFromArray($dataToShow, 'title')
+    );
   }
 
   public function testConvertArrayToShowableConsole() : void
