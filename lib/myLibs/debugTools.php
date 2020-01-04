@@ -160,12 +160,12 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $data           array|object  Array or object to convert
- * @param $indexToExclude string        Index to exclude from the render
- * @param $loop           int           Number of recursions
+ * @param $data           array      Array or object to convert
+ * @param $indexToExclude int|string Index to exclude from the render
+ * @param $loop           int        Number of recursions
  * @return int
  */
-function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
+function recurArrayConvertTab(array $data, $indexToExclude = null, int $loop = -1)
 {
   $i = 0;
   $oldLoop = $loop;
@@ -176,7 +176,12 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
     if ($index === $indexToExclude)
       continue;
 
-    $datum = (true === is_array($datum) || true === is_object($datum) || true === is_numeric($datum)) ? $datum : '\'' . $datum . '\'';
+    $datum = (true === is_array($datum)
+      || true === is_object($datum)
+      || true === is_numeric($datum)
+      )
+      ? $datum
+      : '\'' . $datum . '\'';
 
     // End of the table that shows the inner headers
     if (0 === $loop)
@@ -206,7 +211,10 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
                '</tr>';
         else
           echo '<tr class="foldable no-dummy">',
-                 '<td colspan="">Index:' , is_numeric($index) ? getArgumentType($index, $datum) : $index, ', Loop:' . $loop . '</td>';
+                 '<td colspan="">Index:' ,
+                    is_numeric($index) ? getArgumentType($index, $datum) : $index,
+                  ', Loop:', $loop,
+                 '</td>';
 
         $oldLoop = recurArrayConvertTab($datum, $indexToExclude, $loop);
     } else
