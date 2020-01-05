@@ -515,12 +515,18 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         // If we find __DIR__ in the include/require statement then we replace it with the good folder and not the actual folder (...console ^^)
         $posDir = strpos($tempFile, '__DIR__ .');
 
+        // TODO replace the value 9 by a constant or at least put an explanation !
         if ($posDir !== false)
           $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
 
         // we must not change this inclusion from CORE_PATH . Router.php !
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\'')
           continue;
+
+        // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
+        // inclusion of the dev/prod controller in the file lib/myLibs/Controller.php
+        if ($tempFile === 'CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : \'prod\') . \'/Controller.php')
+          $tempFile .= "'";
 
         // str_replace to ensure us that the same character '/' is used each time
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
