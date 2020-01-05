@@ -17,6 +17,8 @@
     <testsuite name="Debug and log tools">
       <directory suffix="DebugToolsTest.php">./src/</directory>
       <directory suffix="LoggerTest.php">./src/</directory>
+      <directory suffix="OtraExceptionTest.php">./src/</directory>
+      <directory suffix="OtraExceptionCliTest.php">./src/</directory>
     </testsuite>
   </testsuites>
   <filter>

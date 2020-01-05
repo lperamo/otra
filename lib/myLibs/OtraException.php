@@ -33,7 +33,7 @@ class OtraException extends \Exception
   ];
 
   public array $backtraces;
-  private array $context;
+  public array $context;
   // String version of error code
   public string $scode;
 
@@ -56,7 +56,10 @@ class OtraException extends \Exception
     $this->line = ('' === $line) ? $this->getLine() : $line;
     $this->context = $context;
 
-    echo 'cli' === PHP_SAPI ? $this->consoleMessage() : $this->errorMessage();
+    if ('cli' === PHP_SAPI)
+      new OtraExceptionCLI($this);
+    else
+      echo $this->errorMessage(); // @codeCoverageIgnore
   }
 
   /**
@@ -77,6 +80,8 @@ class OtraException extends \Exception
         'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
         'module' =>  Routes::$_[$route]['chunks'][2] ?? '',
         'route' => $route,
+        'hasCssToLoad' => '',
+        'hasJsToLoad' => ''
       ]
     );
     $renderController->viewPath = CORE_VIEWS_PATH;
@@ -104,35 +109,6 @@ class OtraException extends \Exception
         'backtraces' => $this->getTrace()
       ]
     );
-  }
-
-  /**
-   * Shows an exception 'colorful' display for command line commands.
-   */
-  private function consoleMessage()
-  {
-    if (false === empty($this->context))
-    {
-      unset($this->context['variables']);
-//      createShowableFromArrayConsole($this->context, 'Variables');
-    }
-
-    $this->backtraces = $this->getTrace();
-
-    // Is the error code a native error code ?
-    $this->scode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
-    $this->message = preg_replace('/\<br\s*\/?\>/i', '', $this->message);
-
-    // If there is no ClassMap.php, we cannot use the 'use' statement
-    // so we are forced to use a 'require_once' statement
-    if (true === class_exists('lib\myLibs\console\OtraExceptionCLI'))
-      OtraExceptionCLI::showMessage($this);
-    else
-    {
-      require_once BASE_PATH . 'lib/myLibs/console/OtraExceptionCLI.php';
-      OtraExceptionCLI::showMessage($this);
-    }
-//    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
   }
 }
 ?>

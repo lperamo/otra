@@ -132,7 +132,7 @@ class MasterController
     {
       if (isset($baseParams['route']) === true && $baseParams['route'] === 'exception')
         // Stores the bundle, module, controller and action for later use
-        list($this->bundle, $this->module, $this->route) = array_values($baseParams);
+        list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
 
       return;
     }
