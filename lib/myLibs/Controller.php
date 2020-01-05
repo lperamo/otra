@@ -1,1 +1,1 @@
-<?php require CORE_PATH . ('cli' === php_sapi_name() ? 'prod' : $_SERVER['APP_ENV']) . '/Controller.php'; ?>
+<?php require CORE_PATH . ('cli' === PHP_SAPI ? 'prod' : $_SERVER['APP_ENV']) . '/Controller.php'; ?>

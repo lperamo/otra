@@ -56,8 +56,7 @@ class OtraException extends \Exception
     $this->line = ('' === $line) ? $this->getLine() : $line;
     $this->context = $context;
 
-    echo 'cli' == php_sapi_name() ? $this->consoleMessage() : $this->errorMessage();
-    return null;
+    echo 'cli' === PHP_SAPI ? $this->consoleMessage() : $this->errorMessage();
   }
 
   /**
@@ -65,7 +64,7 @@ class OtraException extends \Exception
    *
    * @throws OtraException
    */
-  public function errorMessage() : string
+  private function errorMessage() : string
   {
     require_once BASE_PATH . 'config/AllConfig.php';
     $route = 'exception';
@@ -110,7 +109,7 @@ class OtraException extends \Exception
   /**
    * Shows an exception 'colorful' display for command line commands.
    */
-  public function consoleMessage()
+  private function consoleMessage()
   {
     if (false === empty($this->context))
     {

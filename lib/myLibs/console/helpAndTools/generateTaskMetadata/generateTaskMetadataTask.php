@@ -74,7 +74,7 @@ file_put_contents(BASE_PATH . 'cache/php/tasksClassMap.php',
     )
 );
 
-if (php_sapi_name() === 'cli')
+if (PHP_SAPI === 'cli')
   echo CLI_GREEN, 'Generation of help and task class map done.', END_COLOR, PHP_EOL;
 
 /********************************
@@ -125,5 +125,5 @@ $shellCompletionsContent .= PHP_EOL . 'typeset -a OTRA_COMMANDS_DESCRIPTIONS=(' 
 
 file_put_contents(CORE_PATH . 'console/shellCompletions/shellCompletions.sh', $shellCompletionsContent);
 
-if (php_sapi_name() === 'cli')
+if (PHP_SAPI === 'cli')
   echo CLI_GREEN, 'Generation of shell completions script done.', END_COLOR, PHP_EOL;
