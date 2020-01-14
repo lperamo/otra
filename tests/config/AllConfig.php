@@ -4,10 +4,9 @@ namespace config;
 define('CACHE_PATH', BASE_PATH . 'cache/');
 
 // Framework core resources
-define('CORE_RESOURCES_PATH', '/lib/myLibs/'); // ends with /
 define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
-define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
-define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
+define('CORE_CSS_PATH', CORE_PATH . 'resources/css/');
+define('CORE_JS_PATH', CORE_PATH . 'resources/js/');
 
 define('VERSION', 'v1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
