@@ -303,8 +303,8 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException If the original YAML schema can't be copied.
    * @throws ReflectionException
-   * @depends testInit
-   * @depends testDropDatabase
+   * depends testInit
+   * depends testDropDatabase
    * @author Lionel Péramo
    */
   public function testCreateDatabase() : void
@@ -318,9 +318,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     // Launching the task
     Database::createDatabase(self::$databaseName);
@@ -392,20 +397,37 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
     // restores correct content in the variable overwritten by the function call
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
-    removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::$configFolderSqlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'pathSqlFixtures' => self::$configFolderSqlFixtures,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
     $sortedTables = [];
-    Database::createFixture(self::$databaseName, self::$databaseFirstTableName, [], [], [], $sortedTables,
-      self::$configFolderSqlFixtures . self::$databaseName . '_' . self::$databaseFirstTableName . '.sql');
+    Database::createFixture(
+      self::$databaseName,
+      self::$databaseFirstTableName,
+      [],
+      [],
+      [],
+      $sortedTables,
+      self::$configFolderSqlFixtures . self::$databaseName . '_' . self::$databaseFirstTableName . '.sql'
+    );
   }
 
   /**
@@ -464,9 +486,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     try
     {
@@ -477,11 +504,16 @@ class DatabaseTest extends TestCase
     }
 
     // restores correct content in the variable overwritten by the function call
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
-    removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::$configFolderSqlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+        'pathSqlFixtures' => self::$configFolderSqlFixtures,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
     // launching task
     Database::createFixtures(self::$databaseName, 1);
@@ -510,9 +542,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
     // assertions
     $this->expectException(OtraException::class);
@@ -534,6 +571,7 @@ class DatabaseTest extends TestCase
    */
   public function testCreateFixtures_CleanAndTruncate() : void
   {
+    // context
     $this->copyFileAndFolders(
       [
         self::$schemaFileBackup,
@@ -550,18 +588,29 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
-    removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::$configFolderSqlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+        'pathSqlFixtures' => self::$configFolderSqlFixtures,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
+    // testing
     Database::createFixtures(self::$databaseName, 2);
   }
 
@@ -602,9 +651,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     // Launching the tasks
     Database::createDatabase(self::$databaseName);
@@ -653,9 +707,14 @@ class DatabaseTest extends TestCase
 
     // context - We create the database
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+      ]
+    );
     Database::createDatabase(self::$databaseName);
 
     removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::$configFolderSqlFixtures);
@@ -695,9 +754,14 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
@@ -719,9 +783,13 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     Database::initBase();
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'pathSql' => self::$configFolderSql,
+      ]
+    );
 
     // launching the task
     $this->expectException(OtraException::class);
@@ -749,9 +817,14 @@ class DatabaseTest extends TestCase
 
     Database::init(self::$databaseConnection);
 
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     // launching the task
     Database::generateSqlSchema(self::$databaseName);
@@ -777,9 +850,14 @@ class DatabaseTest extends TestCase
 
     Database::init(self::$databaseConnection);
 
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+      ]
+    );
 
     // launching the task
     Database::generateSqlSchema(self::$databaseName, true);
@@ -829,9 +907,14 @@ class DatabaseTest extends TestCase
     Session::init();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
@@ -887,9 +970,15 @@ class DatabaseTest extends TestCase
     Session::init();
 
     Database::init(self::$databaseConnection);
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
+
     Database::createDatabase(self::$databaseName);
 
     // launching the task
@@ -944,9 +1033,14 @@ class DatabaseTest extends TestCase
 
     Database::init(self::$databaseConnection);
 
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
@@ -986,19 +1080,29 @@ class DatabaseTest extends TestCase
 
     Database::init(self::$databaseConnection);
 
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
     Database::createDatabase(self::$databaseName);
 
     // restores correct content in the variable overwritten by the function call
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::$schemaAbsolutePath);
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::$tablesOrderFilePath);
-    removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->setValue(self::$configFolderYmlFixtures);
-    removeFieldScopeProtection(Database::class, 'pathSql')->setValue(self::$configFolderSql);
-    removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::$configFolderSqlFixtures);
+    setScopeProtectedFields(
+      Database::class,
+      [
+        'schemaFile' => self::$schemaAbsolutePath,
+        'tablesOrderFile' => self::$tablesOrderFilePath,
+        'pathSql' => self::$configFolderSql,
+        'pathSqlFixtures' => self::$configFolderSqlFixtures,
+        'pathYmlFixtures' => self::$configFolderYmlFixtures
+      ]
+    );
 
     Database::createFixtures(self::$databaseName, 1);
 

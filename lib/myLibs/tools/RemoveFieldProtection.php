@@ -19,6 +19,27 @@ function removeFieldScopeProtection($class, string $field) : ReflectionProperty
 }
 
 /**
+ * Removes temporarily the scope protection of fields to set values.
+ *
+ * @param       $class
+ * @param array $fieldsAndValues
+ *
+ * @throws ReflectionException
+ */
+function setScopeProtectedFields($class, array $fieldsAndValues) : void
+{
+  $class = new ReflectionClass($class);
+
+  foreach ($fieldsAndValues as $field => &$value)
+  {
+    $_field = $class->getProperty($field);
+    $_field->setAccessible(true);
+    $_field->setValue($value);
+    $_field->setAccessible(false);
+  }
+}
+
+/**
  * Removes protection from a method in order to test it easily and returns it.
  *
  * @param        $class
