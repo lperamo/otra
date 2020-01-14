@@ -189,7 +189,7 @@ class MasterController
   }
 
   /**
-   * Adds a css script to the existing ones
+   * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
    * @param array $css The css file to add (Array of string)
    */
@@ -199,7 +199,8 @@ class MasterController
   }
 
   /**
-   * Adds one or more javascript scripts to the existing ones. If the keys are string it will add the string to the link.
+   * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
+   * If the keys are string it will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
    */
