@@ -107,7 +107,7 @@ foreach($tasks as &$task)
   }
 
   $taskDescription .= SPACE_INDENT . '"${' .  $taskCategoryLong .'} '
-    . str_pad($task, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' . $helpFileContent[$task][TasksManager::$TASK_DESCRIPTION] . '${ECO}"'
+    . str_pad($task, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' . $helpFileContent[$task][TasksManager::TASK_DESCRIPTION] . '${ECO}"'
     . PHP_EOL;
 }
 
