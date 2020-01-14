@@ -13,8 +13,6 @@ $_SERVER['APP_ENV']= 'prod';
 require CORE_PATH . 'console/TasksManager.php';
 require CORE_PATH . 'console/colors.php';
 
-//require CORE_PATH . 'console/deployment/genClassMapTask.php';
-
 if (exec('whoami') === 'root')
 {
   echo CLI_RED, 'You should not be root to execute this ! It will probably change the rights of your files and folders.',
@@ -30,13 +28,6 @@ if (exec('whoami') === 'root')
  */
 function launchTask(array $tasksClassMap, array $argv, int $argc)
 {
-  // Checks if a task description is missing
-//  if (false === method_exists('lib\myLibs\console\Tasks', $argv[1] . 'Desc'))
-//  {
-//    echo CLI_RED, 'There is no description for that command !', END_COLOR;
-//    exit(1);
-//  }
-
   $task = $argv[TasksManager::TASK_PARAMETERS];
   $paramsDesc = require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Help.php';
 
