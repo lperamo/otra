@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
-    <testsuite name="Framework tests">
+    <testsuite name="Framework tests - SQL">
         <file>./src/lib/myLibs/database/SqlTest.php</file>
     </testsuite>
     <filter>
