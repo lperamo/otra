@@ -122,15 +122,6 @@ class Controller extends MasterController
     return $content;
   }
 
-  /** Includes the layout */
-  public function layout()
-  {
-    $cachedFile = parent::getCacheFileName('layout.phtml', CACHE_PATH, 'CORE_FRAMEWORK');
-
-    if (false === (parent::$layout = parent::getCachedFile($cachedFile))) // if it was not in the cache or "fresh"...
-      parent::$layout = $this->buildCachedFile(LAYOUT, [], $cachedFile, false);
-  }
-
   /** Returns the pre-generated css and the additional concatenated css
    *
    * @param string $routeV Route name plus the version

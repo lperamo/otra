@@ -77,6 +77,9 @@ if ('dev' === $_SERVER['APP_ENV'])
   require CORE_PATH . 'BootstrapDev.php';
 else // mode Prod
 {
+  // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
+  define('VERSION', 'V1.0.0-alpha.1.3.1');
+
   try
   {
     require BASE_PATH . 'cache/php/RouteManagement.php';
@@ -90,7 +93,7 @@ else // mode Prod
       if ('cli' !== PHP_SAPI && true === isset(\cache\php\Routes::$_[$route[0]]['resources']['template']))
       {
         header('Content-Encoding: gzip');
-        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . 'v1che') . '.gz'); // version to change
+        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz'); // version to change
         exit;
       }
 

@@ -29,7 +29,7 @@ class MasterController
 
   protected string $controller = '',
     $action = '',
-    $pattern = '';
+    $pattern = ''; // path to the action, eg. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
 
   protected array
     $viewResourcePath = [
@@ -129,7 +129,13 @@ class MasterController
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if (false === isset($baseParams['controller']))
+    {
+      if (isset($baseParams['route']) === true && $baseParams['route'] === 'exception')
+        // Stores the bundle, module, controller and action for later use
+        list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
+
       return;
+    }
 
     // Stores the bundle, module, controller and action for later use
     list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);
@@ -183,7 +189,7 @@ class MasterController
   }
 
   /**
-   * Adds a css script to the existing ones
+   * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
    * @param array $css The css file to add (Array of string)
    */
@@ -193,7 +199,8 @@ class MasterController
   }
 
   /**
-   * Adds one or more javascript scripts to the existing ones. If the keys are string it will add the string to the link.
+   * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
+   * If the keys are string it will add the string to the link.
    *
    * @param array $js The javascript file to add (Array of strings)
    */

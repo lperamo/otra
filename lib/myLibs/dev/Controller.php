@@ -108,14 +108,14 @@ class Controller extends MasterController
     // send variables to the debug toolbar (if debug is active, cache don't)
     require CORE_VIEWS_PATH . '/debugBar.phtml';
     parent::$template = (false === strpos(parent::$template, 'body'))
-                        ? ob_get_clean() . parent::$template
-                        : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
+      ? ob_get_clean() . parent::$template
+      : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 
     // suppress useless spaces
     parent::$template = str_replace(
       '/title>',
       '/title>'. self::addDebugCSS(),
-      parent::$template . self::addResource('js')
+      parent::$template . self::addDebugJS()
     );
   }
 
@@ -150,9 +150,9 @@ class Controller extends MasterController
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-      ? '<script type="application/javascript" src="'
-      : '<link rel="stylesheet" href="'
-    );
+        ? '<script type="application/javascript" src="'
+        : '<link rel="stylesheet" href="'
+      );
 
     $endLink = ($assetType === 'js')
       ? '.js" ></script>'
@@ -221,6 +221,18 @@ class Controller extends MasterController
     foreach(self::$css as &$css) { $cssContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />'; }
 
     return $cssContent;
+  }
+
+  /**
+   * Adds the OTRA CSS for the debug bar.
+   */
+  public static function addDebugJS()
+  {
+    $jsContent = '';
+
+    foreach(self::$js as &$js) { $jsContent .= "\n" . '<script type="application/javascript" src="' . $js . '.js" ></script>'; }
+
+    return $jsContent;
   }
 
   /**

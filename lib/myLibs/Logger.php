@@ -8,6 +8,8 @@ namespace lib\myLibs;
 
 class Logger
 {
+  const APPEND_LOG = 3;
+
   /**
    * Returns the date or also the ip address and the browser if different
    *
@@ -33,9 +35,10 @@ class Logger
     if ($date !== $_SESSION[SESSION_DATE])
       $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
 
-    // remote address ip is not set if we come from the console
-    if (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
-      $infos .= '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] ';
+    // remote address ip is not set if we come from the console or if we are in localhost
+    $infos .= (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
+      ? '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] '
+      : (PHP_SAPI === true ? '[OTRA_CONSOLE] ' : '');
 
     // user agent not set if we come from the console
     if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
@@ -49,8 +52,13 @@ class Logger
    *
    * @param string $message
    */
-  public static function log(string $message) {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt');
+  public static function log(string $message)
+  {
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt'
+    );
   }
 
   /**
@@ -59,8 +67,13 @@ class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logToPath(string $message, string $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  __DIR__ . '/' . $path . '.txt');
+  public static function logToRelativePath(string $message, string $path = '')
+  {
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      __DIR__ . '/' . $path . '.txt'
+    );
   }
 
   /**
@@ -70,7 +83,11 @@ class Logger
    * @param string $path
    */
   public static function logTo(string $message, string  $path = '') {
-    error_log(self::logIpTest() . $message . "\n", 3,  BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt');
+    error_log(
+      self::logIpTest() . $message . "\n",
+      self::APPEND_LOG,
+      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt'
+    );
   }
 
   /**
@@ -84,6 +101,8 @@ class Logger
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
     $path = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt';
+
+    // If there is no SQL content logged, we start with '[', otherwise with ''
     error_log(
       ((file_exists($path) === false || ($content = file_get_contents($path)) === false || '' === $content) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .
@@ -92,7 +111,7 @@ class Logger
         ' ',
         str_replace(["\r", "\r\n", "\n"], '', trim($message))
       ) . '"},',
-      3,
+      self::APPEND_LOG,
       $path);
   }
 }

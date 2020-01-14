@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace lib\myLibs\console;
 
+use lib\myLibs\OtraException;
+
 /** @author Lionel Péramo */
 abstract class TasksManager
 {
@@ -64,36 +66,24 @@ abstract class TasksManager
     error_reporting(E_ALL & ~E_DEPRECATED);
     require CORE_PATH . 'OtraException.php';
 
-    set_error_handler(function ($errno, $message, $file, $line, $context) {
-      throw new \lib\myLibs\OtraException($message, $errno, $file, $line, $context);
-    });
+    set_error_handler([OtraException::class, 'errorHandler']);
+    set_exception_handler([OtraException::class, 'exceptionHandler']);
 
-    try
+    if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {
-      if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
-      {
-        echo CLI_YELLOW,
-          'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
-          END_COLOR, PHP_EOL;
-        require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
+      echo CLI_YELLOW,
+        'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
+        END_COLOR, PHP_EOL;
+      require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
 
-        // If the task was genClassMap...then we have nothing left to do !
-        if ($task === 'genClassMap')
-          exit(0);
-      }
-
-      require_once BASE_PATH . 'cache/php/ClassMap.php';
-      spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
-      require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
-    } catch(\Exception $e)
-    {
-      if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
-        echo '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}';
-
-      // no need for $e->getMessage if it's not the case ? i believe in this case $e->getMessage() is already used
-
-      return;
+      // If the task was genClassMap...then we have nothing left to do !
+      if ($task === 'genClassMap')
+        exit(0);
     }
+
+    require_once BASE_PATH . 'cache/php/ClassMap.php';
+    spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
+    require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
   }
 }
 ?>

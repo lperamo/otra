@@ -15,7 +15,7 @@ class ConsoleTest extends TestCase
    * @author Lionel Péramo
    * @doesNotPerformAssertions
    */
-  public function testExecConsole()
+  public function testExecConsole() : void
   {
     exec('php ' . _DIR_ . '/../otra.php');
   }
