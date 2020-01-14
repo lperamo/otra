@@ -5,20 +5,23 @@
   <!--convertWarningsToExceptions="true"-->
   <testsuites>
     <testsuite name="Block templating system">
-      <directory suffix="BlocksTest.php">./src/</directory>
+      <file>./src/lib/myLibs/BlocksTest.php</file>
     </testsuite>
     <testsuite name="Database console tasks">
-      <directory suffix="DatabaseTest.php">./src/</directory>
+      <file>./src/lib/myLibs/console/DatabaseTest.php</file>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
-      <directory suffix="SqlTest.php">./src/</directory>
-      <directory suffix="PdomysqlTest.php">./src/</directory>
+      <directory>./src/lib/myLibs/database</directory>
     </testsuite>
     <testsuite name="Debug and log tools">
-      <directory suffix="DebugToolsTest.php">./src/</directory>
-      <directory suffix="LoggerTest.php">./src/</directory>
-      <directory suffix="OtraExceptionTest.php">./src/</directory>
-      <directory suffix="OtraExceptionCliTest.php">./src/</directory>
+      <file>./src/lib/myLibs/DebugToolsTest.php</file>
+      <file>./src/lib/myLibs/LoggerTest.php</file>
+      <file>./src/lib/myLibs/OtraExceptionTest.php</file>
+      <file>./src/lib/myLibs/console/OtraExceptionCliTest.php</file>
+      <file>./config/AllConfigTest.php</file>
+    </testsuite>
+    <testsuite name="Console architecture tasks">
+      <directory>./src/lib/myLibs/console/architecture</directory>
     </testsuite>
   </testsuites>
   <filter>

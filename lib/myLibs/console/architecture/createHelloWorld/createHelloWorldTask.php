@@ -1,5 +1,11 @@
 <?php
 
+if (file_exists(BASE_PATH . 'bundles/HelloWorld'))
+{
+  echo CLI_YELLOW, 'The bundle ', CLI_CYAN, 'HelloWorld', CLI_YELLOW, ' already exists.', END_COLOR, PHP_EOL;
+  throw new \lib\myLibs\OtraException('', 1, '', NULL, [], true);
+}
+
 const ARG_BUNDLE_NAME = 2,
   ARG_MODULE_NAME = 3,
   ARG_CONTROLLER_NAME = 4,
