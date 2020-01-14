@@ -55,7 +55,8 @@ block('title', 'Exception !');
 			</tr>
 			<tr class="deep-content">
 				<td colspan="5"><?php if(0 === $i) unset($now['args']['variables']);
-          createShowableFromArray($now['args'], 'Arguments', 'variables'); echo $now['args']; ?></td>
+          echo createShowableFromArray($now['args'], 'Arguments', 'variables');
+        ?></td>
 			</tr>
 			<?php }
       } ?>
