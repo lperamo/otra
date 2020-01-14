@@ -8,6 +8,9 @@ namespace lib\myLibs\console;
 
 use lib\myLibs\OtraException;
 
+/**
+ * Shows an exception 'colorful' display for command line commands.
+ */
 class OtraExceptionCLI extends \Exception
 {
   const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
@@ -15,6 +18,24 @@ class OtraExceptionCLI extends \Exception
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
     ARGUMENTS_WIDTH = 51;
+
+  public function __construct(OtraException $exception)
+  {
+    if (false === empty($exception->context))
+    {
+      unset($exception->context['variables']);
+//      createShowableFromArrayConsole($this->context, 'Variables');
+    }
+
+    $exception->backtraces = $exception->getTrace();
+
+    // Is the error code a native error code ?
+    $exception->scode = true === isset(OtraException::$codes[$exception->code]) ? OtraException::$codes[$exception->code] : 'UNKNOWN';
+    $exception->message = preg_replace('/\<br\s*\/?\>/i', '', $exception->message);
+
+    self::showMessage($exception);
+//    require(BASE_PATH . 'lib\myLibs\views\exceptionConsole.phtml');
+  }
 
   /**
    * Shows an exception 'colorful' display for command line commands.
@@ -55,7 +76,7 @@ class OtraExceptionCLI extends \Exception
 
       if(0 === $i) unset($now['args']['variables']);
 
-      convertArrayToShowableConsole($now['args'], 'Arguments', 'variables');
+      createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
 
       if (isset($now['file']))
         $now['file'] = str_replace('\\', '/', $now['file']);

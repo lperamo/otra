@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
-    <testsuite name="Framework tests">
+    <testsuite name="Framework tests - Database tasks">
         <file>./src/lib/myLibs/console/DatabaseTest.php</file>
     </testsuite>
     <filter>
@@ -19,7 +19,8 @@
             </exclude>
         </whitelist>
     </filter>
-    <!--<logging>-->
-        <!--<log type="coverage-html" target="./coverageHtml" title="LP Framework" />-->
-    <!--</logging>-->
+    <logging>
+        <log type="coverage-clover" target="./coverage.xml"/>
+        <log type="coverage-html" target="./coverageHtml" title="LP Framework" />
+    </logging>
 </phpunit>

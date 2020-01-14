@@ -5,7 +5,7 @@
 
 namespace lib\myLibs\bdd;
 
-use lib\myLibs\{ OtraException, bdd\Mysql, Logger };
+use lib\myLibs\{ OtraException, Logger };
 use config\AllConfig;
 
 class Sql
@@ -23,7 +23,7 @@ class Sql
     $_currentDBMS = '',
     $_currentConnectionName;
 
-  public static Sql $instance;
+  public static ?Sql $instance;
 
   private function __construct()
   {
@@ -37,16 +37,16 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param $conn
+   * @param      $conn
    * @param bool $haveDatabase Do we have a database ? Can be no, if we want to CREATE a database.
    *
    * @return bool|Sql|resource
    *
    * @throws OtraException
    *
-   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    * @internal param string $dbms     Kind of dbms
    * @internal param string $conn     Connection used (see AllConfig files)
+   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    */
   public static function getDB($conn = null, bool $haveDatabase = true) : Sql
   {
@@ -67,7 +67,7 @@ class Sql
         throw new OtraException('There is no \'' . $conn . '\' configuration available in the AllConfig file !');
     } else
     {
-      if (false === isset(AllConfig::$defaultConn))
+      if (AllConfig::$defaultConn === '')
         throw new OtraException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
 
       $conn = AllConfig::$defaultConn;
@@ -136,7 +136,7 @@ class Sql
         throw new OtraException($e->getMessage());
       }
     }else
-      throw new OtraException('This DBMS \'' . $driver . '\' doesn\'t exist...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
+      throw new OtraException('This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
 
     return $activeConn['instance'];
   }
@@ -166,9 +166,11 @@ class Sql
     try
     {
       $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
+      // @codeCoverageIgnoreStart
       $this->query('SET NAMES UTF8');
 
       return $return;
+      // @codeCoverageIgnoreEnd
     } catch (\Exception $exception)
     {
       $currentDriver = AllConfig::$dbConnections[self::$_currentConnectionName]['driver'];
@@ -177,7 +179,7 @@ class Sql
       if ($currentDriver === 'PDOMySQL')
         throw new OtraException($message . '.. and mysql driver is now deprecated !');
       else
-        throw new OtraException($message);
+        throw new OtraException($message); // @codeCoverageIgnore
     }
   }
 
@@ -330,12 +332,16 @@ class Sql
   /**
    * Close MySQL connection
    *
+   * @param bool $instanceToClose
+   *
    * @return bool Returns true on success or false on failure
    */
-  private static function close()
+  private static function close($instanceToClose = true) : bool
   {
     if (isset(self::$instance) === true)
-      return call_user_func(self::$_currentDBMS . '::close', self::$_currentConn);
+      return call_user_func_array(self::$_currentDBMS . '::close', [&$instanceToClose]);
+
+    return false;
   }
 
     /**

@@ -2,7 +2,7 @@
 /**
  * @param string $message
  */
-function lg(string $message)
+function lg(string $message) : void
 {
   require_once CORE_PATH . 'Logger.php';
   lib\myLibs\Logger::logTo($message, 'trace');
@@ -18,7 +18,7 @@ function lg(string $message)
  * @param array ...$args
  */
 
-function dump(bool $maxData = false, bool $maxChildren = false, ... $args)
+function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
 {
 
   if (true === $maxData)
@@ -76,9 +76,10 @@ function dumpSmall()
 }
 
 /**
- * Puts new lines in order to add legibility to a code in debug mode
+ * Puts <br> between markups in order to add legibility to a code in debug mode and convert other markups in html
+ * entities.
  *
- * @param string $stringToFormat The ... (e.g. : self::$template
+ * @param string $stringToFormat The ... (e.g. : self::$template)
  *
  * @return string The formatted string
  */
@@ -94,7 +95,7 @@ function reformatSource(string $stringToFormat) : string
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
  */
-function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = null)
+function createShowableFromArray(array &$dataToShow, string $title, $indexToExclude = null)
 {
     ob_start();?>
     <table class="test innerHeader">
@@ -112,16 +113,16 @@ function convertArrayToShowable(&$dataToShow, string $title, $indexToExclude = n
     <?php
       recurArrayConvertTab($dataToShow, $indexToExclude);
     ?></tbody></table><?php
-    $dataToShow = ob_get_clean();
+    return ob_get_clean();
 }
 
 /** Converts a php array into stylish console table. TODO finish it !
  *
- * @param $dataToShow array  Array to convert
- * @param $title      string Table name to show in the header
- * @param $indexToExclude string Index to exclude from the render
+ * @param $dataToShow     null|array Array to convert
+ * @param $title          string     Table name to show in the header
+ * @param $indexToExclude string     Index to exclude from the render
  */
-function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = null)
+function createShowableFromArrayConsole(?array &$dataToShow, string $title, $indexToExclude = null)
 {
   return;
 
@@ -132,6 +133,12 @@ function convertArrayToShowableConsole(&$dataToShow, $title, $indexToExclude = n
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
+/**
+ * @param $index
+ * @param $value
+ *
+ * @return int|string
+ */
 function getArgumentType(&$index, &$value)
 {
   switch($index)
@@ -153,12 +160,12 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $data        array|object  Array or object to convert
- * @param $indexToExclude string        Index to exclude from the render
- * @param $loop           int           Number of recursions
+ * @param $data           array      Array or object to convert
+ * @param $indexToExclude int|string Index to exclude from the render
+ * @param $loop           int        Number of recursions
  * @return int
  */
-function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
+function recurArrayConvertTab(array $data, $indexToExclude = null, int $loop = -1)
 {
   $i = 0;
   $oldLoop = $loop;
@@ -169,7 +176,12 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
     if ($index === $indexToExclude)
       continue;
 
-    $datum = (true === is_array($datum) || true === is_object($datum) || true === is_numeric($datum)) ? $datum : '\'' . $datum . '\'';
+    $datum = (true === is_array($datum)
+      || true === is_object($datum)
+      || true === is_numeric($datum)
+      )
+      ? $datum
+      : '\'' . $datum . '\'';
 
     // End of the table that shows the inner headers
     if (0 === $loop)
@@ -199,7 +211,10 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
                '</tr>';
         else
           echo '<tr class="foldable no-dummy">',
-                 '<td colspan="">Index:' , getArgumentType($index, $datum), ', Loop:' . $loop . '</td>';
+                 '<td colspan="">Index:' ,
+                    is_numeric($index) ? getArgumentType($index, $datum) : $index,
+                  ', Loop:', $loop,
+                 '</td>';
 
         $oldLoop = recurArrayConvertTab($datum, $indexToExclude, $loop);
     } else
@@ -232,5 +247,69 @@ function debug(bool $noErrors = true) : bool
     error_reporting(0);
 
   return 'dev' === $_SERVER['APP_ENV'];
+}
+
+  /**
+   * Slightly modified version of the original.
+   * No verification of the fileDescriptor, we must check that before.
+   *
+   * @param string $filepath
+   * @param int    $lines
+   *
+   * @return string
+   * @link    http://stackoverflow.com/a/15025877/995958
+   * @license http://creativecommons.org/licenses/by/3.0/
+   * @author  Torleif Berger, Lorenzo Stanco, Lionel Péramo
+   */
+function tailCustom(string $filepath, int $lines = 1) : string
+{
+  $fileDescriptor = fopen($filepath, "rb");
+
+  // Sets buffer size, according to the number of lines to retrieve.
+  // This gives a performance boost when reading a few lines from the file.
+  $buffer = ($lines < 2 ? 64 : ($lines < 10 ? 512 : 4096));
+
+  // Jump to last character
+  fseek($fileDescriptor, -1, SEEK_END);
+
+  // Read it and adjust line number if necessary
+  // (Otherwise the result would be wrong if file doesn't end with a blank line)
+  if (fread($fileDescriptor, 1) !== PHP_EOL)
+    --$lines;
+
+  // Start reading
+  $output = $chunk = '';
+
+  // While we would like more
+  while (ftell($fileDescriptor) > 0 && $lines >= 0)
+  {
+    // Figure out how far back we should jump
+    $seek = min(ftell($fileDescriptor), $buffer);
+
+    // Do the jump (backwards, relative to where we are)
+    fseek($fileDescriptor, -$seek, SEEK_CUR);
+
+    // Read a chunk and prepend it to our output
+    $output = ($chunk = fread($fileDescriptor, $seek)) . $output;
+
+    // Jump back to where we started reading
+    fseek($fileDescriptor, -mb_strlen($chunk, '8bit'), SEEK_CUR);
+
+    // Decrease our line counter
+    $lines -= substr_count($chunk, PHP_EOL);
+  }
+
+  // Close file
+  fclose($fileDescriptor);
+
+  // While we have too many lines
+  // (Because of buffer size we might have read too many)
+  while ($lines++ < 0)
+  {
+    // Find first newline and remove all text before that
+    $output = substr($output, strpos($output, PHP_EOL) + 1);
+  }
+
+  return trim($output);
 }
 ?>

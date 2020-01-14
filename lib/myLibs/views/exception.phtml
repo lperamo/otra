@@ -1,4 +1,13 @@
 <?php
+/**
+ * @var string $message
+ * @var string $code
+ * @var string $file
+ * @var int    $line
+ * @var string $context
+ * @var array  $backtraces
+ */
+
 require CORE_PATH . 'views/layout.phtml';
 block('title', 'Exception !');
 ?>
@@ -19,7 +28,8 @@ block('title', 'Exception !');
 			</tr>
 		</thead>
 		<tbody>
-		  <?php for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
+		  <?php
+      for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
 		  {
 		  	$now = $trace[$i];
 		  	?><tr>
@@ -45,7 +55,8 @@ block('title', 'Exception !');
 			</tr>
 			<tr class="deep-content">
 				<td colspan="5"><?php if(0 === $i) unset($now['args']['variables']);
-				 convertArrayToShowable($now['args'], 'Arguments', 'variables'); echo $now['args']; ?></td>
+          echo createShowableFromArray($now['args'], 'Arguments', 'variables');
+        ?></td>
 			</tr>
 			<?php }
       } ?>
