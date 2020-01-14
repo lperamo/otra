@@ -78,7 +78,7 @@ if ('dev' === $_SERVER['APP_ENV'])
 else // mode Prod
 {
   // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
-  define('VERSION', 'V1.0.0-alpha.1.3.0');
+  define('VERSION', 'V1.0.0-alpha.1.3.1');
 
   try
   {

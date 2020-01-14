@@ -18,7 +18,7 @@ define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layo
 if (defined('SPACE_INDENT') === false)
   define('SPACE_INDENT', '  ');
 
-define('VERSION', 'V1.0.0-alpha.1.3.0');
+define('VERSION', 'V1.0.0-alpha.1.3.1');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n'); // TODO Put in an environment variable
 
