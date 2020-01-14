@@ -32,10 +32,11 @@ class OtraException extends \Exception
     E_WARNING           => 'E_WARNING'
   ];
 
-  public array $backtraces;
-  public array $context;
+  public array $backtraces,
+    $context;
   // String version of error code
   public string $scode;
+  private bool $otraCliWarning;
 
   /**
    * OtraException constructor.
@@ -45,13 +46,26 @@ class OtraException extends \Exception
    * @param string $file
    * @param int    $line
    * @param array  $context
+   * @param bool   $otraCliWarning True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
    */
-  public function __construct(string $message = 'Error !', int $code = NULL, string $file = '', int $line = NULL, $context = [])
+  public function __construct(
+    string $message = 'Error !',
+    int $code = NULL,
+    string $file = '',
+    int $line = NULL,
+    $context = [],
+    bool $otraCliWarning = false)
   {
-    $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->code = (null !== $code) ? $code : $this->getCode();
+    $this->otraCliWarning = $otraCliWarning;
+
+    // When $otraCliWarning is true then we only need the error code that will be used as exit code
+    if ($otraCliWarning === true)
+      return;
+
+    $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->file = str_replace('\\', '/', (('' == $file) ? $this->getFile() : $file));
     $this->line = ('' === $line) ? $this->getLine() : $line;
     $this->context = $context;
@@ -109,6 +123,54 @@ class OtraException extends \Exception
         'backtraces' => $this->getTrace()
       ]
     );
+  }
+
+  /**
+   * To use with set_error_handler().
+   *
+   * @param int    $errno
+   * @param string $message
+   * @param string $file
+   * @param int    $line
+   * @param array  $context
+   *
+   * @throws OtraException
+   */
+  public static function errorHandler(int $errno, string $message, string $file, int $line, ?array $context)
+  {
+    if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+      // json sent if it was an AJAX request
+      echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
+    else
+      new OtraException($message, $errno, $file, $line, $context);
+
+    exit($errno);
+  }
+
+  /**
+   * To use with set_exception_handler().
+   *
+   * @param OtraException $exception
+   *
+   * @throws OtraException
+   */
+  public static function exceptionHandler(OtraException $exception)
+  {
+    if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
+      // json sent if it was an AJAX request
+      echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';
+    else
+      {
+        new OtraException(
+          $exception->getMessage(),
+          $exception->getCode(),
+          $exception->getFile(),
+          $exception->getLine(),
+          $exception->getTrace(),
+          $exception->otraCliWarning
+        );}
+
+    exit($exception->getCode());
   }
 }
 ?>
