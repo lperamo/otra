@@ -160,12 +160,12 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $data           array      Array or object to convert
- * @param $indexToExclude int|string Index to exclude from the render
- * @param $loop           int        Number of recursions
+ * @param $data           array|object Array or object to convert
+ * @param $indexToExclude int|string   Index to exclude from the render
+ * @param $loop           int          Number of recursions
  * @return int
  */
-function recurArrayConvertTab(array $data, $indexToExclude = null, int $loop = -1)
+function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
 {
   $i = 0;
   $oldLoop = $loop;

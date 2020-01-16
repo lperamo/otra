@@ -100,7 +100,7 @@ class OtraException extends \Exception
     );
     $renderController->viewPath = CORE_VIEWS_PATH;
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-
+//    dump(true, true, $this->context['exception']);die;
     if (false === empty($this->context))
     {
       unset($this->context['variables']);
@@ -150,11 +150,11 @@ class OtraException extends \Exception
   /**
    * To use with set_exception_handler().
    *
-   * @param OtraException $exception
+   * @param mixed $exception Can be TypeError, OtraException, maybe something else.
    *
    * @throws OtraException
    */
-  public static function exceptionHandler(OtraException $exception)
+  public static function exceptionHandler($exception)
   {
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
@@ -167,7 +167,7 @@ class OtraException extends \Exception
           $exception->getFile(),
           $exception->getLine(),
           $exception->getTrace(),
-          $exception->otraCliWarning
+          $exception->otraCliWarning ?? false
         );}
 
     exit($exception->getCode());
