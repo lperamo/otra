@@ -35,10 +35,13 @@ class Logger
     if ($date !== $_SESSION[SESSION_DATE])
       $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
 
+    // if we come from console, adds it to the log
+    $infos .= (PHP_SAPI === 'cli') ? '[OTRA_CONSOLE] ' : '';
+
     // remote address ip is not set if we come from the console or if we are in localhost
     $infos .= (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
       ? '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] '
-      : (PHP_SAPI === true ? '[OTRA_CONSOLE] ' : '');
+      : '';
 
     // user agent not set if we come from the console
     if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])

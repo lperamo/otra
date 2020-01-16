@@ -35,9 +35,10 @@ class LoggerTest extends TestCase
   {
     // context
     require CORE_PATH . 'debugTools.php';
-    $logCustomFolder = '../../logs/otraTests/';
+    $path = 'logs/otraTests/';
+    $logCustomFolder = '../../' . $path;
     define('LOG_FILENAME', 'log.txt');
-    $absolutePathToFolder = realpath(__DIR__ . '/../..') . '/' . $logCustomFolder;
+    $absolutePathToFolder = BASE_PATH . $path;
     mkdir($absolutePathToFolder);
     $absolutePathToLogFilename = $absolutePathToFolder . LOG_FILENAME;
     $logCustomPath = $logCustomFolder . 'log';

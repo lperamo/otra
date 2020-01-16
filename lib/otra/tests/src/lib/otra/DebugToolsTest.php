@@ -162,7 +162,7 @@ class DebugToolsTest extends TestCase
    */
   public function testTailCustom() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTail.txt', 1));
+    self::assertEquals('world', tailCustom(CORE_PATH . 'tests/testTail.txt', 1));
   }
 
   /**
@@ -172,7 +172,7 @@ class DebugToolsTest extends TestCase
    */
   public function testTailCustom_NoEndBlankLine() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt', 1));
+    self::assertEquals('world', tailCustom(CORE_PATH . 'tests/testTailNoEndBlankLine.txt', 1));
   }
 
   /**

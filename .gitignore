@@ -8,8 +8,8 @@
 !**.gitkeep
 /lib/otra/console/closure-compiler.log
 .idea
-/tests/coverageHtml
-/tests/coverage.xml
+**/tests/coverageHtml
+**/tests/coverage.xml
 /**/.phpunit.result.cache
 **/css/*.css*
 **/scss/.sass-cache/**
