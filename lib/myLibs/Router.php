@@ -67,16 +67,12 @@ class Router
     if (false === is_array($params))
       $params = [$params];
 
-    /** Preventing redirections from crashing the application (the caller function is more or less far depending on
-     * the development mode ($_SERVER['APP_ENV']) so we have :
-     * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0] for dev mode
-     * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1] for prod mode
-     */
+    /** Preventing redirections from crashing the application */
     if ('cli' !== PHP_SAPI
       && substr(str_replace(
         ['\\', BASE_PATH],
         ['/', ''],
-        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[(int) !($_SERVER['APP_ENV'] === 'prod')]['file']
+        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0]['file']
       ), 0, 9) !== 'web/index')
     {
       // Is it a static page
