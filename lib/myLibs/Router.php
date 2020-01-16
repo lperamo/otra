@@ -73,11 +73,11 @@ class Router
      * debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1] for prod mode
      */
     if ('cli' !== PHP_SAPI
-      && str_replace(
+      && substr(str_replace(
         ['\\', BASE_PATH],
         ['/', ''],
         debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[(int) !($_SERVER['APP_ENV'] === 'prod')]['file']
-      ) !== 'web/Resources.php')
+      ), 0, 9) !== 'web/index')
     {
       // Is it a static page
       if (true === isset(Routes::$_[$route]['resources']['template']))

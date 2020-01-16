@@ -11,7 +11,7 @@ server {
     listen 80;
     listen [::]:80;
     set $rootPath /var/www/html;
-    index Resources.php;
+    index indexDev.php;
     
     server_name yourdomain.com;
     error_log /var/log/nginx/yourdomain/error.log error;
@@ -20,7 +20,7 @@ server {
     root $rootPath/pathToYourSite/web;
     
     location / {
-      try_files $uri /Resources.php$is_args$args;
+      try_files $uri /indexDev.php$is_args$args;
     }
     
     location ~ \.php {
