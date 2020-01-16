@@ -10,7 +10,7 @@ define('CACHE_PATH', BASE_PATH . 'cache/');
 // Framework core resources
 define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
 // CORE_RESOURCES_PATH, CORE_CSS_PATH and CORE_JS_PATH are used for otra utilities like the debug bar
-define('CORE_RESOURCES_PATH', 'lib/myLibs/');
+define('CORE_RESOURCES_PATH', 'lib/otra/');
 define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
 define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
 

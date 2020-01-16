@@ -1,7 +1,7 @@
 <?php
 define ('_DIR_', str_replace('\\', '/', __DIR__));
 define('BASE_PATH', substr(_DIR_, 0, -5)); // Ends with /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
+define('CORE_PATH', BASE_PATH . 'lib/otra/');
 require _DIR_ . '/../cache/php/ClassMap.php';
 
 spl_autoload_register(function(string $className)

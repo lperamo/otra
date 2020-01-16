@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
     <testsuite name="Framework tests - Database tasks">
-        <file>./src/lib/myLibs/console/DatabaseTest.php</file>
+        <file>./src/lib/otra/console/DatabaseTest.php</file>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <file>../lib/myLibs/console/Database.php</file>
+            <file>../lib/otra/console/Database.php</file>
             <exclude>
                 <directory>./src/lib/</directory>
                 <directory>./</directory>

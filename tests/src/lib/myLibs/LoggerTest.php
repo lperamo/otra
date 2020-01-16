@@ -1,6 +1,6 @@
 <?php
 
-use lib\myLibs\Logger;
+use lib\otra\Logger;
 use phpunit\framework\TestCase;
 
 /**

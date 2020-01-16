@@ -1,6 +1,6 @@
 <?php
 
-use lib\myLibs\OtraException;
+use lib\otra\OtraException;
 use phpunit\framework\TestCase;
 
 /**

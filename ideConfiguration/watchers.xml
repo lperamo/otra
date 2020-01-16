@@ -32,7 +32,7 @@
       <array />
     </option>
     <option name="outputFromStdout" value="false" />
-    <option name="program" value="$PROJECT_DIR$/lib/myLibs/console/typescriptAndClosure.sh" />
+    <option name="program" value="$PROJECT_DIR$/lib/otra/console/typescriptAndClosure.sh" />
     <option name="runOnExternalChanges" value="true" />
     <option name="scopeName" value="TypeScript" />
     <option name="trackOnlyRoot" value="false" />

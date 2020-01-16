@@ -2,11 +2,11 @@
 <?php
 declare(strict_types=1);
 
-use lib\myLibs\console\TasksManager;
+use lib\otra\console\TasksManager;
 
 // TODO Centralize those constants that are already defined in AllConfig...
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/');
+define('CORE_PATH', BASE_PATH . 'lib/otra/');
 define('SPACE_INDENT', '  ');
 $_SERVER['APP_ENV']= 'prod';
 

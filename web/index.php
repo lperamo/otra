@@ -4,11 +4,11 @@
  * @author Lionel Péramo */
 define ('_DIR_', str_replace('\\', '/', __DIR__));
 define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
-require BASE_PATH . 'lib/myLibs/entryPoint.php';
+require BASE_PATH . 'lib/otra/entryPoint.php';
 
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
 define('VERSION', 'V1.0.0-alpha.1.3.1');
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/otra/'); // Ends with /
 
 try
 {
@@ -39,7 +39,7 @@ try
       if (false === isset(CLASSMAP[$className]))
       {
         require_once CORE_PATH . 'Logger.php';
-        \lib\myLibs\Logger::logTo(
+        \lib\otra\Logger::logTo(
           'Path not found for the class name : ' . $className . PHP_EOL .
           'Stack trace : ' . PHP_EOL .
           print_r(debug_backtrace(), true),
@@ -58,7 +58,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \lib\myLibs\Logger::logTo(
+  \lib\otra\Logger::logTo(
     'Exception : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),
@@ -71,7 +71,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \lib\myLibs\Logger::logTo(
+  \lib\otra\Logger::logTo(
     'Fatal error : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),

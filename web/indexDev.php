@@ -5,14 +5,14 @@
 define('_DIR_', str_replace('\\', '/', __DIR__));
 define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
 
-require BASE_PATH . 'lib/myLibs/entryPoint.php';
+require BASE_PATH . 'lib/otra/entryPoint.php';
 
 define ('BEFORE', microtime(true));
 
 if (false === defined('BASE_PATH'))
   define('BASE_PATH', substr(__DIR__, 0, -15)); // Ends with /
 
-define('CORE_PATH', BASE_PATH . 'lib/myLibs/'); // Ends with /
+define('CORE_PATH', BASE_PATH . 'lib/otra/'); // Ends with /
 
 require CORE_PATH . 'debugTools.php';
 
@@ -34,11 +34,11 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-use lib\myLibs\OtraException;
+use lib\otra\OtraException;
 set_error_handler([OtraException::class, 'errorHandler']);
 set_exception_handler([OtraException::class, 'exceptionHandler']);
 
-use lib\myLibs\Router;
+use lib\otra\Router;
 
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))

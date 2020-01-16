@@ -29,16 +29,16 @@ class Routes
     ],
 
     'refreshSQLLogs' => [
-      'chunks' => ['/dbg/refreshSQLLogs', 'lib', 'myLibs', 'profiler', 'refreshSQLLogsAction'],
+      'chunks' => ['/dbg/refreshSQLLogs', 'lib', 'otra', 'profiler', 'refreshSQLLogsAction'],
       'core' => true
     ],
 
     'clearSQLLogs' => [
-      'chunks' => ['/dbg/clearSQLLogs', 'lib', 'myLibs', 'profiler', 'clearSQLLogsAction'],
+      'chunks' => ['/dbg/clearSQLLogs', 'lib', 'otra', 'profiler', 'clearSQLLogsAction'],
       'core' => true
     ],
     'profiler' => [
-      'chunks' => ['/dbg', 'lib', 'myLibs', 'profiler', 'indexAction'],
+      'chunks' => ['/dbg', 'lib', 'otra', 'profiler', 'indexAction'],
       'core' => true
     ]
   ];

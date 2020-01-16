@@ -1,7 +1,7 @@
 <?php
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use lib\myLibs\
+use lib\otra\
 {OtraException, console\Database, bdd\Sql, Session};
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');

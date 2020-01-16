@@ -1,6 +1,6 @@
 <?php
 
-use lib\myLibs\
+use lib\otra\
 {MasterController, Router, Controller, OtraException};
 use phpunit\framework\TestCase;
 
