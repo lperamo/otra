@@ -45,7 +45,7 @@ class DatabaseTest extends TestCase
   {
     $_SERVER['APP_ENV'] = 'prod';
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
-    removeFieldScopeProtection(Database::class, 'folder')->setValue('src/otra/tests/src/bundles/');
+    removeFieldScopeProtection(Database::class, 'folder')->setValue('src/tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
     self::$configFolderSqlBackup = self::$configBackupFolder . 'sqlBackup/';
     self::$configFolderSqlFixtures = self::$configFolderSql . 'fixtures/';

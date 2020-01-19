@@ -6,7 +6,7 @@ use lib\otra\console\TasksManager;
 
 // TODO Centralize those constants that are already defined in AllConfig...
 define('BASE_PATH', str_replace('\\', '/', __DIR__) . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('CORE_PATH', BASE_PATH . 'src/otra/');
+define('CORE_PATH', BASE_PATH . 'src/');
 define('SPACE_INDENT', '  ');
 $_SERVER['APP_ENV']= 'prod';
 

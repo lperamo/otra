@@ -5,14 +5,14 @@
 define('_DIR_', str_replace('\\', '/', __DIR__));
 define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
 
-require BASE_PATH . 'src/otra/entryPoint.php';
+require BASE_PATH . 'src/entryPoint.php';
 
 define ('BEFORE', microtime(true));
 
 if (false === defined('BASE_PATH'))
   define('BASE_PATH', substr(__DIR__, 0, -15)); // Ends with /
 
-define('CORE_PATH', BASE_PATH . 'src/otra/'); // Ends with /
+define('CORE_PATH', BASE_PATH . 'src/'); // Ends with /
 
 require CORE_PATH . 'debugTools.php';
 

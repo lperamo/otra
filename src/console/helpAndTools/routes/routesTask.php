@@ -87,7 +87,7 @@ foreach($routes as $route => &$details)
   // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
 
-  $basePath = substr(__DIR__, 0, -strlen('src/otra/console')) . 'cache/';
+  $basePath = substr(__DIR__, 0, -strlen('src/console')) . 'cache/';
 
   echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
 

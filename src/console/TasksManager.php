@@ -29,7 +29,13 @@ abstract class TasksManager
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
-    $methods = require BASE_PATH . 'cache/php/tasksHelp.php';
+    $tasksHelpPath = BASE_PATH . 'cache/php/tasksHelp.php';
+
+    if (file_exists($tasksHelpPath) === true)
+      $methods = require BASE_PATH . 'cache/php/tasksHelp.php';
+    else
+      require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+
     $category = '';
 
     foreach ($methods as $method => &$paramsDesc)
