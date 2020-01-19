@@ -1,5 +1,5 @@
 /bundles
-/cache/*
+/cache
 /cert/*
 /logs/**
 !/logs/
