@@ -1,0 +1,19 @@
+{
+  "name": "otra/otra",
+  "type": "library",
+  "description": "The OTRA PHP framework",
+  "keywords": ["framework"],
+  "homepage": "https://github.com/lperamo/otra",
+  "license": "X11",
+  "authors": [
+    {
+      "name": "Lionel Péramo",
+      "email": "contact@lionel-peramo.com",
+      "homepage": "https://wexample.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "symfony/yaml": "^4.0"
+  }
+}

@@ -1,0 +1,62 @@
+<TaskOptions>
+  <TaskOptions>
+    <option name="arguments" value="$FileName$:../css/$FileNameWithoutExtension$.css" />
+    <option name="checkSyntaxErrors" value="true" />
+    <option name="description" />
+    <option name="exitCodeBehavior" value="ERROR" />
+    <option name="fileExtension" value="scss" />
+    <option name="immediateSync" value="true" />
+    <option name="name" value="SCSS" />
+    <option name="output" value="../css/$FileNameWithoutExtension$.css:../css/$FileNameWithoutExtension$.css.map" />
+    <option name="outputFilters">
+      <array />
+    </option>
+    <option name="outputFromStdout" value="false" />
+    <option name="program" value="sass" />
+    <option name="runOnExternalChanges" value="true" />
+    <option name="scopeName" value="SCSS" />
+    <option name="trackOnlyRoot" value="true" />
+    <option name="workingDir" value="$FileDir$" />
+    <envs />
+  </TaskOptions>
+  <TaskOptions>
+    <option name="arguments" value="$FileDir$ $FileName$ $FileNameWithoutExtension$ $FileParentDir$ $ProjectFileDir$ ADVANCED" />
+    <option name="checkSyntaxErrors" value="true" />
+    <option name="description" />
+    <option name="exitCodeBehavior" value="ERROR" />
+    <option name="fileExtension" value="ts" />
+    <option name="immediateSync" value="true" />
+    <option name="name" value="Custom TypeScript management" />
+    <option name="output" value="../js/$FileNameWithoutExtension$.js:../js/$FileNameWithoutExtension$.js.map" />
+    <option name="outputFilters">
+      <array />
+    </option>
+    <option name="outputFromStdout" value="false" />
+    <option name="program" value="$PROJECT_DIR$/lib/otra/console/typescriptAndClosure.sh" />
+    <option name="runOnExternalChanges" value="true" />
+    <option name="scopeName" value="TypeScript" />
+    <option name="trackOnlyRoot" value="false" />
+    <option name="workingDir" value="" />
+    <envs />
+  </TaskOptions>
+  <TaskOptions>
+    <option name="arguments" value="genClassMap" />
+    <option name="checkSyntaxErrors" value="true" />
+    <option name="description" />
+    <option name="exitCodeBehavior" value="ERROR" />
+    <option name="fileExtension" value="php" />
+    <option name="immediateSync" value="true" />
+    <option name="name" value="Class Mapping" />
+    <option name="output" value="" />
+    <option name="outputFilters">
+      <array />
+    </option>
+    <option name="outputFromStdout" value="false" />
+    <option name="program" value="php console.php" />
+    <option name="runOnExternalChanges" value="true" />
+    <option name="scopeName" value="PHP class mapping" />
+    <option name="trackOnlyRoot" value="false" />
+    <option name="workingDir" value="" />
+    <envs />
+  </TaskOptions>
+</TaskOptions>
