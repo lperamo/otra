@@ -2,7 +2,11 @@
 
 function _otra {
     BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    CORE_DIR=${BASE_DIR}/src/
+    CORE_DIR=${BASE_DIR}/vendor/otra/otra/src/
+
+    # If the folder does not exist, maybe we are editing the framework !
+    [[ ! -d "$CORE_DIR" ]] && CORE_DIR=${BASE_DIR}/src/
+
     export BASE_DIR
     . ${CORE_DIR}console/shellCompletions/completionHandler.sh
 }
