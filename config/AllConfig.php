@@ -10,7 +10,7 @@ define('CACHE_PATH', BASE_PATH . 'cache/');
 // Framework core resources
 define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
 // CORE_RESOURCES_PATH, CORE_CSS_PATH and CORE_JS_PATH are used for otra utilities like the debug bar
-define('CORE_RESOURCES_PATH', 'src/otra/');
+define('CORE_RESOURCES_PATH', 'src/');
 define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
 define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
 
@@ -19,7 +19,7 @@ define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layo
 if (defined('SPACE_INDENT') === false)
   define('SPACE_INDENT', '  ');
 
-define('VERSION', 'V1.0.0-alpha.2.0.1');
+define('VERSION', 'V1.0.0-alpha.2.0.2');
 define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
 define('FWK_HASH', '$2y$07$hu3yJ9cEtjFXwzpHoMdv5n'); // TODO Put in an environment variable
 

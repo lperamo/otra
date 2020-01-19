@@ -1,4 +1,4 @@
-[Home](README.md) / Cache management
+[Home](../README.md) / Cache management
 
 ## Cache management
 

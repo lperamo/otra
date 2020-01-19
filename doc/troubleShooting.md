@@ -1,4 +1,4 @@
-[Home](README.md) / Troubleshooting
+[Home](../README.md) / Troubleshooting
 
 ## Troubleshooting
 

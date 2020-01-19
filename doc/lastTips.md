@@ -1,4 +1,4 @@
-[Home](README.md) / A few last tips
+[Home](../README.md) / A few last tips
                                 
 ### A few last tips
 

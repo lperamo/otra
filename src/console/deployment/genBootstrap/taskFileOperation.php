@@ -524,7 +524,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
           continue;
 
         // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
-        // inclusion of the dev/prod controller in the file src/otra/Controller.php
+        // inclusion of the dev/prod controller in the file src/Controller.php
         if ($tempFile === 'CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : \'prod\') . \'/Controller.php')
           $tempFile .= "'";
 
@@ -972,13 +972,13 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
    */
   $finalContent = str_replace(
     [
-      // line from src/otra/Controller.php
+      // line from src/Controller.php
       'require CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
-      // line at the top of src/otra/OtraException.php
+      // line at the top of src/OtraException.php
       'require_once CORE_PATH . \'debugTools.php\';',
-      // line 115 in getDB, Sql class => src/otra/bdd/Sql.php
+      // line 115 in getDB, Sql class => src/bdd/Sql.php
       'require CORE_PATH . \'bdd/\' . $driver . \'.php\';',
-      // line in renderView, file src/otra/prod/Controller.php:57
+      // line in renderView, file src/prod/Controller.php:57
       'require CORE_PATH . \'Logger.php\';',
       // line in OtraException at the beginning of the method errorMessage()
       'require_once BASE_PATH . \'config/AllConfig.php\';',

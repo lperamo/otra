@@ -1,4 +1,4 @@
-[Home](../README.md) / [Contributing](../contributing.md) / HTML side
+[Home](../../README.md) / [Contributing](../contributing.md) / HTML side
 
 Previous section : [JavaScript side](js.md)
 

@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../../configuration.md) /
+[Home](../../../README.md) / [Installation](../../configuration.md) /
 [Project configuration](../projectConfiguration.md) / Watching files
 
 Previous section : [Routes configuration file](routesConfiguration.md)

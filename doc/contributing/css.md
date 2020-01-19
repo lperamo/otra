@@ -1,4 +1,4 @@
-[Home](../README.md) / [Contributing](../contributing.md) / CSS or SCSS side
+[Home](../../README.md) / [Contributing](../contributing.md) / CSS or SCSS side
 
 Previous section : [PHP side](php.md)
 
