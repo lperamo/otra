@@ -60,14 +60,19 @@ require CORE_PATH . 'console/tools.php';
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
 $helpFileFinalContent = substr(convertArrayFromVarExportToShortVersion($helpFileFinalContent), 0, -2) . '];';
 
-file_put_contents(BASE_PATH . 'cache/php/tasksHelp.php', $helpFileFinalContent);
+$phpCacheFolder = CACHE_PATH . 'php/';
+
+if (file_exists($phpCacheFolder) === false)
+  mkdir($phpCacheFolder, 0777, true);
+
+file_put_contents($phpCacheFolder . 'tasksHelp.php', $helpFileFinalContent);
 
 // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
 $taskClassMap = '<?php return ' . var_export($taskClassMap, true);
 $taskClassMap = substr(convertArrayFromVarExportToShortVersion($taskClassMap), 0, -2) . '];';
 $taskClassMap = convertArrayFromVarExportToShortVersion($taskClassMap);
 
-file_put_contents(BASE_PATH . 'cache/php/tasksClassMap.php',
+file_put_contents($phpCacheFolder . 'tasksClassMap.php',
     str_replace("'" . BASE_PATH,
       'BASE_PATH.\'',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
