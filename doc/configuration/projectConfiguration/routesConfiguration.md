@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Project configuration](../projectConfiguration.md) / Routes configuration
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Project configuration](../projectConfiguration.md) / Routes configuration
 
 Previous section : [Main configuration file](mainConfiguration.md)
 

@@ -1,4 +1,4 @@
-[Home](../README.md) / [Installation](../configuration.md) / Project configuration
+[Home](../../README.md) / [Installation](../configuration.md) / Project configuration
 
 Previous section : [Setting server configuration](serverConfiguration.md)
 

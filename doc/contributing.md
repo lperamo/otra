@@ -1,4 +1,4 @@
-[Home](README.md) / Contributing
+[Home](../README.md) / Contributing
 
 ## Contributing
 

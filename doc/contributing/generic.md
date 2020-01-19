@@ -1,4 +1,4 @@
-[Home](../README.md) / [Contributing](../contributing.md) / Generic rules
+[Home](../../README.md) / [Contributing](../contributing.md) / Generic rules
 
 ### Generic rules
 

@@ -1,4 +1,4 @@
-[Home](../README.md) / [Contributing](../contributing.md) / Shell side
+[Home](../../README.md) / [Contributing](../contributing.md) / Shell side
 
 Previous section : [HTML side](html.md)
 

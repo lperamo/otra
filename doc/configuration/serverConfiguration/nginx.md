@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / Nginx
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / Nginx
 
 #### Nginx configuration
 
