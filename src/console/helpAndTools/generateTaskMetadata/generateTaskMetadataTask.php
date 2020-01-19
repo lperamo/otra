@@ -6,14 +6,14 @@ use lib\otra\console\TasksManager;
 if (defined('BASE_PATH') === false)
 {
   define('BASE_PATH', realpath(__DIR__ . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /;
-  define('CORE_PATH', BASE_PATH . 'src/otra/');
+  define('CORE_PATH', BASE_PATH . 'src/');
   define('SPACE_INDENT', '  ');
 
   $pathToClassMap = BASE_PATH . 'cache/php/ClassMap.php';
 
   // Generating the class map if needed
   if (file_exists($pathToClassMap) === false)
-    require BASE_PATH . 'src/otra/console/deployment/genClassMap/genClassMapTask.php';
+    require BASE_PATH . 'src/console/deployment/genClassMap/genClassMapTask.php';
 
   // loading the class map
   require $pathToClassMap;
@@ -26,7 +26,7 @@ if (defined('BASE_PATH') === false)
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH . 'src/otra/console', \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH . 'src/console', \FilesystemIterator::SKIP_DOTS);
 $iterator = new \RecursiveIteratorIterator($dir_iterator);
 
 $helpFileContent = [];

@@ -1,4 +1,4 @@
-[Home](README.md) / Installation
+[Home](../README.md) / Installation
 
 ## Installation
 

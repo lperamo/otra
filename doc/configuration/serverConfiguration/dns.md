@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / DNS
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / DNS
 
 ### Configuring DNS
 

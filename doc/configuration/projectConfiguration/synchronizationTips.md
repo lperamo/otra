@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Project configuration](../projectConfiguration.md) / Synchronization tips
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Project configuration](../projectConfiguration.md) / Synchronization tips
 
 Previous section : [Watching files](watchingFiles.md)
 

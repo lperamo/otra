@@ -166,7 +166,7 @@ class Controller extends MasterController
       'bundle_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
       'module_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
       '_' . $assetType => $debLink . $this->viewResourcePath[$assetType],
-      'core_' . $assetType => $debLink . '/src/otra/resources/' . $assetType . '/'
+      'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
     ];
 
     // For each kind of JS file, we will looks for them in their respective folders

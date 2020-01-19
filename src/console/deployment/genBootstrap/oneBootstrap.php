@@ -5,8 +5,8 @@ use config\AllConfig;
 
 $verbose = $argv[1];
 $route = $argv[2];
-define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) - strlen('src/otra/console/deployment/genBootstrap'))); // Fixes windows awful __DIR__, BASE_PATH ends with /.
-define('CORE_PATH', BASE_PATH . 'src/otra/');
+define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) - strlen('src/console/deployment/genBootstrap'))); // Fixes windows awful __DIR__, BASE_PATH ends with /.
+define('CORE_PATH', BASE_PATH . 'src/');
 require CORE_PATH . 'console/colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;

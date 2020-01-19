@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / PHP requirements
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / PHP requirements
 
 #### PHP requirements
 

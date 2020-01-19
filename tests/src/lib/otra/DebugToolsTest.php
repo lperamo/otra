@@ -9,7 +9,7 @@ class DebugToolsTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/';
   const DUMP_STRING = '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':';
-  const DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/otra/debugTools.php:71:';
+  const DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:71:';
   const DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   protected function setUp(): void

@@ -6,7 +6,7 @@ define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
 
 define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('CORE_PATH', BASE_PATH . 'src/otra/');
+define('CORE_PATH', BASE_PATH . 'src/');
 $_SERVER['APP_ENV'] = 'prod';
 
 // Loads the main configuration
@@ -32,7 +32,7 @@ spl_autoload_register(function ($className)
 
 // Loads router and compression tools
 require CORE_PATH . 'Router.php';
-require BASE_PATH . '/src/otra/tools/Compression.php';
+require BASE_PATH . '/src/tools/Compression.php';
 
 $_SERVER['REQUEST_URI'] = \lib\otra\Router::getRouteUrl(ARG_SITE_ROUTE);
 

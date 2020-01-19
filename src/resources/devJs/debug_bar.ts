@@ -100,7 +100,7 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
     if (null === profilerlightbox && u === window['LIB_LIGHTBOX'])
     {
       const s = d.createElement('script');
-      s.src = '/src/otra/core/js/lightbox.js';
+      s.src = '/src/core/js/lightbox.js';
       s.id = 'profiler-light-box';
       s.onload = initLightBox;
 

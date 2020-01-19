@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / CLI requirements
+[Home](../../../README.md) / [Installation](../projectConfiguration.md) / [Server configuration](../serverConfiguration.md) / CLI requirements
 
 #### Command line requirements
 

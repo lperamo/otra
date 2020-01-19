@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Installation](../../configuration.md) / [Project configuration](../projectConfiguration.md) / Main configuration files
+[Home](../../../README.md) / [Installation](../../configuration.md) / [Project configuration](../projectConfiguration.md) / Main configuration files
 
 #### Main configuration files
 

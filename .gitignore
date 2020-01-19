@@ -1,12 +1,12 @@
 /bundles
-/cache/*
+/cache
 /cert/*
 /logs/**
 !/logs/
 !/logs/dev/
 !/logs/prod/
 !**.gitkeep
-/src/otra/console/closure-compiler.log
+/src/console/closure-compiler.log
 .idea
 **/tests/coverageHtml
 **/tests/coverage.xml
