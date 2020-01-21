@@ -12,9 +12,16 @@
       "homepage": "https://wexample.com"
     }
   ],
+  "config": {
+    "sort-packages": true
+  },
   "require": {
+    "ext-mbstring": "*",
     "php": ">=7.4.0",
     "symfony/yaml": "^4.0"
+  },
+  "require-dev": {
+    "ext-pdo_mysql": "*"
   },
   "scripts": {
     "test": "php vendor/otra/otra/src/postPackageUpdate.php"
