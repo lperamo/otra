@@ -2,10 +2,7 @@
 
 #### PHP requirements
 
-You also need to activate some libraries as :
-
-- mbstring 
-- inotify
+You also need to activate the library `inotify`.
 
 `Inotify` is a PECL extension that will allow OTRA to create file watchers.
 To install `inotify`, you will need `PEAR` and some development dependencies like `phpsize` (`phpize`) :

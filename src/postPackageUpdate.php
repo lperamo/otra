@@ -1,10 +1,12 @@
 <?php
+define('RELATIVE_PATH_LENGTH', 21); // length of vendor/otra/otra/src/
 // Fixes windows awful __DIR__. The path finishes with /
-define('RELATIVE_PATH_LENGTH', 21);
 define(
   'BASE_PATH',
   substr( str_replace('\\', '/', __DIR__) . '/', 0, -RELATIVE_PATH_LENGTH)
 );
+
+echo '***', BASE_PATH, '***', PHP_EOL;
 
 $binFolderPath = BASE_PATH . 'bin/';
 
