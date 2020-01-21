@@ -12,7 +12,9 @@
       "homepage": "https://wexample.com"
     }
   ],
+  "bin" : ["otra.php"],
   "config": {
+    "bin-dir" : "bin",
     "sort-packages": true
   },
   "require": {
