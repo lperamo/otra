@@ -23,18 +23,24 @@ abstract class TasksManager
    */
   public static function showCommands(string $message)
   {
+    // We check if the help and task class map is present, if not ... generate it.
+    // In fact, we also generate shell completions... for now.
+    $tasksHelpPath = BASE_PATH . 'cache/php/tasksHelp.php';
+
+    if (file_exists($tasksHelpPath) === false)
+    {
+      echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
+      require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+      echo 'Now we can continue as planned.', PHP_EOL;
+    }
+
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
-    $tasksHelpPath = BASE_PATH . 'cache/php/tasksHelp.php';
-
-    if (file_exists($tasksHelpPath) === true)
-      $methods = require BASE_PATH . 'cache/php/tasksHelp.php';
-    else
-      require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+    $methods = require CACHE_PATH . 'php/tasksHelp.php';
 
     $category = '';
 
