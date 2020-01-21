@@ -15,5 +15,8 @@
   "require": {
     "php": ">=7.4.0",
     "symfony/yaml": "^4.0"
+  },
+  "scripts": {
+    "test": "php vendor/otra/otra/src/postPackageUpdate.php"
   }
 }
