@@ -7,7 +7,7 @@ define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
 require BASE_PATH . 'src/entryPoint.php';
 
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
-define('VERSION', 'V1.0.0-alpha.2.0.2');
+define('VERSION', 'V1.0.0-alpha.2.0.3');
 define('CORE_PATH', BASE_PATH . 'src/'); // Ends with /
 
 try

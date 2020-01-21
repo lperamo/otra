@@ -26,5 +26,5 @@ foreach($by as $key => &$character)
 
 echo str_repeat(' ', 20), PHP_EOL,
   str_repeat(' ', 60), PHP_EOL,
-  str_repeat(' ', 40), CLI_WHITE, CLI_BGD_LIGHT_BLACK, 'Version 1.0.0-alpha.2.0.2', END_COLOR, PHP_EOL;
+  str_repeat(' ', 40), CLI_WHITE, CLI_BGD_LIGHT_BLACK, 'V1.0.0-alpha.2.0.3', END_COLOR, PHP_EOL;
 ?>
