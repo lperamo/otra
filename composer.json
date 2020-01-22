@@ -24,8 +24,5 @@
   },
   "require-dev": {
     "ext-pdo_mysql": "*"
-  },
-  "scripts": {
-    "test": "php vendor/otra/otra/src/postPackageUpdate.php"
   }
 }
