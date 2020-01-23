@@ -21,7 +21,12 @@ class AllConfigTest extends TestCase
   public function testAllConfig_ExternalConfig() : void
   {
     // context
-    $externalConfigFilePath = BASE_PATH . 'bundles/config/Config.php';
+    $externalConfigFileFolder = BASE_PATH . 'bundles/config/';
+
+    if (file_exists($externalConfigFileFolder) === false)
+      mkdir($externalConfigFileFolder, 0777, true);
+
+    $externalConfigFilePath = $externalConfigFileFolder . 'Config.php';
     $externalConfigFileCreated = false;
 
     // If there is not already an external file present then we create it temporarily
@@ -37,5 +42,12 @@ class AllConfigTest extends TestCase
     // cleanup if needed
     if ($externalConfigFileCreated === true)
       unlink($externalConfigFilePath);
+
+    // we clean the folders bundles and bundles/config only if we are working on the framework, not with.
+    if (OTRA_PROJECT === false)
+    {
+      rmdir($externalConfigFileFolder);
+      rmdir(BASE_PATH . 'bundles');
+    }
   }
 }
