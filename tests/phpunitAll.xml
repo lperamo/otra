@@ -26,10 +26,10 @@
   </testsuites>
   <filter>
     <whitelist addUncoveredFilesFromWhitelist="false">
-      <directory suffix=".php">../../../</directory>
-      <directory suffix=".php">../../../bundles/*</directory>
-      <directory suffix=".php">../../../lib/otra/</directory>
-      <directory suffix=".php">../../../web/</directory>
+      <directory suffix=".php">../</directory>
+      <directory suffix=".php">../bundles/*</directory>
+      <directory suffix=".php">../src/</directory>
+      <directory suffix=".php">../web/</directory>
       <exclude>
         <directory>./</directory>
         <directory>./bundles/</directory>
@@ -39,7 +39,6 @@
         <directory>../cache</directory>
         <directory>../logs</directory>
         <directory>./coverageHtml</directory>
-        <directory>../lib/otra/Sf2Yaml</directory>
       </exclude>
     </whitelist>
   </filter>
