@@ -9,10 +9,24 @@ use phpunit\framework\TestCase;
 class LoggerTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/';
+  private static string $LOGS_PROD_PATH;
 
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
+
+    if (file_exists(self::$LOGS_PROD_PATH) === false)
+      mkdir(self::$LOGS_PROD_PATH, 0777, true);
+  }
+
+  protected function tearDown(): void
+  {
+    if (OTRA_PROJECT === false)
+    {
+      rmdir(self::$LOGS_PROD_PATH);
+      rmdir(self::LOG_PATH);
+    }
   }
 
   /**
@@ -22,10 +36,15 @@ class LoggerTest extends TestCase
   {
     require CORE_PATH . 'debugTools.php';
     Logger::log('[OTRA_LOGGER_TEST]');
+    $logFile = self::$LOGS_PROD_PATH . '/log.txt';
     $this->assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
-      tailCustom(self::LOG_PATH . $_SERVER['APP_ENV'] . '/log.txt', 1)
+      tailCustom($logFile, 1)
     );
+
+    // cleaning
+    if (OTRA_PROJECT === false)
+      unlink($logFile);
   }
 
   /**
@@ -36,7 +55,7 @@ class LoggerTest extends TestCase
     // context
     require CORE_PATH . 'debugTools.php';
     $path = 'logs/otraTests/';
-    $logCustomFolder = '../../' . $path;
+    $logCustomFolder = '../' . $path;
     define('LOG_FILENAME', 'log.txt');
     $absolutePathToFolder = BASE_PATH . $path;
     mkdir($absolutePathToFolder);

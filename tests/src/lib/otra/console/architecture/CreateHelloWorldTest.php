@@ -25,7 +25,12 @@ class CreateHelloWorldTest extends TestCase
 
   protected function tearDown(): void
   {
-    self::delTree(self::HELLO_WORLD_BUNDLE_PATH);
+    // cleaning
+    if (OTRA_PROJECT === false)
+    {
+      self::delTree(self::HELLO_WORLD_BUNDLE_PATH);
+      rmdir(BASE_PATH  .'bundles');
+    }
   }
 
   /**
@@ -82,6 +87,13 @@ class CreateHelloWorldTest extends TestCase
       'createHelloWorld',
       ['otra.php', 'createHelloWorld']
     );
+
+    // cleaning
+    if (OTRA_PROJECT === false)
+    {
+      unlink(BASE_PATH . 'bundles/config/Routes.php');
+      rmdir(BASE_PATH . 'bundles/config');
+    }
   }
   /**
    * @author Lionel Péramo
@@ -90,12 +102,11 @@ class CreateHelloWorldTest extends TestCase
   {
     // context
     $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
-    mkdir(self::HELLO_WORLD_BUNDLE_PATH);
+    mkdir(self::HELLO_WORLD_BUNDLE_PATH, 0777, true);
 
     // testing
     $this->expectOutputString(CLI_YELLOW . 'The bundle ' . CLI_CYAN . 'HelloWorld' . CLI_YELLOW . ' already exists.' . END_COLOR . PHP_EOL);
     $this->expectException(\lib\otra\OtraException::class);
-
 
     // launching
     TasksManager::execute(

@@ -11,13 +11,13 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
  */
 class DatabaseTest extends TestCase
 {
-  const TEST_CONFIG_PATH = CORE_PATH . 'tests/config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = CORE_PATH . 'tests/config/AllConfigGood.php';
+  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
   protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
   private static
-    $configFolder = CORE_PATH . 'tests/src/bundles/HelloWorld/config/data/',
-    $configBackupFolder = CORE_PATH . 'tests/config/data/',
+    $configFolder = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
+    $configBackupFolder = TEST_PATH . 'config/data/',
     $databaseConnection = 'test',
     $databaseFirstTableName = 'testDB_table',
     $databaseName = 'testDB',
@@ -45,7 +45,7 @@ class DatabaseTest extends TestCase
   {
     $_SERVER['APP_ENV'] = 'prod';
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
-    removeFieldScopeProtection(Database::class, 'folder')->setValue('src/tests/src/bundles/');
+    removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
     self::$configFolderSqlBackup = self::$configBackupFolder . 'sqlBackup/';
     self::$configFolderSqlFixtures = self::$configFolderSql . 'fixtures/';
