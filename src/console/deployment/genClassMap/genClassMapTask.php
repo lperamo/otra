@@ -6,7 +6,8 @@
 $dirs = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',
-  BASE_PATH . 'src'
+  BASE_PATH . 'src',
+  BASE_PATH . 'vendor'
 ];
 $classes = [];
 $processedDir = 0;
