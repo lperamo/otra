@@ -1,7 +1,8 @@
 <?php
 // Fixes windows awful __DIR__
 define('_DIR_', str_replace('\\', '/', __DIR__));
-define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false); // if true, we are not developing on OTRA itself
+// if true, we are not developing on OTRA itself
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
 // The path finishes with /
 define(
   'BASE_PATH',
