@@ -1,7 +1,29 @@
 <?php
-define ('_DIR_', str_replace('\\', '/', __DIR__));
-define('BASE_PATH', substr(_DIR_, 0, strpos(_DIR_, 'otra')) . 'otra/'); // Ends with /
-define('CORE_PATH', BASE_PATH . 'src/');
+// Fixes windows awful __DIR__
+define('_DIR_', str_replace('\\', '/', __DIR__));
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false); // if true, we are not developing on OTRA itself
+// The path finishes with /
+define(
+  'BASE_PATH',
+  OTRA_PROJECT === true
+    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
+    : realpath(_DIR_ . '/..') . '/'
+);
+
+define(
+  'CORE_PATH',
+  OTRA_PROJECT === true
+    ? BASE_PATH . 'vendor/otra/otra/src/'
+    : BASE_PATH . 'src/'
+);
+
+define(
+  'TEST_PATH',
+  OTRA_PROJECT === true
+    ? BASE_PATH . 'vendor/otra/otra/tests/'
+    : BASE_PATH . 'tests/'
+);
+
 require BASE_PATH . 'cache/php/ClassMap.php';
 
 spl_autoload_register(function(string $className)
