@@ -1,7 +1,7 @@
 <?php
 
 use phpunit\framework\TestCase;
-use lib\otra\{bdd\Sql,OtraException};
+use src\{bdd\Sql,OtraException};
 
 /**
  * @runTestsInSeparateProcesses

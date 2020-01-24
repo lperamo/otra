@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\{console\OtraExceptionCLI, OtraException};
+use src\{console\OtraExceptionCLI, OtraException};
 use phpunit\framework\TestCase;
 
 /**

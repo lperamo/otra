@@ -9,26 +9,29 @@ class DebugToolsTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:71:',
+    DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:72:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   private static string $LOGS_PROD_PATH;
 
-  protected function setUp(): void
+  public static function setUpBeforeClass(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
 
-    require CORE_PATH . 'debugTools.php';
+    // @TODO we should be able to do a simple require and not require_once
+    require_once CORE_PATH . 'debugTools.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);
   }
 
-  protected function tearDown(): void
+  public static function tearDownAfterClass(): void
   {
     if (OTRA_PROJECT === false)
     {
+      /* @TODO those lines generates PHP warnings with PHPUnit ...
+       * no reasons for that as this code must be executed only once ! */
       rmdir(self::$LOGS_PROD_PATH);
       rmdir(self::LOG_PATH);
     }
@@ -117,8 +120,6 @@ class DebugToolsTest extends TestCase
         false,
         $arrayToTest
       );
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   /**
@@ -142,8 +143,6 @@ class DebugToolsTest extends TestCase
       false,
       $arrayToTest
     );
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   public function testDump_MaxDataTrueMaxChildrenTrue() : void
@@ -164,8 +163,6 @@ class DebugToolsTest extends TestCase
       true,
       $arrayToTest
     );
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   /**
