@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\otra;
+namespace src;
 
-use lib\otra\{Controller, console\OtraExceptionCLI};
+use src\{Controller, console\OtraExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
@@ -100,7 +100,7 @@ class OtraException extends \Exception
     );
     $renderController->viewPath = CORE_VIEWS_PATH;
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-//    dump(true, true, $this->context['exception']);die;
+
     if (false === empty($this->context))
     {
       unset($this->context['variables']);

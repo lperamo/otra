@@ -41,4 +41,4 @@ spl_autoload_register(function(string $className)
 });
 
 require CORE_PATH . 'console/colors.php';
-require CORE_PATH . 'tools/RemoveFieldProtection.php';
+require CORE_PATH . 'tools/removeFieldProtection.php';

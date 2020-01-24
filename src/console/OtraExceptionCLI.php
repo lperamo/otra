@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\otra\console;
+namespace src\console;
 
-use lib\otra\OtraException;
+use src\OtraException;
 
 /**
  * Shows an exception 'colorful' display for command line commands.
@@ -34,7 +34,7 @@ class OtraExceptionCLI extends \Exception
     $exception->message = preg_replace('/\<br\s*\/?\>/i', '', $exception->message);
 
     self::showMessage($exception);
-//    require(BASE_PATH . 'src\otra\views\exceptionConsole.phtml');
+//    require(CORE_PATH . 'views\exceptionConsole.phtml');
   }
 
   /**

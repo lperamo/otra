@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\console\TasksManager;
+use src\console\TasksManager;
 
 return [
   'Deploy the site. ' . CLI_YELLOW . '[WIP - Do not use yet !]' . END_COLOR,

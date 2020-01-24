@@ -2,7 +2,7 @@
 /** Description of Session
  *
  * @author Lionel Péramo */
-namespace lib\otra;
+namespace src;
 
 class Session
 {

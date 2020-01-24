@@ -1,7 +1,7 @@
 <?php
 /* Light templating engine */
 
-use lib\otra\MasterController;
+use src\MasterController;
 
 // those functions can be redeclared if we have an exception later, exception that will also use the block system
 if (function_exists('block') === false)

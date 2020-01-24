@@ -5,7 +5,7 @@
  * @author Lionel Péramo
  */
 
-namespace lib\otra\services;
+namespace src\services;
 
 class ProfilerService
 {
@@ -27,7 +27,7 @@ class ProfilerService
     {
       $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
 
-      require CORE_PATH . 'tools/SqlPrettyPrint.php';
+      require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
       foreach($requests as &$r)
       {

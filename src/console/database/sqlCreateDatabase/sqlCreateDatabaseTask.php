@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\console\Database;
+use src\console\Database;
 
 Database::createDatabase(
   $argv[2],

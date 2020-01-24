@@ -36,7 +36,7 @@ spl_autoload_register(function ($className)
   if (false === isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \lib\otra\Logger::logTo(
+    \src\Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),
@@ -48,9 +48,9 @@ spl_autoload_register(function ($className)
 
 // Loads router and compression tools
 require CORE_PATH . 'Router.php';
-require BASE_PATH . '/src/tools/Compression.php';
+require BASE_PATH . '/src/tools/compression.php';
 
-$_SERVER['REQUEST_URI'] = \lib\otra\Router::getRouteUrl(ARG_SITE_ROUTE);
+$_SERVER['REQUEST_URI'] = \src\Router::getRouteUrl(ARG_SITE_ROUTE);
 
 // NEEDED ONLY FOR the 'template', function needed because this function is not part of main controllers
 // Otherwise the templates cannot execute this translation function.
@@ -69,7 +69,7 @@ session_start([
 ]);
 
 // We launch the route
-\lib\otra\Router::get(ARG_SITE_ROUTE);
+\src\Router::get(ARG_SITE_ROUTE);
 $content = ob_get_clean();
 
 // We restore the error reporting
