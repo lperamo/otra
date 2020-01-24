@@ -30,6 +30,15 @@ $_SERVER['APP_ENV'] = 'prod';
 require CORE_PATH . 'console/TasksManager.php';
 require CORE_PATH . 'console/colors.php';
 
+// We check if the help and task class map is present, if not ... generate it.
+// In fact, we also generate shell completions... for now.
+if (file_exists(CACHE_PATH . 'php/tasksHelp.php') === false)
+{
+  echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
+  require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+  echo 'Now we can continue as planned.', PHP_EOL;
+}
+
 if (exec('whoami') === 'root')
 {
   echo CLI_RED, 'You should not be root to execute this ! It will probably change the rights of your files and folders.',
