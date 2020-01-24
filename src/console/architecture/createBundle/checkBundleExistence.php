@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\otra\console;
+namespace src\console;
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';

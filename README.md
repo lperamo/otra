@@ -31,7 +31,8 @@ This framework uses :
 - the Google Closure Compiler ([Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0))
 
 Here are the main topics :
- 
+
+- [Installation](doc/installation.md)
 - [Configuration](doc/configuration.md "Server configuration (Apache/Nginx) and project configuration")
 - [Cache management](doc/cacheManagement.md)
 - [Generating all you needed](doc/codeGeneration.md "Routes, class mapping generation, PHP optimization and optimized assets generation")

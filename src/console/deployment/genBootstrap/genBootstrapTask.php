@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace lib\otra\console;
+namespace src\console;
 
 $verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 
@@ -11,7 +11,7 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
   // Re-execute our task now that we have a correct class mapping
-  require CORE_PATH . 'tools/Cli.php';
+  require CORE_PATH . 'tools/cli.php';
 
   list($status, $return) = cli(PHP_BINARY . ' ./otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
   echo $return;

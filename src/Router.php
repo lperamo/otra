@@ -4,7 +4,7 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\otra;
+namespace src;
 
 use config\Routes;
 

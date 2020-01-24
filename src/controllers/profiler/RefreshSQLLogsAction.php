@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 
-namespace lib\otra\controllers\profiler;
+namespace src\controllers\profiler;
 
-use lib\otra\{Controller, services\ProfilerService};
+use src\{Controller, services\ProfilerService};
 
 class RefreshSQLLogsAction extends Controller
 {

@@ -1,17 +1,17 @@
 <?php
 
 use phpunit\framework\TestCase;
-use lib\otra\{bdd\Sql,OtraException};
+use src\{bdd\Sql,OtraException};
 
 /**
  * @runTestsInSeparateProcesses
  */
 class SqlTest extends TestCase
 {
-  const TEST_CONFIG_PATH = CORE_PATH . 'tests/config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = CORE_PATH . 'tests/config/AllConfigGood.php';
-  const TEST_CONFIG_BAD_DRIVER_PATH = CORE_PATH . 'tests/config/AllConfigBadDriver.php';
-  const TEST_CONFIG_NO_DEFAULT_CONNECTION = CORE_PATH . 'tests/config/AllConfigNoDefaultConnection.php';
+  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+  const TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php';
+  const TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
   const LOG_PATH = BASE_PATH . 'logs/';
 
   private static string $databaseName = 'testDB';
@@ -175,16 +175,31 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
     $_SERVER['APP_ENV'] = 'dev';
 
+    $devLogFolder = self::LOG_PATH . 'dev/';
+
+    if (file_exists($devLogFolder) === false)
+      mkdir($devLogFolder, 0777, true);
+
+    $sqlLogPath = $devLogFolder . 'sql.txt';
+
+    if (file_exists($sqlLogPath) === false)
+      touch($sqlLogPath);
+
     // launching task
     Sql::getDB();
-    $sqlLogPath = self::LOG_PATH . 'dev/sql.txt';
     $sqlLogContent = file_get_contents($sqlLogPath);
     $this->assertInstanceOf(\PDOStatement::class, Sql::$instance->query('SELECT 1'));
     $this->assertEquals(
       $sqlLogContent
-        . '{"file":"phar:///var/www/html/src/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
+        . '[{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
+
+    if (OTRA_PROJECT === false)
+    {
+      unlink($sqlLogPath);
+      rmdir($devLogFolder);
+    }
   }
 
   /**

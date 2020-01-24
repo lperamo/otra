@@ -5,13 +5,13 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace lib\otra\console {
+namespace src\console {
 
-  use lib\otra\bdd\Sql;
+  use src\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
-  use lib\otra\{Session, OtraException};
+  use src\{Session, OtraException};
 
   abstract class Database
   {

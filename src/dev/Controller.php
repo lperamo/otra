@@ -4,10 +4,10 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\otra;
+namespace src;
 
 use config\{AllConfig, Routes};
-use lib\otra\{Logger, MasterController};
+use src\{Logger, MasterController};
 
 class Controller extends MasterController
 {

@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\console\TasksManager;
+use src\console\TasksManager;
 
 return [
   'Launches a watcher that will update the PHP class mapping, the ts files and the scss files.',

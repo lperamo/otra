@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\console\TasksManager;
+use src\console\TasksManager;
 
 define('HELP_TASK', 2);
 $task = $argv[HELP_TASK];

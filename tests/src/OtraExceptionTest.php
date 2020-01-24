@@ -1,6 +1,6 @@
 <?php
 
-use lib\otra\OtraException;
+use src\OtraException;
 use phpunit\framework\TestCase;
 
 /**
@@ -8,9 +8,35 @@ use phpunit\framework\TestCase;
  */
 class OtraExceptionTest extends TestCase
 {
+  const BUNDLES_FOLDER = BASE_PATH . 'bundles/';
+  const BUNDLES_CONFIG_FOLDER = self::BUNDLES_FOLDER . 'config/';
+  const BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
+
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
+
+    // Adding test bundle routes config in "bundles/config" if nothing exists
+    if (file_exists(self::BUNDLES_CONFIG_FOLDER) === false)
+    {
+      mkdir(self::BUNDLES_CONFIG_FOLDER, 0777, true);
+      file_put_contents(
+        self::BUNDLES_CONFIG_ROUTES,
+        '<?php return []; ?>'
+        //return ['HelloWorld'=>['chunks'=>['/helloworld','HelloWorld','frontend','index','HomeAction'],'resources'=>['template'=> true ]]];
+      );
+    }
+  }
+
+  protected function tearDown(): void
+  {
+    // If we are working on the framework itself
+    if (OTRA_PROJECT === false)
+    {
+      unlink(self::BUNDLES_CONFIG_ROUTES);
+      rmdir(self::BUNDLES_CONFIG_FOLDER);
+      rmdir(self::BUNDLES_FOLDER);
+    }
   }
 
   /**

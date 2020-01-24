@@ -1,9 +1,9 @@
 <?php
 
-namespace lib\otra;
+namespace src;
 
 use config\AllConfig;
-use lib\otra\Session;
+use src\Session;
 
 /**
  * A classic MVC model class
@@ -26,7 +26,7 @@ abstract class Model
   public function save()
   {
     $dbName = Session::get('db');
-    /* @var $db \lib\otra\bdd\Sql */
+    /* @var $db \src\bdd\Sql */
     $db = Session::get('dbConn');
 
     $refl = new \ReflectionObject($this);

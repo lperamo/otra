@@ -1,4 +1,10 @@
 <?php
+
+if (file_exists(BASE_PATH . 'bundles/config/Routes.php') === false)
+{
+  echo CLI_YELLOW, 'No custom routes are defined.', END_COLOR, PHP_EOL;
+  throw new \src\OtraException('', 1, '', NULL, [], true);
+}
 /** Task that show all or one of the routes available for the application.
  * It shows for each related route :
  * - the url

@@ -1,11 +1,15 @@
 <?php
+
+define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
+define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
+
 /**
  * @param string $message
  */
 function lg(string $message) : void
 {
   require_once CORE_PATH . 'Logger.php';
-  lib\otra\Logger::logTo($message, 'trace');
+  src\Logger::logTo($message, 'trace');
 }
 
 /**
@@ -20,17 +24,14 @@ function lg(string $message) : void
 
 function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
 {
-
   if (true === $maxData)
   {
-    define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
     $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
     ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
   }
 
   if (true === $maxChildren)
   {
-    define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
     $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
     ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, -1);
   }
@@ -144,9 +145,9 @@ function getArgumentType(&$index, &$value)
   switch($index)
   {
     case 0:
-      if (true === is_int($value) && true === isset(lib\otra\OtraException::$codes[$value]))
+      if (true === is_int($value) && true === isset(src\OtraException::$codes[$value]))
       {
-        $value = lib\otra\OtraException::$codes[$value];
+        $value = src\OtraException::$codes[$value];
         return 'Error type';
       }
 

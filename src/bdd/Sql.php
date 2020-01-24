@@ -3,9 +3,9 @@
  *
  * @author Lionel Péramo */
 
-namespace lib\otra\bdd;
+namespace src\bdd;
 
-use lib\otra\{ OtraException, Logger };
+use src\{ OtraException, Logger };
 use config\AllConfig;
 
 class Sql

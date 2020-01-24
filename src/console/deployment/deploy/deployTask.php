@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace lib\otra\console;
+namespace src\console;
 
 $mode = (isset($argv[2]) === true) ? (int) $argv[2] : 0;
 $verbose = (isset($argv[3]) === true) ? (int) $argv[3] : 0;

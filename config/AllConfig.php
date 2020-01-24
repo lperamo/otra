@@ -5,7 +5,9 @@
  * @author Lionel Péramo */
 
 namespace config;
-define('CACHE_PATH', BASE_PATH . 'cache/');
+
+if (defined('CACHE_PATH') === false)
+  define('CACHE_PATH', BASE_PATH . 'cache/');
 
 // Framework core resources
 define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
