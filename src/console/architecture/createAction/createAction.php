@@ -45,7 +45,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     '<?php
 namespace bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName . ';
 
-use src\otra\Controller;
+use src\Controller;
 
 class ' . $upperActionName . 'Action extends Controller
 {

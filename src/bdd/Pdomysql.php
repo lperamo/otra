@@ -4,8 +4,8 @@
  *
  * @author Lionel Péramo */
 
-namespace lib\otra\bdd;
-use lib\otra\OtraException;
+namespace src\bdd;
+use src\OtraException;
 use PDO, PDOStatement;
 
 class Pdomysql

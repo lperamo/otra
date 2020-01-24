@@ -7,15 +7,34 @@ use phpunit\framework\TestCase;
  */
 class DebugToolsTest extends TestCase
 {
-  const LOG_PATH = BASE_PATH . 'logs/';
-  const DUMP_STRING = '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':';
-  const DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:71:';
-  const DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
+  const LOG_PATH = BASE_PATH . 'logs/',
+    DUMP_STRING = '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':',
+    DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:72:',
+    DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
-  protected function setUp(): void
+  private static string $LOGS_PROD_PATH;
+
+  public static function setUpBeforeClass(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    require CORE_PATH . 'debugTools.php';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
+
+    // @TODO we should be able to do a simple require and not require_once
+    require_once CORE_PATH . 'debugTools.php';
+
+    if (file_exists(self::$LOGS_PROD_PATH) === false)
+      mkdir(self::$LOGS_PROD_PATH, 0777, true);
+  }
+
+  public static function tearDownAfterClass(): void
+  {
+    if (OTRA_PROJECT === false)
+    {
+      /* @TODO those lines generates PHP warnings with PHPUnit ...
+       * no reasons for that as this code must be executed only once ! */
+      rmdir(self::$LOGS_PROD_PATH);
+      rmdir(self::LOG_PATH);
+    }
   }
 
   /**
@@ -26,10 +45,14 @@ class DebugToolsTest extends TestCase
   public function testLg() : void
   {
     lg('[OTRA_TEST_DEBUG_TOOLS_LG]');
+    $traceLogFile = self::LOG_PATH . $_SERVER['APP_ENV'] . '/trace.txt';
     $this->assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
-      tailCustom(self::LOG_PATH . $_SERVER['APP_ENV'] . '/trace.txt', 1)
+      tailCustom($traceLogFile, 1)
      );
+
+    // cleaning
+    unlink($traceLogFile);
   }
 
   /**
@@ -97,8 +120,6 @@ class DebugToolsTest extends TestCase
         false,
         $arrayToTest
       );
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   /**
@@ -122,8 +143,6 @@ class DebugToolsTest extends TestCase
       false,
       $arrayToTest
     );
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertFalse(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   public function testDump_MaxDataTrueMaxChildrenTrue() : void
@@ -144,8 +163,6 @@ class DebugToolsTest extends TestCase
       true,
       $arrayToTest
     );
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_DATA'));
-    $this->assertTrue(defined('XDEBUG_VAR_DISPLAY_MAX_CHILDREN'));
   }
 
   /**
@@ -162,7 +179,7 @@ class DebugToolsTest extends TestCase
    */
   public function testTailCustom() : void
   {
-    self::assertEquals('world', tailCustom(CORE_PATH . 'tests/testTail.txt', 1));
+    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTail.txt', 1));
   }
 
   /**
@@ -172,7 +189,7 @@ class DebugToolsTest extends TestCase
    */
   public function testTailCustom_NoEndBlankLine() : void
   {
-    self::assertEquals('world', tailCustom(CORE_PATH . 'tests/testTailNoEndBlankLine.txt', 1));
+    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt', 1));
   }
 
   /**

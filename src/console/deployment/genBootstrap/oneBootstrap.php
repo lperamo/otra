@@ -74,7 +74,7 @@ require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = BASE_PATH . str_replace(
     '\\',
     '/',
-    \lib\otra\Router::get(
+    \src\Router::get(
       $route,
       (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
       false
@@ -94,7 +94,7 @@ define(
 );
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
-  throw new \lib\otra\OtraException($message, $errno, $file, $line, $context);
+  throw new \src\OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];

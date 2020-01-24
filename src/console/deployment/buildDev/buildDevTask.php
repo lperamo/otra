@@ -1,11 +1,11 @@
 <?php
 
-namespace lib\otra\console;
+namespace src\console;
 
 use SebastianBergmann\CodeCoverage\Report\PHP;
 
 require BASE_PATH . 'config/Routes.php';
-require CORE_PATH . 'tools/Cli.php';
+require CORE_PATH . 'tools/cli.php';
 
 const BUILD_DEV_ARG_VERBOSE = 2,
       BUILD_DEV_ARG_MASK = 3,

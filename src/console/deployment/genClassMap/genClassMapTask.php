@@ -6,7 +6,8 @@
 $dirs = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',
-  BASE_PATH . 'src'
+  BASE_PATH . 'src',
+  BASE_PATH . 'vendor'
 ];
 $classes = [];
 $processedDir = 0;
@@ -148,7 +149,7 @@ foreach($classes as $key => &$class)
     $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
-    if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src/otra') === false)
+    if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
       $prodClasses [$key] = $class;
   } else
     $prodClasses [$key]= $class;

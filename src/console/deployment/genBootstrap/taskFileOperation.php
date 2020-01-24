@@ -187,7 +187,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
         $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
         $classToReplace = $beginString . str_replace(' ', '', $lastChunk);
 
-        // simplifies the usage of classes by passing from FQCN to class name ... src\otra\bdd\Sql => Sql
+        // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
         str_replace($classToReplace, $lastChunk, $contentToAdd);
 
         // We analyze the use statement in order to retrieve the name of each class which is included in it.
@@ -205,20 +205,20 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
             $classToReplace = $chunk;
             $tempChunks = explode('\\', $classToReplace);
 
-            // simplifies the usage of classes by passing from FQCN to class name ... src\otra\bdd\Sql => Sql
+            // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
             str_replace($classToReplace, array_pop($tempChunks), $contentToAdd);
           } else // case use xxx/xxx{xxx, XXX, xxx}; (notice the uppercase, it's where we are)
           {
             $classToReplace = $beginString . $chunk;
 
-            // simplifies the usage of classes by passing from FQCN to class name ... src\otra\bdd\Sql => Sql
+            // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
             str_replace($classToReplace, $chunk, $contentToAdd);
           }
         } else { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
           $lastChunk = substr($chunk, 0, -1);
           $classToReplace = $beginString . $lastChunk;
 
-          // simplifies the usage of classes by passing from FQCN to class name ... src\otra\bdd\Sql => Sql
+          // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
           str_replace($classToReplace, $lastChunk, $contentToAdd);
         }
 

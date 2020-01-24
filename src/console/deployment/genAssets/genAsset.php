@@ -5,8 +5,24 @@ define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
 
-define('BASE_PATH', realpath(str_replace('\\', '/', __DIR__) . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /
-define('CORE_PATH', BASE_PATH . 'src/');
+// Fixes windows awful __DIR__
+define('_DIR_', realpath(str_replace('\\', '/', __DIR__) . '/../../../../'));
+// if true, we are not developing on OTRA itself
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
+// The path finishes with /
+define(
+  'BASE_PATH',
+  OTRA_PROJECT === true
+    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
+    : _DIR_ . '/'
+);
+
+define(
+  'CORE_PATH',
+  OTRA_PROJECT === true
+    ? BASE_PATH . 'vendor/otra/otra/src/'
+    : BASE_PATH . 'src/'
+);
 $_SERVER['APP_ENV'] = 'prod';
 
 // Loads the main configuration
@@ -20,7 +36,7 @@ spl_autoload_register(function ($className)
   if (false === isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \lib\otra\Logger::logTo(
+    \src\Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),
@@ -32,9 +48,9 @@ spl_autoload_register(function ($className)
 
 // Loads router and compression tools
 require CORE_PATH . 'Router.php';
-require BASE_PATH . '/src/tools/Compression.php';
+require BASE_PATH . '/src/tools/compression.php';
 
-$_SERVER['REQUEST_URI'] = \lib\otra\Router::getRouteUrl(ARG_SITE_ROUTE);
+$_SERVER['REQUEST_URI'] = \src\Router::getRouteUrl(ARG_SITE_ROUTE);
 
 // NEEDED ONLY FOR the 'template', function needed because this function is not part of main controllers
 // Otherwise the templates cannot execute this translation function.
@@ -53,7 +69,7 @@ session_start([
 ]);
 
 // We launch the route
-\lib\otra\Router::get(ARG_SITE_ROUTE);
+\src\Router::get(ARG_SITE_ROUTE);
 $content = ob_get_clean();
 
 // We restore the error reporting

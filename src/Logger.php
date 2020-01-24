@@ -1,5 +1,5 @@
 <?php
-namespace lib\otra;
+namespace src;
 
 /** Simple logger class
  *

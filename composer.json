@@ -23,9 +23,7 @@
     "symfony/yaml": "^4.0"
   },
   "require-dev": {
+    "ext-pdo": "*",
     "ext-pdo_mysql": "*"
-  },
-  "scripts": {
-    "test": "php vendor/otra/otra/src/postPackageUpdate.php"
   }
 }

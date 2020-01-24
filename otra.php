@@ -2,23 +2,30 @@
 <?php
 declare(strict_types=1);
 
-use lib\otra\console\TasksManager;
+use src\console\TasksManager;
 
 // TODO Centralize those constants that are already defined in AllConfig...
-// Fixes windows awful __DIR__. The path finishes with /
+// Fixes windows awful __DIR__
+define('_DIR_', str_replace('\\', '/', __DIR__));
+// if true, we are not developing on OTRA itself
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
+// The path finishes with /
 define(
   'BASE_PATH',
-  str_replace('\\', '/', __DIR__) . '/'
+  OTRA_PROJECT === true
+    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
+    : _DIR_ . '/'
 );
+
 define(
   'CORE_PATH',
-  file_exists(BASE_PATH . 'vendor') === true
+  OTRA_PROJECT === true
     ? BASE_PATH . 'vendor/otra/otra/src/'
     : BASE_PATH . 'src/'
 );
 define('CACHE_PATH', BASE_PATH . 'cache/');
 define('SPACE_INDENT', '  ');
-$_SERVER['APP_ENV']= 'prod';
+$_SERVER['APP_ENV'] = 'prod';
 
 require CORE_PATH . 'console/TasksManager.php';
 require CORE_PATH . 'console/colors.php';

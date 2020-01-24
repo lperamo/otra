@@ -34,11 +34,11 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-use lib\otra\OtraException;
+use src\OtraException;
 set_error_handler([OtraException::class, 'errorHandler']);
 set_exception_handler([OtraException::class, 'exceptionHandler']);
 
-use lib\otra\Router;
+use src\Router;
 
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))

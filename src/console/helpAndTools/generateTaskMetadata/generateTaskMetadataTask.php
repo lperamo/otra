@@ -1,7 +1,7 @@
 <?php
 
 // If we do not come from the 'otra' command...
-use lib\otra\console\TasksManager;
+use src\console\TasksManager;
 
 if (defined('BASE_PATH') === false)
 {
@@ -26,7 +26,7 @@ if (defined('BASE_PATH') === false)
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH . 'src/console', \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new \RecursiveDirectoryIterator(CORE_PATH . 'console', \FilesystemIterator::SKIP_DOTS);
 $iterator = new \RecursiveIteratorIterator($dir_iterator);
 
 $helpFileContent = [];

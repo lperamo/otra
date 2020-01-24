@@ -1,7 +1,7 @@
 <?php
 
 use phpunit\framework\TestCase;
-use lib\otra\{bdd\Sql, OtraException};
+use src\{bdd\Sql, OtraException};
 
 /**
  * The majority of the code is already tested by SqlTest.php so we only test the remaining uncovered code.
@@ -10,10 +10,10 @@ use lib\otra\{bdd\Sql, OtraException};
  */
 class PdomysqlTest extends TestCase
 {
-  const TEST_CONFIG_PATH = CORE_PATH . 'tests/config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = CORE_PATH . 'tests/config/AllConfigGood.php';
-  const TEST_CONFIG_BAD_DRIVER_PATH = CORE_PATH . 'tests/config/AllConfigBadDriver.php';
-  const TEST_CONFIG_NO_DEFAULT_CONNECTION = CORE_PATH . 'tests/config/AllConfigNoDefaultConnection.php';
+  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
+  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+  const TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php';
+  const TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
   const LOG_PATH = BASE_PATH . 'logs/';
 
   private static string $databaseName = 'testDB';
@@ -102,7 +102,7 @@ class PdomysqlTest extends TestCase
     Sql::getDB();
 
     // testing
-    $this->assertTrue(\lib\otra\bdd\Pdomysql::close(Sql::$instance));
+    $this->assertTrue(\src\bdd\Pdomysql::close(Sql::$instance));
     $this->assertNull(Sql::$instance);
   }
 }

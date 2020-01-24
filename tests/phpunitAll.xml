@@ -5,31 +5,31 @@
   <!--convertWarningsToExceptions="true"-->
   <testsuites>
     <testsuite name="Block templating system">
-      <file>./src/lib/otra/BlocksTest.php</file>
+      <file>./src/BlocksTest.php</file>
     </testsuite>
     <testsuite name="Database console tasks">
-      <file>./src/lib/otra/console/DatabaseTest.php</file>
+      <file>./src/console/DatabaseTest.php</file>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
-      <directory>./src/lib/otra/database</directory>
+      <directory>./src/database</directory>
     </testsuite>
     <testsuite name="Debug and log tools">
-      <file>./src/lib/otra/DebugToolsTest.php</file>
-      <file>./src/lib/otra/LoggerTest.php</file>
-      <file>./src/lib/otra/OtraExceptionTest.php</file>
-      <file>./src/lib/otra/console/OtraExceptionCliTest.php</file>
+      <file>./src/DebugToolsTest.php</file>
+      <file>./src/LoggerTest.php</file>
+      <file>./src/OtraExceptionTest.php</file>
+      <file>./src/console/OtraExceptionCliTest.php</file>
       <file>./config/AllConfigTest.php</file>
     </testsuite>
     <testsuite name="Console architecture tasks">
-      <directory>./src/lib/otra/console/architecture</directory>
+      <directory>./src/console/architecture</directory>
     </testsuite>
   </testsuites>
   <filter>
     <whitelist addUncoveredFilesFromWhitelist="false">
-      <directory suffix=".php">../../../</directory>
-      <directory suffix=".php">../../../bundles/*</directory>
-      <directory suffix=".php">../../../lib/otra/</directory>
-      <directory suffix=".php">../../../web/</directory>
+      <directory suffix=".php">../</directory>
+      <directory suffix=".php">../bundles/*</directory>
+      <directory suffix=".php">../src/</directory>
+      <directory suffix=".php">../web/</directory>
       <exclude>
         <directory>./</directory>
         <directory>./bundles/</directory>
@@ -39,7 +39,6 @@
         <directory>../cache</directory>
         <directory>../logs</directory>
         <directory>./coverageHtml</directory>
-        <directory>../lib/otra/Sf2Yaml</directory>
       </exclude>
     </whitelist>
   </filter>

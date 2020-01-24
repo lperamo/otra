@@ -3,7 +3,7 @@
 if (file_exists(BASE_PATH . 'bundles/HelloWorld'))
 {
   echo CLI_YELLOW, 'The bundle ', CLI_CYAN, 'HelloWorld', CLI_YELLOW, ' already exists.', END_COLOR, PHP_EOL;
-  throw new \lib\otra\OtraException('', 1, '', NULL, [], true);
+  throw new \src\OtraException('', 1, '', NULL, [], true);
 }
 
 const ARG_BUNDLE_NAME = 2,
@@ -60,12 +60,12 @@ file_put_contents(
  */
 namespace bundles\\' . $bundleName . '\\frontend\\controllers\\' . $controllerName . ';
 
-use src\otra\Controller;
+use src\Controller;
 
 class ' . $upperActionName . 'Action extends Controller
 {
   /**
-   * @throws \lib\otra\OtraException
+   * @throws \src\OtraException
    */
   public function ' . $actionName . 'Action() {
     echo $this->renderView(\'' . $actionName . '.phtml\', []);
