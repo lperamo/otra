@@ -23,17 +23,6 @@ abstract class TasksManager
    */
   public static function showCommands(string $message)
   {
-    // We check if the help and task class map is present, if not ... generate it.
-    // In fact, we also generate shell completions... for now.
-    $tasksHelpPath = BASE_PATH . 'cache/php/tasksHelp.php';
-
-    if (file_exists($tasksHelpPath) === false)
-    {
-      echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
-      require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
-      echo 'Now we can continue as planned.', PHP_EOL;
-    }
-
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
     echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
@@ -78,20 +67,20 @@ abstract class TasksManager
     error_reporting(E_ALL & ~E_DEPRECATED);
     require CORE_PATH . 'OtraException.php';
 
-    set_error_handler([OtraException::class, 'errorHandler']);
-    set_exception_handler([OtraException::class, 'exceptionHandler']);
-
     if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {
       echo CLI_YELLOW,
         'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
         END_COLOR, PHP_EOL;
-      require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
+      require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/genClassMapTask.php';
 
       // If the task was genClassMap...then we have nothing left to do !
       if ($task === 'genClassMap')
         exit(0);
     }
+
+    set_error_handler([OtraException::class, 'errorHandler']);
+    set_exception_handler([OtraException::class, 'exceptionHandler']);
 
     require_once BASE_PATH . 'cache/php/ClassMap.php';
     spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
