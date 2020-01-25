@@ -130,8 +130,12 @@ echo 'Starter template created in ', CLI_LIGHT_CYAN, substr($starterTemplate, st
 // We update the routes configuration as we just add one route.
 require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
 
-// We update the class mapping since we have one action more.
-define('VERBOSE', 0);
+/* We update the class mapping since we have one action more.
+ * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the
+ * class map generation task.
+*/
+if (defined('VERBOSE') === false)
+  define('VERBOSE', 0);
 require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
 echo 'The route is accessible via this url : http://dev.otra.tech/helloworld', PHP_EOL;
