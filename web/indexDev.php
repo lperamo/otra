@@ -14,6 +14,9 @@ if (false === defined('BASE_PATH'))
 
 define('CORE_PATH', BASE_PATH . 'src/'); // Ends with /
 
+if (isset($_ENV['OTRA_APP_ENV']) === true)
+  $_SERVER['APP_ENV'] = $_ENV['OTRA_APP_ENV'];
+
 require CORE_PATH . 'debugTools.php';
 
 ini_set('display_errors', 1);
