@@ -138,5 +138,6 @@ if (defined('VERBOSE') === false)
   define('VERBOSE', 0);
 require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
-echo 'The route is accessible via this url : http://dev.otra.tech/helloworld', PHP_EOL;
+echo CLI_GREEN, 'You can launch this example via the url ', CLI_LIGHT_CYAN, '/helloworld', CLI_GREEN,
+'.', PHP_EOL, 'You can launch a PHP internal web server by typing ', CLI_LIGHT_CYAN, 'otra serve', CLI_GREEN, '.', END_COLOR, PHP_EOL;
 ?>
