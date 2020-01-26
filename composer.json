@@ -27,6 +27,6 @@
     "ext-pdo_mysql": "*"
   },
   "scripts": {
-    "pre-install-cmd": "composer config bin-dir bin/"
+    "pre-install-cmd": "@composer config bin-dir bin/"
   }
 }
