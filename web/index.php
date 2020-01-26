@@ -5,7 +5,7 @@
 define ('_DIR_', str_replace('\\', '/', __DIR__));
 
 // if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
+define('OTRA_PROJECT', file_exists(_DIR_ . '/../vendor/otra'));
 
 // The path finishes with /
 define('BASE_PATH', substr(_DIR_, 0, -3)); // 3 = strlen('web')
