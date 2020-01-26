@@ -3,12 +3,24 @@
  *
  * @author Lionel Péramo */
 define ('_DIR_', str_replace('\\', '/', __DIR__));
-define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
-require BASE_PATH . 'src/entryPoint.php';
+
+// if true, we are not developing on OTRA itself
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
+
+// The path finishes with /
+define('BASE_PATH', substr(_DIR_, 0, -3)); // 3 = strlen('web')
+
+define(
+  'CORE_PATH',
+  OTRA_PROJECT === true
+    ? BASE_PATH . 'vendor/otra/otra/src/'
+    : BASE_PATH . 'src/'
+);
+
+require CORE_PATH . 'entryPoint.php';
 
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
 define('VERSION', 'V1.0.0-alpha.2.0.0');
-define('CORE_PATH', BASE_PATH . 'src/'); // Ends with /
 
 try
 {

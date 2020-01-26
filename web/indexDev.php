@@ -3,16 +3,23 @@
  *
  * @author Lionel Péramo */
 define('_DIR_', str_replace('\\', '/', __DIR__));
-define('BASE_PATH', substr(_DIR_, 0, -3)); // Ends with /
 
-require BASE_PATH . 'src/entryPoint.php';
+// if true, we are not developing on OTRA itself
+define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
+
+// The path finishes with /
+define('BASE_PATH', substr(_DIR_, 0, -3)); // 3 = strlen('web')
+
+define(
+  'CORE_PATH',
+  OTRA_PROJECT === true
+    ? BASE_PATH . 'vendor/otra/otra/src/'
+    : BASE_PATH . 'src/'
+);
+
+require CORE_PATH . 'entryPoint.php';
 
 define ('BEFORE', microtime(true));
-
-if (false === defined('BASE_PATH'))
-  define('BASE_PATH', substr(__DIR__, 0, -15)); // Ends with /
-
-define('CORE_PATH', BASE_PATH . 'src/'); // Ends with /
 
 if (isset($_ENV['OTRA_APP_ENV']) === true)
   $_SERVER['APP_ENV'] = $_ENV['OTRA_APP_ENV'];
