@@ -169,25 +169,31 @@ foreach($iterator as $entry)
     $resourceFolder = realPath(dirname($resourceName) . '/..');
 
     if ($extension === 'ts')
-      generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
+    {
+      if (WATCH_FOR_TS_RESOURCES === true)
+        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
+    }
     elseif (substr($baseName, 0, 1) !== '_')
     {
-      $generatedCssFile = $baseName . '.css';
+      if (WATCH_FOR_CSS_RESOURCES === true)
+      {
+        $generatedCssFile = $baseName . '.css';
 
-      // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-      $cssFolder = $resourceFolder . '/css';
+        // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
+        $cssFolder = $resourceFolder . '/css';
 
-      // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-      if (file_exists($cssFolder) === false)
-        mkdir($cssFolder);
+        // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+        if (file_exists($cssFolder) === false)
+          mkdir($cssFolder);
 
-      $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+        $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
-      list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
+        list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
-      echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
-        returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-        PHP_EOL . PHP_EOL;
+        echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
+          returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
+          PHP_EOL . PHP_EOL;
+      }
     }
   }
 }
