@@ -14,7 +14,6 @@
   ],
   "bin" : ["otra.php"],
   "config": {
-    "bin-dir" : "bin",
     "sort-packages": true
   },
   "require": {
@@ -25,8 +24,5 @@
   "require-dev": {
     "ext-pdo": "*",
     "ext-pdo_mysql": "*"
-  },
-  "scripts": {
-    "pre-install-cmd": "@composer config bin-dir bin/"
   }
 }
