@@ -62,6 +62,9 @@ class DatabaseTest extends TestCase
 
   public static function setUpBeforeClass() : void{
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require CORE_PATH . 'tools/cleanFilesAndFolders.php';
+
+    cleanFileAndFolders([BASE_PATH . 'logs']);
   }
 
   /**
@@ -79,7 +82,7 @@ class DatabaseTest extends TestCase
    */
   protected function cleanAll() : void
   {
-    $this->cleanFileAndFolders([
+    cleanFileAndFolders([
       self::$configFolderSql,
       self::$configFolderYml
     ]);
@@ -88,47 +91,6 @@ class DatabaseTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::$databaseName . '`;');
-  }
-
-  /**
-   * Removes all files and folders specified in the array.
-   *
-   * @param array $fileOrFolders
-   *
-   * @throws OtraException If we cannot remove a file or a folder
-   */
-  private function cleanFileAndFolders(array $fileOrFolders) : void
-  {
-    foreach ($fileOrFolders as &$folder)
-    {
-      if (true === file_exists($folder))
-      {
-        $files = new RecursiveIteratorIterator(
-          new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-          RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $file)
-        {
-          $realPath = $file->getRealPath();
-          $method = true === $file->isDir() ? 'rmdir' : 'unlink';
-
-          if (false === $method($realPath))
-            throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
-        }
-
-        $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
-
-        try
-        {
-          if (false === rmdir($folder))
-            throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch (Exception $e)
-        {
-          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
-        }
-      }
-    }
   }
 
   /**
