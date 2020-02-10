@@ -81,6 +81,6 @@ echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 echo 'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',
   PHP_EOL;
-echo CLI_LIGHT_CYAN, 'alias otra="php bin/otra.php ""$@""', END_COLOR,
+echo CLI_LIGHT_CYAN, 'alias otra="php bin/otra.php"', END_COLOR,
   PHP_EOL, PHP_EOL;
 echo 'If you want to see an example application, type \'otra createHelloWorld\'.', PHP_EOL;

@@ -5,6 +5,7 @@
 /config
 /logs
 /vendor
+/web
 !**.gitkeep
 /src/console/closure-compiler.log
 /src/console/shellCompletions/shellCompletions.sh
