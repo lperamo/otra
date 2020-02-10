@@ -1,10 +1,11 @@
+/bin
 /bundles
 /cache
-/cert/*
-/logs/**
-!/logs/
-!/logs/dev/
-!/logs/prod/
+/cert
+/config
+/logs
+/vendor
+/web
 !**.gitkeep
 /src/console/closure-compiler.log
 /src/console/shellCompletions/shellCompletions.sh
@@ -15,5 +16,3 @@
 **/css/*.css*
 **/scss/.sass-cache/**
 **/js/*.js*
-/bin
-/vendor
