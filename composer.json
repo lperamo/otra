@@ -16,6 +16,7 @@
   "config": {
     "sort-packages": true
   },
+  "minimum-stability": "dev",
   "require": {
     "ext-mbstring": "*",
     "php": ">=7.4.0",
