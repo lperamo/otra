@@ -4,14 +4,11 @@
 
 You can install OTRA via Composer.
 
-OTRA has its own system to load classes so we can skip autoloader generation but not, at the time of writing, for the
-`require` command.
+OTRA has its own system to load classes so we can skip autoloader generation.
+
+At the time of writing, we cannot do this with the `require` command so we first disable the update and then we use the
+ `update` command with the `--no-autoloader` parameter.
  
 ```bash
-composer require otra/otra:dev-develop
-```
-
-If you wish to remove useless autoloader files, you can still remove the vendor folder afterwards and do this command :
-```bash
-composer update otra/otra --no-autoloader
+composer create-project otra/skeleton:dev-develop --remove-vcs yourProjectFolderName
 ```

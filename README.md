@@ -16,14 +16,12 @@ This framework is in a very alpha stage so be indulgent :)
 There is still a lot of things to do :
 - bugs,
 - improving/adding unit tests,
-- fixing bad conceptual choices,
 - features
 - optimizations
 - compatibility
 - and so on ^^.
  
-I will working on giving to the community a list of tasks that I compiled until now.
-I am just wondering myself how I will present that to you, which service I will use etc.
+I am working on giving to the community a list of tasks that I compiled until now.
 
 This framework uses :
 

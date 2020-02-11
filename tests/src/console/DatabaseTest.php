@@ -1,8 +1,7 @@
 <?php
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use src\
-{OtraException, console\Database, bdd\Sql, Session};
+use src\{OtraException, console\Database, bdd\Sql, Session};
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -61,6 +60,13 @@ class DatabaseTest extends TestCase
     self::$tablesOrderFilePath = self::$configFolderYml . self::$tablesOrderFile;
   }
 
+  public static function setUpBeforeClass() : void{
+    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require CORE_PATH . 'tools/cleanFilesAndFolders.php';
+
+    cleanFileAndFolders([BASE_PATH . 'logs']);
+  }
+
   /**
    * @throws OtraException
    */
@@ -76,7 +82,7 @@ class DatabaseTest extends TestCase
    */
   protected function cleanAll() : void
   {
-    $this->cleanFileAndFolders([
+    cleanFileAndFolders([
       self::$configFolderSql,
       self::$configFolderYml
     ]);
@@ -85,109 +91,6 @@ class DatabaseTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::$databaseName . '`;');
-  }
-
-  /**
-   * Removes all files and folders specified in the array.
-   *
-   * @param array $fileOrFolders
-   *
-   * @throws OtraException If we cannot remove a file or a folder
-   */
-  private function cleanFileAndFolders(array $fileOrFolders) : void
-  {
-    foreach ($fileOrFolders as &$folder)
-    {
-      if (true === file_exists($folder))
-      {
-        $files = new RecursiveIteratorIterator(
-          new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-          RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $file)
-        {
-          $realPath = $file->getRealPath();
-          $method = true === $file->isDir() ? 'rmdir' : 'unlink';
-
-          if (false === $method($realPath))
-            throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
-        }
-
-        $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
-
-        try
-        {
-          if (false === rmdir($folder))
-            throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch (Exception $e)
-        {
-          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
-        }
-      }
-    }
-  }
-
-  /**
-   * Copy the file or an entire folder to the destination
-   *
-   * @param array $filesOrFoldersSrc Must be the absolute path
-   * @param array $filesOrFoldersDest Must be the absolute path
-   *
-   * @throws OtraException If we can't create a folder or copy a file.
-   */
-  private function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest) : void
-  {
-    foreach ($filesOrFoldersSrc as $key => &$fileOrFolderSrc)
-    {
-      $fileOrFolderDest = $filesOrFoldersDest[$key];
-      $isDirFileOrFolderSrc = is_dir($fileOrFolderSrc);
-      $initialFolder = $isDirFileOrFolderSrc ? $fileOrFolderDest : dirname($fileOrFolderDest);
-
-      if (false === file_exists($initialFolder) && false === mkdir($initialFolder, 0777, true))
-        throw new OtraException('Cannot create the folder ' . $initialFolder);
-
-      if (true === file_exists($fileOrFolderSrc))
-      {
-        // If it just a file, we don't have to iterate on it !
-        if (true === $isDirFileOrFolderSrc)
-        {
-          $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($fileOrFolderSrc, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-          );
-
-          // We have to make a temporary array from the results of the iterator because it isn't sorted alphabetically
-          // and then the folder names come after files ... or we have to create the folders before the files !
-          $filesAndFoldersArray = [];
-
-          foreach ($files as $file)
-          {
-            $filesAndFoldersArray[$file->getBaseName()] = $file->getRealPath();
-          }
-
-          unset($files, $file);
-
-          sort($filesAndFoldersArray);
-        } else
-          $filesAndFoldersArray = [$fileOrFolderSrc];
-
-        foreach ($filesAndFoldersArray as $basename => &$file)
-        {
-          $newPath = $fileOrFolderDest . str_replace(DIRECTORY_SEPARATOR, '/', substr($file, strlen($fileOrFolderSrc)));
-
-          if (true === is_dir($file))
-          {
-            if (false === mkdir($newPath))
-              throw new OtraException('Cannot create the folder \'' . $newPath . '\'.', E_CORE_ERROR);
-          } else
-          {
-            if (false === copy($file, $newPath))
-              throw new OtraException('Cannot copy the file \'' . $basename . ' to ' . $newPath . '\'.', E_CORE_ERROR);
-          }
-        }
-      }
-    }
   }
 
   /**
@@ -283,7 +186,7 @@ class DatabaseTest extends TestCase
   public function testClean() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$configFolderYmlBackup,
         self::$configFolderSqlBackup
@@ -310,7 +213,7 @@ class DatabaseTest extends TestCase
   public function testCreateDatabase() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$schemaFileBackup],
       [self::$schemaAbsolutePath]
     );
@@ -388,7 +291,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixture() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$schemaFileBackup],
       [self::$schemaAbsolutePath]
     );
@@ -437,7 +340,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixtures_TruncateOnly_NoSchema() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$configFolderYmlFixturesBackup],
       [self::$configFolderYmlFixtures]
     );
@@ -470,7 +373,7 @@ class DatabaseTest extends TestCase
   {
     // context
     define('VERBOSE', 2);
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$schemaFileBackup,
         self::$configFolderYmlBackup . self::$tablesOrderFile,
@@ -528,7 +431,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixtures_TruncateOnly_NoTablesOrderFile() : void
   {
     // context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$schemaFileBackup,
         self::$configFolderYmlFixturesBackup
@@ -572,7 +475,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixtures_CleanAndTruncate() : void
   {
     // context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$schemaFileBackup,
         self::$configFolderYmlBackup . self::$tablesOrderFile,
@@ -641,7 +544,7 @@ class DatabaseTest extends TestCase
    */
   public function testTruncateTable() : void
   {
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$schemaFileBackup],
       [self::$schemaAbsolutePath]
     );
@@ -692,7 +595,7 @@ class DatabaseTest extends TestCase
   public function testExecuteFixture() : void
   {
     // context - copying the needed configuration files
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$schemaFileBackup,
         self::$configFolderSqlFixturesBackup
@@ -744,7 +647,7 @@ class DatabaseTest extends TestCase
   public function testDropDatabase() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$schemaFileBackup],
       [self::$schemaAbsolutePath]
     );
@@ -811,7 +714,7 @@ class DatabaseTest extends TestCase
   public function testGenerateSqlSchema_DontForce() : void
   {
     // Creating the context
-    $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
+    copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
 
@@ -844,7 +747,7 @@ class DatabaseTest extends TestCase
   public function testGenerateSqlSchema_Force() : void
   {
     // Creating the context
-    $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
+    copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
 
@@ -876,7 +779,7 @@ class DatabaseTest extends TestCase
   public function testAnalyzeFixtures() : void
   {
     // context
-    $this->copyFileAndFolders([self::$configFolderYmlFixturesBackup], [self::$configFolderYmlFixtures]);
+    copyFileAndFolders([self::$configFolderYmlFixturesBackup], [self::$configFolderYmlFixtures]);
 
     // launching the task
     removeMethodScopeProtection(Database::class, '_analyzeFixtures')
@@ -896,7 +799,7 @@ class DatabaseTest extends TestCase
   public function testInitImports_AllNull() : void
   {
     // Creating the context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [self::$schemaFileBackup],
       [self::$schemaAbsolutePath]
     );
@@ -962,7 +865,7 @@ class DatabaseTest extends TestCase
   public function testInitImports_NoNull() : void
   {
     // context
-    $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
+    copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
 
@@ -1024,7 +927,7 @@ class DatabaseTest extends TestCase
   public function testImportSchema() : void
   {
     // context
-    $this->copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
+    copyFileAndFolders([self::$schemaFileBackup], [self::$schemaAbsolutePath]);
 
     $this->loadConfig();
 
@@ -1064,7 +967,7 @@ class DatabaseTest extends TestCase
   public function testImportFixtures() : void
   {
     //context
-    $this->copyFileAndFolders(
+    copyFileAndFolders(
       [
         self::$configFolderYmlBackup
       ],

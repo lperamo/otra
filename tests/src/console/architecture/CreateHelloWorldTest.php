@@ -78,7 +78,9 @@ class CreateHelloWorldTest extends TestCase
       CLI_GREEN . '/var/www/html/perso/otra/bundles/config/Routes.php' . ' updated.' . END_COLOR . PHP_EOL .
       CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL
       . PHP_EOL
-      . 'The route is accessible via this url : http://dev.otra.tech/helloworld' . PHP_EOL
+      . CLI_GREEN . 'You can launch this example via the url ' . CLI_LIGHT_CYAN . '/helloworld' . CLI_GREEN .
+      '.' . PHP_EOL . 'You can launch a PHP internal web server by typing ' . CLI_LIGHT_CYAN . 'otra serve' . CLI_GREEN . '.' .
+      END_COLOR . PHP_EOL
     );
 
     // launching
