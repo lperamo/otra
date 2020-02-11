@@ -12,6 +12,7 @@
       "homepage": "https://wexample.com"
     }
   ],
+  "bin" : ["bin/otra.php"],
   "config": {
     "sort-packages": true
   },

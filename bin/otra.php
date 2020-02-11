@@ -13,7 +13,7 @@ define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
 define(
   'BASE_PATH',
   OTRA_PROJECT === true
-    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
+    ? substr(_DIR_, 0, -20) // 20 = strlen('vendor/otra/otra/bin')
     : substr(_DIR_ . '/', 0, -4) // 4 = strlen('/bin')
 );
 
