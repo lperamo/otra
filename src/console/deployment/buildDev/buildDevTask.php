@@ -2,8 +2,6 @@
 
 namespace src\console;
 
-use SebastianBergmann\CodeCoverage\Report\PHP;
-
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
