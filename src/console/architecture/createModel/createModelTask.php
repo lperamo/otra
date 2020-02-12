@@ -287,7 +287,7 @@ if ('1' === $argv[3])
 } else
 {
   $schemaPath = realpath(BASE_PATH . 'config/data/yml/schema.yml');
-  require BASE_PATH . 'src\Sf2Yaml\Yaml.php';
+  require BASE_PATH . 'vendor/symfony/yaml/Yaml.php';
   $schemaData = Symfony\Component\Yaml\Yaml::parse(file_get_contents($schemaPath));
 
   // Those variables are used for code creation
