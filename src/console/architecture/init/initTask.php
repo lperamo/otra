@@ -44,6 +44,14 @@ foreach ($distFiles as $distFile)
     copy($distFile, $destinationFilePath);
 }
 
+// We need a routes configuration file even empty.
+$bundleConfigPath = BASE_PATH . 'bundles/config/';
+
+if (file_exists($bundleConfigPath) === false)
+  mkdir($bundleConfigPath, 0777, true);
+
+file_put_contents($bundleConfigPath . 'Routes.php', '<?php return []; ?>');
+
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 
 // ********** WEB FOLDER FILES **********
