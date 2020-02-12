@@ -86,7 +86,9 @@ if (PHP_SAPI === 'cli')
  * SHELL COMPLETIONS GENERATION *
  ********************************/
 
-define('COMPLETIONS_SPACES_STR_PAD', 28);
+// if we launch this task, the console will already launch this task before so for now, we check the variable existence
+if (defined('COMPLETIONS_SPACES_STR_PAD') === false)
+  define('COMPLETIONS_SPACES_STR_PAD', 28);
 
 $shellCompletionsContent = '#!/usr/bin/env bash' . PHP_EOL
 . 'typeset BLC="\033[1;96m"' . PHP_EOL // CLI_BOLD_LIGHT_CYAN
