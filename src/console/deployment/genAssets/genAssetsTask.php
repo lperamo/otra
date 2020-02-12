@@ -2,7 +2,7 @@
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . 'config/Routes.php';
-require BASE_PATH . 'src/tools/compression.php';
+require CORE_PATH . 'tools/compression.php';
 
 define('ASSET_MASK', 2);
 define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3] ?? 1]);
