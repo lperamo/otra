@@ -15,3 +15,5 @@
 **/css/*.css*
 **/scss/.sass-cache/**
 **/js/*.js*
+/tslint*
+/tsconfig*

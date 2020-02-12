@@ -13,14 +13,29 @@ require CORE_PATH . 'tools/copyFilesAndFolders.php';
 
 copyFileAndFolders(
   [
-    CORE_PATH . 'init/config'
+    CORE_PATH . 'init/config',
+    CORE_PATH . 'init/tsconfig.json.dist',
+    CORE_PATH . 'init/tslint.json.dist'
   ],
   [
-    $configFolder
+    $configFolder,
+    BASE_PATH . 'tsconfig.json.dist',
+    BASE_PATH . 'tslint.json.dist'
   ]
 );
 
-foreach (glob($configFolder . '{**/,}{**,.htaccess}.dist', GLOB_BRACE) as $distFile)
+$distFiles = [
+  $configFolder . 'dev/AllConfig.php.dist',
+  $configFolder . 'prod/AllConfig.php.dist',
+  $configFolder . 'AdditionalClassFiles.php.dist',
+  $configFolder . 'AllConfig.php.dist',
+  $configFolder . '.htaccess.dist',
+  $configFolder . 'Routes.php.dist',
+  BASE_PATH . 'tsconfig.json.dist',
+  BASE_PATH . 'tslint.json.dist'
+];
+
+foreach ($distFiles as $distFile)
 {
   $destinationFilePath = substr($distFile, 0, -5);
 
