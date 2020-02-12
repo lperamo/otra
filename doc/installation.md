@@ -10,5 +10,5 @@ At the time of writing, we cannot do this with the `require` command so we first
  `update` command with the `--no-autoloader` parameter.
  
 ```bash
-composer create-project otra/skeleton:dev-develop --remove-vcs yourProjectFolderName
+composer create-project otra/skeleton --remove-vcs yourProjectFolderName
 ```
