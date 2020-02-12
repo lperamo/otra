@@ -12,9 +12,9 @@ if (defined('CACHE_PATH') === false)
 // Framework core resources
 define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
 // CORE_RESOURCES_PATH, CORE_CSS_PATH and CORE_JS_PATH are used for otra utilities like the debug bar
-define('CORE_RESOURCES_PATH', 'src/');
-define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'resources/css/');
-define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'resources/js/');
+define('CORE_RESOURCES_PATH', OTRA_PROJECT === true ? 'vendor/otra/otra/src/resources/' : 'src/resources/');
+define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'css/');
+define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'js/');
 
 define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layout
 
