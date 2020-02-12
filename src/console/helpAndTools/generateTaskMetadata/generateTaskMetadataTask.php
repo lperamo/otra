@@ -13,7 +13,7 @@ if (defined('BASE_PATH') === false)
 
   // Generating the class map if needed
   if (file_exists($pathToClassMap) === false)
-    require BASE_PATH . 'src/console/deployment/genClassMap/genClassMapTask.php';
+    require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
 
   // loading the class map
   require $pathToClassMap;
