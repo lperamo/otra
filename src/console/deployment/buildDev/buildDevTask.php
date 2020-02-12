@@ -21,13 +21,13 @@ const BUILD_DEV_ARG_VERBOSE = 2,
       [
         BASE_PATH . 'bundles',
         BASE_PATH . 'config',
-        BASE_PATH . 'src'
+        CORE_PATH
       ],
 
       PATHS_TO_HAVE_RESOURCES =
       [
         BASE_PATH . 'bundles',
-        BASE_PATH . 'src'
+        CORE_PATH
       ],
 
       PATH_TO_AVOID = BASE_PATH . 'bundles/config';

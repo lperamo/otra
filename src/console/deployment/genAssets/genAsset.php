@@ -48,7 +48,7 @@ spl_autoload_register(function ($className)
 
 // Loads router and compression tools
 require CORE_PATH . 'Router.php';
-require BASE_PATH . '/src/tools/compression.php';
+require CORE_PATH . 'tools/compression.php';
 
 $_SERVER['REQUEST_URI'] = \src\Router::getRouteUrl(ARG_SITE_ROUTE);
 
