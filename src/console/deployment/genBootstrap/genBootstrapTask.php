@@ -35,7 +35,7 @@ if (true === isset($argv[4]))
   {
     // We try to find a route which the name is similar
     // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this src !
-    require_once CORE_PATH . 'console/Tools.php';
+    require_once CORE_PATH . 'console/tools.php';
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
