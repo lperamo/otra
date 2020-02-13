@@ -13,7 +13,7 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
 
-  list($status, $return) = cli(PHP_BINARY . ' ./otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  list($status, $return) = cli(PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
   echo $return;
 
   return $status;
