@@ -5,8 +5,27 @@ use config\AllConfig;
 
 $verbose = $argv[1];
 $route = $argv[2];
-define('BASE_PATH', substr(str_replace('\\', '/', __DIR__), 0, strlen(__DIR__) - strlen('src/console/deployment/genBootstrap'))); // Fixes windows awful __DIR__, BASE_PATH ends with /.
-define('CORE_PATH', BASE_PATH . 'src/');
+define('_DIR_', str_replace('\\', '/', __DIR__));
+define('DIR_LENGTH', strlen(__DIR__));
+
+if (false !== strpos(_DIR_, 'vendor'))
+{
+  define('OTRA_PROJECT', true);
+  // Fixes windows awful __DIR__, BASE_PATH ends with /.
+  define(
+    'BASE_PATH',
+    substr(_DIR_, 0, DIR_LENGTH - strlen('vendor/otra/otra/src/console/deployment/genBootstrap'))
+  );
+  define('CORE_PATH', BASE_PATH . 'vendor/otra/otra/src/');
+} else {
+  define('OTRA_PROJECT', false);
+  // Fixes windows awful __DIR__, BASE_PATH ends with /.
+  define(
+    'BASE_PATH',
+    substr(_DIR_, 0, DIR_LENGTH - strlen('src/console/deployment/genBootstrap'))
+  );
+  define('CORE_PATH', BASE_PATH . 'src/');
+}
 require CORE_PATH . 'console/colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
