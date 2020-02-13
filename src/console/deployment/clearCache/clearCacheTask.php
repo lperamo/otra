@@ -12,7 +12,7 @@ if (isset($route) === true)
   // Is this an existing route ? If not ...
   if (isset($routes[$route]) === false)
   {
-    require CORE_PATH . 'console/Tools.php';
+    require CORE_PATH . 'console/tools.php';
     list($newRoute) = guessWords($route, array_keys($routes));
 
     if ($newRoute === null)

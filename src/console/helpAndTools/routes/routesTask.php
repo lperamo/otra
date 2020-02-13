@@ -54,7 +54,7 @@ if (true === isset($argv[2]))
   if (false === isset(\config\Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
-    require CORE_PATH . 'console/Tools.php';
+    require CORE_PATH . 'console/tools.php';
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
