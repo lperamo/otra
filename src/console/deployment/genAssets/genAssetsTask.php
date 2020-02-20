@@ -142,7 +142,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
         {
           // JAVA CASE
           /** TODO Find a way to store the logs (and then remove -W QUIET) */
-          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
             $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
         } else {
@@ -158,7 +158,7 @@ for($i = 0; $i < $cptRoutes; ++$i)
       {
         // JAVA CASE
         /** TODO Find a way to store the logs (and then remove -W QUIET) */
-        exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+        exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
           $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
         gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
       }
