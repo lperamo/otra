@@ -19,6 +19,9 @@ define(
 
 require CORE_PATH . 'entryPoint.php';
 
+// Is it an asset ?
+if (isset($posDot) !== false) return 0;
+
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
 define('VERSION', 'V1.0.0-alpha.2.0.0');
 

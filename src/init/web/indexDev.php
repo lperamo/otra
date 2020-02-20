@@ -19,6 +19,9 @@ define(
 
 require CORE_PATH . 'entryPoint.php';
 
+// Is it an asset ?
+if (isset($posDot) !== false) return 0;
+
 define ('BEFORE', microtime(true));
 
 if (isset($_ENV['OTRA_APP_ENV']) === true)
