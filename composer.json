@@ -18,6 +18,7 @@
   },
   "minimum-stability": "dev",
   "require": {
+    "ext-fileinfo": "*",
     "ext-mbstring": "*",
     "php": ">=7.4.0",
     "symfony/yaml": "^4.0"

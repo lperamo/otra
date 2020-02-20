@@ -37,6 +37,12 @@
       REQ_PACKAGE
     ],
     [
+      'fileinfo',
+      'PHP extension \'mbstring\'',
+      'Needed for analyzing mime types',
+      REQ_PHP_LIB
+    ],
+    [
       'mbstring',
       'PHP extension \'mbstring\'',
       'Needed for string multibyte functions',
