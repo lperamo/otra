@@ -102,7 +102,11 @@ if (false === file_exists($logsProdPath))
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
-echo 'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',
+// ********** GENERATE TASK METADATA **********
+require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+
+echo PHP_EOL,
+  'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',
   PHP_EOL;
 echo CLI_LIGHT_CYAN, 'alias otra="php bin/otra.php"', END_COLOR, PHP_EOL, PHP_EOL;
 
