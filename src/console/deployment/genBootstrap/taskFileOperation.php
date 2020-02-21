@@ -707,7 +707,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
             // If it is a class from an external library (not from the framework),
             // we let the inclusion code and we do not add the content to the bootstrap file.
-            if (false !== strpos($tempFile, 'vendor'))
+            if (false !== strpos($tempFile, 'vendor') && false === strpos($tempFile, 'otra'))
             {
               echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
               // for example
