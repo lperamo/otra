@@ -2,12 +2,15 @@
 
 namespace src\console;
 
+use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
+
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
 const BUILD_DEV_ARG_VERBOSE = 2,
       BUILD_DEV_ARG_MASK = 3,
       BUILD_DEV_ARG_GCC = 4,
+      BUILD_DEV_ARG_SCOPE = 5,
       BUILD_DEV_MASK_SCSS = 1,
       BUILD_DEV_MASK_TS = 2,
       BUILD_DEV_MASK_ROUTES = 4,
@@ -38,6 +41,8 @@ define(
   array_key_exists(BUILD_DEV_ARG_GCC, $argv) === true && $argv[BUILD_DEV_ARG_GCC] === 'true' ? true : false
 );
 
+define('BUILD_DEV_SCOPE', (int) $argv[BUILD_DEV_ARG_SCOPE]);
+
 /**
  * @param array  $paths
  * @param string $realPath
@@ -51,8 +56,14 @@ function isNotInThePath(array $paths, string &$realPath) : bool
   foreach ($paths as &$path)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false){
-      $continue = false;
+    if (mb_strpos($realPath, $path) !== false)
+    {
+      if (
+        BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
+        || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
+        || BUILD_DEV_SCOPE === 2
+      )
+        $continue = false;
     }
   }
 
@@ -123,15 +134,22 @@ define(
 
 unset($maskExists);
 
+$filesProcessed = false;
+
 // Handle PHP files
 if (WATCH_FOR_PHP_FILES === true)
 {
   // We generate the class mapping...
   require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+  $filesProcessed = true;
+}
 
+if (WATCH_FOR_ROUTES === true)
+{
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
   require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
+  $filesProcessed = true;
 }
 
 require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
@@ -161,6 +179,8 @@ foreach($iterator as $entry)
     if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath) === true)
       continue;
 
+    $filesProcessed = true;
+
     $extension = $entry->getExtension();
     $baseName = substr($entry->getFilename(), 0, -strlen($extension) - 1);
     $resourceName = $entry->getPathname();
@@ -188,9 +208,10 @@ foreach($iterator as $entry)
 
         list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
 
-        echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
-          returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-          PHP_EOL . PHP_EOL;
+        if (BUILD_DEV_VERBOSE > 0)
+          echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
+            returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
+            PHP_EOL . PHP_EOL;
       }
     }
   }
@@ -198,4 +219,10 @@ foreach($iterator as $entry)
 
 unset($dir_iterator, $iterator, $entry, $realPath);
 
+if ($filesProcessed === true)
+{
+  if (BUILD_DEV_VERBOSE === '0')
+    echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
+} else
+  echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;
 ?>
