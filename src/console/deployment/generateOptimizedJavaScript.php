@@ -54,11 +54,13 @@ function generateJavaScript(
     $jsFileExists = file_exists($generatedTemporaryJsFile);
 
     if ($return === 0 && $jsFileExists === true)
-      echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
-        false), CLI_GREEN, ' have generated the temporary files ', $legibleGeneratedTemporaryJsFile, ' and ',
-      returnLegiblePath($generatedTemporaryJsFile . '.map', '', false), CLI_GREEN, '.',
-      END_COLOR, PHP_EOL, PHP_EOL;
-    else
+    {
+      if (BUILD_DEV_VERBOSE > 0)
+        echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
+          false), CLI_GREEN, ' have generated the temporary files ', $legibleGeneratedTemporaryJsFile, ' and ',
+        returnLegiblePath($generatedTemporaryJsFile . '.map', '', false), CLI_GREEN, '.',
+        END_COLOR, PHP_EOL, PHP_EOL;
+    } else
     {
       if ($jsFileExists === true)
         echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
