@@ -13,6 +13,8 @@ class IndexAction extends Controller
   public function indexAction()
   {
     ProfilerService::securityCheck();
+    require CORE_PATH . 'tools/translate.php';
+
     echo '<div id="profiler" class="profiler">
       <div>
         <a id="dbg-hide-profiler" role="button" class="lb-btn dbg-marginR5">' . t('Hide the profiler') . '</a>
