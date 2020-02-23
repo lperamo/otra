@@ -18,6 +18,7 @@ class ClearSQLLogsAction extends Controller
     ftruncate($handle, 0);
     fclose($handle);
 
+    require CORE_PATH . 'tools/translate.php';
     echo t('No more stored queries in '), $file, '.';
   }
 }

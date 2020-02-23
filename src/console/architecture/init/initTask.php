@@ -100,6 +100,14 @@ if (false === file_exists($logsDevPath))
 if (false === file_exists($logsProdPath))
   mkdir($logsProdPath);
 
+$sqlLogPath = $logsDevPath . 'sql.txt';
+
+if (false === file_exists($sqlLogPath))
+  touch($sqlLogPath);
+
+// Force the rights mode in order to be sure to be able to overwrite the file.
+chmod($sqlLogPath, 0666);
+
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // ********** GENERATE TASK METADATA **********
