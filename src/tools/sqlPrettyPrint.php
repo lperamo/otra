@@ -97,13 +97,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
     $output
   );
 
-  $output .= "\n" . "\n";
-
-  if ($raw === false) {
-    $output .= '</pre>';
-  }
-
-  return $output;
+  return $output . ($raw === false ? '</pre>' : "\n" . "\n");
 }
 
 /**
