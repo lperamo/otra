@@ -122,9 +122,10 @@
       box-shadow : 0 0 2px 0 #aaa;
 
       // box
+      box-sizing : border-box;
       margin     : 0 5px 5px 0;
       padding    : 5px;
-      width      : calc(100% - 5px);
+      width      : 100%;
 
       // positioning
       clear      : both;
@@ -154,7 +155,7 @@
 .dbg-btn,
 div.profiler .lb-btn {
   // animation
-  transition    : color .2s, text-shadow .2s;
+  transition : color .2s, text-shadow .2s;
 
   // background
   background    : none repeat scroll 0 0 $debug--background-color;
@@ -163,17 +164,17 @@ div.profiler .lb-btn {
   box-shadow    : none;
 
   // box
-  height        : auto;
-  padding       : 5px;
-  display       : inline-block;
+  height  : auto;
+  padding : 5px;
+  display : inline-block;
 
   // text
-  color         : $debug-buttons-color;
-  font-weight   : 400;
-  text-shadow   : none;
+  color       : $debug-buttons-color;
+  text-shadow : none;
+  font-weight : 400;
 
   // others
-  cursor        : pointer;
+  cursor : pointer;
 
   &:hover {
     color       : $debug--hover-color;
@@ -194,10 +195,14 @@ div.profiler .lb-btn {
   top        : 0;
 }
 
-// The font size styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
+// The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
 div.profiler {
-  padding   : 1em;
-  font-size : 10px;
+  padding     : 1em;
+
+  // text
+  font-family : $debug--font;
+  font-size   : 10px;
+  line-height : normal;
 
   &>div {
     font-size: 1.6em;
