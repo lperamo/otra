@@ -1,12 +1,15 @@
 // Mixins
 @mixin glowingRed() {
-  color       : $debug--file-color;
-  text-shadow : 0 0 3px $debug--file-text-shadow-color;
+  color                   : $debug--file-color;
+  text-shadow             : 0 0 1px $debug--file-text-shadow-color;
+  background-image        : linear-gradient(90deg, $debug--file-gradient-primary-color, $debug--file-gradient-secondary-color);
+  -webkit-background-clip : text;
+  -webkit-text-fill-color : transparent;
 }
 
 @mixin glowingYellowGreen() {
   color       : $debug--line-color;
-  text-shadow : 0 0 3px $debug--line-text-shadow-color;
+  text-shadow : 0 0 1px $debug--line-text-shadow-color;
 }
 
 // Rules
@@ -26,15 +29,16 @@
 
   &bar {
     // background
-    background    : rgba(67, 67, 67, 0.8);
-    box-shadow    : 0 0 30px 0 #555 inset;
+    background : linear-gradient(90deg, $debug-bar-background-primary-color, $debug-bar-background-secondary-color);
+    box-shadow : 0 0 30px 0 #555 inset;
 
     // box
-    padding       : 5px 5px 8px;
+    padding : 5px 5px 8px;
 
     // positioning
-    display       : flex;
-    align-items   : center;
+    align-items : center;
+    display     : flex;
+    flex-wrap   : wrap;
 
     // text
     color       : #eee;
@@ -48,7 +52,10 @@
       .dbg--toggle-small {
         // positioning
         margin      : 0 10px 0 auto;
-        transition  : .25s;
+
+        // animation
+        transition  : text-shadow .25s;
+        will-change : text-shadow;
 
         // text
         color       : $debug--toggle-color;
@@ -71,21 +78,22 @@
 
   &off {
     color       : $debug--off-color;
-    text-shadow : 0 0 3px $debug--off-text-shadow-color;
+    text-shadow : 0 0 9px $debug--off-text-shadow-color;
   }
 
   &bar-xs {
     // background
-    background : linear-gradient(#b8cdff 0%, #d6d6ff 45%, #b8beff 100%);
-    border-top : solid #ddd 1px;
-    box-shadow : 0 0 6px #fff, 0 0 6px #645eea, 0 0 6px #645eea;
-    opacity    : 0.8;
+    background-image : linear-gradient(90deg, #999, #bbb);
 
     // box
-    padding    : 5px;
+    padding       : 10px 2px;
+    border-radius : 10px;
 
     // positioning
-    float      : right;
+    float : right;
+
+    // text
+    text-indent: 10px;
   }
 
   &btn:active {
@@ -100,6 +108,7 @@
 
   &file {
     @include glowingRed();
+    word-break: break-all;
   }
 
   &line {
@@ -142,7 +151,11 @@
       }
 
       .sql-field {
-        color : #88f;
+        background              : linear-gradient(90deg, $debug--field-gradient-primary-color, $debug--field-gradient-secondary-color);
+        color                   : $debug--field-color;
+        text-shadow             : 0 0 1px $debug--field-text-shadow-color;
+        -webkit-background-clip : text;
+        -webkit-text-fill-color : transparent;
       }
 
       .sql-clause {
@@ -155,13 +168,14 @@
 .dbg-btn,
 div.profiler .lb-btn {
   // animation
-  transition : color .2s, text-shadow .2s;
+  transition : box-shadow .2s, color .2s, text-shadow .2s;
+  will-change: box-shadow, color, text-shadow;
 
   // background
-  background    : none repeat scroll 0 0 $debug--background-color;
-  border        : 1px solid $debug--border-color;
+  background-image : radial-gradient($debug--button-background-gradient-primary-color, $debug--button-background-gradient-secondary-color);
+  border        : none;
   border-radius : 4px;
-  box-shadow    : none;
+  box-shadow    : 0 0 3px $debug--button-box-shadow-color;
 
   // box
   height  : auto;
@@ -169,16 +183,17 @@ div.profiler .lb-btn {
   display : inline-block;
 
   // text
-  color       : $debug-buttons-color;
-  text-shadow : none;
+  color       : $debug-buttons-text-color;
+  text-shadow : 0 0 3px $debug--button-text-shadow-color;
   font-weight : 400;
 
   // others
   cursor : pointer;
 
   &:hover {
-    color       : $debug--hover-color;
-    text-shadow : 0 0 2px #7ac;
+    color       : $debug-buttons-hover-text-color;
+    box-shadow  : 0 0 4px $debug-buttons-hover-box-shadow-primary-color, 0 0 7px 3px $debug-buttons-hover-box-shadow-secondary-color;
+    text-shadow : 0 0 1px $debug-buttons-hover-text-shadow-color;
   }
 }
 
@@ -202,13 +217,20 @@ div.profiler {
   // text
   font-family : $debug--font;
   font-size   : 10px;
-  line-height : normal;
+  line-height : 2em;
+
+  @at-root
+  {
+    button.profiler-button {
+      margin-right: .5em;
+    }
+
+    pre.sql-request {
+      font-size: 0.8125em;
+    }
+  }
 
   &>div {
     font-size: 1.6em;
-  }
-
-  @at-root pre.sql-request {
-    font-size: 0.8125em;
   }
 }
