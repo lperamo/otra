@@ -43,6 +43,12 @@
       REQ_PHP_LIB
     ],
     [
+      'json',
+      'PHP extension \'json\'',
+      'Needed for encoding/decoding JSON format.',
+      REQ_PHP_LIB
+    ],
+    [
       'mbstring',
       'PHP extension \'mbstring\'',
       'Needed for string multibyte functions',
