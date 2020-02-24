@@ -39,7 +39,7 @@
     [
       'fileinfo',
       'PHP extension \'fileinfo\'',
-      'Needed for analyzing mime types',
+      'Needed for analyzing MIME types',
       REQ_PHP_LIB
     ],
     [
