@@ -38,7 +38,7 @@
     ],
     [
       'fileinfo',
-      'PHP extension \'mbstring\'',
+      'PHP extension \'fileinfo\'',
       'Needed for analyzing mime types',
       REQ_PHP_LIB
     ],
