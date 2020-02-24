@@ -4,7 +4,7 @@ $this::css(CORE_CSS_PATH . 'devMode'); ?>
 <div id="dbg-bar" class="dbg-bar">
    <?= '\'', $this->route, '\' | ', $this->bundle, '/', $this->module, '/', $this->controller, '/', $this->action,
    ' | ', round(microtime(true) - BEFORE, 3) ?>s&nbsp;&nbsp;|&nbsp;&nbsp;<span class="<?= (isset($_SESSION['sid'])) ? 'dbg-on' : 'dbg-off'?>">Connected</span>
-    &nbsp;&nbsp;|&nbsp;&nbsp;<a id="show-sql" class="dbg-btn">Inspect SQL</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;<button id="show-sql" class="dbg-btn">Inspect SQL</button>
     <p id="dbg--toggle" class="dbg--toggle">▶</p>
 </div><div class="dbg-bar-xs dbg-hide">
 	<p id="dbg--toggle-small" class="dbg--toggle-small">▼</p>

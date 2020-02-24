@@ -14,7 +14,7 @@ class RefreshSQLLogsAction extends Controller
   {
     ProfilerService::securityCheck();
     require CORE_PATH . 'tools/translate.php';
-    ProfilerService::writeLogs(BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt');
+    echo ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt');
   }
 }
 ?>
