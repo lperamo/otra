@@ -38,8 +38,14 @@
     ],
     [
       'fileinfo',
-      'PHP extension \'mbstring\'',
-      'Needed for analyzing mime types',
+      'PHP extension \'fileinfo\'',
+      'Needed for analyzing MIME types',
+      REQ_PHP_LIB
+    ],
+    [
+      'json',
+      'PHP extension \'json\'',
+      'Needed for encoding/decoding JSON format. (needed by the developer toolbar)',
       REQ_PHP_LIB
     ],
     [

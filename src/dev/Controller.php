@@ -35,7 +35,7 @@ class Controller extends MasterController
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
    * @param bool        $ajax      Is this an ajax partial ?
-   * @param bool|string $viewPath  Using the view path or not
+   * @param bool|string $viewPath  If true, we adds the usual view path before the $file variable.
    *
    * @return string parent::$template Content of the template
    *
@@ -43,7 +43,13 @@ class Controller extends MasterController
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    $templateFile = ($viewPath) ? $this->viewPath . $file : $file;
+    $otraRoute = strpos($this->route, 'otra_') !== false;
+
+    if ($otraRoute === false)
+      $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
+    else
+      $templateFile = CORE_VIEWS_PATH . $file;
+
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 
     if (false === file_exists($templateFile))
@@ -55,11 +61,13 @@ class Controller extends MasterController
     // we use self::ajax in this function (it is why we cannot merge the two if with self::$ajax
     parent::$template = $this->buildCachedFile($templateFile, $variables);
 
+    // If it is not an ajax route, debug is active (or not defined) and it is not an internal route, we show the debug bar
     if (false === $ajax
       && (
         property_exists(AllConfig::class, 'debug') === false
         || property_exists(AllConfig::class, 'debug') === true && AllConfig::$debug !== false
       )
+      && $otraRoute === false
     )
       self::addDebugBar();
 

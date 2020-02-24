@@ -37,9 +37,11 @@
     align-items   : center;
 
     // text
-    color         : #eee;
-    font-family   : $debug--font;
-    text-shadow   : 0 0 3px $debug--text-shadow-color;
+    color       : #eee;
+    font-family : $debug--font;
+    // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
+    font-size   : 16px;
+    text-shadow : 0 0 3px $debug--text-shadow-color;
 
     @at-root {
       .dbg--toggle,
@@ -150,7 +152,7 @@
 }
 
 .dbg-btn,
-.profiler .lb-btn {
+div.profiler .lb-btn {
   // animation
   transition    : color .2s, text-shadow .2s;
 
@@ -192,6 +194,16 @@
   top        : 0;
 }
 
-.profiler {
-  padding : 1em
+// The font size styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
+div.profiler {
+  padding   : 1em;
+  font-size : 10px;
+
+  &>div {
+    font-size: 1.6em;
+  }
+
+  @at-root pre.sql-request {
+    font-size: 0.8125em;
+  }
 }

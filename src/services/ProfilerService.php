@@ -21,29 +21,32 @@ class ProfilerService
   /**
    * @param string $file
    */
-  public static function writeLogs(string $file)
+  public static function getLogs(string $file)
   {
-    if ( true === file_exists($file) && '' !== ($contents = file_get_contents($file)))
+    if ( false === file_exists($file) || '' === ($contents = file_get_contents($file)))
+      return t('No stored queries in ') . $file . '.';
+
+    $requests = json_decode(
+      str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
+      true
+    );
+    require CORE_PATH . 'tools/sqlPrettyPrint.php';
+
+    ob_start();
+    foreach($requests as &$r)
     {
-      $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
-
-      require CORE_PATH . 'tools/sqlPrettyPrint.php';
-
-      foreach($requests as &$r)
-      {
-        ?>
-        <div>
-          <div class="dbg-left-block dbg-fl">
-            <?= t('In file') . ' <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> '
-              . t('at line') . '&nbsp;<span class="dbg-line">', $r['line'], '</span>&nbsp;:',
-            '<p>', rawSqlPrettyPrint($r['query']), '</p>'?>
-          </div>
-          <a role="button" class="dbg-fr lb-btn"><?= t('Copy') ?></a>
+      ?>
+      <div>
+        <div class="dbg-left-block dbg-fl">
+          <?= t('In file') . ' <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> '
+            . t('at line') . '&nbsp;<span class="dbg-line">', $r['line'], '</span>&nbsp;:',
+          '<p>', rawSqlPrettyPrint($r['query']), '</p>'?>
         </div>
-        <?php
-      }
-    } else
-      echo t('No stored queries in '), $file, '.';
+        <button class="dbg-fr lb-btn"><?= t('Copy') ?></button>
+      </div>
+      <?php
+    }
+    return ob_get_clean();
   }
 }
 ?>

@@ -34,14 +34,20 @@ const BUILD_DEV_ARG_VERBOSE = 2,
       PATH_TO_AVOID = BASE_PATH . 'bundles/config';
 
 // Reminder : 0 => no debug, 1 => basic logs
-define('BUILD_DEV_VERBOSE', array_key_exists(BUILD_DEV_ARG_VERBOSE, $argv) ? $argv[BUILD_DEV_ARG_VERBOSE] : 0);
+define(
+  'BUILD_DEV_VERBOSE',
+  array_key_exists(BUILD_DEV_ARG_VERBOSE, $argv) === true ? $argv[BUILD_DEV_ARG_VERBOSE] : 0
+);
 
 define(
   'BUILD_DEV_GCC',
   array_key_exists(BUILD_DEV_ARG_GCC, $argv) === true && $argv[BUILD_DEV_ARG_GCC] === 'true' ? true : false
 );
 
-define('BUILD_DEV_SCOPE', (int) $argv[BUILD_DEV_ARG_SCOPE]);
+define(
+  'BUILD_DEV_SCOPE',
+  array_key_exists(BUILD_DEV_ARG_SCOPE, $argv) === true ? (int) $argv[BUILD_DEV_ARG_SCOPE] : 0
+);
 
 /**
  * @param array  $paths

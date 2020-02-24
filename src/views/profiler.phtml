@@ -1,6 +1,8 @@
-<?php
-$file = '/logs/sql.txt';
-echo (true === file_exists($file))
-  ? file_get_contents($file) . 'plop'
-  : 'No stored request.';
-?>
+<div id="profiler" class="profiler">
+  <div>
+    <button id="dbg-hide-profiler" class="lb-btn dbg-marginR5"><?= t('Hide the profiler') ?></button>
+    <button id="dbg-clear-sql-logs" class="lb-btn dbg-marginR5"><?=t('Clear SQL logs') ?></button>
+    <button id="dbg-refresh-sql-logs" class="lb-btn"><?= t('Refresh SQL logs') ?></button><br><br>
+  </div>
+  <div id="dbg-sql-logs" class="dbg-sql-logs"><?= $sqlLogs; ?></div>
+</div>
