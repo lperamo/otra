@@ -7,8 +7,6 @@
 declare(strict_types=1);
 namespace config;
 
-define('CORE_SMALL_PATH', OTRA_PROJECT === true ? 'vendor/otra/otra/' : '');
-
 class Routes
 {
   public static array $default = [
@@ -31,16 +29,16 @@ class Routes
     ],
 
     'refreshSQLLogs' => [
-      'chunks' => ['/dbg/refreshSQLLogs', CORE_SMALL_PATH, 'src', 'profiler', 'refreshSQLLogsAction'],
+      'chunks' => ['/dbg/refreshSQLLogs', '', 'src', 'profiler', 'refreshSQLLogsAction'],
       'core' => true
     ],
 
     'clearSQLLogs' => [
-      'chunks' => ['/dbg/clearSQLLogs', CORE_SMALL_PATH, 'src', 'profiler', 'clearSQLLogsAction'],
+      'chunks' => ['/dbg/clearSQLLogs', '', 'src', 'profiler', 'clearSQLLogsAction'],
       'core' => true
     ],
     'profiler' => [
-      'chunks' => ['/dbg', CORE_SMALL_PATH, 'src', 'profiler', 'indexAction'],
+      'chunks' => ['/dbg', '', 'src', 'profiler', 'indexAction'],
       'core' => true
     ]
   ];
