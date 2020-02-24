@@ -45,7 +45,7 @@
     [
       'json',
       'PHP extension \'json\'',
-      'Needed for encoding/decoding JSON format.',
+      'Needed for encoding/decoding JSON format. (needed by the developer toolbar)',
       REQ_PHP_LIB
     ],
     [
