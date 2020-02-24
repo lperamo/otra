@@ -25,8 +25,10 @@ class ProfilerService
   {
     if ( true === file_exists($file) && '' !== ($contents = file_get_contents($file)))
     {
-      $requests = json_decode(str_replace('\\', '\\\\', substr($contents, 0, -1) . ']'), true);
-
+      $requests = json_decode(
+        str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
+        true
+      );
       require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
       foreach($requests as &$r)
