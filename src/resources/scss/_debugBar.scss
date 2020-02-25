@@ -33,13 +33,18 @@
     box-shadow : 0 0 30px 0 #555 inset;
 
     // box
-    padding : 5px 5px 8px;
+    padding    : 5px 5px 8px;
+    box-sizing : border-box;
 
     // positioning
     align-items : center;
     display     : flex;
     flex-wrap   : wrap;
     left        : 0;
+    position    : fixed;
+    right       : 0;
+    top         : 0;
+    z-index     : 10000;
 
     // text
     color       : #eee;
@@ -48,18 +53,17 @@
     font-size   : 16px;
     text-shadow : 0 0 3px $debug--text-shadow-color;
 
-    &, &-xs {
-      position : fixed;
-      right    : 0;
-      top      : 0;
-      z-index  : 10000;
-    }
+    // animation
+    transition: transform .2s;
+    will-change: transform;
 
     @at-root {
-      .dbg--toggle,
-      .dbg--toggle-small {
+      .dbg--toggle {
+        // size
+        box-sizing : border-box;
+
         // positioning
-        margin      : 0 10px 0 auto;
+        margin-left : 10px;
 
         // animation
         transition  : text-shadow .25s;
@@ -67,6 +71,7 @@
 
         // text
         color       : $debug--toggle-color;
+        font-size   : 1.3em;
         text-shadow : 0 0 1px $debug--toggle-text-shadow-color;
 
         // others
@@ -87,21 +92,6 @@
   &off {
     color       : $debug--off-color;
     text-shadow : 0 0 9px $debug--off-text-shadow-color;
-  }
-
-  &bar-xs {
-    // background
-    background-image : linear-gradient(90deg, #999, #bbb);
-
-    // box
-    padding       : 10px 2px;
-    border-radius : 10px;
-
-    // positioning
-    float : right;
-
-    // text
-    text-indent: 10px;
   }
 
   &btn:active {
@@ -240,5 +230,50 @@ div.profiler {
 
   &>div {
     font-size: 1.6em;
+  }
+}
+
+input.dbg--toggle {
+  &-direction {
+    // positioning
+    position : fixed;
+    left     : -10000px;
+  }
+
+  &-top, span.dbg--toggle-top {
+    &:checked ~ div#dbg-bar {
+      transform: rotateZ(0deg);
+    }
+  }
+
+  &-right, span.dbg--toggle-right {
+    &:checked ~ div#dbg-bar {
+      transform-origin : right;
+      transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
+      width            : 100vh;
+
+      & > label.dbg--toggle {
+        transform : rotateZ(90deg);
+      }
+    }
+  }
+
+  &-bottom, span.dbg--toggle-bottom {
+    &:checked ~ div#dbg-bar {
+      transform-origin : top left;
+      transform        : translate(0, calc(100vh - 38px));
+    }
+  }
+
+  &-left, span.dbg--toggle-left {
+    &:checked + div#dbg-bar {
+      transform-origin : left;
+      transform        : rotateZ(90deg) translate(-19px, -19px);
+      width            : 100vh;
+
+      & > label.dbg--toggle {
+        transform : rotateZ(-90deg);
+      }
+    }
   }
 }
