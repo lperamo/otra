@@ -3,14 +3,6 @@
 const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
 {
   'use strict';
-  let bar : HTMLElement, barXS : HTMLElement;
-
-  function toggle()
-  {
-    bar.classList.toggle('dbg-hide');
-    barXS.classList.toggle('dbg-hide');
-  }
-
   function hideProfiler() : void
   {
     /** @var Lib_LightboxInterface LIB_LIGHTBOX */
@@ -130,12 +122,6 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
 
   w.onload = function() : void
   {
-    bar = d.getElementById('dbg-bar');
-    barXS = <HTMLElement> bar.nextSibling;
-    const toggleElt : HTMLElement = d.getElementById('dbg--toggle'),
-        toggleXSElt : HTMLElement = d.getElementById('dbg--toggle-small');
-
-    toggleXSElt.onmouseup = toggleElt.onmouseup = toggle;
     d.getElementById('show-sql').addEventListener('mouseup', runProfiler)
   };
 
