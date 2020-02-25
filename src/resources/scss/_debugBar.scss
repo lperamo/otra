@@ -39,6 +39,7 @@
     align-items : center;
     display     : flex;
     flex-wrap   : wrap;
+    left        : 0;
 
     // text
     color       : #eee;
@@ -46,6 +47,13 @@
     // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
     font-size   : 16px;
     text-shadow : 0 0 3px $debug--text-shadow-color;
+
+    &, &-xs {
+      position : fixed;
+      right    : 0;
+      top      : 0;
+      z-index  : 10000;
+    }
 
     @at-root {
       .dbg--toggle,
