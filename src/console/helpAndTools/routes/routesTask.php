@@ -77,7 +77,7 @@ if (true === isset($argv[2]))
 
 foreach($routes as $route => &$details)
 {
-  if ('exception' === $route )
+  if ('otra_exception' === $route )
     continue;
 
   // Routes and paths management
