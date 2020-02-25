@@ -27,5 +27,8 @@
   "require-dev": {
     "ext-pdo": "*",
     "ext-pdo_mysql": "*"
+  },
+  "suggest": {
+    "ext-inotify": "Needed to use the OTRA genWatcher task."
   }
 }

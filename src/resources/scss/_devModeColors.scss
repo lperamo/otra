@@ -1,39 +1,56 @@
 // === DEBUG BAR ===>
 
 // GENERAL
-$debug--background-color : #3a3a3a;
-$debug--text-shadow-color : #ccc;
-$debug--border-color : #777;
-
+$debug-bar-background-primary-color: #777;
+$debug-bar-background-secondary-color: #bbb;
 $debug--hover-color : #b4defb;
+$debug--text-shadow-color : #ccc;
 
 // ON
 $debug--on-color : #afffae;
 $debug--on-text-shadow-color : #7fcf7e;
 
 // OFF
-$debug--off-color : #f22;
-$debug--off-text-shadow-color : #c00;
+$debug--off-color : #d00;
+$debug--off-text-shadow-color : #fda;
 
 // BUTTONS
-$debug-buttons-color : #eee;
+$debug--button-background-gradient-primary-color : #ed4;
+$debug--button-background-gradient-secondary-color : #b64;
+$debug--button-text-shadow-color : #444;
+$debug--button-box-shadow-color : #fd8;
+$debug-buttons-text-color : #333;
+
+// BUTTONS HOVER
+$debug-buttons-hover-text-color : #211;
+$debug-buttons-hover-box-shadow-primary-color : #fff;
+$debug-buttons-hover-box-shadow-secondary-color : #432;
+$debug-buttons-hover-text-shadow-color : #444;
 
 // TOGGLE
-$debug--toggle-color : #89b;
-$debug--toggle-text-shadow-color : #0b255e;
+$debug--toggle-color : #fd9;
+$debug--toggle-text-shadow-color : #540;
 @mixin debugToggleHoverTextShadow {
   text-shadow : 0 0 1px #0b255e, 0 0 8px #fff, 0 0 8px #fff, 0 0 8px #fff
 }
 
 // === PROFILER ===>
 
-// FILE
+// FILE AND SQL CLAUSES
 $debug--file-color : #f55;
-$debug--file-text-shadow-color : #e33;
+$debug--file-text-shadow-color : #fa1;
+$debug--file-gradient-primary-color : #cc0;
+$debug--file-gradient-secondary-color : #e27;
 
 // LINE
 $debug--line-color : #dd5;
 $debug--line-text-shadow-color : #cc3;
+
+// FIELDS
+$debug--field-color : #88f;
+$debug--field-text-shadow-color : #88f;
+$debug--field-gradient-primary-color : #88f;
+$debug--field-gradient-secondary-color : #04f;
 
 // LOGS
 $debug--logs-selection-color : #667;
