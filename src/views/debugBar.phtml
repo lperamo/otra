@@ -1,6 +1,7 @@
 <?php
 function generateArrows($type = 'radio')
 {
+  $debugBarPosition = isset(\config\AllConfig::$debugBarPosition) ? \config\AllConfig::$debugBarPosition : 'top';
   $positions = [
     '▲' => 'top',
     '▶' => 'right',
@@ -15,7 +16,7 @@ function generateArrows($type = 'radio')
       ?>
       <input type="radio" id="dbg--toggle--<?= $position ?>" name="dbg--position"
              class="dbg--toggle-direction dbg--toggle-<?= $position ?>"<?php
-      if (\config\AllConfig::$debugBarPosition === $position)
+      if ($debugBarPosition === $position)
         echo ' checked';
       ?>>
       <?php
