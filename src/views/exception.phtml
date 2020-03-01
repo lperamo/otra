@@ -10,6 +10,7 @@
 
 require CORE_PATH . 'views/layout.phtml';
 block('title', 'Exception !');
+block('body');
 ?>
 <div class="exception text-center">Exception</div>
 <div class="explications text-center correct-display"><?php
@@ -65,3 +66,4 @@ block('title', 'Exception !');
 	<br />
 	<?= $context ?>
 </div>
+<?php endblock(); ?>
