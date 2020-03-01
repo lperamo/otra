@@ -27,7 +27,7 @@ Don't forget to restart your IDE after that operation.
 
 In the case of PHPStorm, you also can go to :
  
-_Settings > Appearange & Behavior > System settings > Synchronization_
+_Settings > Appearance & Behavior > System settings > Synchronization_
  
 Here you can put `Save files automatically if application is idle for` to *1* second.
 
