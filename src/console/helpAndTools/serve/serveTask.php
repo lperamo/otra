@@ -7,4 +7,10 @@ $env = isset($argv[PARAMETER_ENV]) ? $argv[PARAMETER_ENV] : 'dev';
 
 echo CLI_GREEN, 'Launching a PHP web internal server on localhost:', $port, ' in ',
   $env === 'dev' ? 'development' : 'production', ' mode.', END_COLOR, PHP_EOL;
-cli('OTRA_APP_ENV=' . $env . ' php -d variables_order=EGPCS -S localhost:' . $port . ' -t web web/indexDev.php');
+
+$command = 'OTRA_APP_ENV=' . $env . ' php -d variables_order=EGPCS -S localhost:' . $port . ' -t web web/index';
+
+if(PARAMETER_ENV === 'dev')
+  $command .= 'Dev';
+
+cli($command . '.php');
