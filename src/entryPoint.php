@@ -2,8 +2,16 @@
 
 $uri = $_SERVER['REDIRECT_URL'] ?? strtok($_SERVER["REQUEST_URI"],'?');
 $realPath = substr(_DIR_, 0, -4) . $uri;
+$cachedFile = file_exists($realPath);
 
-if ('/' !== $uri && true === file_exists($realPath))
+// If it's an asset in the web folder...
+if ($cachedFile === false)
+{
+  $realPath = realpath(_DIR_) . $uri;
+  $cachedFile = file_exists($realPath);
+}
+
+if ('/' !== $uri && true === $cachedFile)
 {
   $posDot = strpos($uri, '.');
   // Comment it for debugging purposes
