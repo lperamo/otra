@@ -31,19 +31,10 @@ if ('/' !== $uri && true === file_exists($realPath))
         case 'js.map': header('Content-type: application/json'); break;
         case 'js': header('Content-type: application/javascript'); break;
         default: // images or other things
-          // IE doesn't understand images correctly if there are a 'nosniff' header rule (for security)... -_-
-          $userAgent = $_SERVER['HTTP_USER_AGENT'];
-          preg_match('/MSIE (.*?);/', $userAgent, $matches);
-
-          if (count($matches) < 2)
-            preg_match('/Trident\/\d{1,2}.\d{1,2}; rv:([0-9]*)/', $userAgent, $matches);
-
-          if (count($matches) > 1 || false !== strpos($userAgent, 'Edge'))
-          {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            header('Content-type: ' . finfo_file($finfo, $realPath));
-            finfo_close($finfo);
-          }
+          // neither IE nor Chrome understands images correctly ... so we force the type
+          $finfo = finfo_open(FILEINFO_MIME_TYPE);
+          header('Content-type: ' . finfo_file($finfo, $realPath));
+          finfo_close($finfo);
       }
     }
 
