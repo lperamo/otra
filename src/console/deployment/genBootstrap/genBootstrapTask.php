@@ -57,6 +57,12 @@ if (true === isset($argv[4]))
 } else
 {
   $routes = \config\Routes::$_;
+  unset(
+    $routes['otra_exception'],
+    $routes['otra_refreshSQLLogs'],
+    $routes['otra_clearSQLLogs'],
+    $routes['otra_profiler']
+  );
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
