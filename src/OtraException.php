@@ -98,7 +98,7 @@ class OtraException extends \Exception
         'hasJsToLoad' => ''
       ]
     );
-    $renderController->viewPath = CORE_VIEWS_PATH;
+    $renderController->viewPath = CORE_VIEWS_PATH . '/errors';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
     if (false === empty($this->context))

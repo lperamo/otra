@@ -1,0 +1,21 @@
+<?php
+require CORE_VIEWS_PATH . '/layout.phtml';
+block('title', '404 Not found !');
+block('body');
+?>
+  <h1>Damn where is that page already?</h1>
+  <div id="error">
+    You're trying to access to : <?php $host = 'http://' . $_SERVER['HTTP_HOST'];
+    echo $host . $_SERVER['REQUEST_URI']; ?>
+    <br><br>
+    <?php
+    /** @var string $suggestedRoute */
+    if ($suggestedRoute !== null) {
+      ?>You can try to go to <a href="<?= $suggestedRoute ?>"><?= $suggestedRoute ?></a> instead.<?php
+    } else {
+      ?> Sorry, there is no web page for the moment.<?php
+    }
+    ?>
+  </div>
+<?php
+endblock();

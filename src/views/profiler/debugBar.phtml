@@ -1,0 +1,49 @@
+<?php
+if(function_exists('generateArrows') === false)
+{
+  function generateArrows($type = 'radio')
+  {
+    $debugBarPosition = isset(\config\AllConfig::$debugBarPosition) ? \config\AllConfig::$debugBarPosition : 'top';
+    $positions = [
+      '▲' => 'top',
+      '▶' => 'right',
+      '▼' => 'bottom',
+      '◀' => 'left'
+    ];
+
+    foreach($positions as $arrow => &$position)
+    {
+      if ($type === 'radio')
+      {
+        ?>
+        <input type="radio" id="dbg--toggle--<?= $position ?>" name="dbg--position"
+               class="dbg--toggle-direction dbg--toggle-<?= $position ?>"<?php
+        if ($debugBarPosition === $position)
+          echo ' checked';
+        ?>>
+        <?php
+      } else
+      {
+        ?>
+        <label for="dbg--toggle--<?= $position ?>" class="dbg--toggle dbg--toggle-<?= $position ?>"><?= $arrow ?></label>
+        <?php
+      }
+    }
+  }
+}
+/** @var \src\MasterController $this */
+$this::css(CORE_CSS_PATH . 'devMode'); ?>
+<?php generateArrows(); ?>
+
+<div id="dbg-bar" class="dbg-bar">
+   <?= '\'', $this->route, '\' | ', $this->bundle, '/', $this->module, '/', $this->controller, '/', $this->action,
+   ' | ', round(microtime(true) - BEFORE, 3) ?>s&nbsp;&nbsp;|&nbsp;&nbsp;<?php
+  if (isset($_SESSION['sid']) === true) {
+     ?><span class="dbg-on">Connected</span><?php
+  } else {
+    ?><span class="dbg-off">Disconnected</span><?php
+  } ?> &nbsp;&nbsp;|&nbsp;&nbsp;<button id="show-sql" class="dbg-btn">Inspect SQL</button>
+  <?php generateArrows('label') ?>
+</div>
+<?php $this::js(CORE_JS_PATH . 'debug_bar');
+  $this::js(CORE_JS_PATH . 'lightbox'); ?>

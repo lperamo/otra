@@ -108,7 +108,7 @@ class Router
       $routeUrl = $routeData['chunks'][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
-      // This is not the route you are looking for !  false === isset($routeData['mainPattern']) &&
+      // This is not the route you are looking for !
       if (false === strpos($pattern, $mainPattern))
         continue;
 
@@ -152,7 +152,9 @@ class Router
       return [$routeName, $params];
     }
 
-    return false;
+    // If the user has not defined a 404 route, then we launch the default 404 page made by OTRA
+    header('HTTP/1.0 404 Not Found');
+    return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
   }
 
   /**
