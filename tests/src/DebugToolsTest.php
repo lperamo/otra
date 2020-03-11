@@ -208,7 +208,7 @@ class DebugToolsTest extends TestCase
    */
   public function testConvertArrayToShowable() : void
   {
-    $dataToShow = ['test' => 'autre test'];
+    $dataToShow = ['test' => 'other test'];
     $this->assertEquals(
       '    <table class="test innerHeader">
       <thead>
@@ -222,14 +222,14 @@ class DebugToolsTest extends TestCase
         </tr>
       </thead>
       <tbody>
-     </tbody></table><table class="test"><tbody><tr class="no-dummy" ><td>test</td><td colspan="2">\'autre test\'</td></tr></tbody></table>',
+     </tbody></table><table class="test"><tbody><tr class="no-dummy" ><td>test</td><td colspan="2">\'other test\'</td></tr></tbody></table>',
       createShowableFromArray($dataToShow, 'title')
     );
   }
 
   public function testConvertArrayToShowableConsole() : void
   {
-    $dataToShow = ['test' => 'autre test'];
+    $dataToShow = ['test' => 'other test'];
     createShowableFromArray($dataToShow, 'title');
     $this->markTestIncomplete('This function is not finished so we cannot finish the test.');
   }
