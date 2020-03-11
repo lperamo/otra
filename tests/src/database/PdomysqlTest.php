@@ -90,7 +90,6 @@ class PdomysqlTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException
    * @throws OtraException
    *
    * @author Lionel Péramo

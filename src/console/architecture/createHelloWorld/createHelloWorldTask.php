@@ -64,9 +64,6 @@ use src\Controller;
 
 class ' . $upperActionName . 'Action extends Controller
 {
-  /**
-   * @throws \src\OtraException
-   */
   public function ' . $actionName . 'Action() {
     echo $this->renderView(\'' . $actionName . '.phtml\', []);
   }
