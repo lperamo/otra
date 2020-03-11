@@ -75,8 +75,7 @@ copyFileAndFolders(
 // The favicons and the 404.php page should be customisable and we will not overwrite those files.
 $webCustomisableFiles = [
   CORE_PATH . 'init/web/favicon.ico' => $webFolder . 'favicon.ico',
-  CORE_PATH . 'init/web/favicon.png' => $webFolder . 'favicon.png',
-  CORE_PATH . 'init/web/404.php' => $webFolder . '404.php'
+  CORE_PATH . 'init/web/favicon.png' => $webFolder . 'favicon.png'
 ];
 
 foreach ($webCustomisableFiles as $sourceFile => &$destinationFile)
