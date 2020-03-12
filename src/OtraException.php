@@ -84,7 +84,7 @@ class OtraException extends \Exception
   private function errorMessage() : string
   {
     require_once BASE_PATH . 'config/AllConfig.php';
-    $route = 'exception';
+    $route = 'otra_exception';
 
     // Cleans all the things processed before in order to not perturb the exception page
     ob_clean();
@@ -113,7 +113,7 @@ class OtraException extends \Exception
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
     return $renderController->renderView(
-      '/exception.phtml',
+      '/errors/exception.phtml',
       [
         'message' => $this->message,
         'code' => $code,
@@ -121,7 +121,9 @@ class OtraException extends \Exception
         'line' => $this->line,
         'context' => $showableContext,
         'backtraces' => $this->getTrace()
-      ]
+      ],
+      false,
+      false
     );
   }
 

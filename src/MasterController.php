@@ -130,7 +130,7 @@ class MasterController
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if (false === isset($baseParams['controller']))
     {
-      if (isset($baseParams['route']) === true && $baseParams['route'] === 'exception')
+      if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
         // Stores the bundle, module, controller and action for later use
         list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
 

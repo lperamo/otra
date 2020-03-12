@@ -48,7 +48,7 @@ class Controller extends MasterController
     if ($otraRoute === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
     else
-      $templateFile = CORE_VIEWS_PATH . '/' . $this->controller . '/' . $file;
+      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
 
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 

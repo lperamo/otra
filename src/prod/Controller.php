@@ -53,7 +53,7 @@ class Controller extends MasterController
     if (strpos($this->route, 'otra_') === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
     else
-      $templateFile = CORE_VIEWS_PATH . '/' . $this->controller . '/' . $file;
+      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
 
     if (false === file_exists($templateFile))
     {
