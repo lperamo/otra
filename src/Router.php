@@ -8,7 +8,7 @@ namespace src;
 
 use config\Routes;
 
-class Router
+abstract class Router
 {
   /**
    * Retrieve the controller's path that we want or launches the route !

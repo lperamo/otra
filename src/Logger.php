@@ -6,7 +6,7 @@ namespace src;
  * @author Lionel Péramo
  */
 
-class Logger
+abstract class Logger
 {
   const APPEND_LOG = 3;
 

@@ -5,7 +5,7 @@
 namespace config;
 
 define('CACHE_TIME', 300); // 5 minutes(5*60)
-class AllConfig
+abstract class AllConfig
 {
   public static int $verbose = 1;
   public static bool $cache = false;

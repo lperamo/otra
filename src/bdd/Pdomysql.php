@@ -8,7 +8,7 @@ namespace src\bdd;
 use src\OtraException;
 use PDO, PDOStatement;
 
-class Pdomysql
+abstract class Pdomysql
 {
   private PDO $conn;
   const DEFAULT_MOTOR = 'InnoDB';
