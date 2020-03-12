@@ -50,7 +50,10 @@ class Controller extends MasterController
    */
   public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    $templateFile = true === $viewPath ? $this->viewPath . $file : $file;
+    if (strpos($this->route, 'otra_') === false)
+      $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
+    else
+      $templateFile = CORE_VIEWS_PATH . '/' . $this->controller . '/' . $file;
 
     if (false === file_exists($templateFile))
     {
