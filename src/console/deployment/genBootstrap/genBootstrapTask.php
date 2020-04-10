@@ -92,8 +92,9 @@ foreach(array_keys($routes) as &$route)
 echo 'Create the specific routes management file... ', PHP_EOL;
 
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
-// configuration
-require BASE_PATH . 'config/AllConfig.php';
+// configuration. We checks if we do not have already loaded the configuration before.
+if (defined('CORE_VIEWS_PATH') === false)
+  require BASE_PATH . 'config/AllConfig.php';
 
 define(
   'PATH_CONSTANTS',
