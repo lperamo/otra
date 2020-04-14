@@ -60,6 +60,7 @@ $uri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
-  'cookie_httponly' => true
+  'cookie_httponly' => true,
+  'cookie_samesite' => 'strict'
 ]);
 ?>
