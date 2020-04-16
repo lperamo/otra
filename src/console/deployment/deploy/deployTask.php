@@ -8,12 +8,13 @@ namespace src\console;
 use config\AllConfig;
 use \src\OtraException;
 
-define('DEPLOY_ARG_MODE', 2);
+define('DEPLOY_ARG_MASK', 2);
 define('DEPLOY_ARG_VERBOSE', 3);
-define('DEPLOY_MODE_ONLY_RSYNC', 0);
-define('DEPLOY_MODE_PHP_BEFORE_RSYNC', 1);
-define('DEPLOY_MODE_PHP_JS_BEFORE_RSYNC', 2);
-define('DEPLOY_MODE_PHP_JS_CSS_BEFORE_RSYNC', 3);
+define('DEPLOY_ARG_GCC_LEVEL_COMPILATION', 4);
+define('DEPLOY_MASK_ONLY_RSYNC', 0);
+define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
+define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
+define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
 
 // **** Checking the deployment config parameters ****
 if (isset(AllConfig::$deployment) === false)
@@ -24,7 +25,7 @@ if (isset(AllConfig::$deployment) === false)
 
 $deploymentParameters = ['server', 'port', 'folder', 'privateSshKey', 'gcc'];
 
-foreach($deploymentParameters as $deploymentParameter)
+foreach($deploymentParameters as &$deploymentParameter)
 {
   if (isset(AllConfig::$deployment[$deploymentParameter]) === false)
   {
@@ -33,10 +34,15 @@ foreach($deploymentParameters as $deploymentParameter)
   }
 }
 
-$mode = (isset($argv[DEPLOY_ARG_MODE]) === true) ? (int) $argv[DEPLOY_ARG_MODE] : 0;
-$verbose = (isset($argv[DEPLOY_ARG_VERBOSE]) === true) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
+define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
+$mask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
+$verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
+define(
+  'DEPLOY_GCC_LEVEL_COMPILATION',
+  isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
+);
 
-if ($mode > DEPLOY_MODE_ONLY_RSYNC)
+if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 {
   // We generate the class mapping...
   require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
@@ -52,30 +58,53 @@ if ($mode > DEPLOY_MODE_ONLY_RSYNC)
 
 require CORE_PATH . 'tools/cli.php';
 
-
 /**
  * @param int $verbose
+ * @param int $mask Binary mask (2^1 for JS, 2^2 for CSS)
  * @param int $mode 2 for TypeScript, 3 for TypeScript and CSS
  *
  * @throws OtraException
  */
-function launchAssetsGeneration(int $verbose, int $mode = 3)
+function launchAssetsGeneration(int $verbose, int $mask, int $mode = 3)
 {
+  echo END_COLOR, 'Assets transcompilation...';
+
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
 
   if ($result[0] === false)
   {
-    echo CLI_RED . 'There was a problem during the assets generation.';
+    echo CLI_RED . 'There was a problem during the assets transcompilation.';
     throw new \src\OtraException('', 1, '', NULL, [], true);
   }
-  echo END_COLOR, 'Assets generation...', PHP_EOL, $result[1], PHP_EOL;
+
+  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+
+  echo 'Assets minification and compression...';
+  $genAssetsMode = 1;
+
+  if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+    $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
+
+  if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+    $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
+
+  // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
+  $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
+
+  if ($result[0] === false)
+  {
+    echo CLI_RED . 'There was a problem during the assets minification and compression.';
+    throw new \src\OtraException('', 1, '', NULL, [], true);
+  }
+
+  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 }
 
-if ($mode === DEPLOY_MODE_PHP_JS_BEFORE_RSYNC)
-  launchAssetsGeneration($verbose, 2);
-elseif ($mode === DEPLOY_MODE_PHP_JS_CSS_BEFORE_RSYNC)
-  launchAssetsGeneration($verbose);
+if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  launchAssetsGeneration($verbose, $mask, 2);
+elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  launchAssetsGeneration($verbose, $mask);
 
 // Deploy the files on the server...
 [
@@ -100,9 +129,8 @@ CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
 $startCommand = 'rsync -zaruvhP --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $port;
 $cursorUpOne = "\033[1A";
 //$cursorBackFour = "\033[4D";
-$success =  CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
 
-$handleTransfer = function ($message, $command, string $operation = 'rsync') use(&$verbose, &$success, &$cursorUpOne)
+$handleTransfer = function ($message, $command, string $operation = 'rsync') use(&$verbose, &$cursorUpOne)
 {
   echo $message, ' ...', PHP_EOL;
 
@@ -126,9 +154,9 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
    * TODO showing things correctly and knowing when all that ends. */
   if ($verbose === 1)
-    echo $cursorUpOne, "\033[" . strlen($message) . "C", $success;
+    echo $cursorUpOne, "\033[" . strlen($message) . "C", OTRA_SUCCESS;
   else
-    echo $cursorUpOne, "\033[" . strlen($message) . "C", $success;
+    echo $cursorUpOne, "\033[" . strlen($message) . "C", OTRA_SUCCESS;
 };
 
 $handleTransfer(
