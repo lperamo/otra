@@ -1,6 +1,9 @@
 <?php
-// Will be the future translation feature
-function t(string $text) : string
+if (function_exists('t') === false)
 {
-  return $text;
+  // Will be the future translation feature
+  function t(string $text): string
+  {
+    return $text;
+  }
 }
