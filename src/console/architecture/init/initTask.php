@@ -104,6 +104,11 @@ $sqlLogPath = $logsDevPath . 'sql.txt';
 if (false === file_exists($sqlLogPath))
   touch($sqlLogPath);
 
+$traceLogPath = $logsDevPath . 'trace.txt';
+
+if (false === file_exists($traceLogPath))
+  touch($traceLogPath);
+
 // Force the rights mode in order to be sure to be able to overwrite the file.
 chmod($sqlLogPath, 0666);
 
