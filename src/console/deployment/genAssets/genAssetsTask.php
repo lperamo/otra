@@ -7,6 +7,7 @@ require CORE_PATH . 'tools/compression.php';
 define('ASSET_MASK', 2);
 define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3] ?? 1]);
 define('ROUTE', 4);
+define('GZIP_COMPRESSION_LEVEL', 9);
 
 $routes = \config\Routes::$_;
 
@@ -28,173 +29,203 @@ if (true === isset($argv[ASSET_MASK]) && false === is_numeric($argv[ASSET_MASK])
   exit(1);
 }
 
-// If we ask just for only one route
-if (true === isset($argv[ROUTE]))
+$mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
+
+// If we only need the manifest, skips the assets generation loop
+if ($mask !== 8)
 {
-  $theRoute = $argv[ROUTE];
-
-  if (false === isset($routes[$theRoute]))
+  // If we ask just for only one route
+  if (true === isset($argv[ROUTE]))
   {
-    echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
-    exit(1);
-  }
+    $theRoute = $argv[ROUTE];
 
-  echo 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
-
-  $routes = array($theRoute => $routes[$theRoute]);
-
-  /***************** CLEANING THE FILES *******************
-   ******* specific to the route passed in parameter ******/
-
-  $shaName = sha1('ca' . $theRoute . VERSION . 'che');
-
-  if ($mask & 1)
-    unlinkResourceFile('tpl/', $shaName);
-
-  if (($mask & 2) >> 1)
-    unlinkResourceFile('css/', $shaName);
-
-  if (($mask & 4) >> 2)
-    unlinkResourceFile('js/', $shaName);
-} else
-{
-  echo PHP_EOL, 'Cleaning the resources cache...';
-  $mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
-
-  if ($mask & 1)
-    array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
-
-  if (($mask & 2) >> 1)
-    array_map('unlink', glob(CACHE_PATH . 'css/*'));
-
-  if (($mask & 4) >> 2)
-    array_map('unlink', glob(CACHE_PATH . 'js/*'));
-}
-
-echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
-
-/*************** PROCESSING THE ROUTES ************/
-
-$cptRoutes = count($routes);
-
-echo $cptRoutes, ' route(s) to process. Processing the route(s) ... ', PHP_EOL, PHP_EOL;
-
-for($i = 0; $i < $cptRoutes; ++$i)
-{
-  $route = current($routes);
-  $routeName = key($routes);
-  next($routes);
-  echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
-
-  if (false === isset($route['resources']))
-  {
-    echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
-    continue;
-  }
-
-  $resources = $route['resources'];
-  $chunks = $route['chunks'];
-  $shaName = sha1('ca' . $routeName . VERSION . 'che');
-
-  // TODO suppress this block and do the appropriate fixes
-  if (false === isset($chunks[1]))
-  {
-    echo '[NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', PHP_EOL;
-    continue;
-  }
-
-  $bundlePath = (true === isset($chunks[1])
-    ? BASE_PATH . 'bundles/' . $chunks[1] . '/'
-    : CORE_PATH
-  );
-
-  $noErrors = true;
-
-  /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
-  if (($mask & 2) >> 1)
-  {
-    if (strpos(implode(array_keys($resources)), 'css') !== false)
+    if (false === isset($routes[$theRoute]))
     {
-      $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
+      echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
+      exit(1);
+    }
 
-      if ($pathAndFile !== null)
+    echo 'Cleaning the resources cache...';
+
+    $routes = array($theRoute => $routes[$theRoute]);
+
+    /***************** CLEANING THE FILES *******************
+     ******* specific to the route passed in parameter ******/
+
+    $shaName = sha1('ca' . $theRoute . VERSION . 'che');
+
+    if ($mask & 1)
+      unlinkResourceFile('tpl/', $shaName);
+
+    if (($mask & 2) >> 1)
+      unlinkResourceFile('css/', $shaName);
+
+    if (($mask & 4) >> 2)
+      unlinkResourceFile('js/', $shaName);
+  } else
+  {
+    echo PHP_EOL, 'Cleaning the resources cache...';
+
+    if ($mask & 1)
+      array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
+
+    if (($mask & 2) >> 1)
+      array_map('unlink', glob(CACHE_PATH . 'css/*'));
+
+    if (($mask & 4) >> 2)
+      array_map('unlink', glob(CACHE_PATH . 'js/*'));
+  }
+
+  echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
+
+  /*************** PROCESSING THE ROUTES ************/
+
+  $cptRoutes = count($routes);
+
+  echo $cptRoutes, ' route(s) to process. Processing the route(s) ... ', PHP_EOL, PHP_EOL;
+
+  for($i = 0; $i < $cptRoutes; ++$i)
+  {
+    $route = current($routes);
+    $routeName = key($routes);
+    next($routes);
+    echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
+
+    if (false === isset($route['resources']))
+    {
+      echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
+      continue;
+    }
+
+    $resources = $route['resources'];
+    $chunks = $route['chunks'];
+    $shaName = sha1('ca' . $routeName . VERSION . 'che');
+
+    // TODO suppress this block and do the appropriate fixes
+    if (false === isset($chunks[1]))
+    {
+      echo '[NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', PHP_EOL;
+      continue;
+    }
+
+    $bundlePath = (true === isset($chunks[1])
+      ? BASE_PATH . 'bundles/' . $chunks[1] . '/'
+      : CORE_PATH
+    );
+
+    $noErrors = true;
+
+    /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
+    if (($mask & 2) >> 1)
+    {
+      if (strpos(implode(array_keys($resources)), 'css') !== false)
       {
-        gzCompressFile($pathAndFile, null, 9);
-        echo status('CSS');
+        $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
+
+        if ($pathAndFile !== null)
+        {
+          gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
+          echo status('CSS');
+        } else
+          echo status('NO CSS', 'CLI_CYAN');
       } else
         echo status('NO CSS', 'CLI_CYAN');
-    } else
-      echo status('NO CSS', 'CLI_CYAN');
-  }
+    }
 
-  /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
-  if (($mask & 4) >> 2)
-  {
-    if (strpos(implode(array_keys($resources)), 'js') !== false)
+    /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
+    if (($mask & 4) >> 2)
     {
-      $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
-
-      // Linux or Windows ? We have java or jamvm ?
-      if (false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
+      if (strpos(implode(array_keys($resources)), 'js') !== false)
       {
-        if (true !== empty(exec('which java'))) // JAVA CASE
+        $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
+
+        // Linux or Windows ? We have java or jamvm ?
+        if (false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
+        {
+          if (true !== empty(exec('which java'))) // JAVA CASE
+          {
+            // JAVA CASE
+            /** TODO Find a way to store the logs (and then remove -W QUIET) */
+            exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+              $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
+            gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
+          } else {
+            // JAMVM CASE
+            exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
+            gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
+          }
+        } else if (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
+        {
+          exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
+          gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
+        } else
         {
           // JAVA CASE
           /** TODO Find a way to store the logs (and then remove -W QUIET) */
           exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
             $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
-          gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
-        } else {
-          // JAMVM CASE
-          exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
-          gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
+          gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
         }
-      } else if (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
-      {
-        exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
-        gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
+
+        echo status('JS');
       } else
-      {
-        // JAVA CASE
-        /** TODO Find a way to store the logs (and then remove -W QUIET) */
-        exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-          $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
-        gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
-      }
+        echo status('NO JS', 'CLI_CYAN');
+    }
 
-      echo status('JS');
-    } else
-      echo status('NO JS', 'CLI_CYAN');
-  }
-
-  /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
-  if ($mask & 1)
-  {
-    if (false === isset($resources['template']))
-      echo status('No TEMPLATE', 'CLI_CYAN');
-    else
+    /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
+    if ($mask & 1)
     {
-      // Generates the gzipped template files
-      passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/deployment/genAssets/genAsset.php" "' .
-        CACHE_PATH . '" "' .
-        $routeName . '" ' .
-        $shaName . ' "' .
-        'bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init"'
-      );
-
-      if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
-        echo status('TEMPLATE');
+      if (false === isset($resources['template']))
+        echo status('No TEMPLATE', 'CLI_CYAN');
       else
       {
-        status('TEMPLATE', 'CLI_RED');
-        $noErrors = false;
+        // Generates the gzipped template files
+        passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/deployment/genAssets/genAsset.php" "' .
+          CACHE_PATH . '" "' .
+          $routeName . '" ' .
+          $shaName . ' "' .
+          'bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init"'
+        );
+
+        if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
+          echo status('TEMPLATE');
+        else
+        {
+          status('TEMPLATE', 'CLI_RED');
+          $noErrors = false;
+        }
       }
     }
+
+    echo ' => ', $noErrors === true ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
+    CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+  }
+}
+
+if (($mask & 8) >> 3)
+{
+  $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
+
+  if (!file_exists($jsonManifestPath))
+  {
+    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.', END_COLOR,
+    PHP_EOL;
+    throw new \src\OtraException('', 1, '', NULL, [], true);
   }
 
-  echo ' => ', $noErrors === true ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
-    CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+  $message = 'Generation of the gzipped JSON manifest';
+  echo $message . '...', PHP_EOL;
+
+  $contents = file_get_contents($jsonManifestPath);
+  $contents = preg_replace('@([{,:])\s{1,}(")@', '$1$2', $contents);
+  $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
+  $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
+  $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
+  $generatedJsonManifestPath = BASE_PATH . 'web/manifest.json';
+
+  file_put_contents($generatedJsonManifestPath, $contents);
+  gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
+  echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
 }
 
 /**
