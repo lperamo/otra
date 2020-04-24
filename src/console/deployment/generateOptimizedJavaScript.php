@@ -79,7 +79,7 @@ function generateJavaScript(
       {
         // TODO add those lines to handle class map and fix the resulting issue
         // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
-        list($return, $output) = cli('java -jar ' . CORE_PATH . 'console/deployment/compiler.jar -W '
+        list($return, $output) = cli('java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
           . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
           . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
           . $generatedJsFile);

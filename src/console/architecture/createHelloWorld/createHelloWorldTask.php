@@ -27,14 +27,14 @@ $bundleMask = 9;
 // load console tools in order to ask questions (the following includes need those functions)
 
 //define ('CORE_PATH', __DIR__ . '../../');
-require CORE_PATH . 'console/tools.php';
+require CONSOLE_PATH . 'tools.php';
 
 // creates bundles, modules, controllers, actions and their related folders
-require CORE_PATH . 'console/architecture/checkInteractiveMode.php';
-require CORE_PATH . 'console/architecture/createBundle/checkBundleExistence.php';
-require CORE_PATH . 'console/architecture/createModule/checkModuleExistence.php';
-require CORE_PATH . 'console/architecture/createController/checkControllerExistence.php';
-require CORE_PATH . 'console/architecture/createAction/createAction.php';
+require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
+require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
+require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
+require CONSOLE_PATH . 'architecture/createController/checkControllerExistence.php';
+require CONSOLE_PATH . 'architecture/createAction/createAction.php';
 
 actionHandling(
   $interactive,
@@ -97,7 +97,7 @@ echo 'Route configuration file ', CLI_LIGHT_CYAN,  $routeConfigurationFile, CLI_
 $starterLayout = BASE_PATH . 'bundles/' . $bundleName . '/views/' . 'layout.phtml';
 file_put_contents(
   $starterLayout,
-  file_get_contents(CORE_PATH . 'console/architecture/helloWorldLayout.phtml')
+  file_get_contents(CONSOLE_PATH . 'architecture/helloWorldLayout.phtml')
 );
 
 echo CLI_GREEN, 'Starter layout created in ', CLI_LIGHT_CYAN, substr($starterLayout, strlen(BASE_PATH)),
@@ -125,7 +125,7 @@ echo 'Starter template created in ', CLI_LIGHT_CYAN, substr($starterTemplate, st
   CLI_GREEN, '.', PHP_EOL;
 
 // We update the routes configuration as we just add one route.
-require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
+require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
 /* We update the class mapping since we have one action more.
  * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the
@@ -133,7 +133,7 @@ require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
 */
 if (defined('VERBOSE') === false)
   define('VERBOSE', 0);
-require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
 echo CLI_GREEN, 'You can launch this example via the url ', CLI_LIGHT_CYAN, '/helloworld', CLI_GREEN,
 '.', PHP_EOL, 'You can launch a PHP internal web server by typing ', CLI_LIGHT_CYAN, 'otra serve', CLI_GREEN, '.', END_COLOR, PHP_EOL;

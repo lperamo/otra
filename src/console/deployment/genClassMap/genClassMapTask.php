@@ -24,7 +24,7 @@ if (file_exists($additionalClassesFilesPath) === true)
 $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
 $classesThatMayHaveToBeAdded = [];
 
-require CORE_PATH . 'console/tools.php';
+require CONSOLE_PATH . 'tools.php';
 
 if (empty($dirs) === false && function_exists('iterateCM') === false)
 {

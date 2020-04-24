@@ -115,7 +115,7 @@ chmod($sqlLogPath, 0666);
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // ********** GENERATE TASK METADATA **********
-require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
 
 echo PHP_EOL,
   'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',

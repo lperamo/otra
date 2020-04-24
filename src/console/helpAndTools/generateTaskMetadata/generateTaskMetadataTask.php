@@ -13,13 +13,13 @@ if (defined('BASE_PATH') === false)
 
   // Generating the class map if needed
   if (file_exists($pathToClassMap) === false)
-    require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+    require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
   // loading the class map
   require $pathToClassMap;
   spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
 
-  require CORE_PATH . 'console/colors.php';
+  require CONSOLE_PATH . 'colors.php';
 }
 
 /**************************************
@@ -54,7 +54,7 @@ $taskCategories = array_column($helpFileContent, TasksManager::TASK_CATEGORY);
 // sorts alphabetically the tasks and grouping them by category
 array_multisort($taskCategories, SORT_ASC, $tasks, SORT_ASC, $helpFileContent);
 
-require CORE_PATH . 'console/tools.php';
+require CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
@@ -130,7 +130,7 @@ $shellCompletionsContent .= PHP_EOL . 'typeset -a OTRA_COMMANDS_DESCRIPTIONS=(' 
   . $taskDescription . ')' . PHP_EOL . PHP_EOL
   . 'export OTRA_COMMANDS' . PHP_EOL . 'export OTRA_COMMANDS_DESCRIPTIONS' . PHP_EOL;
 
-file_put_contents(CORE_PATH . 'console/shellCompletions/shellCompletions.sh', $shellCompletionsContent);
+file_put_contents(CONSOLE_PATH . 'shellCompletions/shellCompletions.sh', $shellCompletionsContent);
 
 if (PHP_SAPI === 'cli')
   echo CLI_GREEN, 'Generation of shell completions script done.', END_COLOR, PHP_EOL;

@@ -32,7 +32,7 @@ if (file_exists($bundlePath) === false)
       exit (0);
   }
 
-  require CORE_PATH . 'console/architecture/createBundle/createBundle.php';
+  require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
   /** @var int $bundleMask */
   bundleHandling($bundleName, $consoleForce ? $bundleMask : null);
 }

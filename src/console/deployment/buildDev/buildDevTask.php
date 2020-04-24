@@ -146,7 +146,7 @@ $filesProcessed = false;
 if (WATCH_FOR_PHP_FILES === true)
 {
   // We generate the class mapping...
-  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
   $filesProcessed = true;
 }
 
@@ -154,11 +154,11 @@ if (WATCH_FOR_ROUTES === true)
 {
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
-  require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
+  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
   $filesProcessed = true;
 }
 
-require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
+require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 

@@ -146,7 +146,7 @@ if ($mask !== 8)
           {
             // JAVA CASE
             /** TODO Find a way to store the logs (and then remove -W QUIET) */
-            exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+            exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH . 'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
               $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
             gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
           } else {
@@ -162,7 +162,7 @@ if ($mask !== 8)
         {
           // JAVA CASE
           /** TODO Find a way to store the logs (and then remove -W QUIET) */
-          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CORE_PATH . 'console/deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
+          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH . 'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
             $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
         }
@@ -180,7 +180,7 @@ if ($mask !== 8)
       else
       {
         // Generates the gzipped template files
-        passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/deployment/genAssets/genAsset.php" "' .
+        passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genAssets/genAsset.php" "' .
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .

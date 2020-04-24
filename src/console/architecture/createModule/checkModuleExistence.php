@@ -2,7 +2,7 @@
 
 namespace otra\console;
 
-require CORE_PATH . 'console/architecture/createModule/createModule.php';
+require CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
 // MODULE STEP
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);

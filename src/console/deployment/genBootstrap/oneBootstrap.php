@@ -26,7 +26,7 @@ if (false !== strpos(_DIR_, 'vendor'))
   );
   define('CORE_PATH', BASE_PATH . 'src/');
 }
-require CORE_PATH . 'console/colors.php';
+require CONSOLE_PATH . 'colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
@@ -89,7 +89,7 @@ if (true === isset($params['session']))
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
-require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
+require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = BASE_PATH . str_replace(
     '\\',
     '/',

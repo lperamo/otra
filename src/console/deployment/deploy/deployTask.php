@@ -45,15 +45,15 @@ define(
 if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 {
   // We generate the class mapping...
-  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
   echo 'Launching routes update...', PHP_EOL;
-  require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
+  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // bootstraps
   $argv[2] = 0; // prevents the class mapping
   $argv[3] = $verbose; // if true, print warnings when the task fails
-  require CORE_PATH . 'console/deployment/genBootstrap/genBootstrapTask.php';
+  require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
 }
 
 require CORE_PATH . 'tools/cli.php';

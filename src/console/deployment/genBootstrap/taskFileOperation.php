@@ -47,7 +47,7 @@ function hasSyntaxErrors(string $file) : bool
   if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
     echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
-    require CORE_PATH . 'console/tools.php';
+    require CONSOLE_PATH . 'tools.php';
     showContextByError($file, $output, 10);
 
     return true;

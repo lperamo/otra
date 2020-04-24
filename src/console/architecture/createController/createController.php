@@ -1,6 +1,6 @@
 <?php
 
-require CORE_PATH . 'console/architecture/createFolder.php';
+require CONSOLE_PATH . 'architecture/createFolder.php';
 
 /**
  * Create the folders that contains all the controllers folders.
