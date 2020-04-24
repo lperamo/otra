@@ -47,8 +47,20 @@ class OtraExceptionCLI extends \Exception
     echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
     if (true === isset($exception->scode))
-      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exception->file, END_COLOR,
+    {
+      $exceptionFile = $exception->file;
+
+      if (strpos($exceptionFile, CONSOLE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
+      elseif (strpos($exceptionFile, CORE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
+      elseif (strpos($exceptionFile, BASE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
+
+        echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
         ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
+    }
+
 
     /******************************
      * Write HEADERS of the table *
