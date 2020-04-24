@@ -4,8 +4,8 @@
  *
  * @author Lionel Péramo */
 
-namespace src\bdd;
-use src\OtraException;
+namespace otra\bdd;
+use otra\OtraException;
 use PDO, PDOStatement;
 
 abstract class Pdomysql

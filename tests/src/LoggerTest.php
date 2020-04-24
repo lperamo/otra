@@ -1,6 +1,6 @@
 <?php
 
-use src\Logger;
+use otra\Logger;
 use phpunit\framework\TestCase;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 use phpunit\framework\TestCase;
 
 /**
@@ -108,7 +108,7 @@ class CreateHelloWorldTest extends TestCase
 
     // testing
     $this->expectOutputString(CLI_YELLOW . 'The bundle ' . CLI_CYAN . 'HelloWorld' . CLI_YELLOW . ' already exists.' . END_COLOR . PHP_EOL);
-    $this->expectException(\src\OtraException::class);
+    $this->expectException(\otra\OtraException::class);
 
     // launching
     TasksManager::execute(

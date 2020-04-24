@@ -2,7 +2,7 @@
 /** Description of Session
  *
  * @author Lionel Péramo */
-namespace src;
+namespace otra;
 
 abstract class Session
 {

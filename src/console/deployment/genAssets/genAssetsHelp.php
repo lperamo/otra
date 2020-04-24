@@ -1,6 +1,6 @@
 <?php
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 return [
   'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files.',

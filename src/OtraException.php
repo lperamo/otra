@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src;
+namespace otra;
 
-use src\{Controller, console\OtraExceptionCLI};
+use otra\{Controller, console\OtraExceptionCLI};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...

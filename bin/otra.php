@@ -2,7 +2,7 @@
 <?php
 declare(strict_types=1);
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 // TODO Centralize those constants that are already defined in AllConfig...
 // Fixes windows awful __DIR__

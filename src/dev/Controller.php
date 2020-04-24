@@ -4,10 +4,10 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src;
+namespace otra;
 
 use config\{AllConfig, Routes};
-use src\{Logger, MasterController};
+use otra\{Logger, MasterController};
 
 class Controller extends MasterController
 {

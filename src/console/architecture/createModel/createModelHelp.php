@@ -1,6 +1,6 @@
 <?php
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 return [
   'Creates a model.',

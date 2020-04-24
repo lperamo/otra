@@ -3,10 +3,10 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
 use config\AllConfig;
-use \src\OtraException;
+use \otra\OtraException;
 
 define('DEPLOY_ARG_MASK', 2);
 define('DEPLOY_ARG_VERBOSE', 3);
@@ -75,7 +75,7 @@ function launchAssetsGeneration(int $verbose, int $mask, int $mode = 3)
   if ($result[0] === false)
   {
     echo CLI_RED . 'There was a problem during the assets transcompilation.';
-    throw new \src\OtraException('', 1, '', NULL, [], true);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
@@ -95,7 +95,7 @@ function launchAssetsGeneration(int $verbose, int $mask, int $mode = 3)
   if ($result[0] === false)
   {
     echo CLI_RED . 'There was a problem during the assets minification and compression.';
-    throw new \src\OtraException('', 1, '', NULL, [], true);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
@@ -148,7 +148,7 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   if ($result[0] !== 0)
   {
     echo CLI_RED, 'Error when using ' . $operation . ' command.', END_COLOR, PHP_EOL;
-    throw new \src\OtraException('', 1, '', NULL, [], true);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,

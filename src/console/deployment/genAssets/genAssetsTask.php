@@ -210,7 +210,7 @@ if (($mask & 8) >> 3)
   {
     echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.', END_COLOR,
     PHP_EOL;
-    throw new \src\OtraException('', 1, '', NULL, [], true);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   $message = 'Generation of the gzipped JSON manifest';

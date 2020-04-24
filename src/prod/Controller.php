@@ -4,7 +4,7 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace src;
+namespace otra;
 
 use config\AllConfig;
 

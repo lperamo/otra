@@ -1,7 +1,7 @@
 <?php
 
-use function src\console\returnLegiblePath;
-use const src\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
+use function otra\console\returnLegiblePath;
+use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
 function generateJavaScript(
   bool $verbose,

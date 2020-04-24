@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
-use src\OtraException;
+use otra\OtraException;
 
 /** @author Lionel Péramo */
 abstract class TasksManager

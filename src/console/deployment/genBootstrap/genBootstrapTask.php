@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
 $verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 

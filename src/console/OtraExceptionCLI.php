@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
-use src\OtraException;
+use otra\OtraException;
 
 /**
  * Shows an exception 'colorful' display for command line commands.

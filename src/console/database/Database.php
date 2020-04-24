@@ -5,13 +5,13 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace src\console {
+namespace otra\console {
 
-  use src\bdd\Sql;
+  use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
-  use src\{Session, OtraException};
+  use otra\{Session, OtraException};
 
   define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);

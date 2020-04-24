@@ -1,7 +1,7 @@
 <?php
 
 // If we do not come from the 'otra' command...
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 if (defined('BASE_PATH') === false)
 {

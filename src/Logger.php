@@ -1,5 +1,5 @@
 <?php
-namespace src;
+namespace otra;
 
 /** Simple logger class
  *

@@ -1,6 +1,6 @@
 <?php
 
-use src\OtraException;
+use otra\OtraException;
 
 /**
  * Copy the file or an entire folder to the destination

@@ -1,6 +1,6 @@
 <?php
 
-use src\
+use otra\
 {MasterController, Controller, OtraException};
 use phpunit\framework\TestCase;
 

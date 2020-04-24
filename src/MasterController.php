@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo
  */
-namespace src;
+namespace otra;
 
 class MasterController
 {
@@ -273,5 +273,5 @@ class MasterController
 // allowing the block.php file of the template engine system to work in production mode,
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER['APP_ENV'] === 'prod' && PHP_SAPI !== 'cli')
-  class_alias('\cache\php\MasterController', '\src\MasterController');
+  class_alias('\cache\php\MasterController', '\otra\MasterController');
 ?>

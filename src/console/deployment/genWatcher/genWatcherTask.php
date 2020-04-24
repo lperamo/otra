@@ -1,11 +1,11 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
-use src\console\Tasks;
+use otra\console\Tasks;
 
 // TODO Add parameter(s)? to add folder(s) to exclude from watching
 // TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)

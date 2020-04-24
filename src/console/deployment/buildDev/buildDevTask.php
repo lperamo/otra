@@ -1,6 +1,6 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
 use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
 

@@ -1,6 +1,6 @@
 <?php
 
-use src\console\Database;
+use otra\console\Database;
 
 Database::createFixtures(
   $argv[2],

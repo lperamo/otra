@@ -1,6 +1,6 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
 require CORE_PATH . 'console/architecture/createModule/createModule.php';
 

@@ -1,7 +1,7 @@
 <?php
 
 use phpunit\framework\TestCase;
-use src\{bdd\Sql, OtraException};
+use otra\{bdd\Sql, OtraException};
 
 /**
  * The majority of the code is already tested by SqlTest.php so we only test the remaining uncovered code.
@@ -101,7 +101,7 @@ class PdomysqlTest extends TestCase
     Sql::getDB();
 
     // testing
-    $this->assertTrue(\src\bdd\Pdomysql::close(Sql::$instance));
+    $this->assertTrue(\otra\bdd\Pdomysql::close(Sql::$instance));
     $this->assertNull(Sql::$instance);
   }
 }

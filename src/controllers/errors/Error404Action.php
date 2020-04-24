@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 
-namespace src\controllers\errors;
+namespace otra\controllers\errors;
 
-use src\Controller;
+use otra\Controller;
 use config\Routes;
 
 class Error404Action extends Controller
