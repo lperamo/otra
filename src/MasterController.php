@@ -168,7 +168,7 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = '', string $extension = '.cache') : string {
+  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = VERSION, string $extension = '.cache') : string {
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
