@@ -26,6 +26,8 @@ if (false !== strpos(_DIR_, 'vendor'))
   );
   define('CORE_PATH', BASE_PATH . 'src/');
 }
+
+define('CONSOLE_PATH', CORE_PATH . 'console/');
 require CONSOLE_PATH . 'colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
