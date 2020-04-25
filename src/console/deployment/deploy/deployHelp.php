@@ -9,7 +9,8 @@ return [
       str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '1 => Generates PHP production files.' . PHP_EOL .
       str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '2 => JS production files.' . PHP_EOL .
       str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '4 => CSS production files' . PHP_EOL .
-      str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '7 => all production files'
+      str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '8 => Templates and JSON manifest' . PHP_EOL .
+      str_repeat(' ', TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . '15 => all production files'
     ,
     'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
   ],

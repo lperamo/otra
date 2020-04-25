@@ -15,6 +15,7 @@ define('DEPLOY_MASK_ONLY_RSYNC', 0);
 define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
 define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
+define('DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC', 8);
 
 // **** Checking the deployment config parameters ****
 if (isset(AllConfig::$deployment) === false)
@@ -58,53 +59,50 @@ if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 
 require CORE_PATH . 'tools/cli.php';
 
-/**
- * @param int $verbose
- * @param int $mask Binary mask (2^1 for JS, 2^2 for CSS)
- * @param int $mode 2 for TypeScript, 3 for TypeScript and CSS
- *
- * @throws OtraException
- */
-function launchAssetsGeneration(int $verbose, int $mask, int $mode = 3)
-{
-  echo END_COLOR, 'Assets transcompilation...';
-
-  // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
-
-  if ($result[0] === false)
-  {
-    echo CLI_RED . 'There was a problem during the assets transcompilation.';
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
-  }
-
-  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
-
-  echo 'Assets minification and compression...';
-  $genAssetsMode = 1;
-
-  if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-    $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
-
-  if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-    $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
-
-  // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
-
-  if ($result[0] === false)
-  {
-    echo CLI_RED . 'There was a problem during the assets minification and compression.';
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
-  }
-
-  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
-}
+$mode = 0;
 
 if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-  launchAssetsGeneration($verbose, $mask, 2);
+  $mode |= 4;
 elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-  launchAssetsGeneration($verbose, $mask);
+  $mode |= 2;
+elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 3)
+  $mode |= 9;
+
+echo END_COLOR, 'Assets transcompilation...';
+
+// Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
+$result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
+
+if ($result[0] === false)
+{
+  echo CLI_RED . 'There was a problem during the assets transcompilation.';
+  throw new \otra\OtraException('', 1, '', NULL, [], true);
+}
+
+echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+
+echo 'Assets minification and compression...';
+$genAssetsMode = 0;
+
+if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
+
+if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
+
+if (($mask & DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC) >> 3)
+  $genAssetsMode |= DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC | 1;
+
+// Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
+$result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
+
+if ($result[0] === false)
+{
+  echo CLI_RED . 'There was a problem during the assets minification and compression.';
+  throw new \otra\OtraException('', 1, '', NULL, [], true);
+}
+
+echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 
 // Deploy the files on the server...
 [
@@ -198,11 +196,13 @@ $handleTransfer(
 define('STRLEN_BASEPATH', strlen(BASE_PATH));
 
 /**
- * @param string $folderToCheck
+ * See which files to send and which files to keep
+ *
+ * @param string $folderToAnalyze
  */
-$check = function (string &$folderToCheck) use (&$handleTransfer, &$check, &$startCommand, &$folder, &$port, &$server)
+$seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$port, &$server)
 {
-  $bundleFolders = new \DirectoryIterator($folderToCheck);
+  $bundleFolders = new \DirectoryIterator($folderToAnalyze);
 
   foreach ($bundleFolders as $bundleFolder)
   {
@@ -235,12 +235,12 @@ $check = function (string &$folderToCheck) use (&$handleTransfer, &$check, &$sta
     );
 
     // Then we create the inside stuff
-    $check($folderRealPath);
+    $seekingToSendFiles($folderRealPath);
   }
 };
 
 $mainBundlesFolder = BASE_PATH . 'bundles';
-$check($mainBundlesFolder);
+$seekingToSendFiles($mainBundlesFolder);
 
 $handleTransfer(
   'Checking log folder',

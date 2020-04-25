@@ -221,7 +221,7 @@ if (($mask & 8) >> 3)
   $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
   $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
   $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
-  $generatedJsonManifestPath = BASE_PATH . 'web/manifest.json';
+  $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
 
   file_put_contents($generatedJsonManifestPath, $contents);
   gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
