@@ -89,22 +89,27 @@ if ($mask !== 8)
     $route = current($routes);
     $routeName = key($routes);
     next($routes);
+
+    // Showing the route name
     echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
+
+    $shaName = sha1('ca' . $routeName . VERSION . 'che');
 
     if (false === isset($route['resources']))
     {
-      echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
+      echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
+        CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
     $resources = $route['resources'];
     $chunks = $route['chunks'];
-    $shaName = sha1('ca' . $routeName . VERSION . 'che');
 
     // TODO suppress this block and do the appropriate fixes
     if (false === isset($chunks[1]))
     {
-      echo '[NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', PHP_EOL;
+      echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',
+      CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
