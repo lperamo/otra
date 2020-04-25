@@ -38,6 +38,20 @@ class OtraExceptionCLI extends \Exception
   }
 
   /**
+   * Converts the absolute path into 'BASE_PATH/CORE_PATH/CONSOLE_PATH + path' path like
+   *
+   * @param string $pathType 'BASE', 'CORE' or 'CONSOLE'
+   * @param string $file
+   *
+   * @return string
+   */
+  private static function returnShortenFilePath(string $pathType, string &$file) : string
+  {
+    return CLI_BLUE . $pathType . '_PATH' . CLI_LIGHT_BLUE . ' + ' .
+      mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
+  }
+
+  /**
    * Shows an exception 'colorful' display for command line commands.
    *
    * @param OtraException $exception
@@ -60,7 +74,6 @@ class OtraExceptionCLI extends \Exception
         echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
         ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
-
 
     /******************************
      * Write HEADERS of the table *
@@ -91,7 +104,17 @@ class OtraExceptionCLI extends \Exception
       createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
 
       if (isset($now['file']))
+      {
         $now['file'] = str_replace('\\', '/', $now['file']);
+
+        if (false !== mb_strpos($now['file'], CONSOLE_PATH))
+          $now['file'] = self::returnShortenFilePath('CONSOLE', $now['file']);
+        elseif (false !== mb_strpos($now['file'], CORE_PATH))
+          $now['file'] = self::returnShortenFilePath('CORE', $now['file']);
+        elseif (false !== mb_strpos($now['file'], BASE_PATH))
+          $now['file'] = self::returnShortenFilePath('BASE', $now['file']);
+      } else
+        $now['file'] = '';
 
       echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
       self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
@@ -100,12 +123,8 @@ class OtraExceptionCLI extends \Exception
       self::consoleLine(
         $now,
         'file',
-        self::FILE_WIDTH,
-        true === isset($now['file'])
-          ? (false === mb_strpos($now['file'], BASE_PATH)
-          ? $now['file'] :
-          mb_substr($now['file'], mb_strlen(BASE_PATH)))
-          : ''
+        self::FILE_WIDTH + 37, // 37 = mb_strlen(CLI_BLUE . CLI_LIGHT_BLUE)
+        $now['file']
       ),
         /** ARGUMENTS */
       CLI_LIGHT_BLUE, '|', END_COLOR,
@@ -156,7 +175,7 @@ class OtraExceptionCLI extends \Exception
    */
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
-    return CLI_LIGHT_BLUE . '│' .
+    return CLI_LIGHT_BLUE . '│' . END_COLOR .
       str_pad(true === isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
         : ' -',
