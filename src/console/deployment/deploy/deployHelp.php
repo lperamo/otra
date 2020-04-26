@@ -1,7 +1,5 @@
 <?php
 
-use otra\console\TasksManager;
-
 return [
   'Deploy the site. ' . CLI_YELLOW . '[Currently only works for unix systems !]' . END_COLOR,
   [

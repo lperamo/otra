@@ -1,7 +1,5 @@
 <?php
 
-use otra\console\TasksManager;
-
 return [
   'Clears whatever cache you want to clear.',
   [
