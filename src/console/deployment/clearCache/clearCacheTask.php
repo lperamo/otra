@@ -11,18 +11,20 @@ define('CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE', 1);
 define('CLEAR_CACHE_MASK_PHP_BOOTSTRAPS', 2);
 define('CLEAR_CACHE_MASK_CSS', 4);
 define('CLEAR_CACHE_MASK_JS', 8);
-define('CLEAR_CACHE_MASK_ROUTE_MANAGEMENT', 16);
-define('CLEAR_CACHE_MASK_CLASS_MAPPING', 32);
-define('CLEAR_CACHE_MASK_METADATA', 64);
-define('CLEAR_CACHE_MASK_DEBUGGING', 128);
+define('CLEAR_CACHE_MASK_TEMPLATES', 16);
+define('CLEAR_CACHE_MASK_ROUTE_MANAGEMENT', 32);
+define('CLEAR_CACHE_MASK_CLASS_MAPPING', 64);
+define('CLEAR_CACHE_MASK_METADATA', 128);
+define('CLEAR_CACHE_MASK_DEBUGGING', 256);
 
-$mask = (int) $argv[CLEAR_CACHE_ARG_MASK] ?? 255;
+$mask = (int) $argv[CLEAR_CACHE_ARG_MASK] ?? 511;
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
 // Handling route
-if ($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS
-  || $mask & CLEAR_CACHE_MASK_CSS
-  || $mask & CLEAR_CACHE_MASK_JS)
+if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
+  || ($mask & CLEAR_CACHE_MASK_CSS) >> 2
+  || ($mask & CLEAR_CACHE_MASK_JS) >> 3
+  || ($mask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
 {
   $routes = \config\Routes::$_;
 
@@ -100,8 +102,8 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
 
   if (!unlink($file))
   {
-    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $fileShownInTheError, CLI_RED, '.',
-      END_COLOR, PHP_EOL;
+    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $fileShownInTheError, CLI_RED,
+      '. Task aborted.', END_COLOR, PHP_EOL;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -116,8 +118,8 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
 {
   if (!file_exists($folder))
   {
-    echo CLI_YELLOW, 'The folder ', CLI_CYAN, $folderShownInTheError, CLI_YELLOW, ' does not exist.', END_COLOR,
-      PHP_EOL;
+    echo CLI_YELLOW, 'The folder ', CLI_CYAN, $folderShownInTheError, CLI_YELLOW, ' does not exist. Task aborted.',
+      END_COLOR, PHP_EOL;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -176,8 +178,15 @@ if (($mask & CLEAR_CACHE_MASK_JS) >> 3)
   echo 'JS files cleared', OTRA_SUCCESS;
 }
 
+/* **************** TEMPLATES **************** */
+if (($mask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
+{
+  $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
+  echo 'Templates cleared', OTRA_SUCCESS;
+}
+
 /* **************** ROUTE MANAGEMENT **************** */
-if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 4)
+if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 {
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
@@ -189,7 +198,7 @@ if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 4)
 }
 
 /* **************** CLASS MAPPING **************** */
-if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 5)
+if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
@@ -207,7 +216,7 @@ if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 5)
 }
 
 /* **************** CONSOLE TASKS METADATA **************** */
-if (($mask & CLEAR_CACHE_MASK_METADATA) >> 6)
+if (($mask & CLEAR_CACHE_MASK_METADATA) >> 7)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
@@ -225,7 +234,7 @@ if (($mask & CLEAR_CACHE_MASK_METADATA) >> 6)
 }
 
 /* **************** DEBUGGING FILES **************** */
-if (($mask & CLEAR_CACHE_MASK_DEBUGGING) >> 6)
+if (($mask & CLEAR_CACHE_MASK_DEBUGGING) >> 8)
 {
   $profilerFile = 'profiler.php';
   unlinkFile(
