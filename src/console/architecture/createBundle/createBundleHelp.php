@@ -2,7 +2,7 @@
 
 $showMaskOption = static function (string $text) : string
 {
-  return str_repeat(' ', \otra\console\TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . $text;
+  return STRING_PAD_FOR_OPTION_FORMATTING . $text;
 };
 
 return [
