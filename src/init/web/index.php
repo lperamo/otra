@@ -17,10 +17,13 @@ define(
     : BASE_PATH . 'src/'
 );
 
-require CORE_PATH . 'entryPoint.php';
-
-// Is it an asset ?
-if (isset($posDot) !== false) return 0;
+$uri = $_SERVER['REQUEST_URI'];
+session_name('__Secure-LPSESSID');
+session_start([
+  'cookie_secure' => true,
+  'cookie_httponly' => true,
+  'cookie_samesite' => 'strict'
+]);
 
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
 define('VERSION', '1.0.0-alpha.2.1.0');
@@ -54,7 +57,7 @@ try
       if (false === isset(CLASSMAP[$className]))
       {
         require_once CORE_PATH . 'Logger.php';
-        \otra\Logger::logTo(
+        \src\Logger::logTo(
           'Path not found for the class name : ' . $className . PHP_EOL .
           'Stack trace : ' . PHP_EOL .
           print_r(debug_backtrace(), true),
@@ -73,7 +76,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \otra\Logger::logTo(
+  \src\Logger::logTo(
     'Exception : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),
@@ -86,7 +89,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \otra\Logger::logTo(
+  \src\Logger::logTo(
     'Fatal error : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),
