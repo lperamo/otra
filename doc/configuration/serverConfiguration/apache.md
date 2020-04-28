@@ -5,4 +5,8 @@
 I recommend to not use `.htaccess` file when possible, it allows to deactivate the functionality that searches for this
 kind of files.<br>
 
-TODO
+In the future, you will be able to generate a server configuration file with this command :
+              
+`otra genServerConfig /etc/nginx/sites-available/dev.yourdomain.com dev apache`
+
+...but it only works for Nginx as we speak. 
