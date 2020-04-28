@@ -65,7 +65,8 @@ ob_start();
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
-  'cookie_httponly' => true
+  'cookie_httponly' => true,
+  'cookie_samesite' => 'strict'
 ]);
 
 // We launch the route
