@@ -92,7 +92,10 @@ $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
-$fileToInclude = BASE_PATH . str_replace(
+
+// If it is an OTRA core route, we must change the path src from the config/Routes.php file by vendor/otra/otra/src
+$fileToInclude = ($params['core'] ? substr(CORE_PATH,0, -5) : BASE_PATH)
+  . str_replace(
     '\\',
     '/',
     \otra\Router::get(
