@@ -36,6 +36,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   PATHS_TO_HAVE_RESOURCES =
   [
     BASE_PATH . 'bundles',
+    BASE_PATH . 'web',
     CORE_PATH
   ],
 

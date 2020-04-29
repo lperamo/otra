@@ -29,6 +29,7 @@ PATHS_TO_HAVE_PHP =
 PATHS_TO_HAVE_RESOURCES =
 [
   BASE_PATH . 'bundles',
+  BASE_PATH . 'web',
   CORE_PATH
 ],
 
