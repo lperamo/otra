@@ -68,41 +68,44 @@ elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
 elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 3)
   $mode |= 9;
 
-echo END_COLOR, 'Assets transcompilation...';
-
-// Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-$result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
-
-if ($result[0] === false)
+if ($mode > 0)
 {
-  echo CLI_RED . 'There was a problem during the assets transcompilation.';
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  echo END_COLOR, 'Assets transcompilation...';
+
+  // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
+  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
+
+  if ($result[0] === false)
+  {
+    echo CLI_RED . 'There was a problem during the assets transcompilation.';
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
+  }
+
+  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+
+  echo 'Assets minification and compression...';
+  $genAssetsMode = 0;
+
+  if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+    $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
+
+  if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+    $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
+
+  if (($mask & DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC) >> 3)
+    $genAssetsMode |= DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC | 1;
+
+  // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
+  $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
+
+  if ($result[0] === false)
+  {
+    echo CLI_RED . 'There was a problem during the assets minification and compression.';
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
+  }
+
+  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 }
-
-echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
-
-echo 'Assets minification and compression...';
-$genAssetsMode = 0;
-
-if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-  $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
-
-if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-  $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
-
-if (($mask & DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC) >> 3)
-  $genAssetsMode |= DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC | 1;
-
-// Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-$result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
-
-if ($result[0] === false)
-{
-  echo CLI_RED . 'There was a problem during the assets minification and compression.';
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
-}
-
-echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 
 // Deploy the files on the server...
 [
