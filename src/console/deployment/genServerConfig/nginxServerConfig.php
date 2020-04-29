@@ -155,7 +155,7 @@ function handleGzippedAsset(string $assetType = 'css'): string
     SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL .
     SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT_2 . 'root /var/www/html/perso/otraSite;' . PHP_EOL .
+    SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
@@ -226,7 +226,7 @@ if (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev')
     SPACE_INDENT . 'location ~ /bundles/.*\.(css|js)$' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
     checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . 'root /var/www/html/perso/otraSite;' . PHP_EOL .
+    SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 } else {
   $content .=
