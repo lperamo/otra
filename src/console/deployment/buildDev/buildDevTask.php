@@ -2,51 +2,52 @@
 
 namespace otra\console;
 
+use config\AllConfig;
 use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
 const BUILD_DEV_ARG_VERBOSE = 2,
-      BUILD_DEV_ARG_MASK = 3,
-      BUILD_DEV_ARG_GCC = 4,
-      BUILD_DEV_ARG_SCOPE = 5,
-      BUILD_DEV_MASK_SCSS = 1,
-      BUILD_DEV_MASK_TS = 2,
-      BUILD_DEV_MASK_ROUTES = 4,
-      BUILD_DEV_MASK_PHP = 8,
-      GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
-      RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
+BUILD_DEV_ARG_MASK = 3,
+BUILD_DEV_ARG_GCC = 5,
+BUILD_DEV_ARG_SCOPE = 6,
+BUILD_DEV_MASK_SCSS = 1,
+BUILD_DEV_MASK_TS = 2,
+BUILD_DEV_MASK_ROUTES = 4,
+BUILD_DEV_MASK_PHP = 8,
+GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
+RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
 
-      PATHS_TO_HAVE_PHP =
-      [
-        BASE_PATH . 'bundles',
-        BASE_PATH . 'config',
-        CORE_PATH
-      ],
+PATHS_TO_HAVE_PHP =
+[
+  BASE_PATH . 'bundles',
+  BASE_PATH . 'config',
+  CORE_PATH
+],
 
-      PATHS_TO_HAVE_RESOURCES =
-      [
-        BASE_PATH . 'bundles',
-        CORE_PATH
-      ],
+PATHS_TO_HAVE_RESOURCES =
+[
+  BASE_PATH . 'bundles',
+  CORE_PATH
+],
 
-      PATH_TO_AVOID = BASE_PATH . 'bundles/config';
+PATH_TO_AVOID = BASE_PATH . 'bundles/config';
 
 // Reminder : 0 => no debug, 1 => basic logs
 define(
   'BUILD_DEV_VERBOSE',
-  array_key_exists(BUILD_DEV_ARG_VERBOSE, $argv) === true ? $argv[BUILD_DEV_ARG_VERBOSE] : 0
+  (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0)
 );
 
 define(
   'BUILD_DEV_GCC',
-  array_key_exists(BUILD_DEV_ARG_GCC, $argv) === true && $argv[BUILD_DEV_ARG_GCC] === 'true' ? true : false
+  isset($argv[BUILD_DEV_ARG_GCC]) && $argv[BUILD_DEV_ARG_GCC] === 'true'
 );
 
 define(
   'BUILD_DEV_SCOPE',
-  array_key_exists(BUILD_DEV_ARG_SCOPE, $argv) === true ? (int) $argv[BUILD_DEV_ARG_SCOPE] : 0
+  (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0)
 );
 
 /**
@@ -122,6 +123,13 @@ if ($maskExists === true && is_numeric($argv[BUILD_DEV_ARG_MASK]) === false)
   echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
   exit(1);
 }
+
+echo CLI_YELLOW, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
+
+define(
+  'BUILD_DEV_SOURCE_MAPS',
+  isset(AllConfig::$cssSourceMaps) ? AllConfig::$cssSourceMaps : false
+);
 
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_SCSS));
 define('WATCH_FOR_TS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_TS));
@@ -212,12 +220,22 @@ foreach($iterator as $entry)
 
         $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
-        list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
+        list(, $return) = cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
+          ':' . $cssPath);
+
+        $sourceMapPath = $cssPath . '.map';
 
         if (BUILD_DEV_VERBOSE > 0)
           echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
-            returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-            PHP_EOL . PHP_EOL;
+            returnLegiblePath($cssPath) .
+            (BUILD_DEV_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
+
+        // We clean the source map if there is an old source map related to this CSS file
+        if (!BUILD_DEV_SOURCE_MAPS)
+        {
+          if (file_exists($sourceMapPath))
+            unlink($sourceMapPath);
+        }
       }
     }
   }
