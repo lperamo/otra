@@ -246,7 +246,7 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 
 if ($filesProcessed === true)
 {
-  if (BUILD_DEV_VERBOSE === '0')
+  if (BUILD_DEV_VERBOSE === 0)
     echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
 } else
   echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;
