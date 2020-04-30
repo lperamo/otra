@@ -175,7 +175,27 @@ function handleWebFolderAssets() : string
     SPACE_INDENT . '# Handling images' . PHP_EOL .
     SPACE_INDENT . 'location ~ /.*\.(ico|jpe?g|png|svg|webp)$' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() .
+    SPACE_INDENT_2 .
+    '# Workaround, Firefox does not send referrer for favicons so we send always the images when Firefox is used' .
+    PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . '# Handles the case of "not favicon images" when using Firefox' . PHP_EOL .
+    SPACE_INDENT_2 . 'set $referer $http_referer;' . PHP_EOL.
+    PHP_EOL .
+    SPACE_INDENT_2 . 'if ($uri ~ "^/(favicon|apple-touch).*\.png$")' . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'set $referer https://$server_name/;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . 'if ($http_user_agent !~ ".*Firefox.*")' . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'set $referer $http_referer;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . 'if ($referer = "")' . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
