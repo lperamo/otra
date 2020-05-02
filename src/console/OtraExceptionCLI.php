@@ -103,6 +103,8 @@ class OtraExceptionCLI extends \Exception
 
       createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
 
+      $compositeColoredPath = true;
+
       if (isset($now['file']))
       {
         $now['file'] = str_replace('\\', '/', $now['file']);
@@ -113,8 +115,13 @@ class OtraExceptionCLI extends \Exception
           $now['file'] = self::returnShortenFilePath('CORE', $now['file']);
         elseif (false !== mb_strpos($now['file'], BASE_PATH))
           $now['file'] = self::returnShortenFilePath('BASE', $now['file']);
+        else
+          $compositeColoredPath = false;
       } else
+      {
         $now['file'] = '';
+        $compositeColoredPath = false;
+      }
 
       echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
       self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
@@ -123,7 +130,8 @@ class OtraExceptionCLI extends \Exception
       self::consoleLine(
         $now,
         'file',
-        self::FILE_WIDTH + 37, // 37 = mb_strlen(CLI_BLUE . CLI_LIGHT_BLUE)
+        // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+        $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
         $now['file']
       ),
         /** ARGUMENTS */
