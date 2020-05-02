@@ -43,12 +43,11 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
     {
       foreach(array_keys($routes) as &$routeToSuppress)
       {
-        if (in_array(
-          $routeToSuppress,
-          ['otra_exception', 'otra_refreshSQLLogs', 'otra_clearSQLLogs', 'otra_profiler']
-        ))
+        if (in_array($routeToSuppress, ['otra_exception']))
           continue;
 
+        echo $cachePath . $routeToSuppress . $extension, ' ',
+          $cacheRelativePath . $routeToSuppress . $extension, PHP_EOL;
         unlinkFile(
           $cachePath . $routeToSuppress . $extension,
           $cacheRelativePath . $routeToSuppress . $extension

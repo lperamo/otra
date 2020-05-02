@@ -7,3 +7,4 @@ if (function_exists('t') === false)
     return $text;
   }
 }
+?>
