@@ -17,7 +17,7 @@ define('CLEAR_CACHE_MASK_CLASS_MAPPING', 64);
 define('CLEAR_CACHE_MASK_METADATA', 128);
 define('CLEAR_CACHE_MASK_DEBUGGING', 256);
 
-$mask = (int) $argv[CLEAR_CACHE_ARG_MASK] ?? 511;
+$mask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
 // Handling route
@@ -43,14 +43,17 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
     {
       foreach(array_keys($routes) as &$routeToSuppress)
       {
-        if (in_array($routeToSuppress, ['otra_exception']))
+        if ($routeToSuppress === 'otra_exception')
           continue;
 
-        echo $cachePath . $routeToSuppress . $extension, ' ',
-          $cacheRelativePath . $routeToSuppress . $extension, PHP_EOL;
+        $routeFileName = $routeToSuppress . $extension;
+
+        if ($extension !== '.php')
+          $routeFileName = sha1('ca' . $routeToSuppress . config\AllConfig::$version . 'che') . $extension;
+
         unlinkFile(
-          $cachePath . $routeToSuppress . $extension,
-          $cacheRelativePath . $routeToSuppress . $extension
+          $cachePath . $routeFileName,
+          $cacheRelativePath . $routeFileName
         );
       }
     }
