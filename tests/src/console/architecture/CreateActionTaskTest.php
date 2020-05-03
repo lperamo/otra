@@ -20,8 +20,8 @@ define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST
 class CreateActionTaskTest extends TestCase
 {
   const TEST_TASK = 'createAction',
-    TEST_BUNDLE = 'testBundle',
-    TEST_MODULE = 'testModule',
+    TEST_BUNDLE = 'test',
+    TEST_MODULE = 'test',
     TEST_CONTROLLER = 'test',
     TEST_ACTION = 'test',
     TEST_BUNDLES_CONFIG_PATH = BASE_PATH . 'bundles/config/',
@@ -32,8 +32,6 @@ class CreateActionTaskTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-    define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
   }
 
   protected function tearDown(): void

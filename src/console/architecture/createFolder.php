@@ -13,12 +13,13 @@ if (function_exists('createFolder') === false)
   {
     while (file_exists($absoluteFolderPath) === true)
     {
-      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN . substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
+      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN .
+        substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
 
       if ($interactive === false)
       {
-        echo $sentence, PHP_EOL;
-        exit(1);
+        echo $sentence, END_COLOR, PHP_EOL;
+        throw new \otra\OtraException('', 1, '', NULL, [], true);
       }
 
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');

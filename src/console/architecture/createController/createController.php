@@ -53,7 +53,7 @@ function controllerHandling(bool $interactive, string &$controllersFolder, strin
     }
   } else
   {
-    createControllersFolder($controllersFolder);;
+    createControllersFolder($controllersFolder);
     createController($controllersFolder, $controllerName, $interactive);
   }
 }

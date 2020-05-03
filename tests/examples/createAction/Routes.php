@@ -1,7 +1,7 @@
 <?php
 return [
   'testTest' => [
-    'chunks' => ['/testTest', 'TestBundle', 'testModule', 'test', 'TestAction'],
+    'chunks' => ['/testTest', 'Test', 'test', 'test', 'TestAction'],
     'resources' => [
       'template' => true
     ]

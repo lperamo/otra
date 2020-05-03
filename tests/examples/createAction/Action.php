@@ -1,5 +1,5 @@
 <?php
-namespace bundles\TestBundle\testModule\controllers\test;
+namespace bundles\Test\test\controllers\test;
 
 use otra\Controller;
 
