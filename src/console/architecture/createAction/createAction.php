@@ -1,5 +1,11 @@
 <?php
 
+if (defined('SPACE_INDENT_2') === false)
+  define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
+
+if (defined('SPACE_INDENT_3') === false)
+  define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
+
 /**
  * Creates the folder of the specified controller.
  *
@@ -17,7 +23,8 @@ function createAction(string $bundleName, string $moduleName, string $controller
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
 
-  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN . substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
+  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN .
+    substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.' . END_COLOR;
 
   while (file_exists($actionPath) === true)
   {
@@ -25,7 +32,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     if ($interactive === false)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
@@ -50,7 +57,7 @@ use otra\Controller;
 class ' . $upperActionName . 'Action extends Controller
 {
   public function ' . $actionName . 'Action() {
-    
+
   }
 }
 ?>
@@ -63,7 +70,7 @@ class ' . $upperActionName . 'Action extends Controller
 
   // If the action folder does not exist
   if (file_exists($viewFolder) === false)
-    mkdir($viewFolder);
+    mkdir($viewFolder, 0777, true);
   else
     echo CLI_YELLOW, 'For your information, the folder ', CLI_LIGHT_CYAN, $viewFolder, CLI_YELLOW, ' already existed.',
       END_COLOR, PHP_EOL;
@@ -80,15 +87,16 @@ class ' . $upperActionName . 'Action extends Controller
 
   if ($consoleForce === false)
   {
+
     $routesConfigFolder = BASE_PATH . 'bundles/' . $bundleName . '/config';
     $routeConfigurationFile = BASE_PATH . 'bundles/' . $bundleName . '/config/Routes.php';
-    $routeConfiguration = $controllerName . $upperActionName . "' => [
-        'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '" . $moduleName
-      . "', '" . $controllerName . "', '" . $upperActionName . "Action'],
-        'resources' => [
-          'template' => true
-        ]
-      ]";
+    $routeConfiguration = $controllerName . $upperActionName . "' => [" . PHP_EOL .
+      SPACE_INDENT_2 . "'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '"
+      . $moduleName . "', '" . $controllerName . "', '" . $upperActionName . "Action']," . PHP_EOL .
+      SPACE_INDENT_2 . "'resources' => [" . PHP_EOL .
+      SPACE_INDENT_3 . "'template' => true" . PHP_EOL .
+      SPACE_INDENT_2 . "]" . PHP_EOL .
+      SPACE_INDENT . "]";
 
     // If there already are actions for this bundle, we have to complete the configuration file not replace it
     if (file_exists($routesConfigFolder) === true)
@@ -135,9 +143,9 @@ class ' . $upperActionName . 'Action extends Controller
 
       file_put_contents(
         $routeConfigurationFile,
-        '<?php
-  return ' . $routesArray . ';
-?>'
+        '<?php' . PHP_EOL .
+        'return ' . $routesArray . ';
+        ?>' . PHP_EOL
       );
     } else
     { // If it's not the case, we replace it
@@ -147,11 +155,11 @@ class ' . $upperActionName . 'Action extends Controller
       // Adds a routes config file
       file_put_contents(
         $routeConfigurationFile,
-        "<?php
-      return [
-        '" . $routeConfiguration . "
-      ];
-    ?>"
+        "<?php" . PHP_EOL .
+        "return [" . PHP_EOL .
+        SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
+        "];" . PHP_EOL .
+        "?>" . PHP_EOL
       );
     }
 

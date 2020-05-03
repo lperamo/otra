@@ -17,14 +17,14 @@ if (file_exists($controllerPath) === false)
 {
   /** @var bool $consoleForce */
   if ($consoleForce === false)
-    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $controllerName, CLI_RED, ' does not exist.' , END_COLOR,
+    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $moduleRelativePath . '/controllers/' . $controllerName, CLI_RED, ' does not exist.' , END_COLOR,
       PHP_EOL;
 
   /** @var bool $interactive */
   if ($interactive === false)
   {
     if ($consoleForce === false)
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
 
