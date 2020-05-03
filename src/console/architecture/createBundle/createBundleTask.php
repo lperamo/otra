@@ -4,9 +4,11 @@ require CONSOLE_PATH . 'tools.php';
 require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
 
 const ARG_BUNDLE_NAME = 2,
-  ARG_BUNDLE_MASK = 3;
+  ARG_BUNDLE_MASK = 3,
+  ARG_INTERACTIVE = 4;
 
 $consoleForce = false;
+require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 
 // Checking argument : bundle name
 if (false === isset($argv[ARG_BUNDLE_NAME]))
@@ -19,5 +21,5 @@ if (false === isset($argv[ARG_BUNDLE_NAME]))
   $bundleName = $argv[ARG_BUNDLE_NAME];
 }
 
-bundleHandling($bundleName, $argv[ARG_BUNDLE_MASK] ?? null, true);
+bundleHandling($interactive, $bundleName, $argv[ARG_BUNDLE_MASK] ?? null, true);
 ?>

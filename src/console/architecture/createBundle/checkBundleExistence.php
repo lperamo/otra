@@ -34,6 +34,6 @@ if (file_exists($bundlePath) === false)
 
   require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
   /** @var int $bundleMask */
-  bundleHandling($bundleName, $consoleForce ? $bundleMask : null);
+  bundleHandling($interactive, $bundleName, $consoleForce ? $bundleMask : null);
 }
 ?>
