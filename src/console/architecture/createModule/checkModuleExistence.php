@@ -20,7 +20,7 @@ if (file_exists($modulePath) === false)
   if ($interactive === false)
   {
     if ($consoleForce === false)
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
 

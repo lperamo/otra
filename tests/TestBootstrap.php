@@ -27,6 +27,8 @@ define(
     : BASE_PATH . 'tests/'
 );
 
+define('SPACE_INDENT', '  ');
+
 require BASE_PATH . 'cache/php/ClassMap.php';
 
 spl_autoload_register(function(string $className)
