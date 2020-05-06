@@ -1,0 +1,23 @@
+<?php
+require CREATE_MODEL_FOLDER . '/allModelsFromYmlSchema/common.php';
+
+echo CREATE_ALL_MODELS_FROM_YAML_SCHEMA;
+
+if (MODEL_LOCATION_BUNDLE === $modelLocation)
+{
+  echo CREATING_ALL_MODELS_FOR_BUNDLE;
+  defineModelPath($modelLocation, $bundlePath, $bundleName);
+} else
+{
+  /** MODULE */
+  echo 'A model in the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' for the module ', CLI_LIGHT_CYAN,
+    MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
+  define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
+
+  // We cleans the last sentence
+  echo ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' in the module ',
+  CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
+}
+
+modelsCreation($modelLocation, $bundleName, $modelFullName);
+?>
