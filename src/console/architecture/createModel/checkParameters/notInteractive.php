@@ -79,7 +79,6 @@ else
   }
 }
 
-/** @var int $creationMode */
 if ($creationMode === CREATION_MODE_FROM_NOTHING)
 {
   define(

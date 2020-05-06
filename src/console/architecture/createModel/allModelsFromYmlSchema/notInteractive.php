@@ -15,7 +15,7 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
   define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
 
   // We cleans the last sentence
-  echo ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' in the module ',
+  echo 'Creating all the models for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' in the module ',
   CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 

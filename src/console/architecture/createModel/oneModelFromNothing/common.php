@@ -3,7 +3,7 @@ require CREATE_MODEL_FOLDER . 'common.php';
 define('MODEL_CREATED_FROM_NOTHING_MESSAGE', 'We will create one model from nothing.' . PHP_EOL);
 define(
   'MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
-  'The model ' . CLI_YELLOW . $modelName . END_COLOR . ' will be created from nothing.' . PHP_EOL
+  'The model ' . CLI_LIGHT_CYAN . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
 );
 
 /**
@@ -51,10 +51,6 @@ function endingTask(
 ) : void
 {
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
-
-  // We cleans the last sentence
-  echo ERASE_SEQUENCE;
-
   modelCreationSuccess($bundleName, $modelName);
 }
 ?>

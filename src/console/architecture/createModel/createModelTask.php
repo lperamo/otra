@@ -61,7 +61,7 @@ else
   if (!YML_SCHEMA_REAL_PATH)
   {
     echo CLI_RED, 'The YAML schema ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, 'bundles/', ucfirst($bundleName),
-      YML_SCHEMA_PATH, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
+      '/' . YML_SCHEMA_PATH, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 

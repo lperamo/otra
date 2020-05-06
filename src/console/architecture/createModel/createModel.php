@@ -2,6 +2,7 @@
 
 use otra\OtraException;
 
+define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
 $bundlesPath = BASE_PATH . 'bundles/';
 
 /**
@@ -90,7 +91,7 @@ function modelCreationSuccess(string $bundleName, string $modelName, string $pro
   if (null !== $propertiesTxt)
     echo ' with those properties [', substr($propertiesTxt, 0, strlen($propertiesTxt) - 2), ']';
 
-  echo '.', END_COLOR, PHP_EOL;
+  echo '.', OTRA_SUCCESS;
 }
 
 /**

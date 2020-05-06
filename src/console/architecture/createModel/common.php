@@ -1,7 +1,7 @@
 <?php
 define(
   'MODULE_BUNDLE_MESSAGE',
-  DOUBLE_ERASE_SEQUENCE . 'A model in the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' for the module ' .
+  'A model in the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' for the module ' .
   CLI_LIGHT_CYAN . MODULE_NAME . END_COLOR . ' ...' . PHP_EOL
 );
 // This variable is used for code creation
