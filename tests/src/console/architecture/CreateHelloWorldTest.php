@@ -16,7 +16,6 @@ class CreateHelloWorldTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('SPACE_INDENT', '  ');
     define('ERASE_SEQUENCE', "\033[1A\r\033[K");
     define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
 
