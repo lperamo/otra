@@ -57,7 +57,7 @@ try
       if (false === isset(CLASSMAP[$className]))
       {
         require_once CORE_PATH . 'Logger.php';
-        \src\Logger::logTo(
+        \otra\Logger::logTo(
           'Path not found for the class name : ' . $className . PHP_EOL .
           'Stack trace : ' . PHP_EOL .
           print_r(debug_backtrace(), true),
@@ -76,7 +76,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \src\Logger::logTo(
+  \otra\Logger::logTo(
     'Exception : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),
@@ -89,7 +89,7 @@ try
 {
   // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \src\Logger::logTo(
+  \otra\Logger::logTo(
     'Fatal error : ' . $e->getMessage() . PHP_EOL .
     'Stack trace : ' . PHP_EOL .
     print_r(debug_backtrace(), true),
