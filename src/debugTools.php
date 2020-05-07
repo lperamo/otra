@@ -172,7 +172,8 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
   $oldLoop = $loop;
   ++$loop;
 
-  foreach ($data as $index => &$datum)
+  // We cannot use a reference for $datum as it can be an iterator
+  foreach ($data as $index => $datum)
   {
     if ($index === $indexToExclude)
       continue;
