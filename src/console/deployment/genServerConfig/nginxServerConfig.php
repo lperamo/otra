@@ -172,8 +172,8 @@ function handleWebFolderAssets() : string
     checkHttpReferer() .
     SPACE_INDENT . '}' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT . '# Handling images' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /.*\.(ico|jpe?g|png|svg|webp)$' . PHP_EOL .
+    SPACE_INDENT . '# Handling images and fonts' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /.*\.(ico|jpe?g|png|svg|webp|woff2)$' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
     SPACE_INDENT_2 .
     '# Workaround, Firefox does not send referrer for favicons so we send always the images when Firefox is used' .
