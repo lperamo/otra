@@ -29,7 +29,7 @@ if (true === isset($argv[ASSET_MASK]) && false === is_numeric($argv[ASSET_MASK])
   exit(1);
 }
 
-$mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 7;
+$mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 15; // 15 = default to all assets
 
 // If we only need the manifest, skips the assets generation loop
 if ($mask !== 8)
