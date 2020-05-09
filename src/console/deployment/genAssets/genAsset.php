@@ -24,6 +24,7 @@ define(
     : BASE_PATH . 'src/'
 );
 $_SERVER['APP_ENV'] = 'prod';
+$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 
 // Loads the main configuration
 require BASE_PATH . 'config/AllConfig.php';
@@ -51,10 +52,6 @@ require CORE_PATH . 'Router.php';
 require CORE_PATH . 'tools/compression.php';
 
 $_SERVER['REQUEST_URI'] = \otra\Router::getRouteUrl(ARG_SITE_ROUTE);
-
-// NEEDED ONLY FOR the 'template', function needed because this function is not part of main controllers
-// Otherwise the templates cannot execute this translation function.
-function t(string $text) : string { return $text; }
 
 // We don't allow errors shown on production !
 $oldErrorReporting = error_reporting();
