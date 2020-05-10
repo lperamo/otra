@@ -199,12 +199,28 @@ foreach($iterator as $entry)
     $extension = $entry->getExtension();
     $baseName = substr($entry->getFilename(), 0, -strlen($extension) - 1);
     $resourceName = $entry->getPathname();
-    $resourceFolder = realPath(dirname($resourceName) . '/..');
+    $resourceFolder = dirname($resourceName);
+
+    $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'resources');
+
+    // Retrieve the main folder of the resource type whether it is in a 'module/resources' folder or a 'web/' folder
+    $resourcesMainFolder =
+      $resourcesMainFolderPosition !== false
+        ? substr(
+          $resourceFolder,
+          0,
+          $resourcesMainFolderPosition
+        ) . 'resources/'
+        : substr(
+          $resourceFolder,
+          0,
+          mb_strrpos($resourceFolder, 'web')
+        ) . 'web/';
 
     if ($extension === 'ts')
     {
       if (WATCH_FOR_TS_RESOURCES === true)
-        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
+        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourcesMainFolder, $baseName, $resourceName);
     }
     elseif (substr($baseName, 0, 1) !== '_')
     {
@@ -213,7 +229,7 @@ foreach($iterator as $entry)
         $generatedCssFile = $baseName . '.css';
 
         // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-        $cssFolder = $resourceFolder . '/css';
+        $cssFolder = $resourcesMainFolder . '/css';
 
         // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
         if (file_exists($cssFolder) === false)
