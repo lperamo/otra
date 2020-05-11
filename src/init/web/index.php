@@ -26,7 +26,7 @@ session_start([
 ]);
 
 // TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
-define('VERSION', '1.0.0-alpha.2.1.0');
+define('VERSION', '1.0.0-alpha.2.2.0');
 
 try
 {
