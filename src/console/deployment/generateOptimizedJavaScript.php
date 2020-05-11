@@ -22,11 +22,11 @@ function generateJavaScript(
   {
     // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
     // and remove the dummy file ...
-    $jsFolder = $resourceFolder . '/js/';
+    $jsFolder = $resourceFolder . 'js/';
 
-    // if the js folder corresponding to the ts folder does not exist yet, we create it
+    // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
     if (file_exists($jsFolder) === false)
-      mkdir($jsFolder);
+      mkdir($jsFolder, 0777, true);
 
     $generatedTemporaryJsFile = $jsFolder . $baseName . '_viaTypescript.js';
     $generatedJsFile = $jsFolder . $baseName . '.js';
@@ -56,10 +56,21 @@ function generateJavaScript(
     if ($return === 0 && $jsFileExists === true)
     {
       if (BUILD_DEV_VERBOSE > 0)
+      {
+        $temporarySourceMap = $generatedTemporaryJsFile . '.map';
+
         echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
-          false), CLI_GREEN, ' have generated the temporary files ', $legibleGeneratedTemporaryJsFile, ' and ',
-        returnLegiblePath($generatedTemporaryJsFile . '.map', '', false), CLI_GREEN, '.',
-        END_COLOR, PHP_EOL, PHP_EOL;
+          false), CLI_GREEN, ' have generated the temporary file';
+
+        if (file_exists($temporarySourceMap))
+          echo 's ', $legibleGeneratedTemporaryJsFile, CLI_GREEN, ' and ',
+          returnLegiblePath($generatedTemporaryJsFile . '.map', '', false);
+        else
+          echo ' ', $legibleGeneratedTemporaryJsFile;
+
+        echo CLI_GREEN, '.', END_COLOR, PHP_EOL, PHP_EOL;
+      }
+
     } else
     {
       if ($jsFileExists === true)
@@ -93,7 +104,9 @@ function generateJavaScript(
 
         // Cleaning temporary files ...(js and the mapping)
         unlink($generatedTemporaryJsFile);
-        unlink($generatedTemporaryJsFile . '.map');
+
+        if (file_exists($temporarySourceMap))
+          unlink($temporarySourceMap);
 
         /** TODO side note, the class mapping is not present when we pass by Google Closure.
          * We have to check if we can add it.
@@ -101,17 +114,22 @@ function generateJavaScript(
       } else
       {
         rename($generatedTemporaryJsFile, $generatedJsFile);
-        rename($generatedTemporaryJsFile . '.map', $generatedJsFile . '.map');
+        $sourceMapFile = $generatedTemporaryJsFile . '.map';
 
-        // Fixing class mapping reference
-        file_put_contents(
-          $generatedJsFile,
-          str_replace(
-            $baseName . '_viaTypescript.js.map',
-            $baseName . '.js.map',
-            file_get_contents($generatedJsFile)
-          )
-        );
+        // If there was a source map, rename it as well
+        if (file_exists($sourceMapFile))
+        {
+          rename($generatedTemporaryJsFile . '.map', $generatedJsFile . '.map');
+          // Fixing class mapping reference
+          file_put_contents(
+            $generatedJsFile,
+            str_replace(
+              $baseName . '_viaTypescript.js.map',
+              $baseName . '.js.map',
+              file_get_contents($generatedJsFile)
+            )
+          );
+        }
       }
     }
   } else
