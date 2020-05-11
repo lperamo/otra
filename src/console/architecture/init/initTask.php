@@ -75,8 +75,7 @@ copyFileAndFolders(
 // The favicons and the 404.php page should be customisable and we will not overwrite those files.
 $webCustomisableFiles = [
   CORE_PATH . 'init/web/favicon.ico' => $webFolder . 'favicon.ico',
-  CORE_PATH . 'init/web/favicon.png' => $webFolder . 'favicon.png',
-  CORE_PATH . 'init/web/404.php' => $webFolder . '404.php'
+  CORE_PATH . 'init/web/favicon.png' => $webFolder . 'favicon.png'
 ];
 
 foreach ($webCustomisableFiles as $sourceFile => &$destinationFile)
@@ -105,13 +104,18 @@ $sqlLogPath = $logsDevPath . 'sql.txt';
 if (false === file_exists($sqlLogPath))
   touch($sqlLogPath);
 
+$traceLogPath = $logsDevPath . 'trace.txt';
+
+if (false === file_exists($traceLogPath))
+  touch($traceLogPath);
+
 // Force the rights mode in order to be sure to be able to overwrite the file.
 chmod($sqlLogPath, 0666);
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // ********** GENERATE TASK METADATA **********
-require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
 
 echo PHP_EOL,
   'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',

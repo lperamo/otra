@@ -47,7 +47,7 @@ function hasSyntaxErrors(string $file) : bool
   if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
     echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
-    require CORE_PATH . 'console/tools.php';
+    require CONSOLE_PATH . 'tools.php';
     showContextByError($file, $output, 10);
 
     return true;
@@ -183,11 +183,11 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 
       if (false !== $posLeftParenthesis) // case use xxx/xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are)
       {
-        $beginString = substr($chunk, 0, $posLeftParenthesis); // like src\otra\bdd\
+        $beginString = substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
         $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
         $classToReplace = $beginString . str_replace(' ', '', $lastChunk);
 
-        // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
+        // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
         str_replace($classToReplace, $lastChunk, $contentToAdd);
 
         // We analyze the use statement in order to retrieve the name of each class which is included in it.
@@ -205,20 +205,20 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
             $classToReplace = $chunk;
             $tempChunks = explode('\\', $classToReplace);
 
-            // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
+            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
             str_replace($classToReplace, array_pop($tempChunks), $contentToAdd);
           } else // case use xxx/xxx{xxx, XXX, xxx}; (notice the uppercase, it's where we are)
           {
             $classToReplace = $beginString . $chunk;
 
-            // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
+            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
             str_replace($classToReplace, $chunk, $contentToAdd);
           }
         } else { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
           $lastChunk = substr($chunk, 0, -1);
           $classToReplace = $beginString . $lastChunk;
 
-          // simplifies the usage of classes by passing from FQCN to class name ... src\bdd\Sql => Sql
+          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
           str_replace($classToReplace, $lastChunk, $contentToAdd);
         }
 

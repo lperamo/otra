@@ -1,11 +1,11 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
-use src\console\Tasks;
+use otra\console\Tasks;
 
 // TODO Add parameter(s)? to add folder(s) to exclude from watching
 // TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
@@ -36,6 +36,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   PATHS_TO_HAVE_RESOURCES =
   [
     BASE_PATH . 'bundles',
+    BASE_PATH . 'web',
     CORE_PATH
   ],
 
@@ -318,7 +319,7 @@ unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
     : 'Watcher started.' . END_COLOR)
     , PHP_EOL;
 
-require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
+require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
 // ******************** Watching ! ********************
 while (true)

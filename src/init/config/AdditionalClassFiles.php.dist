@@ -1,6 +1,6 @@
 <?php
 return [
   'config\\AllConfig' => BASE_PATH . 'config/AllConfig.php',
-  'src\\Controller' => CORE_PATH . 'Controller.php'
+  'otra\\Controller' => CORE_PATH . 'Controller.php'
 ];
 ?>

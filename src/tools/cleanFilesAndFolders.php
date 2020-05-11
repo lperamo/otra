@@ -1,6 +1,6 @@
 <?php
 
-use src\OtraException;
+use otra\OtraException;
 
 /**
  * Removes all files and folders specified in the array.

@@ -3,7 +3,7 @@
  *
  * @author Lionel Péramo
  */
-namespace src;
+namespace otra;
 
 class MasterController
 {
@@ -130,7 +130,7 @@ class MasterController
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
     if (false === isset($baseParams['controller']))
     {
-      if (isset($baseParams['route']) === true && $baseParams['route'] === 'exception')
+      if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
         // Stores the bundle, module, controller and action for later use
         list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
 
@@ -168,7 +168,7 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = '', string $extension = '.cache') : string {
+  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = VERSION, string $extension = '.cache') : string {
     return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
   }
 
@@ -273,5 +273,5 @@ class MasterController
 // allowing the block.php file of the template engine system to work in production mode,
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER['APP_ENV'] === 'prod' && PHP_SAPI !== 'cli')
-  class_alias('\cache\php\MasterController', '\src\MasterController');
+  class_alias('\cache\php\MasterController', '\otra\MasterController');
 ?>

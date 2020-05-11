@@ -1,8 +1,8 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
-require CORE_PATH . 'console/architecture/createModule/createModule.php';
+require CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
 // MODULE STEP
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
@@ -20,7 +20,7 @@ if (file_exists($modulePath) === false)
   if ($interactive === false)
   {
     if ($consoleForce === false)
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
 

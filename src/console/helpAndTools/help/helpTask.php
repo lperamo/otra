@@ -1,6 +1,6 @@
 <?php
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 define('HELP_TASK', 2);
 $task = $argv[HELP_TASK];
@@ -8,7 +8,7 @@ $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
 
 if (false === isset($tasksClassMap[$task]))
 {
-  require CORE_PATH . 'console/tools.php';
+  require CONSOLE_PATH . 'tools.php';
   list($newTask) = guessWords($task, array_keys($tasksClassMap));
 
   // If there are no existing task with a close name ...

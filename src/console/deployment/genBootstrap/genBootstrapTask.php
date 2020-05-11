@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
 $verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 
@@ -8,7 +8,7 @@ $verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
 if (false === (isset($argv[2]) === true && '0' == $argv[2]))
 {
   // Generation of the class mapping
-  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
@@ -35,7 +35,7 @@ if (true === isset($argv[4]))
   {
     // We try to find a route which the name is similar
     // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this src !
-    require_once CORE_PATH . 'console/tools.php';
+    require_once CONSOLE_PATH . 'tools.php';
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
@@ -57,6 +57,8 @@ if (true === isset($argv[4]))
 } else
 {
   $routes = \config\Routes::$_;
+  // otra_exception route has no controller
+  unset($routes['otra_exception']);
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
@@ -79,15 +81,16 @@ foreach(array_keys($routes) as &$route)
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
-    passthru(PHP_BINARY . ' "' . CORE_PATH . 'console/deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' . $route);
+    passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' . $route);
 }
 
 // Final specific management for routes files
 echo 'Create the specific routes management file... ', PHP_EOL;
 
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
-// configuration
-require BASE_PATH . 'config/AllConfig.php';
+// configuration. We checks if we do not have already loaded the configuration before.
+if (defined('CORE_VIEWS_PATH') === false)
+  require BASE_PATH . 'config/AllConfig.php';
 
 define(
   'PATH_CONSTANTS',
@@ -103,7 +106,7 @@ define(
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
 
-require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
+require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 
 $fileToInclude = CORE_PATH . 'Router.php';
 

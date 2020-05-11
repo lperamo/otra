@@ -1,52 +1,54 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
+use config\AllConfig;
 use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
 const BUILD_DEV_ARG_VERBOSE = 2,
-      BUILD_DEV_ARG_MASK = 3,
-      BUILD_DEV_ARG_GCC = 4,
-      BUILD_DEV_ARG_SCOPE = 5,
-      BUILD_DEV_MASK_SCSS = 1,
-      BUILD_DEV_MASK_TS = 2,
-      BUILD_DEV_MASK_ROUTES = 4,
-      BUILD_DEV_MASK_PHP = 8,
-      GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
-      RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
+BUILD_DEV_ARG_MASK = 3,
+BUILD_DEV_ARG_GCC = 4,
+BUILD_DEV_ARG_SCOPE = 5,
+BUILD_DEV_MASK_SCSS = 1,
+BUILD_DEV_MASK_TS = 2,
+BUILD_DEV_MASK_ROUTES = 4,
+BUILD_DEV_MASK_PHP = 8,
+GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
+RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
 
-      PATHS_TO_HAVE_PHP =
-      [
-        BASE_PATH . 'bundles',
-        BASE_PATH . 'config',
-        CORE_PATH
-      ],
+PATHS_TO_HAVE_PHP =
+[
+  BASE_PATH . 'bundles',
+  BASE_PATH . 'config',
+  CORE_PATH
+],
 
-      PATHS_TO_HAVE_RESOURCES =
-      [
-        BASE_PATH . 'bundles',
-        CORE_PATH
-      ],
+PATHS_TO_HAVE_RESOURCES =
+[
+  BASE_PATH . 'bundles',
+  BASE_PATH . 'web',
+  CORE_PATH
+],
 
-      PATH_TO_AVOID = BASE_PATH . 'bundles/config';
+PATH_TO_AVOID = BASE_PATH . 'bundles/config';
 
 // Reminder : 0 => no debug, 1 => basic logs
 define(
   'BUILD_DEV_VERBOSE',
-  array_key_exists(BUILD_DEV_ARG_VERBOSE, $argv) === true ? $argv[BUILD_DEV_ARG_VERBOSE] : 0
+  (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0)
 );
 
 define(
   'BUILD_DEV_GCC',
-  array_key_exists(BUILD_DEV_ARG_GCC, $argv) === true && $argv[BUILD_DEV_ARG_GCC] === 'true' ? true : false
+  isset($argv[BUILD_DEV_ARG_GCC]) && $argv[BUILD_DEV_ARG_GCC] === 'true'
 );
 
 define(
   'BUILD_DEV_SCOPE',
-  array_key_exists(BUILD_DEV_ARG_SCOPE, $argv) === true ? (int) $argv[BUILD_DEV_ARG_SCOPE] : 0
+  (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0)
 );
 
 /**
@@ -123,6 +125,13 @@ if ($maskExists === true && is_numeric($argv[BUILD_DEV_ARG_MASK]) === false)
   exit(1);
 }
 
+echo CLI_YELLOW, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
+
+define(
+  'BUILD_DEV_SOURCE_MAPS',
+  isset(AllConfig::$cssSourceMaps) ? AllConfig::$cssSourceMaps : false
+);
+
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_SCSS));
 define('WATCH_FOR_TS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_TS));
 define('WATCH_FOR_PHP_FILES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_PHP));
@@ -146,7 +155,7 @@ $filesProcessed = false;
 if (WATCH_FOR_PHP_FILES === true)
 {
   // We generate the class mapping...
-  require CORE_PATH . 'console/deployment/genClassMap/genClassMapTask.php';
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
   $filesProcessed = true;
 }
 
@@ -154,11 +163,11 @@ if (WATCH_FOR_ROUTES === true)
 {
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
-  require CORE_PATH . 'console/deployment/updateConf/updateConfTask.php';
+  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
   $filesProcessed = true;
 }
 
-require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
+require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 
@@ -190,12 +199,28 @@ foreach($iterator as $entry)
     $extension = $entry->getExtension();
     $baseName = substr($entry->getFilename(), 0, -strlen($extension) - 1);
     $resourceName = $entry->getPathname();
-    $resourceFolder = realPath(dirname($resourceName) . '/..');
+    $resourceFolder = dirname($resourceName);
+
+    $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'resources');
+
+    // Retrieve the main folder of the resource type whether it is in a 'module/resources' folder or a 'web/' folder
+    $resourcesMainFolder =
+      $resourcesMainFolderPosition !== false
+        ? substr(
+          $resourceFolder,
+          0,
+          $resourcesMainFolderPosition
+        ) . 'resources/'
+        : substr(
+          $resourceFolder,
+          0,
+          mb_strrpos($resourceFolder, 'web')
+        ) . 'web/';
 
     if ($extension === 'ts')
     {
       if (WATCH_FOR_TS_RESOURCES === true)
-        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourceFolder, $baseName, $resourceName);
+        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourcesMainFolder, $baseName, $resourceName);
     }
     elseif (substr($baseName, 0, 1) !== '_')
     {
@@ -204,7 +229,7 @@ foreach($iterator as $entry)
         $generatedCssFile = $baseName . '.css';
 
         // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-        $cssFolder = $resourceFolder . '/css';
+        $cssFolder = $resourcesMainFolder . '/css';
 
         // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
         if (file_exists($cssFolder) === false)
@@ -212,12 +237,22 @@ foreach($iterator as $entry)
 
         $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
-        list(, $return) = cli('sass ' . $resourceName . ':' . $cssPath);
+        list(, $return) = cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
+          ':' . $cssPath);
+
+        $sourceMapPath = $cssPath . '.map';
 
         if (BUILD_DEV_VERBOSE > 0)
           echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
-            returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-            PHP_EOL . PHP_EOL;
+            returnLegiblePath($cssPath) .
+            (BUILD_DEV_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
+
+        // We clean the source map if there is an old source map related to this CSS file
+        if (!BUILD_DEV_SOURCE_MAPS)
+        {
+          if (file_exists($sourceMapPath))
+            unlink($sourceMapPath);
+        }
       }
     }
   }
@@ -227,7 +262,7 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 
 if ($filesProcessed === true)
 {
-  if (BUILD_DEV_VERBOSE === '0')
+  if (BUILD_DEV_VERBOSE === 0)
     echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
 } else
   echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;

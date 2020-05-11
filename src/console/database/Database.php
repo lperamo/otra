@@ -5,13 +5,17 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace src\console {
+namespace otra\console {
 
-  use src\bdd\Sql;
+  use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
   use config\AllConfig;
-  use src\{Session, OtraException};
+  use otra\{Session, OtraException};
+
+  define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
+  define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
+  define ('OTRA_DB_PROPERTY_MODE_DEFAULT', 2);
 
   abstract class Database
   {
@@ -220,25 +224,39 @@ namespace src\console {
      * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
      *
      * @param string $attr Attribute
-     * @param bool   $show If we show the information. Default : false
+     * @param bool $mode How we show the type of date
+     *                   0: type
+     *                   1: value (default)
+     *                   2: type value
      *
      * @return string $attr Concerned attribute in uppercase
      */
-    public static function getAttr(string $attr, bool $show = false) : string
+    public static function getAttr(string $attr, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
       $output = '';
 
       if (true === isset(self::$attributeInfos[$attr]))
       {
+        $value = self::$attributeInfos[$attr];
+
         if ('notnull' === $attr)
           $attr = 'not null';
-        else if ('type' === $attr && false !== strpos(self::$attributeInfos[$attr], 'string'))
-          return 'VARCHAR' . substr(self::$attributeInfos[$attr], 6);
+        else if ('type' === $attr && false !== strpos($value, 'string'))
+          return 'VARCHAR' . substr($value, 6);
 
-        $output .= true === $show ? ' ' . strtoupper($attr) : strtoupper(self::$attributeInfos[$attr]);
-      }
+        if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+          return ' ' . strtoupper($attr);
+        elseif ($mode === OTRA_DB_PROPERTY_MODE_TYPE)
+          return strtoupper($value);
+        else // OTRA_DB_PROPERTY_MODE_DEFAULT
+          return ' ' . strtoupper($attr) . ' ' . (is_string($value) ? '\'' . $value . '\'' : $value);
+      } elseif ($attr === 'default'
+        && isset(self::$attributeInfos['type'])
+        && strtoupper(self::$attributeInfos['type']) === 'TIMESTAMP')
+        // We force a default value in case the SQL_MODE requires it to avoid errors
+        return ' DEFAULT CURRENT_TIMESTAMP';
 
-      return $output;
+      return '';
     }
 
     /**
@@ -590,7 +608,7 @@ namespace src\console {
 
             if (true === file_exists($createdFile))
               echo 'Fixture file creation aborted : the file ', CLI_YELLOW, $databaseName . '_' . $table . '.sql', END_COLOR,
-            'already exists.', PHP_EOL;
+                'already exists.', PHP_EOL;
 
             // Gets the fixture data
             $fixturesData = Yaml::parse(file_get_contents($file));
@@ -783,8 +801,9 @@ namespace src\console {
 
               $tableSql[$table] .= '  `' . $attribute . '` '
                 . self::getAttr('type')
-                . self::getAttr('notnull', true)
-                . self::getAttr('auto_increment', true)
+                . self::getAttr('default', OTRA_DB_PROPERTY_MODE_DEFAULT)
+                . self::getAttr('notnull', OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+                . self::getAttr('auto_increment', OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
                 . ',' . PHP_EOL;
 
               // If the column is a primary key, we add it to the primary keys array

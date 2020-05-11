@@ -2,7 +2,7 @@
 
 $showMaskOption = static function (string $text) : string
 {
-  return str_repeat(' ', \src\console\TasksManager::STRING_PAD_FOR_OPTION_FORMATTING) . $text;
+  return STRING_PAD_FOR_OPTION_FORMATTING . $text;
 };
 
 return [
@@ -14,9 +14,11 @@ return [
       $showMaskOption('1 => config') . PHP_EOL .
       $showMaskOption('2 => models') . PHP_EOL .
       $showMaskOption('4 => resources') . PHP_EOL .
-      $showMaskOption('8 => views')
+      $showMaskOption('8 => views'),
+    'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
   ],
   [
+    'optional',
     'optional',
     'optional'
   ],

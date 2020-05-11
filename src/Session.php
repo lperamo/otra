@@ -2,9 +2,9 @@
 /** Description of Session
  *
  * @author Lionel Péramo */
-namespace src;
+namespace otra;
 
-class Session
+abstract class Session
 {
   private static string $id;
 

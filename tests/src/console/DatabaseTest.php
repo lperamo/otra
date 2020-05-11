@@ -1,7 +1,7 @@
 <?php
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use src\{OtraException, console\Database, bdd\Sql, Session};
+use otra\{OtraException, console\Database, bdd\Sql, Session};
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -60,6 +60,9 @@ class DatabaseTest extends TestCase
     self::$tablesOrderFilePath = self::$configFolderYml . self::$tablesOrderFile;
   }
 
+  /**
+   * @throws OtraException
+   */
   public static function setUpBeforeClass() : void{
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';

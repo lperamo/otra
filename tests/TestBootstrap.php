@@ -18,12 +18,16 @@ define(
     : BASE_PATH . 'src/'
 );
 
+define('CONSOLE_PATH', CORE_PATH . 'console/');
+
 define(
   'TEST_PATH',
   OTRA_PROJECT === true
     ? BASE_PATH . 'vendor/otra/otra/tests/'
     : BASE_PATH . 'tests/'
 );
+
+define('SPACE_INDENT', '  ');
 
 require BASE_PATH . 'cache/php/ClassMap.php';
 
@@ -40,5 +44,5 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-require CORE_PATH . 'console/colors.php';
+require CONSOLE_PATH . 'colors.php';
 require CORE_PATH . 'tools/removeFieldProtection.php';

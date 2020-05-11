@@ -22,7 +22,7 @@ CREATE TABLE `testDB_table3` (
 CREATE TABLE `testDB_table` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `titre` VARCHAR(255) NOT NULL,
-  `date_creation` TIMESTAMP NOT NULL,
+  `date_creation` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `fk_id_table2` INT(11) NOT NULL,
   `fk_id_table3` INT(11) NOT NULL,
   PRIMARY KEY(`id`, `fk_id_table2`),

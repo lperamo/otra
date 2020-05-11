@@ -17,10 +17,13 @@ define(
     : BASE_PATH . 'src/'
 );
 
-require CORE_PATH . 'entryPoint.php';
-
-// Is it an asset ?
-if (isset($posDot) !== false) return 0;
+$uri = $_SERVER['REQUEST_URI'];
+session_name('__Secure-LPSESSID');
+session_start([
+  'cookie_secure' => true,
+  'cookie_httponly' => true,
+  'cookie_samesite' => 'strict'
+]);
 
 define ('BEFORE', microtime(true));
 
@@ -47,11 +50,11 @@ spl_autoload_register(function(string $className)
     require CLASSMAP[$className];
 });
 
-use src\OtraException;
+use otra\OtraException;
 set_error_handler([OtraException::class, 'errorHandler']);
 set_exception_handler([OtraException::class, 'exceptionHandler']);
 
-use src\Router;
+use otra\Router;
 
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))

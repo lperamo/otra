@@ -3,7 +3,7 @@
 if (file_exists(BASE_PATH . 'bundles/config/Routes.php') === false)
 {
   echo CLI_YELLOW, 'No custom routes are defined.', END_COLOR, PHP_EOL;
-  throw new \src\OtraException('', 1, '', NULL, [], true);
+  throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 /** Task that show all or one of the routes available for the application.
  * It shows for each related route :
@@ -54,7 +54,7 @@ if (true === isset($argv[2]))
   if (false === isset(\config\Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
-    require CORE_PATH . 'console/tools.php';
+    require CONSOLE_PATH . 'tools.php';
     list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
 
     // And asks the user whether we find what he wanted or not
@@ -77,7 +77,7 @@ if (true === isset($argv[2]))
 
 foreach($routes as $route => &$details)
 {
-  if ('exception' === $route )
+  if ('otra_exception' === $route )
     continue;
 
   // Routes and paths management
@@ -93,7 +93,7 @@ foreach($routes as $route => &$details)
   // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
 
-  $basePath = substr(__DIR__, 0, -strlen('src/console')) . 'cache/';
+  $basePath = BASE_PATH . 'cache/';
 
   echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
 

@@ -5,7 +5,7 @@
  * @author Lionel Péramo
  */
 
-namespace src\services;
+namespace otra\services;
 
 class ProfilerService
 {

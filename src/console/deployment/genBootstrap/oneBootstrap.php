@@ -26,7 +26,9 @@ if (false !== strpos(_DIR_, 'vendor'))
   );
   define('CORE_PATH', BASE_PATH . 'src/');
 }
-require CORE_PATH . 'console/colors.php';
+
+define('CONSOLE_PATH', CORE_PATH . 'console/');
+require CONSOLE_PATH . 'colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
@@ -89,11 +91,14 @@ if (true === isset($params['session']))
 $file = BASE_PATH . 'cache/php/' . $route;
 $file_ = $file . '_.php';
 
-require CORE_PATH . 'console/deployment/genBootstrap/taskFileOperation.php';
-$fileToInclude = BASE_PATH . str_replace(
+require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+
+// If it is an OTRA core route, we must change the path src from the config/Routes.php file by vendor/otra/otra/src
+$fileToInclude = ($params['core'] ? substr(CORE_PATH,0, -5) : BASE_PATH)
+  . str_replace(
     '\\',
     '/',
-    \src\Router::get(
+    \otra\Router::get(
       $route,
       (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
       false
@@ -113,7 +118,7 @@ define(
 );
 
 set_error_handler(function ($errno, $message, $file, $line, $context) {
-  throw new \src\OtraException($message, $errno, $file, $line, $context);
+  throw new \otra\OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];

@@ -9,7 +9,7 @@ define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
 function lg(string $message) : void
 {
   require_once CORE_PATH . 'Logger.php';
-  src\Logger::logTo($message, 'trace');
+  otra\Logger::logTo($message, 'trace');
 }
 
 /**
@@ -145,9 +145,9 @@ function getArgumentType(&$index, &$value)
   switch($index)
   {
     case 0:
-      if (true === is_int($value) && true === isset(src\OtraException::$codes[$value]))
+      if (true === is_int($value) && true === isset(otra\OtraException::$codes[$value]))
       {
-        $value = src\OtraException::$codes[$value];
+        $value = otra\OtraException::$codes[$value];
         return 'Error type';
       }
 
@@ -172,7 +172,8 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
   $oldLoop = $loop;
   ++$loop;
 
-  foreach ($data as $index => &$datum)
+  // We cannot use a reference for $datum as it can be an iterator
+  foreach ($data as $index => $datum)
   {
     if ($index === $indexToExclude)
       continue;

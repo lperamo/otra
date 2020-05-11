@@ -1,6 +1,7 @@
 <?php
+namespace src\console\architecture;
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 use phpunit\framework\TestCase;
 
 /**
@@ -15,12 +16,14 @@ class CreateHelloWorldTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('SPACE_INDENT', '  ');
     define('ERASE_SEQUENCE', "\033[1A\r\033[K");
     define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
 
+    require CORE_PATH . 'tools/deleteTree.php';
+    /** @var callable $delTree */
+
     if (file_exists(self::HELLO_WORLD_BUNDLE_PATH) === true)
-      self::delTree(self::HELLO_WORLD_BUNDLE_PATH);
+      $delTree(self::HELLO_WORLD_BUNDLE_PATH);
   }
 
   protected function tearDown(): void
@@ -28,30 +31,12 @@ class CreateHelloWorldTest extends TestCase
     // cleaning
     if (OTRA_PROJECT === false)
     {
-      self::delTree(self::HELLO_WORLD_BUNDLE_PATH);
+      require CORE_PATH . 'tools/deleteTree.php';
+
+      /** @var callable $delTree */
+      $delTree(self::HELLO_WORLD_BUNDLE_PATH);
       rmdir(BASE_PATH  .'bundles');
     }
-  }
-
-  /**
-   * Deletes a tree recursively.
-   *
-   * @param string $dir
-   *
-   * @return bool
-   */
-  private static function delTree(string $dir) : bool
-  {
-    $files = array_diff(scandir($dir), ['.','..']);
-
-    foreach ($files as &$file)
-    {
-      (is_dir("$dir/$file") === true)
-        ? self::delTree("$dir/$file")
-        : unlink("$dir/$file");
-    }
-
-    return rmdir($dir);
   }
 
   /**
@@ -108,7 +93,7 @@ class CreateHelloWorldTest extends TestCase
 
     // testing
     $this->expectOutputString(CLI_YELLOW . 'The bundle ' . CLI_CYAN . 'HelloWorld' . CLI_YELLOW . ' already exists.' . END_COLOR . PHP_EOL);
-    $this->expectException(\src\OtraException::class);
+    $this->expectException(\otra\OtraException::class);
 
     // launching
     TasksManager::execute(

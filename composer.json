@@ -29,6 +29,7 @@
     "ext-pdo_mysql": "*"
   },
   "suggest": {
-    "ext-inotify": "Needed to use the OTRA genWatcher task."
+    "ext-inotify": "Needed to use the OTRA genWatcher task.",
+    "ext-zend-opcache": "Needed to use the preloading feature available since PHP 7.4."
   }
 }

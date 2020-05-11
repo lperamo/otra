@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
-use src\OtraException;
+use otra\OtraException;
 
 /** @author Lionel Péramo */
 abstract class TasksManager
 {
-  const STRING_PAD_FOR_OPTION_FORMATTING = 40;
+  const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40;
   const TASK_CLASS_MAP_TASK_PATH = 0;
   const TASK_CLASS_MAP_TASK_STATUS = 1;
   const TASK_DESCRIPTION = 0;
@@ -87,4 +87,10 @@ abstract class TasksManager
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
   }
 }
+
+if (!defined('STRING_PAD_FOR_OPTION_FORMATTING'))
+  define(
+    'STRING_PAD_FOR_OPTION_FORMATTING',
+    str_repeat(' ', TasksManager::STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING)
+  );
 ?>

@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src\console;
+namespace otra\console;
 
-use src\OtraException;
+use otra\OtraException;
 
 /**
  * Shows an exception 'colorful' display for command line commands.
@@ -38,6 +38,20 @@ class OtraExceptionCLI extends \Exception
   }
 
   /**
+   * Converts the absolute path into 'BASE_PATH/CORE_PATH/CONSOLE_PATH + path' path like
+   *
+   * @param string $pathType 'BASE', 'CORE' or 'CONSOLE'
+   * @param string $file
+   *
+   * @return string
+   */
+  private static function returnShortenFilePath(string $pathType, string &$file) : string
+  {
+    return CLI_BLUE . $pathType . '_PATH' . CLI_LIGHT_BLUE . ' + ' .
+      mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
+  }
+
+  /**
    * Shows an exception 'colorful' display for command line commands.
    *
    * @param OtraException $exception
@@ -47,8 +61,19 @@ class OtraExceptionCLI extends \Exception
     echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
     if (true === isset($exception->scode))
-      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exception->file, END_COLOR,
+    {
+      $exceptionFile = $exception->file;
+
+      if (strpos($exceptionFile, CONSOLE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
+      elseif (strpos($exceptionFile, CORE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
+      elseif (strpos($exceptionFile, BASE_PATH) !== false)
+        $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
+
+        echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
         ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
+    }
 
     /******************************
      * Write HEADERS of the table *
@@ -78,8 +103,25 @@ class OtraExceptionCLI extends \Exception
 
       createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
 
+      $compositeColoredPath = true;
+
       if (isset($now['file']))
+      {
         $now['file'] = str_replace('\\', '/', $now['file']);
+
+        if (false !== mb_strpos($now['file'], CONSOLE_PATH))
+          $now['file'] = self::returnShortenFilePath('CONSOLE', $now['file']);
+        elseif (false !== mb_strpos($now['file'], CORE_PATH))
+          $now['file'] = self::returnShortenFilePath('CORE', $now['file']);
+        elseif (false !== mb_strpos($now['file'], BASE_PATH))
+          $now['file'] = self::returnShortenFilePath('BASE', $now['file']);
+        else
+          $compositeColoredPath = false;
+      } else
+      {
+        $now['file'] = '';
+        $compositeColoredPath = false;
+      }
 
       echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
       self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
@@ -88,12 +130,9 @@ class OtraExceptionCLI extends \Exception
       self::consoleLine(
         $now,
         'file',
-        self::FILE_WIDTH,
-        true === isset($now['file'])
-          ? (false === mb_strpos($now['file'], BASE_PATH)
-          ? $now['file'] :
-          mb_substr($now['file'], mb_strlen(BASE_PATH)))
-          : ''
+        // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+        $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
+        $now['file']
       ),
         /** ARGUMENTS */
       CLI_LIGHT_BLUE, '|', END_COLOR,
@@ -144,7 +183,7 @@ class OtraExceptionCLI extends \Exception
    */
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
-    return CLI_LIGHT_BLUE . '│' .
+    return CLI_LIGHT_BLUE . '│' . END_COLOR .
       str_pad(true === isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
         : ' -',

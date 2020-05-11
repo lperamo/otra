@@ -4,9 +4,9 @@
  *
  * @author Lionel Péramo */
 
-namespace src\controllers\profiler;
+namespace otra\controllers\profiler;
 
-use src\{Controller, services\ProfilerService};
+use otra\{Controller, services\ProfilerService};
 
 class ClearSQLLogsAction extends Controller
 {

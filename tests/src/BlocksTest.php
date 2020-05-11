@@ -1,7 +1,7 @@
 <?php
 
-use src\
-{MasterController, Router, Controller, OtraException};
+use otra\
+{MasterController, Controller, OtraException};
 use phpunit\framework\TestCase;
 
 /**

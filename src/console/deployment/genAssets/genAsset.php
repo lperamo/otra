@@ -24,6 +24,7 @@ define(
     : BASE_PATH . 'src/'
 );
 $_SERVER['APP_ENV'] = 'prod';
+$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 
 // Loads the main configuration
 require BASE_PATH . 'config/AllConfig.php';
@@ -36,7 +37,7 @@ spl_autoload_register(function ($className)
   if (false === isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \src\Logger::logTo(
+    \otra\Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),
@@ -50,11 +51,7 @@ spl_autoload_register(function ($className)
 require CORE_PATH . 'Router.php';
 require CORE_PATH . 'tools/compression.php';
 
-$_SERVER['REQUEST_URI'] = \src\Router::getRouteUrl(ARG_SITE_ROUTE);
-
-// NEEDED ONLY FOR the 'template', function needed because this function is not part of main controllers
-// Otherwise the templates cannot execute this translation function.
-function t(string $text) : string { return $text; }
+$_SERVER['REQUEST_URI'] = \otra\Router::getRouteUrl(ARG_SITE_ROUTE);
 
 // We don't allow errors shown on production !
 $oldErrorReporting = error_reporting();
@@ -65,11 +62,12 @@ ob_start();
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
-  'cookie_httponly' => true
+  'cookie_httponly' => true,
+  'cookie_samesite' => 'strict'
 ]);
 
 // We launch the route
-\src\Router::get(ARG_SITE_ROUTE);
+\otra\Router::get(ARG_SITE_ROUTE);
 $content = ob_get_clean();
 
 // We restore the error reporting

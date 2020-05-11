@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 // loading functions, not executing anything
-require CORE_PATH . 'console/tools.php';
-require CORE_PATH . 'console/architecture/createModule/createModule.php';
+require CONSOLE_PATH . 'tools.php';
+require CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
 const ARG_BUNDLE_NAME = 2,
   ARG_MODULE_NAME = 3,
   ARG_INTERACTIVE = 4;
 
 $consoleForce = false;
-require CORE_PATH . 'console/architecture/checkInteractiveMode.php';
-require CORE_PATH . 'console/architecture/createBundle/checkBundleExistence.php';
+require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
+require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 moduleHandling($interactive, $bundleName , $argv[ARG_MODULE_NAME]);

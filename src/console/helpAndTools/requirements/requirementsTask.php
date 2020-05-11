@@ -57,13 +57,19 @@
     [
       'inotify',
       'PHP extension \'inotify\'',
-      'Needed for OTRA watcher on unix like systems.',
+      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed for OTRA watcher on unix like systems.',
       REQ_PHP_LIB
     ],
     [
-      'PHP Version => 7.3',
-      'PHP version 7.3.x+',
-      'PHP version must be at least 7.3.x.',
+      'Zend OPcache',
+      'PHP extension \'zend-opcache\'',
+      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needeed to use the preloading feature available since PHP 7.4',
+      REQ_PHP_LIB
+    ],
+    [
+      'PHP Version => 7.4',
+      'PHP version 7.4.x+',
+      'PHP version must be at least 7.4.x.',
       REQ_PHP_VERSION
     ]
   ];
@@ -78,7 +84,7 @@
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
       $error = cli('which ' . $requirement[REQ_PKG_NAME]);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
-      $error = cli('php -v | egrep -o "PHP\ [7-9]\.[0-9]{1,}\.[0-9]{1,}"');
+      $error = cli('php -v | egrep -o "PHP\ [7-9]\.[4-9]{1,}\.[0-9]{1,}"');
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
       $error = cli('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"');
 

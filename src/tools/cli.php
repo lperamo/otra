@@ -13,3 +13,36 @@ function cli(string $cmd) : array
 
   return [$return, $output ? implode(PHP_EOL, $output) : ''];
 }
+
+/**
+ * Launch one or more commands showing the output progressively
+ *
+ * @param string $cmd
+ *
+ * @return bool
+ */
+function cliStream(string $cmd): bool
+{
+  $process = proc_open(
+    $cmd,
+    [
+      0 => ["pipe", "r"],
+      1 => ["pipe", "w"],
+      2 => ["pipe", "w"]
+    ],
+    $pipes,
+    realpath('./'),
+    []
+  );
+
+  if ($process === false || is_resource($process) === false)
+    return false;
+
+  while ($s = fgets($pipes[1]))
+  {
+    echo $s;
+    flush();
+  }
+
+  return true;
+}

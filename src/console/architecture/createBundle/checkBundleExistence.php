@@ -1,6 +1,6 @@
 <?php
 
-namespace src\console;
+namespace otra\console;
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';
@@ -16,7 +16,7 @@ if (file_exists($bundlePath) === false)
   if ($interactive === false)
   {
     if ($consoleForce === false)
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
 
@@ -32,8 +32,8 @@ if (file_exists($bundlePath) === false)
       exit (0);
   }
 
-  require CORE_PATH . 'console/architecture/createBundle/createBundle.php';
+  require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
   /** @var int $bundleMask */
-  bundleHandling($bundleName, $consoleForce ? $bundleMask : null);
+  bundleHandling($interactive, $bundleName, $consoleForce ? $bundleMask : null);
 }
 ?>

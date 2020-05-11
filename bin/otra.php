@@ -2,7 +2,7 @@
 <?php
 declare(strict_types=1);
 
-use src\console\TasksManager;
+use otra\console\TasksManager;
 
 // TODO Centralize those constants that are already defined in AllConfig...
 // Fixes windows awful __DIR__
@@ -23,19 +23,20 @@ define(
     ? BASE_PATH . 'vendor/otra/otra/src/'
     : BASE_PATH . 'src/'
 );
+define('CONSOLE_PATH', CORE_PATH . 'console/');
 define('CACHE_PATH', BASE_PATH . 'cache/');
 define('SPACE_INDENT', '  ');
 $_SERVER['APP_ENV'] = 'prod';
 
-require CORE_PATH . 'console/TasksManager.php';
-require CORE_PATH . 'console/colors.php';
+require CONSOLE_PATH . 'TasksManager.php';
+require CONSOLE_PATH . 'colors.php';
 
 // We check if the help and task class map is present, if not ... generate it.
 // In fact, we also generate shell completions... for now.
 if (file_exists(CACHE_PATH . 'php/tasksHelp.php') === false)
 {
   echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
-  require CORE_PATH . 'console/helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+  require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
   echo 'Now we can continue as planned.', PHP_EOL;
 }
 
@@ -107,7 +108,7 @@ else // otherwise we'll try to guess if it looks like an existing one
 {
   $methods = array_keys($tasksClassMap);
 
-  require CORE_PATH . 'console/tools.php';
+  require CONSOLE_PATH . 'tools.php';
   $method = $argv[TasksManager::TASK_PARAMETERS];
   list($newTask) = guessWords($method, $methods);
 

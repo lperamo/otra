@@ -4,10 +4,10 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-namespace src;
+namespace otra;
 
 use config\{AllConfig, Routes};
-use src\{Logger, MasterController};
+use otra\{Logger, MasterController};
 
 class Controller extends MasterController
 {
@@ -48,7 +48,7 @@ class Controller extends MasterController
     if ($otraRoute === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
     else
-      $templateFile = CORE_VIEWS_PATH . $file;
+      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
 
     Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
 
@@ -114,7 +114,7 @@ class Controller extends MasterController
   {
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
-    require CORE_VIEWS_PATH . '/debugBar.phtml';
+    require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
     parent::$template = (false === strpos(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
       : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);

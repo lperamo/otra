@@ -10,7 +10,7 @@ if (array_key_exists(ARG_INTERACTIVE, $argv) === true )
     echo CLI_RED, 'The parameter ', CLI_LIGHT_CYAN, 'noQuestion ', CLI_RED, 'is not correct. You typed ',
       CLI_LIGHT_CYAN, $interactive, CLI_RED, '. Type ', CLI_LIGHT_CYAN, 'true', CLI_RED, ' or ', CLI_LIGHT_CYAN,
       'false', CLI_RED, ' instead.', END_COLOR, PHP_EOL;
-    exit(1);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 }
 
