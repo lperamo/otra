@@ -52,13 +52,12 @@ function generateJavaScript(
 
     $legibleGeneratedTemporaryJsFile = returnLegiblePath($generatedTemporaryJsFile);
     $jsFileExists = file_exists($generatedTemporaryJsFile);
+    $temporarySourceMap = $generatedTemporaryJsFile . '.map';
 
     if ($return === 0 && $jsFileExists === true)
     {
       if (BUILD_DEV_VERBOSE > 0)
       {
-        $temporarySourceMap = $generatedTemporaryJsFile . '.map';
-
         echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
           false), CLI_GREEN, ' have generated the temporary file';
 
