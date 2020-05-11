@@ -217,10 +217,21 @@ foreach($iterator as $entry)
           mb_strrpos($resourceFolder, 'web')
         ) . 'web/';
 
+    $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder));
+
     if ($extension === 'ts')
     {
+      // 6 = length of devJs/
+      $resourcesMainFolder = $resourcesMainFolder . substr($resourcesFolderEndPath, 6);
+
       if (WATCH_FOR_TS_RESOURCES === true)
-        generateJavaScript(BUILD_DEV_VERBOSE, BUILD_DEV_GCC, $resourcesMainFolder, $baseName, $resourceName);
+        generateJavaScript(
+          BUILD_DEV_VERBOSE,
+          BUILD_DEV_GCC,
+          $resourcesMainFolder,
+          $baseName,
+          $resourceName
+        );
     }
     elseif (substr($baseName, 0, 1) !== '_')
     {
@@ -229,11 +240,13 @@ foreach($iterator as $entry)
         $generatedCssFile = $baseName . '.css';
 
         // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-        $cssFolder = $resourcesMainFolder . '/css';
+        // 5 length of scss/ or sass/
+        $cssFolder = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5);
 
         // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+        // as well as its subfolders
         if (file_exists($cssFolder) === false)
-          mkdir($cssFolder);
+          mkdir($cssFolder, 0777,true);
 
         $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
 
