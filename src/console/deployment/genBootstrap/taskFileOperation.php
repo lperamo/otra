@@ -965,7 +965,6 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
   $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
-  $patternRemoveUse = '@\buse\b@';
 
   /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
    *  START SECTION
@@ -988,6 +987,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     '',
     $finalContent);
   /** END SECTION */
+
+  $patternRemoveUse = '@^\buse\b@m';
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
