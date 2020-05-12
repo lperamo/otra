@@ -185,9 +185,11 @@ $handleTransfer(
 );
 
 $handleTransfer(
-  'Sending OTRA templating engine',
+  'Sending the OTRA templating engine and the translate tool',
   $startCommand .
-  '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/blocks.php\' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder . '/vendor/'
+  '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
+  ' --include=\'otra/otra/src/blocks.php\' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
+  '/vendor/'
 );
 
 $handleTransfer(
