@@ -5,6 +5,8 @@
  */
 namespace otra;
 
+use config\AllConfig;
+
 class MasterController
 {
   public static string $path;
@@ -41,7 +43,20 @@ class MasterController
   protected static array
     $css = [],
     $js = [],
-    $rendered = [];
+    $rendered = [],
+    $csp = [
+      'frame-ancestors' => "'none'",
+      'default-src' => "'none'",
+      'font-src' => "'self'",
+      'img-src' => "'self'",
+      'object-src' => "'none'",
+      'connect-src' => "'self'",
+      'child-src' => "'self'",
+      'manifest-src' => "'self'",
+      'script-src' => '',
+      'style-src' => "'self'"
+    ],
+    $nonces = [];
 
   protected static bool
     $ajax = false,
@@ -266,6 +281,48 @@ class MasterController
     }
 
     return $content;
+  }
+
+  /**
+   * @return string
+   * @throws \Exception
+   */
+  protected static function getRandomNonceForCSP() : string
+  {
+    $nonce = bin2hex(random_bytes(32));
+    self::$nonces[] = $nonce;
+
+    return $nonce;
+  }
+
+  protected static function addCspHeader() : void
+  {
+    $csp = 'Content-Security-Policy: ';
+
+    foreach (self::$csp as $directive => &$value)
+    {
+      // If the develop has already set a value for that directive, we use it instead of the default
+      if (isset(AllConfig::$csp) && isset(AllConfig::$csp[$directive]))
+        $csp .= $directive . ' ' . AllConfig::$csp[$directive];
+      else
+      {
+        $csp .= $directive . ' ' . $value;
+
+        if ($directive === 'script-src')
+        {
+          $csp .= ' \'strict-dynamic\' ';
+
+          foreach (self::$nonces as &$nonce)
+          {
+            $csp .= '\'nonce-' . $nonce . '\' ';
+          }
+        }
+      }
+
+      $csp .= '; ';
+    }
+
+    header($csp);
   }
 }
 

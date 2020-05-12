@@ -69,9 +69,6 @@ function handleSecurity(): string
     SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
     SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT . '# CSP - Do not forget to adapt this line to fit your needs !' . PHP_EOL .
-    SPACE_INDENT . 'add_header Content-Security-Policy "frame-ancestors \'none\'; default-src \'none\'; font-src \'self\'; img-src \'self\'; object-src \'none\'; connect-src \'self\'; script-src \'strict-dynamic\'; style-src \'self\'; child-src \'self\'; manifest-src \'self\'";' . PHP_EOL .
-    PHP_EOL .
     SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwith and assets).' . PHP_EOL .
     SPACE_INDENT . 'valid_referers none blocked ~.google. ~.bing. ~.yahoo. ' .
     AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .

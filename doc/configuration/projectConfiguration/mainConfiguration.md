@@ -20,9 +20,15 @@ respectively.
 
 Beware, in this file, the driver name must match with the related class name in OTRA (e.g. : `Pdomysql`). 
 
-You must, even empty (for the time being), have a file `bundles/App/config/Config.php` where `App` is the name of ... 
-your application.
+You can pass csp custom directives that will replace the default values of the "Master Controller" by setting something
+like :
+```php
+public static array $csp = [
+  'script-src' => "'self'"
+];
+```
 
+You can have a file `bundles/App/config/Config.php` where `App` is the name of your bundle.
 It will contains additional configuration that you want to pass like paths for example.
 
 In the file `config/AdditionalClassFiles.php`, must contains the paths of OTRA classes that are included dynamically via

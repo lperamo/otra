@@ -216,6 +216,8 @@ class Controller extends MasterController
       }
     }
 
+    parent::addCspHeader();
+
     return $resourceContent;
   }
 
