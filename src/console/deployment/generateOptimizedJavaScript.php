@@ -74,7 +74,7 @@ function generateJavaScript(
     {
       if ($jsFileExists === true)
         echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
-        END_COLOR, PHP_EOL, $output, 'Launching Google Closure Compiler...', PHP_EOL;
+        END_COLOR, PHP_EOL, $output;
       else
         echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
         CLI_LIGHT_CYAN,
@@ -87,6 +87,8 @@ function generateJavaScript(
       // Should we launch Google Closure Compiler ?
       if ($launch === true)
       {
+        echo 'Launching Google Closure Compiler...', PHP_EOL;
+
         // TODO add those lines to handle class map and fix the resulting issue
         // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
         list($return, $output) = cli('java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
