@@ -11,6 +11,8 @@
 
 # Documentation
 
+The documentation is also available on the [blog](https://otra.tech). 
+
 This framework is in a very alpha stage so be indulgent :)
 
 There is still a lot of things to do :
