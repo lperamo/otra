@@ -40,6 +40,10 @@ abstract class Routes
     'otra_profiler' => [
       'chunks' => ['/dbg', '', 'src', 'profiler', 'indexAction'],
       'core' => true
+    ],
+    'otra_404' => [
+      'chunks' => ['/404', '', 'src', 'errors', 'error404Action'],
+      'core' => true
     ]
   ];
 
