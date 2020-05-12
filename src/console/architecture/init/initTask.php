@@ -72,18 +72,6 @@ copyFileAndFolders(
   ]
 );
 
-// The favicons and the 404.php page should be customisable and we will not overwrite those files.
-$webCustomisableFiles = [
-  CORE_PATH . 'init/web/favicon.ico' => $webFolder . 'favicon.ico',
-  CORE_PATH . 'init/web/favicon.png' => $webFolder . 'favicon.png'
-];
-
-foreach ($webCustomisableFiles as $sourceFile => &$destinationFile)
-{
-  if (false === file_exists($destinationFile))
-    copyFileAndFolders([$sourceFile], [$destinationFile]);
-}
-
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 
 // ********** LOGS FOLDER FILES **********
