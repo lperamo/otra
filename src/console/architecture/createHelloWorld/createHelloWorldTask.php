@@ -124,6 +124,21 @@ block('body');
 echo 'Starter template created in ', CLI_LIGHT_CYAN, substr($starterTemplate, strlen(BASE_PATH)),
   CLI_GREEN, '.', PHP_EOL;
 
+echo 'Adding favicons...';
+define('HELLO_WORLD_IMAGES_PATH', CORE_PATH . 'resources/img/HelloWorld/');
+require CORE_PATH . 'tools/copyFilesAndFolders.php';
+
+copyFileAndFolders(
+  [
+    HELLO_WORLD_IMAGES_PATH . 'favicon.ico',
+    HELLO_WORLD_IMAGES_PATH . 'favicon.png'
+  ],
+  [
+    BASE_PATH . 'web/favicon.ico',
+    BASE_PATH . 'web/favicon.png'
+  ]
+);
+
 // We update the routes configuration as we just add one route.
 require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
