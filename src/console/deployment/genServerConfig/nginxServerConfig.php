@@ -66,6 +66,9 @@ function handleSecurity(): string
     SPACE_INDENT . 'add_header X-Content-Type-Options "nosniff";' . PHP_EOL .
     SPACE_INDENT . 'add_header X-XSS-Protection "1; mode=block";' . PHP_EOL .
     PHP_EOL .
+    SPACE_INDENT . '# Avoid showing server version ...' . PHP_EOL .
+    SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
+    PHP_EOL .
     SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
     SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
     PHP_EOL .
