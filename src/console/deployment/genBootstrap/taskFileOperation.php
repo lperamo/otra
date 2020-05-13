@@ -733,7 +733,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             $nextContentToAdd = file_get_contents($tempFile);
 
             // we remove comments to facilitate the search and replace operations that follow
-            $nextContentToAdd = preg_replace('@(//.*)|(/\\*(.|\\s)*?\\*/)@', '', $nextContentToAdd);
+            /* @TODO Find a way to use this regex without removing links because links can contain // as in
+             * https://example.com */
+            //$nextContentToAdd = preg_replace('@(//.*)|(/\*(.|\s)*?\*/)@', '', $nextContentToAdd);
 
             $isReturn = false;
 
