@@ -100,7 +100,8 @@ define(
       && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
       ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
       : '',
-    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV']
+    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
+    'temporaryEnv' => 'prod'
   ]
 );
 

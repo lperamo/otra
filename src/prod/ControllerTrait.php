@@ -8,7 +8,7 @@ namespace otra;
 
 use config\AllConfig;
 
-class Controller extends MasterController
+trait ControllerTrait
 {
   private static bool $cache_used;
 

@@ -7,13 +7,12 @@ declare(strict_types=1);
 namespace otra;
 
 use config\{AllConfig, Routes};
-use otra\{Logger, MasterController};
 
-class Controller extends MasterController
+define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
+define('ROUTE_CHUNKS_MODULE_PARAM', 2);
+
+trait ControllerTrait
 {
-  const ROUTE_CHUNKS_MODULE_PARAM = 1;
-  const ROUTE_CHUNKS_BUNDLE_PARAM = 1;
-
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     parent::__construct($baseParams, $getParams);
@@ -156,8 +155,8 @@ class Controller extends MasterController
     $chunks = $route['chunks'];
 
     // Bundle and module informations do not exist on exceptions
-    if (array_key_exists(self::ROUTE_CHUNKS_BUNDLE_PARAM, $chunks) === false)
-      $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] = '';
+    if (array_key_exists(ROUTE_CHUNKS_BUNDLE_PARAM, $chunks) === false)
+      $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[ROUTE_CHUNKS_MODULE_PARAM] = '';
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
@@ -174,8 +173,8 @@ class Controller extends MasterController
     $debLink2 = $debLink . '/bundles/';
 
     $resourcesType = [
-      'bundle_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
-      'module_' . $assetType => $debLink2 . $chunks[self::ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
+      'bundle_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
+      'module_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
       '_' . $assetType => $debLink . $this->viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
     ];
