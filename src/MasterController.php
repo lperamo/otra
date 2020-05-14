@@ -56,7 +56,17 @@ class MasterController
       'script-src' => '',
       'style-src' => "'self'"
     ],
-    $nonces = [];
+    $nonces = [],
+    $devFeaturePolicyRestrictionsArray = [
+      'layout-animations' => "'self'",
+      'legacy-image-formats' => "'none'",
+      'oversized-images' => "'none'",
+      'sync-script' => "'none'",
+      'sync-xhr' => "'none'",
+      'unoptimized-images' => "'none'",
+      'unsized-media' => "'none'",
+    ],
+    $prodFeaturesPolicyRestrictionsArray = [];
 
   protected static bool
     $ajax = false,
@@ -323,6 +333,37 @@ class MasterController
     }
 
     header($csp);
+  }
+
+  /**
+   * @static
+   * @param array  $restrictionsArray
+   * @param string $restrictions
+   */
+  private static function addFeaturePoliciesRestrictions(array $restrictionsArray, string &$restrictions) : void
+  {
+    foreach ($restrictionsArray as $feature => &$policy)
+    {
+      $restrictions .= $feature . ' ' . $policy . ';';
+    }
+  }
+
+  protected static function addFeaturePoliciesHeader()
+  {
+    $featurePoliciesRestrictions = '';
+
+    if ($_SERVER['APP_ENV'] === 'dev')
+      self::addFeaturePoliciesRestrictions(
+        self::$devFeaturePolicyRestrictionsArray,
+        $featurePoliciesRestrictions
+      );
+
+    MasterController::addFeaturePoliciesRestrictions(
+      self::$prodFeaturesPolicyRestrictionsArray,
+      $featurePoliciesRestrictions
+    );
+
+    header('Feature-Policy: ' . $featurePoliciesRestrictions);
   }
 }
 

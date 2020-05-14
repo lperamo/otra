@@ -71,6 +71,9 @@ class Controller extends MasterController
     )
       self::addDebugBar();
 
+    parent::addCspHeader();
+    parent::addFeaturePoliciesHeader();
+
     return parent::$template;
   }
 
@@ -215,8 +218,6 @@ class Controller extends MasterController
         $resourceContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
       }
     }
-
-    parent::addCspHeader();
 
     return $resourceContent;
   }
