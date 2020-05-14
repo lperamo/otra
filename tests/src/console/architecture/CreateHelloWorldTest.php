@@ -59,6 +59,7 @@ class CreateHelloWorldTest extends TestCase
       'Route configuration file ' . CLI_LIGHT_CYAN . '/var/www/html/perso/otra/bundles/HelloWorld/config/Routes.php' . CLI_GREEN . ' created.' . PHP_EOL .
       CLI_GREEN . 'Starter layout created in ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/views/layout.phtml' . CLI_GREEN . '.' . PHP_EOL .
       'Starter template created in ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend/views/index/home.phtml' . CLI_GREEN . '.' . PHP_EOL .
+      'Adding favicons...' . PHP_EOL .
       CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_BLUE . '/var/www/html/perso/otra/bundles/config/Config.php' . CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
       CLI_GREEN . '/var/www/html/perso/otra/bundles/config/Routes.php' . ' updated.' . END_COLOR . PHP_EOL .
       CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL

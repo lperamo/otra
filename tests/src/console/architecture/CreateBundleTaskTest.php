@@ -2,11 +2,13 @@
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
-use otra\OtraException;
 use phpunit\framework\TestCase;
 
-define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
-define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+if (defined('TEST_BUNDLE_UPPER') === false)
+{
+  define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
+  define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+}
 
 /**
  * @runTestsInSeparateProcesses

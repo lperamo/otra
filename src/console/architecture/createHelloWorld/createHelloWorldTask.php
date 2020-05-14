@@ -124,7 +124,7 @@ block('body');
 echo 'Starter template created in ', CLI_LIGHT_CYAN, substr($starterTemplate, strlen(BASE_PATH)),
   CLI_GREEN, '.', PHP_EOL;
 
-echo 'Adding favicons...';
+echo 'Adding favicons...', PHP_EOL;
 define('HELLO_WORLD_IMAGES_PATH', CORE_PATH . 'resources/img/HelloWorld/');
 require CORE_PATH . 'tools/copyFilesAndFolders.php';
 
