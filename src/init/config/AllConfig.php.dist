@@ -16,8 +16,6 @@ define('CORE_RESOURCES_PATH', OTRA_PROJECT === true ? '/vendor/otra/otra/src/res
 define('CORE_CSS_PATH', CORE_RESOURCES_PATH . 'css/');
 define('CORE_JS_PATH', CORE_RESOURCES_PATH . 'js/');
 
-define('LAYOUT', BASE_PATH . 'bundles/views/layout.phtml'); // It has to be layout
-
 if (defined('SPACE_INDENT') === false)
   define('SPACE_INDENT', '  ');
 
