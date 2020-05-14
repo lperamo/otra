@@ -1,6 +1,6 @@
 [Home](../README.md) / HTTP Headers
                                 
-### Installation
+### HTTP Headers
 
 You can configure the Content Security Policy and the Feature Policy in your actions.
 Feature Policies have default values for the development environment, not for the production one.
