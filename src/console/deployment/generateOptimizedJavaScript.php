@@ -132,6 +132,34 @@ function generateJavaScript(
           );
         }
       }
+
+      // We copy the service worker to the root if there is one
+      if ($baseName === 'sw' || $baseName === 'serviceWorker')
+      {
+        echo 'Moving the service worker files to their final locations...', PHP_EOL;
+
+        $serviceWorkerPath = BASE_PATH . 'web/' . $baseName . '.js';
+        if (!rename($generatedJsFile, $serviceWorkerPath))
+        {
+          echo CLI_RED, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
+          throw new \otra\OtraException('', 1, '', NULL, [], true);
+        }
+
+        $generatedJsMapFile = $generatedJsFile . '.map';
+        $newJsMapPath = $serviceWorkerPath . '.map';
+
+        if (file_exists($generatedJsMapFile))
+        {
+          if (!rename($generatedJsMapFile, $newJsMapPath))
+          {
+            echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
+            throw new \otra\OtraException('', 1, '', NULL, [], true);
+          }
+        }
+
+        echo 'Service worker files moved to ', CLI_LIGHT_CYAN, returnLegiblePath($serviceWorkerPath), END_COLOR,
+          ' and ', CLI_LIGHT_CYAN, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
+      }
     }
   } else
     echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
