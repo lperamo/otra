@@ -216,7 +216,7 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
 
     $folderFilename = $bundleFolder->getFilename();
 
-    if (in_array($folderFilename, ['config',  'resources', 'controllers']) === true)
+    if (in_array($folderFilename, ['config',  'resources', 'controllers', 'services']) === true)
       continue;
 
     $folderRealPath = $bundleFolder->getRealPath();
