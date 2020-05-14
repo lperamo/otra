@@ -81,6 +81,9 @@ class Controller extends MasterController
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
+    parent::addCspHeader();
+    parent::addFeaturePoliciesHeader();
+
     return parent::$template;
   }
 
@@ -149,8 +152,6 @@ class Controller extends MasterController
   {
     // If we have JS files to load, then we load them
     $content = (self::$hasJsToLoad) ? '<script type="application/javascript" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
-
-    parent::addCspHeader();
 
     if (true === empty(self::$js))
       return $content;
