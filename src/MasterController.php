@@ -44,29 +44,36 @@ class MasterController
     $css = [],
     $js = [],
     $rendered = [],
-    $csp = [
-      'frame-ancestors' => "'none'",
-      'default-src' => "'none'",
-      'font-src' => "'self'",
-      'img-src' => "'self'",
-      'object-src' => "'none'",
-      'connect-src' => "'self'",
-      'child-src' => "'self'",
-      'manifest-src' => "'self'",
-      'script-src' => '',
-      'style-src' => "'self'"
-    ],
     $nonces = [],
-    $devFeaturePolicyRestrictionsArray = [
-      'layout-animations' => "'self'",
-      'legacy-image-formats' => "'none'",
-      'oversized-images' => "'none'",
-      'sync-script' => "'none'",
-      'sync-xhr' => "'none'",
-      'unoptimized-images' => "'none'",
-      'unsized-media' => "'none'",
+    $csp = [
+      'dev' =>
+      [
+        'frame-ancestors' => "'none'",
+        'default-src' => "'none'",
+        'font-src' => "'self'",
+        'img-src' => "'self'",
+        'object-src' => "'none'",
+        'connect-src' => "'self'",
+        'child-src' => "'self'",
+        'manifest-src' => "'self'",
+        'script-src' => '',
+        'style-src' => "'self'"
+      ],
+      'prod' => [] // assigned in the constructor
     ],
-    $prodFeaturesPolicyRestrictionsArray = [];
+    $featurePolicy = [
+      'dev' =>
+      [
+        'layout-animations' => "'self'",
+        'legacy-image-formats' => "'none'",
+        'oversized-images' => "'none'",
+        'sync-script' => "'none'",
+        'sync-xhr' => "'none'",
+        'unoptimized-images' => "'none'",
+        'unsized-media' => "'none'"
+      ],
+      'prod' => []
+    ];
 
   protected static bool
     $ajax = false,
@@ -179,6 +186,7 @@ class MasterController
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
+    self::$csp['prod'] = self::$csp['dev'];
 
     call_user_func_array([$this, $baseParams['action']], $getParams);
   }
@@ -309,7 +317,7 @@ class MasterController
   {
     $csp = 'Content-Security-Policy: ';
 
-    foreach (self::$csp as $directive => &$value)
+    foreach (self::$csp[$_SERVER['APP_ENV']] as $directive => &$value)
     {
       // If the develop has already set a value for that directive, we use it instead of the default
       if (isset(AllConfig::$csp) && isset(AllConfig::$csp[$directive]))
@@ -337,33 +345,33 @@ class MasterController
 
   /**
    * @static
-   * @param array  $restrictionsArray
-   * @param string $restrictions
+   * @param array  $policiesArray
+   * @param string $policies
    */
-  private static function addFeaturePoliciesRestrictions(array $restrictionsArray, string &$restrictions) : void
+  private static function addFeaturePolicies(array $policiesArray, string &$policies) : void
   {
-    foreach ($restrictionsArray as $feature => &$policy)
+    foreach ($policiesArray as $feature => &$policy)
     {
-      $restrictions .= $feature . ' ' . $policy . ';';
+      $policies .= $feature . ' ' . $policy . ';';
     }
   }
 
   protected static function addFeaturePoliciesHeader()
   {
-    $featurePoliciesRestrictions = '';
+    $featurePolicies = '';
 
     if ($_SERVER['APP_ENV'] === 'dev')
-      self::addFeaturePoliciesRestrictions(
-        self::$devFeaturePolicyRestrictionsArray,
-        $featurePoliciesRestrictions
+      self::addFeaturePolicies(
+        self::$featurePolicy['dev'],
+        $featurePolicies
       );
 
-    MasterController::addFeaturePoliciesRestrictions(
-      self::$prodFeaturesPolicyRestrictionsArray,
-      $featurePoliciesRestrictions
+    MasterController::addFeaturePolicies(
+      self::$featurePolicy['prod'],
+      $featurePolicies
     );
 
-    header('Feature-Policy: ' . $featurePoliciesRestrictions);
+    header('Feature-Policy: ' . $featurePolicies);
   }
 }
 

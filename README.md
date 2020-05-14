@@ -37,6 +37,7 @@ Here are the main topics :
 - [Cache management](doc/cacheManagement.md)
 - [Generating all you needed](doc/codeGeneration.md "Routes, class mapping generation, PHP optimization and optimized assets generation")
 - [All about database](doc/database.md "Database schema configuration and its fixtures")
+- [HTTP Headers](doc/httpHeaders.md "Content security and feature policies configuration")
 - [A few last tips](doc/lastTips.md)
 - [Troubleshooting](doc/troubleShooting.md)
 - [Contributing](doc/contributing.md "Some guidelines and OTRA code philosophy")
