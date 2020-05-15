@@ -36,7 +36,7 @@ function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : voi
     ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, -1);
   }
 
-  call_user_func_array('dumpSmall', $args);
+  call_user_func_array('cli' === PHP_SAPI ? 'dumpSmallCli' : 'dumpSmall', $args);
 
   if (true === $maxData)
     ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, $oldXDebugMaxData);
@@ -62,10 +62,9 @@ function getCaller()
  */
 function dumpSmall()
 {
-  echo '<pre>';
   $args = func_get_args();
   $secondTrace = debug_backtrace()[1];
-  echo '<p style="color:#3377FF">OTRA DUMP - ', $secondTrace['file'], ':', $secondTrace['line'], '</p>';
+  echo '<pre>', '<p style="color:#3377FF">', 'OTRA DUMP - ' . $secondTrace['file'] . ':' . $secondTrace['line'], '</p>';
 
   foreach ($args as &$param)
   {
@@ -74,6 +73,18 @@ function dumpSmall()
   }
 
   echo '</pre>';
+}
+
+function dumpSmallCli()
+{
+  $args = func_get_args();
+  $secondTrace = debug_backtrace()[1];
+  echo 'OTRA DUMP - ' . $secondTrace['file'] . ':' . $secondTrace['line'] . PHP_EOL;
+
+  foreach ($args as &$param)
+  {
+    var_dump($param);
+  }
 }
 
 /**
