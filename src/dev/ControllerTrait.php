@@ -160,7 +160,7 @@ trait ControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<script type="application/javascript" src="'
+        ? '<script type="application/javascript" nonce="' . parent::getRandomNonceForCSP() . '" src="'
         : '<link rel="stylesheet" href="'
       );
 
@@ -214,7 +214,7 @@ trait ControllerTrait
         if (true === is_int($key))
           $key = '';
 
-        $resourceContent .= "\n" . '<script src="' . $js . '.js" ' . $key . '></script>';
+        $resourceContent .= "\n" . '<script src="' . $js . '.js" nonce="' . parent::getRandomNonceForCSP() . '" ' . $key . '></script>';
       }
     }
 
@@ -240,7 +240,11 @@ trait ControllerTrait
   {
     $jsContent = '';
 
-    foreach(self::$js as &$js) { $jsContent .= "\n" . '<script type="application/javascript" src="' . $js . '.js" ></script>'; }
+    foreach(self::$js as &$js)
+    {
+      $jsContent .= "\n" . '<script type="application/javascript" nonce="' .
+      parent::getRandomNonceForCSP() . '" src="' . $js . '.js" ></script>';
+    }
 
     return $jsContent;
   }
