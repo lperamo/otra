@@ -5,9 +5,14 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
-define('TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));
-define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
-define('TEST_MODULE_PATH', TEST_BUNDLE_PATH . CreateModuleTaskTest::TEST_MODULE . '/');
+if (!defined('TEST_BUNDLE_UPPER'))
+  define('TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));
+
+if (!defined('TEST_BUNDLE_PATH'))
+  define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+
+if (!defined('TEST_MODULE_PATH'))
+  define('TEST_MODULE_PATH', TEST_BUNDLE_PATH . CreateModuleTaskTest::TEST_MODULE . '/');
 
 /**
  * @runTestsInSeparateProcesses

@@ -580,7 +580,7 @@ class DatabaseTest extends TestCase
    */
   public function testExecuteFile_Exists() : void
   {
-    echo _DIR_;
+    echo __DIR__;
     //    Database::executeFile();
   }
 

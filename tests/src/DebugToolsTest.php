@@ -1,4 +1,5 @@
 <?php
+namespace src;
 
 use phpunit\framework\TestCase;
 
@@ -8,8 +9,8 @@ use phpunit\framework\TestCase;
 class DebugToolsTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/',
-    DUMP_STRING = '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = '</p>/var/www/html/perso/otra/src/debugTools.php:72:',
+    DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:86:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   private static string $LOGS_PROD_PATH;
@@ -30,10 +31,11 @@ class DebugToolsTest extends TestCase
   {
     if (OTRA_PROJECT === false)
     {
-      /* @TODO those lines generates PHP warnings with PHPUnit ...
-       * no reasons for that as this code must be executed only once ! */
-      rmdir(self::$LOGS_PROD_PATH);
-      rmdir(self::LOG_PATH);
+      if (file_exists(self::$LOGS_PROD_PATH))
+        rmdir(self::$LOGS_PROD_PATH);
+
+      if (file_exists(self::LOG_PATH))
+        rmdir(self::LOG_PATH);
     }
   }
 
@@ -61,7 +63,7 @@ class DebugToolsTest extends TestCase
   public function testDump_NoParameters() : void
   {
     $this->expectOutputString(
-      '<pre><p style="color:#3377FF">OTRA DUMP - ' . __FILE__ . ':' . (__LINE__ + 2) . '</p></pre>'
+      'OTRA DUMP - ' . __FILE__ . ':' . (__LINE__ + 2) . PHP_EOL
     );
     dump();
   }
@@ -112,7 +114,7 @@ class DebugToolsTest extends TestCase
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
       . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0,$maxData) . "\"...\n"
       . $this->getExpectedOutputPartial($maxChildren)
-      . "\n  (more elements)...\n}\n<br /></pre>"
+      . "\n  (more elements)...\n}\n"
     );
 
       dump(
@@ -135,7 +137,7 @@ class DebugToolsTest extends TestCase
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
       . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren)
-      . "\n  (more elements)...\n}\n<br /></pre>"
+      . "\n  (more elements)...\n}\n"
     );
 
     dump(
@@ -155,7 +157,7 @@ class DebugToolsTest extends TestCase
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
       . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren + 1)
-      . "}\n<br /></pre>"
+      . "}\n"
     );
 
     dump(

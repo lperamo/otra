@@ -17,7 +17,6 @@ class BlocksTest extends TestCase
   protected function setUp(): void
   {
     $_SERVER['APP_ENV'] = 'prod';
-    define('CACHE_PATH', BASE_PATH . 'cache/');
     define('VERSION', 'v1');
     self::$controller = new Controller();
     self::$controller->route = 'routeTest';

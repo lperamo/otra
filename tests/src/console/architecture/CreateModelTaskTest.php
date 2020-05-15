@@ -4,10 +4,12 @@ namespace src\console\architecture;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
 
-define('TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
-define('TEST_BUNDLE_PATH', BASE_PATH . CreateModelTaskTest::BUNDLE_RELATIVE_PATH);
+if (!defined('TEST_BUNDLE_UPPER'))
+  define('TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
+
+if (!defined('TEST_BUNDLE_PATH'))
+  define('TEST_BUNDLE_PATH', BASE_PATH . CreateModelTaskTest::BUNDLE_RELATIVE_PATH);
 
 /**
  * @runTestsInSeparateProcesses
