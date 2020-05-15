@@ -48,15 +48,15 @@ class MasterController
     $csp = [
       'dev' =>
       [
-        'frame-ancestors' => "'none'",
-        'default-src' => "'none'",
+        'frame-ancestors' => "'self'",
+        'default-src' => "'self'",
         'font-src' => "'self'",
         'img-src' => "'self'",
-        'object-src' => "'none'",
+        'object-src' => "'self'",
         'connect-src' => "'self'",
         'child-src' => "'self'",
         'manifest-src' => "'self'",
-        'script-src' => '',
+        'script-src' => "'self'",
         'style-src' => "'self'"
       ],
       'prod' => [] // assigned in the constructor
