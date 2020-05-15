@@ -7,7 +7,7 @@ use otra\console\TasksManager;
 $_SERVER['APP_ENV'] = 'prod';
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT
-    ? '/../../../../../../..' // long path from vendor
+    ? '/../../../..' // long path from vendor
     : '/..'
   ) . '/config/constants.php';
 require CONSOLE_PATH . 'TasksManager.php';
