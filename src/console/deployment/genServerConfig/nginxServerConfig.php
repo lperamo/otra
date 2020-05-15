@@ -233,32 +233,38 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   handleStaticCompression() .
   PHP_EOL .
-  SPACE_INDENT . '# Blocking any page that don\'t send a referrer via if conditions in the next \'location\' blocks'
-  . PHP_EOL .
+  SPACE_INDENT . '# Blocking any page that don\'t send a referrer via if conditions in the next \'location\' blocks' .
   PHP_EOL .
-  handleManifest();
+  PHP_EOL .
+  handleManifest() .
 
-if (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev')
-{
-  $content .=
-    PHP_EOL .
-    SPACE_INDENT . '# Handling CSS and JS' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /bundles/.*\.(css|js)$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL;
-} else {
-  $content .=
-    PHP_EOL .
-    handleGzippedAsset('css') .
-    PHP_EOL .
-    handleGzippedAsset('js') .
-    PHP_EOL .
-    handleGzippedAsset('tpl');
-}
+  (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev'
+  ? PHP_EOL .
+  SPACE_INDENT . '# Handling CSS and JS (project and vendor)' . PHP_EOL .
+  SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  checkHttpReferer() . PHP_EOL .
+  SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . '# Handling CSS and JS source maps (project and vendor)' . PHP_EOL .
+  SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'types' . PHP_EOL .
+  SPACE_INDENT_2 . '{' . PHP_EOL .
+  SPACE_INDENT_3 . 'application/json map;' . PHP_EOL .
+  SPACE_INDENT_2 . '}' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL
+  : PHP_EOL .
+  handleGzippedAsset('css') .
+  PHP_EOL .
+  handleGzippedAsset('js') .
+  PHP_EOL .
+  handleGzippedAsset('tpl')) .
 
-$content .= PHP_EOL .
+  PHP_EOL .
   handleWebFolderAssets() .
   PHP_EOL .
   handleRewriting() . PHP_EOL .
