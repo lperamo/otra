@@ -5,35 +5,17 @@ use config\AllConfig;
 
 $verbose = $argv[1];
 $route = $argv[2];
-define('_DIR_', str_replace('\\', '/', __DIR__));
-define('DIR_LENGTH', strlen(__DIR__));
-
-if (false !== strpos(_DIR_, 'vendor'))
-{
-  define('OTRA_PROJECT', true);
-  // Fixes windows awful __DIR__, BASE_PATH ends with /.
-  define(
-    'BASE_PATH',
-    substr(_DIR_, 0, DIR_LENGTH - strlen('vendor/otra/otra/src/console/deployment/genBootstrap'))
-  );
-  define('CORE_PATH', BASE_PATH . 'vendor/otra/otra/src/');
-} else {
-  define('OTRA_PROJECT', false);
-  // Fixes windows awful __DIR__, BASE_PATH ends with /.
-  define(
-    'BASE_PATH',
-    substr(_DIR_, 0, DIR_LENGTH - strlen('src/console/deployment/genBootstrap'))
-  );
-  define('CORE_PATH', BASE_PATH . 'src/');
-}
-
-define('CONSOLE_PATH', CORE_PATH . 'console/');
+define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+require __DIR__ . (OTRA_PROJECT
+    ? '/../../../../../../..' // long path from vendor
+    : '/../../../..'
+  ) . '/config/constants.php';
 require CONSOLE_PATH . 'colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER['APP_ENV'] = 'prod';
 
-require BASE_PATH . 'cache/php/ClassMap.php';
+require CLASS_MAP_PATH;
 
 $_SESSION['bootstrap'] = 1; // in order to not really make BDD requests !
 $firstFilesIncluded = get_included_files();

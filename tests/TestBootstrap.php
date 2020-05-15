@@ -1,35 +1,12 @@
 <?php
-// Fixes windows awful __DIR__
-define('_DIR_', str_replace('\\', '/', __DIR__));
-// if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
-// The path finishes with /
-define(
-  'BASE_PATH',
-  OTRA_PROJECT === true
-    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
-    : realpath(_DIR_ . '/..') . '/'
-);
 
-define(
-  'CORE_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/src/'
-    : BASE_PATH . 'src/'
-);
+define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+require __DIR__ . (OTRA_PROJECT
+  ? '/../../../..' // long path from vendor
+  : '/..'
+  ) . '/config/constants.php';
 
-define('CONSOLE_PATH', CORE_PATH . 'console/');
-
-define(
-  'TEST_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/tests/'
-    : BASE_PATH . 'tests/'
-);
-
-define('SPACE_INDENT', '  ');
-
-require BASE_PATH . 'cache/php/ClassMap.php';
+require CACHE_PATH . 'php/ClassMap.php';
 
 spl_autoload_register(function(string $className)
 {
@@ -37,7 +14,7 @@ spl_autoload_register(function(string $className)
   {
     // Handle the particular test configuration
     if('AllConfig' === $className)
-      require BASE_PATH . 'tests/config/AllConfig.php';
+      require TEST_PATH . 'config/AllConfig.php';
     else
       echo PHP_EOL, 'Path not found for the class name : ', $className, PHP_EOL;
   }else

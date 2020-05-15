@@ -2,20 +2,7 @@
 /** Bootstrap of the framework - Development entry point
  *
  * @author Lionel Péramo */
-define('_DIR_', str_replace('\\', '/', __DIR__));
-
-// if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', file_exists(_DIR_ . '/../vendor/otra'));
-
-// The path finishes with /
-define('BASE_PATH', substr(_DIR_, 0, -3)); // 3 = strlen('web')
-
-define(
-  'CORE_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/src/'
-    : BASE_PATH . 'src/'
-);
+require __DIR__ . '/../config/constants.php';
 
 $uri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
@@ -37,7 +24,7 @@ ini_set('html_errors', 1);
 ini_set('error_reporting', -1 & ~E_DEPRECATED);
 
 /** CLASS MAPPING */
-require BASE_PATH . 'cache/php/ClassMap.php';
+require CACHE_PATH . 'php/ClassMap.php';
 
 /** MAIN CONFIGURATION */
 require BASE_PATH . 'config/AllConfig.php';

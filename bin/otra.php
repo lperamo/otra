@@ -4,30 +4,12 @@ declare(strict_types=1);
 
 use otra\console\TasksManager;
 
-// TODO Centralize those constants that are already defined in AllConfig...
-// Fixes windows awful __DIR__
-define('_DIR_', str_replace('\\', '/', __DIR__));
-// if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
-// The path finishes with /
-define(
-  'BASE_PATH',
-  OTRA_PROJECT === true
-    ? substr(_DIR_, 0, -20) // 20 = strlen('vendor/otra/otra/bin')
-    : substr(_DIR_ . '/', 0, -4) // 4 = strlen('/bin')
-);
-
-define(
-  'CORE_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/src/'
-    : BASE_PATH . 'src/'
-);
-define('CONSOLE_PATH', CORE_PATH . 'console/');
-define('CACHE_PATH', BASE_PATH . 'cache/');
-define('SPACE_INDENT', '  ');
 $_SERVER['APP_ENV'] = 'prod';
-
+define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+require __DIR__ . (OTRA_PROJECT
+    ? '/../../../../../../..' // long path from vendor
+    : '/..'
+  ) . '/config/constants.php';
 require CONSOLE_PATH . 'TasksManager.php';
 require CONSOLE_PATH . 'colors.php';
 

@@ -2,21 +2,26 @@
 
 // If we do not come from the 'otra' command...
 use otra\console\TasksManager;
-
+die;
 if (defined('BASE_PATH') === false)
 {
-  define('BASE_PATH', realpath(__DIR__ . '/../../../../..') . '/');  // Fixes windows awful __DIR__. The path finishes with /;
-  define('CORE_PATH', BASE_PATH . 'src/');
-  define('SPACE_INDENT', '  ');
-
-  $pathToClassMap = BASE_PATH . 'cache/php/ClassMap.php';
+  define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+  var_dump(__DIR__ . (OTRA_PROJECT
+      ? '/../../../../../../..' // long path from vendor
+      : '/..'
+    ) . '/config/constants.php');die;
+  require __DIR__ . (OTRA_PROJECT
+      ? '/../../../../../../..' // long path from vendor
+      : '/..'
+    ) . '/config/constants.php';
+  require CONSOLE_PATH . 'colors.php';
 
   // Generating the class map if needed
-  if (file_exists($pathToClassMap) === false)
+  if (file_exists(CLASS_MAP_PATH) === false)
     require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
   // loading the class map
-  require $pathToClassMap;
+  require CLASS_MAP_PATH;
   spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
 
   require CONSOLE_PATH . 'colors.php';
@@ -26,7 +31,7 @@ if (defined('BASE_PATH') === false)
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new \RecursiveDirectoryIterator(CORE_PATH . 'console', \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new \RecursiveDirectoryIterator(CONSOLE_PATH, \FilesystemIterator::SKIP_DOTS);
 $iterator = new \RecursiveIteratorIterator($dir_iterator);
 
 $helpFileContent = [];
@@ -53,13 +58,11 @@ $tasks = array_keys($helpFileContent);
 $taskCategories = array_column($helpFileContent, TasksManager::TASK_CATEGORY);
 // sorts alphabetically the tasks and grouping them by category
 array_multisort($taskCategories, SORT_ASC, $tasks, SORT_ASC, $helpFileContent);
-
 require CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
 $helpFileFinalContent = substr(convertArrayFromVarExportToShortVersion($helpFileFinalContent), 0, -2) . '];';
-
 $phpCacheFolder = CACHE_PATH . 'php/';
 
 if (file_exists($phpCacheFolder) === false)

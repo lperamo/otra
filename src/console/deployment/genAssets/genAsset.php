@@ -5,24 +5,11 @@ define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
 
-// Fixes windows awful __DIR__
-define('_DIR_', realpath(str_replace('\\', '/', __DIR__) . '/../../../../'));
-// if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', strpos(_DIR_, 'vendor') !== false);
-// The path finishes with /
-define(
-  'BASE_PATH',
-  OTRA_PROJECT === true
-    ? substr(_DIR_, 0, -16) // 16 = strlen('vendor/otra/otra')
-    : _DIR_ . '/'
-);
-
-define(
-  'CORE_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/src/'
-    : BASE_PATH . 'src/'
-);
+define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+require __DIR__ . (OTRA_PROJECT
+    ? '/../../../../../../..' // long path from vendor
+    : '/../../../..'
+  ) . '/config/constants.php';
 $_SERVER['APP_ENV'] = 'prod';
 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 
@@ -30,7 +17,7 @@ $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 require BASE_PATH . 'config/AllConfig.php';
 
 // Loads the production class mapping
-require BASE_PATH . 'cache/php/ClassMap.php';
+require CACHE_PATH . 'php/ClassMap.php';
 
 spl_autoload_register(function ($className)
 {

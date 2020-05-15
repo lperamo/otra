@@ -2,20 +2,7 @@
 /** Bootstrap of the framework - Production entry point
  *
  * @author Lionel Péramo */
-define ('_DIR_', str_replace('\\', '/', __DIR__));
-
-// if true, we are not developing on OTRA itself
-define('OTRA_PROJECT', file_exists(_DIR_ . '/../vendor/otra'));
-
-// The path finishes with /
-define('BASE_PATH', substr(_DIR_, 0, -3)); // 3 = strlen('web')
-
-define(
-  'CORE_PATH',
-  OTRA_PROJECT === true
-    ? BASE_PATH . 'vendor/otra/otra/src/'
-    : BASE_PATH . 'src/'
-);
+require __DIR__ . '/../config/constants.php';
 
 $uri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
@@ -25,12 +12,9 @@ session_start([
   'cookie_samesite' => 'strict'
 ]);
 
-// TODO Find a way to avoid duplication of the definition of the version already present in the config/AllConfig file!
-define('VERSION', '1.0.0-alpha.2.2.0');
-
 try
 {
-  require BASE_PATH . 'cache/php/RouteManagement.php';
+  require CACHE_PATH . 'php/RouteManagement.php';
 
   if ($route = \cache\php\Router::getByPattern($uri))
   {
@@ -51,7 +35,7 @@ try
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
     /** CLASS MAPPING */
-    require BASE_PATH . 'cache/php/ProdClassMap.php';
+    require CACHE_PATH . 'php/ProdClassMap.php';
 
     spl_autoload_register(function ($className) {
       if (false === isset(CLASSMAP[$className]))
