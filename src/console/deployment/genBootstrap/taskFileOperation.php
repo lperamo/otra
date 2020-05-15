@@ -75,6 +75,8 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
 /**
  * @param string $content
  * @param string $outputFile
+ *
+ * @throws \otra\OtraException
  */
 function contentToFile(string $content, string $outputFile)
 {
@@ -89,7 +91,7 @@ function contentToFile(string $content, string $outputFile)
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]',
       END_COLOR, PHP_EOL;
-    exit(1);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
@@ -101,10 +103,17 @@ function contentToFile(string $content, string $outputFile)
   if (true === hasSyntaxErrors($outputFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
-    exit(1);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   echo CLI_LIGHT_GREEN, '[NAMESPACES]', PHP_EOL;
+
+  if (!unlink($tempFile))
+  {
+    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $tempFile, CLI_RED,
+    '. Task aborted.', END_COLOR, PHP_EOL;
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
+  }
 }
 
 /**
