@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use config\AllConfig;
+use config\{AllConfig,Routes};
 
 $verbose = $argv[1];
 $route = $argv[2];
@@ -39,12 +39,12 @@ spl_autoload_register(function($className)
 
 require BASE_PATH . 'config/AllConfig.php';
 
-$params = \config\Routes::$_[$route];
+$params = Routes::$_[$route];
 
 // Init require section
 require CORE_PATH . 'Session.php';
 require CORE_PATH . 'bdd/Sql.php';
-$defaultRoute = \config\Routes::$default['bundle'];
+$defaultRoute = Routes::$default['bundle'];
 
 // in order to pass some conditions
 $_SERVER['REMOTE_ADDR'] = 'console';
@@ -76,24 +76,36 @@ $file_ = $file . '_.php';
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 
 // If it is an OTRA core route, we must change the path src from the config/Routes.php file by vendor/otra/otra/src
-$fileToInclude = (isset($params['core']) && $params['core'] ? substr(CORE_PATH,0, -5) : BASE_PATH)
-  . str_replace(
-    '\\',
-    '/',
-    \otra\Router::get(
-      $route,
-      (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
-      false
-    )
-  ) . '.php';
+if (isset($params['core']) && $params['core'])
+{
+  $fileToInclude = substr(CORE_PATH,0, -5) . str_replace(
+      ['\\', 'otra'],
+      ['/', 'src'],
+      \otra\Router::get(
+        $route,
+        (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        false
+      )
+    ) . '.php';
+} else {
+  $fileToInclude = BASE_PATH . str_replace(
+      '\\',
+      '/',
+      \otra\Router::get(
+        $route,
+        (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        false
+      )
+    ) . '.php';
+}
 
 define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => empty(\config\AllConfig::$dbConnections) === false
-      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
-      ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+    'driver' => empty(AllConfig::$dbConnections) === false
+      && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
     'temporaryEnv' => 'prod'
