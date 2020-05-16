@@ -5,7 +5,7 @@ block('body');
 ?>
   <h1>Damn where is that page already?</h1>
   <div id="error">
-    You're trying to access to : <?php $host = $_SERVER['HTTPS'] ? 'https' : 'http' . '://' . $_SERVER['HTTP_HOST'];
+    You're trying to access to : <?php $host = ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
     echo $host . $_SERVER['REQUEST_URI']; ?>
     <br><br>
     <?php
