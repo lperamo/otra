@@ -196,6 +196,12 @@ function handleWebFolderAssets() : string
     SPACE_INDENT_2 . '{' . PHP_EOL .
     SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . '# Handle vendor images' . PHP_EOL .
+    SPACE_INDENT_2 . 'if ($uri ~ "^/vendor.*$")' . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'root $rootPath;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
