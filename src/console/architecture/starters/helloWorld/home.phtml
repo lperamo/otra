@@ -1,0 +1,9 @@
+<?php
+require BASE_PATH . 'bundles/HelloWorld/views/layout.phtml';
+
+block('title', 'Hello world starter template');
+block('body');
+?>
+<?php parent(); ?><br/>
+It's the basic template.
+<?php endblock(); ?>

@@ -187,7 +187,7 @@ class ' . $upperActionName . 'Action extends Controller
  * @param bool   $consoleForce
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string &$controllerPath, string &$actionName, bool $consoleForce = false)
+                        string &$controllerPath, string $actionName, bool $consoleForce = false)
 {
   /** @var string $interactive */
   if ($interactive === true)

@@ -4,6 +4,9 @@ namespace src\console\architecture;
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
 
+if (!defined('OTRA_SUCESS'))
+  define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
+
 /**
  * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase !
  *
@@ -55,18 +58,18 @@ class CreateHelloWorldTest extends TestCase
       CLI_GREEN . 'Basic folder architecture created for ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend' . CLI_GREEN . '.' . END_COLOR . PHP_EOL .
       CLI_LIGHT_GREEN . 'Folder ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend/controllers/index' . CLI_LIGHT_GREEN . ' created.' . END_COLOR . PHP_EOL .
       CLI_LIGHT_GREEN . 'Action ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend/controllers/index/HomeAction.php' . CLI_LIGHT_GREEN . ' created.' . END_COLOR . PHP_EOL .
-      CLI_GREEN . 'Action filled.' . PHP_EOL .
-      'Route configuration file ' . CLI_LIGHT_CYAN . '/var/www/html/perso/otra/bundles/HelloWorld/config/Routes.php' . CLI_GREEN . ' created.' . PHP_EOL .
-      CLI_GREEN . 'Starter layout created in ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/views/layout.phtml' . CLI_GREEN . '.' . PHP_EOL .
-      'Starter template created in ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend/views/index/home.phtml' . CLI_GREEN . '.' . PHP_EOL .
+      'Action filled.' . OTRA_SUCCESS .
+      'Route configuration file ' . CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN .'bundles/HelloWorld/config/Routes.php' . END_COLOR . ' created.' . OTRA_SUCCESS .
+      'Starter layout ' . CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/views/layout.phtml' . END_COLOR . ' created.' . OTRA_SUCCESS .
+      'Starter template ' . CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'bundles/HelloWorld/frontend/views/index/home.phtml' . END_COLOR . ' created.' . OTRA_SUCCESS .
       'Adding favicons...' . PHP_EOL .
       CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_BLUE . '/var/www/html/perso/otra/bundles/config/Config.php' . CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
       CLI_GREEN . '/var/www/html/perso/otra/bundles/config/Routes.php' . ' updated.' . END_COLOR . PHP_EOL .
-      CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL
-      . PHP_EOL
-      . CLI_GREEN . 'You can launch this example via the url ' . CLI_LIGHT_CYAN . '/helloworld' . CLI_GREEN .
-      '.' . PHP_EOL . 'You can launch a PHP internal web server by typing ' . CLI_LIGHT_CYAN . 'otra serve' . CLI_GREEN . '.' .
-      END_COLOR . PHP_EOL
+      CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL .
+      PHP_EOL .
+      'You can launch this example via the url ' . CLI_LIGHT_CYAN . '/helloworld' . END_COLOR .
+      '.' . PHP_EOL . 'You can launch a PHP internal web server by typing ' . CLI_LIGHT_CYAN . 'otra serve' . END_COLOR . '.' .
+      PHP_EOL
     );
 
     // launching
