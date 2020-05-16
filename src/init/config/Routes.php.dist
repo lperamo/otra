@@ -29,20 +29,20 @@ abstract class Routes
     ],
 
     'otra_refreshSQLLogs' => [
-      'chunks' => ['/dbg/refreshSQLLogs', '', 'src', 'profiler', 'refreshSQLLogsAction'],
+      'chunks' => ['/dbg/refreshSQLLogs', '', 'otra', 'profiler', 'refreshSQLLogsAction'],
       'core' => true
     ],
 
     'otra_clearSQLLogs' => [
-      'chunks' => ['/dbg/clearSQLLogs', '', 'src', 'profiler', 'clearSQLLogsAction'],
+      'chunks' => ['/dbg/clearSQLLogs', '', 'otra', 'profiler', 'clearSQLLogsAction'],
       'core' => true
     ],
     'otra_profiler' => [
-      'chunks' => ['/dbg', '', 'src', 'profiler', 'indexAction'],
+      'chunks' => ['/dbg', '', 'otra', 'profiler', 'indexAction'],
       'core' => true
     ],
     'otra_404' => [
-      'chunks' => ['/404', '', 'src', 'errors', 'error404Action'],
+      'chunks' => ['/404', '', 'otra', 'errors', 'error404Action'],
       'core' => true
     ]
   ];
