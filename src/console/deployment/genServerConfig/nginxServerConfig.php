@@ -215,7 +215,7 @@ function handleRewriting() : string
   return SPACE_INDENT . '# Handles rewriting' . PHP_EOL .
     SPACE_INDENT . 'location /' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT_2 . 'rewrite ^ /indexDev.php last;' . PHP_EOL .
+    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'Dev' : '') . '.php last;' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
@@ -223,7 +223,7 @@ function handleRewriting() : string
     SPACE_INDENT_2 . 'include snippets/fastcgi-php.conf;' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT_2 . 'fastcgi_param APP_ENV dev;' . PHP_EOL .
+    SPACE_INDENT_2 . 'fastcgi_param APP_ENV ' . GEN_SERVER_CONFIG_ENVIRONMENT .';' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param TEST_LOGIN yourLogin;' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param TEST_PASSWORD yourPassword;' . PHP_EOL .
     SPACE_INDENT . '}';
