@@ -29,15 +29,15 @@ require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
 // Checks that the folder of micro bootstraps exists
-if (false === file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
+if (file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
-if (true === isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
+if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
   $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
 
-  if (false === isset(\config\Routes::$_[$route]))
+  if (!isset(\config\Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
     // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this src !
@@ -83,7 +83,7 @@ foreach(array_keys($routes) as &$route)
 
   ++$key;
 
-  if (true === isset($routes[$route]['resources']['template']))
+  if (isset($routes[$route]['resources']['template']))
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
@@ -128,7 +128,7 @@ contentToFile(
   $routesManagementFile
 );
 
-if (true === hasSyntaxErrors($routesManagementFile))
+if (hasSyntaxErrors($routesManagementFile))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
