@@ -6,10 +6,10 @@ define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
 define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
 
-$verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) === true ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
+$verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
-if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) === true && '0' == $argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]))
+if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) && '0' === $argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]))
 {
   // Generation of the class mapping
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -95,7 +95,7 @@ echo 'Create the specific routes management file... ', PHP_EOL;
 
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
 // configuration. We checks if we do not have already loaded the configuration before.
-if (defined('CORE_VIEWS_PATH') === false)
+if (!defined('CORE_VIEWS_PATH'))
   require BASE_PATH . 'config/AllConfig.php';
 
 define(
