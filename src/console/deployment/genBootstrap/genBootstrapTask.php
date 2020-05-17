@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace otra\console;
 
+use config\{Routes, AllConfig};
+
 define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
 define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
@@ -29,7 +31,7 @@ require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
 // Checks that the folder of micro bootstraps exists
-if (file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
+if (!file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
@@ -37,12 +39,12 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
   $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
 
-  if (!isset(\config\Routes::$_[$route]))
+  if (!isset(Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
-    // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this src !
+    // (require_once 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
     require_once CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
+    list($newRoute) = guessWords($route, array_keys(Routes::$_));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -58,11 +60,11 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     $route = $newRoute;
   }
 
-  $routes = [$route => \config\Routes::$_[$route]];
+  $routes = [$route => Routes::$_[$route]];
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else
 {
-  $routes = \config\Routes::$_;
+  $routes = Routes::$_;
   // otra_exception route has no controller
   unset($routes['otra_exception']);
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
@@ -102,9 +104,9 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => empty(\config\AllConfig::$dbConnections) === false
-      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
-      ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+    'driver' => empty(AllConfig::$dbConnections) === false
+      && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
     'temporaryEnv' => 'prod'
