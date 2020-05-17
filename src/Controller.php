@@ -7,14 +7,23 @@ declare(strict_types=1);
 
 namespace otra;
 
-use otra\MasterController;
-
 $temporaryEnv = ('cli' === PHP_SAPI ? 'prod' : $_SERVER['APP_ENV']);
-require CORE_PATH . $temporaryEnv . '/ControllerTrait.php';
+require CORE_PATH . $temporaryEnv . '/' . ucfirst($temporaryEnv) . 'ControllerTrait.php';
+
+if ($temporaryEnv === 'prod')
+{
+  class Controller extends MasterController
+  {
+    use ProdControllerTrait;
+  }
+} else
+{
+  class Controller extends MasterController
+  {
+    use DevControllerTrait;
+  }
+}
+
 unset($temporaryEnv);
 
-class Controller extends MasterController
-{
-  use ControllerTrait;
-}
 ?>

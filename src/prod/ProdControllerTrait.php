@@ -8,7 +8,7 @@ namespace otra;
 
 use config\AllConfig;
 
-trait ControllerTrait
+trait ProdControllerTrait
 {
   private static bool $cache_used;
 

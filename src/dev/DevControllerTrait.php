@@ -11,7 +11,7 @@ use config\{AllConfig, Routes};
 define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
 define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 
-trait ControllerTrait
+trait DevControllerTrait
 {
   public function __construct(array $baseParams = [], array $getParams = [])
   {
