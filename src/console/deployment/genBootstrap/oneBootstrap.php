@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 use config\{AllConfig,Routes};
 
-$verbose = $argv[1];
-$route = $argv[2];
+define('ONE_BOOTSTRAP_ARG_VERBOSE', 1);
+define('ONE_BOOTSTRAP_ARG_ROUTE', 2);
+
+$verbose = $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
+$route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
@@ -52,16 +55,17 @@ $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
 $_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // TODO to put into a file to configure for each project ?
 
 // Preparation of default parameters for the routes
-if (true === isset($params['post']))
+if (isset($params['post']))
   $_POST = $params['post'];
 
-if (true === isset($params['get']))
+if (isset($params['get']))
   $_GET = $params['get'];
 
 // We put default parameters in order to not write too much times the session configuration in the routes file
+// TODO remove this project related configuration line of code
 $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
-if (true === isset($params['session']))
+if (isset($params['session']))
 {
   foreach($params['session'] as $key => &$param)
   {
@@ -83,17 +87,18 @@ if (isset($params['core']) && $params['core'])
       ['/', 'src'],
       \otra\Router::get(
         $route,
-        (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        (isset($params['bootstrap'])) ? $params['bootstrap'] : [],
         false
       )
     ) . '.php';
-} else {
+} else
+{
   $fileToInclude = BASE_PATH . str_replace(
       '\\',
       '/',
       \otra\Router::get(
         $route,
-        (true === isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        (isset($params['bootstrap'])) ? $params['bootstrap'] : [],
         false
       )
     ) . '.php';
@@ -132,14 +137,14 @@ try
   );
 } catch(\Exception $e)
 {
-  echo (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' == $_SERVER['HTTP_X_REQUESTED_WITH'])
+  echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
     : $e->getMessage();
 
   return;
 }
 
-if (hasSyntaxErrors($file_) === true)
+if (hasSyntaxErrors($file_))
   return;
 
 compressPHPFile($file_, $file);

@@ -534,7 +534,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
 
         // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
         // inclusion of the dev/prod controller in the file src/Controller.php
-        if ($tempFile === 'CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : \'prod\') . \'/Controller.php')
+        if ($tempFile === 'CORE_PATH . \'prod\' . \'/\' . ucfirst(\'prod\') . \'ControllerTrait.php')
           $tempFile .= "'";
 
         // str_replace to ensure us that the same character '/' is used each time

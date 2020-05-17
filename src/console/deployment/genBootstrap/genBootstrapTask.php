@@ -2,10 +2,16 @@
 declare(strict_types=1);
 namespace otra\console;
 
-$verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
+use config\{Routes, AllConfig};
+
+define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
+define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
+
+$verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
-if (false === (isset($argv[2]) === true && '0' == $argv[2]))
+if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) && '0' === $argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]))
 {
   // Generation of the class mapping
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -13,7 +19,9 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
 
-  list($status, $return) = cli(PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  list($status, $return) = cli(
+    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
+  );
   echo $return;
 
   return $status;
@@ -23,20 +31,20 @@ require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
 // Checks that the folder of micro bootstraps exists
-if (false === file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
+if (!file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
-if (true === isset($argv[4]))
+if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
-  $route = $argv[4];
+  $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
 
-  if (false === isset(\config\Routes::$_[$route]))
+  if (!isset(Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
-    // (require_once 'cause maybe the user type a wrong task like 'genBootsrap' so we have already loaded this src !
+    // (require_once 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
     require_once CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
+    list($newRoute) = guessWords($route, array_keys(Routes::$_));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -46,17 +54,17 @@ if (true === isset($argv[4]))
     if ('n' === $choice)
     {
       echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
     $route = $newRoute;
   }
 
-  $routes = [$route => \config\Routes::$_[$route]];
+  $routes = [$route => Routes::$_[$route]];
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else
 {
-  $routes = \config\Routes::$_;
+  $routes = Routes::$_;
   // otra_exception route has no controller
   unset($routes['otra_exception']);
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
@@ -77,7 +85,7 @@ foreach(array_keys($routes) as &$route)
 
   ++$key;
 
-  if (true === isset($routes[$route]['resources']['template']))
+  if (isset($routes[$route]['resources']['template']))
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
@@ -89,16 +97,16 @@ echo 'Create the specific routes management file... ', PHP_EOL;
 
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
 // configuration. We checks if we do not have already loaded the configuration before.
-if (defined('CORE_VIEWS_PATH') === false)
+if (!defined('CORE_VIEWS_PATH'))
   require BASE_PATH . 'config/AllConfig.php';
 
 define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => empty(\config\AllConfig::$dbConnections) === false
-      && array_key_exists('driver', \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]) === true
-      ? \config\AllConfig::$dbConnections[key(\config\AllConfig::$dbConnections)]['driver']
+    'driver' => empty(AllConfig::$dbConnections) === false
+      && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
       : '',
     "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
     'temporaryEnv' => 'prod'
@@ -122,7 +130,7 @@ contentToFile(
   $routesManagementFile
 );
 
-if (true === hasSyntaxErrors($routesManagementFile))
+if (hasSyntaxErrors($routesManagementFile))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
