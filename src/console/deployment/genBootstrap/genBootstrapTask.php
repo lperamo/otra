@@ -2,10 +2,14 @@
 declare(strict_types=1);
 namespace otra\console;
 
-$verbose = isset($argv[3]) === true ? (int) $argv[3] : 0;
+define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
+define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
+
+$verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) === true ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
-if (false === (isset($argv[2]) === true && '0' == $argv[2]))
+if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) === true && '0' == $argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]))
 {
   // Generation of the class mapping
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -13,7 +17,9 @@ if (false === (isset($argv[2]) === true && '0' == $argv[2]))
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
 
-  list($status, $return) = cli(PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[4] ?? ''));
+  list($status, $return) = cli(
+    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
+  );
   echo $return;
 
   return $status;
@@ -27,9 +33,9 @@ if (false === file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
   mkdir($bootstrapPath);
 
 // Checks whether we want only one/many CORRECT route(s)
-if (true === isset($argv[4]))
+if (true === isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
-  $route = $argv[4];
+  $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
 
   if (false === isset(\config\Routes::$_[$route]))
   {
@@ -46,7 +52,7 @@ if (true === isset($argv[4]))
     if ('n' === $choice)
     {
       echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
-      exit(1);
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
     $route = $newRoute;
