@@ -89,6 +89,21 @@ class OtraException extends \Exception
     // Cleans all the things processed before in order to not perturb the exception page
     ob_clean();
 
+    // If the error is that we do not found the Controller class then we directly show the message.
+    if (!class_exists('Controller'))
+    {
+      if (PHP_SAPI === 'cli')
+      {
+        echo CLI_RED . 'Error in ' . CLI_LIGHT_CYAN . $this->file . CLI_RED . ':' . CLI_LIGHT_CYAN . $this->line .
+          CLI_RED . ' : ' . $this->message . END_COLOR . PHP_EOL;
+        throw new OtraException('', 1, '', NULL, [], true);
+      }
+      else
+        return '<span style="color:#E00">Error in </span><span style="color:#0AA">' . $this->file .
+          '</span>:<span style="color:#0AA">' . $this->line . '</span><span style="color:#E00"> : ' . $this->message .
+          '</span>';
+    }
+
     $renderController = new Controller(
       [
         'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
