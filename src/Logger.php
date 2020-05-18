@@ -117,5 +117,19 @@ abstract class Logger
       self::APPEND_LOG,
       $path);
   }
+
+  /**
+   * @param string $message
+   * @param string $errorType
+   */
+  public static function logExceptionOrErrorTo(string $message, string $errorType): void
+  {
+    self::logTo(
+      $errorType . ' : ' . $message . PHP_EOL .
+      'Stack trace : ' . PHP_EOL .
+      print_r(debug_backtrace(), true),
+      $errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors'
+    );
+  }
 }
 ?>

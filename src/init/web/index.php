@@ -56,30 +56,14 @@ try
 
     \cache\php\Router::get($route[0], $route[1]);
   }
-} catch (Exception $e)
+} catch (Exception $exception)
 {
-  // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \otra\Logger::logTo(
-    'Exception : ' . $e->getMessage() . PHP_EOL .
-    'Stack trace : ' . PHP_EOL .
-    print_r(debug_backtrace(), true),
-    'unknownExceptions'
-  );
-
-  // and shows a message for users !
+  \otra\Logger::logExceptionOrErrorTo($exception->getMessage(), 'Exception');
   echo 'Server in trouble. Please come back later !';
-} catch (Error $e)
+} catch (Error $error)
 {
-  // Logs the error for developers...
   require_once CORE_PATH . 'Logger.php';
-  \otra\Logger::logTo(
-    'Fatal error : ' . $e->getMessage() . PHP_EOL .
-    'Stack trace : ' . PHP_EOL .
-    print_r(debug_backtrace(), true),
-    'unknownFatalErrors'
-  );
-
-  // and shows a message for users !
+  \otra\Logger::logExceptionOrErrorTo($error->getMessage(), 'Fatal error');
   echo 'Server in great trouble. Please come back later !';
 }
