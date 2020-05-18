@@ -11,11 +11,11 @@ session_start([
   'cookie_httponly' => true,
   'cookie_samesite' => 'strict'
 ]);
-
 define ('BEFORE', microtime(true));
 
-if (isset($_ENV['OTRA_APP_ENV']) === true)
-  $_SERVER['APP_ENV'] = $_ENV['OTRA_APP_ENV'];
+// If it is an asset, we echo it and we stop the work here
+if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntryPoint.php')
+  return true;
 
 require CORE_PATH . 'debugTools.php';
 
