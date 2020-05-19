@@ -12,6 +12,9 @@ session_start([
   'cookie_samesite' => 'strict'
 ]);
 
+// Otherwise for dynamic pages...
+$_SERVER['APP_ENV'] = 'prod';
+
 try
 {
   require CACHE_PATH . 'php/RouteManagement.php';
@@ -25,12 +28,10 @@ try
     if ('cli' !== PHP_SAPI && true === isset(\cache\php\Routes::$_[$route[0]]['resources']['template']))
     {
       header('Content-Encoding: gzip');
+      require BASE_PATH . 'config/AllConfig.php';
       echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz'); // version to change
       exit;
     }
-
-    // Otherwise for dynamic pages...
-    $_SERVER['APP_ENV'] = 'prod';
 
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
