@@ -2,14 +2,11 @@
 
 // If we do not come from the 'otra' command...
 use otra\console\TasksManager;
-die;
+
 if (defined('BASE_PATH') === false)
 {
   define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
-  var_dump(__DIR__ . (OTRA_PROJECT
-      ? '/../../../../../../..' // long path from vendor
-      : '/..'
-    ) . '/config/constants.php');die;
+
   require __DIR__ . (OTRA_PROJECT
       ? '/../../../../../../..' // long path from vendor
       : '/..'

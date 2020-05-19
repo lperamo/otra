@@ -31,6 +31,12 @@ $content = '<?php define(\'BASE_PATH\',\'' . $basePath .
 // require_once in case we do not load this file directly (console already loads colors, not composer)
 require_once $consolePath . 'colors.php';
 
+// Those lines are for when a developer installs OTRA via composer for the first time
+$configFolderPath = $basePath . 'config/';
+
+if (!file_exists($configFolderPath))
+  mkdir($configFolderPath);
+
 if (file_put_contents($basePath . 'config/constants.php', $content) === false)
   echo CLI_RED . 'There was a problem while writing the OTRA global constants.', END_COLOR, PHP_EOL;
 else
