@@ -8,7 +8,10 @@ use otra\{Controller, MasterController};
 
 class HomeAction extends Controller
 {
-  public function homeAction() {
+  /**
+   * @throws \otra\OtraException
+   */
+  public function homeAction():void {
     MasterController::$featurePolicy['dev']['sync-script'] = "'self'";
     echo $this->renderView('home.phtml', []);
   }
