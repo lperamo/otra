@@ -186,7 +186,7 @@ $handleTransfer(
 
 $handleTransfer(
   'Adding the OTRA constants',
-  $startCommand . '\' config/constants.php ' . $server . ':' . $folder . '/config/constants.php'
+  $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . '/config/constants.php'
 );
 
 $handleTransfer(
