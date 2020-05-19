@@ -179,16 +179,28 @@ $handleTransfer(
 );
 
 $handleTransfer(
+  'Creating the config folder',
+  'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/config',
+  'mkdir'
+);
+
+$handleTransfer(
+  'Adding the OTRA constants',
+  $startCommand . '\' config/constants.php ' . $server . ':' . $folder . '/config/constants.php'
+);
+
+$handleTransfer(
   'Creating the vendor folder',
   'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/vendor',
   'mkdir'
 );
 
 $handleTransfer(
-  'Sending the OTRA templating engine and the translate tool',
+  'Sending the OTRA templating engine, the translate tool and the production controller',
   $startCommand .
   '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
-  ' --include=\'otra/otra/src/blocks.php\' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
+  ' --include=\'otra/otra/src/blocks.php\' --include=\'otra/otra/src/prod/ControllerTrait.php\'' .
+  ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
   '/vendor/'
 );
 
