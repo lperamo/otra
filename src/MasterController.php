@@ -25,9 +25,9 @@ class MasterController
     $currentBlocksStackIndex = 0;
 
   public string $route,
-        $bundle = '',
-        $module = '',
-        $viewPath = '/'; // index/index/ for indexController and indexAction
+    $bundle = '',
+    $module = '',
+    $viewPath = '/'; // index/index/ for indexController and indexAction
 
   protected string $controller = '',
     $action = '',
@@ -47,22 +47,21 @@ class MasterController
     $nonces = [],
     $csp = [
       'dev' =>
-      [
-        'frame-ancestors' => "'self'",
-        'default-src' => "'self'",
-        'font-src' => "'self'",
-        'img-src' => "'self'",
-        'object-src' => "'self'",
-        'connect-src' => "'self'",
-        'child-src' => "'self'",
-        'manifest-src' => "'self'",
-        'script-src' => "'self'",
-        'style-src' => "'self'"
-      ],
+        [
+          'frame-ancestors' => "'self'",
+          'default-src' => "'self'",
+          'font-src' => "'self'",
+          'img-src' => "'self'",
+          'object-src' => "'self'",
+          'connect-src' => "'self'",
+          'child-src' => "'self'",
+          'manifest-src' => "'self'",
+          'style-src' => "'self'"
+        ],
       'prod' => [] // assigned in the constructor
     ],
-    $featurePolicy = [
-      'dev' =>
+  $featurePolicy = [
+    'dev' =>
       [
         'layout-animations' => "'self'",
         'legacy-image-formats' => "'none'",
@@ -72,8 +71,8 @@ class MasterController
         'unoptimized-images' => "'none'",
         'unsized-media' => "'none'"
       ],
-      'prod' => []
-    ];
+    'prod' => []
+  ];
 
   protected static bool
     $ajax = false,
@@ -82,7 +81,7 @@ class MasterController
 
   protected static string
     $id,
-  /* @var string $template The actual template being processed */
+    /* @var string $template The actual template being processed */
     $template,
     $layout;
 
@@ -319,25 +318,18 @@ class MasterController
 
     foreach (self::$csp[$_SERVER['APP_ENV']] as $directive => &$value)
     {
-      // If the develop has already set a value for that directive, we use it instead of the default
-      if (isset(AllConfig::$csp) && isset(AllConfig::$csp[$directive]))
-        $csp .= $directive . ' ' . AllConfig::$csp[$directive];
-      else
+      $csp .= $directive . ' ' . $value . '; ';
+    }
+
+    // If no value has been set for 'script-src', we define automatically a secure policy for this directive
+    if (!isset(self::$csp[$_SERVER['APP_ENV']]['script-src']))
+    {
+      $csp .= 'script-src' . ' \'strict-dynamic\' ';
+
+      foreach (self::$nonces as &$nonce)
       {
-        $csp .= $directive . ' ' . $value;
-
-        if ($directive === 'script-src')
-        {
-          $csp .= ' \'strict-dynamic\' ';
-
-          foreach (self::$nonces as &$nonce)
-          {
-            $csp .= '\'nonce-' . $nonce . '\' ';
-          }
-        }
+        $csp .= '\'nonce-' . $nonce . '\' ';
       }
-
-      $csp .= '; ';
     }
 
     header($csp);
