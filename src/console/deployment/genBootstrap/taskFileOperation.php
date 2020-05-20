@@ -390,7 +390,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
   if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent))
   {
     // We remove PHP tags
-    substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
+    $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
   } else if(1 === $inEval)
