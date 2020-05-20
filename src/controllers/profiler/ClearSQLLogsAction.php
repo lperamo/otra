@@ -10,8 +10,13 @@ use otra\{Controller, services\ProfilerService};
 
 class ClearSQLLogsAction extends Controller
 {
-  public function clearSQLLogsAction()
+  /**
+   * @param array $baseParams
+   * @param array $getParams
+   */
+  public function __construct(array $baseParams = [], array $getParams = [])
   {
+    parent::__construct($baseParams, $getParams);
     ProfilerService::securityCheck();
     $file = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt';
     $handle = fopen($file, 'r+');

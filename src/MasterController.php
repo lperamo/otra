@@ -186,8 +186,6 @@ class MasterController
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
     self::$csp['prod'] = self::$csp['dev'];
-
-    call_user_func_array([$this, $baseParams['action']], $getParams);
   }
 
   /**

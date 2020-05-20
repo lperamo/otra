@@ -11,9 +11,13 @@ use config\Routes;
 
 class Error404Action extends Controller
 {
-  public function error404Action()
+  /**
+   * @param array $baseParams
+   * @param array $getParams
+   */
+  public function __construct(array $baseParams = [], array $getParams = [])
   {
-//    var_dump(array_search('core', Routes::$_));
+    parent::__construct($baseParams, $getParams);
     $routes = array_keys(Routes::$_);
     $defaultUrl = null;
 

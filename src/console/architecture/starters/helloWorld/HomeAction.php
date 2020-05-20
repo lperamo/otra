@@ -9,9 +9,14 @@ use otra\{Controller, MasterController};
 class HomeAction extends Controller
 {
   /**
-   * @throws \otra\OtraException
+   * HomeAction constructor.
+   *
+   * @param array $baseParams
+   * @param array $getParams
    */
-  public function homeAction():void {
+  public function __construct(array $baseParams = [], array $getParams = [])
+  {
+    parent::__construct($baseParams, $getParams);
     MasterController::$featurePolicy['dev']['sync-script'] = "'self'";
     echo $this->renderView('home.phtml', []);
   }
