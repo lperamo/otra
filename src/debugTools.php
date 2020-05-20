@@ -138,10 +138,10 @@ function createShowableFromArrayConsole(?array &$dataToShow, string $title, $ind
 {
   return;
 
-  echo $title, PHP_EOL,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
+//  echo $title, PHP_EOL,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
