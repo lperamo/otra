@@ -47,7 +47,9 @@ class AllConfigTest extends TestCase
     if (OTRA_PROJECT === false)
     {
       rmdir($externalConfigFileFolder);
-      rmdir(BASE_PATH . 'bundles');
+
+      if (!file_exists(BASE_PATH . 'bundles'))
+        rmdir(BASE_PATH . 'bundles');
     }
   }
 }
