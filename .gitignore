@@ -18,3 +18,4 @@
 /tslint*
 /tsconfig*
 /tmp/
+/.scannerwork/
