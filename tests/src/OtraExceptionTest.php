@@ -1,7 +1,10 @@
 <?php
 
+namespace src;
+
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionException;
 
 /**
  * @runTestsInSeparateProcesses
@@ -34,14 +37,17 @@ class OtraExceptionTest extends TestCase
     if (OTRA_PROJECT === false)
     {
       unlink(self::BUNDLES_CONFIG_ROUTES);
-      rmdir(self::BUNDLES_CONFIG_FOLDER);
-      rmdir(self::BUNDLES_FOLDER);
+
+      if (!file_exists(self::BUNDLES_CONFIG_FOLDER))
+        rmdir(self::BUNDLES_CONFIG_FOLDER);
+
+      if (!file_exists(self::BUNDLES_FOLDER))
+        rmdir(self::BUNDLES_FOLDER);
     }
   }
 
   /**
    * @throws ReflectionException
-   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testOtraException(): void
@@ -54,7 +60,6 @@ class OtraExceptionTest extends TestCase
 
   /**
    * @throws ReflectionException
-   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testOtraException_WithContext(): void
