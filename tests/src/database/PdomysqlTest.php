@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace src\database;
 
 use phpunit\framework\TestCase;
 use otra\{bdd\Sql, OtraException};

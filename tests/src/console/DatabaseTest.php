@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+namespace src\console;
+
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
 use otra\{OtraException, console\Database, bdd\Sql, Session};

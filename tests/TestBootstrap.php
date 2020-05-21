@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT

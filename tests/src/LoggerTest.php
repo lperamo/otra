@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace src;
 
 use otra\Logger;
 use phpunit\framework\TestCase;

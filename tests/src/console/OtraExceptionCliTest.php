@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use otra\{console\OtraExceptionCLI, OtraException};
 use phpunit\framework\TestCase;
