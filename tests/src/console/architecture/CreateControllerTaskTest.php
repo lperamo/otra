@@ -31,6 +31,7 @@ class CreateControllerTaskTest extends TestCase
 
   protected function tearDown(): void
   {
+    parent::tearDown();
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {

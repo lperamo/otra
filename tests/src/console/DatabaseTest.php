@@ -46,6 +46,7 @@ class DatabaseTest extends TestCase
    */
   protected function setUp(): void
   {
+    parent::setUp();
     $_SERVER['APP_ENV'] = 'prod';
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
@@ -67,7 +68,9 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    */
-  public static function setUpBeforeClass() : void{
+  public static function setUpBeforeClass() : void
+  {
+    parent::setUpBeforeClass();
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
 
@@ -79,6 +82,7 @@ class DatabaseTest extends TestCase
    */
   protected function tearDown(): void
   {
+    parent::tearDown();
     $this->cleanAll();
   }
 

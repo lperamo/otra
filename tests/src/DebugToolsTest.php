@@ -19,6 +19,7 @@ class DebugToolsTest extends TestCase
 
   public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     $_SERVER['APP_ENV'] = 'prod';
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
 
@@ -31,6 +32,8 @@ class DebugToolsTest extends TestCase
 
   public static function tearDownAfterClass(): void
   {
+    parent::tearDownAfterClass();
+
     if (OTRA_PROJECT === false)
     {
       if (file_exists(self::$LOGS_PROD_PATH))

@@ -58,6 +58,7 @@ class OtraException extends \Exception
     $context = [],
     bool $otraCliWarning = false)
   {
+    parent::__construct();
     $this->code = (null !== $code) ? $code : $this->getCode();
     $this->otraCliWarning = $otraCliWarning;
 

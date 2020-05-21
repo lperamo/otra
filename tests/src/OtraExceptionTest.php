@@ -18,6 +18,7 @@ class OtraExceptionTest extends TestCase
 
   protected function setUp(): void
   {
+    parent::setUp();
     $_SERVER['APP_ENV'] = 'prod';
 
     // Adding test bundle routes config in "bundles/config" if nothing exists
@@ -34,6 +35,7 @@ class OtraExceptionTest extends TestCase
 
   protected function tearDown(): void
   {
+    parent::tearDown();
     // If we are working on the framework itself
     if (OTRA_PROJECT === false)
     {

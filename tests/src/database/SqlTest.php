@@ -23,11 +23,14 @@ class SqlTest extends TestCase
 
   protected function setUp() : void
   {
+    parent::setUp();
     $_SERVER['APP_ENV'] = 'prod';
   }
 
   protected function tearDown(): void
   {
+    parent::tearDown();
+
     if (isset($_SESSION['bootstrap']) === true)
       unset($_SESSION['bootstrap']);
 

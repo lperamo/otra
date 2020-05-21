@@ -18,6 +18,7 @@ class BlocksTest extends TestCase
    */
   protected function setUp(): void
   {
+    parent::setUp();
     $_SERVER['APP_ENV'] = 'prod';
     define('VERSION', 'v1');
     self::$controller = new Controller();

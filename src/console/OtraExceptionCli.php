@@ -21,6 +21,8 @@ class OtraExceptionCLI extends \Exception
 
   public function __construct(OtraException $exception)
   {
+    parent::__construct();
+
     if (false === empty($exception->context))
     {
       unset($exception->context['variables']);
