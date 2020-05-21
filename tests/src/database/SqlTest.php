@@ -62,7 +62,7 @@ class SqlTest extends TestCase
   protected function createTemporaryTestValues() : void
   {
     Sql::$instance->freeResult(
-      Sql::$instance->query('INSERT INTO CustomerData (`firstname`, `lastname`)
+      Sql::$instance->query(/** @lang */'INSERT INTO CustomerData (`firstname`, `lastname`)
         VALUES ("john", "smith"),
         ("paul", "miller");
       ')
@@ -76,7 +76,7 @@ class SqlTest extends TestCase
   protected function dropTemporaryTestTable() : void
   {
     Sql::$instance->freeResult(
-      Sql::$instance->query('DROP TEMPORARY TABLE CustomerData')
+      Sql::$instance->query(/** @lang */'DROP TEMPORARY TABLE CustomerData')
     );
   }
 
@@ -124,7 +124,7 @@ class SqlTest extends TestCase
     $this->createTemporaryTestTable();
     $this->createTemporaryTestValues();
 
-    $dbConfig = Sql::$instance->query('SELECT `firstName`, `lastName` FROM CustomerData');
+    $dbConfig = Sql::$instance->query(/** @lang */'SELECT `firstName`, `lastName` FROM CustomerData');
 
     $result = (null === $column)
       ? Sql::$instance->{$fetchMethod}($dbConfig)
