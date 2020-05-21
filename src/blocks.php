@@ -58,7 +58,7 @@ if (function_exists('block') === false)
     if ($inline !== '')
     {
       echo $inline;
-      endBlock();
+      endblock();
     }
   }
 
