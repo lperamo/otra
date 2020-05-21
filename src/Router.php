@@ -40,7 +40,7 @@ abstract class Router
     if ($action === null)
       $action = '';
 
-    $action = ('prod' === $_SERVER['APP_ENV'] && 'cli' !== PHP_SAPI)
+    $action = ('prod' === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
       ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
       : (true === isset(Routes::$_[$route]['core'])
         ? ''

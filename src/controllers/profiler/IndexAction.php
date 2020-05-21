@@ -22,7 +22,7 @@ class IndexAction extends Controller
 
     echo $this->renderView(
       'profiler.phtml',
-      ['sqlLogs' => ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/sql.txt')]
+      ['sqlLogs' => ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt')]
     );
   }
 }

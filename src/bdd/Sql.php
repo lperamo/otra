@@ -196,7 +196,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    if('dev' === $_SERVER['APP_ENV'])
+    if('dev' === $_SERVER[APP_ENV])
     {
       $trace = debug_backtrace();
 

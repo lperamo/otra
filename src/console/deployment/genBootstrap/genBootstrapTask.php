@@ -71,7 +71,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 }
 
 // In CLI mode, the $_SERVER variable is not set so we set it !
-$_SERVER['APP_ENV'] = 'prod';
+$_SERVER[APP_ENV] = 'prod';
 
 $key = 0;
 
@@ -108,7 +108,7 @@ define(
       && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
       : '',
-    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
+    "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
     'temporaryEnv' => 'prod'
   ]
 );

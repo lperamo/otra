@@ -261,7 +261,7 @@ function debug(bool $noErrors = true) : bool
   if (true === $noErrors)
     error_reporting(0);
 
-  return 'dev' === $_SERVER['APP_ENV'];
+  return 'dev' === $_SERVER[APP_ENV];
 }
 
   /**

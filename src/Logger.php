@@ -60,7 +60,7 @@ abstract class Logger
     error_log(
       self::logIpTest() . $message . "\n",
       self::APPEND_LOG,
-      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt'
+      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/log.txt'
     );
   }
 
@@ -89,7 +89,7 @@ abstract class Logger
     error_log(
       self::logIpTest() . $message . "\n",
       self::APPEND_LOG,
-      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt'
+      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/' . $path . '.txt'
     );
   }
 
@@ -103,7 +103,7 @@ abstract class Logger
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
-    $path = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt';
+    $path = BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/' . $path . '.txt';
 
     // If there is no SQL content logged, we start with '[', otherwise with ''
     error_log(

@@ -312,13 +312,13 @@ class MasterController
   {
     $csp = 'Content-Security-Policy: ';
 
-    foreach (self::$csp[$_SERVER['APP_ENV']] as $directive => &$value)
+    foreach (self::$csp[$_SERVER[APP_ENV]] as $directive => &$value)
     {
       $csp .= $directive . ' ' . $value . '; ';
     }
 
     // If no value has been set for 'script-src', we define automatically a secure policy for this directive
-    if (!isset(self::$csp[$_SERVER['APP_ENV']]['script-src']))
+    if (!isset(self::$csp[$_SERVER[APP_ENV]]['script-src']))
     {
       $csp .= 'script-src' . ' \'strict-dynamic\' ';
 
@@ -348,7 +348,7 @@ class MasterController
   {
     $featurePolicies = '';
 
-    if ($_SERVER['APP_ENV'] === 'dev')
+    if ($_SERVER[APP_ENV] === 'dev')
       self::addFeaturePolicies(
         self::$featurePolicy['dev'],
         $featurePolicies
@@ -366,6 +366,6 @@ class MasterController
 // We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
 // allowing the block.php file of the template engine system to work in production mode,
 // by creating a class alias. Disabled when passing via the command line tasks.
-if ($_SERVER['APP_ENV'] === 'prod' && PHP_SAPI !== 'cli')
+if ($_SERVER[APP_ENV] === 'prod' && PHP_SAPI !== 'cli')
   class_alias('\cache\php\MasterController', '\otra\MasterController');
 ?>

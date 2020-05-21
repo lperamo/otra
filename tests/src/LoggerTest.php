@@ -16,8 +16,8 @@ class LoggerTest extends TestCase
 
   public static function setUpBeforeClass(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'] . '/';
+    $_SERVER[APP_ENV] = 'prod';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
     // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
     require_once CORE_PATH . 'debugTools.php';
 

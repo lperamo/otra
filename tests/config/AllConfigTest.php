@@ -9,7 +9,7 @@ class AllConfigTest extends TestCase
 {
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    $_SERVER[APP_ENV] = 'prod';
   }
 
   /**

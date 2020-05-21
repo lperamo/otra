@@ -20,8 +20,8 @@ class DebugToolsTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
-    $_SERVER['APP_ENV'] = 'prod';
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
+    $_SERVER[APP_ENV] = 'prod';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
 
     // @TODO we should be able to do a simple require and not require_once
     require_once CORE_PATH . 'debugTools.php';
@@ -52,7 +52,7 @@ class DebugToolsTest extends TestCase
   public function testLg() : void
   {
     lg('[OTRA_TEST_DEBUG_TOOLS_LG]');
-    $traceLogFile = self::LOG_PATH . $_SERVER['APP_ENV'] . '/trace.txt';
+    $traceLogFile = self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt';
     self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
       tailCustom($traceLogFile, 1)

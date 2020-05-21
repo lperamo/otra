@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace otra;
 
-$temporaryEnv = ('cli' === PHP_SAPI ? 'prod' : $_SERVER['APP_ENV']);
+$temporaryEnv = ('cli' === PHP_SAPI ? 'prod' : $_SERVER[APP_ENV]);
 require CORE_PATH . $temporaryEnv . '/' . ucfirst($temporaryEnv) . 'ControllerTrait.php';
 
 if ($temporaryEnv === 'prod')
