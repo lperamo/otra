@@ -876,11 +876,8 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
       $newFile = searchForClass($classesFromFile, $class, $contentToAdd, $offset);
 
       // now that we are sure that we have the real path, we test it again
-      if (true === in_array($newFile, $parsedFiles, true))
-        continue;
-
-      // if we already have included the file
-      if (false === $newFile)
+      // and if we already have included the file, we also continue
+      if (true === in_array($newFile, $parsedFiles, true) || false === $newFile)
         continue;
     }
 
