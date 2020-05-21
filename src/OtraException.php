@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace otra;
 
-use otra\{Controller, console\OtraExceptionCLI};
+use otra\{Controller, console\OtraExceptionCli};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
@@ -72,7 +72,7 @@ class OtraException extends \Exception
     $this->context = $context;
 
     if ('cli' === PHP_SAPI)
-      new OtraExceptionCLI($this);
+      new OtraExceptionCli($this);
     else
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
