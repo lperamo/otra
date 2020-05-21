@@ -50,6 +50,10 @@ class CreateActionTaskTest extends TestCase
 
       /** @var callable $delTree */
       $delTree(TEST_BUNDLE_PATH);
+
+      if (file_exists(self::TEST_BUNDLES_CONFIG_PATH))
+        rmdir(self::TEST_BUNDLES_CONFIG_PATH);
+
       rmdir(BASE_PATH . 'bundles');
     }
   }

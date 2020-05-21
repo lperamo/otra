@@ -39,7 +39,8 @@ class OtraExceptionTest extends TestCase
     // If we are working on the framework itself
     if (OTRA_PROJECT === false)
     {
-      unlink(self::BUNDLES_CONFIG_ROUTES);
+      if (file_exists(self::BUNDLES_CONFIG_ROUTES))
+        unlink(self::BUNDLES_CONFIG_ROUTES);
 
       if (!file_exists(self::BUNDLES_CONFIG_FOLDER))
         rmdir(self::BUNDLES_CONFIG_FOLDER);
