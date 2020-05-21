@@ -13,7 +13,7 @@ $cachePath = $basePath . 'cache/';
 $testPath = $otraProject === true
   ? $basePath . 'vendor/otra/otra/tests/'
   : $basePath . 'tests/';
-$content = '<?php define(\'BASE_PATH\',\'' . $basePath .
+$content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'CORE_PATH\',\'' . $corePath .
   '\');define(\'CACHE_PATH\',\'' . $cachePath .
   '\');define(\'CONSOLE_PATH\',\'' . $consolePath .

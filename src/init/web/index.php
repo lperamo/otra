@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /** Bootstrap of the framework - Production entry point
  *
  * @author Lionel Péramo */
