@@ -31,7 +31,7 @@ try
     {
       header('Content-Encoding: gzip');
       require BASE_PATH . 'config/AllConfig.php';
-      echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz'); // version to change
+      echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz');
       exit;
     }
 
