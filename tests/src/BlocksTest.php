@@ -33,12 +33,12 @@ class BlocksTest extends TestCase
   public function testSimpleBlockSystem() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/simpleLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
     Welcome to OTRA!
   </title><body>
   Hello!
 </body>
-", $content);
+', $content);
   }
 
   /**
@@ -50,11 +50,11 @@ class BlocksTest extends TestCase
   public function testAdvancedBlockSystem() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/advancedLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
 </body>
-", $content);
+', $content);
   }
 
   /**
@@ -69,12 +69,12 @@ class BlocksTest extends TestCase
   public function testComplexLayout() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/complexLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
         test
     </body>
-", $content);
+', $content);
   }
 
   /**
@@ -91,11 +91,11 @@ class BlocksTest extends TestCase
   public function testCompleteLayout() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/completeLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
         test
       Hello World!after</body>
-", $content);
+', $content);
   }
 }
