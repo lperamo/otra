@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 require __DIR__ . '/../config/constants.php';
 
-$uri = $_SERVER['REQUEST_URI'];
+$requestUri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -21,7 +21,7 @@ try
 {
   require CACHE_PATH . 'php/RouteManagement.php';
 
-  if ($route = \cache\php\Router::getByPattern($uri))
+  if ($route = \cache\php\Router::getByPattern($requestUri))
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');

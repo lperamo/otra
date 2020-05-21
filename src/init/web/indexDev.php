@@ -6,7 +6,6 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 require __DIR__ . '/../config/constants.php';
 
-$uri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
