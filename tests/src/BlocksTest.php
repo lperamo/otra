@@ -14,7 +14,7 @@ class BlocksTest extends TestCase
   private static Controller $controller;
 
   /**
-   * @throws ReflectionException
+   * @throws \ReflectionException
    */
   protected function setUp(): void
   {

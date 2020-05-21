@@ -712,7 +712,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException
+   * @throws \ReflectionException
    * @throws OtraException
    *
    * @author Lionel Péramo

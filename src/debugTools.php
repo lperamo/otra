@@ -24,12 +24,14 @@ function lg(string $message) : void
 
 function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
 {
+  /** @var string $oldXDebugMaxData  */
   if (true === $maxData)
   {
     $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
     ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
   }
 
+  /** @var string $oldXDebugMaxChildren  */
   if (true === $maxChildren)
   {
     $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);

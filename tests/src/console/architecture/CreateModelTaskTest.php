@@ -129,6 +129,7 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_WithSchema_InBundle_FromNothing() : void
@@ -269,6 +270,7 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_Task_InBundle_OneModel() : void
@@ -305,6 +307,7 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_Task_InModule_OneModel() : void
@@ -342,6 +345,9 @@ class CreateModelTaskTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testCreateModel_NotInteractive_Task_InBundle_AllModels() : void
   {
     // context
@@ -378,6 +384,9 @@ class CreateModelTaskTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testCreateModel_NotInteractive_Task_InModule_AllModels() : void
   {
     // context
