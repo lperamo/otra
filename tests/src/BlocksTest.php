@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use otra\
-{MasterController, Controller, OtraException};
+namespace src;
+
+use otra\{MasterController, Controller, OtraException};
 use phpunit\framework\TestCase;
 
 /**
