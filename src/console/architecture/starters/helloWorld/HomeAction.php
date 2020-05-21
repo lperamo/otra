@@ -8,6 +8,9 @@ namespace bundles\HelloWorld\frontend\controllers\index;
 
 use otra\{Controller, MasterController};
 
+/**
+ * @package bundles\HelloWorld\frontend\controllers\index
+ */
 class HomeAction extends Controller
 {
   /**
