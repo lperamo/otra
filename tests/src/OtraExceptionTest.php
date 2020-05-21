@@ -56,7 +56,7 @@ class OtraExceptionTest extends TestCase
   public function testOtraException(): void
   {
     $exception = new OtraException('test');
-    $this->assertInstanceOf(OtraException::class, $exception);
+    self::assertInstanceOf(OtraException::class, $exception);
     removeMethodScopeProtection(OtraException::class, 'errorMessage')
       ->invokeArgs($exception, []);
   }
@@ -74,7 +74,7 @@ class OtraExceptionTest extends TestCase
      * OtraExceptionCLI class. */
     $exception->context = ['variables' => []];
 
-    $this->assertInstanceOf(OtraException::class, $exception);
+    self::assertInstanceOf(OtraException::class, $exception);
     removeMethodScopeProtection(OtraException::class, 'errorMessage')
       ->invokeArgs($exception, []);
   }

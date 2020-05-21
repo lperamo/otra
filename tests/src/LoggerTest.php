@@ -42,7 +42,7 @@ class LoggerTest extends TestCase
     // context
     Logger::log('[OTRA_LOGGER_TEST]');
     $logFile = self::$LOGS_PROD_PATH . 'log.txt';
-    $this->assertRegExp(
+    self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
       tailCustom($logFile, 1)
     );

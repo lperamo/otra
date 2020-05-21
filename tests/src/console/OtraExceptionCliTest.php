@@ -22,7 +22,7 @@ class OtraExceptionCliTest extends TestCase
    */
   public function testOtraExceptionCli(): void
   {
-    $this->assertInstanceOf(
+    self::assertInstanceOf(
       OtraExceptionCli::class,
       new OtraExceptionCli(new OtraException('test'))
     );
@@ -34,7 +34,7 @@ class OtraExceptionCliTest extends TestCase
    */
   public function testOtraExceptionCli_WithContext(): void
   {
-    $this->assertInstanceOf(
+    self::assertInstanceOf(
       OtraExceptionCli::class,
       new OtraExceptionCli(
         new OtraException(

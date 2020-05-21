@@ -119,6 +119,6 @@ class CreateModuleTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_MODULE_PATH);
+    self::assertFileExists(TEST_MODULE_PATH);
   }
 }

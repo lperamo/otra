@@ -201,16 +201,16 @@ class CreateActionTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_ACTION_PATH);
-    $this->assertFileEquals(TEST_PATH . 'examples/createAction/Action.php', TEST_ACTION_PATH);
-    $this->assertFileExists(TEST_VIEWS_PATH);
-    $this->assertFileExists(TEST_VIEWS_SUBFOLDER_PATH);
-    $this->assertFileExists(TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION . '.phtml');
+    self::assertFileExists(TEST_ACTION_PATH);
+    self::assertFileEquals(TEST_PATH . 'examples/createAction/Action.php', TEST_ACTION_PATH);
+    self::assertFileExists(TEST_VIEWS_PATH);
+    self::assertFileExists(TEST_VIEWS_SUBFOLDER_PATH);
+    self::assertFileExists(TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION . '.phtml');
 
-    $this->assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
+    self::assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
 
-    $this->assertFileExists(self::TEST_BUNDLE_ROUTES_PATH);
-    $this->assertFileEquals(
+    self::assertFileExists(self::TEST_BUNDLE_ROUTES_PATH);
+    self::assertFileEquals(
       TEST_PATH . 'examples/createAction/Routes.php',
       self::TEST_BUNDLE_ROUTES_PATH
     );

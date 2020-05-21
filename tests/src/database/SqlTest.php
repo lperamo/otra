@@ -107,7 +107,7 @@ class SqlTest extends TestCase
 
     // launching task
     $sqlInstance = Sql::getDB(null, false);
-    $this->assertInstanceOf(Sql::class, $sqlInstance);
+    self::assertInstanceOf(Sql::class, $sqlInstance);
   }
 
   /**
@@ -153,7 +153,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertInstanceOf(\PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
   }
 
   /**
@@ -169,7 +169,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertEquals(null, Sql::$instance->query('SELECT 1'));
+    self::assertEquals(null, Sql::$instance->query('SELECT 1'));
   }
 
   /**
@@ -196,8 +196,8 @@ class SqlTest extends TestCase
     // launching task
     Sql::getDB();
     $sqlLogContent = file_get_contents($sqlLogPath);
-    $this->assertInstanceOf(\PDOStatement::class, Sql::$instance->query('SELECT 1'));
-    $this->assertEquals(
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    self::assertEquals(
       $sqlLogContent
         . '[{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
@@ -224,7 +224,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    $this->assertIsArray($this->fetch('fetchArray'));
+    self::assertIsArray($this->fetch('fetchArray'));
   }
 
   /**
@@ -242,7 +242,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    $this->assertNull($this->fetch('fetchArray'));
+    self::assertNull($this->fetch('fetchArray'));
   }
 
   /**
@@ -259,7 +259,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    $this->assertIsArray($this->fetch('fetchAssoc'));
+    self::assertIsArray($this->fetch('fetchAssoc'));
   }
 
   /**
@@ -277,7 +277,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    $this->assertNull($this->fetch('fetchAssoc'));
+    self::assertNull($this->fetch('fetchAssoc'));
   }
 
   /**
@@ -294,7 +294,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    $this->assertIsArray($this->fetch('fetchRow'));
+    self::assertIsArray($this->fetch('fetchRow'));
   }
 
   /**
@@ -312,7 +312,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    $this->assertNull($this->fetch('fetchRow'));
+    self::assertNull($this->fetch('fetchRow'));
   }
 
   /**
@@ -329,7 +329,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    $this->assertIsArray($this->fetch('getColumnMeta', 0));
+    self::assertIsArray($this->fetch('getColumnMeta', 0));
   }
 
   /**
@@ -347,7 +347,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    $this->assertNull($this->fetch('getColumnMeta', 0));
+    self::assertNull($this->fetch('getColumnMeta', 0));
   }
 
   /**
@@ -364,7 +364,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    $this->assertIsObject($this->fetch('fetchObject'));
+    self::assertIsObject($this->fetch('fetchObject'));
   }
 
   /**
@@ -382,7 +382,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    $this->assertNull($this->fetch('fetchObject'));
+    self::assertNull($this->fetch('fetchObject'));
   }
 
   /**
@@ -397,7 +397,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertIsInt(Sql::$instance->lastInsertedId());
+    self::assertIsInt(Sql::$instance->lastInsertedId());
   }
 
   /**
@@ -423,7 +423,7 @@ class SqlTest extends TestCase
    */
   public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL() : void
   {
-    $this->markTestIncomplete('We have to create more drivers classes to be able to test this condition');
+    self::markTestIncomplete('We have to create more drivers classes to be able to test this condition');
     // loading the test configuration
     require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 
@@ -467,7 +467,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    self::assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -486,7 +486,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    self::assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -504,7 +504,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertIsArray(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
+    self::assertIsArray(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
   /**
@@ -523,7 +523,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertNull(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
+    self::assertNull(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
   /**
@@ -541,7 +541,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -560,7 +560,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $this->assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
   /**
@@ -595,7 +595,7 @@ class SqlTest extends TestCase
     $sql2 = Sql::getDB('test');
 
     // Testing !
-    $this->assertEquals($sql, $sql2);
+    self::assertEquals($sql, $sql2);
   }
 
   /**
@@ -648,7 +648,7 @@ class SqlTest extends TestCase
     // launching task
     Sql::getDB();
     $sql = Sql::$instance->query('SELECT 1');
-    $this->assertNull(Sql::$instance->freeResult($sql));
+    self::assertNull(Sql::$instance->freeResult($sql));
   }
 
   /**
@@ -664,7 +664,7 @@ class SqlTest extends TestCase
     // launching task
     Sql::getDB();
     Sql::$instance->beginTransaction();
-    $this->assertTrue(Sql::$instance->inTransaction());
+    self::assertTrue(Sql::$instance->inTransaction());
     Sql::$instance->commit();
   }
 
@@ -681,7 +681,7 @@ class SqlTest extends TestCase
     // launching task
     Sql::getDB();
     Sql::$instance->beginTransaction();
-    $this->assertTrue(Sql::$instance->rollBack());
+    self::assertTrue(Sql::$instance->rollBack());
   }
 
   /**
@@ -700,7 +700,7 @@ class SqlTest extends TestCase
     try {
       Sql::$instance->query('bogus sql');
     } catch (Exception $e) {
-      $this->assertEquals(
+      self::assertEquals(
       [
         0 => '42000',
         1 => '1064',
@@ -725,7 +725,7 @@ class SqlTest extends TestCase
 
     // testing
     Sql::$instance = null;
-    $this->assertFalse(removeMethodScopeProtection(Sql::class, 'close')
+    self::assertFalse(removeMethodScopeProtection(Sql::class, 'close')
       ->invokeArgs(null, [&Sql::$instance]));
   }
 }

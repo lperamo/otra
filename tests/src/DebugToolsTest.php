@@ -53,7 +53,7 @@ class DebugToolsTest extends TestCase
   {
     lg('[OTRA_TEST_DEBUG_TOOLS_LG]');
     $traceLogFile = self::LOG_PATH . $_SERVER['APP_ENV'] . '/trace.txt';
-    $this->assertRegExp(
+    self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
       tailCustom($traceLogFile, 1)
      );
@@ -177,8 +177,8 @@ class DebugToolsTest extends TestCase
    */
   public function testGetCaller() : void
   {
-    $test = function(){ return getCaller(); };
-    $this->assertEquals(__FILE__ . ':' . __LINE__, $test());
+    $testGetCaller = function(){ return getCaller(); };
+    self::assertEquals(__FILE__ . ':' . __LINE__, $testGetCaller());
   }
 
   /**
@@ -204,7 +204,7 @@ class DebugToolsTest extends TestCase
    */
   public function testReformatSource() : void
   {
-    $this->assertEquals(
+    self::assertEquals(
       '&lt;p&gt;Hi&lt;/p&gt;<br/>&lt;p&gt;Ha&lt;/p&gt;',
       reformatSource('<p>Hi</p><p>Ha</p>')
     );
@@ -216,7 +216,7 @@ class DebugToolsTest extends TestCase
   public function testConvertArrayToShowable() : void
   {
     $dataToShow = ['test' => 'other test'];
-    $this->assertEquals(
+    self::assertEquals(
       '    <table class="test innerHeader">
       <thead>
         <tr>
@@ -238,6 +238,6 @@ class DebugToolsTest extends TestCase
   {
     $dataToShow = ['test' => 'other test'];
     createShowableFromArray($dataToShow, 'title');
-    $this->markTestIncomplete('This function is not finished so we cannot finish the test.');
+    self::markTestIncomplete('This function is not finished so we cannot finish the test.');
   }
 }

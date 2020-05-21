@@ -127,37 +127,37 @@ class DatabaseTest extends TestCase
     Database::initBase();
 
     // We test each private static variable that has been set by Database::initBase()
-    $this->assertEquals(
+    self::assertEquals(
       Database::getDirs(),
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/yml/',
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'fixtures/',
       removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/sql/',
       removeFieldScopeProtection(Database::class, 'pathSql')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathSql')->getValue() . 'fixtures/',
       removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::$schemaFile,
       removeFieldScopeProtection(Database::class, 'schemaFile')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::$tablesOrderFile,
       removeFieldScopeProtection(Database::class, 'tablesOrderFile')->getValue()
     );
@@ -184,7 +184,7 @@ class DatabaseTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
     $dirs = Database::getDirs();
-    $this->assertIsArray($dirs);
+    self::assertIsArray($dirs);
   }
 
   /**
@@ -211,8 +211,8 @@ class DatabaseTest extends TestCase
 
     Database::clean();
     $sqlPath = removeFieldScopeProtection(Database::class, 'pathSql')->getValue();
-    $this->assertEquals([], glob($sqlPath . '/*.sql'));
-    $this->assertEquals([], glob($sqlPath . 'truncate/*.sql'));
+    self::assertEquals([], glob($sqlPath . '/*.sql'));
+    self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
   }
 
   /**
@@ -247,7 +247,7 @@ class DatabaseTest extends TestCase
 
     // Assertions
     $endPath = removeFieldScopeProtection(Database::class, '_databaseFile')->getValue() . '.sql';
-    $this->assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
+    self::assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
   }
 
 
@@ -258,7 +258,7 @@ class DatabaseTest extends TestCase
   public function testGetAttr() : void
   {
     $attrTest = Database::getAttr('test');
-    $this->assertIsString($attrTest);
+    self::assertIsString($attrTest);
   }
 
   /**
@@ -682,7 +682,7 @@ class DatabaseTest extends TestCase
 
     // launching the task
     $sqlInstance = Database::dropDatabase(self::$databaseName);
-    $this->assertInstanceOf(Sql::class, $sqlInstance);
+    self::assertInstanceOf(Sql::class, $sqlInstance);
   }
 
   /**
@@ -964,8 +964,8 @@ class DatabaseTest extends TestCase
 
     // launching task
     Database::importSchema(self::$databaseName, self::$databaseConnection);
-    $this->assertFileExists(self::$importedSchemaAbsolutePath);
-    $this->assertFileEquals(self::$schemaFileBackup, self::$importedSchemaAbsolutePath);
+    self::assertFileExists(self::$importedSchemaAbsolutePath);
+    self::assertFileEquals(self::$schemaFileBackup, self::$importedSchemaAbsolutePath);
   }
 
   /**
@@ -1030,8 +1030,8 @@ class DatabaseTest extends TestCase
     foreach (self::$tablesOrder as &$table)
     {
       $ymlFile = self::$configFolderYmlFixtures . $table . '.yml';
-      $this->assertFileExists(self::$configFolderYmlFixtures . $table . '.yml');
-      $this->assertFileEquals(self::$configFolderYmlFixturesBackup . $table . '.yml', $ymlFile);
+      self::assertFileExists(self::$configFolderYmlFixtures . $table . '.yml');
+      self::assertFileEquals(self::$configFolderYmlFixturesBackup . $table . '.yml', $ymlFile);
     }
   }
 }

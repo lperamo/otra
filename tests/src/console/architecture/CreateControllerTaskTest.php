@@ -154,6 +154,6 @@ class CreateControllerTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_CONTROLLER_PATH);
+    self::assertFileExists(TEST_CONTROLLER_PATH);
   }
 }

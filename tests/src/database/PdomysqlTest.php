@@ -74,7 +74,7 @@ class PdomysqlTest extends TestCase
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
 
-    $this->assertFalse(Sql::$instance->valuesOneCol(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
+    self::assertFalse(Sql::$instance->valuesOneCol(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
   }
 
   /**
@@ -92,7 +92,7 @@ class PdomysqlTest extends TestCase
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
 
-    $this->assertFalse(Sql::$instance->single(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
+    self::assertFalse(Sql::$instance->single(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
   }
 
   /**
@@ -107,7 +107,7 @@ class PdomysqlTest extends TestCase
     Sql::getDB();
 
     // testing
-    $this->assertTrue(\otra\bdd\Pdomysql::close(Sql::$instance));
-    $this->assertNull(Sql::$instance);
+    self::assertTrue(\otra\bdd\Pdomysql::close(Sql::$instance));
+    self::assertNull(Sql::$instance);
   }
 }

@@ -84,6 +84,6 @@ class CreateBundleTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_BUNDLE_PATH);
+    self::assertFileExists(TEST_BUNDLE_PATH);
   }
 }
