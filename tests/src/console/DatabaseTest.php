@@ -413,7 +413,7 @@ class DatabaseTest extends TestCase
     try
     {
       Database::createDatabase(self::$databaseName);
-    } catch (OtraException $le)
+    } catch (OtraException $exception)
     {
       echo 'Schema already exists', PHP_EOL;
     }

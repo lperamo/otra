@@ -98,9 +98,9 @@ class DebugToolsTest extends TestCase
   {
     $expectedOutputPartial = '';
 
-    for($i = 1; $i < $maxChildren; ++$i)
+    for($index = 1; $index < $maxChildren; ++$index)
     {
-      $expectedOutputPartial .= '  [' . $i . '] =>' . "\n  int(0)\n";
+      $expectedOutputPartial .= '  [' . $index . '] =>' . "\n  int(0)\n";
     }
 
     return $expectedOutputPartial;

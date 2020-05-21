@@ -11,7 +11,7 @@ use otra\OtraException;
 /**
  * Shows an exception 'colorful' display for command line commands.
  */
-class OtraExceptionCLI extends \Exception
+class OtraExceptionCli extends \Exception
 {
   const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,
