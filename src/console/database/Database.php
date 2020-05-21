@@ -343,7 +343,8 @@ namespace otra\console {
 
       $first = true;
       $ymlIdentifiers = $table . ': ' . PHP_EOL;
-      $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+      $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
+        'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
       $localMemory = $values = $properties = [];
       $theProperties = '';
 
