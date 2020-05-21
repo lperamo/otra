@@ -5,7 +5,9 @@ namespace src\console;
 
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use otra\{OtraException, console\Database, bdd\Sql, Session};
+use otra\
+{console\OtraExceptionCli, OtraException, console\Database, bdd\Sql, Session};
+use ReflectionException;
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -25,7 +27,7 @@ class DatabaseTest extends TestCase
     $databaseConnection = 'test',
     $databaseFirstTableName = 'testDB_table',
     $databaseName = 'testDB',
-    $fixturesFile = 'db_fixture',
+    //$fixturesFile = 'db_fixture',
     $schemaFile = 'schema.yml',
     $schemaAbsolutePath,
     $importedSchemaAbsolutePath,

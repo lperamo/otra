@@ -39,7 +39,7 @@ class PdomysqlTest extends TestCase
     try
     {
       Sql::getDB()->__destruct();
-    } catch (Exception $e)
+    } catch (\Exception $e)
     {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }

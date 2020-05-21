@@ -16,7 +16,6 @@ class SqlTest extends TestCase
   private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
-    TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php',
     LOG_PATH = BASE_PATH . 'logs/';
 
   private static string $databaseName = 'testDB';
@@ -38,7 +37,7 @@ class SqlTest extends TestCase
 
     try {
       Sql::getDB()->__destruct();
-    } catch (Exception $e) {
+    } catch (Exception $exception) {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
   }
@@ -412,8 +411,8 @@ class SqlTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
 
-    $sql = Sql::getDB('test');
-    $sql->selectDb();
+    $sqlInstance = Sql::getDB('test');
+    $sqlInstance->selectDb();
   }
 
   /**
@@ -430,8 +429,8 @@ class SqlTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'.');
 
-    $sql = Sql::getDB('testOtherDriver');
-    $sql->selectDb();
+    $sqlInstance = Sql::getDB('testOtherDriver');
+    $sqlInstance->selectDb();
   }
 
   /**
@@ -573,8 +572,8 @@ class SqlTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
 
-    $sql = Sql::getDB();
-    $sql->__destruct();
+    $sqlInstance = Sql::getDB();
+    $sqlInstance->__destruct();
 
     self::assertEquals(null, Sql::$_currentConn);
   }
@@ -589,13 +588,13 @@ class SqlTest extends TestCase
   {
     // Creating the context (having a SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
-    $sql = Sql::getDB('test');
+    $sqlInstance = Sql::getDB('test');
 
     // Launching the task
-    $sql2 = Sql::getDB('test');
+    $sqlInstance2 = Sql::getDB('test');
 
     // Testing !
-    self::assertEquals($sql, $sql2);
+    self::assertEquals($sqlInstance, $sqlInstance2);
   }
 
   /**
@@ -647,8 +646,8 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDB();
-    $sql = Sql::$instance->query('SELECT 1');
-    self::assertNull(Sql::$instance->freeResult($sql));
+    $sqlInstance = Sql::$instance->query('SELECT 1');
+    self::assertNull(Sql::$instance->freeResult($sqlInstance));
   }
 
   /**
@@ -699,7 +698,8 @@ class SqlTest extends TestCase
 
     try {
       Sql::$instance->query('bogus sql');
-    } catch (Exception $e) {
+    } catch (Exception $exception)
+    {
       self::assertEquals(
       [
         0 => '42000',
