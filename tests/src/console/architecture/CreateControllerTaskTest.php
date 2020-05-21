@@ -24,7 +24,8 @@ if (!defined('TEST_CONTROLLER_PATH'))
  */
 class CreateControllerTaskTest extends TestCase
 {
-  const TEST_TASK = 'createController',
+  private const TEST_TASK = 'createController';
+  public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test',
     TEST_CONTROLLER = 'test';

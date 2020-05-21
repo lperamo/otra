@@ -10,7 +10,7 @@ use phpunit\framework\TestCase;
  */
 class DebugToolsTest extends TestCase
 {
-  const LOG_PATH = BASE_PATH . 'logs/',
+  private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
     DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:86:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";

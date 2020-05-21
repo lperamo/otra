@@ -21,15 +21,17 @@ define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST
  */
 class CreateActionTaskTest extends TestCase
 {
-  const TEST_TASK = 'createAction',
-    TEST_BUNDLE = 'test',
-    TEST_MODULE = 'test',
-    TEST_CONTROLLER = 'test',
-    TEST_ACTION = 'test',
+  private const TEST_TASK = 'createAction',
     TEST_BUNDLES_CONFIG_PATH = BASE_PATH . 'bundles/config/',
     TEST_BUNDLES_CONFIG_FILE_PATH = self::TEST_BUNDLES_CONFIG_PATH . 'Routes.php',
     TEST_BUNDLE_CONFIG_PATH = TEST_BUNDLE_PATH . 'config/',
     TEST_BUNDLE_ROUTES_PATH = self::TEST_BUNDLE_CONFIG_PATH . 'Routes.php';
+
+  public const
+    TEST_BUNDLE = 'test',
+    TEST_MODULE = 'test',
+    TEST_CONTROLLER = 'test',
+    TEST_ACTION = 'test';
 
   protected function setUp(): void
   {

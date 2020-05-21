@@ -21,7 +21,8 @@ if (!defined('TEST_MODULE_PATH'))
  */
 class CreateModuleTaskTest extends TestCase
 {
-  const TEST_TASK = 'createModule',
+  private const TEST_TASK = 'createModule';
+  public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
 

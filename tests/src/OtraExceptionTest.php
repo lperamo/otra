@@ -12,9 +12,9 @@ use ReflectionException;
  */
 class OtraExceptionTest extends TestCase
 {
-  const BUNDLES_FOLDER = BASE_PATH . 'bundles/';
-  const BUNDLES_CONFIG_FOLDER = self::BUNDLES_FOLDER . 'config/';
-  const BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
+  private const BUNDLES_FOLDER = BASE_PATH . 'bundles/',
+    BUNDLES_CONFIG_FOLDER = self::BUNDLES_FOLDER . 'config/',
+    BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
 
   protected function setUp(): void
   {

@@ -18,8 +18,10 @@ if (!defined('TEST_BUNDLE_PATH'))
  */
 class CreateModelTaskTest extends TestCase
 {
-  const TASK_NAME = 'createModel',
-    BUNDLE_NAME = 'test',
+  public const BUNDLE_NAME = 'test',
+    BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . '/';
+
+  private const TASK_NAME = 'createModel',
     MODULE_NAME = 'test',
     INTERACTIVE = 'false',
     MODEL_NAME = 'testModel',
@@ -33,7 +35,6 @@ class CreateModelTaskTest extends TestCase
     MODEL_LOCATION_MODULE = 1,
     MODEL_PROPERTIES = 'rock, paper, scissors, lizard, spock',
     MODEL_SQL_TYPES = 'text,int,bool,date,float',
-    BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . '/',
     SCHEMA_YML_FILE = 'schema.yml',
     BACKUP_YAML_SCHEMA = TEST_PATH . 'config/data/ymlBackup/' . self::SCHEMA_YML_FILE,
     MODULE_PATH = TEST_BUNDLE_PATH . CreateModelTaskTest::MODULE_NAME . '/',

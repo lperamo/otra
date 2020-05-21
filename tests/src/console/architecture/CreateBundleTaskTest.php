@@ -17,9 +17,8 @@ if (defined('TEST_BUNDLE_UPPER') === false)
  */
 class CreateBundleTaskTest extends TestCase
 {
-  const TEST_TASK = 'createBundle',
-    TEST_BUNDLE = 'test',
-    TEST_MODULE = 'test';
+  public const TEST_BUNDLE = 'test';
+  private const TEST_TASK = 'createBundle';
 
   protected function tearDown(): void
   {

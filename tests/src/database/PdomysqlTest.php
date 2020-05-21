@@ -13,11 +13,11 @@ use otra\{bdd\Sql, OtraException};
  */
 class PdomysqlTest extends TestCase
 {
-  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
-  const TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php';
-  const TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
-  const LOG_PATH = BASE_PATH . 'logs/';
+  private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
+    TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
+    TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
+    TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php',
+    LOG_PATH = BASE_PATH . 'logs/';
 
   private static string $databaseName = 'testDB';
 

@@ -14,11 +14,12 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
  */
 class DatabaseTest extends TestCase
 {
-  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+  private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
+    TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+
   protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
-  private static
+  private static string
     $configFolder = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
     $configBackupFolder = TEST_PATH . 'config/data/',
     $databaseConnection = 'test',
@@ -31,7 +32,6 @@ class DatabaseTest extends TestCase
     $schemaFileBackup,
     $tablesOrderFile = 'tables_order.yml',
     $tablesOrderFilePath,
-    $tablesOrder = ['testDB_table2', 'testDB_table3', 'testDB_table'],
     $configFolderSql,
     $configFolderSqlBackup,
     $configFolderSqlFixtures,
@@ -41,6 +41,7 @@ class DatabaseTest extends TestCase
     $configFolderYmlFixtures,
     $configFolderYmlFixturesBackup;
 
+  private static array $tablesOrder = ['testDB_table2', 'testDB_table3', 'testDB_table'];
   /**
    * @throws ReflectionException
    */
