@@ -3,7 +3,6 @@
 namespace otra;
 
 use config\AllConfig;
-use otra\Session;
 
 /**
  * A classic MVC model class

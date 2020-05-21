@@ -5,8 +5,6 @@
  */
 namespace otra;
 
-use config\AllConfig;
-
 class MasterController
 {
   public static string $path;

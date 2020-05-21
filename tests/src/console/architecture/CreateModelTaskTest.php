@@ -42,13 +42,6 @@ class CreateModelTaskTest extends TestCase
     YAML_SCHEMA = TEST_BUNDLE_PATH . self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH,
     OTRA_SUCCESS = CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL;
 
-  /**
-   * @throws OtraException
-   */
-  protected function setUp() : void
-  {
-  }
-
   protected function tearDown() : void
   {
     parent::tearDown();
