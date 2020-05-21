@@ -12,7 +12,7 @@ class DebugToolsTest extends TestCase
 {
   private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:86:',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:88:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   private static string $LOGS_PROD_PATH;
@@ -117,7 +117,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0,$maxData) . "\"...\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData) . "\"...\n"
       . $this->getExpectedOutputPartial($maxChildren)
       . "\n  (more elements)...\n}\n"
     );
@@ -140,7 +140,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren)
       . "\n  (more elements)...\n}\n"
     );
@@ -160,7 +160,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren + 1)
       . "}\n"
     );

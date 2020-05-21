@@ -407,9 +407,12 @@ class SqlTest extends TestCase
   {
     // loading the test configuration
     require self::TEST_CONFIG_GOOD_PATH;
+    $this->createDatabaseForTest();
 
     $this->expectException(OtraException::class);
-    $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !');
+    $this->expectExceptionMessage(
+      'This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !'
+    );
 
     $sqlInstance = Sql::getDB('test');
     $sqlInstance->selectDb();
