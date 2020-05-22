@@ -78,7 +78,7 @@ if ($mode > 0)
   if ($result[0] === false)
   {
     echo CLI_RED . 'There was a problem during the assets transcompilation.';
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
@@ -101,7 +101,7 @@ if ($mode > 0)
   if ($result[0] === false)
   {
     echo CLI_RED . 'There was a problem during the assets minification and compression.';
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
@@ -149,7 +149,7 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   if ($result[0] !== 0)
   {
     echo CLI_RED, 'Error when using ' . $operation . ' command.', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
