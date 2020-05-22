@@ -194,10 +194,10 @@ namespace otra\console
       if (false === self::$init)
         self::init();
 
-      // No need to get DB twice (getDB is already used in dropDatabase function)
+      // No need to get DB twice (getDb is already used in dropDatabase function)
       (true === $force)
         ? self::dropDatabase($databaseName)
-        : Sql::getDB(null, false);
+        : Sql::getDb(null, false);
 
       $inst = &Sql::$instance;
       $inst->beginTransaction();
@@ -656,7 +656,7 @@ namespace otra\console
       if (false === self::$init)
         self::init();
 
-      Sql::getDB();
+      Sql::getDb();
 
       $inst = &Sql::$instance;
       $inst->beginTransaction();
@@ -707,7 +707,7 @@ namespace otra\console
      */
     public static function dropDatabase(string $databaseName) : Sql
     {
-      $sqlInstance = Sql::getDB();
+      $sqlInstance = Sql::getDb();
       Sql::$instance->beginTransaction();
 
       try
@@ -716,7 +716,7 @@ namespace otra\console
         Sql::$instance->freeResult($result);
       } catch (\Exception $e)
       {
-        Sql::$instance->rollback();
+        Sql::$instance->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
       }
 
@@ -1038,7 +1038,7 @@ namespace otra\console
         $database = AllConfig::$dbConnections[$confToUse]['db'];
 
       Session::set('db', $confToUse);
-      $db = Sql::getDB(null, false);
+      $db = Sql::getDb(null, false);
 
       $schemaInformations = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
 

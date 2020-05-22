@@ -446,7 +446,7 @@ while (true)
             if (file_exists($cssFolder) === false)
               mkdir($cssFolder);
 
-            $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+            $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
             list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 

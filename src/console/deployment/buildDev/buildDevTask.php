@@ -248,7 +248,7 @@ foreach($iterator as $entry)
         if (file_exists($cssFolder) === false)
           mkdir($cssFolder, 0777,true);
 
-        $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+        $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
         list(, $return) = cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
           ':' . $cssPath);

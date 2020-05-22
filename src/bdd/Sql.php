@@ -48,7 +48,7 @@ class Sql
    * @internal param string $conn     Connection used (see AllConfig files)
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    */
-  public static function getDB($conn = null, bool $haveDatabase = true) : Sql
+  public static function getDb($conn = null, bool $haveDatabase = true) : Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
