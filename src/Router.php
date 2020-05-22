@@ -39,7 +39,7 @@ abstract class Router
      */
     extract($baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
-      array_pad(Routes::$_[$route][OTRA_ROUTE_CHUNKS_KEY], 5, null)
+      array_pad(Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
     ));
 
     // The route "otra_exception" has an null value into $action
@@ -59,9 +59,9 @@ abstract class Router
     $baseParams['css'] = $baseParams['js'] = false;
 
     // Do we have some resources for this route...
-    if (true === isset(Routes::$_[$route][OTRA_ROUTE_RESOURCES_KEY]))
+    if (true === isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
-      $resources = Routes::$_[$route][OTRA_ROUTE_RESOURCES_KEY];
+      $resources = Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY];
       $baseParams['js'] = (
         isset($resources['bundle_js'])
         || isset($resources['module_js'])
@@ -86,7 +86,7 @@ abstract class Router
       ), 0, 9) !== 'web/index')
     {
       // Is it a static page
-      if (true === isset(Routes::$_[$route][OTRA_ROUTE_RESOURCES_KEY]['template']))
+      if (true === isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
         header('Content-Encoding: gzip');
         echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
@@ -111,7 +111,7 @@ abstract class Router
   {
     foreach (Routes::$_ as $routeName => &$routeData)
     {
-      $routeUrl = $routeData[OTRA_ROUTE_CHUNKS_KEY][0];
+      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
       // This is not the route you are looking for !
@@ -180,7 +180,7 @@ abstract class Router
       $paramsString .= '/' . $value;
     }
 
-    return Routes::$_[$route][OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
+    return Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
   }
 }
 
