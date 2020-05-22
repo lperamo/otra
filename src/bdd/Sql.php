@@ -32,7 +32,7 @@ class Sql
 
   /** Destructor that closes the connection */
   public function __destruct() {
-    $this->close();
+    self::close();
   }
 
   /**
