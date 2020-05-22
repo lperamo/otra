@@ -159,7 +159,7 @@ if ($mask !== 8)
             exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
             gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
           }
-        } else if (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
+        } elseif (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
         {
           exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);

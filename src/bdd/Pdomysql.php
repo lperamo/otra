@@ -11,7 +11,7 @@ use PDO, PDOStatement;
 abstract class Pdomysql
 {
   private PDO $conn;
-  const DEFAULT_MOTOR = 'InnoDB';
+  private const DEFAULT_MOTOR = 'InnoDB';
 
   /**
    * Connects to PDO_MySql

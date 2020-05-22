@@ -70,15 +70,15 @@ function generateJavaScript(
         echo CLI_GREEN, '.', END_COLOR, PHP_EOL, PHP_EOL;
       }
 
+    } elseif ($jsFileExists === true)
+    {
+      echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
+      END_COLOR, PHP_EOL, $output;
     } else
     {
-      if ($jsFileExists === true)
-        echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
-        END_COLOR, PHP_EOL, $output;
-      else
-        echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
-        CLI_LIGHT_CYAN,
-        'tsconfig.json', CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
+      echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
+      CLI_LIGHT_CYAN,
+      'tsconfig.json', CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
     }
 
     // We launch Google Closure Compiler only if a file has been generated with success

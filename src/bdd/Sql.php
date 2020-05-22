@@ -59,7 +59,7 @@ class Sql
       if (true === isset(self::$_activeConn[$conn]))
       {
         $currentConnection = $conn;
-      } else if (true === isset(AllConfig::$dbConnections[$conn]))
+      } elseif (true === isset(AllConfig::$dbConnections[$conn]))
       {
         $currentConnection = $conn;
         self::$_activeConn[$conn] = null;
@@ -100,7 +100,7 @@ class Sql
       if (null == self::$_activeConn[$currentConnection])
       {
         self::$_currentDBMS = __NAMESPACE__ . '\\' . ucfirst(strtolower($driver));
-        self::$_activeConn[$currentConnection]['instance'] = new Sql;
+        self::$_activeConn[$currentConnection]['instance'] = new Sql();
         require CORE_PATH . 'bdd/' . $driver . '.php';
       }
 

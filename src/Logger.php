@@ -8,7 +8,7 @@ namespace otra;
 
 abstract class Logger
 {
-  const APPEND_LOG = 3;
+  private const APPEND_LOG = 3;
 
   /**
    * Returns the date or also the ip address and the browser if different

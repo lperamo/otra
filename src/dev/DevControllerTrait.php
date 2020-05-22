@@ -40,7 +40,7 @@ trait DevControllerTrait
    *
    * @throws OtraException
    */
-  public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
+  final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
     $otraRoute = strpos($this->route, 'otra_') !== false;
 

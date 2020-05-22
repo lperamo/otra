@@ -241,7 +241,7 @@ namespace otra\console
 
         if ('notnull' === $attr)
           $attr = 'not null';
-        else if ('type' === $attr && false !== strpos($value, 'string'))
+        elseif ('type' === $attr && false !== strpos($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
         if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
@@ -441,7 +441,7 @@ namespace otra\console
           {
             if (true === is_bool($value))
               $value = $value ? 1 : 0;
-            else if (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
+            elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
               $value = $localMemory[$value];
 
             $theValues .= (null === $value)

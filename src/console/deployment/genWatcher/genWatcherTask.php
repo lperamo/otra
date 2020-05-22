@@ -369,7 +369,7 @@ while (true)
         }
 
         continue;
-      } else if (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
+      } elseif (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
         // User is deleting a folder
         $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
@@ -386,7 +386,7 @@ while (true)
         unset($foldersWatchedIds[$wd]);
 
         continue;
-      } else if ( // If it is an event IN_DELETE and is a file to watch
+      } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($mask & IN_DELETE) === IN_DELETE
         && (in_array($name, $phpEntriesToWatch) === true
           || in_array($name, $resourcesEntriesToWatch) === true
@@ -400,7 +400,7 @@ while (true)
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
         }
-      } else if ( // A save operation has been done
+      } elseif ( // A save operation has been done
           (
             ($mask & IN_ATTRIB) === IN_ATTRIB
             || ($mask & IN_MODIFY) === IN_MODIFY
@@ -427,7 +427,7 @@ while (true)
           // We updates routes configuration if the php file is a routes configuration file
           if ($name === 'Routes.php')
             Tasks::upConf();
-        } else if (in_array($resourceName, $resourcesEntriesToWatch) === true)
+        } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
           $resourceFolder = dirname($foldersWatchedIds[$wd]);
@@ -497,11 +497,8 @@ while (true)
             }
           }
         }
-      } else
-      {
-        if (GEN_WATCHER_VERBOSE > 1)
-          $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-      }
+      } elseif (GEN_WATCHER_VERBOSE > 1)
+        $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
 
       $headers = false;
     }

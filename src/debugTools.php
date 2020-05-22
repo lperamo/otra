@@ -218,7 +218,7 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
             echo '<td>' , $index, '</td>',
                  '<td colspan="0" class="dummy"></td>',
               '</tr>';
-        } else if ($loop > 1)
+        } elseif ($loop > 1)
           echo '<tr class="foldable">',
                  '<td colspan="', $loop, '"></td>',
                  '<td colspan="0">', $index,  '</td>',

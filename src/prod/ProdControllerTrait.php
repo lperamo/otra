@@ -48,7 +48,7 @@ trait ProdControllerTrait
    *
    * @return string
    */
-  public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
+  final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
     if (strpos($this->route, 'otra_') === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;

@@ -162,7 +162,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   {
     $filesToConcat['php']['use'][] = $tempFile;
     $parsedFiles[] = $tempFile;
-  } else if (1 < VERBOSE)
+  } elseif (1 < VERBOSE)
     showFile($level, $tempFile, ' ALREADY PARSED');
 }
 
@@ -278,22 +278,19 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
     {
       if (true === isset(PATH_CONSTANTS[$pathVariable[0]]))
         $tempFile = str_replace('$' . $pathVariable[0], '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'', $tempFile);
-      else
-      {
-        /* we make an exception for this particular require statement because
+      /* we make an exception for this particular require statement because
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
-        if ('templateFilename' === trim($pathVariable[0]))
-          $isTemplate = true;
-        else if ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' === $trimmedMatch)
-        { // we must not change this line from CORE_PATH . Router.php !
-          continue;
-        } else
-        {
-          echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
-            '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
-            $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
-          exit(1);
-        }
+      elseif ('templateFilename' === trim($pathVariable[0]))
+        $isTemplate = true;
+      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' === $trimmedMatch)
+      { // we must not change this line from CORE_PATH . Router.php !
+        continue;
+      } else
+      {
+        echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
+          '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
+          $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
+        exit(1);
       }
     }
   }
@@ -396,7 +393,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
     $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
-  } else if(1 === $inEval)
+  } elseif(1 === $inEval)
   {
     phpOrHTMLIntoEval($contentToAdd);
     $replacement = 'eval(\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\\'); ';
@@ -573,7 +570,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } else if(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
+    } elseif(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
     {
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
@@ -587,7 +584,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
       // If we already have included the class
       if (false === $tempFile)
         continue;
-      else if (in_array($tempFile, $parsedFiles) === true)
+      elseif (in_array($tempFile, $parsedFiles) === true)
       {
         if (1 < VERBOSE)
           showFile($level, $tempFile, ' ALREADY PARSED');
@@ -596,7 +593,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
       }
 
       $filesToConcat['php']['extends'][] = $tempFile;
-    } else if(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+    } elseif(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
     {
       $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
 
@@ -624,16 +621,14 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
           {
             if ($trimmedMatch === '/exception.phtml')
               $tempDir = CORE_PATH . 'views/' ;
-            else // no ? so where is that file ?
+            // no ? so where is that file ?
+            elseif (strpos($trimmedMatch, 'html') === false)
             {
-              if (strpos($trimmedMatch, 'html') === false)
-              {
-                echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
-                  CLI_YELLOW,
-                $file,
-                CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-                die;
-              }
+              echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
+                CLI_YELLOW,
+              $file,
+              CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
+              die;
             }
           }
         }
@@ -898,7 +893,7 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     {
       $parsedFiles[] = $newFile;
       $filesToConcat['php']['static'][] = $newFile;
-    } else if (1 < VERBOSE)
+    } elseif (1 < VERBOSE)
     {
       showFile($level, $newFile, ' ALREADY PARSED');
     }

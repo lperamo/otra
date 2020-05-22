@@ -13,7 +13,7 @@ use otra\OtraException;
  */
 class OtraExceptionCli extends \Exception
 {
-  const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
+  private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
