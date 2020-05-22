@@ -19,15 +19,12 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
   define('BUNDLE_ROOT_PATH', BASE_PATH . OTRA_BUNDLES_MAIN_FOLDER_NAME);
   $errorMessage = CLI_YELLOW . 'The bundle ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_YELLOW . ' already exists.';
 
-  if ($interactive === false)
+  if ($interactive === false && file_exists(BUNDLE_ROOT_PATH . $bundleName))
   {
-    if (file_exists(BUNDLE_ROOT_PATH . $bundleName))
-    {
-      echo $errorMessage, END_COLOR, PHP_EOL;
+    echo $errorMessage, END_COLOR, PHP_EOL;
 
-      /** @var bool $consoleForce */
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
-    }
+    /** @var bool $consoleForce */
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   while (file_exists(BUNDLE_ROOT_PATH . $bundleName))
