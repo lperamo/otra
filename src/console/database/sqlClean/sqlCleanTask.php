@@ -3,4 +3,6 @@ declare(strict_types=1);
 
 use otra\console\Database;
 
-Database::clean(isset($argv[2]) ? '1' === $argv[2]  : false);
+define('SQL_CLEAN_ARG_CLEANING_LEVEL', 2);
+
+Database::clean(isset($argv[SQL_CLEAN_ARG_CLEANING_LEVEL]) ? ('1' === $argv[2]) : false);
