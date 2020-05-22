@@ -77,7 +77,7 @@ class OtraExceptionCli extends \Exception
       elseif (strpos($exceptionFile, BASE_PATH) !== false)
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
-        echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
+      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
         ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
 
@@ -107,7 +107,7 @@ class OtraExceptionCli extends \Exception
     {
       $actualTrace = $trace[$actualTraceIndex];
 
-      if(0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
+      if (0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
 
       createShowableFromArrayConsole($actualTrace['args'], 'Arguments', self::KEY_VARIABLES);
 
