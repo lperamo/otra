@@ -36,11 +36,11 @@ class DebugToolsTest extends TestCase
 
     if (OTRA_PROJECT === false)
     {
-      if (file_exists(self::$LOGS_PROD_PATH))
-        rmdir(self::$LOGS_PROD_PATH);
+      require CORE_PATH . 'tools/deleteTree.php';
 
+      /** @var callable $delTree */
       if (file_exists(self::LOG_PATH))
-        rmdir(self::LOG_PATH);
+        $delTree(self::LOG_PATH);
     }
   }
 
