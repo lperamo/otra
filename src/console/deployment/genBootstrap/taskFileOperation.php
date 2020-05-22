@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use otra\OtraException;
 
@@ -469,7 +470,7 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
   // Do we already have this class ?
   foreach($classesFromFile as &$classFromFile)
   {
-    if (false !== strrpos($classFromFile, $class, strrpos($classFromFile,',')))
+    if (false !== strrpos($classFromFile, $class, (int) strrpos($classFromFile,',')))
       return false;
   }
 
@@ -586,7 +587,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
 
       // if the class begin by \ then it is a standard class and then we do nothing otherwise we do this ...
       if ('\\' !== $class[0])
-        $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, $match[1]);
+        $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $match[1]);
       else
         $tempFile = false;
 
@@ -889,7 +890,7 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     // does the class exist ? if not we search the real path of it
     if (false === file_exists($newFile))
     {
-      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, $offset);
+      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $offset);
 
       // now that we are sure that we have the real path, we test it again
       // and if we already have included the file, we also continue
