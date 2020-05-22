@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use otra\OtraException;
 
@@ -465,7 +464,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
  *
  * @return string $tempFile
  */
-function searchForClass(array &$classesFromFile, string &$class, string &$contentToAdd, string &$match)
+function searchForClass(array &$classesFromFile, string &$class, string &$contentToAdd, string $match)
 {
   // Do we already have this class ?
   foreach($classesFromFile as &$classFromFile)
@@ -801,7 +800,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
       {
         foreach ($entries as $templateEntry)
         {
-        //var_dump($templateEntries);die;
+          //var_dump($templateEntries);die;
           showFile($level, $templateEntry, ' via renderView');
           $nextContentToAdd = file_get_contents($templateEntry) . PHP_END_TAG_STRING;
           ++$inc;
@@ -837,7 +836,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
   //  ****** // Either we begin the process, either we return to the roots of the process so ... (DEBUG)
   --$level;
-  
+
   return $finalContent;
 }
 
