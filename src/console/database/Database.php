@@ -23,7 +23,7 @@ namespace otra\console
   {
     // Database connection
     private static string
-      $_databaseFile = 'database_schema',
+      $databaseFile = 'database_schema',
       $base,
       $fixturesFileIdentifiers = 'ids',
       $folder = 'bundles/',
@@ -746,7 +746,7 @@ namespace otra\console
       if (false === self::$init)
         self::init();
 
-      $dbFile = self::$pathSql . self::$_databaseFile . ($force ? '_force.sql' : '.sql');
+      $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
 
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
