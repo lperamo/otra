@@ -54,7 +54,7 @@ define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ?
 // Defines if we want to use Google Closure Compiler or not
 define(
   'GEN_WATCHER_GCC',
-  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true' ? true : false
+  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true'
 );
 
 if (GEN_WATCHER_VERBOSE > 1 )
