@@ -8,11 +8,12 @@ namespace otra;
 
 use otra\{Controller, console\OtraExceptionCli};
 use config\Routes;
+use Exception;
 
 // Sometimes it is already defined ! so we put '_once' ...
 require_once CORE_PATH . 'debugTools.php';
 
-class OtraException extends \Exception
+class OtraException extends Exception
 {
   public static array $codes = [
     E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
@@ -101,7 +102,7 @@ class OtraException extends \Exception
           'hasJsToLoad' => ''
         ]
       );
-    } catch(\Exception $e)
+    } catch(Exception $e)
     {
       if (PHP_SAPI === 'cli')
       {

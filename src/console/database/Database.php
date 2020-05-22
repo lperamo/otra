@@ -7,6 +7,8 @@
 declare(strict_types=1);
 namespace otra\console
 {
+
+  use Exception;
   use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
@@ -207,7 +209,7 @@ namespace otra\console
       {
         $dbResult = $inst->query(file_get_contents($databaseFile));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted when executing ' . $e->getMessage());
@@ -367,7 +369,7 @@ namespace otra\console
         {
           if (false === mkdir($fixtureFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -673,7 +675,7 @@ namespace otra\console
         // Runs the file
         $dbResult = $inst->query(file_get_contents($file));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
@@ -714,7 +716,7 @@ namespace otra\console
       {
         $result = Sql::$instance->query('DROP DATABASE IF EXISTS ' . $databaseName);
         Sql::$instance->freeResult($result);
-      } catch (\Exception $e)
+      } catch (Exception $e)
       {
         Sql::$instance->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
@@ -1133,7 +1135,7 @@ namespace otra\console
         {
           if (false === mkdir($saveFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1175,7 +1177,7 @@ namespace otra\console
         {
           if (false === mkdir(self::$pathYmlFixtures, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }

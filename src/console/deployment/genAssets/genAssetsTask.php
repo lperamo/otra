@@ -1,4 +1,7 @@
 <?php
+
+use config\Routes;
+
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . 'config/Routes.php';
@@ -9,7 +12,7 @@ define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVA
 define('ROUTE', 4);
 define('GZIP_COMPRESSION_LEVEL', 9);
 
-$routes = \config\Routes::$_;
+$routes = Routes::$_;
 
 /**
  * @param string $folder  The resource folder name
@@ -189,7 +192,7 @@ if ($mask !== 8)
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .
-          'bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init"'
+          'bundles\\' . Routes::$default['bundle'] . '\\Init::Init"'
         );
 
         if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))

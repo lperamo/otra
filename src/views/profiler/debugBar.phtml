@@ -1,9 +1,12 @@
 <?php
-if(function_exists('generateArrows') === false)
+
+use config\AllConfig;
+
+if (function_exists('generateArrows') === false)
 {
   function generateArrows($type = 'radio')
   {
-    $debugBarPosition = isset(\config\AllConfig::$debugBarPosition) ? \config\AllConfig::$debugBarPosition : 'top';
+    $debugBarPosition = isset(AllConfig::$debugBarPosition) ? AllConfig::$debugBarPosition : 'top';
     $positions = [
       '▲' => 'top',
       '▶' => 'right',

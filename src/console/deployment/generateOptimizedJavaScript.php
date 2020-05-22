@@ -1,5 +1,6 @@
 <?php
 
+use otra\OtraException;
 use function otra\console\returnLegiblePath;
 use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
@@ -142,7 +143,7 @@ function generateJavaScript(
         if (!rename($generatedJsFile, $serviceWorkerPath))
         {
           echo CLI_RED, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
-          throw new \otra\OtraException('', 1, '', NULL, [], true);
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         $generatedJsMapFile = $generatedJsFile . '.map';
@@ -153,7 +154,7 @@ function generateJavaScript(
           if (!rename($generatedJsMapFile, $newJsMapPath))
           {
             echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
-            throw new \otra\OtraException('', 1, '', NULL, [], true);
+            throw new OtraException('', 1, '', NULL, [], true);
           }
         }
 

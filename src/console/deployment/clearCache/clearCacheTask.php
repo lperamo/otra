@@ -1,6 +1,7 @@
 <?php
 
 use config\AllConfig;
+use otra\OtraException;
 
 define('CLEAR_CACHE_ARG_MASK', 2);
 define('CLEAR_CACHE_ARG_ROUTE', 3);
@@ -95,7 +96,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
  * @param string $file
  * @param string $fileShownInTheError
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function unlinkFile(string $file, string $fileShownInTheError) : void
 {
@@ -106,7 +107,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
   {
     echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $fileShownInTheError, CLI_RED,
       '. Task aborted.', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 
@@ -114,7 +115,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
  * @param string $folder
  * @param string $folderShownInTheError
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function checkFolder(string $folder, string $folderShownInTheError) : void
 {
@@ -122,7 +123,7 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
   {
     echo CLI_YELLOW, 'The folder ', CLI_CYAN, $folderShownInTheError, CLI_YELLOW, ' does not exist. Task aborted.',
       END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 

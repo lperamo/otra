@@ -5,6 +5,7 @@
 
 namespace otra\bdd;
 
+use Exception;
 use otra\{ OtraException, Logger };
 use config\AllConfig;
 
@@ -131,7 +132,7 @@ class Sql
 
         self::$_currentConn = $activeConn['conn'];
         self::$_currentConnectionName = $currentConnection;
-      }catch(\Exception $e)
+      }catch(Exception $e)
       {
         throw new OtraException($e->getMessage());
       }
@@ -171,7 +172,7 @@ class Sql
 
       return $return;
       // @codeCoverageIgnoreEnd
-    } catch (\Exception $exception)
+    } catch (Exception $exception)
     {
       $currentDriver = AllConfig::$dbConnections[self::$_currentConnectionName]['driver'];
       $message = 'This function does not exist with \'' . $currentDriver . '\'.';

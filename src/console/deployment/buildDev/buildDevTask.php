@@ -4,6 +4,7 @@ namespace otra\console;
 
 use config\AllConfig;
 use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
+use RecursiveIteratorIterator;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
@@ -172,7 +173,7 @@ require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
-$iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
+$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 /** @var \SplFileInfo $entry */
 foreach($iterator as $entry)
