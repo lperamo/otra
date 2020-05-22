@@ -26,4 +26,4 @@ if ($temporaryEnv === 'prod')
 
 unset($temporaryEnv);
 
-?>
+

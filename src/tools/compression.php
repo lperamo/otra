@@ -39,4 +39,4 @@ function gzCompressFile(string $source, string $dest = null, int $level = 9, $ke
 
   return true;
 }
-?>
+

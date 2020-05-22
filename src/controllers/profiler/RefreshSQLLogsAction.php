@@ -22,4 +22,4 @@ class RefreshSQLLogsAction extends Controller
     echo ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt');
   }
 }
-?>
+

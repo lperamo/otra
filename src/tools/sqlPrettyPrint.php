@@ -164,4 +164,4 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   return $output;
 }
-?>
+

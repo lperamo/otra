@@ -19,4 +19,4 @@ $controllersFolder = $modulePath . '/controllers/';
 $controllerName = $argv[ARG_CONTROLLER_NAME];
 
 controllerHandling($interactive, $controllersFolder, $controllerName);
-?>
+

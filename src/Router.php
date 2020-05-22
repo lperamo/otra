@@ -17,7 +17,7 @@ abstract class Router
    * @param string|array $params Additional params
    * @param bool 				 $launch True if we have to launch the route or just retrieve the path (do we really need this ?)
    *
-   * @return string Controller's path
+   * @return string|Controller Controller's path
    */
   public static function get(string $route = 'index', array $params = [], bool $launch = true)
   {
@@ -91,7 +91,7 @@ abstract class Router
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 
-    new $action($baseParams, $params);
+    return new $action($baseParams, $params);
   }
 
   /**
@@ -175,4 +175,4 @@ abstract class Router
     return Routes::$_[$route]['chunks'][0] . $paramsString;
   }
 }
-?>
+

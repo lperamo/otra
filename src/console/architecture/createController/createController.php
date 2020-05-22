@@ -57,4 +57,4 @@ function controllerHandling(bool $interactive, string &$controllersFolder, strin
     createController($controllersFolder, $controllerName, $interactive);
   }
 }
-?>
+

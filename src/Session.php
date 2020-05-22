@@ -31,4 +31,4 @@ abstract class Session
    */
   public static function get(string $key) { return $_SESSION[sha1(self::$id . $key)]; }
 }
-?>
+

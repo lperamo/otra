@@ -25,4 +25,4 @@ if (true === $modelExists || false === $tableExists)
 }
 
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-?>
+

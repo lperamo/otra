@@ -94,4 +94,4 @@ if ($creationMode === CREATION_MODE_FROM_NOTHING)
 
 
 unset($checkParameter);
-?>
+

@@ -27,4 +27,4 @@ class ClearSQLLogsAction extends Controller
     echo t('No more stored queries in '), $file, '.';
   }
 }
-?>
+

@@ -35,4 +35,4 @@ function modelsCreation(int $modelLocation, string $bundleName, string $modelFul
     modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
   }
 }
-?>
+

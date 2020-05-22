@@ -166,7 +166,7 @@ uksort($routesArray, $sortRoutes);
 // Transforms the array in code that returns the array.
 $routesContent = '<?php declare(strict_types=1);return [';
 loopForEach($routesContent, $routesArray, true);
-$routesContent = substr($routesContent, 0, -1) . ']; ?>';
+$routesContent = substr($routesContent, 0, -1) . '];';
 
 writeConfigFile($routesFile, $routesContent);
-?>
+

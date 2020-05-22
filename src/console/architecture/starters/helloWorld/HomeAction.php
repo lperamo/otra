@@ -26,4 +26,4 @@ class HomeAction extends Controller
     echo $this->renderView('home.phtml', []);
   }
 }
-?>
+

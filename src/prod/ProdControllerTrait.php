@@ -187,4 +187,4 @@ trait ProdControllerTrait
     return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
-?>
+

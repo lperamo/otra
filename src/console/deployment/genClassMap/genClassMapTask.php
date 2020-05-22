@@ -113,7 +113,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   {
     // if the class map is empty, then we just return an empty array.
     if ($classMap === 'array (' . PHP_EOL . ')')
-      return '<?php define(\'CLASSMAP\', []);?>';
+      return '<?php define(\'CLASSMAP\', []);';
 
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
@@ -122,7 +122,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
       '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped),
       0,
       -2
-    ) . ']);?>';
+    ) . ']);';
   }
 }
 
@@ -217,4 +217,3 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 }
 
 return null;
-?>

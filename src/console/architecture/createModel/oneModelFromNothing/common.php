@@ -53,4 +53,4 @@ function endingTask(
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
   modelCreationSuccess($bundleName, $modelName);
 }
-?>
+

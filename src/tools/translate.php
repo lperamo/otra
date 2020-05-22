@@ -31,4 +31,4 @@ if (function_exists('t') === false)
     return array_filter($langs, $filterLangs)[0] ?: 'en';
   }
 }
-?>
+

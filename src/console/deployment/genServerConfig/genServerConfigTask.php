@@ -60,4 +60,4 @@ define(
 );
 
 require CONSOLE_PATH . 'deployment/genServerConfig/' . GEN_SERVER_CONFIG_SERVER_TECHNOLOGY . 'ServerConfig.php';
-?>
+

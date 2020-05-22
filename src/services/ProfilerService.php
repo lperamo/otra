@@ -49,4 +49,3 @@ class ProfilerService
     return ob_get_clean();
   }
 }
-?>

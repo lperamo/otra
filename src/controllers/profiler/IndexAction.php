@@ -26,4 +26,4 @@ class IndexAction extends Controller
     );
   }
 }
-?>
+

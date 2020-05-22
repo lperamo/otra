@@ -420,4 +420,4 @@ class Sql
     return call_user_func(self::$_currentDBMS . '::errorInfo');
   }
 }
-?>
+

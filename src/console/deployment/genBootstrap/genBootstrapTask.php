@@ -123,7 +123,7 @@ contentToFile(
   fixFiles(
     $routes[$route]['chunks'][1],
     $route,
-    file_get_contents($fileToInclude),
+    file_get_contents($fileToInclude) . '?>',
     $verbose,
     $fileToInclude
   ),
@@ -136,4 +136,3 @@ if (hasSyntaxErrors($routesManagementFile))
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
 
 echo PHP_EOL;
-?>

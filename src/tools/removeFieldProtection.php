@@ -56,4 +56,4 @@ function removeMethodScopeProtection($class, string $method) : ReflectionMethod
 
   return $method;
 }
-?>
+

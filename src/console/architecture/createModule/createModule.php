@@ -44,4 +44,4 @@ if (function_exists('createModule') === false)
       createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
   }
 }
-?>
+

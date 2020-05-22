@@ -5,4 +5,4 @@
 
   if ($return !== 0)
     throw new \otra\OtraException('', 1, '', NULL, [], true);
-?>
+

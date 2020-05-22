@@ -112,5 +112,3 @@ else // otherwise we'll try to guess if it looks like an existing one
   } else
     TasksManager::showCommands('This command doesn\'t exist. ');
 }
-
-?>

@@ -84,4 +84,4 @@ else
       : 'allModelsFromYmlSchema/'
     ) . ($interactive === false ? 'notI' : 'i') . 'nteractive.php';
 }
-?>
+

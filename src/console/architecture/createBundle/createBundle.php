@@ -75,4 +75,4 @@ function bundleHandling(bool $interactive, string $bundleName, ?string $bundleMa
     }
   }
 }
-?>
+

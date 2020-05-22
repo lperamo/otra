@@ -5,8 +5,8 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace otra\console {
-
+namespace otra\console
+{
   use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
@@ -811,7 +811,7 @@ namespace otra\console {
               if (isset(self::$attributeInfos['primary']) && '' !== self::$attributeInfos['primary'])
                 $primaryKeys[] = $attribute;
             }
-          } else if ('relations' === $property)
+          } elseif ('relations' === $property)
           {
             foreach ($attributes as $otherTable => &$attribute)
             {
@@ -821,15 +821,17 @@ namespace otra\console {
               if (isset($attribute['onDelete']))
                 $onDelete = '  ON DELETE ' . strtoupper($attribute['onDelete']);
 
-              $constraints .= 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
+              $constraints .= /** @lang text */
+                'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
                 . ' FOREIGN KEY(`' . $attribute['local'] . '`)' . PHP_EOL;
               $constraints .= '  REFERENCES ' . $otherTable . '(`' . $attribute['foreign'] . '`)' . PHP_EOL
                 . $onDelete . ';' . PHP_EOL;
             }
-          } else if ('indexes' === $property)
+          } elseif ('indexes' === $property)
           {
+            echo CLI_YELLOW, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
             /** @TODO Manage the indexes part */
-          } else if ('default_character_set' === $property)
+          } elseif ('default_character_set' === $property)
             $defaultCharacterSet = $attributes;
         }
 
@@ -1251,7 +1253,7 @@ namespace otra\console {
 
                 if (null === $colOfRow)
                   $content .= '~';
-                else if (is_string($colOfRow))
+                elseif (is_string($colOfRow))
                 {
                   // For some obscure reasons, PHP_EOL cannot work in this case as it is always returning \n in my tests...
                   if (false === strpos($colOfRow,
@@ -1277,5 +1279,3 @@ namespace otra\console {
     }
   }
 }
-
-?>

@@ -125,4 +125,4 @@ require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 echo 'You can launch this example via the url ', CLI_LIGHT_CYAN, '/helloworld', END_COLOR,
   '.', PHP_EOL, 'You can launch a PHP internal web server by typing ', CLI_LIGHT_CYAN, 'otra serve', END_COLOR, '.',
   PHP_EOL;
-?>
+

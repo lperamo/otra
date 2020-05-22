@@ -136,7 +136,7 @@ function writeModelFile(
     ($modelLocation === MODEL_LOCATION_MODULE ? '\\' . MODULE_NAME : '') . '\\models;' . PHP_EOL .
     $useDateTime . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
-    '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL . '?>' . PHP_EOL);
+    '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL);
   fclose($fp);
 }
 
@@ -235,4 +235,4 @@ function retrieveFunctionsAndProperties(
     );
   }
 }
-?>
+

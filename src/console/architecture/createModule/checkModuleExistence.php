@@ -40,4 +40,4 @@ if (file_exists($modulePath) === false)
 
   createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
 }
-?>
+

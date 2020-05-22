@@ -513,5 +513,5 @@ while (true)
   // Avoid watching too much to avoid performance issues
   sleep(0.1);
 }
-?>
+
 

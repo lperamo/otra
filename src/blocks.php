@@ -133,4 +133,4 @@ if (function_exists('block') === false)
     echo $content;
   }
 }
-?>
+

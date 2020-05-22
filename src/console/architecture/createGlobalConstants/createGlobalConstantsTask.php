@@ -28,7 +28,7 @@ $content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'SPACE_INDENT\',\'  ' .
   '\');define(\'APP_ENV\',\'APP_ENV' .
   '\');define(\'OTRA_VERSION\',\'1.0.0-alpha.2.3.0' .
-  '\');if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');?>';
+  '\');if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)
 require_once $consolePath . 'colors.php';
@@ -51,4 +51,4 @@ if (file_put_contents($basePath . 'config/prodConstants.php', $prodContent) === 
   echo CLI_RED . 'There was a problem while writing the OTRA global constants for the online side.', END_COLOR, PHP_EOL;
 else
   echo 'OTRA global constants for the online side generated.', CLI_GREEN, ' ✔', END_COLOR, PHP_EOL;
-?>
+

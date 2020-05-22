@@ -279,4 +279,4 @@ if ($filesProcessed === true)
     echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
 } else
   echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;
-?>
+

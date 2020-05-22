@@ -27,7 +27,7 @@ class OtraExceptionTest extends TestCase
       mkdir(self::BUNDLES_CONFIG_FOLDER, 0777, true);
       file_put_contents(
         self::BUNDLES_CONFIG_ROUTES,
-        '<?php return []; ?>'
+        '<?php return [];'
         //return ['HelloWorld'=>['chunks'=>['/helloworld','HelloWorld','frontend','index','HomeAction'],'resources'=>['template'=> true ]]];
       );
     }

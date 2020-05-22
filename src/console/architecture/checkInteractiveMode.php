@@ -15,4 +15,4 @@ if (array_key_exists(ARG_INTERACTIVE, $argv) === true )
 }
 
 $interactive = $interactive === 'true';
-?>
+

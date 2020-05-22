@@ -59,9 +59,7 @@ class ' . $upperActionName . 'Action extends Controller
   public function ' . $actionName . 'Action() {
 
   }
-}
-?>
-');
+}');
 
   echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
@@ -144,8 +142,7 @@ class ' . $upperActionName . 'Action extends Controller
       file_put_contents(
         $routeConfigurationFile,
         '<?php' . PHP_EOL .
-        'return ' . $routesArray . ';
-        ?>' . PHP_EOL
+        'return ' . $routesArray . ';' . PHP_EOL
       );
     } else
     { // If it's not the case, we replace it
@@ -158,8 +155,7 @@ class ' . $upperActionName . 'Action extends Controller
         "<?php" . PHP_EOL .
         "return [" . PHP_EOL .
         SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
-        "];" . PHP_EOL .
-        "?>" . PHP_EOL
+        "];" . PHP_EOL
       );
     }
 
@@ -200,4 +196,4 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   } else
     createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
 }
-?>
+

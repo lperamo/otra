@@ -5,4 +5,4 @@ return [
   'config\\AllConfig' => BASE_PATH . 'config/AllConfig.php',
   'otra\\Controller' => CORE_PATH . 'Controller.php'
 ];
-?>
+

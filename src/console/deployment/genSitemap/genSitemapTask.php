@@ -15,4 +15,4 @@ foreach ($routes as &$route)
 }
 
 file_put_contents(BASE_PATH . 'web/sitemap.xml', $siteMapContent . PHP_EOL . '</urlset>');
-?>
+

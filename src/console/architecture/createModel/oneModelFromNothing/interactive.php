@@ -47,4 +47,4 @@ while ('no!more' !== $property)
 }
 
 endingTask($modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
-?>
+

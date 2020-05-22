@@ -368,4 +368,4 @@ class MasterController
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER[APP_ENV] === 'prod' && PHP_SAPI !== 'cli')
   class_alias('\cache\php\MasterController', '\otra\MasterController');
-?>
+

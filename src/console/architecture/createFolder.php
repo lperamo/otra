@@ -36,4 +36,4 @@ if (function_exists('createFolder') === false)
     mkdir($absoluteFolderPath, 0755);
   }
 }
-?>
+

@@ -34,4 +34,4 @@ if (preg_match('@\.(?:png|ico|svg|json|webp|jpg|jpeg|gif|css|js).*$@', $_SERVER[
 }
 
 return false;
-?>
+

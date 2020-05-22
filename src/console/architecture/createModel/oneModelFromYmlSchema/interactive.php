@@ -39,4 +39,4 @@ while (true === $modelExists || false === $tableExists)
 // We cleans the last sentence
 echo ERASE_SEQUENCE;
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-?>
+

@@ -36,4 +36,4 @@ if (file_exists($bundlePath) === false)
   /** @var int $bundleMask */
   bundleHandling($interactive, $bundleName, $consoleForce ? $bundleMask : null);
 }
-?>
+

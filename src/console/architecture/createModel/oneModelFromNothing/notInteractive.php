@@ -33,4 +33,4 @@ $typesArray = array_map('assignType', array_keys($fakeTypeArray), $fakeTypeArray
 define('MODEL_COLUMNS_ARRAY', array_combine(MODEL_PROPERTIES_ARRAY, $typesArray));
 retrieveFunctionsAndProperties(MODEL_COLUMNS_ARRAY, $modelName, $functions, $propertiesCode, $propertiesTxt);
 endingTask($modelLocation, $modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
-?>
+

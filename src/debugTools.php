@@ -327,4 +327,3 @@ function tailCustom(string $filepath, int $lines = 1) : string
 
   return trim($output);
 }
-?>

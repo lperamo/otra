@@ -19,4 +19,4 @@ $externalConfigFile = BASE_PATH . 'bundles/config/Config.php';
 
 if (true === file_exists($externalConfigFile))
   require $externalConfigFile;
-?>
+

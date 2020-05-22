@@ -22,4 +22,4 @@ if (false === isset($argv[ARG_BUNDLE_NAME]))
 }
 
 bundleHandling($interactive, $bundleName, $argv[ARG_BUNDLE_MASK] ?? null, true);
-?>
+

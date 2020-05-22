@@ -165,4 +165,4 @@ function generateJavaScript(
     echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
     , CLI_RED, json_last_error_msg(), PHP_EOL;
 }
-?>
+

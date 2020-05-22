@@ -251,4 +251,4 @@ abstract class Pdomysql
     return Sql::$_currentConn->errorInfo();
   }
 }
-?>
+

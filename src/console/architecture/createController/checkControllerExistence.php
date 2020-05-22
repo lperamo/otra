@@ -41,4 +41,4 @@ if (file_exists($controllerPath) === false)
 
   createController($controllersFolder, $controllerName, $interactive);
 }
-?>
+

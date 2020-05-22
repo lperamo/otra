@@ -246,4 +246,4 @@ if (($mask & CLEAR_CACHE_MASK_DEBUGGING) >> 8)
 
   echo 'Debugging files cleared', OTRA_SUCCESS;
 }
-?>
+

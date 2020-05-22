@@ -8,7 +8,9 @@ define('PATTERN', '@\s{0,}
 
 define('ANNOTATION_DEBUG_PAD', 80);
 define('LOADED_DEBUG_PAD', 80);
+define('PHP_OPEN_TAG_STRING', '<?php');
 define('PHP_OPEN_TAG_LENGTH', 5);
+define('PHP_END_TAG_STRING', '?>');
 define('PHP_END_TAG_LENGTH', 2);
 define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
 
@@ -22,17 +24,17 @@ define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
   // Beginning of content
-  $contentToAdd = '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+  $contentToAdd = PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
     ? substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
-    : '?>' . $contentToAdd;
+    : PHP_END_TAG_STRING . $contentToAdd;
 
   // Ending of content
-  if ('?>' === substr($contentToAdd, - PHP_END_TAG_LENGTH))
+  if (PHP_END_TAG_STRING === substr($contentToAdd, - PHP_END_TAG_LENGTH))
     $contentToAdd = substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
-    $contentToAdd .= '<?php';
+    $contentToAdd .= PHP_OPEN_TAG_STRING;
 
-  return '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
+  return PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
 }
 
 /**
@@ -326,9 +328,9 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
 {
   $offset = 0;
 
-  while (false !== ($posBeginPHP = strpos($contentToAdd, '<?php', $offset)))
+  while (false !== ($posBeginPHP = strpos($contentToAdd, PHP_OPEN_TAG_STRING, $offset)))
   {
-    $posFinPHP = strpos($contentToAdd, '?>', $posBeginPHP);
+    $posFinPHP = strpos($contentToAdd, PHP_END_TAG_STRING, $posBeginPHP);
 
     $contentToAdd = substr_replace($contentToAdd,
       str_replace('\'', '\\\'', substr($contentToAdd, $posBeginPHP, $posFinPHP - $posBeginPHP), $nbReplacements),
@@ -379,7 +381,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
 
   /* We ensure us that the content have only one space after the PHP opening tag and before the PHP ending tag
    * that surrounds the require statement */
-  $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\?>))@', ' ', $finalContent);
+  $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@', ' ', $finalContent);
 
   // We have to process the $match value because we have modified the code
   $newMatch = preg_replace('@\s{2,}@', '', $match);
@@ -388,7 +390,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
   $inEval = preg_match('@(?<=BOOTSTRAP###)[\S\s]*' . preg_quote($match) . '[\S\s]*(?=###BOOTSTRAP)@', $finalContent);
 
   /* If our $match is in PHP code then we determine the replacement string according to the context */
-  if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent))
+  if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\\' . PHP_END_TAG_STRING . ')@', $finalContent))
   {
     // We remove PHP tags
     $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
@@ -428,7 +430,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
   $contentToAdd = trim(substr(
     $contentToAdd,
     PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
-    -(3 + PHP_END_TAG_LENGTH)
+    -(2 + PHP_END_TAG_LENGTH)
   ));
 
   if (false !== strpos($match, 'require') &&
@@ -744,7 +746,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if ($tempFile === CACHE_PATH . 'php/MasterController.php')
               $tempFile = CORE_PATH . 'MasterController.php';
 
-            $nextContentToAdd = file_get_contents($tempFile);
+            $nextContentToAdd = file_get_contents($tempFile) . PHP_END_TAG_STRING;
 
             // we remove comments to facilitate the search and replace operations that follow
             /* @TODO Find a way to use this regex without removing links because links can contain // as in
@@ -796,7 +798,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
         {
         //var_dump($templateEntries);die;
           showFile($level, $templateEntry, ' via renderView');
-          $nextContentToAdd = file_get_contents($templateEntry);
+          $nextContentToAdd = file_get_contents($templateEntry) . PHP_END_TAG_STRING;
           ++$inc;
           assembleFiles($inc, $level, $templateEntry, $nextContentToAdd, $parsedFiles);
         }
@@ -962,7 +964,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   $finalContent = str_replace('declare(strict_types=1);', '', $finalContent);
 
   /** We stick the php files by removing end and open php tag between files */
-  $finalContent = preg_replace('@\?>\s*<\?php@', '', $finalContent);
+  $finalContent = preg_replace('@\\' . PHP_END_TAG_STRING . '\s*<\?php@', '', $finalContent);
 
   /** We suppress namespaces */
   $finalContent = preg_replace(
@@ -982,7 +984,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   */
 
   $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
-  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
+  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) .
+    PHP_END_TAG_STRING : '';
 
   /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
    *  START SECTION
@@ -1010,9 +1013,9 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return '<?php declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?php' == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces .
+    (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
-      : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)
+      : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
     );
 }
-?>

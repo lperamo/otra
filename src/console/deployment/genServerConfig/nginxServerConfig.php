@@ -281,4 +281,4 @@ file_put_contents($file, $content);
 echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'development' : 'production') .
   ' server configuration generated in ' . CLI_LIGHT_CYAN . $file . END_COLOR . '.' . PHP_EOL;
 return 0;
-?>
+

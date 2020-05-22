@@ -36,4 +36,4 @@ class Error404Action extends Controller
     );
   }
 }
-?>
+

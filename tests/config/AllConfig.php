@@ -20,4 +20,3 @@ class AllConfig
     $defaultConn = ''; // mandatory in order to modify it later if needed
   public static array $dbConnections = []; // mandatory in order to modify it later if needed
 }
-?>

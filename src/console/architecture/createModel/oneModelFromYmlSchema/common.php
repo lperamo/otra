@@ -66,4 +66,4 @@ function preparingErrorMessage(bool &$modelExists, bool &$tableExists, string &$
   if (false === $tableExists)
     $errorLabel .= 'The schema does not contains this table ' . $modelName . ' (maybe ... check the case).';
 }
-?>
+

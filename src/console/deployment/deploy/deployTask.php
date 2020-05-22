@@ -155,7 +155,7 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
    * TODO showing things correctly and knowing when all that ends. */
   if ($verbose === 1)
-    echo $cursorUpOne, "\033[" . strlen($message) . "C", OTRA_SUCCESS;
+    echo $cursorUpOne, "\033[" . strlen($message) . "C ", OTRA_SUCCESS;
   else
     echo $cursorUpOne, "\033[" . strlen($message) . "C", OTRA_SUCCESS;
 };

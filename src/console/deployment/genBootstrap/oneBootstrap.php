@@ -148,4 +148,4 @@ if (hasSyntaxErrors($file_))
   return;
 
 compressPHPFile($file_, $file);
-?>
+

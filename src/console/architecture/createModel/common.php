@@ -22,4 +22,4 @@ function modelCreation(int $modelLocation, string &$modelName,string &$modelFull
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
   modelCreationSuccess($bundleName, $modelName, $propertiesTxt);
 }
-?>
+

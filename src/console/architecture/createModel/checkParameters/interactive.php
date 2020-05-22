@@ -51,4 +51,4 @@ if (!isset($argv[ARG_METHOD]) || !in_array($argv[ARG_METHOD], $possibleChoices))
   // We clean the screen (8 lines to erase !)
   echo DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE;
 }
-?>
+

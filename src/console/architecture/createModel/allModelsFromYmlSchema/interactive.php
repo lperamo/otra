@@ -29,4 +29,4 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 }
 
 modelsCreation($modelLocation, $bundleName);
-?>
+

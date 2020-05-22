@@ -49,4 +49,4 @@ if (isset($paramsDesc[TasksManager::TASK_PARAMETERS]) === true)
 }
 
 echo END_COLOR;
-?>
+

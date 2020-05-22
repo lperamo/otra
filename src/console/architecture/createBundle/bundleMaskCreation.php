@@ -17,4 +17,3 @@ foreach(BUNDLE_FOLDERS as $key => &$folder)
 
   $bundleMask += pow(2, $key) * ($answer === 'y' ? 1 : 0);
 }
-?>

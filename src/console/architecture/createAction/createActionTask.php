@@ -24,4 +24,4 @@ actionHandling(
   $controllerPath,
   $argv[ARG_ACTION_NAME]
 );
-?>
+
