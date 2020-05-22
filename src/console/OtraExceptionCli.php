@@ -101,44 +101,46 @@ class OtraExceptionCli extends \Exception
     /*******************************
      * Write the BODY of the table *
      *******************************/
-    for($i = 0, $trace = $exception->backtraces, $max = count($trace); $i < $max; $i += 1)
+    for($actualTraceIndex = 0, $trace = $exception->backtraces, $maxTraceIndex = count($trace);
+        $actualTraceIndex < $maxTraceIndex;
+        $actualTraceIndex += 1)
     {
-      $now = $trace[$i];
+      $actualTrace = $trace[$actualTraceIndex];
 
-      if(0 === $i) unset($now['args'][self::KEY_VARIABLES]);
+      if(0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
 
-      createShowableFromArrayConsole($now['args'], 'Arguments', self::KEY_VARIABLES);
+      createShowableFromArrayConsole($actualTrace['args'], 'Arguments', self::KEY_VARIABLES);
 
       $compositeColoredPath = true;
 
-      if (isset($now['file']))
+      if (isset($actualTrace['file']))
       {
-        $now['file'] = str_replace('\\', '/', $now['file']);
+        $actualTrace['file'] = str_replace('\\', '/', $actualTrace['file']);
 
-        if (false !== mb_strpos($now['file'], CONSOLE_PATH))
-          $now['file'] = self::returnShortenFilePath('CONSOLE', $now['file']);
-        elseif (false !== mb_strpos($now['file'], CORE_PATH))
-          $now['file'] = self::returnShortenFilePath('CORE', $now['file']);
-        elseif (false !== mb_strpos($now['file'], BASE_PATH))
-          $now['file'] = self::returnShortenFilePath('BASE', $now['file']);
+        if (false !== mb_strpos($actualTrace['file'], CONSOLE_PATH))
+          $actualTrace['file'] = self::returnShortenFilePath('CONSOLE', $actualTrace['file']);
+        elseif (false !== mb_strpos($actualTrace['file'], CORE_PATH))
+          $actualTrace['file'] = self::returnShortenFilePath('CORE', $actualTrace['file']);
+        elseif (false !== mb_strpos($actualTrace['file'], BASE_PATH))
+          $actualTrace['file'] = self::returnShortenFilePath('BASE', $actualTrace['file']);
         else
           $compositeColoredPath = false;
       } else
       {
-        $now['file'] = '';
+        $actualTrace['file'] = '';
         $compositeColoredPath = false;
       }
 
-      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
-      self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
-      self::consoleLine($now, 'line', self::LINE_WIDTH),
+      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
+      self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
       self::consoleLine(
-        $now,
+        $actualTrace,
         'file',
         // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
         $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
-        $now['file']
+        $actualTrace['file']
       ),
         /** ARGUMENTS */
       CLI_LIGHT_BLUE, '|', END_COLOR,
