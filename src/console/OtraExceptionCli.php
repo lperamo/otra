@@ -106,6 +106,7 @@ class OtraExceptionCli extends \Exception
         $actualTraceIndex += 1)
     {
       $actualTrace = $trace[$actualTraceIndex];
+      $actualTraceFile = $actualTrace['file'] ?? '';
 
       if (0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
 
@@ -113,23 +114,20 @@ class OtraExceptionCli extends \Exception
 
       $compositeColoredPath = true;
 
-      if (isset($actualTrace['file']))
+      if ($actualTraceFile !== '')
       {
-        $actualTrace['file'] = str_replace('\\', '/', $actualTrace['file']);
+        $actualTraceFile = str_replace('\\', '/', $actualTraceFile);
 
-        if (false !== mb_strpos($actualTrace['file'], CONSOLE_PATH))
-          $actualTrace['file'] = self::returnShortenFilePath('CONSOLE', $actualTrace['file']);
-        elseif (false !== mb_strpos($actualTrace['file'], CORE_PATH))
-          $actualTrace['file'] = self::returnShortenFilePath('CORE', $actualTrace['file']);
-        elseif (false !== mb_strpos($actualTrace['file'], BASE_PATH))
-          $actualTrace['file'] = self::returnShortenFilePath('BASE', $actualTrace['file']);
+        if (false !== mb_strpos($actualTraceFile, CONSOLE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
+        elseif (false !== mb_strpos($actualTraceFile, CORE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
+        elseif (false !== mb_strpos($actualTraceFile, BASE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
         else
           $compositeColoredPath = false;
       } else
-      {
-        $actualTrace['file'] = '';
         $compositeColoredPath = false;
-      }
 
       echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
       self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
@@ -140,7 +138,7 @@ class OtraExceptionCli extends \Exception
         'file',
         // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
         $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
-        $actualTrace['file']
+        $actualTraceFile
       ),
         /** ARGUMENTS */
       CLI_LIGHT_BLUE, '|', END_COLOR,
