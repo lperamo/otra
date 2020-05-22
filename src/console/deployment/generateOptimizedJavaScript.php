@@ -5,6 +5,8 @@ use otra\OtraException;
 use function otra\console\returnLegiblePath;
 use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
+define('OTRA_LABEL_TSCONFIG_JSON', 'tsconfig.json');
+
 function generateJavaScript(
   int $verbose,
   bool $launch,
@@ -18,7 +20,7 @@ function generateJavaScript(
          * or a list of files without json configuration ... but not a list with json configuration ...
          * so we create one temporary json that list only the file we want */
 
-  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . 'tsconfig.json'), true);
+  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
 
   if ($typescriptConfig !== null)
   {
@@ -80,7 +82,7 @@ function generateJavaScript(
     {
       echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
       CLI_LIGHT_CYAN,
-      'tsconfig.json', CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
+      OTRA_LABEL_TSCONFIG_JSON, CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
     }
 
     // We launch Google Closure Compiler only if a file has been generated with success
@@ -164,7 +166,7 @@ function generateJavaScript(
       }
     }
   } else
-    echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
+    echo 'There is an error with your ', returnLegiblePath(OTRA_LABEL_TSCONFIG_JSON), ' file. : '
     , CLI_RED, json_last_error_msg(), PHP_EOL;
 }
 
