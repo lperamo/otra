@@ -175,7 +175,7 @@ abstract class Router
 
     $paramsString = '';
 
-    foreach($params as $param => &$value)
+    foreach($params as &$value)
     {
       $paramsString .= '/' . $value;
     }
