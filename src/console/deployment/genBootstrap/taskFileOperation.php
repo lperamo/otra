@@ -19,6 +19,7 @@ define('PHP_END_TAG_LENGTH', 2);
 define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
 
 define('OTRA_ALREADY_PARSED_LABEL', ' ALREADY PARSED');
+define('OTRA_KEY_REQUIRE', 'require');
 define('OTRA_KEY_EXTENDS', 'extends');
 define('OTRA_KEY_STATIC', 'static');
 define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
@@ -574,7 +575,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         if (true === in_array($tempFile, $parsedFiles, true))
           continue;
 
-        $filesToConcat['php']['require'][$tempFile] = [
+        $filesToConcat['php'][OTRA_KEY_REQUIRE][$tempFile] = [
           'match' => $match[0],
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
@@ -675,7 +676,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
   $filesToConcat = [
     'php' => [
       'use' => [],
-      'require' => [],
+      OTRA_KEY_REQUIRE => [],
       OTRA_KEY_EXTENDS => [],
       OTRA_KEY_STATIC => []
     ],
@@ -712,7 +713,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
                 $tempFile = $nextFileOrInfo;
                 $method = ' via use statement';
                 break;
-              case 'require':
+              case OTRA_KEY_REQUIRE:
                 $tempFile = $keyOrFile;
                 $method = ' via require/include statement';
                 break;
@@ -759,7 +760,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
             $isReturn = false;
 
-            if ('require' === $inclusionMethod
+            if (OTRA_KEY_REQUIRE === $inclusionMethod
               /* if the file has contents that begin by a return statement and strict type declaration then we apply a
                particular process*/
               && false !== strpos(
