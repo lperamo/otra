@@ -291,16 +291,16 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
-      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' === $trimmedMatch)
-      { // we must not change this line from CORE_PATH . Router.php !
-        continue;
-      } else
+      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch)
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
-          '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
-          $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
+        '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
+        $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
         exit(1);
       }
+
+      // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
+      // next loop iteration!
     }
   }
 
