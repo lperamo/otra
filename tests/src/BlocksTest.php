@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
-use otra\
-{MasterController, Controller, OtraException};
+namespace src;
+
+use otra\{MasterController, Controller, OtraException};
 use phpunit\framework\TestCase;
 
 /**
@@ -12,11 +14,12 @@ class BlocksTest extends TestCase
   private static Controller $controller;
 
   /**
-   * @throws ReflectionException
+   * @throws \ReflectionException
    */
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    parent::setUp();
+    $_SERVER[APP_ENV] = 'prod';
     define('VERSION', 'v1');
     self::$controller = new Controller();
     self::$controller->route = 'routeTest';
@@ -33,12 +36,12 @@ class BlocksTest extends TestCase
   public function testSimpleBlockSystem() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/simpleLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
     Welcome to OTRA!
   </title><body>
   Hello!
 </body>
-", $content);
+', $content);
   }
 
   /**
@@ -50,11 +53,11 @@ class BlocksTest extends TestCase
   public function testAdvancedBlockSystem() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/advancedLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
 </body>
-", $content);
+', $content);
   }
 
   /**
@@ -69,12 +72,12 @@ class BlocksTest extends TestCase
   public function testComplexLayout() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/complexLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
         test
     </body>
-", $content);
+', $content);
   }
 
   /**
@@ -91,11 +94,11 @@ class BlocksTest extends TestCase
   public function testCompleteLayout() : void
   {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/completeLayout.phtml');
-    $this->assertEquals("<!DOCTYPE html><html><title>
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
         test
       Hello World!after</body>
-", $content);
+', $content);
   }
 }

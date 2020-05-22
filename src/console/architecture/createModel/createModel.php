@@ -2,7 +2,9 @@
 
 use otra\OtraException;
 
-define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
+if (!defined('OTRA_SUCCESS'))
+  define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
+
 $bundlesPath = BASE_PATH . 'bundles/';
 
 /**

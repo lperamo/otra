@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
@@ -15,12 +17,12 @@ if (defined('TEST_BUNDLE_UPPER') === false)
  */
 class CreateBundleTaskTest extends TestCase
 {
-  const TEST_TASK = 'createBundle',
-    TEST_BUNDLE = 'test',
-    TEST_MODULE = 'test';
+  public const TEST_BUNDLE = 'test';
+  private const TEST_TASK = 'createBundle';
 
   protected function tearDown(): void
   {
+    parent::tearDown();
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {
@@ -82,6 +84,6 @@ class CreateBundleTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_BUNDLE_PATH);
+    self::assertFileExists(TEST_BUNDLE_PATH);
   }
 }

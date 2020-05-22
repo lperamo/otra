@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace src;
 
 use phpunit\framework\TestCase;
@@ -8,17 +10,18 @@ use phpunit\framework\TestCase;
  */
 class DebugToolsTest extends TestCase
 {
-  const LOG_PATH = BASE_PATH . 'logs/',
+  private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:86:',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:88:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   private static string $LOGS_PROD_PATH;
 
   public static function setUpBeforeClass(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'];
+    parent::setUpBeforeClass();
+    $_SERVER[APP_ENV] = 'prod';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
 
     // @TODO we should be able to do a simple require and not require_once
     require_once CORE_PATH . 'debugTools.php';
@@ -29,6 +32,8 @@ class DebugToolsTest extends TestCase
 
   public static function tearDownAfterClass(): void
   {
+    parent::tearDownAfterClass();
+
     if (OTRA_PROJECT === false)
     {
       if (file_exists(self::$LOGS_PROD_PATH))
@@ -47,8 +52,8 @@ class DebugToolsTest extends TestCase
   public function testLg() : void
   {
     lg('[OTRA_TEST_DEBUG_TOOLS_LG]');
-    $traceLogFile = self::LOG_PATH . $_SERVER['APP_ENV'] . '/trace.txt';
-    $this->assertRegExp(
+    $traceLogFile = self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt';
+    self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
       tailCustom($traceLogFile, 1)
      );
@@ -93,9 +98,9 @@ class DebugToolsTest extends TestCase
   {
     $expectedOutputPartial = '';
 
-    for($i = 1; $i < $maxChildren; ++$i)
+    for($index = 1; $index < $maxChildren; ++$index)
     {
-      $expectedOutputPartial .= '  [' . $i . '] =>' . "\n  int(0)\n";
+      $expectedOutputPartial .= '  [' . $index . '] =>' . "\n  int(0)\n";
     }
 
     return $expectedOutputPartial;
@@ -112,7 +117,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0,$maxData) . "\"...\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData) . "\"...\n"
       . $this->getExpectedOutputPartial($maxChildren)
       . "\n  (more elements)...\n}\n"
     );
@@ -135,7 +140,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren)
       . "\n  (more elements)...\n}\n"
     );
@@ -155,7 +160,7 @@ class DebugToolsTest extends TestCase
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat(0, $maxData + 1) . "\"\n"
+      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
       . $this->getExpectedOutputPartial($maxChildren + 1)
       . "}\n"
     );
@@ -172,8 +177,8 @@ class DebugToolsTest extends TestCase
    */
   public function testGetCaller() : void
   {
-    $test = function(){ return getCaller(); };
-    $this->assertEquals(__FILE__ . ':' . __LINE__, $test());
+    $testGetCaller = function(){ return getCaller(); };
+    self::assertEquals(__FILE__ . ':' . __LINE__, $testGetCaller());
   }
 
   /**
@@ -199,7 +204,7 @@ class DebugToolsTest extends TestCase
    */
   public function testReformatSource() : void
   {
-    $this->assertEquals(
+    self::assertEquals(
       '&lt;p&gt;Hi&lt;/p&gt;<br/>&lt;p&gt;Ha&lt;/p&gt;',
       reformatSource('<p>Hi</p><p>Ha</p>')
     );
@@ -211,7 +216,7 @@ class DebugToolsTest extends TestCase
   public function testConvertArrayToShowable() : void
   {
     $dataToShow = ['test' => 'other test'];
-    $this->assertEquals(
+    self::assertEquals(
       '    <table class="test innerHeader">
       <thead>
         <tr>
@@ -233,6 +238,6 @@ class DebugToolsTest extends TestCase
   {
     $dataToShow = ['test' => 'other test'];
     createShowableFromArray($dataToShow, 'title');
-    $this->markTestIncomplete('This function is not finished so we cannot finish the test.');
+    self::markTestIncomplete('This function is not finished so we cannot finish the test.');
   }
 }

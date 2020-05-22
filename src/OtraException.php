@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace otra;
 
-use otra\{Controller, console\OtraExceptionCLI};
+use otra\{Controller, console\OtraExceptionCli};
 use config\Routes;
 
 // Sometimes it is already defined ! so we put '_once' ...
@@ -58,6 +58,7 @@ class OtraException extends \Exception
     $context = [],
     bool $otraCliWarning = false)
   {
+    parent::__construct();
     $this->code = (null !== $code) ? $code : $this->getCode();
     $this->otraCliWarning = $otraCliWarning;
 
@@ -71,7 +72,7 @@ class OtraException extends \Exception
     $this->context = $context;
 
     if ('cli' === PHP_SAPI)
-      new OtraExceptionCLI($this);
+      new OtraExceptionCli($this);
     else
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
@@ -90,29 +91,29 @@ class OtraException extends \Exception
     ob_clean();
 
     // If the error is that we do not found the Controller class then we directly show the message.
-    if (!class_exists('Controller'))
+    try {
+      $renderController = new Controller(
+        [
+          'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
+          'module' =>  Routes::$_[$route]['chunks'][2] ?? '',
+          'route' => $route,
+          'hasCssToLoad' => '',
+          'hasJsToLoad' => ''
+        ]
+      );
+    } catch(\Exception $e)
     {
       if (PHP_SAPI === 'cli')
       {
         echo CLI_RED . 'Error in ' . CLI_LIGHT_CYAN . $this->file . CLI_RED . ':' . CLI_LIGHT_CYAN . $this->line .
           CLI_RED . ' : ' . $this->message . END_COLOR . PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
-      }
-      else
+      } else
         return '<span style="color:#E00">Error in </span><span style="color:#0AA">' . $this->file .
           '</span>:<span style="color:#0AA">' . $this->line . '</span><span style="color:#E00"> : ' . $this->message .
           '</span>';
     }
 
-    $renderController = new Controller(
-      [
-        'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
-        'module' =>  Routes::$_[$route]['chunks'][2] ?? '',
-        'route' => $route,
-        'hasCssToLoad' => '',
-        'hasJsToLoad' => ''
-      ]
-    );
     $renderController->viewPath = CORE_VIEWS_PATH . '/errors';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 

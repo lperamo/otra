@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /** Bootstrap of the framework - Production entry point
  *
  * @author Lionel Péramo */
 require __DIR__ . '/../config/constants.php';
 
-$uri = $_SERVER['REQUEST_URI'];
+$requestUri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -13,13 +15,13 @@ session_start([
 ]);
 
 // Otherwise for dynamic pages...
-$_SERVER['APP_ENV'] = 'prod';
+$_SERVER[APP_ENV] = 'prod';
 
 try
 {
   require CACHE_PATH . 'php/RouteManagement.php';
 
-  if ($route = \cache\php\Router::getByPattern($uri))
+  if ($route = \cache\php\Router::getByPattern($requestUri))
   {
     header('Content-Type: text/html; charset=utf-8');
     header('Vary: Accept-Encoding,Accept-Language');
@@ -29,7 +31,7 @@ try
     {
       header('Content-Encoding: gzip');
       require BASE_PATH . 'config/AllConfig.php';
-      echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz'); // version to change
+      echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route[0] . VERSION . 'che') . '.gz');
       exit;
     }
 

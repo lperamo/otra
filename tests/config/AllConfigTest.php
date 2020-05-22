@@ -9,7 +9,7 @@ class AllConfigTest extends TestCase
 {
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    $_SERVER[APP_ENV] = 'prod';
   }
 
   /**
@@ -47,7 +47,9 @@ class AllConfigTest extends TestCase
     if (OTRA_PROJECT === false)
     {
       rmdir($externalConfigFileFolder);
-      rmdir(BASE_PATH . 'bundles');
+
+      if (!file_exists(BASE_PATH . 'bundles'))
+        rmdir(BASE_PATH . 'bundles');
     }
   }
 }

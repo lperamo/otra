@@ -61,7 +61,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
 
         // We only need files that match with the actual environment
         // so, for example, we'll not include dev config if we are in prod mode !
-        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER['APP_ENV'] === 'prod')
+        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER[APP_ENV] === 'prod')
           continue;
 
         $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));

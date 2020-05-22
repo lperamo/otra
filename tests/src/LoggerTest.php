@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace src;
 
 use otra\Logger;
 use phpunit\framework\TestCase;
@@ -13,8 +16,8 @@ class LoggerTest extends TestCase
 
   public static function setUpBeforeClass(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER['APP_ENV'] . '/';
+    $_SERVER[APP_ENV] = 'prod';
+    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
     // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
     require_once CORE_PATH . 'debugTools.php';
 
@@ -39,7 +42,7 @@ class LoggerTest extends TestCase
     // context
     Logger::log('[OTRA_LOGGER_TEST]');
     $logFile = self::$LOGS_PROD_PATH . 'log.txt';
-    $this->assertRegExp(
+    self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
       tailCustom($logFile, 1)
     );

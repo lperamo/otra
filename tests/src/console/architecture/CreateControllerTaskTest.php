@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
@@ -22,13 +24,15 @@ if (!defined('TEST_CONTROLLER_PATH'))
  */
 class CreateControllerTaskTest extends TestCase
 {
-  const TEST_TASK = 'createController',
+  private const TEST_TASK = 'createController';
+  public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test',
     TEST_CONTROLLER = 'test';
 
   protected function tearDown(): void
   {
+    parent::tearDown();
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {
@@ -150,6 +154,6 @@ class CreateControllerTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_CONTROLLER_PATH);
+    self::assertFileExists(TEST_CONTROLLER_PATH);
   }
 }

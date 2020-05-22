@@ -13,7 +13,7 @@ $cachePath = $basePath . 'cache/';
 $testPath = $otraProject === true
   ? $basePath . 'vendor/otra/otra/tests/'
   : $basePath . 'tests/';
-$content = '<?php define(\'BASE_PATH\',\'' . $basePath .
+$content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'CORE_PATH\',\'' . $corePath .
   '\');define(\'CACHE_PATH\',\'' . $cachePath .
   '\');define(\'CONSOLE_PATH\',\'' . $consolePath .
@@ -26,6 +26,7 @@ $content = '<?php define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'CORE_CSS_PATH\',\'' . $coreResourcesPath . 'css/' .
   '\');define(\'CORE_JS_PATH\',\'' . $coreResourcesPath . 'js/' .
   '\');define(\'SPACE_INDENT\',\'  ' .
+  '\');define(\'APP_ENV\',\'APP_ENV' .
   '\');define(\'OTRA_VERSION\',\'1.0.0-alpha.2.3.0' .
   '\');if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');?>';
 

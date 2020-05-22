@@ -131,7 +131,7 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 {
   if (isset($route))
   {
-    $cacheFileName = AllConfig::$cache_path . sha1('ca' . $route . VERSION . 'che');
+    $cacheFileName = AllConfig::$cachePath . sha1('ca' . $route . VERSION . 'che');
 
     // Is there a cache for this route ? If yes, clears it.
     if (file_exists($cacheFileName) === true)
@@ -143,7 +143,7 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
   }
 
   // Otherwise we clear all the other routes.
-  array_map('unlink', glob(AllConfig::$cache_path . '*.cache'));
+  array_map('unlink', glob(AllConfig::$cachePath . '*.cache'));
   echo 'PHP OTRA internal cache cleared', OTRA_SUCCESS;
 }
 

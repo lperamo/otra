@@ -10,6 +10,7 @@ define('ANNOTATION_DEBUG_PAD', 80);
 define('LOADED_DEBUG_PAD', 80);
 define('PHP_OPEN_TAG_LENGTH', 5);
 define('PHP_END_TAG_LENGTH', 2);
+define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
 
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
@@ -390,7 +391,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
   if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent))
   {
     // We remove PHP tags
-    substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
+    $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
   } else if(1 === $inEval)
@@ -422,9 +423,13 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
  */
 function processReturn(string &$finalContent, string &$contentToAdd, string &$match, int &$posMatch)
 {
-  // 9 means after the 'return' statement, -5 for the semicolon, the ending tag and the mandatory line break
+  //-5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(substr($contentToAdd, PHP_OPEN_TAG_LENGTH + 7, -(3 + PHP_END_TAG_LENGTH)));
+  $contentToAdd = trim(substr(
+    $contentToAdd,
+    PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
+    -(3 + PHP_END_TAG_LENGTH)
+  ));
 
   if (false !== strpos($match, 'require') &&
     0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
@@ -749,9 +754,14 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             $isReturn = false;
 
             if ('require' === $inclusionMethod
-              /* if the file has contents that begin by a return statement then we apply a particular process*/
+              /* if the file has contents that begin by a return statement and strict type declaration then we apply a
+               particular process*/
               && false !== strpos(
-                substr($nextContentToAdd, PHP_OPEN_TAG_LENGTH + 1, PHP_OPEN_TAG_LENGTH + 7),
+                substr(
+                  $nextContentToAdd,
+                  PHP_OPEN_TAG_LENGTH + 1,
+                  PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION
+                ),
                 'return'
               ))
             {
@@ -876,11 +886,8 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
       $newFile = searchForClass($classesFromFile, $class, $contentToAdd, $offset);
 
       // now that we are sure that we have the real path, we test it again
-      if (true === in_array($newFile, $parsedFiles, true))
-        continue;
-
-      // if we already have included the file
-      if (false === $newFile)
+      // and if we already have included the file, we also continue
+      if (true === in_array($newFile, $parsedFiles, true) || false === $newFile)
         continue;
     }
 

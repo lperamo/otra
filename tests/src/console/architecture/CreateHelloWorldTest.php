@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
@@ -18,7 +20,8 @@ class CreateHelloWorldTest extends TestCase
 
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    parent::setUp();
+    $_SERVER[APP_ENV] = 'prod';
     define('ERASE_SEQUENCE', "\033[1A\r\033[K");
     define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
 
@@ -31,6 +34,8 @@ class CreateHelloWorldTest extends TestCase
 
   protected function tearDown(): void
   {
+    parent::tearDown();
+
     // cleaning
     if (OTRA_PROJECT === false)
     {

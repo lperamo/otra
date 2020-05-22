@@ -1,7 +1,13 @@
 <?php
+declare(strict_types=1);
+
+namespace src\console;
+
 use config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use otra\{OtraException, console\Database, bdd\Sql, Session};
+use otra\
+{console\OtraExceptionCli, OtraException, console\Database, bdd\Sql, Session};
+use ReflectionException;
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
 
@@ -10,24 +16,24 @@ define('INIT_IMPORTS_FUNCTION', '_initImports');
  */
 class DatabaseTest extends TestCase
 {
-  const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php';
-  const TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+  private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
+    TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
+
   protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
-  private static
+  private static string
     $configFolder = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
     $configBackupFolder = TEST_PATH . 'config/data/',
     $databaseConnection = 'test',
     $databaseFirstTableName = 'testDB_table',
     $databaseName = 'testDB',
-    $fixturesFile = 'db_fixture',
+    //$fixturesFile = 'db_fixture',
     $schemaFile = 'schema.yml',
     $schemaAbsolutePath,
     $importedSchemaAbsolutePath,
     $schemaFileBackup,
     $tablesOrderFile = 'tables_order.yml',
     $tablesOrderFilePath,
-    $tablesOrder = ['testDB_table2', 'testDB_table3', 'testDB_table'],
     $configFolderSql,
     $configFolderSqlBackup,
     $configFolderSqlFixtures,
@@ -37,12 +43,14 @@ class DatabaseTest extends TestCase
     $configFolderYmlFixtures,
     $configFolderYmlFixturesBackup;
 
+  private static array $tablesOrder = ['testDB_table2', 'testDB_table3', 'testDB_table'];
   /**
    * @throws ReflectionException
    */
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    parent::setUp();
+    $_SERVER[APP_ENV] = 'prod';
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
     self::$configFolderSql = self::$configFolder . 'sql/';
@@ -63,7 +71,9 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    */
-  public static function setUpBeforeClass() : void{
+  public static function setUpBeforeClass() : void
+  {
+    parent::setUpBeforeClass();
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
 
@@ -75,6 +85,7 @@ class DatabaseTest extends TestCase
    */
   protected function tearDown(): void
   {
+    parent::tearDown();
     $this->cleanAll();
   }
 
@@ -118,37 +129,37 @@ class DatabaseTest extends TestCase
     Database::initBase();
 
     // We test each private static variable that has been set by Database::initBase()
-    $this->assertEquals(
+    self::assertEquals(
       Database::getDirs(),
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/yml/',
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'fixtures/',
       removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/sql/',
       removeFieldScopeProtection(Database::class, 'pathSql')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathSql')->getValue() . 'fixtures/',
       removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::$schemaFile,
       removeFieldScopeProtection(Database::class, 'schemaFile')->getValue()
     );
 
-    $this->assertEquals(
+    self::assertEquals(
       removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::$tablesOrderFile,
       removeFieldScopeProtection(Database::class, 'tablesOrderFile')->getValue()
     );
@@ -175,7 +186,7 @@ class DatabaseTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
     $dirs = Database::getDirs();
-    $this->assertIsArray($dirs);
+    self::assertIsArray($dirs);
   }
 
   /**
@@ -202,8 +213,8 @@ class DatabaseTest extends TestCase
 
     Database::clean();
     $sqlPath = removeFieldScopeProtection(Database::class, 'pathSql')->getValue();
-    $this->assertEquals([], glob($sqlPath . '/*.sql'));
-    $this->assertEquals([], glob($sqlPath . 'truncate/*.sql'));
+    self::assertEquals([], glob($sqlPath . '/*.sql'));
+    self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
   }
 
   /**
@@ -238,7 +249,7 @@ class DatabaseTest extends TestCase
 
     // Assertions
     $endPath = removeFieldScopeProtection(Database::class, '_databaseFile')->getValue() . '.sql';
-    $this->assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
+    self::assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
   }
 
 
@@ -249,7 +260,7 @@ class DatabaseTest extends TestCase
   public function testGetAttr() : void
   {
     $attrTest = Database::getAttr('test');
-    $this->assertIsString($attrTest);
+    self::assertIsString($attrTest);
   }
 
   /**
@@ -404,7 +415,7 @@ class DatabaseTest extends TestCase
     try
     {
       Database::createDatabase(self::$databaseName);
-    } catch (OtraException $le)
+    } catch (OtraException $exception)
     {
       echo 'Schema already exists', PHP_EOL;
     }
@@ -673,7 +684,7 @@ class DatabaseTest extends TestCase
 
     // launching the task
     $sqlInstance = Database::dropDatabase(self::$databaseName);
-    $this->assertInstanceOf(Sql::class, $sqlInstance);
+    self::assertInstanceOf(Sql::class, $sqlInstance);
   }
 
   /**
@@ -955,8 +966,8 @@ class DatabaseTest extends TestCase
 
     // launching task
     Database::importSchema(self::$databaseName, self::$databaseConnection);
-    $this->assertFileExists(self::$importedSchemaAbsolutePath);
-    $this->assertFileEquals(self::$schemaFileBackup, self::$importedSchemaAbsolutePath);
+    self::assertFileExists(self::$importedSchemaAbsolutePath);
+    self::assertFileEquals(self::$schemaFileBackup, self::$importedSchemaAbsolutePath);
   }
 
   /**
@@ -1021,8 +1032,8 @@ class DatabaseTest extends TestCase
     foreach (self::$tablesOrder as &$table)
     {
       $ymlFile = self::$configFolderYmlFixtures . $table . '.yml';
-      $this->assertFileExists(self::$configFolderYmlFixtures . $table . '.yml');
-      $this->assertFileEquals(self::$configFolderYmlFixturesBackup . $table . '.yml', $ymlFile);
+      self::assertFileExists(self::$configFolderYmlFixtures . $table . '.yml');
+      self::assertFileEquals(self::$configFolderYmlFixturesBackup . $table . '.yml', $ymlFile);
     }
   }
 }

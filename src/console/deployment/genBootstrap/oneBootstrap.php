@@ -16,7 +16,7 @@ require __DIR__ . (OTRA_PROJECT
 require CONSOLE_PATH . 'colors.php';
 
 echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
-$_SERVER['APP_ENV'] = 'prod';
+$_SERVER[APP_ENV] = 'prod';
 
 require CLASS_MAP_PATH;
 
@@ -112,7 +112,7 @@ define(
       && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
       : '',
-    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
+    "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
     'temporaryEnv' => 'prod'
   ]
 );

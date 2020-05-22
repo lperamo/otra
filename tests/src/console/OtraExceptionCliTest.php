@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
-use otra\{console\OtraExceptionCLI, OtraException};
+namespace src\console;
+
+use otra\{console\OtraExceptionCli, OtraException};
 use phpunit\framework\TestCase;
 
 /**
@@ -10,7 +13,8 @@ class OtraExceptionCliTest extends TestCase
 {
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    parent::setUp();
+    $_SERVER[APP_ENV] = 'prod';
   }
 
   /**
@@ -18,7 +22,7 @@ class OtraExceptionCliTest extends TestCase
    */
   public function testOtraExceptionCli(): void
   {
-    $this->assertInstanceOf(
+    self::assertInstanceOf(
       OtraExceptionCli::class,
       new OtraExceptionCli(new OtraException('test'))
     );
@@ -30,7 +34,7 @@ class OtraExceptionCliTest extends TestCase
    */
   public function testOtraExceptionCli_WithContext(): void
   {
-    $this->assertInstanceOf(
+    self::assertInstanceOf(
       OtraExceptionCli::class,
       new OtraExceptionCli(
         new OtraException(

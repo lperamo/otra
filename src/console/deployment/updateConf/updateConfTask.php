@@ -164,7 +164,7 @@ if (function_exists('sortRoutes') === false)
 uksort($routesArray, $sortRoutes);
 
 // Transforms the array in code that returns the array.
-$routesContent = '<?php return [';
+$routesContent = '<?php declare(strict_types=1);return [';
 loopForEach($routesContent, $routesArray, true);
 $routesContent = substr($routesContent, 0, -1) . ']; ?>';
 

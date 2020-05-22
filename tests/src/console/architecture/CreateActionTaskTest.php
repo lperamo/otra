@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
@@ -19,23 +21,28 @@ define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST
  */
 class CreateActionTaskTest extends TestCase
 {
-  const TEST_TASK = 'createAction',
-    TEST_BUNDLE = 'test',
-    TEST_MODULE = 'test',
-    TEST_CONTROLLER = 'test',
-    TEST_ACTION = 'test',
+  private const TEST_TASK = 'createAction',
     TEST_BUNDLES_CONFIG_PATH = BASE_PATH . 'bundles/config/',
     TEST_BUNDLES_CONFIG_FILE_PATH = self::TEST_BUNDLES_CONFIG_PATH . 'Routes.php',
     TEST_BUNDLE_CONFIG_PATH = TEST_BUNDLE_PATH . 'config/',
     TEST_BUNDLE_ROUTES_PATH = self::TEST_BUNDLE_CONFIG_PATH . 'Routes.php';
 
+  public const
+    TEST_BUNDLE = 'test',
+    TEST_MODULE = 'test',
+    TEST_CONTROLLER = 'test',
+    TEST_ACTION = 'test';
+
   protected function setUp(): void
   {
-    $_SERVER['APP_ENV'] = 'prod';
+    parent::setUp();
+    $_SERVER[APP_ENV] = 'prod';
   }
 
   protected function tearDown(): void
   {
+    parent::tearDown();
+
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {
@@ -43,6 +50,10 @@ class CreateActionTaskTest extends TestCase
 
       /** @var callable $delTree */
       $delTree(TEST_BUNDLE_PATH);
+
+      if (file_exists(self::TEST_BUNDLES_CONFIG_PATH))
+        rmdir(self::TEST_BUNDLES_CONFIG_PATH);
+
       rmdir(BASE_PATH . 'bundles');
     }
   }
@@ -194,16 +205,16 @@ class CreateActionTaskTest extends TestCase
     );
 
     // testing
-    $this->assertFileExists(TEST_ACTION_PATH);
-    $this->assertFileEquals(TEST_PATH . 'examples/createAction/Action.php', TEST_ACTION_PATH);
-    $this->assertFileExists(TEST_VIEWS_PATH);
-    $this->assertFileExists(TEST_VIEWS_SUBFOLDER_PATH);
-    $this->assertFileExists(TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION . '.phtml');
+    self::assertFileExists(TEST_ACTION_PATH);
+    self::assertFileEquals(TEST_PATH . 'examples/createAction/Action.php', TEST_ACTION_PATH);
+    self::assertFileExists(TEST_VIEWS_PATH);
+    self::assertFileExists(TEST_VIEWS_SUBFOLDER_PATH);
+    self::assertFileExists(TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION . '.phtml');
 
-    $this->assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
+    self::assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
 
-    $this->assertFileExists(self::TEST_BUNDLE_ROUTES_PATH);
-    $this->assertFileEquals(
+    self::assertFileExists(self::TEST_BUNDLE_ROUTES_PATH);
+    self::assertFileEquals(
       TEST_PATH . 'examples/createAction/Routes.php',
       self::TEST_BUNDLE_ROUTES_PATH
     );

@@ -24,12 +24,14 @@ function lg(string $message) : void
 
 function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
 {
+  /** @var string $oldXDebugMaxData  */
   if (true === $maxData)
   {
     $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
     ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
   }
 
+  /** @var string $oldXDebugMaxChildren  */
   if (true === $maxChildren)
   {
     $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
@@ -138,10 +140,10 @@ function createShowableFromArrayConsole(?array &$dataToShow, string $title, $ind
 {
   return;
 
-  echo $title, PHP_EOL,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
+//  echo $title, PHP_EOL,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
@@ -259,7 +261,7 @@ function debug(bool $noErrors = true) : bool
   if (true === $noErrors)
     error_reporting(0);
 
-  return 'dev' === $_SERVER['APP_ENV'];
+  return 'dev' === $_SERVER[APP_ENV];
 }
 
   /**

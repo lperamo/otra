@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /** Bootstrap of the framework - Development entry point
  *
  * @author Lionel Péramo */
 require __DIR__ . '/../config/constants.php';
 
-$uri = $_SERVER['REQUEST_URI'];
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -19,9 +20,9 @@ if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntr
 
 require CORE_PATH . 'debugTools.php';
 
-ini_set('display_errors', 1);
-ini_set('html_errors', 1);
-ini_set('error_reporting', -1 & ~E_DEPRECATED);
+ini_set('display_errors', '1');
+ini_set('html_errors', '1');
+error_reporting(-1 & ~E_DEPRECATED);
 
 /** CLASS MAPPING */
 require CACHE_PATH . 'php/ClassMap.php';
