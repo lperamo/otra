@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use config\AllConfig;
 
+define('OTRA_LABEL_RETURN_403', 'return 403;');
+
 /**
  * @return string
  */
@@ -81,7 +83,7 @@ function handleSecurity(): string
     PHP_EOL .
     SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT . SPACE_INDENT . 'return 403;' . PHP_EOL .
+    SPACE_INDENT . SPACE_INDENT . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
@@ -106,7 +108,7 @@ function checkHttpReferer() : string
 {
   return SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL;
 }
 
@@ -195,7 +197,7 @@ function handleWebFolderAssets() : string
     PHP_EOL .
     SPACE_INDENT_2 . 'if ($referer = "")' . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT_2 . '# Handle vendor images' . PHP_EOL .
