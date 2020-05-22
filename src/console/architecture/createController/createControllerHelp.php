@@ -12,9 +12,9 @@ return [
     'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
   ],
   [
-    TasksManager::OPTIONAL_REQUIRED,
-    TasksManager::OPTIONAL_REQUIRED,
-    TasksManager::OPTIONAL_REQUIRED,
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::REQUIRED_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER
   ],
   'Architecture'
