@@ -12,7 +12,7 @@ abstract class Session
 {
   private static string $id;
 
-  public static function init() { self::$id = \sha1(\time()); }
+  public static function init() { self::$id = \sha1((string)\time()); }
 
   /** Puts a value associated with a key into the session
    *

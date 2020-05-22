@@ -20,5 +20,4 @@ $delTree = function (string $dir) use (&$delTree) : bool
   }
 
   return rmdir($dir);
-}
-
+};

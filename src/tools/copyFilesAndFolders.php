@@ -53,19 +53,21 @@ if (!function_exists('copyFileAndFolders'))
       RecursiveIteratorIterator::SELF_FIRST
     );
 
+    /** @var SplFileInfo $file */
     foreach ($files as $file)
     {
       if ($file->isDir() === true)
       {
-        $destinationFolder = $destination . $file->getFileName();
+        $destinationFolder = $destination . $file->getFilename();
 
         if (file_exists($destinationFolder) === false && false === mkdir($destinationFolder))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
       } else
       {
-        $destinationFilePath = $destination . substr($file, $initialFolderLength);
+        $filePath = $file->getRealPath();
+        $destinationFilePath = $destination . substr($filePath, $initialFolderLength);
 
-        if (false === copy($file, $destinationFilePath))
+        if (false === copy($filePath, $destinationFilePath))
           throw new OtraException('Cannot copy the file \'' . $file . ' to ' . $destinationFilePath . '\'.');
       }
     }

@@ -62,7 +62,7 @@ class ' . $upperActionName . 'Action extends Controller
   public function ' . $actionName . 'Action() {
 
   }
-}');
+}' . PHP_EOL);
 
   echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;

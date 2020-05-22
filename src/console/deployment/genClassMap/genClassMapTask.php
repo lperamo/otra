@@ -57,7 +57,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         // Only php files are interesting
         $posDot = strrpos($entry, '.');
 
-        if ('.php' !== substr($entry, $posDot))
+        if ($posDot === false || '.php' !== substr($entry, $posDot))
           continue;
 
         // We only need files that match with the actual environment

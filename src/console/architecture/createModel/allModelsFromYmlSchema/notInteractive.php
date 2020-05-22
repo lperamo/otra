@@ -20,5 +20,5 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
   CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
-modelsCreation($modelLocation, $bundleName, $modelFullName);
+modelsCreation($modelLocation, $bundleName, $modelName . '.php');
 

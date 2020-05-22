@@ -17,7 +17,7 @@ if (function_exists('createModule') === false)
     $modulePath = $bundleBasePath . $moduleName;
 
     // If the folder does not exist and we are not in interactive mode, we exit the program.
-    createFolder($modulePath, $bundleBasePath, $moduleName, 'module', $interactive);
+    createFolder($modulePath, $bundleBasePath, 'module', $interactive);
 
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);

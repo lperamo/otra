@@ -51,6 +51,9 @@ class CreateActionTaskTest extends TestCase
       /** @var callable $delTree */
       $delTree(TEST_BUNDLE_PATH);
 
+      if (file_exists(self::TEST_BUNDLES_CONFIG_FILE_PATH))
+        unlink(self::TEST_BUNDLES_CONFIG_FILE_PATH);
+
       if (file_exists(self::TEST_BUNDLES_CONFIG_PATH))
         rmdir(self::TEST_BUNDLES_CONFIG_PATH);
 
@@ -94,7 +97,9 @@ class CreateActionTaskTest extends TestCase
   {
     // context
     $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
-    mkdir(TEST_BUNDLE_PATH, 0777, true);
+
+    if (!file_exists(TEST_BUNDLE_PATH))
+      mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // testing
     $this->expectOutputString(CLI_RED . 'The module ' . CLI_LIGHT_CYAN . 'bundles/' . TEST_BUNDLE_UPPER .

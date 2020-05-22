@@ -29,14 +29,14 @@ function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : voi
   if (true === $maxData)
   {
     $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, '-1');
   }
 
   /** @var string $oldXDebugMaxChildren  */
   if (true === $maxChildren)
   {
     $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, -1);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, '-1');
   }
 
   call_user_func_array('cli' === PHP_SAPI ? 'dumpSmallCli' : 'dumpSmall', $args);

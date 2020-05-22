@@ -103,7 +103,9 @@ class CreateModuleTaskTest extends TestCase
   {
     // context
     $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
-    mkdir(TEST_BUNDLE_PATH, 0777, true);
+
+    if (!file_exists(TEST_BUNDLE_PATH))
+      mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // launching
     TasksManager::execute(

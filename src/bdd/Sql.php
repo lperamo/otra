@@ -168,24 +168,12 @@ class Sql
    */
   public function selectDb(...$params)
   {
-    try
-    {
-      $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
-      // @codeCoverageIgnoreStart
-      $this->query('SET NAMES UTF8');
+    $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
+    // @codeCoverageIgnoreStart
+    $this->query('SET NAMES UTF8');
 
-      return $return;
-      // @codeCoverageIgnoreEnd
-    } catch (Exception $exception)
-    {
-      $currentDriver = AllConfig::$dbConnections[self::$_currentConnectionName]['driver'];
-      $message = 'This function does not exist with \'' . $currentDriver . '\'.';
-
-      if ($currentDriver === 'PDOMySQL')
-        throw new OtraException($message . '.. and mysql driver is now deprecated !');
-      else
-        throw new OtraException($message); // @codeCoverageIgnore
-    }
+    return $return;
+    // @codeCoverageIgnoreEnd
   }
 
   /**
@@ -369,18 +357,19 @@ class Sql
    *
    * @param string $sequenceName
    *
-   * @return int The last inserted id
+   * @return string The last inserted id
    */
-  public function lastInsertedId(string $sequenceName = null)
+  public function lastInsertedId(string $sequenceName = null) : string
   {
     return call_user_func(self::$_currentDBMS . '::lastInsertedId', $sequenceName);
   }
 
- /**
- * @param string $string
- * @return mixed
- */
-  public function quote(string $string)
+  /**
+   * @param string $string
+   *
+   * @return string
+   */
+  public function quote(string $string) : string
   {
     return call_user_func(self::$_currentDBMS . '::quote', $string);
   }

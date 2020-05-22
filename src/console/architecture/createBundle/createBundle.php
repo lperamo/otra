@@ -4,14 +4,14 @@ declare(strict_types=1);
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 
 /**
- * @param bool        $interactive
- * @param string      $bundleName
- * @param string|null $bundleMask
- * @param bool        $bundleTask
+ * @param bool     $interactive
+ * @param string   $bundleName
+ * @param int|null $bundleMask
+ * @param bool     $bundleTask
  *
  * @throws \otra\OtraException
  */
-function bundleHandling(bool $interactive, string $bundleName, ?string $bundleMask, bool $bundleTask = false)
+function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false)
 {
   $bundleName = ucfirst($bundleName);
   define('BUNDLE_ROOT_PATH', BASE_PATH . 'bundles/');

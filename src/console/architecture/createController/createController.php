@@ -32,7 +32,7 @@ function createController(string $controllersFolder, string $controllerName, boo
   $controllerPath = $controllersFolder . $controllerName;
 
   // If the folder does not exist and we are not in interactive mode, we exit the program.
-  createFolder($controllerPath, $controllersFolder, $controllerName, 'controller', $interactive);
+  createFolder($controllerPath, $controllersFolder, 'controller', $interactive);
   echo CLI_LIGHT_GREEN, 'Folder ', CLI_LIGHT_CYAN, substr($controllerPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
 }

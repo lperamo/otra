@@ -101,8 +101,8 @@ class OtraException extends Exception
           'bundle' => Routes::$_[$route]['chunks'][1] ?? '',
           'module' =>  Routes::$_[$route]['chunks'][2] ?? '',
           'route' => $route,
-          'hasCssToLoad' => '',
-          'hasJsToLoad' => ''
+          'hasCssToLoad' => false,
+          'hasJsToLoad' => false
         ]
       );
     } catch(Exception $e)

@@ -56,7 +56,7 @@ class CreateBundleTaskTest extends TestCase
         'otra.php',
         self::TEST_TASK,
         self::TEST_BUNDLE,
-        '8',
+        '0',
         'false'
       ]
     );
@@ -78,12 +78,16 @@ class CreateBundleTaskTest extends TestCase
         'otra.php',
         self::TEST_TASK,
         self::TEST_BUNDLE,
-        '8',
+        '15',
         'false'
       ]
     );
 
     // testing
     self::assertFileExists(TEST_BUNDLE_PATH);
+    self::assertFileExists(TEST_BUNDLE_PATH . 'config/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'models/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'resources/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'views/');
   }
 }
