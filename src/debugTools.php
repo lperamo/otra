@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
 define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
+define('OTRA_TD_OPENING_TAG', '<td>');
+define('OTRA_TD_ENDING_TAG', '</td>');
+define('OTRA_TR_ENDING_TAG', '</tr>');
 
 /**
  * @param string $message
@@ -216,24 +219,24 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
           if ($loop < $oldLoop)
             echo '<tr class="foldable">',
                    '<td colspan="' , $loop , '"></td>',
-                   '<td>' , $index, '</td>',
-                 '</tr>';
+                   OTRA_TD_OPENING_TAG , $index, OTRA_TD_ENDING_TAG,
+                 OTRA_TR_ENDING_TAG;
           else
-            echo '<td>' , $index, '</td>',
+            echo OTRA_TD_OPENING_TAG , $index, OTRA_TD_ENDING_TAG,
                  '<td colspan="0" class="dummy"></td>',
-              '</tr>';
+              OTRA_TR_ENDING_TAG;
         } elseif ($loop > 1)
           echo '<tr class="foldable">',
                  '<td colspan="', $loop, '"></td>',
-                 '<td colspan="0">', $index,  '</td>',
+                 '<td colspan="0">', $index,  OTRA_TD_ENDING_TAG,
                  '<td colspan="0" class="dummy"></td>',
-               '</tr>';
+               OTRA_TR_ENDING_TAG;
         else
           echo '<tr class="foldable no-dummy">',
                  '<td colspan="">Index:' ,
                     is_numeric($index) ? getArgumentType($index, $datum) : $index,
                   ', Loop:', $loop,
-                 '</td>';
+                 OTRA_TD_ENDING_TAG;
 
         $oldLoop = recurArrayConvertTab($datum, $indexToExclude, $loop);
     } else
@@ -243,9 +246,9 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
 
 //    if (0 === $loop)
       echo '<tr class="no-dummy" >',
-             '<td>', getArgumentType($index, $datum), '</td>',
-             '<td colspan="2">', $datum , '</td>',
-           '</tr>';
+             OTRA_TD_OPENING_TAG, getArgumentType($index, $datum), OTRA_TD_ENDING_TAG,
+             '<td colspan="2">', $datum , OTRA_TD_ENDING_TAG,
+           OTRA_TR_ENDING_TAG;
 
     }
 
