@@ -106,6 +106,8 @@ abstract class Router
    * @param string $pattern The pattern to check
    *
    * @return bool|array The route and the parameters if they exist, false otherwise
+   *
+   * @throws OtraException
    */
   public static function getByPattern(string $pattern)
   {
