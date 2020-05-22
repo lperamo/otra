@@ -917,11 +917,11 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
- * @param $bundle        string
- * @param $route         string
- * @param $content       string Content to fix
- * @param $verbose       bool
- * @param $fileToInclude mixed  Files to merge
+ * @param string $bundle
+ * @param string $route
+ * @param string $content       Content to fix
+ * @param bool   $verbose
+ * @param mixed  $fileToInclude Files to merge
  *
  * @return mixed
  */

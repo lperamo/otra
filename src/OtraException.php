@@ -13,6 +13,9 @@ use Exception;
 // Sometimes it is already defined ! so we put '_once' ...
 require_once CORE_PATH . 'debugTools.php';
 
+/**
+ * @package otra
+ */
 class OtraException extends Exception
 {
   public static array $codes = [

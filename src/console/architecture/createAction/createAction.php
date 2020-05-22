@@ -16,6 +16,8 @@ if (defined('SPACE_INDENT_3') === false)
  * @param string $actionName
  * @param bool   $interactive
  * @param bool   $consoleForce
+ *
+ * @throws \otra\OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
                       string &$controllerPath, string $actionName, bool $interactive, bool $consoleForce)
@@ -181,6 +183,8 @@ class ' . $upperActionName . 'Action extends Controller
  * @param string $controllerPath
  * @param string $actionName
  * @param bool   $consoleForce
+ *
+ * @throws \otra\OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
                         string &$controllerPath, string $actionName, bool $consoleForce = false)

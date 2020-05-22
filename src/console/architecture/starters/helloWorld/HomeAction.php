@@ -18,8 +18,6 @@ class HomeAction extends Controller
    *
    * @param array $baseParams
    * @param array $getParams
-   *
-   * @throws \otra\OtraException
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {

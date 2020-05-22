@@ -4,6 +4,9 @@ use config\AllConfig;
 
 if (function_exists('generateArrows') === false)
 {
+  /**
+   * @param string $type
+   */
   function generateArrows($type = 'radio')
   {
     $debugBarPosition = isset(AllConfig::$debugBarPosition) ? AllConfig::$debugBarPosition : 'top';
@@ -34,7 +37,6 @@ if (function_exists('generateArrows') === false)
     }
   }
 }
-/** @var \otra\MasterController $this */
 $this::css(CORE_CSS_PATH . 'devMode'); ?>
 <?php generateArrows(); ?>
 

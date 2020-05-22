@@ -19,6 +19,9 @@ class OtraExceptionCli extends \Exception
     FILE_WIDTH = 85,
     ARGUMENTS_WIDTH = 51;
 
+  /**
+   * @param OtraException $exception
+   */
   public function __construct(OtraException $exception)
   {
     parent::__construct();

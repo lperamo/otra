@@ -9,6 +9,9 @@ use Exception;
 use otra\{ OtraException, Logger };
 use config\AllConfig;
 
+/**
+ * @package otra\bdd
+ */
 class Sql
 {
   /**

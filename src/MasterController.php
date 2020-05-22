@@ -5,6 +5,9 @@
  */
 namespace otra;
 
+/**
+ * @package otra
+ */
 class MasterController
 {
   public static string $path;

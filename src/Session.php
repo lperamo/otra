@@ -4,6 +4,9 @@
  * @author Lionel Péramo */
 namespace otra;
 
+/**
+ * @package otra
+ */
 abstract class Session
 {
   private static string $id;

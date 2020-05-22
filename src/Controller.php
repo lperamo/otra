@@ -12,12 +12,20 @@ require CORE_PATH . $temporaryEnv . '/' . ucfirst($temporaryEnv) . 'ControllerTr
 
 if ($temporaryEnv === 'prod')
 {
+  /**
+   * Production controller
+   * @package otra
+   */
   class Controller extends MasterController
   {
     use ProdControllerTrait;
   }
 } else
 {
+  /**
+   * Development controller
+   * @package otra
+   */
   class Controller extends MasterController
   {
     use DevControllerTrait;

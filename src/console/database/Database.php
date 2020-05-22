@@ -19,6 +19,9 @@ namespace otra\console
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
   define ('OTRA_DB_PROPERTY_MODE_DEFAULT', 2);
 
+  /**
+   * @package otra\console
+   */
   abstract class Database
   {
     // Database connection
@@ -226,10 +229,10 @@ namespace otra\console
      * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
      *
      * @param string $attr Attribute
-     * @param bool $mode How we show the type of date
-     *                   0: type
-     *                   1: value (default)
-     *                   2: type value
+     * @param int    $mode How we show the type of date
+     *                     0: type
+     *                     1: value (default)
+     *                     2: type value
      *
      * @return string $attr Concerned attribute in uppercase
      */

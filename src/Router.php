@@ -8,6 +8,9 @@ namespace otra;
 
 use config\Routes;
 
+/**
+ * @package otra
+ */
 abstract class Router
 {
   /**

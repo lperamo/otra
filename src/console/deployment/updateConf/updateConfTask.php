@@ -4,6 +4,10 @@ if (defined('CHUNKS_KEY_LENGTH') === false)
 
 if (function_exists('writeConfigFile') === false)
 {
+  /**
+   * @param string $configFile
+   * @param string $content
+   */
   function writeConfigFile(string &$configFile, string &$content)
   {
     if (true === empty($content))

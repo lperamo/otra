@@ -9,13 +9,14 @@ namespace otra\controllers\errors;
 use otra\Controller;
 use config\Routes;
 
+/**
+ * @package otra\controllers\errors
+ */
 class Error404Action extends Controller
 {
   /**
    * @param array $baseParams
    * @param array $getParams
-   *
-   * @throws \otra\OtraException
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {

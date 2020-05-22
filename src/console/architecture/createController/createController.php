@@ -23,6 +23,8 @@ function createControllersFolder(string $controllersFolder)
  * @param string $controllersFolder
  * @param string $controllerName
  * @param bool   $interactive
+ *
+ * @throws \otra\OtraException
  */
 function createController(string $controllersFolder, string $controllerName, bool $interactive)
 {
@@ -38,6 +40,8 @@ function createController(string $controllersFolder, string $controllerName, boo
  * @param bool   $interactive
  * @param string $controllersFolder
  * @param string $controllerName
+ *
+ * @throws \otra\OtraException
  */
 function controllerHandling(bool $interactive, string &$controllersFolder, string &$controllerName)
 {

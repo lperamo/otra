@@ -8,6 +8,8 @@ if (function_exists('createModule') === false)
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
    * @param bool   $interactive
+   *
+   * @throws \otra\OtraException
    */
   function createModule(string $bundleBasePath, string &$moduleName, bool &$interactive): void
   {
@@ -26,6 +28,8 @@ if (function_exists('createModule') === false)
    * @param bool   $interactive
    * @param string $bundleName
    * @param string $moduleName
+   *
+   * @throws \otra\OtraException
    */
   function moduleHandling(bool $interactive, string $bundleName, string $moduleName)
   {

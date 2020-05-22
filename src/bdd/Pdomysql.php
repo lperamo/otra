@@ -8,6 +8,9 @@ namespace otra\bdd;
 use otra\OtraException;
 use PDO, PDOStatement;
 
+/**
+ * @package otra\bdd
+ */
 abstract class Pdomysql
 {
   private PDO $conn;
@@ -38,10 +41,12 @@ abstract class Pdomysql
 
   /**
    * Sends a SQL query !
-   * @param string $query SQL query.
-   *                      The query string should not end with a semicolon. Data inside the query should be properly escaped.
    *
-   * @return resource Returns a resource on success, otherwise an exception is raised
+   * @param string $query SQL query.
+   *                      The query string should not end with a semicolon. Data inside the query should be properly
+   *                      escaped.
+   *
+   * @return false|PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php

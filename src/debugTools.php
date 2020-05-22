@@ -108,6 +108,8 @@ function reformatSource(string $stringToFormat) : string
  * @param array  $dataToShow     Array to convert
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
+ *
+ * @return false|string
  */
 function createShowableFromArray(array &$dataToShow, string $title, $indexToExclude = null)
 {
@@ -132,9 +134,9 @@ function createShowableFromArray(array &$dataToShow, string $title, $indexToExcl
 
 /** Converts a php array into stylish console table. TODO finish it !
  *
- * @param $dataToShow     null|array Array to convert
- * @param $title          string     Table name to show in the header
- * @param $indexToExclude string     Index to exclude from the render
+ * @param null|array $dataToShow     Array to convert
+ * @param string     $title          Table name to show in the header
+ * @param string     $indexToExclude Index to exclude from the render
  */
 function createShowableFromArrayConsole(?array &$dataToShow, string $title, $indexToExclude = null)
 {
@@ -174,9 +176,10 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $data           array|object Array or object to convert
- * @param $indexToExclude int|string   Index to exclude from the render
- * @param $loop           int          Number of recursions
+ * @param array|object $data           Array or object to convert
+ * @param int|string   $indexToExclude Index to exclude from the render
+ * @param int          $loop           Number of recursions
+ *
  * @return int
  */
 function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
