@@ -7,14 +7,16 @@ use otra\OtraException;
 /** @author Lionel Péramo */
 abstract class TasksManager
 {
-  public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40;
-  public const TASK_CLASS_MAP_TASK_PATH = 0;
-  public const TASK_CLASS_MAP_TASK_STATUS = 1;
-  public const TASK_DESCRIPTION = 0;
-  public const TASK_PARAMETERS = 1;
-  public const TASK_STATUS = 2;
-  public const TASK_CATEGORY = 3;
-  public const TASK_PATH = 4;
+  public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
+    TASK_CLASS_MAP_TASK_PATH = 0,
+    TASK_CLASS_MAP_TASK_STATUS = 1,
+    TASK_DESCRIPTION = 0,
+    TASK_PARAMETERS = 1,
+    TASK_STATUS = 2,
+    TASK_CATEGORY = 3,
+    TASK_PATH = 4,
+    REQUIRED_PARAMETER = 'required',
+    OPTIONAL_PARAMETER = 'optional';
 
   /**
    * List the available commands

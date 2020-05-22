@@ -17,6 +17,12 @@ define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
 define('DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC', 8);
 
+define('OTRA_CLI_CONTROL_MODE', "\033[");
+
+define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
+define('OTRA_CLI_COMMAND_MKDIR', 'mkdir');
+define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', 'mkdir -p ');
+
 // **** Checking the deployment config parameters ****
 if (isset(AllConfig::$deployment) === false)
 {
@@ -81,7 +87,7 @@ if ($mode > 0)
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 
   echo 'Assets minification and compression...';
   $genAssetsMode = 0;
@@ -104,7 +110,7 @@ if ($mode > 0)
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo "\033[" . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 }
 
 // Deploy the files on the server...
@@ -153,9 +159,9 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
    * TODO showing things correctly and knowing when all that ends. */
   if ($verbose === 1)
-    echo $cursorUpOne, "\033[" . strlen($message) . "C ", OTRA_SUCCESS;
+    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C ", OTRA_SUCCESS;
   else
-    echo $cursorUpOne, "\033[" . strlen($message) . "C", OTRA_SUCCESS;
+    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C", OTRA_SUCCESS;
 };
 
 $handleTransfer(
@@ -178,8 +184,8 @@ $handleTransfer(
 
 $handleTransfer(
   'Creating the config folder',
-  'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/config',
-  'mkdir'
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/config',
+  OTRA_CLI_COMMAND_MKDIR
 );
 
 $handleTransfer(
@@ -189,8 +195,8 @@ $handleTransfer(
 
 $handleTransfer(
   'Creating the vendor folder',
-  'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/vendor',
-  'mkdir'
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/vendor',
+  OTRA_CLI_COMMAND_MKDIR
 );
 
 $handleTransfer(
@@ -204,8 +210,8 @@ $handleTransfer(
 
 $handleTransfer(
   'Creating the bundles folder',
-  'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/bundles',
-  'mkdir'
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/bundles',
+  OTRA_CLI_COMMAND_MKDIR
 );
 
 define('STRLEN_BASEPATH', strlen(BASE_PATH));
@@ -245,8 +251,8 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
     // Ensuring the folder exists before creating stuff inside
     $handleTransfer(
       'Creating the ' . $folderRelativePath .' folder',
-      'ssh -p ' . $port . ' ' . $server . ' mkdir -p ' . $folder . '/' . $folderRelativePath,
-      'mkdir'
+      OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/' . $folderRelativePath,
+      OTRA_CLI_COMMAND_MKDIR
     );
 
     // Then we create the inside stuff

@@ -17,7 +17,8 @@ class OtraExceptionCli extends \Exception
     FUNCTION_WIDTH = 49,
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
-    ARGUMENTS_WIDTH = 51;
+    ARGUMENTS_WIDTH = 51,
+    KEY_VARIABLES = 'variables';
 
   /**
    * @param OtraException $exception
@@ -28,7 +29,7 @@ class OtraExceptionCli extends \Exception
 
     if (false === empty($exception->context))
     {
-      unset($exception->context['variables']);
+      unset($exception->context[self::KEY_VARIABLES]);
 //      createShowableFromArrayConsole($this->context, 'Variables');
     }
 
@@ -104,9 +105,9 @@ class OtraExceptionCli extends \Exception
     {
       $now = $trace[$i];
 
-      if(0 === $i) unset($now['args']['variables']);
+      if(0 === $i) unset($now['args'][self::KEY_VARIABLES]);
 
-      createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
+      createShowableFromArrayConsole($now['args'], 'Arguments', self::KEY_VARIABLES);
 
       $compositeColoredPath = true;
 

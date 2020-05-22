@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use otra\console\TasksManager;
+
 return [
   'Generates a server configuration adapted to OTRA.',
   [
@@ -8,7 +11,11 @@ return [
     'serverTechnology' => CLI_LIGHT_CYAN . 'nginx' . CLI_CYAN . ' (default) or ' . CLI_LIGHT_CYAN . 'apache' . CLI_YELLOW .
       ' (but works only for Nginx for now)'
   ],
-  ['required', 'optional', 'optional'],
+  [
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];
 

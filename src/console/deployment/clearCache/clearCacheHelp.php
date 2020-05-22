@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use otra\console\TasksManager;
+
 return [
   'Clears whatever cache you want to clear.',
   [
@@ -18,6 +20,9 @@ return [
     'route name' => 'If you want to clear cache for only one route. (useful only for bits 2, 4, 8 of the ' .
       CLI_LIGHT_CYAN . 'mask' . CLI_CYAN . ' parameter)'
   ],
-  ['optional', 'optional'],
+  [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];

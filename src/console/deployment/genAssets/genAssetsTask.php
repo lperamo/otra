@@ -13,6 +13,9 @@ define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVA
 define('ROUTE', 4);
 define('GZIP_COMPRESSION_LEVEL', 9);
 
+define('OTRA_UNLINK_CALLBACK', 'unlink');
+define('OTRA_CLI_CYAN_STRING', 'CLI_CYAN');
+
 $routes = Routes::$_;
 
 /**
@@ -71,13 +74,13 @@ if ($mask !== 8)
     echo PHP_EOL, 'Cleaning the resources cache...';
 
     if ($mask & 1)
-      array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
 
     if (($mask & 2) >> 1)
-      array_map('unlink', glob(CACHE_PATH . 'css/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'css/*'));
 
     if (($mask & 4) >> 2)
-      array_map('unlink', glob(CACHE_PATH . 'js/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
   }
 
   echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
@@ -101,7 +104,7 @@ if ($mask !== 8)
 
     if (false === isset($route['resources']))
     {
-      echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
+      echo status('Nothing to do', OTRA_CLI_CYAN_STRING), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
         CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
@@ -136,9 +139,9 @@ if ($mask !== 8)
           gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
           echo status('CSS');
         } else
-          echo status('NO CSS', 'CLI_CYAN');
+          echo status('NO CSS', OTRA_CLI_CYAN_STRING);
       } else
-        echo status('NO CSS', 'CLI_CYAN');
+        echo status('NO CSS', OTRA_CLI_CYAN_STRING);
     }
 
     /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -178,14 +181,14 @@ if ($mask !== 8)
 
         echo status('JS');
       } else
-        echo status('NO JS', 'CLI_CYAN');
+        echo status('NO JS', OTRA_CLI_CYAN_STRING);
     }
 
     /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
     if ($mask & 1)
     {
       if (false === isset($resources['template']))
-        echo status('No TEMPLATE', 'CLI_CYAN');
+        echo status('No TEMPLATE', OTRA_CLI_CYAN_STRING);
       else
       {
         // Generates the gzipped template files

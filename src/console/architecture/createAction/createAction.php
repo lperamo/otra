@@ -7,6 +7,8 @@ if (defined('SPACE_INDENT_2') === false)
 if (defined('SPACE_INDENT_3') === false)
   define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
 
+define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+
 /**
  * Creates the folder of the specified controller.
  *
@@ -67,7 +69,7 @@ class ' . $upperActionName . 'Action extends Controller
   echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
 
-  $viewFolder = BASE_PATH . 'bundles/' . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
+  $viewFolder = BUNDLES_PATH . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
 
   // If the action folder does not exist
   if (file_exists($viewFolder) === false)
@@ -89,8 +91,8 @@ class ' . $upperActionName . 'Action extends Controller
   if ($consoleForce === false)
   {
 
-    $routesConfigFolder = BASE_PATH . 'bundles/' . $bundleName . '/config';
-    $routeConfigurationFile = BASE_PATH . 'bundles/' . $bundleName . '/config/Routes.php';
+    $routesConfigFolder = BUNDLES_PATH . $bundleName . '/config';
+    $routeConfigurationFile = BUNDLES_PATH . $bundleName . '/config/Routes.php';
     $routeConfiguration = $controllerName . $upperActionName . "' => [" . PHP_EOL .
       SPACE_INDENT_2 . "'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '"
       . $moduleName . "', '" . $controllerName . "', '" . $upperActionName . "Action']," . PHP_EOL .

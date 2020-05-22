@@ -18,6 +18,11 @@ define('PHP_END_TAG_STRING', '?>');
 define('PHP_END_TAG_LENGTH', 2);
 define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
 
+define('OTRA_ALREADY_PARSED_LABEL', ' ALREADY PARSED');
+define('OTRA_KEY_EXTENDS', 'extends');
+define('OTRA_KEY_STATIC', 'static');
+define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
+
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
  *
@@ -167,7 +172,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
     $filesToConcat['php']['use'][] = $tempFile;
     $parsedFiles[] = $tempFile;
   } elseif (1 < VERBOSE)
-    showFile($level, $tempFile, ' ALREADY PARSED');
+    showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 }
 
 /**
@@ -591,12 +596,12 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
       elseif (in_array($tempFile, $parsedFiles) === true)
       {
         if (1 < VERBOSE)
-          showFile($level, $tempFile, ' ALREADY PARSED');
+          showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 
         continue;
       }
 
-      $filesToConcat['php']['extends'][] = $tempFile;
+      $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
     } elseif(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
     {
       $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
@@ -671,8 +676,8 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
     'php' => [
       'use' => [],
       'require' => [],
-      'extends' => [],
-      'static' => []
+      OTRA_KEY_EXTENDS => [],
+      OTRA_KEY_STATIC => []
     ],
     'template' => []
   ];
@@ -711,11 +716,11 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
                 $tempFile = $keyOrFile;
                 $method = ' via require/include statement';
                 break;
-              case 'extends':
+              case OTRA_KEY_EXTENDS:
                 $tempFile = $nextFileOrInfo;
                 $method = ' via extends statement';
                 break;
-              case 'static':
+              case OTRA_KEY_STATIC:
                 $tempFile = $nextFileOrInfo;
                 $method = ' via static direct call';
             }
@@ -778,7 +783,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if (strpos($file, 'config/AllConfig') !== false)
             {
               $finalContentParts[]= $contentToAdd;
-              $_SESSION['finalContentParts'] = true;
+              $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;
             }
 
             showFile($level, $tempFile, $method);
@@ -816,9 +821,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
    * dev/prod configuration because of the generic constant declaration. This block is related with the previous block
    * line 752 as I wrote those lines.
    */
-  if (isset($_SESSION['finalContentParts']) === true && empty($finalContentParts) === false)
+  if (isset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]) === true && empty($finalContentParts) === false)
   {
-    unset($_SESSION['finalContentParts']);
+    unset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]);
     $contentToAdd = '';
     echo CLI_BOLD_RED, $contentToAdd, END_COLOR, PHP_EOL;
   }
@@ -896,10 +901,10 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     if (false === in_array($newFile, $parsedFiles))
     {
       $parsedFiles[] = $newFile;
-      $filesToConcat['php']['static'][] = $newFile;
+      $filesToConcat['php'][OTRA_KEY_STATIC][] = $newFile;
     } elseif (1 < VERBOSE)
     {
-      showFile($level, $newFile, ' ALREADY PARSED');
+      showFile($level, $newFile, OTRA_ALREADY_PARSED_LABEL);
     }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use otra\console\TasksManager;
+
 return [
   'Deploy the site. ' . CLI_YELLOW . '[Currently only works for unix systems !]' . END_COLOR,
   [
@@ -13,6 +15,9 @@ return [
     ,
     'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
   ],
-  ['optional', 'optional'],
+  [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];

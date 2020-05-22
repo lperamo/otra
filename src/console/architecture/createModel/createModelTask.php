@@ -30,6 +30,9 @@ define('DEFAULT_BDD_SCHEMA_NAME', 'schema.yml');
 define('MODEL_DIRECTORY', 'models/');
 define('CREATE_MODEL_FOLDER', CONSOLE_PATH . 'architecture/createModel/');
 
+// String in file name
+define('OTRA_NTERACTIVE', 'nteractive.php');
+
 // Loading common functions
 require CONSOLE_PATH . 'tools.php';
 require CREATE_MODEL_FOLDER . 'createModel.php';
@@ -41,7 +44,7 @@ require CREATE_MODEL_FOLDER . 'createModel.php';
  */
 // Checking parameters...
 $missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
-require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive === true ? 'i' : 'notI') . 'nteractive.php';
+require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive === true ? 'i' : 'notI') . OTRA_NTERACTIVE;
 
 echo 'We use the ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
 
@@ -49,7 +52,7 @@ echo 'We use the ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
 define('FUNCTION_START', SPACE_INDENT . 'public function ');
 
 if (CREATION_MODE_FROM_NOTHING === $creationMode)
-  require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . ($interactive === false ? 'notI' : 'i') . 'nteractive.php';
+  require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . ($interactive === false ? 'notI' : 'i') . OTRA_NTERACTIVE;
 else
 {
   if (defined('YML_SCHEMA_PATH') === false)
@@ -82,6 +85,6 @@ else
     (CREATION_MODE_ONE_MODEL === $creationMode
       ? 'oneModelFromYmlSchema/'
       : 'allModelsFromYmlSchema/'
-    ) . ($interactive === false ? 'notI' : 'i') . 'nteractive.php';
+    ) . ($interactive === false ? 'notI' : 'i') . OTRA_NTERACTIVE;
 }
 
