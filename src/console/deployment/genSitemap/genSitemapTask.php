@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 $routes = require BASE_PATH . 'bundles/config/Routes.php';
 $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
   '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;

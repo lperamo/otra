@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
   'Deploy the site. ' . CLI_YELLOW . '[Currently only works for unix systems !]' . END_COLOR,

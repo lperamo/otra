@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
   'Creates the database schema from your database. (importSchema)',
   [

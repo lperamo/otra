@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (file_exists(BASE_PATH . 'bundles/HelloWorld'))
 {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
   'Database creation, tables creation.(sql_generate_basic)',
   [

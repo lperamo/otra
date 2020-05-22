@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (defined('SPACE_INDENT_2') === false)
   define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
@@ -189,7 +190,6 @@ class ' . $upperActionName . 'Action extends Controller
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
                         string &$controllerPath, string $actionName, bool $consoleForce = false)
 {
-  /** @var string $interactive */
   if ($interactive === true)
   {
     while($actionName !== 'n')

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
   'Import the fixtures from database into ' . CLI_YELLOW . 'config/data/yml/fixtures' . CLI_CYAN . '.',
   [

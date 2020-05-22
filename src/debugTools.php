@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
 define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');

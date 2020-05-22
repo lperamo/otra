@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
@@ -45,7 +46,6 @@ function createController(string $controllersFolder, string $controllerName, boo
  */
 function controllerHandling(bool $interactive, string &$controllersFolder, string &$controllerName)
 {
-  /** @var string $interactive */
   if ($interactive === true)
   {
     createControllersFolder($controllersFolder);

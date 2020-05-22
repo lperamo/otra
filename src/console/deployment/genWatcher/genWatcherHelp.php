@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
   'Launches a watcher that will update the PHP class mapping, the ts files and the scss files.',

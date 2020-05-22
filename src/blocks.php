@@ -1,6 +1,7 @@
 <?php
-/* Light templating engine */
+declare(strict_types=1);
 
+/* Light templating engine */
 use otra\MasterController;
 
 // those functions can be redeclared if we have an exception later, exception that will also use the block system

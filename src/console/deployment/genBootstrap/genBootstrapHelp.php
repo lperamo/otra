@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
   'Launch the genClassMap command and generates a file that contains all the necessary php files.',
   [

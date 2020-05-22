@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
   'Compiles the typescripts, sass and php configuration files (modulo the binary mask).',

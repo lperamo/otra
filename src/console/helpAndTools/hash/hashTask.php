@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 $argv[2] = isset($argv[2]) === true ? $argv[2] : 7;
 $salt = '';
 $salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));

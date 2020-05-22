@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
   'Creates a model. ' . CLI_LIGHT_CYAN . 'how' . CLI_CYAN . ' parameter is ignored in interactive mode',

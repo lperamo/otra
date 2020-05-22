@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Mysql management
  *
@@ -201,10 +202,10 @@ abstract class Pdomysql
    *
    * @param string $sequenceName
    *
-   * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
+   * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) : int { return Sql::$_currentConn->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) : string { return Sql::$_currentConn->lastInsertId($sequenceName); }
 
   /**
    * @param string $string

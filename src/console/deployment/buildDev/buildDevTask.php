@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\console;
 
 use config\AllConfig;
-use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
 use RecursiveIteratorIterator;
 
 require BASE_PATH . 'config/Routes.php';

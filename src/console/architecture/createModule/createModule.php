@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 

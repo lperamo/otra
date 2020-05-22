@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 if (true === isset($argv[3]))
   define(FWK_HASH, $argv[3]);
 else

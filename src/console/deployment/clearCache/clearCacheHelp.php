@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
   'Clears whatever cache you want to clear.',

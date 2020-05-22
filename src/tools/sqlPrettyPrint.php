@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // TODO Not fully tested !
 
 define('SQL_CLAUSES', [

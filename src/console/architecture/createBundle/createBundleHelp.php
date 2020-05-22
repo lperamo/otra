@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 $showMaskOption = static function (string $text) : string
 {

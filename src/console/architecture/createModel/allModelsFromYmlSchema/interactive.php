@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . '/allModelsFromYmlSchema/common.php';
 
 echo CREATE_ALL_MODELS_FROM_YAML_SCHEMA;
@@ -28,5 +29,5 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
     CLI_YELLOW, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
-modelsCreation($modelLocation, $bundleName);
+modelsCreation($modelLocation, $bundleName, $modelName . '.php');
 

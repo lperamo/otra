@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 define(
   'MODULE_BUNDLE_MESSAGE',
   'A model in the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' for the module ' .

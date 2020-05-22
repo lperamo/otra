@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . '/allModelsFromYmlSchema/common.php';
 
 echo CREATE_ALL_MODELS_FROM_YAML_SCHEMA;

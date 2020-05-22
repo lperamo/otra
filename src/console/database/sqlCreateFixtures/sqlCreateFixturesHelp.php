@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
   'Generates fixtures sql files and executes them. (sql_generate_fixtures)',
   [

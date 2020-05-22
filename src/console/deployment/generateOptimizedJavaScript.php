@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 use otra\OtraException;
 use function otra\console\returnLegiblePath;
 use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
 function generateJavaScript(
-  bool $verbose,
+  int $verbose,
   bool $launch,
   string &$resourceFolder,
   string &$baseName,
