@@ -50,7 +50,7 @@ if ($mask !== 8)
 
     echo 'Cleaning the resources cache...';
 
-    $routes = array($theRoute => $routes[$theRoute]);
+    $routes = [$theRoute => $routes[$theRoute]];
 
     /***************** CLEANING THE FILES *******************
      ******* specific to the route passed in parameter ******/
