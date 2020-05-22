@@ -163,7 +163,6 @@ trait ProdControllerTrait
 
     foreach(self::$js as &$js)
     {
-      $lastFile = $js . '.js';
       ob_start();
 
       if (false === strpos($lastFile, ('http')))
@@ -181,8 +180,6 @@ trait ProdControllerTrait
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
       return '<script async defer>' . $allJs . '</script>';
-
-    $lastFile .= VERSION;
 
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);

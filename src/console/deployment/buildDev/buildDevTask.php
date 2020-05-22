@@ -251,7 +251,7 @@ foreach($iterator as $entry)
 
         $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-        list(, $return) = cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
+        cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
           ':' . $cssPath);
 
         $sourceMapPath = $cssPath . '.map';

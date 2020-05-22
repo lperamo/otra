@@ -144,8 +144,6 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
   } else
     $result = cli($command);
 
-  $error = '';
-
   if ($result[0] !== 0)
   {
     echo CLI_RED, 'Error when using ' . $operation . ' command.', END_COLOR, PHP_EOL;

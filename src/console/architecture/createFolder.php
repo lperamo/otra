@@ -5,13 +5,12 @@ if (function_exists('createFolder') === false)
   /**
    * @param string $absoluteFolderPath
    * @param string $relativeFolderPath Used to recreate the absolute path if the folder already exists.
-   * @param string $folderName         Used if the folder does not exists.
    * @param string $folderType         Is it a 'controller' folder, 'module' folder ?
    * @param bool   $interactive        Do we have to ask for another folder ?
    *
    * @throws \otra\OtraException
    */
-  function createFolder(string &$absoluteFolderPath, string $relativeFolderPath, string $folderName, string $folderType,
+  function createFolder(string &$absoluteFolderPath, string $relativeFolderPath, string $folderType,
                         bool $interactive)
   {
     while (file_exists($absoluteFolderPath) === true)

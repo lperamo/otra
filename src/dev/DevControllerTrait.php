@@ -28,6 +28,7 @@ trait DevControllerTrait
 
   /**
    * If the files are in cache, put them directly in $rendered
+   * @TODO Fix this function !!
    *
    * @param array $filesToCheck Files to check in cache
    *

@@ -238,8 +238,6 @@ namespace otra\console
      */
     public static function getAttr(string $attr, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
-      $output = '';
-
       if (true === isset(self::$attributeInfos[$attr]))
       {
         $value = self::$attributeInfos[$attr];
@@ -1010,8 +1008,6 @@ namespace otra\console
         echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
         exit(1);
       }
-
-      $tablesToCreate = [];
 
       $tablesToCreate = [];
 

@@ -152,6 +152,8 @@ abstract class Router
       } else
         $newParams = $params;
 
+      /** TODO why the $newParams variable is not used ??? */
+
       return [$routeName, $params];
     }
 
