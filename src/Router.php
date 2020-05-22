@@ -134,7 +134,7 @@ abstract class Router
         return [$routeName, []];
 
       // If there are named parameters in the route configuration
-      if (true === isset($routeData['mainPattern']))
+      if (isset($routeData['mainPattern']))
       {
         $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
 
@@ -142,7 +142,7 @@ abstract class Router
         if (count($parametersName) !== count($params))
         {
           echo 'The number of parameters does not match !';
-          exit(1);
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         // ...and we name the passed parameters accordingly to the route configuration
