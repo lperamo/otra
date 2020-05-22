@@ -111,60 +111,68 @@ abstract class Router
    */
   public static function getByPattern(string $pattern)
   {
+    $patternFound = false;
+
     foreach (Routes::$_ as $routeName => &$routeData)
     {
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
-      // This is not the route you are looking for !
-      if (false === strpos($pattern, $mainPattern))
-        continue;
-
-      $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
-
-      // Zero parameters => we have all we need.
-      if ('' === $params[0])
-        return [$routeName, []];
-
-      // We destroy the parameters after '?' because we only want rewritten parameters
-      $derParam = count($params) - 1;
-      $paramsFinal = explode('?', $params[$derParam]);
-      $params[$derParam] = $paramsFinal[0];
-
-      // Zero parameters once we remove the parameters after '?' ? => we have all we need.
-      if ('' === $params[0])
-        return [$routeName, []];
-
-      // If there are named parameters in the route configuration
-      if (isset($routeData['mainPattern']))
+      // This is the route we are looking for !
+      if (false !== strpos($pattern, $mainPattern))
       {
-        $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
-
-        // We check the number of parameters ...
-        if (count($parametersName) !== count($params))
-        {
-          echo 'The number of parameters does not match !';
-          throw new OtraException('', 1, '', NULL, [], true);
-        }
-
-        // ...and we name the passed parameters accordingly to the route configuration
-        $newParams = [];
-
-        foreach($params as $key => $param)
-        {
-          $newParams[substr($parametersName[$key], 1, strlen($parametersName[$key]) - 2)] = $param;
-        }
-      } else
-        $newParams = $params;
-
-      /** TODO why the $newParams variable is not used ??? */
-
-      return [$routeName, $params];
+        $patternFound = true;
+        break;
+      }
     }
 
-    // If the user has not defined a 404 route, then we launch the default 404 page made by OTRA
-    header('HTTP/1.0 404 Not Found');
-    return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
+    if (!$patternFound)
+    {
+      header('HTTP/1.0 404 Not Found');
+
+      return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
+    }
+
+    $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
+
+    // Zero parameters => we have all we need.
+    if ('' === $params[0])
+      return [$routeName, []];
+
+    // We destroy the parameters after '?' because we only want rewritten parameters
+    $derParam = count($params) - 1;
+    $paramsFinal = explode('?', $params[$derParam]);
+    $params[$derParam] = $paramsFinal[0];
+
+    // Zero parameters once we remove the parameters after '?' ? => we have all we need.
+    if ('' === $params[0])
+      return [$routeName, []];
+
+    // If there are named parameters in the route configuration
+    if (isset($routeData['mainPattern']))
+    {
+      $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
+
+      // We check the number of parameters ...
+      if (count($parametersName) !== count($params))
+      {
+        echo 'The number of parameters does not match !';
+        throw new OtraException('', 1, '', NULL, [], true);
+      }
+
+      // ...and we name the passed parameters accordingly to the route configuration
+      $newParams = [];
+
+      foreach ($params as $key => $param)
+      {
+        $newParams[substr($parametersName[$key], 1, strlen($parametersName[$key]) - 2)] = $param;
+      }
+    } else
+      $newParams = $params;
+
+    /** TODO why the $newParams variable is not used ??? */
+
+    return [$routeName, $params];
   }
 
   /**
