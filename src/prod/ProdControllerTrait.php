@@ -180,7 +180,7 @@ trait ProdControllerTrait
     }
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' + $allJs + '</script>';
+      return '<script async defer>' . $allJs . '</script>';
 
     $lastFile .= VERSION;
 
