@@ -220,8 +220,8 @@ if (($mask & 8) >> 3)
 
   if (!file_exists($jsonManifestPath))
   {
-    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.', END_COLOR,
-    PHP_EOL;
+    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.',
+      END_COLOR, PHP_EOL;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 

@@ -155,9 +155,9 @@ foreach($classes as $key => &$class)
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
     if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
-      $prodClasses [$key] = $class;
+      $prodClasses[$key] = $class;
   } else
-    $prodClasses [$key]= $class;
+    $prodClasses[$key]= $class;
 }
 
 $classMap = var_export($classes, true);
