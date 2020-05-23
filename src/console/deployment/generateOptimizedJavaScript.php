@@ -152,13 +152,10 @@ function generateJavaScript(
         $generatedJsMapFile = $generatedJsFile . '.map';
         $newJsMapPath = $serviceWorkerPath . '.map';
 
-        if (file_exists($generatedJsMapFile))
+        if (file_exists($generatedJsMapFile) && !rename($generatedJsMapFile, $newJsMapPath))
         {
-          if (!rename($generatedJsMapFile, $newJsMapPath))
-          {
-            echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
-            throw new OtraException('', 1, '', NULL, [], true);
-          }
+          echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         echo 'Service worker files moved to ', CLI_LIGHT_CYAN, returnLegiblePath($serviceWorkerPath), END_COLOR,
@@ -167,6 +164,6 @@ function generateJavaScript(
     }
   } else
     echo 'There is an error with your ', returnLegiblePath(OTRA_LABEL_TSCONFIG_JSON), ' file. : '
-    , CLI_RED, json_last_error_msg(), PHP_EOL;
+      , CLI_RED, json_last_error_msg(), PHP_EOL;
 }
 
