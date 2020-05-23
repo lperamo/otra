@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
+define(OTRA_LABEL_SELECT, 'SELECT ');
 // TODO Not fully tested !
 
 define('SQL_CLAUSES', [
   '(SELECT ',
-  'SELECT ',
+  OTRA_LABEL_SELECT,
   'FROM ',
   'LEFT OUTER JOIN',
   'RIGHT OUTER JOIN',
@@ -39,8 +40,8 @@ function sqlReplacements(
 ) : array
 {
    return [
-    '(' . "\n" . $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
-    $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
+    '(' . "\n" . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
+    $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'LEFT OUTER JOIN' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,

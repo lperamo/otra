@@ -7,14 +7,21 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
+define('OTRA_BUNDLES_FOLDER_NAME', 'bundles/');
+define('OTRA_LABEL_DOES_NOT_EXIST', ' does not exist.');
+define('OTRA_LABEL_FALSE', 'false');
+define('OTRA_BINARY_NAME', 'otra.php');
+
 define('TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE));
-define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+define('TEST_BUNDLES_MAIN_FOLDER', BASE_PATH . OTRA_BUNDLES_FOLDER_NAME);
+define('TEST_BUNDLE_PATH', TEST_BUNDLES_MAIN_FOLDER . TEST_BUNDLE_UPPER . '/');
 define('TEST_MODULE_PATH', TEST_BUNDLE_PATH . CreateActionTaskTest::TEST_MODULE . '/');
 define('TEST_CONTROLLER_PATH', TEST_MODULE_PATH . 'controllers/' . CreateActionTaskTest::TEST_CONTROLLER . '/');
 define('TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION) . 'Action.php');
 define('TEST_ACTION_PATH', TEST_CONTROLLER_PATH . TEST_ACTION_FULL);
 define('TEST_VIEWS_PATH', TEST_MODULE_PATH . 'views/');
 define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER . '/');
+define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
 
 /**
  * @runTestsInSeparateProcesses
@@ -57,7 +64,7 @@ class CreateActionTaskTest extends TestCase
       if (file_exists(self::TEST_BUNDLES_CONFIG_PATH))
         rmdir(self::TEST_BUNDLES_CONFIG_PATH);
 
-      rmdir(BASE_PATH . 'bundles');
+      rmdir(TEST_BUNDLES_MAIN_FOLDER);
     }
   }
 
@@ -67,25 +74,25 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_BundleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
 
     // assertions
     $this->expectException(OtraException::class);
     $this->expectOutputString(CLI_RED . 'The bundle ' . CLI_LIGHT_CYAN . TEST_BUNDLE_UPPER . CLI_RED .
-      ' does not exist.' . END_COLOR . PHP_EOL);
+      OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
 
     // launching
     TasksManager::execute(
       $tasksClassMap,
       self::TEST_TASK,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
         self::TEST_CONTROLLER,
         self::TEST_ACTION,
-        'false'
+        OTRA_LABEL_FALSE
       ]
     );
   }
@@ -96,14 +103,14 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ModuleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
 
     if (!file_exists(TEST_BUNDLE_PATH))
       mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The module ' . CLI_LIGHT_CYAN . 'bundles/' . TEST_BUNDLE_UPPER .
-      '/' . self::TEST_MODULE . CLI_RED . ' does not exist.' . END_COLOR . PHP_EOL);
+    $this->expectOutputString(CLI_RED . 'The module ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
+      '/' . self::TEST_MODULE . CLI_RED . OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
     // launching
@@ -111,13 +118,13 @@ class CreateActionTaskTest extends TestCase
       $tasksClassMap,
       self::TEST_TASK,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
         self::TEST_CONTROLLER,
         self::TEST_ACTION,
-        'false'
+        OTRA_LABEL_FALSE
       ]
     );
   }
@@ -128,13 +135,13 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ControllerDoNotExist() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_MODULE_PATH, 0777, true);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The controller ' . CLI_LIGHT_CYAN . 'bundles/' .
+    $this->expectOutputString(CLI_RED . 'The controller ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME .
       TEST_BUNDLE_UPPER . '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . CLI_RED .
-      ' does not exist.' . END_COLOR . PHP_EOL);
+      OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
     // launching
@@ -142,13 +149,13 @@ class CreateActionTaskTest extends TestCase
       $tasksClassMap,
       self::TEST_TASK,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
         self::TEST_CONTROLLER,
         self::TEST_ACTION,
-        'false'
+        OTRA_LABEL_FALSE
       ]
     );
   }
@@ -159,12 +166,12 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ActionAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_CONTROLLER_PATH, 0777, true);
     touch(TEST_ACTION_PATH);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The action ' . CLI_LIGHT_CYAN . 'bundles/' . TEST_BUNDLE_UPPER .
+    $this->expectOutputString(CLI_RED . 'The action ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
       '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . '/' . TEST_ACTION_FULL . CLI_RED .
       ' already exists.' . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
@@ -174,13 +181,13 @@ class CreateActionTaskTest extends TestCase
       $tasksClassMap,
       self::TEST_TASK,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
         self::TEST_CONTROLLER,
         self::TEST_ACTION,
-        'false'
+        OTRA_LABEL_FALSE
       ]
     );
   }
@@ -191,7 +198,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_CONTROLLER_PATH, 0777, true);
 
     // launching
@@ -199,13 +206,13 @@ class CreateActionTaskTest extends TestCase
       $tasksClassMap,
       self::TEST_TASK,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
         self::TEST_CONTROLLER,
         self::TEST_ACTION,
-        'false'
+        OTRA_LABEL_FALSE
       ]
     );
 

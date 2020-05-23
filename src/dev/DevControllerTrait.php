@@ -11,6 +11,8 @@ use config\{AllConfig, Routes};
 define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
 define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 
+define('OTRA_LABEL_ENDING_TITLE_TAG', '/title>');
+
 /**
  * @package otra
  */
@@ -106,8 +108,8 @@ trait DevControllerTrait
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = false === self::$ajax
       ? str_replace(
-        '/title>',
-        '/title>'. self::addResource('css'),
+        OTRA_LABEL_ENDING_TITLE_TAG,
+        OTRA_LABEL_ENDING_TITLE_TAG. self::addResource('css'),
         $content . self::addResource('js'))
       : self::addResource('css') . $content . self::addResource('js');
 
@@ -131,8 +133,8 @@ trait DevControllerTrait
 
     // suppress useless spaces
     parent::$template = str_replace(
-      '/title>',
-      '/title>'. self::addDebugCSS(),
+      OTRA_LABEL_ENDING_TITLE_TAG,
+      OTRA_LABEL_ENDING_TITLE_TAG. self::addDebugCSS(),
       parent::$template . self::addDebugJS()
     );
   }

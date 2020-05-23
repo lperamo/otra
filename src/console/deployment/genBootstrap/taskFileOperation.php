@@ -24,6 +24,8 @@ define('OTRA_KEY_EXTENDS', 'extends');
 define('OTRA_KEY_STATIC', 'static');
 define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
 
+define('OTRA_LABEL_REQUIRE', 'require');
+
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
  *
@@ -440,7 +442,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
-  if (false !== strpos($match, 'require') &&
+  if (false !== strpos($match, OTRA_LABEL_REQUIRE) &&
     0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
     ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
@@ -526,7 +528,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
-    if (false !== strpos($trimmedMatch, 'require'))
+    if (false !== strpos($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
       list($tempFile, $isTemplate) = getFileInfoFromRequireMatch($trimmedMatch, $file);
 
