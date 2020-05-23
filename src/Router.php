@@ -42,24 +42,26 @@ abstract class Router
       array_pad(Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
     ));
 
-    // The route "otra_exception" has an null value into $action
-    if ($action === null)
-      $action = '';
+    $finalAction = '';
 
-    $action = ('prod' === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
-      ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
-      : (true === isset(Routes::$_[$route]['core'])
-        ? ''
-        : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . ucfirst($action);
+    if ('prod' === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
+      $finalAction = 'cache\\php\\' . $action; //'cache\\php\\' . $controller . 'Controller'
+    else
+    {
+      if (!isset(Routes::$_[$route]['core']))
+        $finalAction = 'bundles\\';
 
-    if (false === $launch)
-      return $action;
+      $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
+    }
+
+    if (!$launch)
+      return $finalAction;
 
     $baseParams['route'] = $route;
     $baseParams['css'] = $baseParams['js'] = false;
 
     // Do we have some resources for this route...
-    if (true === isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
+    if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
       $resources = Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY];
       $baseParams['js'] = (
@@ -74,7 +76,7 @@ abstract class Router
       );
     }
 
-    if (false === is_array($params))
+    if (!is_array($params))
       $params = [$params];
 
     /** Preventing redirections from crashing the application */
@@ -86,7 +88,7 @@ abstract class Router
       ), 0, 9) !== 'web/index')
     {
       // Is it a static page
-      if (true === isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
+      if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
         header('Content-Encoding: gzip');
         echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
@@ -97,7 +99,7 @@ abstract class Router
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 
-    return new $action($baseParams, $params);
+    return new $finalAction($baseParams, $params);
   }
 
   /**
