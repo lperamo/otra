@@ -130,7 +130,7 @@ echo CLI_YELLOW, 'The production configuration is used for this task.', END_COLO
 
 define(
   'BUILD_DEV_SOURCE_MAPS',
-  isset(AllConfig::$cssSourceMaps) ? AllConfig::$cssSourceMaps : false
+  isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_SCSS));
