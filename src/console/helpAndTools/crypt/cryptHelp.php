@@ -7,7 +7,7 @@ return [
   'Crypts a password and shows it.',
   [
     'password' => 'The password to crypt.',
-    'hash' => 'The hash to use.'
+    'iterations' => 'The number of internal iterations to perform for the derivation.'
   ],
   [
     TasksManager::REQUIRED_PARAMETER,
