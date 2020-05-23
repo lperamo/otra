@@ -61,35 +61,30 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
     }
   };
 
-  // If we have chosen a specific route
-  if (isset($route))
+  // If we have chosen a specific route and this is not an existing route ...
+  if (isset($route) && !isset($routes[$route]))
   {
-    // Is this an existing route ? If not ...
-    if (!isset($routes[$route]))
+    require CONSOLE_PATH . 'tools.php';
+    list($newRoute) = guessWords($route, array_keys($routes));
+
+    if ($newRoute === null)
     {
-      require CONSOLE_PATH . 'tools.php';
-      list($newRoute) = guessWords($route, array_keys($routes));
+      echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
 
-      if ($newRoute === null)
-      {
-        echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
-
-        return null;
-      }
-
-      // Otherwise, we suggest the closest name that we have found.
-      $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' . CLI_WHITE .
-        $newRoute
-        . CLI_YELLOW . ' ? (y/n)');
-
-      if ('n' === $choice)
-      {
-        echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
-        return null;
-      }
-
-      $route = $newRoute;
+      return null;
     }
+
+    // Otherwise, we suggest the closest name that we have found.
+    $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' .
+      CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
+
+    if ('n' === $choice)
+    {
+      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
+      return null;
+    }
+
+    $route = $newRoute;
   }
 }
 

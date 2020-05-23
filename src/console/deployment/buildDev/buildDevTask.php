@@ -65,15 +65,12 @@ function isNotInThePath(array $paths, string &$realPath) : bool
   foreach ($paths as &$path)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false)
-    {
-      if (
-        BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
-        || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
-        || BUILD_DEV_SCOPE === 2
+    if (mb_strpos($realPath, $path) !== false &&
+        (BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
+          || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
+          || BUILD_DEV_SCOPE === 2)
       )
         $continue = false;
-    }
   }
 
   return $continue;
@@ -262,11 +259,8 @@ foreach($iterator as $entry)
             (BUILD_DEV_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
 
         // We clean the source map if there is an old source map related to this CSS file
-        if (!BUILD_DEV_SOURCE_MAPS)
-        {
-          if (file_exists($sourceMapPath))
+        if (!BUILD_DEV_SOURCE_MAPS && file_exists($sourceMapPath))
             unlink($sourceMapPath);
-        }
       }
     }
   }
