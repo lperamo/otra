@@ -3,6 +3,17 @@ declare(strict_types=1);
 
 use otra\console\Database;
 
-isset($argv[2]) === true
-  ? (isset($argv[3]) === true ? Database::importFixtures($argv[2], $argv[3]) : Database::importFixtures($argv[2]))
-  : Database::importFixtures();
+define('SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME', 2);
+define('SQL_IMPORT_FIXTURES_ARG_CONFIGURATION', 3);
+
+if (isset($argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]))
+{
+  if (isset($argv[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]))
+    Database::importFixtures(
+      $argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME],
+      $argv[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]
+    );
+  else
+    Database::importFixtures($argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]);
+} else
+  Database::importFixtures();
