@@ -30,7 +30,7 @@ $content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'CORE_JS_PATH\',\'' . $coreResourcesPath . 'js/' .
   '\');define(\'SPACE_INDENT\',\'  ' .
   '\');define(\'APP_ENV\',\'APP_ENV' .
-  '\');define(\'OTRA_VERSION\',\'1.0.0-alpha.2.3.0' .
+  '\');define(\'OTRA_VERSION\',\'1.0.0-alpha.2.3.1' .
   '\');if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)
