@@ -15,7 +15,7 @@ abstract class AllConfig
 {
   public static int $verbose = 1;
   public static bool $cache = false,
-    $classMaps = false;
+    $cssSourceMaps = false;
   public static string
     /* In order to not make new AllConfig::foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
     case
