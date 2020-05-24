@@ -49,5 +49,9 @@ if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))
 {
   header('Content-Type: text/html; charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
-  Router::get($route[0], $route[1]);
+
+  Router::get(
+    $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
+    $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS]
+  );
 }
