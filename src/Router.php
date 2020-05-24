@@ -16,6 +16,10 @@ abstract class Router
   private const OTRA_ROUTE_CHUNKS_KEY = 'chunks',
     OTRA_ROUTE_RESOURCES_KEY = 'resources';
 
+  public const
+    OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
+    OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS = 1;
+
   /**
    * Retrieve the controller's path that we want or launches the route !
    *
@@ -107,11 +111,11 @@ abstract class Router
    *
    * @param string $pattern The pattern to check
    *
-   * @return bool|array The route and the parameters if they exist, false otherwise
+   * @return array The route and the parameters if they exist, false otherwise
    *
    * @throws OtraException
    */
-  public static function getByPattern(string $pattern)
+  public static function getByPattern(string $pattern) : array
   {
     $patternFound = false;
 
