@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * LPFramework - Core - Profiler - RefreshSQLLogs
  *
@@ -8,6 +9,9 @@ namespace otra\controllers\profiler;
 
 use otra\{Controller, services\ProfilerService};
 
+/**
+ * @package otra\controllers\profiler
+ */
 class RefreshSQLLogsAction extends Controller
 {
   /**

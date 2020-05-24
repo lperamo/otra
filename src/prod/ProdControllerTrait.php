@@ -8,6 +8,9 @@ namespace otra;
 
 use config\AllConfig;
 
+/**
+ * @package otra
+ */
 trait ProdControllerTrait
 {
   private static bool $cache_used;
@@ -160,7 +163,6 @@ trait ProdControllerTrait
 
     foreach(self::$js as &$js)
     {
-      $lastFile = $js . '.js';
       ob_start();
 
       if (false === strpos($lastFile, ('http')))
@@ -177,9 +179,7 @@ trait ProdControllerTrait
     }
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' + $allJs + '</script>';
-
-    $lastFile .= VERSION;
+      return '<script async defer>' . $allJs . '</script>';
 
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);

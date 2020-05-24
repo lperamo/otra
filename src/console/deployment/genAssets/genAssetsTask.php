@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+use config\Routes;
+
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . 'config/Routes.php';
@@ -9,7 +13,10 @@ define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVA
 define('ROUTE', 4);
 define('GZIP_COMPRESSION_LEVEL', 9);
 
-$routes = \config\Routes::$_;
+define('OTRA_UNLINK_CALLBACK', 'unlink');
+define('OTRA_CLI_CYAN_STRING', 'CLI_CYAN');
+
+$routes = Routes::$_;
 
 /**
  * @param string $folder  The resource folder name
@@ -47,7 +54,7 @@ if ($mask !== 8)
 
     echo 'Cleaning the resources cache...';
 
-    $routes = array($theRoute => $routes[$theRoute]);
+    $routes = [$theRoute => $routes[$theRoute]];
 
     /***************** CLEANING THE FILES *******************
      ******* specific to the route passed in parameter ******/
@@ -67,13 +74,13 @@ if ($mask !== 8)
     echo PHP_EOL, 'Cleaning the resources cache...';
 
     if ($mask & 1)
-      array_map('unlink', glob(CACHE_PATH . 'tpl/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
 
     if (($mask & 2) >> 1)
-      array_map('unlink', glob(CACHE_PATH . 'css/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'css/*'));
 
     if (($mask & 4) >> 2)
-      array_map('unlink', glob(CACHE_PATH . 'js/*'));
+      array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
   }
 
   echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
@@ -97,7 +104,7 @@ if ($mask !== 8)
 
     if (false === isset($route['resources']))
     {
-      echo status('Nothing to do', 'CLI_CYAN'), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
+      echo status('Nothing to do', OTRA_CLI_CYAN_STRING), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
         CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
@@ -132,9 +139,9 @@ if ($mask !== 8)
           gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
           echo status('CSS');
         } else
-          echo status('NO CSS', 'CLI_CYAN');
+          echo status('NO CSS', OTRA_CLI_CYAN_STRING);
       } else
-        echo status('NO CSS', 'CLI_CYAN');
+        echo status('NO CSS', OTRA_CLI_CYAN_STRING);
     }
 
     /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -174,14 +181,14 @@ if ($mask !== 8)
 
         echo status('JS');
       } else
-        echo status('NO JS', 'CLI_CYAN');
+        echo status('NO JS', OTRA_CLI_CYAN_STRING);
     }
 
     /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
     if ($mask & 1)
     {
       if (false === isset($resources['template']))
-        echo status('No TEMPLATE', 'CLI_CYAN');
+        echo status('No TEMPLATE', OTRA_CLI_CYAN_STRING);
       else
       {
         // Generates the gzipped template files
@@ -189,7 +196,7 @@ if ($mask !== 8)
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .
-          'bundles\\' . \config\Routes::$default['bundle'] . '\\Init::Init"'
+          'bundles\\' . Routes::$default['bundle'] . '\\Init::Init"'
         );
 
         if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
@@ -213,8 +220,8 @@ if (($mask & 8) >> 3)
 
   if (!file_exists($jsonManifestPath))
   {
-    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.', END_COLOR,
-    PHP_EOL;
+    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.',
+      END_COLOR, PHP_EOL;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 

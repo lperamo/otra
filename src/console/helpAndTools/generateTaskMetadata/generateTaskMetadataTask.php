@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 // If we do not come from the 'otra' command...
 use otra\console\TasksManager;

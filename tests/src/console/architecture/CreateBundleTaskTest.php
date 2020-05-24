@@ -9,7 +9,7 @@ use phpunit\framework\TestCase;
 if (defined('TEST_BUNDLE_UPPER') === false)
 {
   define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
-  define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+  define('TEST_BUNDLE_PATH', BUNDLES_PATH . TEST_BUNDLE_UPPER . '/');
 }
 
 /**
@@ -56,7 +56,7 @@ class CreateBundleTaskTest extends TestCase
         'otra.php',
         self::TEST_TASK,
         self::TEST_BUNDLE,
-        '8',
+        '0',
         'false'
       ]
     );
@@ -78,12 +78,16 @@ class CreateBundleTaskTest extends TestCase
         'otra.php',
         self::TEST_TASK,
         self::TEST_BUNDLE,
-        '8',
+        '15',
         'false'
       ]
     );
 
     // testing
     self::assertFileExists(TEST_BUNDLE_PATH);
+    self::assertFileExists(TEST_BUNDLE_PATH . 'config/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'models/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'resources/');
+    self::assertFileExists(TEST_BUNDLE_PATH . 'views/');
   }
 }

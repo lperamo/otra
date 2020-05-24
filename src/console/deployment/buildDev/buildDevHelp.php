@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
 
 return [
   'Compiles the typescripts, sass and php configuration files (modulo the binary mask).',
@@ -8,6 +11,12 @@ return [
     'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ? Defaults to false.',
     'scope' => '0 => project files (default), 1 => OTRA files, 2 => All the files'
   ],
-  ['optional', 'optional', 'optional', 'optional', 'optional'],
+  [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];

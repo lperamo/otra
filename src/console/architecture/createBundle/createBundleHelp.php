@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
 
 $showMaskOption = static function (string $text) : string
 {
@@ -18,9 +21,9 @@ return [
     'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
   ],
   [
-    'optional',
-    'optional',
-    'optional'
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
   ],
   'Architecture'
 ];

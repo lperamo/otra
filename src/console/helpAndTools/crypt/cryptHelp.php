@@ -1,10 +1,17 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
+
 return [
   'Crypts a password and shows it.',
   [
     'password' => 'The password to crypt.',
-    'hash' => 'The hash to use.'
+    'iterations' => 'The number of internal iterations to perform for the derivation.'
   ],
-  ['required', 'optional'],
+  [
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Help and tools'
 ];

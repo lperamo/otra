@@ -1,10 +1,14 @@
 <?php
+declare(strict_types=1);
 /** MVC master controller class
  *
  * @author Lionel Péramo
  */
 namespace otra;
 
+/**
+ * @package otra
+ */
 class MasterController
 {
   public static string $path;

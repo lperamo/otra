@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
+
 return [
   'Creates controllers.',
   [
@@ -8,10 +12,10 @@ return [
     'interactive' => 'If set to false, no question will be asked but the status messages are shown. Defaults to true.'
   ],
   [
-    'required',
-    'required',
-    'required',
-    'optional'
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::REQUIRED_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
   ],
   'Architecture'
 ];

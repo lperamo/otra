@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * LPFramework - Core - Errors - 404
  *
@@ -9,6 +10,9 @@ namespace otra\controllers\errors;
 use otra\Controller;
 use config\Routes;
 
+/**
+ * @package otra\controllers\errors
+ */
 class Error404Action extends Controller
 {
   /**

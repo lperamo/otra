@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Class mapping generation task
  *
@@ -56,7 +57,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         // Only php files are interesting
         $posDot = strrpos($entry, '.');
 
-        if ('.php' !== substr($entry, $posDot))
+        if ($posDot === false || '.php' !== substr($entry, $posDot))
           continue;
 
         // We only need files that match with the actual environment
@@ -154,9 +155,9 @@ foreach($classes as $key => &$class)
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
     if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
-      $prodClasses [$key] = $class;
+      $prodClasses[$key] = $class;
   } else
-    $prodClasses [$key]= $class;
+    $prodClasses[$key]= $class;
 }
 
 $classMap = var_export($classes, true);

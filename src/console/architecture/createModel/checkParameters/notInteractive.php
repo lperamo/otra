@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use otra\OtraException;
 
@@ -52,7 +53,9 @@ $modelName = $checkParameter(
 
 // We add the chosen bundle name to the path
 $bundlePath = $bundlesPath . ucfirst($bundleName) . '/';
-$modelFullName = ucfirst($modelName) . '.php';
+
+if (isset($modelName))
+  $modelFullName = ucfirst($modelName) . '.php';
 
 if (null === $modelName)
   $creationMode = CREATION_MODE_ALL_MODELS;

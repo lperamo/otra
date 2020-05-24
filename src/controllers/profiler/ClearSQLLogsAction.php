@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * LPFramework - Core - Profiler - ClearSQLLogs
  *
@@ -8,6 +9,9 @@ namespace otra\controllers\profiler;
 
 use otra\{Controller, services\ProfilerService};
 
+/**
+ * @package otra\controllers\profiler
+ */
 class ClearSQLLogsAction extends Controller
 {
   /**

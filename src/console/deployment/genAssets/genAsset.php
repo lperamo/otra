@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use otra\Router;
+
 define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
@@ -38,7 +40,7 @@ spl_autoload_register(function ($className)
 require CORE_PATH . 'Router.php';
 require CORE_PATH . 'tools/compression.php';
 
-$_SERVER['REQUEST_URI'] = \otra\Router::getRouteUrl(ARG_SITE_ROUTE);
+$_SERVER['REQUEST_URI'] = Router::getRouteUrl(ARG_SITE_ROUTE);
 
 // We don't allow errors shown on production !
 $oldErrorReporting = error_reporting();
@@ -54,7 +56,7 @@ session_start([
 ]);
 
 // We launch the route
-\otra\Router::get(ARG_SITE_ROUTE);
+Router::get(ARG_SITE_ROUTE);
 $content = ob_get_clean();
 
 // We restore the error reporting

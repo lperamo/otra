@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 define('BLUE_ON_LIGHT_BLACK', CLI_BLUE . CLI_BGD_LIGHT_BLACK);
 define('LIGHTBLUE_ON_LIGHT_BLACK', CLI_LIGHT_BLUE . CLI_BGD_LIGHT_BLACK);

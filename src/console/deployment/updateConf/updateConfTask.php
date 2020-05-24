@@ -1,9 +1,14 @@
 <?php
+declare(strict_types=1);
 if (defined('CHUNKS_KEY_LENGTH') === false)
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
 
 if (function_exists('writeConfigFile') === false)
 {
+  /**
+   * @param string $configFile
+   * @param string $content
+   */
   function writeConfigFile(string &$configFile, string &$content)
   {
     if (true === empty($content))

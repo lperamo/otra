@@ -25,11 +25,16 @@
     "symfony/yaml": "^4.0"
   },
   "require-dev": {
+    "ext-curl": "*",
+    "ext-inotify": "*",
+    "ext-openssl": "*",
     "ext-pdo": "*",
-    "ext-pdo_mysql": "*"
+    "ext-pdo_mysql": "*",
+    "ext-zlib": "*"
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",
+    "ext-openssl": "Needed to encrypt passwords securely",
     "ext-zend-opcache": "Needed to use the preloading feature available since PHP 7.4."
   }
 }

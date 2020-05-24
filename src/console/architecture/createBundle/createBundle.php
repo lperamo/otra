@@ -1,30 +1,30 @@
 <?php
+declare(strict_types=1);
 
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 
+define('OTRA_BUNDLES_MAIN_FOLDER_NAME', 'bundles/');
+
 /**
- * @param bool        $interactive
- * @param string      $bundleName
- * @param string|null $bundleMask
- * @param bool        $bundleTask
+ * @param bool     $interactive
+ * @param string   $bundleName
+ * @param int|null $bundleMask
+ * @param bool     $bundleTask
  *
  * @throws \otra\OtraException
  */
-function bundleHandling(bool $interactive, string $bundleName, ?string $bundleMask, bool $bundleTask = false)
+function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false)
 {
   $bundleName = ucfirst($bundleName);
-  define('BUNDLE_ROOT_PATH', BASE_PATH . 'bundles/');
-  $errorMessage = CLI_YELLOW . 'The bundle ' . CLI_LIGHT_CYAN . 'bundles/' . $bundleName . CLI_YELLOW . ' already exists.';
+  define('BUNDLE_ROOT_PATH', BASE_PATH . OTRA_BUNDLES_MAIN_FOLDER_NAME);
+  $errorMessage = CLI_YELLOW . 'The bundle ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_YELLOW . ' already exists.';
 
-  if ($interactive === false)
+  if ($interactive === false && file_exists(BUNDLE_ROOT_PATH . $bundleName))
   {
-    if (file_exists(BUNDLE_ROOT_PATH . $bundleName))
-    {
-      echo $errorMessage, END_COLOR, PHP_EOL;
+    echo $errorMessage, END_COLOR, PHP_EOL;
 
-      /** @var bool $consoleForce */
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
-    }
+    /** @var bool $consoleForce */
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   while (file_exists(BUNDLE_ROOT_PATH . $bundleName))
@@ -61,7 +61,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?string $bundleMa
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
   mkdir(BUNDLE_BASE_PATH, 0755, true);
-  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, 'bundles/', $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
+  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 $vendorPosition = mb_strrpos(__DIR__, 'vendor');
 $otraProject = $vendorPosition !== false;

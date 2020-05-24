@@ -11,7 +11,6 @@ It contains generic configuration that will work for development and production 
 Values that can be modified in this file :
 - `VERSION` : used for dynamic caching of CSS/JS resources
 - `RESOURCE_FILE_MIN_SIZE` : aimed to load CSS/JS resources directly into the templates if their size is under this size.
-- `FWK_HASH` : hash used to secure paths to the generated production files.
 
 The related environment specific configuration files are in `config/dev/AllConfig.php` and `config/prod/AllConfig.php`
 respectively.

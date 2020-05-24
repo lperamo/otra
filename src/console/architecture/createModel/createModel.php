@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use otra\OtraException;
 
@@ -177,12 +178,11 @@ function getModelLocation() : int
 /**
  * Asks the user for the module name
  *
- * @param string $bundleName
  * @param string $bundlePath
  *
  * @return string
  */
-function getModuleName(string $bundleName, string $bundlePath) : string
+function getModuleName(string $bundlePath) : string
 {
   $question = 'In which module do you want to create the model ?';
   $moduleName = promptUser($question);

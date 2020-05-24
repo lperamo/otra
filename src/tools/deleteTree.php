@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Deletes a tree recursively.
@@ -19,5 +20,4 @@ $delTree = function (string $dir) use (&$delTree) : bool
   }
 
   return rmdir($dir);
-}
-
+};

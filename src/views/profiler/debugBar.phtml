@@ -1,9 +1,16 @@
 <?php
-if(function_exists('generateArrows') === false)
+declare(strict_types=1);
+
+use config\AllConfig;
+
+if (function_exists('generateArrows') === false)
 {
+  /**
+   * @param string $type
+   */
   function generateArrows($type = 'radio')
   {
-    $debugBarPosition = isset(\config\AllConfig::$debugBarPosition) ? \config\AllConfig::$debugBarPosition : 'top';
+    $debugBarPosition = isset(AllConfig::$debugBarPosition) ? AllConfig::$debugBarPosition : 'top';
     $positions = [
       '▲' => 'top',
       '▶' => 'right',
@@ -31,7 +38,6 @@ if(function_exists('generateArrows') === false)
     }
   }
 }
-/** @var \otra\MasterController $this */
 $this::css(CORE_CSS_PATH . 'devMode'); ?>
 <?php generateArrows(); ?>
 

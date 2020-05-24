@@ -7,6 +7,8 @@
 declare(strict_types=1);
 namespace otra\console
 {
+
+  use Exception;
   use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
@@ -17,11 +19,14 @@ namespace otra\console
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
   define ('OTRA_DB_PROPERTY_MODE_DEFAULT', 2);
 
+  /**
+   * @package otra\console
+   */
   abstract class Database
   {
     // Database connection
     private static string
-      $_databaseFile = 'database_schema',
+      $databaseFile = 'database_schema',
       $base,
       $fixturesFileIdentifiers = 'ids',
       $folder = 'bundles/',
@@ -207,7 +212,7 @@ namespace otra\console
       {
         $dbResult = $inst->query(file_get_contents($databaseFile));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted when executing ' . $e->getMessage());
@@ -224,17 +229,15 @@ namespace otra\console
      * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
      *
      * @param string $attr Attribute
-     * @param bool $mode How we show the type of date
-     *                   0: type
-     *                   1: value (default)
-     *                   2: type value
+     * @param int    $mode How we show the type of date
+     *                     0: type
+     *                     1: value (default)
+     *                     2: type value
      *
      * @return string $attr Concerned attribute in uppercase
      */
     public static function getAttr(string $attr, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
-      $output = '';
-
       if (true === isset(self::$attributeInfos[$attr]))
       {
         $value = self::$attributeInfos[$attr];
@@ -367,7 +370,7 @@ namespace otra\console
         {
           if (false === mkdir($fixtureFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -673,7 +676,7 @@ namespace otra\console
         // Runs the file
         $dbResult = $inst->query(file_get_contents($file));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
@@ -714,7 +717,7 @@ namespace otra\console
       {
         $result = Sql::$instance->query('DROP DATABASE IF EXISTS ' . $databaseName);
         Sql::$instance->freeResult($result);
-      } catch (\Exception $e)
+      } catch (Exception $e)
       {
         Sql::$instance->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
@@ -744,7 +747,7 @@ namespace otra\console
       if (false === self::$init)
         self::init();
 
-      $dbFile = self::$pathSql . self::$_databaseFile . ($force ? '_force.sql' : '.sql');
+      $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
 
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
@@ -1008,8 +1011,6 @@ namespace otra\console
 
       $tablesToCreate = [];
 
-      $tablesToCreate = [];
-
       // For each table
       foreach (array_keys($fixturesData) as $table)
       {
@@ -1133,7 +1134,7 @@ namespace otra\console
         {
           if (false === mkdir($saveFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1175,7 +1176,7 @@ namespace otra\console
         {
           if (false === mkdir(self::$pathYmlFixtures, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }

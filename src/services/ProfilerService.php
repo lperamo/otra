@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Profiler service
  *
@@ -7,6 +8,9 @@
 
 namespace otra\services;
 
+/**
+ * @package otra\services
+ */
 class ProfilerService
 {
   public static function securityCheck()
@@ -20,6 +24,8 @@ class ProfilerService
 
   /**
    * @param string $file
+   *
+   * @return false|string
    */
   public static function getLogs(string $file)
   {

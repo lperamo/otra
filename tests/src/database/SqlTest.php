@@ -395,8 +395,8 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
-    self::assertIsInt(Sql::$instance->lastInsertedId());
+    Sql::getDb();
+    self::assertIsString(Sql::$instance->lastInsertedId());
   }
 
   /**
@@ -409,9 +409,9 @@ class SqlTest extends TestCase
     require self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
 
-    $this->expectException(OtraException::class);
+    $this->expectException(\TypeError::class);
     $this->expectExceptionMessage(
-      'This function does not exist with \'PDOMySQL\'... and mysql driver is now deprecated !'
+      'call_user_func_array() expects parameter 1 to be a valid callback, class \'otra\bdd\Pdomysql\' does not have a method \'selectDb\''
     );
 
     $sqlInstance = Sql::getDB('test');

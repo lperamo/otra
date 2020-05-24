@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'common.php';
 
 define(

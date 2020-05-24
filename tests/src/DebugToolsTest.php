@@ -12,7 +12,7 @@ class DebugToolsTest extends TestCase
 {
   private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:88:',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:92:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
 
   private static string $LOGS_PROD_PATH;
@@ -36,11 +36,11 @@ class DebugToolsTest extends TestCase
 
     if (OTRA_PROJECT === false)
     {
-      if (file_exists(self::$LOGS_PROD_PATH))
-        rmdir(self::$LOGS_PROD_PATH);
+      require CORE_PATH . 'tools/deleteTree.php';
 
+      /** @var callable $delTree */
       if (file_exists(self::LOG_PATH))
-        rmdir(self::LOG_PATH);
+        $delTree(self::LOG_PATH);
     }
   }
 

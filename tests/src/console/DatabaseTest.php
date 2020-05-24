@@ -248,7 +248,7 @@ class DatabaseTest extends TestCase
     Database::createDatabase(self::$databaseName);
 
     // Assertions
-    $endPath = removeFieldScopeProtection(Database::class, '_databaseFile')->getValue() . '.sql';
+    $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '.sql';
     self::assertFileEquals(self::$configFolderSqlBackup . $endPath, self::$configFolderSql . $endPath);
   }
 
@@ -563,7 +563,7 @@ class DatabaseTest extends TestCase
       [self::$schemaAbsolutePath]
     );
 
-    removeFieldScopeProtection(Database::class, '_databaseFile');
+    removeFieldScopeProtection(Database::class, 'databaseFile');
 
     $this->loadConfig();
 

@@ -2,9 +2,13 @@
 declare(strict_types=1);
 
 use config\{AllConfig,Routes};
+use otra\Router;
 
 define('ONE_BOOTSTRAP_ARG_VERBOSE', 1);
 define('ONE_BOOTSTRAP_ARG_ROUTE', 2);
+
+define('OTRA_KEY_BOOTSTRAP', 'bootstrap');
+define('OTRA_KEY_DRIVER', 'driver');
 
 $verbose = $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
@@ -20,7 +24,7 @@ $_SERVER[APP_ENV] = 'prod';
 
 require CLASS_MAP_PATH;
 
-$_SESSION['bootstrap'] = 1; // in order to not really make BDD requests !
+$_SESSION[OTRA_KEY_BOOTSTRAP] = 1; // in order to not really make BDD requests !
 $firstFilesIncluded = get_included_files();
 
 // Force to show all errors
@@ -85,9 +89,9 @@ if (isset($params['core']) && $params['core'])
   $fileToInclude = substr(CORE_PATH,0, -5) . str_replace(
       ['\\', 'otra'],
       ['/', 'src'],
-      \otra\Router::get(
+      Router::get(
         $route,
-        (isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        (isset($params[OTRA_KEY_BOOTSTRAP])) ? $params[OTRA_KEY_BOOTSTRAP] : [],
         false
       )
     ) . '.php';
@@ -96,9 +100,9 @@ if (isset($params['core']) && $params['core'])
   $fileToInclude = BASE_PATH . str_replace(
       '\\',
       '/',
-      \otra\Router::get(
+      Router::get(
         $route,
-        (isset($params['bootstrap'])) ? $params['bootstrap'] : [],
+        (isset($params[OTRA_KEY_BOOTSTRAP])) ? $params[OTRA_KEY_BOOTSTRAP] : [],
         false
       )
     ) . '.php';
@@ -108,9 +112,9 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => empty(AllConfig::$dbConnections) === false
-      && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
-      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
+    OTRA_KEY_DRIVER => empty(AllConfig::$dbConnections) === false
+      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
       : '',
     "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
     'temporaryEnv' => 'prod'

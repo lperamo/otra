@@ -12,8 +12,8 @@ use ReflectionException;
  */
 class OtraExceptionTest extends TestCase
 {
-  private const BUNDLES_FOLDER = BASE_PATH . 'bundles/',
-    BUNDLES_CONFIG_FOLDER = self::BUNDLES_FOLDER . 'config/',
+  private const 
+    BUNDLES_CONFIG_FOLDER = BUNDLES_PATH . 'config/',
     BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
 
   protected function setUp(): void
@@ -45,8 +45,8 @@ class OtraExceptionTest extends TestCase
       if (!file_exists(self::BUNDLES_CONFIG_FOLDER))
         rmdir(self::BUNDLES_CONFIG_FOLDER);
 
-      if (!file_exists(self::BUNDLES_FOLDER))
-        rmdir(self::BUNDLES_FOLDER);
+      if (!file_exists(BUNDLES_PATH))
+        rmdir(BUNDLES_PATH);
     }
   }
 
@@ -56,7 +56,6 @@ class OtraExceptionTest extends TestCase
    */
   public function testOtraException(): void
   {
-    $this->expectException(OtraException::class);
     $exception = new OtraException('test');
     self::assertInstanceOf(OtraException::class, $exception);
     removeMethodScopeProtection(OtraException::class, 'errorMessage')
@@ -69,7 +68,6 @@ class OtraExceptionTest extends TestCase
    */
   public function testOtraException_WithContext(): void
   {
-    $this->expectException(OtraException::class);
     $exception = new OtraException('test');
 
     /* We cannot force the PHP_SAPI constant so it will launch OtraExceptionCli but we can workaround it.

@@ -14,7 +14,6 @@ require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
 require CONSOLE_PATH . 'architecture/createController/createController.php';
 
-/** @var string $modulePath */
 $controllersFolder = $modulePath . '/controllers/';
 $controllerName = $argv[ARG_CONTROLLER_NAME];
 
