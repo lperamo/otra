@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use config\AllConfig;
+
 $vendorPosition = mb_strrpos(__DIR__, 'vendor');
 $otraProject = $vendorPosition !== false;
 $basePath = $otraProject
@@ -46,13 +48,12 @@ else
   echo 'OTRA global constants generated.', CLI_GREEN, ' ✔', END_COLOR, PHP_EOL;
 
 // On the online side
-if (class_exists(AllConfig::class) && isset(\config\AllConfig::$deployment['folder']))
+if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
 {
-  $prodContent = str_replace($basePath, \config\AllConfig::$deployment['folder'], $content, $count);
+  $prodContent = str_replace($basePath, AllConfig::$deployment['folder'], $content, $count);
 
   if (file_put_contents($basePath . 'config/prodConstants.php', $prodContent) === false)
     echo CLI_RED . 'There was a problem while writing the OTRA global constants for the online side.', END_COLOR, PHP_EOL;
   else
     echo 'OTRA global constants for the online side generated.', CLI_GREEN, ' ✔', END_COLOR, PHP_EOL;
 }
-
