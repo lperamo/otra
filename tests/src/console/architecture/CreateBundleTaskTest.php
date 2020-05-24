@@ -9,7 +9,7 @@ use phpunit\framework\TestCase;
 if (defined('TEST_BUNDLE_UPPER') === false)
 {
   define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
-  define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+  define('TEST_BUNDLE_PATH', BUNDLES_PATH . TEST_BUNDLE_UPPER . '/');
 }
 
 /**

@@ -11,7 +11,7 @@ if (!defined('TEST_BUNDLE_UPPER'))
   define('TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));
 
 if (!defined('TEST_BUNDLE_PATH'))
-  define('TEST_BUNDLE_PATH', BASE_PATH . 'bundles/' . TEST_BUNDLE_UPPER . '/');
+  define('TEST_BUNDLE_PATH', BUNDLES_PATH . TEST_BUNDLE_UPPER . '/');
 
 if (!defined('TEST_MODULE_PATH'))
   define('TEST_MODULE_PATH', TEST_BUNDLE_PATH . CreateModuleTaskTest::TEST_MODULE . '/');

@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-if (defined('SPACE_INDENT_2') === false)
+if (!defined('SPACE_INDENT_2'))
   define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
 
-if (defined('SPACE_INDENT_3') === false)
+if (!defined('SPACE_INDENT_3'))
   define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
 
-define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+if (!defined('BUNDLES_PATH'))
+  define('BUNDLES_PATH', BASE_PATH . 'bundles/');
 
 /**
  * Creates the folder of the specified controller.
