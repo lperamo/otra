@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /** This sequence moves the cursor up by 1,
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)
@@ -150,4 +151,4 @@ if (function_exists('promptUser') === false)
       );
   }
 }
-?>
+

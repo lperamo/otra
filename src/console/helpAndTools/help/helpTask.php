@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use otra\console\TasksManager;
 
@@ -49,4 +50,4 @@ if (isset($paramsDesc[TasksManager::TASK_PARAMETERS]) === true)
 }
 
 echo END_COLOR;
-?>
+

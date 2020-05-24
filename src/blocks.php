@@ -1,11 +1,17 @@
 <?php
-/* Light templating engine */
+declare(strict_types=1);
 
+/* Light templating engine */
 use otra\MasterController;
 
 // those functions can be redeclared if we have an exception later, exception that will also use the block system
 if (function_exists('block') === false)
 {
+  define('OTRA_BLOCKS_KEY_CONTENT', 'content');
+  define('OTRA_BLOCKS_KEY_INDEX', 'index');
+  define('OTRA_BLOCKS_KEY_PARENT', 'parent');
+  define('OTRA_BLOCKS_KEY_REPLACED_BY', 'replacedBy');
+
   /**
    * Begins a template block.
    *
@@ -16,16 +22,16 @@ if (function_exists('block') === false)
   {
     // Storing previous content before doing anything else
     $currentBlock = &MasterController::$currentBlock;
-    $currentBlock['content'] .= ob_get_clean();
+    $currentBlock[OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
 
     array_push(MasterController::$blocksStack, $currentBlock);
 
     // Preparing the new block
     $currentBlock = [
-      'content' => '',
-      'index' => ++MasterController::$currentBlocksStackIndex,
+      OTRA_BLOCKS_KEY_CONTENT => '',
+      OTRA_BLOCKS_KEY_INDEX => ++MasterController::$currentBlocksStackIndex,
       'name' => $name,
-      'parent' => &MasterController::$blocksStack[array_key_last(MasterController::$blocksStack)]
+      OTRA_BLOCKS_KEY_PARENT => &MasterController::$blocksStack[array_key_last(MasterController::$blocksStack)]
     ];
 
     // Key of the next $currentBlock in the stack
@@ -42,9 +48,9 @@ if (function_exists('block') === false)
         $previousSameKindBlock = &MasterController::$blocksStack[$stackKey];
 
         // Handles the block replacement system (parent replaced by child)
-        if ($currentBlock['index'] > $previousSameKindBlock['index']
+        if ($currentBlock[OTRA_BLOCKS_KEY_INDEX] > $previousSameKindBlock[OTRA_BLOCKS_KEY_INDEX]
           && $stackKey === $firstPreviousSameKindBlockKey)
-          MasterController::$blocksStack[$firstPreviousSameKindBlockKey]['replacedBy'] = $actualKey;
+          MasterController::$blocksStack[$firstPreviousSameKindBlockKey][OTRA_BLOCKS_KEY_REPLACED_BY] = $actualKey;
       }
     }
 
@@ -58,7 +64,7 @@ if (function_exists('block') === false)
     if ($inline !== '')
     {
       echo $inline;
-      endBlock();
+      endblock();
     }
   }
 
@@ -70,12 +76,12 @@ if (function_exists('block') === false)
     // Storing previous content before doing anything else
     $currentBlock = &MasterController::$currentBlock;
     $currentBlock['endingBlock'] = true; // needed for processing parent function
-    $currentBlock['content'] .= ob_get_clean();
+    $currentBlock[OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
 
     // Updates the list of block types with their position in the stack
     if ($currentBlock['name'] !== 'root'
       && (array_key_exists($currentBlock['name'], MasterController::$blockNames) === true
-        && $currentBlock['index'] > MasterController::$blockNames[$currentBlock['name']])
+        && $currentBlock[OTRA_BLOCKS_KEY_INDEX] > MasterController::$blockNames[$currentBlock['name']])
     )
       MasterController::$blockNames[$currentBlock['name']] = count(MasterController::$blocksStack);
 
@@ -83,10 +89,10 @@ if (function_exists('block') === false)
 
     // Preparing the next block
     MasterController::$currentBlock = [
-      'content' => '',
-      'index' => $currentBlock['parent']['index'],
-      'parent' => $currentBlock['parent']['parent'],
-      'name' => $currentBlock['parent']['name']
+      OTRA_BLOCKS_KEY_CONTENT => '',
+      OTRA_BLOCKS_KEY_INDEX => $currentBlock[OTRA_BLOCKS_KEY_PARENT][OTRA_BLOCKS_KEY_INDEX],
+      OTRA_BLOCKS_KEY_PARENT => $currentBlock[OTRA_BLOCKS_KEY_PARENT][OTRA_BLOCKS_KEY_PARENT],
+      'name' => $currentBlock[OTRA_BLOCKS_KEY_PARENT]['name']
     ];
 
     // Start listening the remaining content
@@ -108,14 +114,14 @@ if (function_exists('block') === false)
     $parentBlock = MasterController::$blocksStack[$key];
 
     // If this block has been replaced, we jump to replacing block if it is not our current block
-    while (array_key_exists('replacedBy', $parentBlock) === true
-      && array_key_exists($parentBlock['replacedBy'], MasterController::$blocksStack) === true)
+    while (array_key_exists(OTRA_BLOCKS_KEY_REPLACED_BY, $parentBlock) === true
+      && array_key_exists($parentBlock[OTRA_BLOCKS_KEY_REPLACED_BY], MasterController::$blocksStack) === true)
     {
-      $key = $parentBlock['replacedBy'];
+      $key = $parentBlock[OTRA_BLOCKS_KEY_REPLACED_BY];
       $parentBlock = MasterController::$blocksStack[$key];
     }
 
-    $content = $parentBlock['content'];
+    $content = $parentBlock[OTRA_BLOCKS_KEY_CONTENT];
 
     if (array_key_exists('endingBlock', $parentBlock) === false)
     {
@@ -126,11 +132,11 @@ if (function_exists('block') === false)
           break;
 
         $block = MasterController::$blocksStack[++$key];
-        $content .= $block['content'];
-      } while ($block['index'] !== $parentBlock['index']);
+        $content .= $block[OTRA_BLOCKS_KEY_CONTENT];
+      } while ($block[OTRA_BLOCKS_KEY_INDEX] !== $parentBlock[OTRA_BLOCKS_KEY_INDEX]);
     }
 
     echo $content;
   }
 }
-?>
+

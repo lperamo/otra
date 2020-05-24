@@ -11,16 +11,27 @@ use config\{AllConfig, Routes};
 define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
 define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 
+define('OTRA_LABEL_ENDING_TITLE_TAG', '/title>');
+define('OTRA_FILENAME_TRACE', 'trace');
+
+/**
+ * @package otra
+ */
 trait DevControllerTrait
 {
+  /**
+   * @param array $baseParams
+   * @param array $getParams
+   */
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     parent::__construct($baseParams, $getParams);
-    Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, 'trace');
+    Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, OTRA_FILENAME_TRACE);
   }
 
   /**
    * If the files are in cache, put them directly in $rendered
+   * @TODO Fix this function !!
    *
    * @param array $filesToCheck Files to check in cache
    *
@@ -40,7 +51,7 @@ trait DevControllerTrait
    *
    * @throws OtraException
    */
-  public final function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
+  final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
     $otraRoute = strpos($this->route, 'otra_') !== false;
 
@@ -49,7 +60,7 @@ trait DevControllerTrait
     else
       $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
 
-    Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), 'trace');
+    Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), OTRA_FILENAME_TRACE);
 
     if (false === file_exists($templateFile))
       throw new OtraException('File not found ! : ' . $templateFile);
@@ -88,18 +99,18 @@ trait DevControllerTrait
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {
     // We log the action variables into logs/trace.txt
-    Logger::logTo(print_r($variables, true), 'trace');
+    Logger::logTo(print_r($variables, true), OTRA_FILENAME_TRACE);
 
     $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
     // We log the template file name into logs/trace.txt
-    Logger::logTo("\t" . 'File : ' . $templateFilename, 'trace');
+    Logger::logTo("\t" . 'File : ' . $templateFilename, OTRA_FILENAME_TRACE);
 
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = false === self::$ajax
       ? str_replace(
-        '/title>',
-        '/title>'. self::addResource('css'),
+        OTRA_LABEL_ENDING_TITLE_TAG,
+        OTRA_LABEL_ENDING_TITLE_TAG. self::addResource('css'),
         $content . self::addResource('js'))
       : self::addResource('css') . $content . self::addResource('js');
 
@@ -123,8 +134,8 @@ trait DevControllerTrait
 
     // suppress useless spaces
     parent::$template = str_replace(
-      '/title>',
-      '/title>'. self::addDebugCSS(),
+      OTRA_LABEL_ENDING_TITLE_TAG,
+      OTRA_LABEL_ENDING_TITLE_TAG. self::addDebugCSS(),
       parent::$template . self::addDebugJS()
     );
   }
@@ -293,4 +304,4 @@ trait DevControllerTrait
     ++$i;
   }
 }
-?>
+

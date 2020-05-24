@@ -1,4 +1,6 @@
-<?php require CORE_PATH . 'blocks.php' ?>
+<?php
+declare(strict_types=1);
+require CORE_PATH . 'blocks.php' ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width" />
@@ -6,7 +8,7 @@
 <title>
 <?php block('title'); ?>
 Welcome to OTRA!
-<?php endBlock(); ?>
+<?php endblock(); ?>
 </title>
 
 <!-- Favicons-->
@@ -18,5 +20,5 @@ Welcome to OTRA!
 <body>
 <?php block('body'); ?>
 Hello!
-<?php endBlock(); ?>
+<?php endblock(); ?>
 </body>

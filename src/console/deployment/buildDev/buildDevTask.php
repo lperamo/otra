@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\console;
 
 use config\AllConfig;
-use PHPUnit\SebastianBergmann\CodeCoverage\Report\PHP;
+use RecursiveIteratorIterator;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
@@ -64,15 +65,12 @@ function isNotInThePath(array $paths, string &$realPath) : bool
   foreach ($paths as &$path)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false)
-    {
-      if (
-        BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
-        || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
-        || BUILD_DEV_SCOPE === 2
+    if (mb_strpos($realPath, $path) !== false &&
+        (BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
+          || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
+          || BUILD_DEV_SCOPE === 2)
       )
         $continue = false;
-    }
   }
 
   return $continue;
@@ -129,7 +127,7 @@ echo CLI_YELLOW, 'The production configuration is used for this task.', END_COLO
 
 define(
   'BUILD_DEV_SOURCE_MAPS',
-  isset(AllConfig::$cssSourceMaps) ? AllConfig::$cssSourceMaps : false
+  isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, BUILD_DEV_MASK_SCSS));
@@ -172,7 +170,7 @@ require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
-$iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
+$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 /** @var \SplFileInfo $entry */
 foreach($iterator as $entry)
@@ -248,9 +246,9 @@ foreach($iterator as $entry)
         if (file_exists($cssFolder) === false)
           mkdir($cssFolder, 0777,true);
 
-        $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+        $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-        list(, $return) = cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
+        cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName .
           ':' . $cssPath);
 
         $sourceMapPath = $cssPath . '.map';
@@ -261,11 +259,8 @@ foreach($iterator as $entry)
             (BUILD_DEV_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
 
         // We clean the source map if there is an old source map related to this CSS file
-        if (!BUILD_DEV_SOURCE_MAPS)
-        {
-          if (file_exists($sourceMapPath))
+        if (!BUILD_DEV_SOURCE_MAPS && file_exists($sourceMapPath))
             unlink($sourceMapPath);
-        }
       }
     }
   }
@@ -279,4 +274,4 @@ if ($filesProcessed === true)
     echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
 } else
   echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;
-?>
+

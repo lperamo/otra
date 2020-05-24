@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\console;
 
@@ -6,6 +7,7 @@ require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
 use otra\console\Tasks;
+use RecursiveIteratorIterator;
 
 // TODO Add parameter(s)? to add folder(s) to exclude from watching
 // TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
@@ -54,7 +56,7 @@ define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ?
 // Defines if we want to use Google Closure Compiler or not
 define(
   'GEN_WATCHER_GCC',
-  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true' ? true : false
+  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true'
 );
 
 if (GEN_WATCHER_VERBOSE > 1 )
@@ -241,7 +243,7 @@ $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 $dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
-$iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
+$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
@@ -369,7 +371,7 @@ while (true)
         }
 
         continue;
-      } else if (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
+      } elseif (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
         // User is deleting a folder
         $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
@@ -386,7 +388,7 @@ while (true)
         unset($foldersWatchedIds[$wd]);
 
         continue;
-      } else if ( // If it is an event IN_DELETE and is a file to watch
+      } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($mask & IN_DELETE) === IN_DELETE
         && (in_array($name, $phpEntriesToWatch) === true
           || in_array($name, $resourcesEntriesToWatch) === true
@@ -400,7 +402,7 @@ while (true)
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
         }
-      } else if ( // A save operation has been done
+      } elseif ( // A save operation has been done
           (
             ($mask & IN_ATTRIB) === IN_ATTRIB
             || ($mask & IN_MODIFY) === IN_MODIFY
@@ -427,7 +429,7 @@ while (true)
           // We updates routes configuration if the php file is a routes configuration file
           if ($name === 'Routes.php')
             Tasks::upConf();
-        } else if (in_array($resourceName, $resourcesEntriesToWatch) === true)
+        } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
           $resourceFolder = dirname($foldersWatchedIds[$wd]);
@@ -446,7 +448,7 @@ while (true)
             if (file_exists($cssFolder) === false)
               mkdir($cssFolder);
 
-            $cssPath = realPath($cssFolder) . '/' . $generatedCssFile;
+            $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
             list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 
@@ -497,11 +499,8 @@ while (true)
             }
           }
         }
-      } else
-      {
-        if (GEN_WATCHER_VERBOSE > 1)
-          $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-      }
+      } elseif (GEN_WATCHER_VERBOSE > 1)
+        $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
 
       $headers = false;
     }
@@ -513,5 +512,5 @@ while (true)
   // Avoid watching too much to avoid performance issues
   sleep(0.1);
 }
-?>
+
 

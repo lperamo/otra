@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'common.php';
 define(
   'MODEL_CREATED_FROM_YAML_SCHEMA',
@@ -66,4 +67,4 @@ function preparingErrorMessage(bool &$modelExists, bool &$tableExists, string &$
   if (false === $tableExists)
     $errorLabel .= 'The schema does not contains this table ' . $modelName . ' (maybe ... check the case).';
 }
-?>
+

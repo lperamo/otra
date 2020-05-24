@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
@@ -23,13 +24,15 @@ function createControllersFolder(string $controllersFolder)
  * @param string $controllersFolder
  * @param string $controllerName
  * @param bool   $interactive
+ *
+ * @throws \otra\OtraException
  */
 function createController(string $controllersFolder, string $controllerName, bool $interactive)
 {
   $controllerPath = $controllersFolder . $controllerName;
 
   // If the folder does not exist and we are not in interactive mode, we exit the program.
-  createFolder($controllerPath, $controllersFolder, $controllerName, 'controller', $interactive);
+  createFolder($controllerPath, $controllersFolder, 'controller', $interactive);
   echo CLI_LIGHT_GREEN, 'Folder ', CLI_LIGHT_CYAN, substr($controllerPath,
     strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
 }
@@ -38,10 +41,11 @@ function createController(string $controllersFolder, string $controllerName, boo
  * @param bool   $interactive
  * @param string $controllersFolder
  * @param string $controllerName
+ *
+ * @throws \otra\OtraException
  */
 function controllerHandling(bool $interactive, string &$controllersFolder, string &$controllerName)
 {
-  /** @var string $interactive */
   if ($interactive === true)
   {
     createControllersFolder($controllersFolder);
@@ -57,4 +61,4 @@ function controllerHandling(bool $interactive, string &$controllersFolder, strin
     createController($controllersFolder, $controllerName, $interactive);
   }
 }
-?>
+

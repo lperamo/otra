@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
@@ -8,13 +9,15 @@ if (function_exists('createModule') === false)
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
    * @param bool   $interactive
+   *
+   * @throws \otra\OtraException
    */
   function createModule(string $bundleBasePath, string &$moduleName, bool &$interactive): void
   {
     $modulePath = $bundleBasePath . $moduleName;
 
     // If the folder does not exist and we are not in interactive mode, we exit the program.
-    createFolder($modulePath, $bundleBasePath, $moduleName, 'module', $interactive);
+    createFolder($modulePath, $bundleBasePath, 'module', $interactive);
 
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);
@@ -26,6 +29,8 @@ if (function_exists('createModule') === false)
    * @param bool   $interactive
    * @param string $bundleName
    * @param string $moduleName
+   *
+   * @throws \otra\OtraException
    */
   function moduleHandling(bool $interactive, string $bundleName, string $moduleName)
   {
@@ -44,4 +49,4 @@ if (function_exists('createModule') === false)
       createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
   }
 }
-?>
+

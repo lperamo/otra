@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
 
 return [
   'Launches a watcher that will update the PHP class mapping, the ts files and the scss files.',
@@ -11,6 +14,10 @@ return [
     'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.',
     'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files ?'
   ],
-  ['optional', 'optional', 'optional'],
+  [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];

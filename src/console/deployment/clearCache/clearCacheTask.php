@@ -1,6 +1,8 @@
 <?php
+declare(strict_types=1);
 
 use config\AllConfig;
+use otra\OtraException;
 
 define('CLEAR_CACHE_ARG_MASK', 2);
 define('CLEAR_CACHE_ARG_ROUTE', 3);
@@ -59,35 +61,30 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
     }
   };
 
-  // If we have chosen a specific route
-  if (isset($route))
+  // If we have chosen a specific route and this is not an existing route ...
+  if (isset($route) && !isset($routes[$route]))
   {
-    // Is this an existing route ? If not ...
-    if (!isset($routes[$route]))
+    require CONSOLE_PATH . 'tools.php';
+    list($newRoute) = guessWords($route, array_keys($routes));
+
+    if ($newRoute === null)
     {
-      require CONSOLE_PATH . 'tools.php';
-      list($newRoute) = guessWords($route, array_keys($routes));
+      echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
 
-      if ($newRoute === null)
-      {
-        echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
-
-        return null;
-      }
-
-      // Otherwise, we suggest the closest name that we have found.
-      $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' . CLI_WHITE .
-        $newRoute
-        . CLI_YELLOW . ' ? (y/n)');
-
-      if ('n' === $choice)
-      {
-        echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
-        return null;
-      }
-
-      $route = $newRoute;
+      return null;
     }
+
+    // Otherwise, we suggest the closest name that we have found.
+    $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' .
+      CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
+
+    if ('n' === $choice)
+    {
+      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
+      return null;
+    }
+
+    $route = $newRoute;
   }
 }
 
@@ -95,7 +92,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
  * @param string $file
  * @param string $fileShownInTheError
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function unlinkFile(string $file, string $fileShownInTheError) : void
 {
@@ -106,7 +103,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
   {
     echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $fileShownInTheError, CLI_RED,
       '. Task aborted.', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 
@@ -114,7 +111,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
  * @param string $folder
  * @param string $folderShownInTheError
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function checkFolder(string $folder, string $folderShownInTheError) : void
 {
@@ -122,7 +119,7 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
   {
     echo CLI_YELLOW, 'The folder ', CLI_CYAN, $folderShownInTheError, CLI_YELLOW, ' does not exist. Task aborted.',
       END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 
@@ -131,7 +128,7 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 {
   if (isset($route))
   {
-    $cacheFileName = AllConfig::$cache_path . sha1('ca' . $route . VERSION . 'che');
+    $cacheFileName = AllConfig::$cachePath . sha1('ca' . $route . VERSION . 'che');
 
     // Is there a cache for this route ? If yes, clears it.
     if (file_exists($cacheFileName) === true)
@@ -143,7 +140,7 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
   }
 
   // Otherwise we clear all the other routes.
-  array_map('unlink', glob(AllConfig::$cache_path . '*.cache'));
+  array_map('unlink', glob(AllConfig::$cachePath . '*.cache'));
   echo 'PHP OTRA internal cache cleared', OTRA_SUCCESS;
 }
 
@@ -246,4 +243,4 @@ if (($mask & CLEAR_CACHE_MASK_DEBUGGING) >> 8)
 
   echo 'Debugging files cleared', OTRA_SUCCESS;
 }
-?>
+

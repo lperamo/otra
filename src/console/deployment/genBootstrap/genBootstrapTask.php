@@ -8,6 +8,8 @@ define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
 define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
 
+define('OTRA_KEY_DRIVER', 'driver');
+
 $verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
@@ -71,7 +73,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 }
 
 // In CLI mode, the $_SERVER variable is not set so we set it !
-$_SERVER['APP_ENV'] = 'prod';
+$_SERVER[APP_ENV] = 'prod';
 
 $key = 0;
 
@@ -104,11 +106,11 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    'driver' => empty(AllConfig::$dbConnections) === false
-      && array_key_exists('driver', AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
-      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)]['driver']
+    OTRA_KEY_DRIVER => empty(AllConfig::$dbConnections) === false
+      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+      ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
       : '',
-    "_SERVER['APP_ENV']" => $_SERVER['APP_ENV'],
+    "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
     'temporaryEnv' => 'prod'
   ]
 );
@@ -123,7 +125,7 @@ contentToFile(
   fixFiles(
     $routes[$route]['chunks'][1],
     $route,
-    file_get_contents($fileToInclude),
+    file_get_contents($fileToInclude) . '?>',
     $verbose,
     $fileToInclude
   ),
@@ -136,4 +138,3 @@ if (hasSyntaxErrors($routesManagementFile))
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
 
 echo PHP_EOL;
-?>

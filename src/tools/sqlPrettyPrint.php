@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+define(OTRA_LABEL_SELECT, 'SELECT ');
 // TODO Not fully tested !
 
 define('SQL_CLAUSES', [
   '(SELECT ',
-  'SELECT ',
+  OTRA_LABEL_SELECT,
   'FROM ',
   'LEFT OUTER JOIN',
   'RIGHT OUTER JOIN',
@@ -38,8 +40,8 @@ function sqlReplacements(
 ) : array
 {
    return [
-    '(' . "\n" . $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
-    $leftStyleClauseCode . 'SELECT ' . $rightStyleClauseCode,
+    '(' . "\n" . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
+    $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'LEFT OUTER JOIN' . $rightStyleClauseCode,
     "\n" . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,
@@ -73,7 +75,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   // If we want to style the SQL with HTML markup + CSS
   if ($raw === false) {
     $output = '<pre class="sql-request">';
-    $leftStyleClauseCode = $_SERVER['APP_ENV'] === 'dev' ? '<span class="sql-clause">' : LEFT_STYLE_CLAUSE_CODE;
+    $leftStyleClauseCode = $_SERVER[APP_ENV] === 'dev' ? '<span class="sql-clause">' : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
@@ -164,4 +166,4 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   return $output;
 }
-?>
+

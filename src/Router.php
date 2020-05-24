@@ -8,8 +8,18 @@ namespace otra;
 
 use config\Routes;
 
+/**
+ * @package otra
+ */
 abstract class Router
 {
+  private const OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+    OTRA_ROUTE_RESOURCES_KEY = 'resources';
+
+  public const
+    OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
+    OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS = 1;
+
   /**
    * Retrieve the controller's path that we want or launches the route !
    *
@@ -17,7 +27,7 @@ abstract class Router
    * @param string|array $params Additional params
    * @param bool 				 $launch True if we have to launch the route or just retrieve the path (do we really need this ?)
    *
-   * @return string Controller's path
+   * @return string|Controller Controller's path
    */
   public static function get(string $route = 'index', array $params = [], bool $launch = true)
   {
@@ -33,29 +43,31 @@ abstract class Router
      */
     extract($baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
-      array_pad(Routes::$_[$route]['chunks'], 5, null)
+      array_pad(Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
     ));
 
-    // The route "otra_exception" has an null value into $action
-    if ($action === null)
-      $action = '';
+    $finalAction = '';
 
-    $action = ('prod' === $_SERVER['APP_ENV'] && 'cli' !== PHP_SAPI)
-      ? 'cache\\php\\' . $action //'cache\\php\\' . $controller . 'Controller'
-      : (true === isset(Routes::$_[$route]['core'])
-        ? ''
-        : 'bundles\\') . $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\'  . ucfirst($action);
+    if ('prod' === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
+      $finalAction = 'cache\\php\\' . $action; //'cache\\php\\' . $controller . 'Controller'
+    else
+    {
+      if (!isset(Routes::$_[$route]['core']))
+        $finalAction = 'bundles\\';
 
-    if (false === $launch)
-      return $action;
+      $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
+    }
+
+    if (!$launch)
+      return $finalAction;
 
     $baseParams['route'] = $route;
     $baseParams['css'] = $baseParams['js'] = false;
 
     // Do we have some resources for this route...
-    if (true === isset(Routes::$_[$route]['resources']))
+    if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
-      $resources = Routes::$_[$route]['resources'];
+      $resources = Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY];
       $baseParams['js'] = (
         isset($resources['bundle_js'])
         || isset($resources['module_js'])
@@ -68,7 +80,7 @@ abstract class Router
       );
     }
 
-    if (false === is_array($params))
+    if (!is_array($params))
       $params = [$params];
 
     /** Preventing redirections from crashing the application */
@@ -80,7 +92,7 @@ abstract class Router
       ), 0, 9) !== 'web/index')
     {
       // Is it a static page
-      if (true === isset(Routes::$_[$route]['resources']['template']))
+      if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
         header('Content-Encoding: gzip');
         echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
@@ -91,7 +103,7 @@ abstract class Router
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 
-    new $action($baseParams, $params);
+    return new $finalAction($baseParams, $params);
   }
 
   /**
@@ -99,62 +111,74 @@ abstract class Router
    *
    * @param string $pattern The pattern to check
    *
-   * @return bool|array The route and the parameters if they exist, false otherwise
+   * @return array The route and the parameters if they exist, false otherwise
+   *
+   * @throws OtraException
    */
-  public static function getByPattern(string $pattern)
+  public static function getByPattern(string $pattern) : array
   {
+    $patternFound = false;
+
     foreach (Routes::$_ as $routeName => &$routeData)
     {
-      $routeUrl = $routeData['chunks'][0];
+      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
-      // This is not the route you are looking for !
-      if (false === strpos($pattern, $mainPattern))
-        continue;
-
-      $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
-
-      // Zero parameters => we have all we need.
-      if ('' === $params[0])
-        return [$routeName, []];
-
-      // We destroy the parameters after '?' because we only want rewritten parameters
-      $derParam = count($params) - 1;
-      $paramsFinal = explode('?', $params[$derParam]);
-      $params[$derParam] = $paramsFinal[0];
-
-      // Zero parameters once we remove the parameters after '?' ? => we have all we need.
-      if ('' === $params[0])
-        return [$routeName, []];
-
-      // If there are named parameters in the route configuration
-      if (true === isset($routeData['mainPattern']))
+      // This is the route we are looking for !
+      if (false !== strpos($pattern, $mainPattern))
       {
-        $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
-
-        // We check the number of parameters ...
-        if (count($parametersName) !== count($params))
-        {
-          echo 'The number of parameters does not match !';
-          exit(1);
-        }
-
-        // ...and we name the passed parameters accordingly to the route configuration
-        $newParams = [];
-
-        foreach($params as $key => $param)
-        {
-          $newParams[substr($parametersName[$key], 1, strlen($parametersName[$key]) - 2)] = $param;
-        }
-      } else
-        $newParams = $params;
-
-      return [$routeName, $params];
+        $patternFound = true;
+        break;
+      }
     }
 
-    // If the user has not defined a 404 route, then we launch the default 404 page made by OTRA
-    header('HTTP/1.0 404 Not Found');
-    return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
+    if (!$patternFound)
+    {
+      header('HTTP/1.0 404 Not Found');
+
+      return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
+    }
+
+    $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
+
+    // Zero parameters => we have all we need.
+    if ('' === $params[0])
+      return [$routeName, []];
+
+    // We destroy the parameters after '?' because we only want rewritten parameters
+    $derParam = count($params) - 1;
+    $paramsFinal = explode('?', $params[$derParam]);
+    $params[$derParam] = $paramsFinal[0];
+
+    // Zero parameters once we remove the parameters after '?' ? => we have all we need.
+    if ('' === $params[0])
+      return [$routeName, []];
+
+    // If there are named parameters in the route configuration
+    if (isset($routeData['mainPattern']))
+    {
+      $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
+
+      // We check the number of parameters ...
+      if (count($parametersName) !== count($params))
+      {
+        echo 'The number of parameters does not match !';
+        throw new OtraException('', 1, '', NULL, [], true);
+      }
+
+      // ...and we name the passed parameters accordingly to the route configuration
+      $newParams = [];
+
+      foreach ($params as $key => $param)
+      {
+        $newParams[substr($parametersName[$key], 1, strlen($parametersName[$key]) - 2)] = $param;
+      }
+    } else
+      $newParams = $params;
+
+    /** TODO why the $newParams variable is not used ??? */
+
+    return [$routeName, $params];
   }
 
   /**
@@ -167,12 +191,12 @@ abstract class Router
 
     $paramsString = '';
 
-    foreach($params as $param => &$value)
+    foreach($params as &$value)
     {
       $paramsString .= '/' . $value;
     }
 
-    return Routes::$_[$route]['chunks'][0] . $paramsString;
+    return Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
   }
 }
-?>
+

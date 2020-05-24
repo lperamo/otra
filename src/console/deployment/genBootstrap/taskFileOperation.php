@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+use otra\OtraException;
+
 define('PATTERN', '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
@@ -8,8 +12,19 @@ define('PATTERN', '@\s{0,}
 
 define('ANNOTATION_DEBUG_PAD', 80);
 define('LOADED_DEBUG_PAD', 80);
+define('PHP_OPEN_TAG_STRING', '<?php');
 define('PHP_OPEN_TAG_LENGTH', 5);
+define('PHP_END_TAG_STRING', '?>');
 define('PHP_END_TAG_LENGTH', 2);
+define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
+
+define('OTRA_ALREADY_PARSED_LABEL', ' ALREADY PARSED');
+define('OTRA_KEY_REQUIRE', 'require');
+define('OTRA_KEY_EXTENDS', 'extends');
+define('OTRA_KEY_STATIC', 'static');
+define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
+
+define('OTRA_LABEL_REQUIRE', 'require');
 
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
@@ -21,17 +36,17 @@ define('PHP_END_TAG_LENGTH', 2);
 function phpOrHTMLIntoEval(string &$contentToAdd)
 {
   // Beginning of content
-  $contentToAdd = '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+  $contentToAdd = PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
     ? substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
-    : '?>' . $contentToAdd;
+    : PHP_END_TAG_STRING . $contentToAdd;
 
   // Ending of content
-  if ('?>' === substr($contentToAdd, - PHP_END_TAG_LENGTH))
+  if (PHP_END_TAG_STRING === substr($contentToAdd, - PHP_END_TAG_LENGTH))
     $contentToAdd = substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
-    $contentToAdd .= '<?php';
+    $contentToAdd .= PHP_OPEN_TAG_STRING;
 
-  return '<?php' === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
+  return PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
 }
 
 /**
@@ -76,7 +91,7 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
  * @param string $content
  * @param string $outputFile
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function contentToFile(string $content, string $outputFile)
 {
@@ -91,7 +106,7 @@ function contentToFile(string $content, string $outputFile)
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]',
       END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
@@ -103,7 +118,7 @@ function contentToFile(string $content, string $outputFile)
   if (true === hasSyntaxErrors($outputFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   echo CLI_LIGHT_GREEN, '[NAMESPACES]', PHP_EOL;
@@ -112,7 +127,7 @@ function contentToFile(string $content, string $outputFile)
   {
     echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $tempFile, CLI_RED,
     '. Task aborted.', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 
@@ -159,8 +174,8 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   {
     $filesToConcat['php']['use'][] = $tempFile;
     $parsedFiles[] = $tempFile;
-  } else if (1 < VERBOSE)
-    showFile($level, $tempFile, ' ALREADY PARSED');
+  } elseif (1 < VERBOSE)
+    showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 }
 
 /**
@@ -275,23 +290,20 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
     {
       if (true === isset(PATH_CONSTANTS[$pathVariable[0]]))
         $tempFile = str_replace('$' . $pathVariable[0], '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'', $tempFile);
-      else
-      {
-        /* we make an exception for this particular require statement because
+      /* we make an exception for this particular require statement because
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
-        if ('templateFilename' === trim($pathVariable[0]))
-          $isTemplate = true;
-        else if ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' === $trimmedMatch)
-        { // we must not change this line from CORE_PATH . Router.php !
-          continue;
-        } else
-        {
-          echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
-            '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
-            $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
-          exit(1);
-        }
+      elseif ('templateFilename' === trim($pathVariable[0]))
+        $isTemplate = true;
+      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch)
+      {
+        echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
+        '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
+        $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
+        exit(1);
       }
+
+      // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
+      // next loop iteration!
     }
   }
 
@@ -325,9 +337,9 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
 {
   $offset = 0;
 
-  while (false !== ($posBeginPHP = strpos($contentToAdd, '<?php', $offset)))
+  while (false !== ($posBeginPHP = strpos($contentToAdd, PHP_OPEN_TAG_STRING, $offset)))
   {
-    $posFinPHP = strpos($contentToAdd, '?>', $posBeginPHP);
+    $posFinPHP = strpos($contentToAdd, PHP_END_TAG_STRING, $posBeginPHP);
 
     $contentToAdd = substr_replace($contentToAdd,
       str_replace('\'', '\\\'', substr($contentToAdd, $posBeginPHP, $posFinPHP - $posBeginPHP), $nbReplacements),
@@ -378,7 +390,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
 
   /* We ensure us that the content have only one space after the PHP opening tag and before the PHP ending tag
    * that surrounds the require statement */
-  $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\?>))@', ' ', $finalContent);
+  $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@', ' ', $finalContent);
 
   // We have to process the $match value because we have modified the code
   $newMatch = preg_replace('@\s{2,}@', '', $match);
@@ -387,13 +399,13 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
   $inEval = preg_match('@(?<=BOOTSTRAP###)[\S\s]*' . preg_quote($match) . '[\S\s]*(?=###BOOTSTRAP)@', $finalContent);
 
   /* If our $match is in PHP code then we determine the replacement string according to the context */
-  if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\?>)@', $finalContent))
+  if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\\' . PHP_END_TAG_STRING . ')@', $finalContent))
   {
     // We remove PHP tags
-    substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
+    $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
-  } else if(1 === $inEval)
+  } elseif(1 === $inEval)
   {
     phpOrHTMLIntoEval($contentToAdd);
     $replacement = 'eval(\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\\'); ';
@@ -422,11 +434,15 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
  */
 function processReturn(string &$finalContent, string &$contentToAdd, string &$match, int &$posMatch)
 {
-  // 9 means after the 'return' statement, -5 for the semicolon, the ending tag and the mandatory line break
+  //-5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(substr($contentToAdd, PHP_OPEN_TAG_LENGTH + 7, -(3 + PHP_END_TAG_LENGTH)));
+  $contentToAdd = trim(substr(
+    $contentToAdd,
+    PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
+    -(2 + PHP_END_TAG_LENGTH)
+  ));
 
-  if (false !== strpos($match, 'require') &&
+  if (false !== strpos($match, OTRA_LABEL_REQUIRE) &&
     0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
     ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
@@ -451,12 +467,12 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
  *
  * @return string $tempFile
  */
-function searchForClass(array &$classesFromFile, string &$class, string &$contentToAdd, string &$match)
+function searchForClass(array &$classesFromFile, string &$class, string &$contentToAdd, string $match)
 {
   // Do we already have this class ?
   foreach($classesFromFile as &$classFromFile)
   {
-    if (false !== strrpos($classFromFile, $class, strrpos($classFromFile,',')))
+    if (false !== strrpos($classFromFile, $class, (int) strrpos($classFromFile,',')))
       return false;
   }
 
@@ -512,7 +528,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
-    if (false !== strpos($trimmedMatch, 'require'))
+    if (false !== strpos($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
       list($tempFile, $isTemplate) = getFileInfoFromRequireMatch($trimmedMatch, $file);
 
@@ -561,35 +577,35 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         if (true === in_array($tempFile, $parsedFiles, true))
           continue;
 
-        $filesToConcat['php']['require'][$tempFile] = [
+        $filesToConcat['php'][OTRA_KEY_REQUIRE][$tempFile] = [
           'match' => $match[0],
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } else if(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
+    } elseif(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
     {
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
 
       // if the class begin by \ then it is a standard class and then we do nothing otherwise we do this ...
       if ('\\' !== $class[0])
-        $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, $match[1]);
+        $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $match[1]);
       else
         $tempFile = false;
 
       // If we already have included the class
       if (false === $tempFile)
         continue;
-      else if (in_array($tempFile, $parsedFiles) === true)
+      elseif (in_array($tempFile, $parsedFiles) === true)
       {
         if (1 < VERBOSE)
-          showFile($level, $tempFile, ' ALREADY PARSED');
+          showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 
         continue;
       }
 
-      $filesToConcat['php']['extends'][] = $tempFile;
-    } else if(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+      $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
+    } elseif(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
     {
       $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
 
@@ -617,16 +633,14 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
           {
             if ($trimmedMatch === '/exception.phtml')
               $tempDir = CORE_PATH . 'views/' ;
-            else // no ? so where is that file ?
+            // no ? so where is that file ?
+            elseif (strpos($trimmedMatch, 'html') === false)
             {
-              if (strpos($trimmedMatch, 'html') === false)
-              {
-                echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
-                  CLI_YELLOW,
-                $file,
-                CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-                die;
-              }
+              echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
+                CLI_YELLOW,
+              $file,
+              CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
+              die;
             }
           }
         }
@@ -664,9 +678,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
   $filesToConcat = [
     'php' => [
       'use' => [],
-      'require' => [],
-      'extends' => [],
-      'static' => []
+      OTRA_KEY_REQUIRE => [],
+      OTRA_KEY_EXTENDS => [],
+      OTRA_KEY_STATIC => []
     ],
     'template' => []
   ];
@@ -701,15 +715,15 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
                 $tempFile = $nextFileOrInfo;
                 $method = ' via use statement';
                 break;
-              case 'require':
+              case OTRA_KEY_REQUIRE:
                 $tempFile = $keyOrFile;
                 $method = ' via require/include statement';
                 break;
-              case 'extends':
+              case OTRA_KEY_EXTENDS:
                 $tempFile = $nextFileOrInfo;
                 $method = ' via extends statement';
                 break;
-              case 'static':
+              case OTRA_KEY_STATIC:
                 $tempFile = $nextFileOrInfo;
                 $method = ' via static direct call';
             }
@@ -739,7 +753,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if ($tempFile === CACHE_PATH . 'php/MasterController.php')
               $tempFile = CORE_PATH . 'MasterController.php';
 
-            $nextContentToAdd = file_get_contents($tempFile);
+            $nextContentToAdd = file_get_contents($tempFile) . PHP_END_TAG_STRING;
 
             // we remove comments to facilitate the search and replace operations that follow
             /* @TODO Find a way to use this regex without removing links because links can contain // as in
@@ -748,10 +762,15 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
             $isReturn = false;
 
-            if ('require' === $inclusionMethod
-              /* if the file has contents that begin by a return statement then we apply a particular process*/
+            if (OTRA_KEY_REQUIRE === $inclusionMethod
+              /* if the file has contents that begin by a return statement and strict type declaration then we apply a
+               particular process*/
               && false !== strpos(
-                substr($nextContentToAdd, PHP_OPEN_TAG_LENGTH + 1, PHP_OPEN_TAG_LENGTH + 7),
+                substr(
+                  $nextContentToAdd,
+                  PHP_OPEN_TAG_LENGTH + 1,
+                  PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION
+                ),
                 'return'
               ))
             {
@@ -767,7 +786,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
             if (strpos($file, 'config/AllConfig') !== false)
             {
               $finalContentParts[]= $contentToAdd;
-              $_SESSION['finalContentParts'] = true;
+              $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;
             }
 
             showFile($level, $tempFile, $method);
@@ -784,9 +803,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
       {
         foreach ($entries as $templateEntry)
         {
-        //var_dump($templateEntries);die;
+          //var_dump($templateEntries);die;
           showFile($level, $templateEntry, ' via renderView');
-          $nextContentToAdd = file_get_contents($templateEntry);
+          $nextContentToAdd = file_get_contents($templateEntry) . PHP_END_TAG_STRING;
           ++$inc;
           assembleFiles($inc, $level, $templateEntry, $nextContentToAdd, $parsedFiles);
         }
@@ -805,9 +824,9 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
    * dev/prod configuration because of the generic constant declaration. This block is related with the previous block
    * line 752 as I wrote those lines.
    */
-  if (isset($_SESSION['finalContentParts']) === true && empty($finalContentParts) === false)
+  if (isset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]) === true && empty($finalContentParts) === false)
   {
-    unset($_SESSION['finalContentParts']);
+    unset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]);
     $contentToAdd = '';
     echo CLI_BOLD_RED, $contentToAdd, END_COLOR, PHP_EOL;
   }
@@ -820,7 +839,7 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
   //  ****** // Either we begin the process, either we return to the roots of the process so ... (DEBUG)
   --$level;
-  
+
   return $finalContent;
 }
 
@@ -873,14 +892,11 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     // does the class exist ? if not we search the real path of it
     if (false === file_exists($newFile))
     {
-      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, $offset);
+      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $offset);
 
       // now that we are sure that we have the real path, we test it again
-      if (true === in_array($newFile, $parsedFiles, true))
-        continue;
-
-      // if we already have included the file
-      if (false === $newFile)
+      // and if we already have included the file, we also continue
+      if (true === in_array($newFile, $parsedFiles, true) || false === $newFile)
         continue;
     }
 
@@ -888,10 +904,10 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     if (false === in_array($newFile, $parsedFiles))
     {
       $parsedFiles[] = $newFile;
-      $filesToConcat['php']['static'][] = $newFile;
-    } else if (1 < VERBOSE)
+      $filesToConcat['php'][OTRA_KEY_STATIC][] = $newFile;
+    } elseif (1 < VERBOSE)
     {
-      showFile($level, $newFile, ' ALREADY PARSED');
+      showFile($level, $newFile, OTRA_ALREADY_PARSED_LABEL);
     }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
@@ -910,11 +926,11 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
- * @param $bundle        string
- * @param $route         string
- * @param $content       string Content to fix
- * @param $verbose       bool
- * @param $fileToInclude mixed  Files to merge
+ * @param string $bundle
+ * @param string $route
+ * @param string $content       Content to fix
+ * @param bool   $verbose
+ * @param mixed  $fileToInclude Files to merge
  *
  * @return mixed
  */
@@ -955,7 +971,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   $finalContent = str_replace('declare(strict_types=1);', '', $finalContent);
 
   /** We stick the php files by removing end and open php tag between files */
-  $finalContent = preg_replace('@\?>\s*<\?php@', '', $finalContent);
+  $finalContent = preg_replace('@\\' . PHP_END_TAG_STRING . '\s*<\?php@', '', $finalContent);
 
   /** We suppress namespaces */
   $finalContent = preg_replace(
@@ -975,7 +991,8 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   */
 
   $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
-  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) : '';
+  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) .
+    PHP_END_TAG_STRING : '';
 
   /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
    *  START SECTION
@@ -1003,9 +1020,9 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return '<?php declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces . ('<?php' == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces .
+    (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
-      : preg_replace($patternRemoveUse, '', ' ?>' . $finalContent)
+      : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
     );
 }
-?>

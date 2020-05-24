@@ -45,5 +45,6 @@
   <logging>
     <log type="coverage-clover" target="./coverage.xml"/>
     <log type="coverage-html" target="./coverageHtml"/>
+    <log type="junit" target="./report.xml" logIncompleteSkipped="false"/>
   </logging>
 </phpunit>

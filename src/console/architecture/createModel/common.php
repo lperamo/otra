@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 define(
   'MODULE_BUNDLE_MESSAGE',
   'A model in the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' for the module ' .
@@ -22,4 +23,4 @@ function modelCreation(int $modelLocation, string &$modelName,string &$modelFull
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
   modelCreationSuccess($bundleName, $modelName, $propertiesTxt);
 }
-?>
+

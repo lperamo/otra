@@ -5,8 +5,10 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace otra\console {
+namespace otra\console
+{
 
+  use Exception;
   use otra\bdd\Sql;
   use Symfony\Component\Yaml\Exception\ParseException;
   use Symfony\Component\Yaml\Yaml;
@@ -17,11 +19,14 @@ namespace otra\console {
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
   define ('OTRA_DB_PROPERTY_MODE_DEFAULT', 2);
 
+  /**
+   * @package otra\console
+   */
   abstract class Database
   {
     // Database connection
     private static string
-      $_databaseFile = 'database_schema',
+      $databaseFile = 'database_schema',
       $base,
       $fixturesFileIdentifiers = 'ids',
       $folder = 'bundles/',
@@ -194,10 +199,10 @@ namespace otra\console {
       if (false === self::$init)
         self::init();
 
-      // No need to get DB twice (getDB is already used in dropDatabase function)
+      // No need to get DB twice (getDb is already used in dropDatabase function)
       (true === $force)
         ? self::dropDatabase($databaseName)
-        : Sql::getDB(null, false);
+        : Sql::getDb(null, false);
 
       $inst = &Sql::$instance;
       $inst->beginTransaction();
@@ -207,7 +212,7 @@ namespace otra\console {
       {
         $dbResult = $inst->query(file_get_contents($databaseFile));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted when executing ' . $e->getMessage());
@@ -224,24 +229,22 @@ namespace otra\console {
      * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
      *
      * @param string $attr Attribute
-     * @param bool $mode How we show the type of date
-     *                   0: type
-     *                   1: value (default)
-     *                   2: type value
+     * @param int    $mode How we show the type of date
+     *                     0: type
+     *                     1: value (default)
+     *                     2: type value
      *
      * @return string $attr Concerned attribute in uppercase
      */
     public static function getAttr(string $attr, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
-      $output = '';
-
       if (true === isset(self::$attributeInfos[$attr]))
       {
         $value = self::$attributeInfos[$attr];
 
         if ('notnull' === $attr)
           $attr = 'not null';
-        else if ('type' === $attr && false !== strpos($value, 'string'))
+        elseif ('type' === $attr && false !== strpos($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
         if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
@@ -343,7 +346,8 @@ namespace otra\console {
 
       $first = true;
       $ymlIdentifiers = $table . ': ' . PHP_EOL;
-      $tableSql = 'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+      $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
+        'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
       $localMemory = $values = $properties = [];
       $theProperties = '';
 
@@ -366,7 +370,7 @@ namespace otra\console {
         {
           if (false === mkdir($fixtureFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -440,7 +444,7 @@ namespace otra\console {
           {
             if (true === is_bool($value))
               $value = $value ? 1 : 0;
-            else if (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
+            elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
               $value = $localMemory[$value];
 
             $theValues .= (null === $value)
@@ -655,7 +659,7 @@ namespace otra\console {
       if (false === self::$init)
         self::init();
 
-      Sql::getDB();
+      Sql::getDb();
 
       $inst = &Sql::$instance;
       $inst->beginTransaction();
@@ -672,7 +676,7 @@ namespace otra\console {
         // Runs the file
         $dbResult = $inst->query(file_get_contents($file));
         $inst->freeResult($dbResult);
-      } catch(\Exception $e)
+      } catch(Exception $e)
       {
         $inst->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
@@ -706,16 +710,16 @@ namespace otra\console {
      */
     public static function dropDatabase(string $databaseName) : Sql
     {
-      $sqlInstance = Sql::getDB();
+      $sqlInstance = Sql::getDb();
       Sql::$instance->beginTransaction();
 
       try
       {
         $result = Sql::$instance->query('DROP DATABASE IF EXISTS ' . $databaseName);
         Sql::$instance->freeResult($result);
-      } catch (\Exception $e)
+      } catch (Exception $e)
       {
-        Sql::$instance->rollback();
+        Sql::$instance->rollBack();
         throw new OtraException('Procedure aborted. ' . $e->getMessage());
       }
 
@@ -743,7 +747,7 @@ namespace otra\console {
       if (false === self::$init)
         self::init();
 
-      $dbFile = self::$pathSql . self::$_databaseFile . ($force ? '_force.sql' : '.sql');
+      $dbFile = self::$pathSql . self::$databaseFile . ($force ? '_force.sql' : '.sql');
 
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
@@ -810,7 +814,7 @@ namespace otra\console {
               if (isset(self::$attributeInfos['primary']) && '' !== self::$attributeInfos['primary'])
                 $primaryKeys[] = $attribute;
             }
-          } else if ('relations' === $property)
+          } elseif ('relations' === $property)
           {
             foreach ($attributes as $otherTable => &$attribute)
             {
@@ -820,15 +824,17 @@ namespace otra\console {
               if (isset($attribute['onDelete']))
                 $onDelete = '  ON DELETE ' . strtoupper($attribute['onDelete']);
 
-              $constraints .= 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
+              $constraints .= /** @lang text */
+                'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
                 . ' FOREIGN KEY(`' . $attribute['local'] . '`)' . PHP_EOL;
               $constraints .= '  REFERENCES ' . $otherTable . '(`' . $attribute['foreign'] . '`)' . PHP_EOL
                 . $onDelete . ';' . PHP_EOL;
             }
-          } else if ('indexes' === $property)
+          } elseif ('indexes' === $property)
           {
+            echo CLI_YELLOW, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
             /** @TODO Manage the indexes part */
-          } else if ('default_character_set' === $property)
+          } elseif ('default_character_set' === $property)
             $defaultCharacterSet = $attributes;
         }
 
@@ -1005,8 +1011,6 @@ namespace otra\console {
 
       $tablesToCreate = [];
 
-      $tablesToCreate = [];
-
       // For each table
       foreach (array_keys($fixturesData) as $table)
       {
@@ -1035,7 +1039,7 @@ namespace otra\console {
         $database = AllConfig::$dbConnections[$confToUse]['db'];
 
       Session::set('db', $confToUse);
-      $db = Sql::getDB(null, false);
+      $db = Sql::getDb(null, false);
 
       $schemaInformations = $db->valuesOneCol($db->query('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA'));
 
@@ -1130,7 +1134,7 @@ namespace otra\console {
         {
           if (false === mkdir($saveFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1172,7 +1176,7 @@ namespace otra\console {
         {
           if (false === mkdir(self::$pathYmlFixtures, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch(\Exception $e)
+        } catch(Exception $e)
         {
           throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
         }
@@ -1250,7 +1254,7 @@ namespace otra\console {
 
                 if (null === $colOfRow)
                   $content .= '~';
-                else if (is_string($colOfRow))
+                elseif (is_string($colOfRow))
                 {
                   // For some obscure reasons, PHP_EOL cannot work in this case as it is always returning \n in my tests...
                   if (false === strpos($colOfRow,
@@ -1276,5 +1280,3 @@ namespace otra\console {
     }
   }
 }
-
-?>

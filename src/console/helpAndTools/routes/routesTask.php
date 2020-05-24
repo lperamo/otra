@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+use config\Routes;
 
 if (file_exists(BASE_PATH . 'bundles/config/Routes.php') === false)
 {
@@ -51,11 +54,11 @@ if (true === isset($argv[2]))
   $route = $argv[2];
 
   // If the route does not exist
-  if (false === isset(\config\Routes::$_[$route]))
+  if (false === isset(Routes::$_[$route]))
   {
     // We try to find a route which the name is similar
     require CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(\config\Routes::$_));
+    list($newRoute) = guessWords($route, array_keys(Routes::$_));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -71,9 +74,9 @@ if (true === isset($argv[2]))
     $route = $newRoute;
   }
 
-  $routes = [$route => \config\Routes::$_[$route]];
+  $routes = [$route => Routes::$_[$route]];
 } else
-  $routes = \config\Routes::$_;
+  $routes = Routes::$_;
 
 foreach($routes as $route => &$details)
 {
@@ -130,4 +133,4 @@ foreach($routes as $route => &$details)
   ++$alt;
 }
 
-?>
+

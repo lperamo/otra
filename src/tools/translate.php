@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 if (function_exists('t') === false)
 {
   // Will be the future translation feature
@@ -31,4 +32,4 @@ if (function_exists('t') === false)
     return array_filter($langs, $filterLangs)[0] ?: 'en';
   }
 }
-?>
+

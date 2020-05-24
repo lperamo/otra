@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';
 echo MODEL_CREATED_FROM_NOTHING_MESSAGE;
 
@@ -33,4 +34,4 @@ $typesArray = array_map('assignType', array_keys($fakeTypeArray), $fakeTypeArray
 define('MODEL_COLUMNS_ARRAY', array_combine(MODEL_PROPERTIES_ARRAY, $typesArray));
 retrieveFunctionsAndProperties(MODEL_COLUMNS_ARRAY, $modelName, $functions, $propertiesCode, $propertiesTxt);
 endingTask($modelLocation, $modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
-?>
+

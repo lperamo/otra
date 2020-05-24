@@ -1,7 +1,11 @@
 <?php
+declare(strict_types=1);
 
 define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
 define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
+define('OTRA_TD_OPENING_TAG', '<td>');
+define('OTRA_TD_ENDING_TAG', '</td>');
+define('OTRA_TR_ENDING_TAG', '</tr>');
 
 /**
  * @param string $message
@@ -24,16 +28,18 @@ function lg(string $message) : void
 
 function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
 {
+  /** @var string $oldXDebugMaxData  */
   if (true === $maxData)
   {
     $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, -1);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, '-1');
   }
 
+  /** @var string $oldXDebugMaxChildren  */
   if (true === $maxChildren)
   {
     $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, -1);
+    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, '-1');
   }
 
   call_user_func_array('cli' === PHP_SAPI ? 'dumpSmallCli' : 'dumpSmall', $args);
@@ -106,6 +112,8 @@ function reformatSource(string $stringToFormat) : string
  * @param array  $dataToShow     Array to convert
  * @param string $title          Table name to show in the header
  * @param null   $indexToExclude Index to exclude from the render
+ *
+ * @return false|string
  */
 function createShowableFromArray(array &$dataToShow, string $title, $indexToExclude = null)
 {
@@ -130,18 +138,18 @@ function createShowableFromArray(array &$dataToShow, string $title, $indexToExcl
 
 /** Converts a php array into stylish console table. TODO finish it !
  *
- * @param $dataToShow     null|array Array to convert
- * @param $title          string     Table name to show in the header
- * @param $indexToExclude string     Index to exclude from the render
+ * @param null|array $dataToShow     Array to convert
+ * @param string     $title          Table name to show in the header
+ * @param string     $indexToExclude Index to exclude from the render
  */
 function createShowableFromArrayConsole(?array &$dataToShow, string $title, $indexToExclude = null)
 {
   return;
 
-  echo $title, PHP_EOL,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
-    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
+//  echo $title, PHP_EOL,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Name' ,
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Index or value if array',
+//    CLI_LIGHT_BLUE, '|', END_COLOR, ' Value if array', PHP_EOL;
   //recurArrayConvertTab($dataToShow, $indexToExclude);
 }
 
@@ -172,9 +180,10 @@ function getArgumentType(&$index, &$value)
 
 /** Recursive function that converts a php array into a stylish tbody
  *
- * @param $data           array|object Array or object to convert
- * @param $indexToExclude int|string   Index to exclude from the render
- * @param $loop           int          Number of recursions
+ * @param array|object $data           Array or object to convert
+ * @param int|string   $indexToExclude Index to exclude from the render
+ * @param int          $loop           Number of recursions
+ *
  * @return int
  */
 function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
@@ -210,24 +219,24 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
           if ($loop < $oldLoop)
             echo '<tr class="foldable">',
                    '<td colspan="' , $loop , '"></td>',
-                   '<td>' , $index, '</td>',
-                 '</tr>';
+                   OTRA_TD_OPENING_TAG , $index, OTRA_TD_ENDING_TAG,
+                 OTRA_TR_ENDING_TAG;
           else
-            echo '<td>' , $index, '</td>',
+            echo OTRA_TD_OPENING_TAG , $index, OTRA_TD_ENDING_TAG,
                  '<td colspan="0" class="dummy"></td>',
-              '</tr>';
-        } else if ($loop > 1)
+              OTRA_TR_ENDING_TAG;
+        } elseif ($loop > 1)
           echo '<tr class="foldable">',
                  '<td colspan="', $loop, '"></td>',
-                 '<td colspan="0">', $index,  '</td>',
+                 '<td colspan="0">', $index,  OTRA_TD_ENDING_TAG,
                  '<td colspan="0" class="dummy"></td>',
-               '</tr>';
+               OTRA_TR_ENDING_TAG;
         else
           echo '<tr class="foldable no-dummy">',
                  '<td colspan="">Index:' ,
                     is_numeric($index) ? getArgumentType($index, $datum) : $index,
                   ', Loop:', $loop,
-                 '</td>';
+                 OTRA_TD_ENDING_TAG;
 
         $oldLoop = recurArrayConvertTab($datum, $indexToExclude, $loop);
     } else
@@ -237,9 +246,9 @@ function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
 
 //    if (0 === $loop)
       echo '<tr class="no-dummy" >',
-             '<td>', getArgumentType($index, $datum), '</td>',
-             '<td colspan="2">', $datum , '</td>',
-           '</tr>';
+             OTRA_TD_OPENING_TAG, getArgumentType($index, $datum), OTRA_TD_ENDING_TAG,
+             '<td colspan="2">', $datum , OTRA_TD_ENDING_TAG,
+           OTRA_TR_ENDING_TAG;
 
     }
 
@@ -259,7 +268,7 @@ function debug(bool $noErrors = true) : bool
   if (true === $noErrors)
     error_reporting(0);
 
-  return 'dev' === $_SERVER['APP_ENV'];
+  return 'dev' === $_SERVER[APP_ENV];
 }
 
   /**
@@ -325,4 +334,3 @@ function tailCustom(string $filepath, int $lines = 1) : string
 
   return trim($output);
 }
-?>

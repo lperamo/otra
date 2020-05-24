@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'oneModelFromYmlSchema/common.php';
 $functions = $propertiesCode = '';
 echo MODEL_CREATED_FROM_YAML_SCHEMA;
@@ -15,7 +16,7 @@ else
   /** MODULE */
   $moduleName = getModuleName($bundleName, $bundlePath);
   echo MODULE_BUNDLE_MESSAGE;
-  defineModelPath($bundlePath, $bundleName);
+  defineModelPath($modelLocation, $bundlePath, $bundleName);
 
   // We cleans the module name question
   echo DOUBLE_ERASE_SEQUENCE;
@@ -39,4 +40,4 @@ while (true === $modelExists || false === $tableExists)
 // We cleans the last sentence
 echo ERASE_SEQUENCE;
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-?>
+

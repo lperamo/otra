@@ -1,9 +1,37 @@
 <?php
+declare(strict_types=1);
+
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+
+if (!defined('OTRA_BINARY_NAME'))
+  define('OTRA_BINARY_NAME', 'otra.php');
+
+define('OTRA_LABEL_BUNDLE', ' bundle.');
+define('OTRA_LABEL_WE_USE_THE', 'We use the ');
+define('OTRA_LABEL_FOR_THE_MODULE', ' for the module ');
+define('OTRA_LABEL_A_MODEL_IN_THE_BUNDLE', 'A model in the bundle ');
+define('OTRA_LABEL_THE_MODEL', 'The model ');
+define('OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE', ' has been created in the bundle ');
+
+if (!defined('TEST_CLASS_MAP_PATH'))
+  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
+
+define(
+  'OTRA_LABEL_YAML_SCHEMA_WARNING',
+  CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
+  END_COLOR . PHP_EOL
+);
+define(
+  'OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE',
+  CLI_YELLOW . 'You did not specified the name of the model. We will import all the models.' .
+  END_COLOR . PHP_EOL .
+  OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . CreateModelTaskTest::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE. PHP_EOL
+);
+define('OTRA_LIBRARY_COPY_FILES_AND_FOLDERS', CORE_PATH . 'tools/copyFilesAndFolders.php');
 
 if (!defined('TEST_BUNDLE_UPPER'))
   define('TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
@@ -16,8 +44,10 @@ if (!defined('TEST_BUNDLE_PATH'))
  */
 class CreateModelTaskTest extends TestCase
 {
-  const TASK_NAME = 'createModel',
-    BUNDLE_NAME = 'test',
+  public const BUNDLE_NAME = 'test',
+    BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . '/';
+
+  private const TASK_NAME = 'createModel',
     MODULE_NAME = 'test',
     INTERACTIVE = 'false',
     MODEL_NAME = 'testModel',
@@ -31,23 +61,17 @@ class CreateModelTaskTest extends TestCase
     MODEL_LOCATION_MODULE = 1,
     MODEL_PROPERTIES = 'rock, paper, scissors, lizard, spock',
     MODEL_SQL_TYPES = 'text,int,bool,date,float',
-    BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . '/',
     SCHEMA_YML_FILE = 'schema.yml',
     BACKUP_YAML_SCHEMA = TEST_PATH . 'config/data/ymlBackup/' . self::SCHEMA_YML_FILE,
     MODULE_PATH = TEST_BUNDLE_PATH . CreateModelTaskTest::MODULE_NAME . '/',
     YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH = 'config/data/yml/' . self::SCHEMA_YML_FILE,
     YAML_SCHEMA = TEST_BUNDLE_PATH . self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH,
-    OTRA_SUCCESS = CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL;
-
-  /**
-   * @throws OtraException
-   */
-  protected function setUp() : void
-  {
-  }
+    OTRA_SUCCESS = CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
 
   protected function tearDown() : void
   {
+    parent::tearDown();
+
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {
@@ -66,15 +90,15 @@ class CreateModelTaskTest extends TestCase
    */
   protected static function returnModelCreationFromNothingOutput(int $modelLocation = self::MODEL_LOCATION_BUNDLE) : string
   {
-    return 'We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' bundle.' . PHP_EOL .
+    return OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE . PHP_EOL .
       'We will create one model from nothing.' . PHP_EOL .
       ($modelLocation === self::MODEL_LOCATION_BUNDLE
         ? 'A model for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' ...'
-        : 'A model in the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' for the module ' .
+        : OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE .
         CLI_LIGHT_CYAN . self::MODULE_NAME . END_COLOR . ' ...')
       . PHP_EOL .
-      'The model ' . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . ' will be created from nothing...' . PHP_EOL .
-      'The model ' . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . ' has been created in the bundle ' .
+      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . ' will be created from nothing...' . PHP_EOL .
+      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
       CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS;
   }
 
@@ -85,7 +109,7 @@ class CreateModelTaskTest extends TestCase
    */
   protected static function modelHasBeenCreatedOutput(string $model) : string
   {
-    return 'The model ' . CLI_LIGHT_CYAN . $model . END_COLOR . ' has been created in the bundle ' . CLI_LIGHT_CYAN .
+    return OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . $model . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE . CLI_LIGHT_CYAN .
       self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS;
   }
 
@@ -95,14 +119,12 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InBundle_FromNothing() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
-      END_COLOR . PHP_EOL .
-      self::returnModelCreationFromNothingOutput()
+      OTRA_LABEL_YAML_SCHEMA_WARNING . self::returnModelCreationFromNothingOutput()
     );
 
     // launching
@@ -110,7 +132,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::FROM_NOTHING,
@@ -125,13 +147,14 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_WithSchema_InBundle_FromNothing() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
-    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
@@ -142,7 +165,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::FROM_NOTHING,
@@ -162,13 +185,12 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InModule_FromNothing() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
-      END_COLOR . PHP_EOL .
+      OTRA_LABEL_YAML_SCHEMA_WARNING .
       self::returnModelCreationFromNothingOutput(self::MODEL_LOCATION_MODULE)
     );
 
@@ -177,7 +199,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::FROM_NOTHING,
@@ -197,14 +219,13 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InModule_FromNothing_NoSqlTypes() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
-      END_COLOR . PHP_EOL .
-      CLI_RED . 'You did not specified the model properties types.' . END_COLOR . PHP_EOL
+      OTRA_LABEL_YAML_SCHEMA_WARNING . CLI_RED . 'You did not specified the model properties types.' .
+      END_COLOR . PHP_EOL
     );
 
     $this->expectException(OtraException::class);
@@ -214,7 +235,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::FROM_NOTHING,
@@ -233,14 +254,12 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_NoModelName() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'You did not specified the name of the model. We will import all the models.' .
-      END_COLOR . PHP_EOL .
-      'We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR  . ' bundle.'. PHP_EOL .
+      OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
       CLI_RED . 'The YAML schema ' . CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . self::BUNDLE_RELATIVE_PATH .
       self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH . CLI_RED .
       ' does not exist.' . END_COLOR . PHP_EOL
@@ -253,7 +272,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::FROM_NOTHING,
@@ -265,21 +284,22 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_Task_InBundle_OneModel() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
-    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
-    $this->expectOutputString('We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' bundle.' .
+    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
       PHP_EOL .
       'We will create one model from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      'The model ' . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . ' has been created in the bundle ' .
+      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
       CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
     );
 
@@ -288,7 +308,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::ONE_MODEL,
@@ -301,23 +321,24 @@ class CreateModelTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
    * @author Lionel Péramo
    */
   public function testCreateModel_NotInteractive_Task_InModule_OneModel() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
-    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
-    $this->expectOutputString('We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' bundle.' .
+    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
       PHP_EOL .
       'We will create one model from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      'A model in the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' for the module ' . CLI_LIGHT_CYAN .
+      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_LIGHT_CYAN .
       self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
-      'The model ' . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . ' has been created in the bundle ' .
+      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
       CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
     );
 
@@ -326,7 +347,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::ONE_MODEL,
@@ -338,19 +359,20 @@ class CreateModelTaskTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testCreateModel_NotInteractive_Task_InBundle_AllModels() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
-    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'You did not specified the name of the model. We will import all the models.' .
-      END_COLOR . PHP_EOL .
-      'We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' bundle.' . PHP_EOL .
+      OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
       'We will create all the models from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
       'Creating all the models for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' ...' . PHP_EOL .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_2) .
@@ -363,7 +385,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::ALL_MODELS,
@@ -374,21 +396,22 @@ class CreateModelTaskTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testCreateModel_NotInteractive_Task_InModule_AllModels() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require TEST_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
-    require CORE_PATH . 'tools/copyFilesAndFolders.php';
+    require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
     $this->expectOutputString(
-      CLI_YELLOW . 'You did not specified the name of the model. We will import all the models.' .
-      END_COLOR . PHP_EOL .
-      'We use the ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' bundle.' . PHP_EOL .
+      OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
       'We will create all the models from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      'A model in the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' for the module ' . CLI_LIGHT_CYAN .
+      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_LIGHT_CYAN .
       self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
       'Creating all the models for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' in the module ' .
       CLI_LIGHT_CYAN . self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
@@ -402,7 +425,7 @@ class CreateModelTaskTest extends TestCase
       $tasksClassMap,
       self::TASK_NAME,
       [
-        'otra.php',
+        OTRA_BINARY_NAME,
         self::TASK_NAME,
         self::BUNDLE_NAME,
         self::ALL_MODELS,

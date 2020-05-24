@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 if (!isset($argv[ARG_BUNDLE_NAME]))
 {
   $bundleName = promptUser('You did not specified the name of the bundle. What is it ?');
@@ -51,4 +52,4 @@ if (!isset($argv[ARG_METHOD]) || !in_array($argv[ARG_METHOD], $possibleChoices))
   // We clean the screen (8 lines to erase !)
   echo DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE;
 }
-?>
+

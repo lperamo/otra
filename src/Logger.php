@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace otra;
 
 /** Simple logger class
@@ -8,7 +10,8 @@ namespace otra;
 
 abstract class Logger
 {
-  const APPEND_LOG = 3;
+  private const APPEND_LOG = 3,
+    LOGS_PATH = BASE_PATH . 'logs/';
 
   /**
    * Returns the date or also the ip address and the browser if different
@@ -60,7 +63,7 @@ abstract class Logger
     error_log(
       self::logIpTest() . $message . "\n",
       self::APPEND_LOG,
-      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/log.txt'
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt'
     );
   }
 
@@ -89,7 +92,7 @@ abstract class Logger
     error_log(
       self::logIpTest() . $message . "\n",
       self::APPEND_LOG,
-      BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt'
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt'
     );
   }
 
@@ -103,7 +106,7 @@ abstract class Logger
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
-    $path = BASE_PATH . 'logs/' . $_SERVER['APP_ENV'] . '/' . $path . '.txt';
+    $path = self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt';
 
     // If there is no SQL content logged, we start with '[', otherwise with ''
     error_log(
@@ -132,4 +135,4 @@ abstract class Logger
     );
   }
 }
-?>
+

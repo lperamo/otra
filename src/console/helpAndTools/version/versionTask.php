@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 define('BLUE_ON_LIGHT_BLACK', CLI_BLUE . CLI_BGD_LIGHT_BLACK);
 define('LIGHTBLUE_ON_LIGHT_BLACK', CLI_LIGHT_BLUE . CLI_BGD_LIGHT_BLACK);
@@ -26,5 +27,5 @@ foreach($by as $key => &$character)
 
 echo str_repeat(' ', 20), PHP_EOL,
   str_repeat(' ', 60), PHP_EOL,
-  str_repeat(' ', 40), CLI_WHITE, CLI_BGD_LIGHT_BLACK, 'V1.0.0-alpha.2.0.0', END_COLOR, PHP_EOL;
-?>
+  str_repeat(' ', 40), CLI_WHITE, CLI_BGD_LIGHT_BLACK, OTRA_VERSION, END_COLOR, PHP_EOL;
+

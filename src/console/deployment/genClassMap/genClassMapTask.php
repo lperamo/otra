@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Class mapping generation task
  *
@@ -56,12 +57,12 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         // Only php files are interesting
         $posDot = strrpos($entry, '.');
 
-        if ('.php' !== substr($entry, $posDot))
+        if ($posDot === false || '.php' !== substr($entry, $posDot))
           continue;
 
         // We only need files that match with the actual environment
         // so, for example, we'll not include dev config if we are in prod mode !
-        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER['APP_ENV'] === 'prod')
+        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER[APP_ENV] === 'prod')
           continue;
 
         $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
@@ -78,7 +79,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
 
           if (isset($classes[$classesKey]) === false)
             $classes[$classesKey] = $fullFilePath;
-          else if (in_array($classesKey, $additionalClassesFilesKeys) === false)
+          elseif (in_array($classesKey, $additionalClassesFilesKeys) === false)
             $classesThatMayHaveToBeAdded[$classesKey] = str_replace(BASE_PATH, '', $fullFilePath);
           else
             $classes[$classesKey] = $fullFilePath;
@@ -113,7 +114,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   {
     // if the class map is empty, then we just return an empty array.
     if ($classMap === 'array (' . PHP_EOL . ')')
-      return '<?php define(\'CLASSMAP\', []);?>';
+      return '<?php define(\'CLASSMAP\', []);';
 
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
@@ -122,7 +123,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
       '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped),
       0,
       -2
-    ) . ']);?>';
+    ) . ']);';
   }
 }
 
@@ -154,9 +155,9 @@ foreach($classes as $key => &$class)
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
     if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
-      $prodClasses [$key] = $class;
+      $prodClasses[$key] = $class;
   } else
-    $prodClasses [$key]= $class;
+    $prodClasses[$key]= $class;
 }
 
 $classMap = var_export($classes, true);
@@ -217,4 +218,3 @@ if (empty($classesThatMayHaveToBeAdded) === false)
 }
 
 return null;
-?>

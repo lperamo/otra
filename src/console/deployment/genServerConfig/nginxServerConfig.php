@@ -1,6 +1,11 @@
 <?php
+declare(strict_types=1);
 
 use config\AllConfig;
+
+define('OTRA_LABEL_RETURN_403', 'return 403;');
+define('OTRA_LABEL_TYPES', 'types');
+define('OTRA_LABEL_ROOT_PATH', 'root $rootPath;');
 
 /**
  * @return string
@@ -80,7 +85,7 @@ function handleSecurity(): string
     PHP_EOL .
     SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT . SPACE_INDENT . 'return 403;' . PHP_EOL .
+    SPACE_INDENT . SPACE_INDENT . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
@@ -105,7 +110,7 @@ function checkHttpReferer() : string
 {
   return SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL;
 }
 
@@ -120,7 +125,7 @@ function handleManifest(): string
     SPACE_INDENT . 'location ~ /manifest\.gz' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
     checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . 'types' . PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
     SPACE_INDENT_3 . 'application/manifest+json gz;' . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
@@ -147,7 +152,7 @@ function handleGzippedAsset(string $assetType = 'css'): string
     SPACE_INDENT . 'location ~ /cache/' . $assetType . '/.*\.gz$' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
     checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . 'types' . PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
     SPACE_INDENT_3 . $mimeType . ' gz;' . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
@@ -155,7 +160,7 @@ function handleGzippedAsset(string $assetType = 'css'): string
     SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL .
     SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
 
@@ -194,13 +199,13 @@ function handleWebFolderAssets() : string
     PHP_EOL .
     SPACE_INDENT_2 . 'if ($referer = "")' . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT_2 . '# Handle vendor images' . PHP_EOL .
     SPACE_INDENT_2 . 'if ($uri ~ "^/vendor.*$")' . PHP_EOL .
     SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'root $rootPath;' . PHP_EOL .
+    SPACE_INDENT_3 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
 }
@@ -250,18 +255,18 @@ $content = handlesHTTPSRedirection() .
   SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
   SPACE_INDENT . '{' . PHP_EOL .
   checkHttpReferer() . PHP_EOL .
-  SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+  SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
   SPACE_INDENT . '}' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Handling CSS and JS source maps (project and vendor)' . PHP_EOL .
   SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
   SPACE_INDENT . '{' . PHP_EOL .
-  SPACE_INDENT_2 . 'types' . PHP_EOL .
+  SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
   SPACE_INDENT_2 . '{' . PHP_EOL .
   SPACE_INDENT_3 . 'application/json map;' . PHP_EOL .
   SPACE_INDENT_2 . '}' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+  SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
   SPACE_INDENT . '}' . PHP_EOL
   : PHP_EOL .
   handleGzippedAsset('css') .
@@ -281,4 +286,4 @@ file_put_contents($file, $content);
 echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'development' : 'production') .
   ' server configuration generated in ' . CLI_LIGHT_CYAN . $file . END_COLOR . '.' . PHP_EOL;
 return 0;
-?>
+

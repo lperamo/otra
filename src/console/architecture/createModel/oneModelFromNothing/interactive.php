@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';
 echo MODEL_CREATED_FROM_NOTHING_MESSAGE;
 $modelLocation = getModelLocation();
@@ -46,5 +47,5 @@ while ('no!more' !== $property)
   $property = promptUser(DOUBLE_ERASE_SEQUENCE . PROPERTY_TEXT, PROPERTY_ERROR_TEXT);
 }
 
-endingTask($modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
-?>
+endingTask($modelLocation, $modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
+

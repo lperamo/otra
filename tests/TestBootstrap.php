@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT
   ? '/../../../..' // long path from vendor
   : '/..'
   ) . '/config/constants.php';
+define('BUNDLES_PATH', BASE_PATH . 'bundles/');
 
 require CACHE_PATH . 'php/ClassMap.php';
 
@@ -23,3 +25,11 @@ spl_autoload_register(function(string $className)
 
 require CONSOLE_PATH . 'colors.php';
 require CORE_PATH . 'tools/removeFieldProtection.php';
+
+if (OTRA_PROJECT === false)
+{
+  require CORE_PATH . 'tools/deleteTree.php';
+
+  if (file_exists(BUNDLES_PATH))
+    $delTree(BUNDLES_PATH);
+}

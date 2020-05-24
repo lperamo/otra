@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'common.php';
 define('MODEL_CREATED_FROM_NOTHING_MESSAGE', 'We will create one model from nothing.' . PHP_EOL);
 define(
@@ -53,4 +54,4 @@ function endingTask(
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
   modelCreationSuccess($bundleName, $modelName);
 }
-?>
+

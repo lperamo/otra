@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\console;
 
@@ -36,4 +37,4 @@ if (file_exists($bundlePath) === false)
   /** @var int $bundleMask */
   bundleHandling($interactive, $bundleName, $consoleForce ? $bundleMask : null);
 }
-?>
+

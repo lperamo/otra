@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 use otra\OtraException;
 
-define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
+if (!defined('OTRA_SUCCESS'))
+  define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
+
 $bundlesPath = BASE_PATH . 'bundles/';
 
 /**
@@ -134,7 +137,7 @@ function writeModelFile(
     ($modelLocation === MODEL_LOCATION_MODULE ? '\\' . MODULE_NAME : '') . '\\models;' . PHP_EOL .
     $useDateTime . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
-    '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL . '?>' . PHP_EOL);
+    '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL);
   fclose($fp);
 }
 
@@ -175,12 +178,11 @@ function getModelLocation() : int
 /**
  * Asks the user for the module name
  *
- * @param string $bundleName
  * @param string $bundlePath
  *
  * @return string
  */
-function getModuleName(string $bundleName, string $bundlePath) : string
+function getModuleName(string $bundlePath) : string
 {
   $question = 'In which module do you want to create the model ?';
   $moduleName = promptUser($question);
@@ -233,4 +235,4 @@ function retrieveFunctionsAndProperties(
     );
   }
 }
-?>
+

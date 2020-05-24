@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace otra;
 
 use config\AllConfig;
-use otra\Session;
 
 /**
  * A classic MVC model class
@@ -14,8 +14,17 @@ abstract class Model
 {
   private string $table;
 
+  /**
+   * @param $property
+   *
+   * @return mixed
+   */
   public function get($property) { return $this->$property; }
 
+  /**
+   * @param $property
+   * @param $value
+   */
   public function set($property, $value) { $this->$property = $value; }
 
   /**
@@ -26,7 +35,7 @@ abstract class Model
   public function save()
   {
     $dbName = Session::get('db');
-    /* @var $db \otra\bdd\Sql */
+    /* @var \otra\bdd\Sql $db */
     $db = Session::get('dbConn');
 
     $refl = new \ReflectionObject($this);
@@ -81,4 +90,4 @@ abstract class Model
     return $db->lastInsertedId();
   }
 }
-?>
+

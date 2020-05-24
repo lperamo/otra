@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'oneModelFromYmlSchema/common.php';
 $functions = $propertiesCode = '';
 echo MODEL_CREATED_FROM_YAML_SCHEMA;
@@ -25,4 +26,4 @@ if (true === $modelExists || false === $tableExists)
 }
 
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-?>
+

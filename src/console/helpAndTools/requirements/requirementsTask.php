@@ -1,5 +1,6 @@
 <?php
-  echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
+declare(strict_types=1);
+echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 
   require CORE_PATH . 'tools/cli.php';
@@ -97,4 +98,4 @@
 
   // a last line break in addition to space the whole thing.
   echo PHP_EOL;
-?>
+

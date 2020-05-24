@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Mysql management
  *
@@ -8,10 +9,13 @@ namespace otra\bdd;
 use otra\OtraException;
 use PDO, PDOStatement;
 
+/**
+ * @package otra\bdd
+ */
 abstract class Pdomysql
 {
   private PDO $conn;
-  const DEFAULT_MOTOR = 'InnoDB';
+  private const DEFAULT_MOTOR = 'InnoDB';
 
   /**
    * Connects to PDO_MySql
@@ -38,10 +42,12 @@ abstract class Pdomysql
 
   /**
    * Sends a SQL query !
-   * @param string $query SQL query.
-   *                      The query string should not end with a semicolon. Data inside the query should be properly escaped.
    *
-   * @return resource Returns a resource on success, otherwise an exception is raised
+   * @param string $query SQL query.
+   *                      The query string should not end with a semicolon. Data inside the query should be properly
+   *                      escaped.
+   *
+   * @return false|PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
@@ -196,10 +202,10 @@ abstract class Pdomysql
    *
    * @param string $sequenceName
    *
-   * @return int The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
+   * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) : int { return Sql::$_currentConn->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) : string { return Sql::$_currentConn->lastInsertId($sequenceName); }
 
   /**
    * @param string $string
@@ -251,4 +257,4 @@ abstract class Pdomysql
     return Sql::$_currentConn->errorInfo();
   }
 }
-?>
+

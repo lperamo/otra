@@ -1,14 +1,18 @@
 <?php
+declare(strict_types=1);
 /** Description of Session
  *
  * @author Lionel Péramo */
 namespace otra;
 
+/**
+ * @package otra
+ */
 abstract class Session
 {
   private static string $id;
 
-  public static function init() { self::$id = \sha1(\time()); }
+  public static function init() { self::$id = \sha1((string)\time()); }
 
   /** Puts a value associated with a key into the session
    *
@@ -31,4 +35,4 @@ abstract class Session
    */
   public static function get(string $key) { return $_SESSION[sha1(self::$id . $key)]; }
 }
-?>
+

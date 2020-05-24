@@ -1,9 +1,14 @@
 <?php
+declare(strict_types=1);
 if (defined('CHUNKS_KEY_LENGTH') === false)
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
 
 if (function_exists('writeConfigFile') === false)
 {
+  /**
+   * @param string $configFile
+   * @param string $content
+   */
   function writeConfigFile(string &$configFile, string &$content)
   {
     if (true === empty($content))
@@ -45,33 +50,30 @@ if (function_exists('writeConfigFile') === false)
       {
         if (true === is_numeric($arrayChunk))
           $content .= $key . $arrayChunk . ',';
+        elseif (false === $routeConfigFile)
+          $content .= '\'' . addslashes($arrayChunk) . '\',';
         else
         {
-          if (false === $routeConfigFile)
-            $content .= '\'' . addslashes($arrayChunk) . '\',';
-          else
+          $arrayChunk = (true === is_bool($arrayChunk))
+            ? (true === $arrayChunk) ? 'true' : 'false'
+            : addslashes($arrayChunk);
+
+          /* If it is a route config file then we search for the main pattern,
+            namely the route part that doesn't contain parameters.
+            Once found, we add it to the route configuration.
+            It will help the router to go faster to name the parameters. */
+
+          if ('\'chunks\'=>' === $actualRouteKey && false !== strpos($arrayChunk, '{'))
           {
-            $arrayChunk = (true === is_bool($arrayChunk))
-              ? (true === $arrayChunk) ? 'true' : 'false'
-              : addslashes($arrayChunk);
+            $bracketPosition = strpos($arrayChunk, '{');
+            $mainPattern     = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);
+            $content         = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' . $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
+          } else
+          {
+            $separator  = ('true' === $arrayChunk || 'false' === $arrayChunk) ? ' ' : '\'';
+            $arrayChunk = $separator . $arrayChunk . $separator . ',';
 
-            /* If it is a route config file then we search for the main pattern,
-              namely the route part that doesn't contain parameters.
-              Once found, we add it to the route configuration.
-              It will help the router to go faster to name the parameters. */
-
-            if ('\'chunks\'=>' === $actualRouteKey && false !== strpos($arrayChunk, '{'))
-            {
-              $bracketPosition = strpos($arrayChunk, '{');
-              $mainPattern     = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);
-              $content         = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' . $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
-            } else
-            {
-              $separator  = ('true' === $arrayChunk || 'false' === $arrayChunk) ? ' ' : '\'';
-              $arrayChunk = $separator . $arrayChunk . $separator . ',';
-
-              $content .= $key . $arrayChunk;
-            }
+            $content .= $key . $arrayChunk;
           }
         }
 
@@ -164,9 +166,9 @@ if (function_exists('sortRoutes') === false)
 uksort($routesArray, $sortRoutes);
 
 // Transforms the array in code that returns the array.
-$routesContent = '<?php return [';
+$routesContent = '<?php declare(strict_types=1);return [';
 loopForEach($routesContent, $routesArray, true);
-$routesContent = substr($routesContent, 0, -1) . ']; ?>';
+$routesContent = substr($routesContent, 0, -1) . '];';
 
 writeConfigFile($routesFile, $routesContent);
-?>
+

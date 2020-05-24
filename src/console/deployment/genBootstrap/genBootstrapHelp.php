@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+use otra\console\TasksManager;
+
 return [
   'Launch the genClassMap command and generates a file that contains all the necessary php files.',
   [
@@ -6,6 +10,10 @@ return [
     'verbose' => 'If set to 1, we print all the main warnings when the task fails. Put 2 to get every warning.',
     'route' => 'The route for which you want to generate the micro bootstrap.'
   ],
-  ['optional', 'optional', 'optional'],
+  [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER
+  ],
   'Deployment'
 ];

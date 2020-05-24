@@ -11,19 +11,25 @@ use otra\OtraException;
 /**
  * Shows an exception 'colorful' display for command line commands.
  */
-class OtraExceptionCLI extends \Exception
+class OtraExceptionCli extends \Exception
 {
-  const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
+  private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
-    ARGUMENTS_WIDTH = 51;
+    ARGUMENTS_WIDTH = 51,
+    KEY_VARIABLES = 'variables';
 
+  /**
+   * @param OtraException $exception
+   */
   public function __construct(OtraException $exception)
   {
+    parent::__construct();
+
     if (false === empty($exception->context))
     {
-      unset($exception->context['variables']);
+      unset($exception->context[self::KEY_VARIABLES]);
 //      createShowableFromArrayConsole($this->context, 'Variables');
     }
 
@@ -71,7 +77,7 @@ class OtraExceptionCLI extends \Exception
       elseif (strpos($exceptionFile, BASE_PATH) !== false)
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
-        echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
+      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
         ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
 
@@ -95,44 +101,44 @@ class OtraExceptionCLI extends \Exception
     /*******************************
      * Write the BODY of the table *
      *******************************/
-    for($i = 0, $trace = $exception->backtraces, $max = count($trace); $i < $max; $i += 1)
+    for($actualTraceIndex = 0, $trace = $exception->backtraces, $maxTraceIndex = count($trace);
+        $actualTraceIndex < $maxTraceIndex;
+        $actualTraceIndex += 1)
     {
-      $now = $trace[$i];
+      $actualTrace = $trace[$actualTraceIndex];
+      $actualTraceFile = $actualTrace['file'] ?? '';
 
-      if(0 === $i) unset($now['args']['variables']);
+      if (0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
 
-      createShowableFromArrayConsole($now['args'], 'Arguments', 'variables');
+      createShowableFromArrayConsole($actualTrace['args'], 'Arguments', self::KEY_VARIABLES);
 
       $compositeColoredPath = true;
 
-      if (isset($now['file']))
+      if ($actualTraceFile !== '')
       {
-        $now['file'] = str_replace('\\', '/', $now['file']);
+        $actualTraceFile = str_replace('\\', '/', $actualTraceFile);
 
-        if (false !== mb_strpos($now['file'], CONSOLE_PATH))
-          $now['file'] = self::returnShortenFilePath('CONSOLE', $now['file']);
-        elseif (false !== mb_strpos($now['file'], CORE_PATH))
-          $now['file'] = self::returnShortenFilePath('CORE', $now['file']);
-        elseif (false !== mb_strpos($now['file'], BASE_PATH))
-          $now['file'] = self::returnShortenFilePath('BASE', $now['file']);
+        if (false !== mb_strpos($actualTraceFile, CONSOLE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
+        elseif (false !== mb_strpos($actualTraceFile, CORE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
+        elseif (false !== mb_strpos($actualTraceFile, BASE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
         else
           $compositeColoredPath = false;
       } else
-      {
-        $now['file'] = '';
         $compositeColoredPath = false;
-      }
 
-      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $i ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
-      self::consoleLine($now, 'function', self::FUNCTION_WIDTH),
-      self::consoleLine($now, 'line', self::LINE_WIDTH),
+      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
+      self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
       self::consoleLine(
-        $now,
+        $actualTrace,
         'file',
         // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
         $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
-        $now['file']
+        $actualTraceFile
       ),
         /** ARGUMENTS */
       CLI_LIGHT_BLUE, '|', END_COLOR,
@@ -191,4 +197,4 @@ class OtraExceptionCLI extends \Exception
       );
   }
 }
-?>
+

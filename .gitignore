@@ -11,6 +11,7 @@
 .idea
 **/tests/coverageHtml
 **/tests/coverage.xml
+**/tests/report.xml
 /**/.phpunit.result.cache
 **/css/*.css*
 **/scss/.sass-cache/**
@@ -18,3 +19,4 @@
 /tslint*
 /tsconfig*
 /tmp/
+/.scannerwork/

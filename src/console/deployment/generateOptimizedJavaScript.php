@@ -1,10 +1,14 @@
 <?php
+declare(strict_types=1);
 
+use otra\OtraException;
 use function otra\console\returnLegiblePath;
 use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
 
+define('OTRA_LABEL_TSCONFIG_JSON', 'tsconfig.json');
+
 function generateJavaScript(
-  bool $verbose,
+  int $verbose,
   bool $launch,
   string &$resourceFolder,
   string &$baseName,
@@ -16,7 +20,7 @@ function generateJavaScript(
          * or a list of files without json configuration ... but not a list with json configuration ...
          * so we create one temporary json that list only the file we want */
 
-  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . 'tsconfig.json'), true);
+  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
 
   if ($typescriptConfig !== null)
   {
@@ -70,15 +74,15 @@ function generateJavaScript(
         echo CLI_GREEN, '.', END_COLOR, PHP_EOL, PHP_EOL;
       }
 
+    } elseif ($jsFileExists === true)
+    {
+      echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
+      END_COLOR, PHP_EOL, $output;
     } else
     {
-      if ($jsFileExists === true)
-        echo CLI_YELLOW, 'Something was wrong during typescript compilation but this may not be blocking.',
-        END_COLOR, PHP_EOL, $output;
-      else
-        echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
-        CLI_LIGHT_CYAN,
-        'tsconfig.json', CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
+      echo CLI_RED, 'The javascript cannot be generated ! Maybe you have a problem with the ',
+      CLI_LIGHT_CYAN,
+      OTRA_LABEL_TSCONFIG_JSON, CLI_RED, ' file.', END_COLOR, PHP_EOL, $output;
     }
 
     // We launch Google Closure Compiler only if a file has been generated with success
@@ -142,19 +146,16 @@ function generateJavaScript(
         if (!rename($generatedJsFile, $serviceWorkerPath))
         {
           echo CLI_RED, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
-          throw new \otra\OtraException('', 1, '', NULL, [], true);
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         $generatedJsMapFile = $generatedJsFile . '.map';
         $newJsMapPath = $serviceWorkerPath . '.map';
 
-        if (file_exists($generatedJsMapFile))
+        if (file_exists($generatedJsMapFile) && !rename($generatedJsMapFile, $newJsMapPath))
         {
-          if (!rename($generatedJsMapFile, $newJsMapPath))
-          {
-            echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
-            throw new \otra\OtraException('', 1, '', NULL, [], true);
-          }
+          echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         echo 'Service worker files moved to ', CLI_LIGHT_CYAN, returnLegiblePath($serviceWorkerPath), END_COLOR,
@@ -162,7 +163,7 @@ function generateJavaScript(
       }
     }
   } else
-    echo 'There is an error with your ', returnLegiblePath('tsconfig.json'), ' file. : '
-    , CLI_RED, json_last_error_msg(), PHP_EOL;
+    echo 'There is an error with your ', returnLegiblePath(OTRA_LABEL_TSCONFIG_JSON), ' file. : '
+      , CLI_RED, json_last_error_msg(), PHP_EOL;
 }
-?>
+

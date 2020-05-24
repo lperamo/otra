@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'common.php';
 
 define(
@@ -35,4 +36,4 @@ function modelsCreation(int $modelLocation, string $bundleName, string $modelFul
     modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
   }
 }
-?>
+

@@ -15,4 +15,4 @@ require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 moduleHandling($interactive, $bundleName , $argv[ARG_MODULE_NAME]);
-?>
+

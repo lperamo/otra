@@ -9,4 +9,3 @@ class TestAction extends Controller
 
   }
 }
-?>

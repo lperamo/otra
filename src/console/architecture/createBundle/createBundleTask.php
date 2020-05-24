@@ -21,5 +21,9 @@ if (false === isset($argv[ARG_BUNDLE_NAME]))
   $bundleName = $argv[ARG_BUNDLE_NAME];
 }
 
-bundleHandling($interactive, $bundleName, $argv[ARG_BUNDLE_MASK] ?? null, true);
-?>
+bundleHandling($interactive,
+  $bundleName,
+  $argv[ARG_BUNDLE_MASK] ? intval($argv[ARG_BUNDLE_MASK]) : null,
+  true
+);
+

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *
@@ -56,4 +57,4 @@ function removeMethodScopeProtection($class, string $method) : ReflectionMethod
 
   return $method;
 }
-?>
+

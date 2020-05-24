@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require CORE_PATH . 'tools/cli.php';
 define('PARAMETER_PORT', 2);
 define('PARAMETER_ENV', 3);
