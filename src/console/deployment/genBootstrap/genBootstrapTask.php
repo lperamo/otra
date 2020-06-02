@@ -29,6 +29,14 @@ if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) && '0' === $argv[GE
   return $status;
 }
 
+if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName']))
+{
+  echo CLI_RED, 'You must define the ', CLI_LIGHT_CYAN, 'domainName', CLI_RED,
+  ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
+  throw new \otra\OtraException('', 1, '', NULL, [], true);
+}
+
+
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 

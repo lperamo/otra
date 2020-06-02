@@ -56,7 +56,7 @@ $defaultRoute = Routes::$default['bundle'];
 // in order to pass some conditions
 $_SERVER['REMOTE_ADDR'] = 'console';
 $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
-$_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // TODO to put into a file to configure for each project ?
+$_SERVER['HTTP_HOST'] = AllConfig::$deployment['domainName'];
 
 // Preparation of default parameters for the routes
 if (isset($params['post']))
