@@ -58,7 +58,6 @@ if ($mask !== 8)
 
     /***************** CLEANING THE FILES *******************
      ******* specific to the route passed in parameter ******/
-
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
     if ($mask & 1)
@@ -219,25 +218,24 @@ if (($mask & 8) >> 3)
   $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
   if (!file_exists($jsonManifestPath))
-  {
     echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.',
       END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+  else
+  {
+    $message = 'Generation of the gzipped JSON manifest';
+    echo $message . '...', PHP_EOL;
+
+    $contents = file_get_contents($jsonManifestPath);
+    $contents = preg_replace('@([{,:])\s{1,}(")@', '$1$2', $contents);
+    $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
+    $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
+    $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
+    $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
+
+    file_put_contents($generatedJsonManifestPath, $contents);
+    gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
+    echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
   }
-
-  $message = 'Generation of the gzipped JSON manifest';
-  echo $message . '...', PHP_EOL;
-
-  $contents = file_get_contents($jsonManifestPath);
-  $contents = preg_replace('@([{,:])\s{1,}(")@', '$1$2', $contents);
-  $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
-  $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
-  $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
-  $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
-
-  file_put_contents($generatedJsonManifestPath, $contents);
-  gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
-  echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
 }
 
 /**
