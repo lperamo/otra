@@ -26,14 +26,12 @@ function generateJavaScript(
   {
     // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
     // and remove the dummy file ...
-    $jsFolder = $resourceFolder . 'js/';
-
     // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
-    if (file_exists($jsFolder) === false)
-      mkdir($jsFolder, 0777, true);
+    if (file_exists($resourceFolder) === false)
+      mkdir($resourceFolder, 0777, true);
 
-    $generatedTemporaryJsFile = $jsFolder . $baseName . '_viaTypescript.js';
-    $generatedJsFile = $jsFolder . $baseName . '.js';
+    $generatedTemporaryJsFile = $resourceFolder . $baseName . '_viaTypescript.js';
+    $generatedJsFile = $resourceFolder . $baseName . '.js';
 
     // Creating a temporary typescript json configuration file suited for the OTRA watcher.
     // We need to recreate it each time because the user can alter his original configuration file

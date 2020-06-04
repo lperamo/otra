@@ -215,12 +215,12 @@ foreach($iterator as $entry)
           mb_strrpos($resourceFolder, 'web')
         ) . 'web/';
 
-    $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder));
+    $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder)) . '/';
 
     if ($extension === 'ts')
     {
       // 6 = length of devJs/
-      $resourcesMainFolder = $resourcesMainFolder . substr($resourcesFolderEndPath, 6);
+      $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
 
       if (WATCH_FOR_TS_RESOURCES === true)
         generateJavaScript(
