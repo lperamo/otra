@@ -101,4 +101,14 @@ class BlocksTest extends TestCase
       Hello World!after</body>
 ', $content);
   }
+
+  public function testEvenMoreCompleteLayout() : void {
+    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/evenMoreCompleteLayout.phtml');
+    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
+  Welcome to the OTRA!</title><meta http-equiv="Accept" /><meta charset="UTF-8" /><link rel="prefetch" /><body>
+  Hello World!
+        test
+      Hello World!after</body>
+', $content);
+  }
 }

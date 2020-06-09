@@ -15,10 +15,10 @@ if (function_exists('block') === false)
   /**
    * Begins a template block.
    *
-   * @param string $name
-   * @param string $inline If we just want an inline block then we echo this string and close the block directly.
+   * @param string      $name
+   * @param string|null $inline If we just want an inline block then we echo this string and close the block directly.
    */
-  function block(string $name, string $inline = '')
+  function block(string $name, ?string $inline = null)
   {
     // Storing previous content before doing anything else
     $currentBlock = &MasterController::$currentBlock;
@@ -61,7 +61,7 @@ if (function_exists('block') === false)
     ob_start();
 
     // If we just want an inline block then we echo the content and close the block directly
-    if ($inline !== '')
+    if ($inline !== null)
     {
       echo $inline;
       endblock();
