@@ -80,7 +80,8 @@ $buildDevMode = 0;
 
 if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
   $buildDevMode |= BUILD_DEV_MASK_TS;
-elseif (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+
+if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
   $buildDevMode |= BUILD_DEV_MASK_SCSS;
 
 if ($buildDevMode > 0)
