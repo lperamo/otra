@@ -102,6 +102,18 @@ class BlocksTest extends TestCase
 ', $content);
   }
 
+  /**
+   * Use :
+   * - overridden blocks,
+   * - an inline title block,
+   * - alternate blocks between blocks override
+   * - parent block call
+   * - the end of the content after a child block is not empty
+   * - empty block placeholders
+   *
+   * @throws OtraException
+   * @author Lionel Péramo
+   */
   public function testEvenMoreCompleteLayout() : void {
     $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/evenMoreCompleteLayout.phtml');
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
