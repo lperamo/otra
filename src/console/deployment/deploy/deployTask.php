@@ -11,11 +11,22 @@ use \otra\OtraException;
 define('DEPLOY_ARG_MASK', 2);
 define('DEPLOY_ARG_VERBOSE', 3);
 define('DEPLOY_ARG_GCC_LEVEL_COMPILATION', 4);
+
+define('GEN_BOOTSTRAP_ARG_CLASS_MAPPING', 2);
+define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+
+define('BUILD_DEV_MASK_SCSS', 1);
+const BUILD_DEV_MASK_TS = 2;
+
 define('DEPLOY_MASK_ONLY_RSYNC', 0);
 define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
 define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
-define('DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC', 8);
+define('DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC', 8);
+
+define('GEN_ASSETS_MASK_TEMPLATE', 1);
+define('GEN_ASSETS_MASK_MANIFEST', 8);
+define('GEN_ASSETS_MASK_SVG', 16);
 
 define('OTRA_CLI_CONTROL_MODE', "\033[");
 
@@ -42,14 +53,14 @@ foreach($deploymentParameters as &$deploymentParameter)
 }
 
 define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
-$mask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
+$deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
 $verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
 define(
   'DEPLOY_GCC_LEVEL_COMPILATION',
   isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
 );
 
-if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
+if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 {
   // We generate the class mapping...
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -58,28 +69,26 @@ if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // bootstraps
-  $argv[2] = 0; // prevents the class mapping
-  $argv[3] = $verbose; // if true, print warnings when the task fails
+  $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
+  $argv[GEN_BOOTSTRAP_ARG_VERBOSE] = $verbose; // if true, print warnings when the task fails
   require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
 }
 
 require CORE_PATH . 'tools/cli.php';
 
-$mode = 0;
+$buildDevMode = 0;
 
-if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-  $mode |= 4;
-elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-  $mode |= 2;
-elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 3)
-  $mode |= 9;
+if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  $buildDevMode |= BUILD_DEV_MASK_TS;
+elseif (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  $buildDevMode |= BUILD_DEV_MASK_SCSS;
 
-if ($mode > 0)
+if ($buildDevMode > 0)
 {
   echo END_COLOR, 'Assets transcompilation...';
 
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
+  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']));
 
   if ($result[0] === false)
   {
@@ -88,19 +97,22 @@ if ($mode > 0)
   }
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+}
 
+$genAssetsMode = 0;
+
+if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
+
+if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
+
+if (($deployMask & DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC) >> 3)
+  $genAssetsMode |= DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC | GEN_ASSETS_MASK_TEMPLATE | GEN_ASSETS_MASK_SVG;
+
+if ($genAssetsMode > 0)
+{
   echo 'Assets minification and compression...';
-  $genAssetsMode = 0;
-
-  if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-    $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
-
-  if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-    $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
-
-  if (($mask & DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC) >> 3)
-    $genAssetsMode |= DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC | 1;
-
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
 
@@ -112,7 +124,7 @@ if ($mode > 0)
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 }
-
+die;
 // Deploy the files on the server...
 [
   'server' => $server,

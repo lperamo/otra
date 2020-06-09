@@ -185,7 +185,10 @@ echo CLI_LIGHT_GREEN , ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
 if (VERBOSE !== 1)
   return;
 
-define('FIRST_CLASS_PADDING', 80);
+// If we come from the deploy task, this constant may already have been defined.
+if (!defined('FIRST_CLASS_PADDING'))
+  define('FIRST_CLASS_PADDING', 80);
+
 echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 

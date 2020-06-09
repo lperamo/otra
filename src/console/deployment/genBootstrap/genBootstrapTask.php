@@ -4,8 +4,13 @@ namespace otra\console;
 
 use config\{Routes, AllConfig};
 
-define('GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP', 2);
-define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+// If we come from the deploy task, those two constants are already defined
+if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
+{
+  define('GEN_BOOTSTRAP_ARG_CLASS_MAPPING', 2);
+  define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+}
+
 define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
 
 define('OTRA_KEY_DRIVER', 'driver');
@@ -13,7 +18,7 @@ define('OTRA_KEY_DRIVER', 'driver');
 $verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
-if (false === (isset($argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]) && '0' === $argv[GEN_BOOTSTRAP_ARG_GEN_CLASS_MAP]))
+if (false === (isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
 {
   // Generation of the class mapping
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
