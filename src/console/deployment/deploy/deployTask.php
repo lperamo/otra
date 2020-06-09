@@ -124,7 +124,7 @@ if ($genAssetsMode > 0)
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
 }
-die;
+
 // Deploy the files on the server...
 [
   'server' => $server,
