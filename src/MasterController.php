@@ -312,7 +312,7 @@ class MasterController
     return $nonce;
   }
 
-  protected static function addCspHeader() : void
+  protected function addCspHeader() : void
   {
     $csp = 'Content-Security-Policy: ';
 
@@ -348,7 +348,7 @@ class MasterController
     }
   }
 
-  protected static function addFeaturePoliciesHeader()
+  protected function addFeaturePoliciesHeader()
   {
     $featurePolicies = '';
 

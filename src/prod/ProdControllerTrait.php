@@ -84,8 +84,8 @@ trait ProdControllerTrait
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
-    parent::addCspHeader();
-    parent::addFeaturePoliciesHeader();
+    $this->addCspHeader();
+    $this->addFeaturePoliciesHeader();
 
     return parent::$template;
   }
