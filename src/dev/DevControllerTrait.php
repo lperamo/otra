@@ -171,7 +171,7 @@ trait DevControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<script type="application/javascript" nonce="' . parent::getRandomNonceForCSP() . '" src="'
+        ? '<scriptnonce="' . parent::getRandomNonceForCSP() . '" src="'
         : '<link rel="stylesheet" href="'
       );
 
@@ -253,7 +253,7 @@ trait DevControllerTrait
 
     foreach(self::$js as &$js)
     {
-      $jsContent .= "\n" . '<script type="application/javascript" nonce="' .
+      $jsContent .= "\n" . '<script nonce="' .
       parent::getRandomNonceForCSP() . '" src="' . $js . '.js" ></script>';
     }
 
