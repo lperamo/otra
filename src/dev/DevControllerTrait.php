@@ -81,8 +81,8 @@ trait DevControllerTrait
     )
       self::addDebugBar();
 
-    parent::addCspHeader();
-    parent::addFeaturePoliciesHeader();
+    $this->addCspHeader();
+    $this->addFeaturePoliciesHeader();
 
     return parent::$template;
   }
@@ -171,7 +171,7 @@ trait DevControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<scriptnonce="' . parent::getRandomNonceForCSP() . '" src="'
+        ? '<script nonce="' . parent::getRandomNonceForCSP() . '" src="'
         : '<link rel="stylesheet" href="'
       );
 

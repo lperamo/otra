@@ -297,7 +297,9 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
-      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch)
+      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
+        && 'require CACHE_PATH . \'php/security/\' . $this->route . \'.php\';' !== $trimmedMatch
+      )
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
         '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
@@ -547,8 +549,10 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         if ($posDir !== false)
           $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
 
-        // we must not change this inclusion from CORE_PATH . Router.php !
-        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\'')
+        // we must not change this inclusion from CORE_PATH . Router.php and from securities configuration !
+        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
+          || $tempFile === 'CACHE_PATH . \'php/security/\' . $this->route . \'.php\''
+        )
           continue;
 
         // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
