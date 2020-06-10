@@ -124,7 +124,7 @@ function contentToFile(string $content, string $outputFile)
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo CLI_LIGHT_GREEN, '[NAMESPACES]', PHP_EOL;
+  echo CLI_LIGHT_GREEN, '[NAMESPACES]', END_COLOR, PHP_EOL;
 
   if (!unlink($tempFile))
   {
