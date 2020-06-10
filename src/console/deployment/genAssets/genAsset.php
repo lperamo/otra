@@ -70,4 +70,8 @@ if (false === file_exists($tplPath))
 
 $pathAndFile = ARG_CACHE_PATH . 'tpl/' . ARG_SHA_NAME;
 file_put_contents($pathAndFile, preg_replace('@\s{2,}@', ' ', $content));
+
+// strips HTML comments thar are not HTML conditional comments
+$content = preg_replace('@<!--[^\\[<>].*?(?<!!)-->@s', '', $content);
+
 gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);

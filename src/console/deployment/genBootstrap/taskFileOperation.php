@@ -80,6 +80,9 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
   $contentToCompress = rtrim(preg_replace('@\s{1,}@', ' ', php_strip_whitespace($fileToCompress)) . PHP_EOL);
 
+  // strips HTML comments that are not HTML conditional comments
+  $contentToCompress = preg_replace('@<!--[^\\[<>].*?(?<!!)-->@s', '', $contentToCompress);
+
   file_put_contents(
     $outputFile . '.php',
     preg_replace('@;\s(class\s[^\s]{1,}) { @', ';$1{', $contentToCompress, -1, $count)
