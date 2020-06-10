@@ -89,6 +89,8 @@ class MasterController
 
   private static array $routes;
 
+  private string $routeSecurityFilePath;
+
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
   public const HTTP_SWITCHING_PROTOCOLS = 101;
@@ -182,6 +184,8 @@ class MasterController
       $this->route,
       self::$hasJsToLoad,
       self::$hasCssToLoad) = array_values($baseParams);
+
+    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
 
     $this->action = substr($baseParams['action'], 0, -6);
 
@@ -325,7 +329,9 @@ class MasterController
   protected function addCspHeader() : void
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
-    if (false === strpos($this->route, 'otra'))
+    if (false === strpos($this->route, 'otra')
+      && isset($this->routeSecurityFilePath)
+      && $this->routeSecurityFilePath)
     {
       // Retrieve security instructions from the routes configuration file
       if (!isset(self::$routes))
@@ -372,7 +378,9 @@ class MasterController
   protected function addFeaturePoliciesHeader()
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
-    if (false === strpos($this->route, 'otra'))
+    if (false === strpos($this->route, 'otra')
+      && isset($this->routeSecurityFilePath)
+      && $this->routeSecurityFilePath)
     {
       // Retrieve security instructions from the routes configuration file
       if (!isset(self::$routes))
