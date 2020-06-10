@@ -87,6 +87,8 @@ class MasterController
     $template,
     $layout;
 
+  private static array $routes;
+
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
   public const HTTP_SWITCHING_PROTOCOLS = 101;
@@ -171,7 +173,15 @@ class MasterController
     }
 
     // Stores the bundle, module, controller and action for later use
-    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);
+    list(
+      $this->pattern,
+      $this->bundle,
+      $this->module,
+      $this->controller,
+      ,
+      $this->route,
+      self::$hasJsToLoad,
+      self::$hasCssToLoad) = array_values($baseParams);
 
     $this->action = substr($baseParams['action'], 0, -6);
 
@@ -314,6 +324,17 @@ class MasterController
 
   protected function addCspHeader() : void
   {
+    // OTRA routes are not secure with CSP and feature policies for the moment
+    if (false === strpos($this->route, 'otra'))
+    {
+      // Retrieve security instructions from the routes configuration file
+      if (!isset(self::$routes))
+        self::$routes = require CACHE_PATH . 'php/security/' . $this->route . '.php';
+
+      self::$csp['dev'] = array_merge(self::$csp['dev'], self::$routes['dev']['csp']);
+      self::$csp['prod'] = array_merge(self::$csp['prod'], self::$routes['prod']['csp']);
+    }
+
     $csp = 'Content-Security-Policy: ';
 
     foreach (self::$csp[$_SERVER[APP_ENV]] as $directive => &$value)
@@ -350,6 +371,17 @@ class MasterController
 
   protected function addFeaturePoliciesHeader()
   {
+    // OTRA routes are not secure with CSP and feature policies for the moment
+    if (false === strpos($this->route, 'otra'))
+    {
+      // Retrieve security instructions from the routes configuration file
+      if (!isset(self::$routes))
+        self::$routes = require CACHE_PATH . 'php/security/' . $this->route . '.php';
+
+      self::$featurePolicy['dev'] = array_merge(self::$featurePolicy['dev'], self::$routes['dev']['featurePolicy']);
+      self::$featurePolicy['prod'] = array_merge(self::$featurePolicy['prod'], self::$routes['prod']['featurePolicy']);
+    }
+
     $featurePolicies = '';
 
     if ($_SERVER[APP_ENV] === 'dev')
