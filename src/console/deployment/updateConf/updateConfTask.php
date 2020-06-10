@@ -96,7 +96,9 @@ if (!function_exists('writeConfigFile'))
 }
 
 /** BEGINNING OF THE TASK */
-define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+if (!defined('BUNDLES_PATH'))
+  define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+
 $folderHandler = opendir(BUNDLES_PATH);
 $securities = $configs = $routes = $schemas = [];
 
