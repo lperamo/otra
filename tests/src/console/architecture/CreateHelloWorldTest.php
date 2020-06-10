@@ -82,9 +82,9 @@ class CreateHelloWorldTest extends TestCase
       'Starter template ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .
         'bundles/HelloWorld/frontend/views/index/home.phtml' . END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
       'Adding favicons...' . PHP_EOL .
-      CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_BLUE . '/var/www/html/perso/otra/bundles/config/Config.php' .
+      CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_CYAN . '/var/www/html/perso/otra/bundles/config/Config.php' .
         CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
-      CLI_GREEN . '/var/www/html/perso/otra/bundles/config/Routes.php' . ' updated.' . END_COLOR . PHP_EOL .
+      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'bundles/config/Routes.php' . CLI_GREEN . ' updated.' . END_COLOR . PHP_EOL .
       CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL .
       PHP_EOL .
       'You can launch this example via the url ' . CLI_LIGHT_CYAN . '/helloworld' . END_COLOR .
