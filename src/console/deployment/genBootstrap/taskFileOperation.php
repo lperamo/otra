@@ -208,7 +208,9 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
       $chunk = trim($chunk);
       $posLeftParenthesis = strpos($chunk, '{');
 
-      if (false !== $posLeftParenthesis) // case use xxx/xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are)
+      // case use xxx\xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are, one or more xxx between the braces)
+      // example otra\otra\bdd\{Sql, Pdomysql}
+      if (false !== $posLeftParenthesis)
       {
         $beginString = substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
         $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
@@ -216,6 +218,10 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 
         // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
         str_replace($classToReplace, $lastChunk, $contentToAdd);
+
+        // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
+        if (substr($classToReplace, -1) === '}')
+          $classToReplace = substr($classToReplace, 0,-1);
 
         // We analyze the use statement in order to retrieve the name of each class which is included in it.
         analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
