@@ -81,7 +81,7 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
   $contentToCompress = rtrim(preg_replace('@\s{1,}@', ' ', php_strip_whitespace($fileToCompress)) . PHP_EOL);
 
   // strips HTML comments that are not HTML conditional comments
-  $contentToCompress = preg_replace('@<!--[^\\[<>].*?(?<!!)-->@s', '', $contentToCompress);
+  $contentToCompress = preg_replace('@<!--.*?-->@', '', $contentToCompress);
 
   file_put_contents(
     $outputFile . '.php',
