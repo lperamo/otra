@@ -51,7 +51,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
         $routeFileName = $routeToSuppress . $extension;
 
         if ($extension !== '.php')
-          $routeFileName = sha1('ca' . $routeToSuppress . config\AllConfig::$version . 'che') . $extension;
+          $routeFileName = sha1('ca' . $routeToSuppress . VERSION . 'che') . $extension;
 
         unlinkFile(
           $cachePath . $routeFileName,
