@@ -89,7 +89,7 @@ class MasterController
 
   private static array $routes;
 
-  private string $routeSecurityFilePath;
+  private ?string $routeSecurityFilePath = null;
 
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
@@ -186,6 +186,9 @@ class MasterController
       self::$hasCssToLoad) = array_values($baseParams);
 
     $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+
+    if (!file_exists($this->routeSecurityFilePath))
+      $this->routeSecurityFilePath = null;
 
     $this->action = substr($baseParams['action'], 0, -6);
 
