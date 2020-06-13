@@ -35,12 +35,7 @@ try
     isset(
       \cache\php\Routes::$_[OTRA_ROUTE]['resources']['template']
     ))
-  {
-    header('Content-Encoding: gzip');
-    require BASE_PATH . 'config/AllConfig.php';
-    echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . OTRA_ROUTE . VERSION . 'che') . '.gz');
-    exit;
-  }
+    require BASE_PATH . 'web/loadStaticRoute.php';
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
@@ -68,12 +63,28 @@ try
   Router::get(OTRA_ROUTE, $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS]);
 } catch (Exception $exception)
 {
-  require_once CORE_PATH . 'Logger.php';
-  Logger::logExceptionOrErrorTo($exception->getMessage(), 'Exception');
+  if (class_exists(\cache\php\Logger::class))
+    Logger::logExceptionOrErrorTo($exception->getMessage(), 'Exception');
+  else
+    error_log(
+      '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Exception : ' . PHP_EOL .
+      $exception->getMessage() . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
+      3,
+      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownExceptions.txt'
+    );
+
   echo 'Server in trouble. Please come back later !';
 } catch (Error $error)
 {
-  require_once CORE_PATH . 'Logger.php';
-  Logger::logExceptionOrErrorTo($error->getMessage(), 'Fatal error');
+  if (class_exists(\cache\php\Logger::class))
+    Logger::logExceptionOrErrorTo($error->getMessage(), 'Fatal error');
+  else
+    error_log(
+      '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Fatal error : ' . PHP_EOL .
+      $error->getMessage() . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
+      3,
+      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownFatalErrors.txt'
+    );
+
   echo 'Server in great trouble. Please come back later !';
 }

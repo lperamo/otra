@@ -59,17 +59,21 @@ echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 echo 'Adding the files for the web folder...';
 
 $webFolder = BASE_PATH . 'web/';
-$indexFileName = 'index.php';
-$indexDevFileName = 'indexDev.php';
+const OTRA_INDEX_FILENAME  = 'index.php';
+const OTRA_INDEX_DEV_FILE_NAME = 'indexDev.php';
+const OTRA_LOAD_STATIC_ROUTE = 'loadStaticRoute.php';
+const CORE_PATH_INIT_WEB_FOLDER = CORE_PATH . 'init/web/';
 
 copyFileAndFolders(
   [
-    CORE_PATH . 'init/web/' . $indexFileName,
-    CORE_PATH . 'init/web/'. $indexDevFileName
+    CORE_PATH_INIT_WEB_FOLDER . OTRA_INDEX_FILENAME,
+    CORE_PATH_INIT_WEB_FOLDER . OTRA_INDEX_DEV_FILE_NAME,
+    CORE_PATH_INIT_WEB_FOLDER . OTRA_LOAD_STATIC_ROUTE
   ],
   [
-    $webFolder . $indexFileName,
-    $webFolder . $indexDevFileName
+    $webFolder . OTRA_INDEX_FILENAME,
+    $webFolder . OTRA_INDEX_DEV_FILE_NAME,
+    $webFolder . OTRA_LOAD_STATIC_ROUTE
   ]
 );
 

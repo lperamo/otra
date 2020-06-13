@@ -304,7 +304,7 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
       elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
-        && 'require CACHE_PATH . \'php/security/\' . $this->route . \'.php\';' !== $trimmedMatch
+        && 'require CACHE_PATH . \'php/security/\' . $route . \'.php\';' !== $trimmedMatch
       )
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
@@ -557,7 +557,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
 
         // we must not change this inclusion from CORE_PATH . Router.php and from securities configuration !
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
-          || $tempFile === 'CACHE_PATH . \'php/security/\' . $this->route . \'.php\''
+          || $tempFile === 'CACHE_PATH . \'php/security/\' . $route . \'.php\''
         )
           continue;
 

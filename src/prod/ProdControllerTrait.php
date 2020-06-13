@@ -84,8 +84,11 @@ trait ProdControllerTrait
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
-    $this->addCspHeader();
-    $this->addFeaturePoliciesHeader();
+    if (isset($this->routeSecurityFilePath))
+    {
+      addCspHeader($this->route, $this->routeSecurityFilePath);
+      addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
+    }
 
     return parent::$template;
   }
@@ -187,4 +190,3 @@ trait ProdControllerTrait
     return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
-

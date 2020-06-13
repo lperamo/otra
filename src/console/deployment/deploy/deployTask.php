@@ -217,6 +217,7 @@ $handleTransfer(
   $startCommand .
   '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
   ' --include=\'otra/otra/src/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
+  ' --include=\'otra/otra/src/services/securityService.php\'' .
   ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
   '/vendor/'
 );

@@ -81,8 +81,12 @@ trait DevControllerTrait
     )
       self::addDebugBar();
 
-    $this->addCspHeader();
-    $this->addFeaturePoliciesHeader();
+
+    if (isset($this->routeSecurityFilePath))
+    {
+      addCspHeader($this->route, $this->routeSecurityFilePath);
+      addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
+    }
 
     return parent::$template;
   }
@@ -171,7 +175,7 @@ trait DevControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<script nonce="' . parent::getRandomNonceForCSP() . '" src="'
+        ? '<script nonce="' . getRandomNonceForCSP() . '" src="'
         : '<link rel="stylesheet" href="'
       );
 
@@ -225,7 +229,7 @@ trait DevControllerTrait
         if (true === is_int($key))
           $key = '';
 
-        $resourceContent .= "\n" . '<script src="' . $js . '.js" nonce="' . parent::getRandomNonceForCSP() . '" ' . $key . '></script>';
+        $resourceContent .= "\n" . '<script src="' . $js . '.js" nonce="' . getRandomNonceForCSP() . '" ' . $key . '></script>';
       }
     }
 
@@ -254,7 +258,7 @@ trait DevControllerTrait
     foreach(self::$js as &$js)
     {
       $jsContent .= "\n" . '<script nonce="' .
-      parent::getRandomNonceForCSP() . '" src="' . $js . '.js" ></script>';
+      getRandomNonceForCSP() . '" src="' . $js . '.js" ></script>';
     }
 
     return $jsContent;
@@ -304,4 +308,3 @@ trait DevControllerTrait
     ++$i;
   }
 }
-
