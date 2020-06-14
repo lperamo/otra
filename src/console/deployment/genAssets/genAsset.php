@@ -69,5 +69,11 @@ if (false === file_exists($tplPath))
   mkdir($tplPath, 0755, true);
 
 $pathAndFile = ARG_CACHE_PATH . 'tpl/' . ARG_SHA_NAME;
-file_put_contents($pathAndFile, preg_replace('@\s{2,}@', ' ', $content));
+
+// remove extra spaces
+$content = preg_replace('@\s{2,}@', ' ', $content);
+
+// strips HTML comments that are not HTML conditional comments and write the content
+file_put_contents($pathAndFile, preg_replace('@<!--.*?-->@', '', $content));
+
 gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);

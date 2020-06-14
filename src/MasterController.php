@@ -12,6 +12,8 @@ namespace otra;
 class MasterController
 {
   public static string $path;
+  public ?string $routeSecurityFilePath = null;
+
   public static array
     $blocksStack = [],
     $currentBlock = [
@@ -21,7 +23,37 @@ class MasterController
       'parent' => null
     ],
     $blockNames = [],
-    $blocksToUnset = [];
+    $blocksToUnset = [],
+    $nonces = [],
+    $contentSecurityPolicy = [
+    'dev' =>
+      [
+        'frame-ancestors' => "'self'",
+        'default-src' => "'self'",
+        'font-src' => "'self'",
+        'img-src' => "'self'",
+        'object-src' => "'self'",
+        'connect-src' => "'self'",
+        'child-src' => "'self'",
+        'manifest-src' => "'self'",
+        'style-src' => "'self'"
+      ],
+    'prod' => [] // assigned in the constructor
+  ],
+    $featurePolicy = [
+    'dev' =>
+      [
+        'layout-animations' => "'self'",
+        'legacy-image-formats' => "'none'",
+        'oversized-images' => "'none'",
+        'sync-script' => "'none'",
+        'sync-xhr' => "'none'",
+        'unoptimized-images' => "'none'",
+        'unsized-media' => "'none'"
+      ],
+    'prod' => []
+  ],
+  $routes;
 
   public static int
     $currentBlocksStackIndex = 0;
@@ -45,36 +77,7 @@ class MasterController
   protected static array
     $css = [],
     $js = [],
-    $rendered = [],
-    $nonces = [],
-    $csp = [
-      'dev' =>
-        [
-          'frame-ancestors' => "'self'",
-          'default-src' => "'self'",
-          'font-src' => "'self'",
-          'img-src' => "'self'",
-          'object-src' => "'self'",
-          'connect-src' => "'self'",
-          'child-src' => "'self'",
-          'manifest-src' => "'self'",
-          'style-src' => "'self'"
-        ],
-      'prod' => [] // assigned in the constructor
-    ],
-  $featurePolicy = [
-    'dev' =>
-      [
-        'layout-animations' => "'self'",
-        'legacy-image-formats' => "'none'",
-        'oversized-images' => "'none'",
-        'sync-script' => "'none'",
-        'sync-xhr' => "'none'",
-        'unoptimized-images' => "'none'",
-        'unsized-media' => "'none'"
-      ],
-    'prod' => []
-  ];
+    $rendered = [];
 
   protected static bool
     $ajax = false,
@@ -171,7 +174,21 @@ class MasterController
     }
 
     // Stores the bundle, module, controller and action for later use
-    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);
+    list(
+      $this->pattern,
+      $this->bundle,
+      $this->module,
+      $this->controller,
+      ,
+      $this->route,
+      self::$hasJsToLoad,
+      self::$hasCssToLoad) = array_values($baseParams);
+
+    require CORE_PATH . 'services/securityService.php';
+    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+
+    if (!file_exists($this->routeSecurityFilePath))
+      $this->routeSecurityFilePath = null;
 
     $this->action = substr($baseParams['action'], 0, -6);
 
@@ -187,7 +204,7 @@ class MasterController
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-    self::$csp['prod'] = self::$csp['dev'];
+    self::$contentSecurityPolicy['prod'] = self::$contentSecurityPolicy['dev'];
   }
 
   /**
@@ -299,72 +316,6 @@ class MasterController
 
     return $content;
   }
-
-  /**
-   * @return string
-   * @throws \Exception
-   */
-  protected static function getRandomNonceForCSP() : string
-  {
-    $nonce = bin2hex(random_bytes(32));
-    self::$nonces[] = $nonce;
-
-    return $nonce;
-  }
-
-  protected static function addCspHeader() : void
-  {
-    $csp = 'Content-Security-Policy: ';
-
-    foreach (self::$csp[$_SERVER[APP_ENV]] as $directive => &$value)
-    {
-      $csp .= $directive . ' ' . $value . '; ';
-    }
-
-    // If no value has been set for 'script-src', we define automatically a secure policy for this directive
-    if (!isset(self::$csp[$_SERVER[APP_ENV]]['script-src']))
-    {
-      $csp .= 'script-src' . ' \'strict-dynamic\' ';
-
-      foreach (self::$nonces as &$nonce)
-      {
-        $csp .= '\'nonce-' . $nonce . '\' ';
-      }
-    }
-
-    header($csp);
-  }
-
-  /**
-   * @static
-   * @param array  $policiesArray
-   * @param string $policies
-   */
-  private static function addFeaturePolicies(array $policiesArray, string &$policies) : void
-  {
-    foreach ($policiesArray as $feature => &$policy)
-    {
-      $policies .= $feature . ' ' . $policy . ';';
-    }
-  }
-
-  protected static function addFeaturePoliciesHeader()
-  {
-    $featurePolicies = '';
-
-    if ($_SERVER[APP_ENV] === 'dev')
-      self::addFeaturePolicies(
-        self::$featurePolicy['dev'],
-        $featurePolicies
-      );
-
-    MasterController::addFeaturePolicies(
-      self::$featurePolicy['prod'],
-      $featurePolicies
-    );
-
-    header('Feature-Policy: ' . $featurePolicies);
-  }
 }
 
 // We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
@@ -372,4 +323,3 @@ class MasterController
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER[APP_ENV] === 'prod' && PHP_SAPI !== 'cli')
   class_alias('\cache\php\MasterController', '\otra\MasterController');
-

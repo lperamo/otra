@@ -84,8 +84,11 @@ trait ProdControllerTrait
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
-    parent::addCspHeader();
-    parent::addFeaturePoliciesHeader();
+    if (isset($this->routeSecurityFilePath))
+    {
+      addCspHeader($this->route, $this->routeSecurityFilePath);
+      addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
+    }
 
     return parent::$template;
   }
@@ -154,7 +157,7 @@ trait ProdControllerTrait
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = (self::$hasJsToLoad) ? '<script type="application/javascript" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
     if (true === empty(self::$js))
       return $content;
@@ -187,4 +190,3 @@ trait ProdControllerTrait
     return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
-

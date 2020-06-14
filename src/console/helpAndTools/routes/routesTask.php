@@ -43,6 +43,8 @@ function showPHPState(string &$basePath, string &$route, string &$altColor)
   echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[PHP]' . $altColor;
 }
 
+require BASE_PATH . 'config/AllConfig.php';
+
 $alt = 0;
 const WIDTH_LEFT = 25;
 const WIDTH_MIDDLE = 10;
@@ -94,7 +96,7 @@ foreach($routes as $route => &$details)
     PHP_EOL;
 
   // shaName is the encrypted key that match a particular route / version
-  $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
+  $shaName = sha1('ca' . $route . VERSION . 'che');
 
   $basePath = BASE_PATH . 'cache/';
 

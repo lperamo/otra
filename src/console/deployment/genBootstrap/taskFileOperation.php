@@ -80,6 +80,9 @@ function compressPHPFile(string $fileToCompress, string $outputFile)
   // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
   $contentToCompress = rtrim(preg_replace('@\s{1,}@', ' ', php_strip_whitespace($fileToCompress)) . PHP_EOL);
 
+  // strips HTML comments that are not HTML conditional comments
+  $contentToCompress = preg_replace('@<!--.*?-->@', '', $contentToCompress);
+
   file_put_contents(
     $outputFile . '.php',
     preg_replace('@;\s(class\s[^\s]{1,}) { @', ';$1{', $contentToCompress, -1, $count)
@@ -121,7 +124,7 @@ function contentToFile(string $content, string $outputFile)
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo CLI_LIGHT_GREEN, '[NAMESPACES]', PHP_EOL;
+  echo CLI_LIGHT_GREEN, '[NAMESPACES]', END_COLOR, PHP_EOL;
 
   if (!unlink($tempFile))
   {
@@ -205,7 +208,9 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
       $chunk = trim($chunk);
       $posLeftParenthesis = strpos($chunk, '{');
 
-      if (false !== $posLeftParenthesis) // case use xxx/xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are)
+      // case use xxx\xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are, one or more xxx between the braces)
+      // example otra\otra\bdd\{Sql, Pdomysql}
+      if (false !== $posLeftParenthesis)
       {
         $beginString = substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
         $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
@@ -213,6 +218,10 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 
         // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
         str_replace($classToReplace, $lastChunk, $contentToAdd);
+
+        // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
+        if (substr($classToReplace, -1) === '}')
+          $classToReplace = substr($classToReplace, 0,-1);
 
         // We analyze the use statement in order to retrieve the name of each class which is included in it.
         analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
@@ -294,7 +303,9 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
-      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch)
+      elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
+        && 'require CACHE_PATH . \'php/security/\' . $route . \'.php\';' !== $trimmedMatch
+      )
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
         '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
@@ -544,8 +555,10 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         if ($posDir !== false)
           $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
 
-        // we must not change this inclusion from CORE_PATH . Router.php !
-        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\'')
+        // we must not change this inclusion from CORE_PATH . Router.php and from securities configuration !
+        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
+          || $tempFile === 'CACHE_PATH . \'php/security/\' . $route . \'.php\''
+        )
           continue;
 
         // TODO temporary workaround to fix a regression. Find a better way to handle this case which is

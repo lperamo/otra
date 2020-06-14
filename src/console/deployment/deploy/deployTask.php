@@ -32,7 +32,7 @@ define('OTRA_CLI_CONTROL_MODE', "\033[");
 
 define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
 define('OTRA_CLI_COMMAND_MKDIR', 'mkdir');
-define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', 'mkdir -p ');
+define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
 
 // **** Checking the deployment config parameters ****
 if (isset(AllConfig::$deployment) === false)
@@ -179,7 +179,7 @@ $handleTransfer = function ($message, $command, string $operation = 'rsync') use
 
 $handleTransfer(
   'Sending cache',
-  $startCommand . '\' cache/ ' . $server . ':' . $folder . '/cache/'
+  $startCommand . '\' cache/ ' . $server . ':' . $folder . 'cache/'
 );
 
 $preloadFilename = 'preload.php';
@@ -187,23 +187,23 @@ $preloadFilename = 'preload.php';
 if (file_exists(BASE_PATH . $preloadFilename) === true)
   $handleTransfer(
     'Sending preload file',
-    $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . '/' . $preloadFilename
+    $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename
   );
 
 $handleTransfer(
   'Sending web folder',
-  $startCommand . '\' web/ ' . $server . ':' . $folder . '/web/'
+  $startCommand . '\' web/ ' . $server . ':' . $folder . 'web/'
 );
 
 $handleTransfer(
   'Creating the config folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/config',
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . 'config',
   OTRA_CLI_COMMAND_MKDIR
 );
 
 $handleTransfer(
   'Adding the OTRA constants',
-  $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . '/config/constants.php'
+  $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php'
 );
 
 $handleTransfer(
@@ -217,6 +217,7 @@ $handleTransfer(
   $startCommand .
   '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
   ' --include=\'otra/otra/src/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
+  ' --include=\'otra/otra/src/services/securityService.php\'' .
   ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
   '/vendor/'
 );
