@@ -39,7 +39,7 @@ class CryptTest extends TestCase
     // testing
     $this->expectOutputString(
       CLI_WHITE .
-      str_pad('crypt', TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
+      str_pad(self::OTRA_TASK_CRYPT, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_LIGHT_GRAY . ': ' . CLI_CYAN . 'Crypts a password and shows it.' . PHP_EOL .
       CLI_LIGHT_CYAN .
       '   + ' . str_pad('password', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
@@ -54,7 +54,7 @@ class CryptTest extends TestCase
     TasksManager::execute(
       require BASE_PATH . 'cache/php/tasksClassMap.php',
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, 'crypt']
+      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_CRYPT]
     );
   }
 }
