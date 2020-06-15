@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 use otra\MasterController;
 
+const OTRA_KEY_FEATURE_POLICY = 'featurePolicy',
+  OTRA_LABEL_SECURITY_NONE = "'none'",
+  OTRA_LABEL_SECURITY_SELF = "'self'";
+
 /**
  * @return string
  * @throws Exception
@@ -43,11 +47,11 @@ function addFeaturePoliciesHeader(string $route, string $routeSecurityFilePath) 
     if (!isset(MasterController::$routes))
       MasterController::$routes = require CACHE_PATH . 'php/security/' . $route . '.php';
 
-    if (isset(MasterController::$routes['dev']['featurePolicy']))
-      MasterController::$featurePolicy['dev'] = array_merge(MasterController::$featurePolicy['dev'], MasterController::$routes['dev']['featurePolicy']);
+    if (isset(MasterController::$routes['dev'][OTRA_KEY_FEATURE_POLICY]))
+      MasterController::$featurePolicy['dev'] = array_merge(MasterController::$featurePolicy['dev'], MasterController::$routes['dev'][OTRA_KEY_FEATURE_POLICY]);
 
-    if (isset(MasterController::$routes['prod']['featurePolicy']))
-      MasterController::$featurePolicy['prod'] = array_merge(MasterController::$featurePolicy['prod'], MasterController::$routes['prod']['featurePolicy']);
+    if (isset(MasterController::$routes['prod'][OTRA_KEY_FEATURE_POLICY]))
+      MasterController::$featurePolicy['prod'] = array_merge(MasterController::$featurePolicy['prod'], MasterController::$routes['prod'][OTRA_KEY_FEATURE_POLICY]);
   }
 
   $featurePolicies = '';

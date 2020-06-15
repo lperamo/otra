@@ -190,7 +190,7 @@ class OtraExceptionCli extends \Exception
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
     return CLI_LIGHT_BLUE . '│' . END_COLOR .
-      str_pad(true === isset($rowData[$columnName])
+      str_pad(isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
         : ' -',
         $width
