@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-/**
- * OTRA starter action
- */
 namespace bundles\HelloWorld\frontend\controllers\index;
 
 use otra\{Controller, MasterController};
 
 /**
+ * OTRA starter action
+ *
  * @package bundles\HelloWorld\frontend\controllers\index
  */
 class HomeAction extends Controller
