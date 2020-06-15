@@ -40,4 +40,3 @@ Here are the main topics :
 - [HTTP Headers](doc/httpHeaders.md "Content security and feature policies configuration")
 - [A few last tips](doc/lastTips.md)
 - [Troubleshooting](doc/troubleShooting.md)
-- [Contributing](doc/contributing.md "Some guidelines and OTRA code philosophy")
