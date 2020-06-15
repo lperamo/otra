@@ -39,6 +39,7 @@
         <directory>../cache</directory>
         <directory>../logs</directory>
         <directory>./coverageHtml</directory>
+        <directory>./tests</directory>
       </exclude>
     </whitelist>
   </filter>
