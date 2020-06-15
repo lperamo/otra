@@ -43,8 +43,11 @@ function addFeaturePoliciesHeader(string $route, string $routeSecurityFilePath) 
     if (!isset(MasterController::$routes))
       MasterController::$routes = require CACHE_PATH . 'php/security/' . $route . '.php';
 
-    MasterController::$featurePolicy['dev'] = array_merge(MasterController::$featurePolicy['dev'], MasterController::$routes['dev']['featurePolicy']);
-    MasterController::$featurePolicy['prod'] = array_merge(MasterController::$featurePolicy['prod'], MasterController::$routes['prod']['featurePolicy']);
+    if (isset(MasterController::$routes['dev']['featurePolicy']))
+      MasterController::$featurePolicy['dev'] = array_merge(MasterController::$featurePolicy['dev'], MasterController::$routes['dev']['featurePolicy']);
+
+    if (isset(MasterController::$routes['prod']['featurePolicy']))
+      MasterController::$featurePolicy['prod'] = array_merge(MasterController::$featurePolicy['prod'], MasterController::$routes['prod']['featurePolicy']);
   }
 
   $featurePolicies = '';
@@ -78,14 +81,17 @@ function addCspHeader(string $route, string $routeSecurityFilePath) : void
     if (!isset(MasterController::$routes))
       MasterController::$routes = require CACHE_PATH . 'php/security/' . $route . '.php';
 
-    MasterController::$contentSecurityPolicy['dev'] = array_merge(
-      MasterController::$contentSecurityPolicy['dev'],
-      MasterController::$routes['dev']['csp']
-    );
-    MasterController::$contentSecurityPolicy['prod'] = array_merge(
-      MasterController::$contentSecurityPolicy['prod'],
-      MasterController::$routes['prod']['csp']
-    );
+    if (isset(MasterController::$routes['dev']['csp']))
+      MasterController::$contentSecurityPolicy['dev'] = array_merge(
+        MasterController::$contentSecurityPolicy['dev'],
+        MasterController::$routes['dev']['csp']
+      );
+
+    if (isset(MasterController::$routes['prod']['csp']))
+      MasterController::$contentSecurityPolicy['prod'] = array_merge(
+        MasterController::$contentSecurityPolicy['prod'],
+        MasterController::$routes['prod']['csp']
+      );
   }
 
   $contentSecurityPolicy = 'Content-Security-Policy: ';
