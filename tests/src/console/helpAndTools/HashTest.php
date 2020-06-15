@@ -21,8 +21,6 @@ class HashTest extends TestCase
    */
   public function testHash() : void
   {
-    // context
-
     // testing
     $this->expectOutputRegex('@\$2y\$03\$[a-zA-Z0-9]{' . self::BLOWFISH_SALT_LENGTH . '}@');
 
