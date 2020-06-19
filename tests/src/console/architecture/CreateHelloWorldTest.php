@@ -11,7 +11,7 @@ define('OTRA_LABEL_FOLDER', 'Folder ');
 define('OTRA_LABEL_BASE_PATH_PLUS', 'BASE_PATH + ');
 define('OTRA_TASK_CREATE_HELLO_WORLD', 'createHelloWorld');
 
-if (!defined('OTRA_SUCESS'))
+if (!defined('OTRA_SUCCESS'))
   define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
 
 /**

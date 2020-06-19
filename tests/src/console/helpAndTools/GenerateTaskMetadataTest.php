@@ -12,8 +12,9 @@ use phpunit\framework\TestCase;
 class GenerateTaskMetadataTest extends TestCase
 {
   private const PHP_CACHE_PATH = CACHE_PATH . 'php/',
-    TASKS_HELP_FILENAME = 'tasksHelp.php',
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
     OTRA_TASK_HELP = 'help';
@@ -23,9 +24,6 @@ class GenerateTaskMetadataTest extends TestCase
    */
   public function testGenerateTaskMetadata() : void
   {
-    // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
-
     // testing
     self::assertFileExists(self::PHP_CACHE_PATH  . self::TASKS_HELP_FILENAME);
     self::assertFileEquals(
@@ -52,7 +50,7 @@ class GenerateTaskMetadataTest extends TestCase
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      require self::TASKS_CLASS_MAP,
       self::TASK_GENERATE_TASK_METADATA,
       ['otra.php', self::TASK_GENERATE_TASK_METADATA]
     );
@@ -69,7 +67,7 @@ class GenerateTaskMetadataTest extends TestCase
     );
 
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require self::TASKS_CLASS_MAP,
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::TASK_GENERATE_TASK_METADATA]
     );

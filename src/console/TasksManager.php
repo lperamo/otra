@@ -69,7 +69,9 @@ abstract class TasksManager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    require CORE_PATH . 'OtraException.php';
+    // 'require_once' needed instead of 'require', if we execute this function multiple times as in tests or some
+    // scripts
+    require_once CORE_PATH . 'OtraException.php';
 
     if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {

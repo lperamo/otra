@@ -4,8 +4,9 @@ declare(strict_types=1);
 define('BLUE_ON_LIGHT_BLACK', CLI_BLUE . CLI_BGD_LIGHT_BLACK);
 define('LIGHTBLUE_ON_LIGHT_BLACK', CLI_LIGHT_BLUE . CLI_BGD_LIGHT_BLACK);
 define('END_PADDING', 21);
+define('INITIAL_ADDITIONAL_PADDING', 39);
 
-echo CLI_BGD_LIGHT_BLACK, str_repeat(' ', END_PADDING + 39), "\n" .
+echo CLI_BGD_LIGHT_BLACK, str_repeat(' ', END_PADDING + INITIAL_ADDITIONAL_PADDING), "\n" .
   BLUE_ON_LIGHT_BLACK, " ..|''||   ", LIGHTBLUE_ON_LIGHT_BLACK, "|''||''| ", BLUE_ON_LIGHT_BLACK, "  '''|.   ", LIGHTBLUE_ON_LIGHT_BLACK, "    |    ", str_repeat(' ', END_PADDING) .
   PHP_EOL
 . BLUE_ON_LIGHT_BLACK, ".|'    ||  ", LIGHTBLUE_ON_LIGHT_BLACK, " ' || '  ", BLUE_ON_LIGHT_BLACK, " ||   ||  ", LIGHTBLUE_ON_LIGHT_BLACK, "   |||   ", str_repeat(' ', END_PADDING) .
@@ -14,14 +15,14 @@ echo CLI_BGD_LIGHT_BLACK, str_repeat(' ', END_PADDING + 39), "\n" .
   PHP_EOL
 . BLUE_ON_LIGHT_BLACK, "'|.     || ", LIGHTBLUE_ON_LIGHT_BLACK, "   ||    ", BLUE_ON_LIGHT_BLACK, " ||   |.  ", LIGHTBLUE_ON_LIGHT_BLACK, " |''''|. ", str_repeat(' ', END_PADDING) .
   PHP_EOL
-  . BLUE_ON_LIGHT_BLACK, " ''|...|'  ", LIGHTBLUE_ON_LIGHT_BLACK, "  .||.   ", BLUE_ON_LIGHT_BLACK, ".||.  '|' ", LIGHTBLUE_ON_LIGHT_BLACK, ".'    '|'", str_repeat(' ', END_PADDING) . "
+. BLUE_ON_LIGHT_BLACK, " ''|...|'  ", LIGHTBLUE_ON_LIGHT_BLACK, "  .||.   ", BLUE_ON_LIGHT_BLACK, ".||.  '|' ", LIGHTBLUE_ON_LIGHT_BLACK, ".'    '|'", str_repeat(' ', END_PADDING) . "
                                                             
                        ";
-$by = explode('*', "B*y* *P*é*r*a*m*o* *L*i*o*n*e*l*.");
+$byPeramoLionel = explode('*', "B*y* *P*é*r*a*m*o* *L*i*o*n*e*l*.");
 
-foreach($by as $key => &$character)
+foreach($byPeramoLionel as $index => &$character)
 {
-  $keyTwice = $key << 2;
+  $keyTwice = $index << 2;
   echo "\e[38;2;" . (76 + $keyTwice) . ";" . (136 + $keyTwice) . ";" . (191 + $keyTwice) . "m" . $character;
 }
 

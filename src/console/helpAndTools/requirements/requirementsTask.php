@@ -34,7 +34,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     [
       'sass',
       'SASS/SCSS',
-      'Only needed to contribute. It is a stylesheet language that’s compiled to CSS => https://sass-lang.com/',
+      'Only needed to contribute. It is a stylesheet language that\'s compiled to CSS => https://sass-lang.com/',
       REQ_PACKAGE
     ],
     [
