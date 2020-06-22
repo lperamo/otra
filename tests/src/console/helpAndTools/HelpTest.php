@@ -11,35 +11,34 @@ use phpunit\framework\TestCase;
  */
 class HelpTest extends TestCase
 {
-  protected function setUp(): void
-  {
-    parent::setUp();
-  }
-
-  protected function tearDown(): void
-  {
-    parent::tearDown();
-  }
+  private const
+    OTRA_TASK_HELP = 'help';
 
   /**
    * @author Lionel Péramo
    */
-  public function testHelp() : void
+  public function testHelpHelp() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $_SERVER['APP_ENV'] = 'prod';
 
     // testing
-
+    $this->expectOutputString(
+      CLI_WHITE .
+      str_pad(self::OTRA_TASK_HELP, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
+      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      'Shows the extended help for the specified command.' .
+      PHP_EOL . CLI_LIGHT_CYAN .
+      '   + ' . str_pad('command', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_LIGHT_GRAY . ': ' . CLI_LIGHT_CYAN . '(' . TasksManager::REQUIRED_PARAMETER .
+      ') ' . CLI_CYAN . 'The command which you need help for.' . PHP_EOL . END_COLOR
+    );
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
-      OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', OTRA_TASK_CREATE_HELLO_WORLD]
+      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      self::OTRA_TASK_HELP,
+      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_HELP]
     );
-
-    // cleaning
-
   }
 }
