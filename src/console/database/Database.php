@@ -96,6 +96,8 @@ namespace otra\console
      * - output path : $pathSQL
      * - schema file path : $schemaFile
      * - tables order path : $tablesOrderFile
+     *
+     * @throws OtraException
      */
     public static function initBase()
     {
@@ -114,6 +116,13 @@ namespace otra\console
     public static function getDirs() : array
     {
       $dir = BASE_PATH . self::$folder;
+
+      if (!file_exists($dir))
+      {
+        echo CLI_RED, 'The folder ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, self::$folder, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
+        throw new OtraException('', 1, '', NULL, [], true);
+      }
+
       $folderHandler = opendir($dir);
       $dirs = [];
 
