@@ -51,4 +51,25 @@ class ToolsTest extends TestCase
     require CONSOLE_PATH . 'tools.php';
     showContext(TEST_PATH . '/examples/tools/toolsExample.php', 5, 4);
   }
+
+  public function testConvertArrayFromVarExportToShortVersion(): void
+  {
+    // launching
+    require CONSOLE_PATH . 'tools.php';
+    $reducedArray = convertArrayFromVarExportToShortVersion(
+      var_export(
+        [
+          'test' => ['test2' => 'test3'],
+          'test4' => 5
+        ],
+        true
+      )
+    );
+
+    // testing
+    $this->assertEquals(
+      '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
+      $reducedArray
+    );
+  }
 }

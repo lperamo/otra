@@ -151,9 +151,9 @@ if (function_exists('promptUser') === false)
       str_replace(
         ['\\\\', ' => ', SPACE_INDENT . '\'', "\n", 'array (', ',' . SPACE_INDENT . SPACE_INDENT . '),',
           ',' . SPACE_INDENT . '),', '[' . SPACE_INDENT . SPACE_INDENT . '),', SPACE_INDENT,
-          SPACE_INDENT . SPACE_INDENT, ',]'],
+          SPACE_INDENT . SPACE_INDENT, ',]', ',)'],
         ['\\'  , '=>'  , '\''               , ''  , '['      , ',' . SPACE_INDENT . SPACE_INDENT . '],',
-          ',' . SPACE_INDENT . '],', '[],', '', '', ']'],
+          ',' . SPACE_INDENT . '],', '[],', '', '', ']', ']'],
         $code
       );
   }

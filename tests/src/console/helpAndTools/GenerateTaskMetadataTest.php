@@ -24,8 +24,15 @@ class GenerateTaskMetadataTest extends TestCase
    */
   public function testGenerateTaskMetadata() : void
   {
+    // launching
+    TasksManager::execute(
+      require self::TASKS_CLASS_MAP,
+      self::TASK_GENERATE_TASK_METADATA,
+      ['otra.php', self::TASK_GENERATE_TASK_METADATA]
+    );
+
     // testing
-    self::assertFileExists(self::PHP_CACHE_PATH  . self::TASKS_HELP_FILENAME);
+    self::assertFileExists(self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME);
     self::assertFileEquals(
       TEST_PATH . 'examples/generateTaskMetadata/' . self::TASKS_HELP_FILENAME,
       self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME
@@ -46,13 +53,6 @@ class GenerateTaskMetadataTest extends TestCase
     self::expectOutputString(
       CLI_GREEN . 'Generation of help and task class map done.' . END_COLOR . PHP_EOL .
       CLI_GREEN . 'Generation of shell completions script done.' . END_COLOR . PHP_EOL
-    );
-
-    // launching
-    TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
-      self::TASK_GENERATE_TASK_METADATA,
-      ['otra.php', self::TASK_GENERATE_TASK_METADATA]
     );
   }
 

@@ -75,13 +75,12 @@ require CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
-$helpFileFinalContent = substr(convertArrayFromVarExportToShortVersion($helpFileFinalContent), 0, -2) . '];';
+$helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';';
 
 file_put_contents(PHP_CACHE_FOLDER . 'tasksHelp.php', $helpFileFinalContent);
 
 // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
-$taskClassMap = '<?php return ' . var_export($taskClassMap, true);
-$taskClassMap = substr(convertArrayFromVarExportToShortVersion($taskClassMap), 0, -2) . '];';
+$taskClassMap = '<?php return ' . var_export($taskClassMap, true) . ';';
 $taskClassMap = convertArrayFromVarExportToShortVersion($taskClassMap);
 
 file_put_contents(PHP_CACHE_FOLDER . 'tasksClassMap.php',

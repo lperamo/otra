@@ -32,7 +32,7 @@ class HashTest extends TestCase
     );
   }
 
-  public function testGenerateTaskMetadataHelp()
+  public function testHashHelp()
   {
     $this->expectOutputString(
       CLI_WHITE .
