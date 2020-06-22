@@ -10,6 +10,15 @@
     <testsuite name="Database console tasks">
       <file>./src/console/DatabaseTest.php</file>
     </testsuite>
+    <testsuite name="Help and tools console tasks">
+      <file>./src/console/helpAndTools/CryptTest.php</file>
+      <file>./src/console/helpAndTools/GenerateTaskMetadataTest.php</file>
+      <file>./src/console/helpAndTools/HashTest.php</file>
+      <file>./src/console/helpAndTools/RequirementsTest.php</file>
+      <file>./src/console/helpAndTools/RoutesTest.php</file>
+      <file>./src/console/helpAndTools/ServeTest.php</file>
+      <file>./src/console/helpAndTools/VersionTest.php</file>
+    </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>
     </testsuite>
@@ -39,6 +48,7 @@
         <directory>../cache</directory>
         <directory>../logs</directory>
         <directory>./coverageHtml</directory>
+        <directory>./tests</directory>
       </exclude>
     </whitelist>
   </filter>

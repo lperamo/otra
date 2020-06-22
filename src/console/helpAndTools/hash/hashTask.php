@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
-$argv[2] = isset($argv[2]) === true ? $argv[2] : 7;
-$salt = '';
-$salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+define('HASH_ARG_BLOWFISH_ROUNDS', 2);
+$argv[HASH_ARG_BLOWFISH_ROUNDS] = isset($argv[HASH_ARG_BLOWFISH_ROUNDS]) === true ? $argv[HASH_ARG_BLOWFISH_ROUNDS] : 7;
+$blowfishSalt = '';
+$saltChars = array_merge(range('A','Z'), range('a','z'), range(0,9));
 
-for($i = 0; $i < 22; ++$i)
+for($index = 0; $index < 22; ++$index)
 {
-  $salt .= $salt_chars[array_rand($salt_chars)];
+  $blowfishSalt .= $saltChars[array_rand($saltChars)];
 }
 
-echo '$2y$0', $argv[2], '$', $salt, PHP_EOL;
+echo '$2y$0', $argv[HASH_ARG_BLOWFISH_ROUNDS], '$', $blowfishSalt, PHP_EOL;

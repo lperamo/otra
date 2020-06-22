@@ -4,7 +4,13 @@ define('OTRA_KEY_REQUEST_URI', 'REQUEST_URI');
 $_SERVER[APP_ENV] = $_ENV['OTRA_LIVE_APP_ENV'];
 $_SERVER['HTTPS'] = $_ENV['OTRA_LIVE_HTTPS'] === 'true';
 
-if (preg_match('@\.(?:png|ico|svg|json|webp|jpg|jpeg|gif|css|js).*$@', $_SERVER[OTRA_KEY_REQUEST_URI], $extension) !== false)
+preg_match(
+  '@\.(?:png|ico|svg|json|webp|jpg|jpeg|gif|css|js).*$@',
+  $_SERVER[OTRA_KEY_REQUEST_URI],
+  $extension
+);
+
+if (!empty($extension))
 {
   switch($extension[0])
   {

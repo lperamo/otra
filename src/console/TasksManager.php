@@ -8,6 +8,8 @@ use otra\OtraException;
 abstract class TasksManager
 {
   public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
+    PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
+    PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
     TASK_CLASS_MAP_TASK_STATUS = 1,
     TASK_DESCRIPTION = 0,
@@ -67,7 +69,9 @@ abstract class TasksManager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    require CORE_PATH . 'OtraException.php';
+    // 'require_once' needed instead of 'require', if we execute this function multiple times as in tests or some
+    // scripts
+    require_once CORE_PATH . 'OtraException.php';
 
     if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {
