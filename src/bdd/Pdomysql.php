@@ -34,7 +34,13 @@ abstract class Pdomysql
       $conn = new PDO($dsn, $username, $password);
     }catch(\PDOException $e)
     {
-      throw new OtraException('Database connection failed: ' . $e->getMessage() . ' - Context : ' . $dsn . ' ' . $username . ' ' . $password);
+      throw new OtraException(
+        'Database connection failed: ' . $e->getMessage() .
+        ($_SERVER['APP_ENV'] === 'prod'
+          ? ''
+          : ' - Context : ' . $dsn . ' ' . $username . ' ' . $password
+        )
+      );
     }
 
     return $conn;

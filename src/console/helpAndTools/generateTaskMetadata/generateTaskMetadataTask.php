@@ -14,6 +14,7 @@ if (defined('BASE_PATH') === false)
     ? '/../../../../../../..' // long path from vendor
     : '/..'
   );
+
   define('CONSTANTS_ENDING_PATH', '/config/constants.php');
   define('CONSTANTS_PATH', __DIR__ . $temporaryBasePath . CONSTANTS_ENDING_PATH);
 
@@ -26,16 +27,18 @@ if (defined('BASE_PATH') === false)
   }
 
   require CONSOLE_PATH . 'colors.php';
-
-  // Generating the class map if needed
-  if (file_exists(CLASS_MAP_PATH) === false)
-    require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
-
-  // loading the class map
-  require CLASS_MAP_PATH;
-  spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
   // @codeCoverageIgnoreEnd
 }
+
+// Generating the class map if needed
+if (file_exists(CLASS_MAP_PATH) === false)
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+
+// loading the class map if not defined
+if (!defined('CLASSMAP'))
+  require CLASS_MAP_PATH;
+
+spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
 
 if (!defined('PHP_CACHE_FOLDER'))
   define ('PHP_CACHE_FOLDER', CACHE_PATH . 'php/');

@@ -7,17 +7,14 @@
     <testsuite name="Block templating system">
       <file>./src/BlocksTest.php</file>
     </testsuite>
-    <testsuite name="Database console tasks">
+    <testsuite name="Database console tasks functions">
       <file>./src/console/DatabaseTest.php</file>
     </testsuite>
+    <testsuite name="Database console tasks">
+      <directory suffix="Test.php">./src/console/database</directory>
+    </testsuite>
     <testsuite name="Help and tools console tasks">
-      <file>./src/console/helpAndTools/CryptTest.php</file>
-      <file>./src/console/helpAndTools/GenerateTaskMetadataTest.php</file>
-      <file>./src/console/helpAndTools/HashTest.php</file>
-      <file>./src/console/helpAndTools/RequirementsTest.php</file>
-      <file>./src/console/helpAndTools/RoutesTest.php</file>
-      <file>./src/console/helpAndTools/ServeTest.php</file>
-      <file>./src/console/helpAndTools/VersionTest.php</file>
+      <directory suffix="Test.php">./src/console/helpAndTools</directory>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>
@@ -55,6 +52,6 @@
   <logging>
     <log type="coverage-clover" target="./coverage.xml"/>
     <log type="coverage-html" target="./coverageHtml"/>
-    <log type="junit" target="./report.xml" logIncompleteSkipped="false"/>
+    <log type="junit" target="./report.xml"/>
   </logging>
 </phpunit>

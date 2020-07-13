@@ -5,15 +5,13 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
+
 namespace otra\console
 {
-
   use Exception;
-  use otra\bdd\Sql;
-  use Symfony\Component\Yaml\Exception\ParseException;
-  use Symfony\Component\Yaml\Yaml;
+  use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
   use config\AllConfig;
-  use otra\{Session, OtraException};
+  use otra\{bdd\Sql, Session, OtraException};
 
   define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
@@ -96,6 +94,8 @@ namespace otra\console
      * - output path : $pathSQL
      * - schema file path : $schemaFile
      * - tables order path : $tablesOrderFile
+     *
+     * @throws OtraException
      */
     public static function initBase()
     {
@@ -110,31 +110,41 @@ namespace otra\console
 
     /**
      * @return array
+     *
+     * @throws OtraException
      */
     public static function getDirs() : array
     {
-      $dir = BASE_PATH . self::$folder;
-      $folderHandler = opendir($dir);
-      $dirs = [];
+      $folder = BASE_PATH . self::$folder;
+
+      if (!file_exists($folder))
+      {
+        echo CLI_RED, 'The folder ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, self::$folder, CLI_RED,
+          ' does not exist.', END_COLOR, PHP_EOL;
+        throw new OtraException('', 1, '', NULL, [], true);
+      }
+
+      $folderHandler = opendir($folder);
+      $folders = [];
 
       /** @var array $schemas Database schemas */
       if (true === self::$boolSchema)
         $schemas = [];
 
       // We scan the bundles directory to retrieve all the bundles name ...
-      while (false !== ($file = readdir($folderHandler)))
+      while (false !== ($actualFile = readdir($folderHandler)))
       {
         // 'config' and 'views' are not bundles ...
-        if (true === in_array($file, ['.', '..', 'config', 'views']))
+        if (true === in_array($actualFile, ['.', '..', 'config', 'views']))
           continue;
 
-        $bundleDir = $dir . $file;
+        $bundleDir = $folder . $actualFile;
 
         // We don't need the files either
         if (true !== is_dir($bundleDir))
           continue;
 
-        $dirs[] = $bundleDir . '/';
+        $folders[] = $bundleDir . '/';
 
         if (true === self::$boolSchema)
         {
@@ -157,13 +167,15 @@ namespace otra\console
         }
       }
 
-      return $dirs;
+      return $folders;
     }
 
     /**
      * Cleans sql and yml files in the case where there are problems that had corrupted files.
      *
      * @param bool $extensive
+     *
+     * @throws OtraException
      */
     public static function clean(bool $extensive = false)
     {
@@ -190,7 +202,7 @@ namespace otra\console
      * Creates the sql database schema file if it doesn't exist and runs it
      *
      * @param string $databaseName Database name
-     * @param bool $force If true, we erase the database before the tables creation.
+     * @param bool   $force        If true, we erase the database before the tables creation.
      *
      * @throws OtraException
      */
@@ -212,10 +224,10 @@ namespace otra\console
       {
         $dbResult = $inst->query(file_get_contents($databaseFile));
         $inst->freeResult($dbResult);
-      } catch(Exception $e)
+      } catch(Exception $exception)
       {
         $inst->rollBack();
-        throw new OtraException('Procedure aborted when executing ' . $e->getMessage());
+        throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
       }
 
       $inst->commit();
@@ -228,32 +240,32 @@ namespace otra\console
     /**
      * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
      *
-     * @param string $attr Attribute
-     * @param int    $mode How we show the type of date
-     *                     0: type
-     *                     1: value (default)
-     *                     2: type value
+     * @param string $attribute Attribute
+     * @param int    $mode      How we show the type of date
+     *                          0: type
+     *                          1: value (default)
+     *                          2: type value
      *
-     * @return string $attr Concerned attribute in uppercase
+     * @return string $attribute Concerned attribute in uppercase
      */
-    public static function getAttr(string $attr, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
+    public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
-      if (true === isset(self::$attributeInfos[$attr]))
+      if (true === isset(self::$attributeInfos[$attribute]))
       {
-        $value = self::$attributeInfos[$attr];
+        $value = self::$attributeInfos[$attribute];
 
-        if ('notnull' === $attr)
-          $attr = 'not null';
-        elseif ('type' === $attr && false !== strpos($value, 'string'))
+        if ('notnull' === $attribute)
+          $attribute = 'not null';
+        elseif ('type' === $attribute && false !== strpos($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
         if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
-          return ' ' . strtoupper($attr);
+          return ' ' . strtoupper($attribute);
         elseif ($mode === OTRA_DB_PROPERTY_MODE_TYPE)
           return strtoupper($value);
         else // OTRA_DB_PROPERTY_MODE_DEFAULT
-          return ' ' . strtoupper($attr) . ' ' . (is_string($value) ? '\'' . $value . '\'' : $value);
-      } elseif ($attr === 'default'
+          return ' ' . strtoupper($attribute) . ' ' . (is_string($value) ? '\'' . $value . '\'' : $value);
+      } elseif ($attribute === 'default'
         && isset(self::$attributeInfos['type'])
         && strtoupper(self::$attributeInfos['type']) === 'TIMESTAMP')
         // We force a default value in case the SQL_MODE requires it to avoid errors
@@ -543,9 +555,9 @@ namespace otra\console
 
       try {
         $schema = Yaml::parse(file_get_contents(self::$schemaFile));
-      } catch(ParseException $e)
+      } catch(ParseException $exception)
       {
-        echo CLI_RED, $e->getMessage(), END_COLOR, PHP_EOL;
+        echo CLI_RED, $exception->getMessage(), END_COLOR, PHP_EOL;
         exit(1);
       }
 
@@ -710,7 +722,7 @@ namespace otra\console
      */
     public static function dropDatabase(string $databaseName) : Sql
     {
-      $sqlInstance = Sql::getDb();
+      $sqlInstance = Sql::getDb(null, false);
       Sql::$instance->beginTransaction();
 
       try
@@ -1146,7 +1158,7 @@ namespace otra\console
     /**
      * Creates the database fixtures from a database.
      *
-     * @param string $database (optional)
+     * @param string $database  (optional)
      * @param string $confToUse (optional)
      *
      * @throws OtraException

@@ -496,6 +496,10 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
   // we search the namespace in the content before the extends call
   $pos = strrpos($contentToAdd, 'namespace', $match - strlen($contentToAdd));
 
+  // no namespace found, we return false
+  if ($pos === false)
+    return false;
+
   // then we find the section that interests us
   $tempContent = substr($contentToAdd, $pos, $match - $pos);
 
