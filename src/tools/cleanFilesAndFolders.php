@@ -3,43 +3,47 @@ declare(strict_types=1);
 
 use otra\OtraException;
 
-/**
- * Removes all files and folders specified in the array.
- *
- * @param array $fileOrFolders
- *
- * @throws OtraException If we cannot remove a file or a folder
- */
-function cleanFileAndFolders(array $fileOrFolders) : void
+if (!function_exists('cleanFileAndFolders'))
 {
-  foreach ($fileOrFolders as &$folder)
+  /**
+   * Removes all files and folders specified in the array.
+   *
+   * @param array $fileOrFolders
+   *
+   * @throws OtraException If we cannot remove a file or a folder
+   */
+  function cleanFileAndFolders(array $fileOrFolders) : void
   {
-    if (true === file_exists($folder))
+    foreach ($fileOrFolders as &$folder)
     {
-      $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-        RecursiveIteratorIterator::CHILD_FIRST
-      );
-
-      foreach ($files as $file)
+      if (true === file_exists($folder))
       {
-        $realPath = $file->getRealPath();
-        $method = true === $file->isDir() ? 'rmdir' : 'unlink';
+        $files = new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+          RecursiveIteratorIterator::CHILD_FIRST
+        );
 
-        if (false === $method($realPath))
-          throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
-      }
+        foreach ($files as $file)
+        {
+          $realPath = $file->getRealPath();
+          $method = true === $file->isDir() ? 'rmdir' : 'unlink';
 
-      $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
+          if (false === $method($realPath))
+            throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
+        }
 
-      try
-      {
-        if (false === rmdir($folder))
-          throw new OtraException($exceptionMessage, E_CORE_ERROR);
-      } catch (Exception $e)
-      {
-        throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+        $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
+
+        try
+        {
+          if (false === rmdir($folder))
+            throw new OtraException($exceptionMessage, E_CORE_ERROR);
+        } catch (Exception $e)
+        {
+          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+        }
       }
     }
   }
 }
+

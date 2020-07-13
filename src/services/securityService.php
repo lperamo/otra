@@ -4,8 +4,8 @@ declare(strict_types=1);
 use otra\MasterController;
 
 const OTRA_KEY_FEATURE_POLICY = 'featurePolicy',
-  OTRA_LABEL_SECURITY_NONE = "'none'",
-  OTRA_LABEL_SECURITY_SELF = "'self'";
+OTRA_LABEL_SECURITY_NONE = "'none'",
+OTRA_LABEL_SECURITY_SELF = "'self'";
 
 /**
  * @return string
@@ -33,10 +33,10 @@ function addFeaturePolicies(array $policiesArray, string &$policies) : void
 }
 
 /**
- * @param string $route
- * @param string $routeSecurityFilePath
+ * @param string      $route
+ * @param string|null $routeSecurityFilePath
  */
-function addFeaturePoliciesHeader(string $route, string $routeSecurityFilePath) : void
+function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
 {
   // OTRA routes are not secure with CSP and feature policies for the moment
   if (false === strpos($route, 'otra')
@@ -71,10 +71,10 @@ function addFeaturePoliciesHeader(string $route, string $routeSecurityFilePath) 
 }
 
 /**
- * @param string $route
- * @param string $routeSecurityFilePath
+ * @param string      $route
+ * @param string|null $routeSecurityFilePath
  */
-function addCspHeader(string $route, string $routeSecurityFilePath) : void
+function addCspHeader(string $route, ?string $routeSecurityFilePath) : void
 {
   // OTRA routes are not secure with CSP and feature policies for the moment
   if (false === strpos($route, 'otra')
@@ -108,7 +108,7 @@ function addCspHeader(string $route, string $routeSecurityFilePath) : void
   // If no value has been set for 'script-src', we define automatically a secure policy for this directive
   if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src']))
   {
-    $contentSecurityPolicy .= 'script-src' . ' \'strict-dynamic\' ';
+    $contentSecurityPolicy .= 'script-src \'strict-dynamic\' ';
 
     foreach (MasterController::$nonces as &$nonce)
     {

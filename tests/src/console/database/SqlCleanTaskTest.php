@@ -11,7 +11,7 @@ use phpunit\framework\TestCase;
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlCleanTest extends TestCase
+class SqlCleanTaskTest extends TestCase
 {
   private const
     OTRA_TASK_SQL_CLEAN = 'sqlClean',

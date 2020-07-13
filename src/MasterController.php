@@ -76,7 +76,7 @@ class MasterController
 
   protected static array
     $css = [],
-    $js = [],
+    $javaScript = [],
     $rendered = [];
 
   protected static bool
@@ -167,8 +167,13 @@ class MasterController
     if (false === isset($baseParams['controller']))
     {
       if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
+      {
         // Stores the bundle, module, controller and action for later use
         list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
+
+        require CORE_PATH . 'services/securityService.php';
+        $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+      }
 
       return;
     }
@@ -255,7 +260,7 @@ class MasterController
    */
   protected static function js($js = []) : void
   {
-    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
+    self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
   }
 
   /**

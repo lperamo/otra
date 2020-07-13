@@ -105,7 +105,7 @@ class OtraException extends Exception
           'hasJsToLoad' => false
         ]
       );
-    } catch(Exception $e)
+    } catch(Exception $exception)
     {
       if (PHP_SAPI === 'cli')
       {
@@ -129,14 +129,14 @@ class OtraException extends Exception
       $showableContext = '';
 
     // Is the error code a native error code ?
-    $code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
     return $renderController->renderView(
       '/errors/exception.phtml',
       [
         'message' => $this->message,
-        'code' => $code,
+        'code' => $errorCode,
         'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
         'context' => $showableContext,
