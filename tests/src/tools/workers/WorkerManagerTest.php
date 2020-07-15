@@ -13,14 +13,14 @@ use phpunit\framework\TestCase;
 class WorkerManagerTest extends TestCase
 {
   private const
-    COMMAND = 'sleep',
+    COMMAND = 'sleep 0.001',
     SUCCESS_MESSAGE = 'hello',
     VERBOSE = 0;
 
   /**
    * @author Lionel Péramo
    */
-  public function testWorkerManagerConstruct() : void
+  public function testConstruct() : void
   {
     // launching
     $manager = new WorkerManager();
@@ -30,12 +30,12 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
-   * @depends testWorkerManagerConstruct
+   * @depends testConstruct
    *
    * @throws ReflectionException
    * @author Lionel Péramo
    */
-  public function testWorkerManagerDestruct() : void
+  public function testDestruct() : void
   {
     // launching
     $workerManager = new WorkerManager();
@@ -57,13 +57,13 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
-   * @depends testWorkerManagerConstruct
-   * @depends testWorkerManagerDestruct
+   * @depends testConstruct
+   * @depends testDestruct
    * @throws ReflectionException
    *
    * @author Lionel Péramo
    */
-  public function testAttachAndDetach() : void
+  public function testAttach() : void
   {
     // context
     $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
@@ -102,5 +102,53 @@ class WorkerManagerTest extends TestCase
 
     // cleaning
     $workerManager->__destruct();
+  }
+
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @throws ReflectionException
+   */
+  public function testDetach() : void
+  {
+    // context
+    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
+    $workerManager  = new WorkerManager();
+    $workerManager->attach($worker);
+    define('TEST_DETACH_STATUS_SUCCESS', 0);
+
+    // launching
+    $foundKey = array_search($worker, $workerManager::$workers, true);
+    $status = $workerManager->detach($worker);
+
+    // testing workers
+    self::assertArrayNotHasKey($foundKey, $workerManager::$workers);
+
+    // testing processes
+    self::assertArrayNotHasKey(
+      $foundKey,
+      removeFieldScopeProtection(WorkerManager::class, 'processes')->getValue($workerManager)
+    );
+
+    // testing streams
+    self::assertArrayNotHasKey(
+      $foundKey,
+      removeFieldScopeProtection(WorkerManager::class, 'stdinStreams')->getValue($workerManager)
+    );
+
+    self::assertArrayNotHasKey(
+      $foundKey,
+      removeFieldScopeProtection(WorkerManager::class, 'stdoutStreams')->getValue($workerManager)
+    );
+
+    self::assertArrayNotHasKey(
+      $foundKey,
+      removeFieldScopeProtection(WorkerManager::class, 'stderrStreams')->getValue($workerManager)
+    );
+
+    // detachment successful
+    self::assertIsInt($status);
+    self::assertEquals(TEST_DETACH_STATUS_SUCCESS, $status);
   }
 }
