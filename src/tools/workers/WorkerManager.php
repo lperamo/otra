@@ -198,15 +198,27 @@ class WorkerManager
   public function __destruct()
   {
     foreach($this->stdinStreams as &$stdin)
-      fclose($stdin);
+    {
+      if (is_resource($stdin))
+        fclose($stdin);
+    }
 
     foreach($this->stdoutStreams as &$stdout)
-      fclose($stdout);
+    {
+      if (is_resource($stdout))
+        fclose($stdout);
+    }
 
     foreach($this->stderrStreams as &$stderr)
-      fclose($stderr);
+    {
+      if (is_resource($stderr))
+        fclose($stderr);
+    }
 
     foreach($this->processes as &$process)
-      proc_close($process);
+    {
+      if (is_resource($process))
+        proc_close($process);
+    }
   }
 }
