@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\tools\workers;
 
@@ -10,8 +11,8 @@ class WorkerManager
   private const STDIN = 0,
     STDOUT = 1,
     STDERR = 2,
-    NON_BLOCKING = 0,
-    BLOCKING = 1,
+    NON_BLOCKING = false,
+    //BLOCKING = true,
     DESCRIPTORSPEC = [
     ['pipe', 'r'],
     ['pipe', 'w'],
@@ -23,9 +24,9 @@ class WorkerManager
 
   private array
     $processes = [],
-    $stdins = [],
-    $stdouts = [],
-    $stderrs = [];
+    $stdinStreams = [],
+    $stdoutStreams = [],
+    $stderrStreams = [];
 
   private static array $foundKeys = [];
   private static int $lines = 0;
@@ -45,9 +46,9 @@ class WorkerManager
 
     self::$workers[] = $worker;
     $this->processes[] = $process;
-    $this->stdins[] = $pipes[self::STDIN];
-    $this->stdouts[] = $pipes[self::STDOUT];
-    $this->stderrs[] = $pipes[self::STDERR];
+    $this->stdinStreams[] = $pipes[self::STDIN];
+    $this->stdoutStreams[] = $pipes[self::STDOUT];
+    $this->stderrStreams[] = $pipes[self::STDERR];
   }
 
   /**
@@ -61,8 +62,8 @@ class WorkerManager
     
     foreach (array_keys(self::$workers) as &$workerKey)
     {
-      $read[] = $this->stdouts[$workerKey];
-      $read[] = $this->stderrs[$workerKey];
+      $read[] = $this->stdoutStreams[$workerKey];
+      $read[] = $this->stderrStreams[$workerKey];
     }
 
     $write = $expect = null;
@@ -80,12 +81,12 @@ class WorkerManager
     {
       // Which stream do we have to check STDOUT or STDERR ?
       /** @var int $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
-      $foundKey = array_search($stream, $this->stdouts, true);
+      $foundKey = array_search($stream, $this->stdoutStreams, true);
 
       if (false === $foundKey)
       {
         $red = true;
-        $foundKey = array_search($stream, $this->stderrs, true);
+        $foundKey = array_search($stream, $this->stderrStreams, true);
 
         if ($foundKey !== false)
         {
@@ -105,8 +106,8 @@ class WorkerManager
 
       // Getting information from workers
       $worker = self::$workers[$foundKey];
-      $stdout = stream_get_contents($this->stdouts[$foundKey]);
-      $stderr = stream_get_contents($this->stderrs[$foundKey]);
+      $stdout = stream_get_contents($this->stdoutStreams[$foundKey]);
+      $stderr = stream_get_contents($this->stderrStreams[$foundKey]);
       $status = $this->detach($worker);
 
       // Retrieving final messages and statuses
@@ -178,17 +179,17 @@ class WorkerManager
     if (false === $foundKey)
       throw new \RuntimeException();
 
-    fclose($this->stdins[$foundKey]);
-    fclose($this->stdouts[$foundKey]);
-    fclose($this->stderrs[$foundKey]);
+    fclose($this->stdinStreams[$foundKey]);
+    fclose($this->stdoutStreams[$foundKey]);
+    fclose($this->stderrStreams[$foundKey]);
     $status = proc_close($this->processes[$foundKey]);
 
     unset(
       self::$workers[$foundKey],
       $this->processes[$foundKey],
-      $this->stdins[$foundKey],
-      $this->stdouts[$foundKey],
-      $this->stderrs[$foundKey]
+      $this->stdinStreams[$foundKey],
+      $this->stdoutStreams[$foundKey],
+      $this->stderrStreams[$foundKey]
     );
 
     return $status;
@@ -196,13 +197,13 @@ class WorkerManager
 
   public function __destruct()
   {
-    foreach($this->stdins as &$stdin)
+    foreach($this->stdinStreams as &$stdin)
       fclose($stdin);
 
-    foreach($this->stdouts as &$stdout)
+    foreach($this->stdoutStreams as &$stdout)
       fclose($stdout);
 
-    foreach($this->stderrs as &$stderr)
+    foreach($this->stderrStreams as &$stderr)
       fclose($stderr);
 
     foreach($this->processes as &$process)
