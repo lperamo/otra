@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace otra\tools\workers;
 
@@ -14,7 +15,7 @@ class Worker
   /**
    * @param string $command
    * @param string $successMessage
-   * @param int    $verbosity
+   * @param int    $verbose
    */
   public function __construct(string $command, string $successMessage = '', int $verbose = 1)
   {
@@ -24,13 +25,11 @@ class Worker
   }
 
   /**
-   * @param string $offsetString
    * @param string $stdout
-   * @param string $stderr
    *
    * @return string
    */
-  public function done(string $stdout, string $stderr) : string
+  public function done(string $stdout) : string
   {
     return $stdout . CLI_GREEN . "\e[15;2]" . $this->successMessage . END_COLOR;
   }
