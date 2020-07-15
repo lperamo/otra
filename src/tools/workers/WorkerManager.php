@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace otra\tools\workers;
 
+use RuntimeException;
+
 /**
  * @package otra\tools
  */
@@ -40,7 +42,7 @@ class WorkerManager
     $process = proc_open($worker->command, self::DESCRIPTORSPEC, $pipes);
 
     if (!is_resource($process))
-      throw new \RuntimeException();
+      throw new RuntimeException();
 
     stream_set_blocking($pipes[self::STDOUT], self::NON_BLOCKING);
 
@@ -58,26 +60,26 @@ class WorkerManager
    */
   public function listen(int $timeout = 200000, int $verbose = 1, $keepOrder = true) : void
   {
-    $read = [];
+    $dataRead = [];
     
     foreach (array_keys(self::$workers) as &$workerKey)
     {
-      $read[] = $this->stdoutStreams[$workerKey];
-      $read[] = $this->stderrStreams[$workerKey];
+      $dataRead[] = $this->stdoutStreams[$workerKey];
+      $dataRead[] = $this->stderrStreams[$workerKey];
     }
 
     $write = $expect = null;
-    $changed_num = stream_select($read, $write, $expect, 0, $timeout);
+    $changed_num = stream_select($dataRead, $write, $expect, 0, $timeout);
 
     if (false === $changed_num)
-      throw new \RuntimeException();
+      throw new RuntimeException();
 
     if (0 === $changed_num)
       return;
 
-    $red = false;
+    $redDebug = false;
 
-    foreach ($read as &$stream)
+    foreach ($dataRead as &$stream)
     {
       // Which stream do we have to check STDOUT or STDERR ?
       /** @var int $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
@@ -85,7 +87,7 @@ class WorkerManager
 
       if (false === $foundKey)
       {
-        $red = true;
+        $redDebug = true;
         $foundKey = array_search($stream, $this->stderrStreams, true);
 
         if ($foundKey !== false)
@@ -116,7 +118,7 @@ class WorkerManager
       elseif (0 < $status)
         $message = $worker->fail($stdout, $stderr, $status);
       else // is this really possible ?
-        throw new \RuntimeException();
+        throw new RuntimeException();
 
       unset($status);
 
@@ -135,7 +137,7 @@ class WorkerManager
           if ($verticalOffset !== 0) echo $offsetString;
         }
 
-        self::$allMessages[$foundKey] = ($red ? CLI_LIGHT_BLUE : '') . $foundKey . $stdout . $stderr . $message . PHP_EOL;
+        self::$allMessages[$foundKey] = ($redDebug ? CLI_LIGHT_BLUE : '') . $foundKey . $stdout . $stderr . $message . PHP_EOL;
         ksort(self::$allMessages);
 
         for ($lineIndex = 0; $lineIndex < self::$lines; ++$lineIndex)
@@ -177,7 +179,7 @@ class WorkerManager
     $foundKey = array_search($worker, self::$workers, true);
 
     if (false === $foundKey)
-      throw new \RuntimeException();
+      throw new RuntimeException();
 
     fclose($this->stdinStreams[$foundKey]);
     fclose($this->stdoutStreams[$foundKey]);
