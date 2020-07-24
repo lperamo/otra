@@ -174,7 +174,7 @@ trait DevControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<script nonce="' . getRandomNonceForCSP() . '" src="'
+        ? '<script nonce="<<<TO_REPLACE>>>" src="'
         : '<link rel="stylesheet" href="'
       );
 
@@ -201,13 +201,16 @@ trait DevControllerTrait
         // We add a link to the CSS/JS array for each file we found
         foreach($resources[$resourceType] as $key => &$file)
         {
+          if ($assetType === 'js')
+            $resourceTypeInfoActual = str_replace('<<<TO_REPLACE>>>', getRandomNonceForCSP(), $resourceTypeInfo);
+
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
             $unorderedArray,
             $orderedArray,
             $i,
             $key,
-            $resourceTypeInfo . $file . $endLink
+            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $file . $endLink
           );
         }
       }
