@@ -11,17 +11,20 @@ class Worker
   public string $command;
   public int $verbose;
   private string $successMessage;
+  private int $timeout;
 
   /**
    * @param string $command
    * @param string $successMessage
    * @param int    $verbose
+   * @param int    $timeout
    */
-  public function __construct(string $command, string $successMessage = '', int $verbose = 1)
+  public function __construct(string $command, string $successMessage = '', int $verbose = 1, int $timeout = 60)
   {
     $this->command = $command;
     $this->successMessage = $successMessage;
     $this->verbose = $verbose;
+    $this->timeout = $timeout;
   }
 
   /**

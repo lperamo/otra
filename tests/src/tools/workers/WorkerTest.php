@@ -14,7 +14,8 @@ class WorkerTest extends TestCase
   private const
     COMMAND = 'sleep',
     SUCCESS_MESSAGE = 'hello',
-    VERBOSE = 0;
+    VERBOSE = 0,
+    TIMEOUT = 120;
 
   /**
    * @throws \ReflectionException
@@ -25,7 +26,12 @@ class WorkerTest extends TestCase
   {
     // launching
     require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::VERBOSE,
+      self::TIMEOUT
+    );
 
     // testing
     self::assertInstanceOf(Worker::class, $worker);
@@ -39,6 +45,10 @@ class WorkerTest extends TestCase
     $workerSuccessMessage = removeFieldScopeProtection(Worker::class, 'successMessage')->getValue($worker);
     self::assertIsString($workerSuccessMessage);
     self::assertEquals(self::SUCCESS_MESSAGE, $workerSuccessMessage);
+
+    $workerTimeout = removeFieldScopeProtection(Worker::class, 'timeout')->getValue($worker);
+    self::assertIsInt($workerTimeout);
+    self::assertEquals(self::TIMEOUT, $workerTimeout);
   }
 
   /**
