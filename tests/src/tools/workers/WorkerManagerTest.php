@@ -17,7 +17,10 @@ class WorkerManagerTest extends TestCase
     COMMAND_2 = 'sleep 2',
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
-    VERBOSE = 2;
+    VERBOSE = 2,
+    OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
+    OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
+    OTRA_FIELD_STDERR_STREAMS = 'stderrStreams';
 
   /**
    * @param string $command
@@ -53,19 +56,19 @@ class WorkerManagerTest extends TestCase
     // testing streams
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, 'stdinStreams')->getValue($workerManager),
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
       'Stdin streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, 'stdoutStreams')->getValue($workerManager),
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
       'Stdout streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, 'stderrStreams')->getValue($workerManager),
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
       'Stderr streams must be empty after we detached a worker.'
     );
 
@@ -110,17 +113,17 @@ class WorkerManagerTest extends TestCase
 
     // testing streams
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, 'stdinStreams')
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
       ->getValue($workerManager),
       'Stdin streams must be empty after the Worker Manager destruction.'
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, 'stdoutStreams')
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)
         ->getValue($workerManager),
       'Stdout streams must be empty after the Worker Manager destruction.'
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, 'stderrStreams')
+      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
         ->getValue($workerManager),
       'Stderr streams must be empty after the Worker Manager destruction.'
     );
@@ -145,7 +148,7 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($worker);
 
     // 1. testing streams
-    $stdinStreams = removeFieldScopeProtection(WorkerManager::class, 'stdinStreams')
+    $stdinStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
       ->getValue($workerManager);
     self::assertNotEmpty($stdinStreams, 'Stdin streams must not be empty after we attached a worker.');
 
@@ -163,7 +166,7 @@ class WorkerManagerTest extends TestCase
       );
     }
 
-    $stderrStreams = removeFieldScopeProtection(WorkerManager::class, 'stderrStreams')
+    $stderrStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
       ->getValue($workerManager);
     self::assertNotEmpty($stderrStreams, 'Stderr streams must not be empty after we attached a worker.');
 
