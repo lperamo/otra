@@ -16,10 +16,14 @@ class WorkerManager
     NON_BLOCKING = false,
     //BLOCKING = true,
     DESCRIPTORSPEC = [
-    ['pipe', 'r'],
-    ['pipe', 'w'],
-    ['pipe', 'w']
-  ];
+      ['pipe', 'r'],
+      ['pipe', 'w'],
+      ['pipe', 'w']
+    ],
+    OTRA_KEY_STATUS = 1;
+
+  public const
+    ERASE_TO_END_OF_LINE = "\033[K";
 
   public static array $workers = [],
     $allMessages = [];
@@ -33,6 +37,7 @@ class WorkerManager
   private static array $foundKeys = [];
   private static int $lines = 0;
   private static array $linesArray = [];
+  private static array $informations = [];
 
   /**
    * @param Worker $worker
@@ -89,16 +94,6 @@ class WorkerManager
       {
         $redDebug = true;
         $foundKey = array_search($stream, $this->stderrStreams, true);
-
-        if ($foundKey !== false)
-        {
-//          if (in_array($foundKey, self::$foundKeys))
-//          {
-//            var_dump('ERRRRRROOOOORRR!');die;
-//          } else {
-//            var_dump('****', array_keys(self::$foundKeys), $foundKey, '+++');
-//          }
-        }
         
         if (false === $foundKey)
           continue;
@@ -107,16 +102,17 @@ class WorkerManager
       self::$foundKeys[]= $foundKey;
 
       // Getting information from workers
+      /** @var Worker $worker */
       $worker = self::$workers[$foundKey];
       $stdout = stream_get_contents($this->stdoutStreams[$foundKey]);
       $stderr = stream_get_contents($this->stderrStreams[$foundKey]);
-      $status = $this->detach($worker);
+      $exitCode = $this->detach($worker)[self::OTRA_KEY_STATUS];
 
       // Retrieving final messages and statuses
-      if (0 === $status)
-        $message = $worker->done($stdout, $stderr);
-      elseif (0 < $status)
-        $message = $worker->fail($stdout, $stderr, $status);
+      if (0 === $exitCode)
+        $message = $worker->done($stdout);
+      elseif (0 < $exitCode)
+        $message = $worker->fail($stdout, $stderr, $exitCode);
       else // is this really possible ?
         throw new RuntimeException();
 
@@ -134,17 +130,18 @@ class WorkerManager
           // we move all the way to the left and we go to the right vertical position
           $offsetString = "\033[" . abs($verticalOffset) . ($verticalOffset < 0 ? "A" : "B");
           
-          if ($verticalOffset !== 0) echo $offsetString;
+//          if ($verticalOffset !== 0) echo $offsetString;
         }
 
-        self::$allMessages[$foundKey] = ($redDebug ? CLI_LIGHT_BLUE : '') . $foundKey . $stdout . $stderr . $message . PHP_EOL;
+        self::$allMessages[$foundKey] = ($redDebug ? CLI_LIGHT_BLUE : '') . $message . PHP_EOL;
         ksort(self::$allMessages);
 
         for ($lineIndex = 0; $lineIndex < self::$lines; ++$lineIndex)
         {
-          echo "\033[K", PHP_EOL;
+          echo self::ERASE_TO_END_OF_LINE, PHP_EOL;
         }
-        
+
+        // Move the cursor up "self::$lines" lines
         if ($keepOrder && $verticalOffset !== 0)
           echo "\033[" . self::$lines . "A";
           
@@ -160,8 +157,8 @@ class WorkerManager
         if (count(self::$workers) === 0)
         {
           ksort(self::$linesArray);
-          echo implode(' ', self::$linesArray) , '***', implode(' ', self::$foundKeys);
-          echo END_COLOR;
+//          echo implode(' ', self::$linesArray) , '***', implode(' ', self::$foundKeys);
+//          echo END_COLOR;
         }
       }
     }
@@ -172,9 +169,9 @@ class WorkerManager
    *
    * @param Worker $worker
    *
-   * @return int 0 => Success, more => failure, else => abnormal
+   * @return array [bool running, int status 0 => Success, more => failure, else => abnormal]
    */
-  public function detach(Worker $worker) : int
+  public function detach(Worker $worker) : array
   {
     $foundKey = array_search($worker, self::$workers, true);
 
@@ -184,7 +181,14 @@ class WorkerManager
     fclose($this->stdinStreams[$foundKey]);
     fclose($this->stdoutStreams[$foundKey]);
     fclose($this->stderrStreams[$foundKey]);
-    $status = proc_close($this->processes[$foundKey]);
+    // update informations about the process
+
+    do {
+      usleep(1000);
+      self::$informations[$foundKey] = proc_get_status($this->processes[$foundKey]);
+    } while (self::$informations[$foundKey]['running']);
+
+    proc_close($this->processes[$foundKey]);
 
     unset(
       self::$workers[$foundKey],
@@ -194,7 +198,7 @@ class WorkerManager
       $this->stderrStreams[$foundKey]
     );
 
-    return $status;
+    return [self::$informations[$foundKey]['running'], self::$informations[$foundKey]['exitcode']];
   }
 
   public function __destruct()

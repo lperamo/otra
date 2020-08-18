@@ -40,15 +40,15 @@ class Worker
   /**
    * @param string $stdout
    * @param string $stderr
-   * @param string $status
+   * @param int    $exitCode
    *
    * @return string
    */
-  public function fail(string $stdout, string $stderr, string $status) : string
+  public function fail(string $stdout, string $stderr, int $exitCode) : string
   {
     return CLI_RED . 'Fail! The command was : "' . $this->command . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . $stdout . PHP_EOL .
       'STDERR : ' . $stderr . PHP_EOL .
-      'STATUS : ' . $status;
+      'Exit code : ' . $exitCode;
   }
 }
