@@ -184,11 +184,31 @@ class WorkerManager
     fclose($this->stdinStreams[$foundKey]);
     fclose($this->stdoutStreams[$foundKey]);
     fclose($this->stderrStreams[$foundKey]);
-    // update informations about the process
+
+    $elapsedTime = 0;
 
     do {
-      usleep(1000);
+      // We are waiting less at the start to speedup things.
+      if ($elapsedTime < 10)
+      {
+        $elapsedTime += 1;
+        usleep(100000); // .1s
+      } else
+      {
+        $elapsedTime += 10;
+        usleep(1000000); // 1s
+      }
+
+      // update informations about the process
       self::$informations[$foundKey] = proc_get_status($this->processes[$foundKey]);
+
+      // If the process is too long, kills it.
+      if ($elapsedTime > $worker->timeout * 10)
+      {
+        echo CLI_RED, 'The process that launched ', $worker->command, ' was hanging during ', $worker->timeout,
+          ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR, PHP_EOL;
+        proc_terminate($this->processes[$foundKey]);
+      }
     } while (self::$informations[$foundKey]['running']);
 
     proc_close($this->processes[$foundKey]);

@@ -14,10 +14,11 @@ class WorkerManagerTest extends TestCase
 {
   private const
     COMMAND = 'sleep 0.001',
-    COMMAND_2 = 'sleep 2',
+    COMMAND_SLEEP_2 = 'sleep 2',
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
     VERBOSE = 2,
+    CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
     OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams';
@@ -215,7 +216,7 @@ class WorkerManagerTest extends TestCase
    */
   public function testDetachLongProcess() : void
   {
-    self::experimentDetach(self::COMMAND_2);
+    self::experimentDetach(self::COMMAND_SLEEP_2);
   }
 
   /**
@@ -252,6 +253,41 @@ class WorkerManagerTest extends TestCase
    * @depends testDestruct
    * @depends testAttach
    * @depends testDetach
+   */
+  public function testListen_OneWorkerTooBig() : void
+  {
+    // Context
+    $worker = new Worker(
+      self::COMMAND_SLEEP_2,
+      self::SUCCESS_MESSAGE,
+      self::VERBOSE,
+      self::CUSTOM_TIMEOUT
+    );
+    $workerManager = new WorkerManager();
+    $workerManager->attach($worker);
+    // Launching
+    $workerManager->listen();
+
+    // Testing
+    $this->expectOutputString(
+      CLI_RED . 'The process that launched ' . self::COMMAND_SLEEP_2 . ' was hanging during ' .
+      self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
+    );
+
+    // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
+    // we ensure that there is no remaining working processes
+    if (count(WorkerManager::$workers) > 0)
+      $workerManager->detach($worker);
+
+    // Cleaning
+    unset($workerManager);
+  }
+
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
    * @depends testDetachLongProcess
    */
   public function testListen_SomeWorkers() : void
@@ -260,7 +296,7 @@ class WorkerManagerTest extends TestCase
     $workerManager  = new WorkerManager();
     $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
     $workerManager->attach($worker);
-    $workerBis = new Worker(self::COMMAND_2, self::SUCCESS_MESSAGE_2, self::VERBOSE);
+    $workerBis = new Worker(self::COMMAND_SLEEP_2, self::SUCCESS_MESSAGE_2, self::VERBOSE);
     $workerManager->attach($workerBis);
 
     // Launching
@@ -275,7 +311,7 @@ class WorkerManagerTest extends TestCase
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
       WorkerManager::ERASE_TO_END_OF_LINE . PHP_EOL . "\033[1A" .
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_2 . PHP_EOL
+      $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL
     );
 
     // Cleaning

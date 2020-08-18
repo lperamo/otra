@@ -8,10 +8,9 @@ namespace otra\tools\workers;
  */
 class Worker
 {
+  public int $verbose, $timeout;
   public string $command;
-  public int $verbose;
   private string $successMessage;
-  private int $timeout;
 
   /**
    * @param string $command
