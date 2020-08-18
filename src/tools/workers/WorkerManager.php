@@ -73,8 +73,8 @@ class WorkerManager
       $dataRead[] = $this->stderrStreams[$workerKey];
     }
 
-    $write = $expect = null;
-    $changed_num = stream_select($dataRead, $write, $expect, 0, $timeout);
+    $write = $except = null;
+    $changed_num = stream_select($dataRead, $write, $except, 0, $timeout);
 
     if (false === $changed_num)
       throw new RuntimeException();
