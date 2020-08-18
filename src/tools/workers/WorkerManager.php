@@ -15,7 +15,7 @@ class WorkerManager
     STDERR = 2,
     NON_BLOCKING = false,
     //BLOCKING = true,
-    DESCRIPTORSPEC = [
+    DESCRIPTOR_SPEC = [
       ['pipe', 'r'],
       ['pipe', 'w'],
       ['pipe', 'w']
@@ -44,7 +44,7 @@ class WorkerManager
    */
   public function attach(Worker $worker) : void
   {
-    $process = proc_open($worker->command, self::DESCRIPTORSPEC, $pipes);
+    $process = proc_open($worker->command, self::DESCRIPTOR_SPEC, $pipes);
 
     if (!is_resource($process))
       throw new RuntimeException();
