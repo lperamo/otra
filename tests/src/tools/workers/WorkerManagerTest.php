@@ -27,7 +27,7 @@ class WorkerManagerTest extends TestCase
    *
    * @throws ReflectionException
    */
-  public static function testingDetach(string $command) {
+  public static function experimentDetach(string $command) {
     // context
     $worker = new Worker($command, self::SUCCESS_MESSAGE, self::VERBOSE);
     $workerManager = new WorkerManager();
@@ -203,7 +203,7 @@ class WorkerManagerTest extends TestCase
    */
   public function testDetach() : void
   {
-    self::testingDetach(self::COMMAND);
+    self::experimentDetach(self::COMMAND);
   }
 
   /**
@@ -215,7 +215,7 @@ class WorkerManagerTest extends TestCase
    */
   public function testDetachLongProcess() : void
   {
-    self::testingDetach(self::COMMAND_2);
+    self::experimentDetach(self::COMMAND_2);
   }
 
   /**
@@ -228,9 +228,8 @@ class WorkerManagerTest extends TestCase
   {
     // Context
     $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
-    $workerManager  = new WorkerManager();
+    $workerManager = new WorkerManager();
     $workerManager->attach($worker);
-
     // Launching
     $workerManager->listen();
 
@@ -239,8 +238,12 @@ class WorkerManagerTest extends TestCase
       CLI_GREEN . "\e[15;2]" . self::SUCCESS_MESSAGE . END_COLOR . ' ' . $worker->command . PHP_EOL
     );
 
+    // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
+    // we ensure that there is no remaining working processes
+    if (count(WorkerManager::$workers) > 0)
+      $workerManager->detach($worker);
+
     // Cleaning
-    $workerManager->detach($worker);
     unset($workerManager);
   }
 
@@ -249,6 +252,7 @@ class WorkerManagerTest extends TestCase
    * @depends testDestruct
    * @depends testAttach
    * @depends testDetach
+   * @depends testDetachLongProcess
    */
   public function testListen_SomeWorkers() : void
   {

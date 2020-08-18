@@ -176,7 +176,10 @@ class WorkerManager
     $foundKey = array_search($worker, self::$workers, true);
 
     if (false === $foundKey)
-      throw new RuntimeException();
+      throw new RuntimeException(
+        'We do not succeed to found the worker "' . $worker->command .
+        '" among the existing workers in order to detach it.' . implode(',', self::$workers) . '.'
+      );
 
     fclose($this->stdinStreams[$foundKey]);
     fclose($this->stdoutStreams[$foundKey]);
