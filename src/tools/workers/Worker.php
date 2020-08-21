@@ -8,20 +8,34 @@ namespace otra\tools\workers;
  */
 class Worker
 {
-  public int $verbose, $timeout;
-  public string $command;
+  public int
+    $verbose,
+    $timeout,
+    $keyInWorkersArray = -1;
+
+  public string
+    $command,
+    $waitingMessage;
+
   private string $successMessage;
 
   /**
    * @param string $command
    * @param string $successMessage
+   * @param string $waitingMessage
    * @param int    $verbose
    * @param int    $timeout
    */
-  public function __construct(string $command, string $successMessage = '', int $verbose = 1, int $timeout = 60)
+  public function __construct(
+    string $command,
+    string $successMessage = '',
+    string $waitingMessage = 'Waiting ...',
+    int $verbose = 1,
+    int $timeout = 60)
   {
     $this->command = $command;
     $this->successMessage = $successMessage;
+    $this->waitingMessage = $waitingMessage;
     $this->verbose = $verbose;
     $this->timeout = $timeout;
   }

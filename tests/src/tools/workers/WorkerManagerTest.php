@@ -17,11 +17,17 @@ class WorkerManagerTest extends TestCase
     COMMAND_SLEEP_2 = 'sleep 2',
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
+    SUCCESS_MESSAGE_3 = 'hi how are you?' . PHP_EOL . 'I\'m fine and you?',
+    WAITING_MESSAGE = 'waiting for the result of the first final message ...',
+    WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
+    WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
     VERBOSE = 2,
     CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
     OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
-    OTRA_FIELD_STDERR_STREAMS = 'stderrStreams';
+    OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
+    UP_ONE_LINE = "\033[1A",
+    CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE;
 
   /**
    * @param string $command
@@ -30,9 +36,16 @@ class WorkerManagerTest extends TestCase
    */
   public static function experimentDetach(string $command) {
     // context
-    $worker = new Worker($command, self::SUCCESS_MESSAGE, self::VERBOSE);
     $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      $command,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE ,
+      self::VERBOSE
+    );
     $workerManager->attach($worker);
+
     define('TEST_DETACH_STATUS_SUCCESS', 0);
     define('TEST_DETACH_STATUS_WAS_RUNNING', true);
 
@@ -141,8 +154,13 @@ class WorkerManagerTest extends TestCase
   public function testAttach() : void
   {
     // context
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
-    $workerManager  = new WorkerManager();
+    $workerManager = new WorkerManager();
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::VERBOSE
+    );
     define('TEST_STREAM_NON_BLOCKING_MODE', false);
 
     // launching
@@ -228,9 +246,15 @@ class WorkerManagerTest extends TestCase
   public function testListen_OneWorker() : void
   {
     // Context
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
     $workerManager = new WorkerManager();
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::VERBOSE
+    );
     $workerManager->attach($worker);
+
     // Launching
     $workerManager->listen();
 
@@ -259,7 +283,8 @@ class WorkerManagerTest extends TestCase
     // Context
     $worker = new Worker(
       self::COMMAND_SLEEP_2,
-      self::SUCCESS_MESSAGE,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
       self::VERBOSE,
       self::CUSTOM_TIMEOUT
     );
@@ -270,8 +295,8 @@ class WorkerManagerTest extends TestCase
 
     // Testing
     $this->expectOutputString(
-      CLI_RED . 'The process that launched ' . self::COMMAND_SLEEP_2 . ' was hanging during ' .
-      self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
+      CLI_RED . 'The process that launched ' . CLI_LIGHT_CYAN . self::COMMAND_SLEEP_2 . CLI_RED .
+      ' was hanging during ' . self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
     );
 
     // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
@@ -293,10 +318,22 @@ class WorkerManagerTest extends TestCase
   public function testListen_SomeWorkers() : void
   {
     // Context
-    $workerManager  = new WorkerManager();
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::VERBOSE);
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::VERBOSE
+    );
     $workerManager->attach($worker);
-    $workerBis = new Worker(self::COMMAND_SLEEP_2, self::SUCCESS_MESSAGE_2, self::VERBOSE);
+
+    $workerBis = new Worker(
+      self::COMMAND_SLEEP_2,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      self::VERBOSE
+    );
     $workerManager->attach($workerBis);
 
     // Launching
@@ -309,13 +346,65 @@ class WorkerManagerTest extends TestCase
 
     $this->expectOutputString(
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      WorkerManager::ERASE_TO_END_OF_LINE . PHP_EOL . "\033[1A" .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
       $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL
     );
 
     // Cleaning
-    foreach($workerManager::$workers as &$worker)
+    foreach($workerManager::$workers as $worker)
+      $workerManager->detach($worker);
+
+    unset($workerManager);
+  }
+
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
+   */
+  public function testListen_orderedOutput() : void
+  {
+    // Context
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::COMMAND_SLEEP_2,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      self::VERBOSE
+    );
+    $workerManager->attach($worker);
+
+    $workerBis = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE_3,
+      self::WAITING_MESSAGE_3,
+      self::VERBOSE
+    );
+    $workerManager->attach($workerBis);
+
+    // Launching
+    while (0 < count($workerManager::$workers))
+      $workerManager->listen();
+
+    // Testing
+    $messageStart = CLI_GREEN . "\e[15;2]";
+    $firstMessageEnd = END_COLOR . ' ' . self::COMMAND . PHP_EOL;
+
+    $this->expectOutputString(
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_3 . END_COLOR . ' ' . self::COMMAND . PHP_EOL
+    );
+
+    // Cleaning
+    foreach($workerManager::$workers as $worker)
       $workerManager->detach($worker);
 
     unset($workerManager);

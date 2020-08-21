@@ -34,9 +34,10 @@ class WorkerManager
     $stdoutStreams = [],
     $stderrStreams = [];
 
-  private static array $foundKeys = [];
-  private static int $lines = 0;
-  private static array $linesArray = [];
+  private static bool
+    $hasStarted = false,
+    $hasPrinted = false;
+
   private static array $informations = [];
 
   /**
@@ -61,30 +62,41 @@ class WorkerManager
   /**
    * @param int  $timeout
    * @param int  $verbose
-   * @param bool $keepOrder
    */
-  public function listen(int $timeout = 200000, int $verbose = 1, $keepOrder = true) : void
+  public function listen(int $timeout = 200000, int $verbose = 1) : void
   {
     $dataRead = [];
     
-    foreach (array_keys(self::$workers) as &$workerKey)
+    foreach (self::$workers as $workerKey => &$worker)
     {
+      /** @var Worker $worker */
       $dataRead[] = $this->stdoutStreams[$workerKey];
       $dataRead[] = $this->stderrStreams[$workerKey];
+
+      if ($verbose > 0 && self::$hasStarted === false)
+      {
+        $worker->keyInWorkersArray = $workerKey;
+        self::$allMessages[$workerKey] = $worker->waitingMessage;
+      }
     }
+
+    unset($workerKey, $worker);
+
+    self::$hasStarted = true;
 
     $write = $except = null;
     $changed_num = stream_select($dataRead, $write, $except, 0, $timeout);
 
+    // An error can happen if the system call is interrupted by an incoming signal
     if (false === $changed_num)
       throw new RuntimeException();
 
+    // If the timeout expires before anything interesting happens,
+    // we can have 0 resources streams contained in the modified arrays
     if (0 === $changed_num)
       return;
 
-    $redDebug = false;
-
-    foreach ($dataRead as &$stream)
+    foreach ($dataRead as $stream)
     {
       // Which stream do we have to check STDOUT or STDERR ?
       /** @var int $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
@@ -92,14 +104,11 @@ class WorkerManager
 
       if (false === $foundKey)
       {
-        $redDebug = true;
         $foundKey = array_search($stream, $this->stderrStreams, true);
-        
+
         if (false === $foundKey)
           continue;
       }
-      
-      self::$foundKeys[]= $foundKey;
 
       // Getting information from workers
       /** @var Worker $worker */
@@ -110,9 +119,9 @@ class WorkerManager
 
       // Retrieving final messages and statuses
       if (0 === $exitCode)
-        $message = $worker->done($stdout);
+        $finalMessage = $worker->done($stdout);
       elseif (0 < $exitCode)
-        $message = $worker->fail($stdout, $stderr, $exitCode);
+        $finalMessage = $worker->fail($stdout, $stderr, $exitCode);
       else // is this really possible ?
         throw new RuntimeException();
 
@@ -121,47 +130,29 @@ class WorkerManager
       if ($verbose > 0)
       {
         if ($worker->verbose > 1)
-          $message .= ' ' . $worker->command;
+          $finalMessage .= ' ' . $worker->command;
 
-        // The scripts are asynchronous so if we want to keep messages in a particular order, we must move the cursor
-        if ($keepOrder)
+        if (self::$hasPrinted)
         {
-          $verticalOffset = -self::$lines;
-          // we move all the way to the left and we go to the right vertical position
-          $offsetString = "\033[" . abs($verticalOffset) . ($verticalOffset < 0 ? "A" : "B");
-          
-//          if ($verticalOffset !== 0) echo $offsetString;
+          foreach (self::$allMessages as $message)
+            echo "\033[1A" . self::ERASE_TO_END_OF_LINE;
         }
+        self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;
 
-        self::$allMessages[$foundKey] = ($redDebug ? CLI_LIGHT_BLUE : '') . $message . PHP_EOL;
-        ksort(self::$allMessages);
+        foreach (self::$allMessages as $message)
+          echo $message . PHP_EOL;
 
-        for ($lineIndex = 0; $lineIndex < self::$lines; ++$lineIndex)
-        {
-          echo self::ERASE_TO_END_OF_LINE, PHP_EOL;
-        }
+        self::$hasPrinted = true;
 
-        // Move the cursor up "self::$lines" lines
-        if ($keepOrder && $verticalOffset !== 0)
-          echo "\033[" . self::$lines . "A";
-          
-        foreach (self::$allMessages as &$message)
-        {
-          echo $message;
-        }
-      
-        // The additional 1 is to avoid to print the next message on the previous one
-        self::$lines += substr_count(self::$allMessages[$foundKey], PHP_EOL);
-        self::$linesArray[$foundKey] = substr_count(self::$allMessages[$foundKey], PHP_EOL) . ' ';
-
-        if (count(self::$workers) === 0)
-        {
-          ksort(self::$linesArray);
-//          echo implode(' ', self::$linesArray) , '***', implode(' ', self::$foundKeys);
-//          echo END_COLOR;
-        }
+        unset($message);
       }
     }
+
+    // If there are no workers left, we consider that we have finished our job
+    if (count(self::$workers) === 0)
+      self::$hasPrinted = self::$hasStarted = false;
+
+    unset($stream);
   }
 
   /**
@@ -187,7 +178,8 @@ class WorkerManager
 
     $elapsedTime = 0;
 
-    do {
+    do
+    {
       // We are waiting less at the start to speedup things.
       if ($elapsedTime < 10)
       {
@@ -205,8 +197,9 @@ class WorkerManager
       // If the process is too long, kills it.
       if ($elapsedTime > $worker->timeout * 10)
       {
-        echo CLI_RED, 'The process that launched ', $worker->command, ' was hanging during ', $worker->timeout,
-          ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR, PHP_EOL;
+        echo CLI_RED, 'The process that launched ', CLI_LIGHT_CYAN, $worker->command, CLI_RED, ' was hanging during ',
+          $worker->timeout, ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR,
+          PHP_EOL;
         proc_terminate($this->processes[$foundKey]);
       }
     } while (self::$informations[$foundKey]['running']);
@@ -221,30 +214,33 @@ class WorkerManager
       $this->stderrStreams[$foundKey]
     );
 
-    return [self::$informations[$foundKey]['running'], self::$informations[$foundKey]['exitcode']];
+    return [
+      self::$informations[$foundKey]['running'],
+      self::$informations[$foundKey]['exitcode']
+    ];
   }
 
   public function __destruct()
   {
-    foreach($this->stdinStreams as &$stdin)
+    foreach($this->stdinStreams as $stdin)
     {
       if (is_resource($stdin))
         fclose($stdin);
     }
 
-    foreach($this->stdoutStreams as &$stdout)
+    foreach($this->stdoutStreams as $stdout)
     {
       if (is_resource($stdout))
         fclose($stdout);
     }
 
-    foreach($this->stderrStreams as &$stderr)
+    foreach($this->stderrStreams as $stderr)
     {
       if (is_resource($stderr))
         fclose($stderr);
     }
 
-    foreach($this->processes as &$process)
+    foreach($this->processes as $process)
     {
       if (is_resource($process))
         proc_close($process);
