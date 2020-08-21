@@ -14,6 +14,7 @@ class WorkerTest extends TestCase
   private const
     COMMAND = 'sleep',
     SUCCESS_MESSAGE = 'hello',
+    WAITING_MESSAGE = 'waiting for the final message',
     VERBOSE = 0,
     TIMEOUT = 120;
 
@@ -29,6 +30,7 @@ class WorkerTest extends TestCase
     $worker = new Worker(
       self::COMMAND,
       self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
       self::VERBOSE,
       self::TIMEOUT
     );
@@ -46,6 +48,10 @@ class WorkerTest extends TestCase
     self::assertIsString($workerSuccessMessage);
     self::assertEquals(self::SUCCESS_MESSAGE, $workerSuccessMessage);
 
+    $workerWaitingMessage = removeFieldScopeProtection(Worker::class, 'waitingMessage')->getValue($worker);
+    self::assertIsString($workerWaitingMessage);
+    self::assertEquals(self::WAITING_MESSAGE, $workerWaitingMessage);
+
     $workerTimeout = removeFieldScopeProtection(Worker::class, 'timeout')->getValue($worker);
     self::assertIsInt($workerTimeout);
     self::assertEquals(self::TIMEOUT, $workerTimeout);
@@ -60,12 +66,12 @@ class WorkerTest extends TestCase
   {
     // launching
     require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, 0);
+    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);
     $string = $worker->done('Worker command done.');
 
     // testing
     self::assertIsString($string);
-    self::assertEquals('Worker command done.' . CLI_GREEN . "\e[15;2]" . self::SUCCESS_MESSAGE . END_COLOR, $string);
+    self::assertEquals('Worker command done.' . "\e[15;2]" . self::SUCCESS_MESSAGE, $string);
   }
 
   /**
@@ -78,10 +84,10 @@ class WorkerTest extends TestCase
     // context
     define('TEST_STDOUT', 'Worker command failed.');
     define('TEST_STDERR', 'my error.');
-    define('TEST_STATUS', 'the status');
+    define('TEST_STATUS', -1);
 
     // launching
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, 0);
+    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);
     $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
@@ -90,7 +96,7 @@ class WorkerTest extends TestCase
       CLI_RED . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
-      'STATUS : ' . TEST_STATUS,
+      'Exit code : ' . TEST_STATUS,
       $string
     );
   }

@@ -260,7 +260,7 @@ class WorkerManagerTest extends TestCase
 
     // Testing
     $this->expectOutputString(
-      CLI_GREEN . "\e[15;2]" . self::SUCCESS_MESSAGE . END_COLOR . ' ' . $worker->command . PHP_EOL
+      "\e[15;2]" . self::SUCCESS_MESSAGE . ' ' . $worker->command . PHP_EOL
     );
 
     // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
@@ -341,8 +341,8 @@ class WorkerManagerTest extends TestCase
       $workerManager->listen();
 
     // Testing
-    $messageStart = CLI_GREEN . "\e[15;2]";
-    $firstMessageEnd = END_COLOR . ' ' . self::COMMAND . PHP_EOL;
+    $messageStart = "\e[15;2]";
+    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
@@ -350,7 +350,7 @@ class WorkerManagerTest extends TestCase
       self::CLEAR_PREVIOUS_LINE .
       self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL
     );
 
     // Cleaning
@@ -392,15 +392,15 @@ class WorkerManagerTest extends TestCase
       $workerManager->listen();
 
     // Testing
-    $messageStart = CLI_GREEN . "\e[15;2]";
-    $firstMessageEnd = END_COLOR . ' ' . self::COMMAND . PHP_EOL;
+    $messageStart = "\e[15;2]";
+    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
       self::WAITING_MESSAGE_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
       self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-      $messageStart . self::SUCCESS_MESSAGE_2 . END_COLOR . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_3 . END_COLOR . ' ' . self::COMMAND . PHP_EOL
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND . PHP_EOL
     );
 
     // Cleaning

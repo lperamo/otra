@@ -47,7 +47,7 @@ class Worker
    */
   public function done(string $stdout) : string
   {
-    return $stdout . CLI_GREEN . "\e[15;2]" . $this->successMessage . END_COLOR;
+    return $stdout . "\e[15;2]" . $this->successMessage;
   }
 
   /**
