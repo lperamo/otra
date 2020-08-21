@@ -260,7 +260,10 @@ class WorkerManagerTest extends TestCase
 
     // Testing
     $this->expectOutputString(
-      "\e[15;2]" . self::SUCCESS_MESSAGE . ' ' . $worker->command . PHP_EOL
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE .
+      "\e[15;2]" . self::SUCCESS_MESSAGE . ' ' . $worker->command .
+      PHP_EOL
     );
 
     // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
@@ -295,6 +298,7 @@ class WorkerManagerTest extends TestCase
 
     // Testing
     $this->expectOutputString(
+      self::WAITING_MESSAGE_2 . PHP_EOL .
       CLI_RED . 'The process that launched ' . CLI_LIGHT_CYAN . self::COMMAND_SLEEP_2 . CLI_RED .
       ' was hanging during ' . self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
     );
@@ -345,6 +349,10 @@ class WorkerManagerTest extends TestCase
     $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
       self::WAITING_MESSAGE_2 . PHP_EOL .
       self::CLEAR_PREVIOUS_LINE .
@@ -396,6 +404,9 @@ class WorkerManagerTest extends TestCase
     $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       self::WAITING_MESSAGE_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
       self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .

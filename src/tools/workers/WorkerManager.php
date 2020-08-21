@@ -77,8 +77,12 @@ class WorkerManager
       {
         $worker->keyInWorkersArray = $workerKey;
         self::$allMessages[$workerKey] = $worker->waitingMessage;
+        echo $worker->waitingMessage . PHP_EOL;
       }
     }
+
+    if ($verbose > 0)
+      self::$hasPrinted = true;
 
     unset($workerKey, $worker);
 
@@ -137,12 +141,11 @@ class WorkerManager
           foreach (self::$allMessages as $message)
             echo "\033[1A" . self::ERASE_TO_END_OF_LINE;
         }
+
         self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;
 
         foreach (self::$allMessages as $message)
           echo $message . PHP_EOL;
-
-        self::$hasPrinted = true;
 
         unset($message);
       }
