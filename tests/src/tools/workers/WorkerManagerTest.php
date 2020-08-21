@@ -27,7 +27,8 @@ class WorkerManagerTest extends TestCase
     OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
     UP_ONE_LINE = "\033[1A",
-    CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE;
+    CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE,
+    WHITE = "\e[15;2]";
 
   /**
    * @param string $command
@@ -262,7 +263,7 @@ class WorkerManagerTest extends TestCase
     $this->expectOutputString(
       self::WAITING_MESSAGE . PHP_EOL .
       self::CLEAR_PREVIOUS_LINE .
-      "\e[15;2]" . self::SUCCESS_MESSAGE . ' ' . $worker->command .
+      self::WHITE . self::SUCCESS_MESSAGE . ' ' . $worker->command .
       PHP_EOL
     );
 
@@ -345,7 +346,7 @@ class WorkerManagerTest extends TestCase
       $workerManager->listen();
 
     // Testing
-    $messageStart = "\e[15;2]";
+    $messageStart = self::WHITE;
     $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
@@ -400,7 +401,7 @@ class WorkerManagerTest extends TestCase
       $workerManager->listen();
 
     // Testing
-    $messageStart = "\e[15;2]";
+    $messageStart = self::WHITE;
     $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(

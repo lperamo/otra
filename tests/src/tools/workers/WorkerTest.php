@@ -16,7 +16,8 @@ class WorkerTest extends TestCase
     SUCCESS_MESSAGE = 'hello',
     WAITING_MESSAGE = 'waiting for the final message',
     VERBOSE = 0,
-    TIMEOUT = 120;
+    TIMEOUT = 120,
+    WHITE = "\e[15;2]";
 
   /**
    * @throws \ReflectionException
@@ -71,7 +72,7 @@ class WorkerTest extends TestCase
 
     // testing
     self::assertIsString($string);
-    self::assertEquals('Worker command done.' . "\e[15;2]" . self::SUCCESS_MESSAGE, $string);
+    self::assertEquals('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
   }
 
   /**
