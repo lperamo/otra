@@ -59,6 +59,7 @@ class MasterController
     $currentBlocksStackIndex = 0;
 
   public string $route,
+    $url,
     $bundle = '',
     $module = '',
     $viewPath = '/'; // index/index/ for indexController and indexAction
@@ -210,6 +211,7 @@ class MasterController
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
     self::$contentSecurityPolicy['prod'] = self::$contentSecurityPolicy['dev'];
+    $this->url = $_SERVER['REQUEST_URI'];
   }
 
   /**
