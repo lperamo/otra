@@ -79,7 +79,7 @@ trait ProdControllerTrait
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
       $cachedFile = parent::getCacheFileName($templateFile);
-      parent::$template = (false === parent::getCachedFile($cachedFile)
+      parent::$template = (true === parent::getCachedFile($cachedFile)
         || (property_exists(AllConfig::class, 'cache') === true && AllConfig::$cache === false))
         ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
@@ -155,7 +155,7 @@ trait ProdControllerTrait
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = (self::$hasJsToLoad) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
     if (true === empty(self::$javaScript))
       return $content;
@@ -180,11 +180,11 @@ trait ProdControllerTrait
     }
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' . $allJs . '</script>';
+      return '<script nonce="' . getRandomNonceForCSP() . '" async defer>' . $allJs . '</script>';
 
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
-    return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
+    return $content . '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }
