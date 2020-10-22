@@ -37,7 +37,6 @@ return [
             'sync-script' => OTRA_LABEL_SECURITY_NONE,
             'sync-xhr' => OTRA_LABEL_SECURITY_NONE,
             'usb' => OTRA_LABEL_SECURITY_NONE,
-            'vr' => OTRA_LABEL_SECURITY_NONE,
             'wake-lock' => OTRA_LABEL_SECURITY_NONE,
             'xr-spatial-tracking' => OTRA_LABEL_SECURITY_NONE
           ]
