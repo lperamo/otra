@@ -102,18 +102,36 @@ function addCspHeader(string $route, ?string $routeSecurityFilePath) : void
 
   foreach (MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]] as $directive => &$value)
   {
+    if ($directive === 'script-src')
+      continue;
+
     $contentSecurityPolicy .= $directive . ' ' . $value . '; ';
   }
+
+  // TODO rajouter des tests unitaites à ce sujet
 
   // If no value has been set for 'script-src', we define automatically a secure policy for this directive
   if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src']))
   {
-    $contentSecurityPolicy .= 'script-src \'strict-dynamic\' ';
+    $contentSecurityPolicy .= 'script-src' . ' \'strict-dynamic\' ';
+  } elseif (strpos(
+    MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'],
+    '\'strict-dynamic\''
+    ) === false) // if a value is set for 'script-src' but no 'strict-dynamic' mode
+  {
+    if (!empty(MasterController::$nonces)) // but has nonces
+      throw new \otra\OtraException('Content Security Policy error : you must have the mode \'strict-dynamic\' if you use nonces!');
 
-    foreach (MasterController::$nonces as &$nonce)
-    {
-      $contentSecurityPolicy .= '\'nonce-' . $nonce . '\' ';
-    }
+    header('script-src ' . MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'] . ';');
+
+    return;
+  } else
+    $contentSecurityPolicy .= 'script-src ' .
+      MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'] . ' ';
+
+  foreach (MasterController::$nonces as &$nonce)
+  {
+    $contentSecurityPolicy .= '\'nonce-' . $nonce . '\' ';
   }
 
   header($contentSecurityPolicy);
