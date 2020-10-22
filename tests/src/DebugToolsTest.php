@@ -12,10 +12,17 @@ class DebugToolsTest extends TestCase
 {
   private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:92:',
-    DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(513) \"";
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:110:',
+    DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(11) \"",
+    XDEBUG_KEY_MAX_DATA = 'xdebug.var_display_max_data',
+    XDEBUG_KEY_MAX_DEPTH = 'xdebug.var_display_max_depth',
+    XDEBUG_KEY_MAX_CHILDREN = 'xdebug.var_display_max_children',
+    XDEBUG_TEST_VALUE_MAX_CHILDREN = 5,
+    XDEBUG_TEST_VALUE_MAX_DATA = 10,
+    XDEBUG_TEST_VALUE_MAX_DEPTH = 3;
 
   private static string $LOGS_PROD_PATH;
+  private static bool $outputFlag = true;
 
   public static function setUpBeforeClass(): void
   {
@@ -63,6 +70,54 @@ class DebugToolsTest extends TestCase
   }
 
   /**
+   * Updates the depth of the array. For a depth of 3, we will see 3 levels of KEYS (2 levels only of values).
+   *
+   * @param int   $depthIndex
+   * @param array $array
+   *
+   * @return array
+   */
+  public static function fillArrayDepth(int &$depthIndex, array &$array) : array
+  {
+    while($depthIndex < self::XDEBUG_TEST_VALUE_MAX_DEPTH - 1)
+    {
+      $array[0] = [0 => ''];
+      ++$depthIndex;
+      self::fillArrayDepth($depthIndex, $array[0]);
+    }
+
+    return $array;
+  }
+
+  /**
+   * Force test values and returns an array to test those values
+   *
+   *
+   * @return array
+   * @author Lionel Péramo
+   */
+  private function getDumpTestArray() : array
+  {
+    // We force test values
+    ini_set(self::XDEBUG_KEY_MAX_CHILDREN, strval(self::XDEBUG_TEST_VALUE_MAX_CHILDREN));
+    ini_set(self::XDEBUG_KEY_MAX_DATA, strval(self::XDEBUG_TEST_VALUE_MAX_DATA));
+    ini_set(self::XDEBUG_KEY_MAX_DEPTH, strval(self::XDEBUG_TEST_VALUE_MAX_DEPTH));
+
+    // for children test
+    $arrayToTest = array_fill(0, self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1, 0);
+
+    // for data length test
+    $arrayToTest[0] = str_repeat('0', self::XDEBUG_TEST_VALUE_MAX_DATA + 1);
+
+    // for depth test
+    $arrayToTest[1] = [0 => ''];
+    $depthIndex = 0;
+    self::fillArrayDepth($depthIndex, $arrayToTest[1]);
+
+    return $arrayToTest;
+  }
+
+  /**
    * @author Lionel Péramo
    */
   public function testDump_NoParameters() : void
@@ -74,31 +129,53 @@ class DebugToolsTest extends TestCase
   }
 
   /**
-   * @param int $maxData
-   * @param int $maxChildren
+   * @param int    $depth
    *
-   * @return array
-   * @author Lionel Péramo
+   * @param string $output
+   *
+   * @param bool   $reachDepth
+   *
+   * @return string
    */
-  private function getDumpTestArray(int $maxData, int $maxChildren) : array
+  public static function increaseExpectedArrayDepth(int &$depth, string &$output, bool $reachDepth = false) : string
   {
-    $arrayToTest = array_fill(0, $maxChildren + 1, 0);
-    $arrayToTest[0] = str_repeat('0', $maxData + 1);
+    while ($depth < self::XDEBUG_TEST_VALUE_MAX_DEPTH)
+    {
+      $spaceLength = str_repeat(' ', ($depth + 1) * 2);
+      $output .= $spaceLength . ($depth === 0 ? '[1] =>' : '[0] =>') . PHP_EOL . $spaceLength . 'array(1) {' . PHP_EOL;
 
-    return $arrayToTest;
+      $oldDepth = $depth;
+      ++$depth;
+      self::increaseExpectedArrayDepth($depth, $output, $reachDepth);
+
+      // If we had stop increasing the array depth...
+      if (self::$outputFlag)
+      {
+        $output .= $spaceLength . ($reachDepth ? '  [0] =>' . PHP_EOL . $spaceLength . '  string(0) ""' : '  ...') . PHP_EOL;
+        self::$outputFlag = false;
+      }
+
+      $output .= str_repeat(' ', ($oldDepth + 1) * 2) . '}' . PHP_EOL;
+    }
+
+    return $output;
   }
 
   /**
-   * @param int $maxChildren
+   * @param int  $maxChildren
+   * @param bool $reachDepth
    *
    * @return string
    * @author Lionel Péramo
    */
-  private function getExpectedOutputPartial(int $maxChildren) : string
+  private function getExpectedOutputPartial(int $maxChildren, bool $reachDepth = false) : string
   {
-    $expectedOutputPartial = '';
+    $tempOutput = $expectedOutputPartial = '';
+    $depth = 0;
+    $expectedOutputPartial .= self::increaseExpectedArrayDepth($depth, $tempOutput, $reachDepth);
+    self::$outputFlag = true;
 
-    for($index = 1; $index < $maxChildren; ++$index)
+    for($index = 2; $index < $maxChildren; ++$index)
     {
       $expectedOutputPartial .= '  [' . $index . '] =>' . "\n  int(0)\n";
     }
@@ -109,67 +186,109 @@ class DebugToolsTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testDump_MaxDataFalseMaxChildrenFalse() : void
+  public function testDump_MaxChildrenFalseMaxDataFalseMaxDepthFalse() : void
   {
-    $maxData = (int) ini_get('xdebug.var_display_max_data');
-    $maxChildren = (int) ini_get('xdebug.var_display_max_children');
-    $arrayToTest = $this->getDumpTestArray($maxData, $maxChildren);
+    $maxChildren = (int) ini_get(self::XDEBUG_KEY_MAX_CHILDREN);
+    $maxData = (int) ini_get(self::XDEBUG_KEY_MAX_DATA);
+    $maxDepth = (int) ini_get(self::XDEBUG_KEY_MAX_DEPTH);
+    $arrayToTest = $this->getDumpTestArray();
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData) . "\"...\n"
-      . $this->getExpectedOutputPartial($maxChildren)
+      . "\narray(" . (self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', self::XDEBUG_TEST_VALUE_MAX_DATA) . "\"...\n"
+      . $this->getExpectedOutputPartial(self::XDEBUG_TEST_VALUE_MAX_CHILDREN)
       . "\n  (more elements)...\n}\n"
     );
 
-      dump(
-        false,
-        false,
-        $arrayToTest
-      );
+    dump(
+      [false, false, false],
+      $arrayToTest
+    );
+
+    // We restore the values
+    ini_set(self::XDEBUG_KEY_MAX_CHILDREN, strval($maxChildren));
+    ini_set(self::XDEBUG_KEY_MAX_DATA, strval($maxData));
+    ini_set(self::XDEBUG_KEY_MAX_DEPTH, strval($maxDepth));
   }
 
   /**
    * @author Lionel Péramo
    */
-  public function testDump_MaxDataTrueMaxChildrenFalse() : void
+  public function testDump_MaxChildrenFalseMaxDataTrueMaxDepthFalse() : void
   {
-    $maxData = (int) ini_get('xdebug.var_display_max_data');
-    $maxChildren = (int) ini_get('xdebug.var_display_max_children');
-    $arrayToTest = $this->getDumpTestArray($maxData, $maxChildren);
+    // We store old values
+    $maxChildren = (int) ini_get(self::XDEBUG_KEY_MAX_CHILDREN);
+    $maxData = (int) ini_get(self::XDEBUG_KEY_MAX_DATA);
+    $maxDepth = (int) ini_get(self::XDEBUG_KEY_MAX_DEPTH);
 
+    // We force test values and we create an array to test those values
+    $arrayToTest = $this->getDumpTestArray();
+
+    // We test our function
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
-      . $this->getExpectedOutputPartial($maxChildren)
+      . "\narray(" . (self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', self::XDEBUG_TEST_VALUE_MAX_DATA + 1) . "\"\n"
+      . $this->getExpectedOutputPartial(self::XDEBUG_TEST_VALUE_MAX_CHILDREN)
       . "\n  (more elements)...\n}\n"
     );
 
     dump(
-      true,
-      false,
+      [false, true, false],
       $arrayToTest
     );
+
+    // We restore the values
+    ini_set(self::XDEBUG_KEY_MAX_CHILDREN, strval($maxChildren));
+    ini_set(self::XDEBUG_KEY_MAX_DATA, strval($maxData));
+    ini_set(self::XDEBUG_KEY_MAX_DEPTH, strval($maxDepth));
   }
 
-  public function testDump_MaxDataTrueMaxChildrenTrue() : void
+  public function testDump_MaxChildrenTrueMaxDataTrueMaxDepthFalse() : void
   {
-    $maxData = (int) ini_get('xdebug.var_display_max_data');
-    $maxChildren = (int) ini_get('xdebug.var_display_max_children');
-    $arrayToTest = $this->getDumpTestArray($maxData, $maxChildren);
+    $maxChildren = (int) ini_get(self::XDEBUG_KEY_MAX_CHILDREN);
+    $maxData = (int) ini_get(self::XDEBUG_KEY_MAX_DATA);
+    $maxDepth = (int) ini_get(self::XDEBUG_KEY_MAX_DEPTH);
+    $arrayToTest = $this->getDumpTestArray();
 
     $this->expectOutputString(
       self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
-      . "\narray(" . ($maxChildren + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', $maxData + 1) . "\"\n"
-      . $this->getExpectedOutputPartial($maxChildren + 1)
+      . "\narray(" . (self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', self::XDEBUG_TEST_VALUE_MAX_DATA + 1) . "\"\n"
+      . $this->getExpectedOutputPartial(self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1)
       . "}\n"
     );
 
     dump(
-      true,
-      true,
+      [true, true, false],
       $arrayToTest
     );
+
+    ini_set(self::XDEBUG_KEY_MAX_CHILDREN, strval($maxChildren));
+    ini_set(self::XDEBUG_KEY_MAX_DATA, strval($maxData));
+    ini_set(self::XDEBUG_KEY_MAX_DEPTH, strval($maxDepth));
+  }
+
+  public function testDump_MaxChildrenTrueMaxDataTrueMaxDepthTrue() : void
+  {
+    $maxData = (int) ini_get(self::XDEBUG_KEY_MAX_DATA);
+    $maxChildren = (int) ini_get(self::XDEBUG_KEY_MAX_CHILDREN);
+    $maxDepth = (int) ini_get(self::XDEBUG_KEY_MAX_DEPTH);
+    $arrayToTest = $this->getDumpTestArray();
+
+    $this->expectOutputString(
+      self::DUMP_STRING . (__LINE__ + 7) . self::DUMP_STRING_SECOND
+      . "\narray(" . (self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1) . self::DUMP_BEGIN_THIRD . str_repeat('0', self::XDEBUG_TEST_VALUE_MAX_DATA + 1) . "\"\n"
+      . $this->getExpectedOutputPartial(self::XDEBUG_TEST_VALUE_MAX_CHILDREN + 1, true)
+      . "}\n"
+    );
+
+    dump(
+      [true, true, true],
+      $arrayToTest
+    );
+
+    ini_set(self::XDEBUG_KEY_MAX_CHILDREN, strval($maxChildren));
+    ini_set(self::XDEBUG_KEY_MAX_DATA, strval($maxData));
+    ini_set(self::XDEBUG_KEY_MAX_DEPTH, strval($maxDepth));
   }
 
   /**
