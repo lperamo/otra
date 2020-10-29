@@ -1037,7 +1037,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); use \\Exception; use \\stdClass;' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces .
+  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL . 'namespace cache\php;use \\Exception; use \\stdClass; ' . $vendorNamespaces .
     (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)

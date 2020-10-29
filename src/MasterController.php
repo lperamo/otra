@@ -87,9 +87,10 @@ class MasterController
 
   protected static string
     $id,
-    /* @var string $template The actual template being processed */
-    $template,
     $layout;
+
+  /* @var string $template The actual template being processed */
+  protected static $template;
 
   // HTTP codes !
   public const HTTP_CONTINUE = 100;

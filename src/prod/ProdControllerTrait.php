@@ -79,7 +79,7 @@ trait ProdControllerTrait
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
       $cachedFile = parent::getCacheFileName($templateFile);
-      parent::$template = (true === parent::getCachedFile($cachedFile)
+      parent::$template = (false === parent::getCachedFile($cachedFile)
         || (property_exists(AllConfig::class, 'cache') === true && AllConfig::$cache === false))
         ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
