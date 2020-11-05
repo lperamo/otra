@@ -125,6 +125,7 @@ if (!function_exists('getRandomNonceForCSP'))
       if (!empty(MasterController::$nonces)) // but has nonces
       {
         // adding nonces to avoid error loop before throwing the exception
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'] = "'self' 'strict-dynamic'";
         throw new \otra\OtraException('Content Security Policy error : you must have the mode \'strict-dynamic\' if you use nonces!');
       }
 
