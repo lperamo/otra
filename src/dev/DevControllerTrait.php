@@ -134,6 +134,15 @@ trait DevControllerTrait
       ? ob_get_clean() . parent::$template
       : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 
+    // ensure csp strict dynamic mode is enabled because the debug bar has nonces
+    if (!isset(MasterController::$routes[$_SERVER[APP_ENV]]['csp']['script-src']))
+      MasterController::$routes[$_SERVER[APP_ENV]]['csp']['script-src'] = "'self' 'strict-dynamic'";
+    elseif (strpos(
+        MasterController::$routes[$_SERVER[APP_ENV]]['csp']['script-src'],
+        '\'strict-dynamic\''
+      ) === false)
+      MasterController::$routes[$_SERVER[APP_ENV]]['csp']['script-src'] .= " 'strict-dynamic'";
+
     // suppress useless spaces
     parent::$template = str_replace(
       OTRA_LABEL_ENDING_TITLE_TAG,

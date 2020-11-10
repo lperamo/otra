@@ -111,8 +111,7 @@ if (!function_exists('getRandomNonceForCSP'))
       $contentSecurityPolicy .= $directive . ' ' . $value . '; ';
     }
 
-    // TODO rajouter des tests unitaites à ce sujet
-
+    // TODO rajouter des tests unitaires à ce sujet
     // If no value has been set for 'script-src', we define automatically a secure policy for this directive
     if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src']))
     {
@@ -126,7 +125,7 @@ if (!function_exists('getRandomNonceForCSP'))
       {
         // adding nonces to avoid error loop before throwing the exception
         MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'] = "'self' 'strict-dynamic'";
-        throw new \otra\OtraException('Content Security Policy error : you must have the mode \'strict-dynamic\' if you use nonces!');
+        throw new \otra\OtraException('Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' . $route . '\' if you use nonces!');
       }
 
       header('script-src ' . MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]['script-src'] . ';');
