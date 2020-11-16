@@ -53,7 +53,7 @@ class MasterController
       ],
     'prod' => []
   ],
-  $routes;
+  $routesSecurity;
 
   public static int
     $currentBlocksStackIndex = 0;
