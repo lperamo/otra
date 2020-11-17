@@ -35,14 +35,12 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath): void
   {
-    $policy = createPolicy(
+    header(createPolicy(
       OTRA_KEY_FEATURE_POLICY,
       $route,
       $routeSecurityFilePath,
       MasterController::$featurePolicy
-    );
-    echo $policy;
-    header($policy);
+    ));
   }
 
   /**
@@ -61,8 +59,11 @@ if (!function_exists('getRandomNonceForCSP'))
       && $routeSecurityFilePath)
     {
       // Retrieve security instructions from the routes configuration file
-      if (!isset(MasterController::$routesSecurity))
-        MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $route . '.php';
+      // /!\ Additional configuration could have been added for the debug toolbar
+      $tempSecurity = isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [];
+
+      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $route . '.php';
+      MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
 
       // If we have a policy for the development environment, we use it
       if (isset(MasterController::$routesSecurity[OTRA_KEY_DEVELOPMENT_ENVIRONMENT][$policy]))
