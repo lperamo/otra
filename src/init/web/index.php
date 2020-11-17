@@ -64,7 +64,10 @@ try
 } catch (Exception $exception)
 {
   if (class_exists(\cache\php\Logger::class))
-    Logger::logExceptionOrErrorTo($exception->getMessage(), 'Exception');
+    Logger::logExceptionOrErrorTo(
+      $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine(),
+      'Exception'
+    );
   else
     error_log(
       '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Exception : ' . PHP_EOL .
@@ -78,7 +81,8 @@ try
 } catch (Error $error)
 {
   if (class_exists(\cache\php\Logger::class))
-    Logger::logExceptionOrErrorTo($error->getMessage(), 'Fatal error');
+    Logger::logExceptionOrErrorTo($error->getMessage() . ' in ' . $error->getFile() . ':' . $error->getLine(),
+      'Fatal error');
   else
     error_log(
       '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Fatal error : ' . PHP_EOL .
