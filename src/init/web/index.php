@@ -68,7 +68,8 @@ try
   else
     error_log(
       '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Exception : ' . PHP_EOL .
-      $exception->getMessage() . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
+      $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine() . PHP_EOL .
+      'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
       3,
       BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownExceptions.txt'
     );
@@ -81,7 +82,8 @@ try
   else
     error_log(
       '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Fatal error : ' . PHP_EOL .
-      $error->getMessage() . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
+      $error->getMessage() . ' in ' . $error->getFile() . ':' . $error->getLine() . PHP_EOL . 'Stack trace : ' .
+      PHP_EOL . print_r(debug_backtrace(), true),
       3,
       BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownFatalErrors.txt'
     );
