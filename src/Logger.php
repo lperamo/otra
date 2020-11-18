@@ -54,16 +54,33 @@ abstract class Logger
   }
 
   /**
+   * @param string $path
+   * @param string $message
+   */
+  public static function logging(string $path, string $message)
+  {
+    if (is_writable($path))
+      error_log(
+        $message,
+        self::APPEND_LOG,
+        $path
+      );
+    else
+      echo 'Cannot log the errors due to a lack of permissions' . (APP_ENV === 'prod')
+        ? '!' . PHP_EOL
+        : ' for the file \'' . $path . '\'!' . PHP_EOL;
+  }
+
+  /**
    * Appends a message to the log file at logs/log.txt
    *
    * @param string $message
    */
   public static function log(string $message)
   {
-    error_log(
-      self::logIpTest() . $message . "\n",
-      self::APPEND_LOG,
-      self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt'
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
+      self::logIpTest() . $message . PHP_EOL
     );
   }
 
@@ -75,10 +92,9 @@ abstract class Logger
    */
   public static function logToRelativePath(string $message, string $path = '')
   {
-    error_log(
-      self::logIpTest() . $message . "\n",
-      self::APPEND_LOG,
-      __DIR__ . '/' . $path . '.txt'
+    self::logging(
+      __DIR__ . '/' . $path . '.txt',
+      self::logIpTest() . $message . PHP_EOL
     );
   }
 
@@ -88,11 +104,11 @@ abstract class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logTo(string $message, string  $path = '') {
-    error_log(
-      self::logIpTest() . $message . "\n",
-      self::APPEND_LOG,
-      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt'
+  public static function logTo(string $message, string  $path = '')
+  {
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt',
+      self::logIpTest() . $message . PHP_EOL
     );
   }
 
@@ -106,19 +122,18 @@ abstract class Logger
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '')
   {
-    $path = self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt';
+    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt';
 
-    // If there is no SQL content logged, we start with '[', otherwise with ''
-    error_log(
-      ((file_exists($path) === false || ($content = file_get_contents($path)) === false || '' === $content) ? '[' : '') .
+    self::logging(
+      $logPath,
+      ((file_exists($logPath) === false || ($content = file_get_contents($logPath)) === false || '' === $content) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .
       preg_replace(
         '/\s\s+/',
         ' ',
         str_replace(["\r", "\r\n", "\n"], '', trim($message))
-      ) . '"},',
-      self::APPEND_LOG,
-      $path);
+      ) . '"},'
+    );
   }
 
   /**
@@ -127,11 +142,11 @@ abstract class Logger
    */
   public static function logExceptionOrErrorTo(string $message, string $errorType): void
   {
-    self::logTo(
-      $errorType . ' : ' . $message . PHP_EOL .
-      'Stack trace : ' . PHP_EOL .
-      print_r(debug_backtrace(), true),
-      $errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors'
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' .
+        ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
+      self::logIpTest() . $errorType . ' : ' . $message . PHP_EOL . 'Stack trace : ' . PHP_EOL .
+        print_r(debug_backtrace(), true) . PHP_EOL
     );
   }
 }

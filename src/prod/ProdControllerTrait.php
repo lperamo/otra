@@ -91,16 +91,17 @@ trait ProdControllerTrait
     return parent::$template;
   }
 
-  /** Parses the template file and updates parent::$template
+  /**
+   * @param string      $templateFilename The template file name ...
+   * @param array       $variables        Variables to pass to the template
+   * @param string|null $cachedFile       The cache file name version of the file
+   * @param bool        $layout           If we add a layout stored previously or not
    *
-   * @param string $templateFilename
-   * @param array  $variables        Variables to pass to the template
-   * @param string $cachedFile       The cache file name version of the file
-   * @param bool   $layout           If we add a layout stored previously or not
-   *
-   * @return mixed|string
+   * @return string
+   * @throws OtraException
    */
-  private function buildCachedFile(string $templateFilename, array $variables, $cachedFile = null, bool $layout = true) : string
+  private function buildCachedFile(
+    string $templateFilename, array $variables, ?string $cachedFile = null, bool $layout = true) : string
   {
     $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
@@ -127,7 +128,11 @@ trait ProdControllerTrait
     // If the cached filename is specified and if the cache is activated, we create a cached file.
     if (null !== $cachedFile
       && (property_exists(AllConfig::class, 'cache') === false || AllConfig::$cache === true))
-      file_put_contents($cachedFile, $content);
+    {
+      if (file_put_contents($cachedFile, $content) === false && $this->route !== 'otra_exception')
+        throw new OtraException('We cannot create/update the cache for the route \'' . $this->route . '\'.' .
+          PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
+    }
 
     return $content;
   }

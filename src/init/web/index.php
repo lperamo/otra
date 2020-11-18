@@ -34,7 +34,7 @@ try
   if ('cli' !== PHP_SAPI &&
     isset(
       \cache\php\Routes::$_[OTRA_ROUTE]['resources']['template']
-    ))
+    ) && \cache\php\Routes::$_[OTRA_ROUTE]['resources']['template'] === 'true')
     require BASE_PATH . 'web/loadStaticRoute.php';
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
@@ -63,33 +63,39 @@ try
   Router::get(OTRA_ROUTE, $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS]);
 } catch (Exception $exception)
 {
-  if (class_exists(\cache\php\Logger::class))
-    Logger::logExceptionOrErrorTo(
-      $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine(),
-      'Exception'
-    );
+  define('EXCEPTION_RELATIVE_LOG_PATH', 'logs/' . $_SERVER[APP_ENV] . '/unknownExceptions.txt');
+  define('EXCEPTION_LOG_PATH', BASE_PATH . EXCEPTION_RELATIVE_LOG_PATH);
+  define('EXCEPTION_TRACE', $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
+
+  if (is_writable(EXCEPTION_LOG_PATH) === false)
+    echo 'Cannot log the exceptions to <span style="color=blue">' . EXCEPTION_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
+  elseif (class_exists(\cache\php\Logger::class))
+    Logger::logExceptionOrErrorTo(EXCEPTION_TRACE, 'Exception');
   else
     error_log(
-      '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Exception : ' . PHP_EOL .
-      $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine() . PHP_EOL .
-      'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
+      '[' . date(DATE_ATOM, time()) . ']' . ' Route not launched ! Exception : ' . PHP_EOL .
+      EXCEPTION_TRACE . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
       3,
-      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownExceptions.txt'
+      EXCEPTION_LOG_PATH
     );
 
   echo 'Server in trouble. Please come back later !';
 } catch (Error $error)
 {
-  if (class_exists(\cache\php\Logger::class))
-    Logger::logExceptionOrErrorTo($error->getMessage() . ' in ' . $error->getFile() . ':' . $error->getLine(),
-      'Fatal error');
+  define('ERROR_RELATIVE_LOG_PATH', 'logs/' . $_SERVER[APP_ENV] . '/unknownFatalErrors.txt');
+  define('ERROR_LOG_PATH', BASE_PATH . ERROR_RELATIVE_LOG_PATH);
+  define('ERROR_TRACE', $error->getMessage() . ' in ' . $error->getFile() . ':' . $error->getLine());
+
+  if (is_writable(ERROR_LOG_PATH) === false)
+    echo 'Cannot log the errors to <span style="blue">' . ERROR_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
+  elseif (class_exists(\cache\php\Logger::class))
+    Logger::logExceptionOrErrorTo(ERROR_TRACE, 'Fatal error');
   else
     error_log(
       '[' . date(DATE_ATOM, time()). ']' . ' Route not launched ! Fatal error : ' . PHP_EOL .
-      $error->getMessage() . ' in ' . $error->getFile() . ':' . $error->getLine() . PHP_EOL . 'Stack trace : ' .
-      PHP_EOL . print_r(debug_backtrace(), true),
+      ERROR_TRACE . PHP_EOL . 'Stack trace : ' . PHP_EOL . print_r(debug_backtrace(), true),
       3,
-      BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/unknownFatalErrors.txt'
+      ERROR_LOG_PATH
     );
 
   echo 'Server in great trouble. Please come back later !';

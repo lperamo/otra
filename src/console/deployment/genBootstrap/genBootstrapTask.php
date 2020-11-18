@@ -41,7 +41,6 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
   throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 
-
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
