@@ -15,6 +15,7 @@ function handlesHTTPSRedirection():string
   return 'server' . PHP_EOL .
     '{' . PHP_EOL .
     SPACE_INDENT . str_pad('listen', GEN_SERVER_CONFIG_STR_PAD) . '80;' . PHP_EOL .
+    SPACE_INDENT . str_pad('listen', GEN_SERVER_CONFIG_STR_PAD) . '[::]:80;' . PHP_EOL .
     SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
     SPACE_INDENT . str_pad('server_name', GEN_SERVER_CONFIG_STR_PAD) . GEN_SERVER_CONFIG_SERVER_NAME .
     ';' . PHP_EOL .
