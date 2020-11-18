@@ -962,7 +962,10 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   // we create these variables only for the reference pass
   $inc = 0; // process steps counter (more granular than $level variable)
   $level = 0; //  depth level of require/include calls
-  $parsedFiles = [];
+  // TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
+  //   an use statement. Other comment to remove once fixed, before the fixFiles function call of genBootstrapTask.php
+  // For the moment, as a workaround, we had temporary explicitly added the OtraException file to solve issues.
+  $parsedFiles = [CORE_PATH . 'OtraException.php'];
   $contentToAdd = $content;
 
   if ('' !== $fileToInclude)

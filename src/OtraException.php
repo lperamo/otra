@@ -45,15 +45,17 @@ class OtraException extends Exception
   /**
    * OtraException constructor.
    *
-   * @param string $message
-   * @param int    $code
-   * @param string $file
-   * @param int    $line
-   * @param array  $context
-   * @param bool   $otraCliWarning True only if we came from a console task that wants to do an exit.
+   * @param string   $message
+   * @param int|null $code
+   * @param string   $file
+   * @param int|null $line
+   * @param array    $context
+   * @param bool     $otraCliWarning True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
+   * @throws Exception
    */
+
   public function __construct(
     string $message = 'Error !',
     int $code = NULL,
@@ -77,6 +79,8 @@ class OtraException extends Exception
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
+    elseif ($_SERVER['APP_ENV'] === 'prod')
+      return;
     else
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
@@ -150,11 +154,11 @@ class OtraException extends Exception
   /**
    * To use with set_error_handler().
    *
-   * @param int    $errno
-   * @param string $message
-   * @param string $file
-   * @param int    $line
-   * @param array  $context
+   * @param int        $errno
+   * @param string     $message
+   * @param string     $file
+   * @param int        $line
+   * @param array|null $context
    *
    * @throws OtraException
    */
@@ -195,4 +199,3 @@ class OtraException extends Exception
     exit($exception->getCode());
   }
 }
-

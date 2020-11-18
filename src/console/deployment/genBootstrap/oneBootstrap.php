@@ -127,13 +127,17 @@ set_error_handler(function ($errno, $message, $file, $line, $context) {
 
 $chunks = $params['chunks'];
 
+// TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
+//   an use statement. Other comment to remove once fixed, in fixFiles function of taskFileOperation.php
+// For the moment, as a workaround, we will temporary explicitly add the OtraException file to solve issues.
+
 try
 {
   contentToFile(
     fixFiles(
       $chunks[1],
       $route,
-      file_get_contents($fileToInclude),
+      file_get_contents(CORE_PATH . 'OtraException.php') . '?>' . file_get_contents($fileToInclude),
       $verbose,
       $fileToInclude
     ),
