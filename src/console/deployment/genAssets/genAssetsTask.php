@@ -288,7 +288,7 @@ if (GEN_ASSETS_SVG)
         echo CLI_RED, 'There was an error during the gzip compression of the file ', CLI_LIGHT_CYAN,
         mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
       } else {
-        echo 'The file ', CLI_LIGHT_CYAN, mb_substr($realPath, strlen(BASE_PATH)),
+        echo 'The file ', CLI_LIGHT_CYAN, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
         ' has been compressed successfully.', END_COLOR, PHP_EOL;
       }
     }
