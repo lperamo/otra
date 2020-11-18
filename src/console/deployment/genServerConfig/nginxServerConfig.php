@@ -57,9 +57,9 @@ function handleBasicConfiguration(): string
 function handleSecurity(): string
 {
   return SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    '/tmp/certs/server_crt.pem;' . PHP_EOL .
+    'tmp/certs/server_crt.pem;' . PHP_EOL .
     SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    '/tmp/certs/server_key.pem;' . PHP_EOL .
+    'tmp/certs/server_key.pem;' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . '#HSTS' . PHP_EOL .
     SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
