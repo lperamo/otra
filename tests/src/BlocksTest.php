@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src;
 
-use otra\{MasterController, Controller, OtraException};
+use otra\{Controller, OtraException};
 use phpunit\framework\TestCase;
 
 /**
@@ -21,10 +21,18 @@ class BlocksTest extends TestCase
     parent::setUp();
     $_SERVER[APP_ENV] = 'prod';
     define('VERSION', 'v1');
-    self::$controller = new Controller();
-    self::$controller->route = 'routeTest';
-    removeFieldScopeProtection(MasterController::class, 'hasCssToLoad')->setValue(false);
-    removeFieldScopeProtection(MasterController::class, 'hasJsToLoad')->setValue(false);
+    self::$controller = new Controller(
+      [
+        'pattern' => '',
+        'bundle' => '',
+        'module' => '',
+        'controller' => 'test',
+        'action' => 'testAction',
+        'route' => 'routeTest',
+        'hasJsToLoad' => false,
+        'hasCssToLoad' => false
+      ]
+    );
   }
 
   /**
@@ -35,7 +43,12 @@ class BlocksTest extends TestCase
    */
   public function testSimpleBlockSystem() : void
   {
-    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/simpleLayout.phtml');
+    $content = self::$controller->renderView(
+      TEST_PATH . 'src/bundles/views/simpleLayout.phtml',
+      [],
+      false,
+      false
+    );
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
     Welcome to OTRA!
   </title><body>
@@ -52,7 +65,12 @@ class BlocksTest extends TestCase
    */
   public function testAdvancedBlockSystem() : void
   {
-    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/advancedLayout.phtml');
+    $content = self::$controller->renderView(
+      TEST_PATH . 'src/bundles/views/advancedLayout.phtml',
+      [],
+      false,
+      false
+    );
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
@@ -71,7 +89,12 @@ class BlocksTest extends TestCase
    */
   public function testComplexLayout() : void
   {
-    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/complexLayout.phtml');
+    $content = self::$controller->renderView(
+      TEST_PATH . 'src/bundles/views/complexLayout.phtml',
+      [],
+      false,
+      false
+    );
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!
@@ -93,7 +116,12 @@ class BlocksTest extends TestCase
    */
   public function testCompleteLayout() : void
   {
-    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/completeLayout.phtml');
+    $content = self::$controller->renderView(
+      TEST_PATH . 'src/bundles/views/completeLayout.phtml',
+      [],
+      false,
+      false
+    );
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><body>
   Hello World!

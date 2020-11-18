@@ -134,8 +134,14 @@ while (false !== ($file = readdir($folderHandler)))
 closedir($folderHandler);
 
 // now we have all the informations, we can create the files in 'bundles/config'
-const BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/';
-const SECURITIES_FOLDER = CACHE_PATH . 'php/security/';
+const BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
+  SECURITIES_FOLDER = CACHE_PATH . 'php/security/';
+
+if (!defined('OTRA_LABEL_SECURITY_NONE'))
+{
+  define('OTRA_LABEL_SECURITY_NONE', "'none'");
+  define('OTRA_LABEL_SECURITY_SELF', "'self'");
+}
 
 if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
   mkdir(BUNDLES_MAIN_CONFIG_DIR, 0755);

@@ -36,7 +36,7 @@ class MasterController {
       ],
     'prod' => []
   ],
-    $routes;
+    $routesSecurity;
 }
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'services/securityService.php';

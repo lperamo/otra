@@ -53,12 +53,13 @@ class MasterController
       ],
     'prod' => []
   ],
-  $routes;
+  $routesSecurity;
 
   public static int
     $currentBlocksStackIndex = 0;
 
   public string $route,
+    $url,
     $bundle = '',
     $module = '',
     $viewPath = '/'; // index/index/ for indexController and indexAction
@@ -76,7 +77,7 @@ class MasterController
 
   protected static array
     $css = [],
-    $js = [],
+    $javaScript = [],
     $rendered = [];
 
   protected static bool
@@ -86,9 +87,10 @@ class MasterController
 
   protected static string
     $id,
-    /* @var string $template The actual template being processed */
-    $template,
     $layout;
+
+  /* @var string $template The actual template being processed */
+  protected static $template;
 
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
@@ -167,8 +169,13 @@ class MasterController
     if (false === isset($baseParams['controller']))
     {
       if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
+      {
         // Stores the bundle, module, controller and action for later use
         list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
+
+        require CORE_PATH . 'services/securityService.php';
+        $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+      }
 
       return;
     }
@@ -205,6 +212,7 @@ class MasterController
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
     self::$contentSecurityPolicy['prod'] = self::$contentSecurityPolicy['dev'];
+    $this->url = $_SERVER['REQUEST_URI'];
   }
 
   /**
@@ -255,7 +263,7 @@ class MasterController
    */
   protected static function js($js = []) : void
   {
-    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
+    self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
   }
 
   /**

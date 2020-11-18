@@ -119,11 +119,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-    return substr(
-      '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped),
-      0,
-      -2
-    ) . ']);';
+    return '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
   }
 }
 
@@ -167,19 +163,20 @@ $classMapPath = BASE_PATH . 'cache/php/';
 if (file_exists($classMapPath) === false)
   mkdir($classMapPath, 0755, true);
 
+// Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
 // Generating development class map
-file_put_contents(
-  $classMapPath . 'ClassMap.php',
-  convertClassMapToPHPFile($classMap)
-);
+$filePointer = fopen($classMapPath . 'ClassMap.php', 'w');
+$contentToWrite = convertClassMapToPHPFile($classMap) . PHP_EOL;
+fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+fclose($filePointer);
 
 // Generating production class map
-file_put_contents(
-  $classMapPath . 'ProdClassMap.php',
-  convertClassMapToPHPFile($prodClassMap)
-);
+$filePointer = fopen($classMapPath . 'ProdClassMap.php', 'w');
+$contentToWrite = convertClassMapToPHPFile($prodClassMap) . PHP_EOL;
+fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+fclose($filePointer);
 
-echo CLI_LIGHT_GREEN , ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
+echo CLI_LIGHT_GREEN, ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
 
 // If we want verbose output, then we display the files found related to the classes
 if (VERBOSE !== 1)

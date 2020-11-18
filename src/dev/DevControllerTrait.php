@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace otra;
 
 use config\{AllConfig, Routes};
+use Exception;
 
 define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
 define('ROUTE_CHUNKS_MODULE_PARAM', 2);
@@ -81,12 +82,8 @@ trait DevControllerTrait
     )
       self::addDebugBar();
 
-
-    if (isset($this->routeSecurityFilePath))
-    {
-      addCspHeader($this->route, $this->routeSecurityFilePath);
-      addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
-    }
+    addCspHeader($this->route, $this->routeSecurityFilePath);
+    addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
 
     return parent::$template;
   }
@@ -94,11 +91,12 @@ trait DevControllerTrait
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string  $templateFilename The file name
-   * @param array   $variables        Variables to pass to the template
-   * @param string  $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
+   * @param string $templateFilename The file name
+   * @param array  $variables        Variables to pass to the template
+   * @param string $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
    *
    * @return mixed|string
+   * @throws Exception
    */
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {
@@ -119,7 +117,7 @@ trait DevControllerTrait
       : self::addResource('css') . $content . self::addResource('js');
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
-    self::$js = self::$css = [];
+    self::$javaScript = self::$css = [];
 
     return $content;
   }
@@ -136,6 +134,15 @@ trait DevControllerTrait
       ? ob_get_clean() . parent::$template
       : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 
+    // ensure csp strict dynamic mode is enabled because the debug bar has nonces
+    if (!isset(MasterController::$routesSecurity[$_SERVER[APP_ENV]][OTRA_KEY_CONTENT_SECURITY_POLICY][OTRA_KEY_SCRIPT_SRC_DIRECTIVE]))
+      MasterController::$routesSecurity[$_SERVER[APP_ENV]][OTRA_KEY_CONTENT_SECURITY_POLICY][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
+    elseif (strpos(
+        MasterController::$routesSecurity[$_SERVER[APP_ENV]][OTRA_KEY_CONTENT_SECURITY_POLICY][OTRA_KEY_SCRIPT_SRC_DIRECTIVE],
+        '\'strict-dynamic\''
+      ) === false)
+      MasterController::$routesSecurity[$_SERVER[APP_ENV]][OTRA_KEY_CONTENT_SECURITY_POLICY][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] .= " 'strict-dynamic'";
+
     // suppress useless spaces
     parent::$template = str_replace(
       OTRA_LABEL_ENDING_TITLE_TAG,
@@ -150,6 +157,7 @@ trait DevControllerTrait
    * @param string $assetType 'css' or 'js'
    *
    * @return string
+   * @throws Exception
    */
   private function addResource(string $assetType) : string
   {
@@ -175,7 +183,7 @@ trait DevControllerTrait
 
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
-        ? '<script nonce="' . getRandomNonceForCSP() . '" src="'
+        ? '<script nonce="<<<TO_REPLACE>>>" src="'
         : '<link rel="stylesheet" href="'
       );
 
@@ -202,13 +210,16 @@ trait DevControllerTrait
         // We add a link to the CSS/JS array for each file we found
         foreach($resources[$resourceType] as $key => &$file)
         {
+          if ($assetType === 'js')
+            $resourceTypeInfoActual = str_replace('<<<TO_REPLACE>>>', getRandomNonceForCSP(), $resourceTypeInfo);
+
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
             $unorderedArray,
             $orderedArray,
             $i,
             $key,
-            $resourceTypeInfo . $file . $endLink
+            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $file . $endLink
           );
         }
       }
@@ -223,13 +234,13 @@ trait DevControllerTrait
 
     if ($assetType === 'js')
     {
-      foreach(self::$js as $key => &$js)
+      foreach(self::$javaScript as $key => &$javaScript)
       {
         // If the key don't give info on async and defer then put them automatically
         if (true === is_int($key))
           $key = '';
 
-        $resourceContent .= "\n" . '<script src="' . $js . '.js" nonce="' . getRandomNonceForCSP() . '" ' . $key . '></script>';
+        $resourceContent .= "\n" . '<script src="' . $javaScript . '.js" nonce="' . getRandomNonceForCSP() . '" ' . $key . '></script>';
       }
     }
 
@@ -250,15 +261,16 @@ trait DevControllerTrait
 
   /**
    * Adds the OTRA CSS for the debug bar.
+   * @throws Exception
    */
   public static function addDebugJS()
   {
     $jsContent = '';
 
-    foreach(self::$js as &$js)
+    foreach(self::$javaScript as &$javaScript)
     {
       $jsContent .= "\n" . '<script nonce="' .
-      getRandomNonceForCSP() . '" src="' . $js . '.js" ></script>';
+      getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
     }
 
     return $jsContent;

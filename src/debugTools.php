@@ -1,8 +1,16 @@
 <?php
 declare(strict_types=1);
 
-define('XDEBUG_VAR_DISPLAY_MAX_DATA', 'xdebug.var_display_max_data');
-define('XDEBUG_VAR_DISPLAY_MAX_CHILDREN', 'xdebug.var_display_max_children');
+define('OTRA_KEY_XDEBUG_MAX_CHILDREN', 0);
+define('OTRA_KEY_XDEBUG_MAX_DATA', 1);
+define('OTRA_KEY_XDEBUG_MAX_DEPTH', 2);
+
+define('XDEBUG_ARRAY', [
+  'xdebug.var_display_max_children',
+  'xdebug.var_display_max_data',
+  'xdebug.var_display_max_depth'
+]);
+
 define('OTRA_TD_OPENING_TAG', '<td>');
 define('OTRA_TD_ENDING_TAG', '</td>');
 define('OTRA_TR_ENDING_TAG', '</tr>');
@@ -17,38 +25,48 @@ function lg(string $message) : void
 }
 
 /**
+ * Set the XDebug key to '-1' and returns the old value.
+ *
+ * @param string $xDebugKey
+ *
+ * @return string
+ */
+function updateXDebugValue(string $xDebugKey) : string
+{
+  $oldXDebugKey = ini_get($xDebugKey);
+  ini_set($xDebugKey,'-1');
+
+  return $oldXDebugKey;
+}
+
+/**
  * A nice dump function that takes as much parameters as we want to put.
  * Somewhat disables XDebug if some parameters are true.
  *
- * @param bool $maxData     Affects the maximum string length that is shown when variables are displayed
- * @param bool $maxChildren Affects the amount of array children and object's properties are shown
- *                          when variables are displayed
+ * @param array $options    [0 => Affects the amount of array children and object's properties shown
+ *                           1 => Affects the maximum string length shown
+ *                           2 => Affects the array and object's depths shown]
  * @param array ...$args
  */
 
-function dump(bool $maxData = false, bool $maxChildren = false, ... $args) : void
+function dump(array $options = [], ... $args) : void
 {
-  /** @var string $oldXDebugMaxData  */
-  if (true === $maxData)
+  $oldXDebugValues = [];
+
+  foreach ($options as $numKey => $option)
   {
-    $oldXDebugMaxData = ini_get(XDEBUG_VAR_DISPLAY_MAX_DATA);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, '-1');
+    if ($option)
+      $oldXDebugValues[$numKey] = updateXDebugValue(XDEBUG_ARRAY[$numKey]);
   }
 
-  /** @var string $oldXDebugMaxChildren  */
-  if (true === $maxChildren)
-  {
-    $oldXDebugMaxChildren = ini_get(XDEBUG_VAR_DISPLAY_MAX_CHILDREN);
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, '-1');
-  }
+  unset($numKey, $option);
 
   call_user_func_array('cli' === PHP_SAPI ? 'dumpSmallCli' : 'dumpSmall', $args);
 
-  if (true === $maxData)
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_DATA, $oldXDebugMaxData);
-
-  if (true === $maxChildren)
-    ini_set(XDEBUG_VAR_DISPLAY_MAX_CHILDREN, $oldXDebugMaxChildren);
+  foreach ($oldXDebugValues as $numKey => $option)
+  {
+    ini_set(XDEBUG_ARRAY[$numKey], $option);
+  }
 }
 
 /**

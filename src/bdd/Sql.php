@@ -43,7 +43,8 @@ class Sql
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
    * @param      $conn
-   * @param bool $haveDatabase Do we have a database ? Can be no, if we want to CREATE a database.
+   * @param bool $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
+   *                           needed in this case.
    *
    * @return bool|Sql|resource
    *

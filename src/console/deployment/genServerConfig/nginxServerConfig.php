@@ -15,6 +15,7 @@ function handlesHTTPSRedirection():string
   return 'server' . PHP_EOL .
     '{' . PHP_EOL .
     SPACE_INDENT . str_pad('listen', GEN_SERVER_CONFIG_STR_PAD) . '80;' . PHP_EOL .
+    SPACE_INDENT . str_pad('listen', GEN_SERVER_CONFIG_STR_PAD) . '[::]:80;' . PHP_EOL .
     SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
     SPACE_INDENT . str_pad('server_name', GEN_SERVER_CONFIG_STR_PAD) . GEN_SERVER_CONFIG_SERVER_NAME .
     ';' . PHP_EOL .
@@ -55,11 +56,10 @@ function handleBasicConfiguration(): string
  */
 function handleSecurity(): string
 {
-  return SPACE_INDENT . 'ssl on;' . PHP_EOL .
-    SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    '/tmp/certs/server_crt.pem;' . PHP_EOL .
+  return SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
+    'tmp/certs/server_crt.pem;' . PHP_EOL .
     SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    '/tmp/certs/server_key.pem;' . PHP_EOL .
+    'tmp/certs/server_key.pem;' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . '#HSTS' . PHP_EOL .
     SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .

@@ -4,7 +4,9 @@ body {
   background : linear-gradient(
           to bottom,
           rgba(180, 187, 237, 0.12) 0%,
-          rgba(2, 17, 27, 0.2) 79%) no-repeat fixed !important /* TODO why important */
+          rgba(2, 17, 27, 0.2) 79%) no-repeat fixed !important; /* TODO why important */
+  margin  : 0;
+  padding : 0;
 }
 
 .exception {
@@ -23,7 +25,7 @@ body {
 }
 
 .explications {
-  padding-top : 20px;
+  padding : 20px;
 
   @at-root {
     .exception-{
@@ -93,8 +95,12 @@ body {
           }
 
           td {
-            width       : 0;
-            white-space : nowrap
+            // size
+            width : 0;
+
+            // text
+            white-space: pre-wrap;
+            word-break: break-all;
           }
         }
 

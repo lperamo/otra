@@ -7,6 +7,7 @@ namespace otra\console;
 
 use config\AllConfig;
 use \otra\OtraException;
+use otra\tools\workers\{Worker, WorkerManager};
 
 define('DEPLOY_ARG_MASK', 2);
 define('DEPLOY_ARG_VERBOSE', 3);
@@ -52,7 +53,17 @@ foreach($deploymentParameters as &$deploymentParameter)
   }
 }
 
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
+unset($deploymentParameter);
+
+$mainBundlesFolder = BASE_PATH . 'bundles';
+
+if (!file_exists($mainBundlesFolder))
+{
+  echo CLI_RED . 'You do not have any bundles yet to deploy!', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
+define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
 $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
 $verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
 define(
@@ -129,12 +140,12 @@ if ($genAssetsMode > 0)
 // Deploy the files on the server...
 [
   'server' => $server,
-  'port' => $port,
+  'port' => $destinationPort,
   'folder' => $folder,
   'privateSshKey' => $privateSshKey
 ] = AllConfig::$deployment;
 
-echo PHP_EOL, 'Deploys the files on the server ', CLI_LIGHT_BLUE, $server, ':', $port, END_COLOR, ' in ',
+echo PHP_EOL, 'Deploys the files on the server ', CLI_LIGHT_BLUE, $server, ':', $destinationPort, END_COLOR, ' in ',
 CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
 
 /* --delete allows to delete things that are no present anymore on the source to keep a really synchronized folder
@@ -146,74 +157,77 @@ CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
  * -R is for --relative, it will create missing folders
  * -m remove empty folders */
 
-$startCommand = 'rsync -zaruvhP --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $port;
-$cursorUpOne = "\033[1A";
-//$cursorBackFour = "\033[4D";
+$startCommand = 'rsync -qzaruvhP --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
+//$startCommand = 'rsync -zaruvhP --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
+$startCommandRelativeRsync = 'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
+//$startCommandRelativeRsync = 'rsync -zaruvhPR --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
 
-$handleTransfer = function ($message, $command, string $operation = 'rsync') use(&$verbose, &$cursorUpOne)
+$workerManager = new WorkerManager();
+
+/**
+ * @param string $waitingMessage
+ * @param string $successMessage
+ * @param string $command
+ */
+$handleTransfer = function (
+  string $waitingMessage,
+  string $successMessage,
+  string $command
+) use(&$verbose, &$workerManager)
 {
-  echo $message, ' ...', PHP_EOL;
-
-  /* TODO Fix the verbosity by showing the progress of rsync commands via proc_open */
-  if ($verbose === 1)
-  {
-    $result = cli($command);
-//    echo PHP_EOL;
-//    $result = [cliStream($cacheCommand), ''];
-  } else
-    $result = cli($command);
-
-  if ($result[0] !== 0)
-  {
-    echo CLI_RED, 'Error when using ' . $operation . ' command.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
-  }
-
-  /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
-   * TODO showing things correctly and knowing when all that ends. */
-  if ($verbose === 1)
-    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C ", OTRA_SUCCESS;
-  else
-    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C", OTRA_SUCCESS;
+  $workerManager->attach(new Worker($command, $successMessage, $waitingMessage, $verbose));
 };
 
 $handleTransfer(
-  'Sending cache',
-  $startCommand . '\' cache/ ' . $server . ':' . $folder . 'cache/'
+  'Creating the site main folder if needed ...',
+  'Site main folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder
+);
+
+$handleTransfer(
+  'Sending cache ...',
+  'Cache' . OTRA_SUCCESS,
+  $startCommandRelativeRsync . '\' cache ' . $server . ':' . $folder
 );
 
 $preloadFilename = 'preload.php';
 
 if (file_exists(BASE_PATH . $preloadFilename) === true)
   $handleTransfer(
-    'Sending preload file',
+    'Sending preload file ...',
+    'Preload file' . OTRA_SUCCESS,
     $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename
   );
 
 $handleTransfer(
-  'Sending web folder',
+  'Sending web folder ...',
+  'Web folder' . OTRA_SUCCESS,
   $startCommand . '\' web/ ' . $server . ':' . $folder . 'web/'
 );
 
 $handleTransfer(
-  'Creating the config folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . 'config',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the config folder ...',
+  'Config folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'config'
 );
 
 $handleTransfer(
-  'Adding the OTRA constants',
+  'Adding the OTRA constants ...',
+  'OTRA constants' . OTRA_SUCCESS,
   $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php'
 );
 
 $handleTransfer(
-  'Creating the vendor folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/vendor',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the vendor folder ...',
+  'Vendor folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'vendor'
 );
 
 $handleTransfer(
-  'Sending the OTRA templating engine, the translate tool and the production controller',
+  'Sending the OTRA templating engine, the translate tool and the production controller ...',
+  'OTRA templating engine, the translate tool and the production controller' . OTRA_SUCCESS,
   $startCommand .
   '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
   ' --include=\'otra/otra/src/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
@@ -223,9 +237,10 @@ $handleTransfer(
 );
 
 $handleTransfer(
-  'Creating the bundles folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/bundles',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the bundles folder ...',
+  'Bundles folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'bundles'
 );
 
 define('STRLEN_BASEPATH', strlen(BASE_PATH));
@@ -235,7 +250,7 @@ define('STRLEN_BASEPATH', strlen(BASE_PATH));
  *
  * @param string $folderToAnalyze
  */
-$seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$port, &$server)
+$seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server)
 {
   $bundleFolders = new \DirectoryIterator($folderToAnalyze);
 
@@ -255,18 +270,19 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
     if ($folderFilename === 'views')
     {
       $handleTransfer(
-        'Sending ' . $folderRelativePath . ' folder',
+        'Sending ' . $folderRelativePath . ' folder ...',
+        $folderRelativePath . ' folder' . OTRA_SUCCESS,
         $startCommand .
-        '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . '/' . $folderRelativePath
+        '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath
       );
       continue;
     }
 
     // Ensuring the folder exists before creating stuff inside
     $handleTransfer(
-      'Creating the ' . $folderRelativePath .' folder',
-      OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/' . $folderRelativePath,
-      OTRA_CLI_COMMAND_MKDIR
+      'Creating the ' . $folderRelativePath .' folder ...',
+      $folderRelativePath . ' folder' . OTRA_SUCCESS,
+      OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . $folderRelativePath
     );
 
     // Then we create the inside stuff
@@ -274,10 +290,20 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
   }
 };
 
-$mainBundlesFolder = BASE_PATH . 'bundles';
 $seekingToSendFiles($mainBundlesFolder);
 
 $handleTransfer(
-  'Checking log folder',
-  $startCommand . '\' --include=\'*/\' --exclude=\'*\' logs/ ' . $server . ':' . $folder . '/logs/'
+  'Checking log folder ...',
+  'Log folder' . OTRA_SUCCESS,
+  $startCommandRelativeRsync . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder
 );
+
+// Launching the workers
+while (0 < count($workerManager::$workers))
+  $workerManager->listen();
+
+// Cleaning
+foreach($workerManager::$workers as &$worker)
+  $workerManager->detach($worker);
+
+unset($workerManager);

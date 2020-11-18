@@ -41,7 +41,6 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
   throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 
-
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
@@ -100,7 +99,7 @@ foreach(array_keys($routes) as &$route)
 
   ++$key;
 
-  if (isset($routes[$route]['resources']['template']))
+  if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else

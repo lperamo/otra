@@ -13,7 +13,7 @@ use config\AllConfig;
  */
 trait ProdControllerTrait
 {
-  private static bool $cache_used;
+  private static bool $cacheUsed;
 
   /** If the files are in cache, put them directly in $rendered
    *
@@ -50,6 +50,7 @@ trait ProdControllerTrait
    * return string parent::$template Content of the template
    *
    * @return string
+   * @throws OtraException
    */
   final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
@@ -63,17 +64,17 @@ trait ProdControllerTrait
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
       // TODO Have a beautiful error page for that case !
-      die('Server problem : the file requested does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
+      throw new OtraException('Server problem : the requested file does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.');
     }
 
     // If we already have the template in memory and that it's not empty then we show it
-    self::$cache_used = true === isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
+    self::$cacheUsed = true === isset(self::$rendered[$templateFile]) && '' != self::$rendered[$templateFile];
 
     if (true === $ajax)
       self::$ajax = $ajax;
 
     // If we already have the file in 'cache memory' then we serve it
-    if (true === self::$cache_used)
+    if (true === self::$cacheUsed)
       parent::$template = self::$rendered[$templateFile];
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
@@ -84,25 +85,23 @@ trait ProdControllerTrait
         : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
     }
 
-    if (isset($this->routeSecurityFilePath))
-    {
-      addCspHeader($this->route, $this->routeSecurityFilePath);
-      addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
-    }
+    addCspHeader($this->route, $this->routeSecurityFilePath);
+    addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
 
     return parent::$template;
   }
 
-  /** Parses the template file and updates parent::$template
+  /**
+   * @param string      $templateFilename The template file name ...
+   * @param array       $variables        Variables to pass to the template
+   * @param string|null $cachedFile       The cache file name version of the file
+   * @param bool        $layout           If we add a layout stored previously or not
    *
-   * @param string $templateFilename
-   * @param array  $variables  Variables to pass to the template
-   * @param string $cachedFile The cache file name version of the file
-   * @param bool   $layout     If we add a layout stored previously or not
-   *
-   * @return mixed|string
+   * @return string
+   * @throws OtraException
    */
-  private function buildCachedFile(string $templateFilename, array $variables, $cachedFile = null, bool $layout = true) : string
+  private function buildCachedFile(
+    string $templateFilename, array $variables, ?string $cachedFile = null, bool $layout = true) : string
   {
     $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
@@ -121,7 +120,7 @@ trait ProdControllerTrait
     ); // suppress useless spaces
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
-    self::$js = self::$css = [];
+    self::$javaScript = self::$css = [];
 
     if ('cli' === PHP_SAPI)
       return $content;
@@ -129,7 +128,11 @@ trait ProdControllerTrait
     // If the cached filename is specified and if the cache is activated, we create a cached file.
     if (null !== $cachedFile
       && (property_exists(AllConfig::class, 'cache') === false || AllConfig::$cache === true))
-      file_put_contents($cachedFile, $content);
+    {
+      if (file_put_contents($cachedFile, $content) === false && $this->route !== 'otra_exception')
+        throw new OtraException('We cannot create/update the cache for the route \'' . $this->route . '\'.' .
+          PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
+    }
 
     return $content;
   }
@@ -157,14 +160,14 @@ trait ProdControllerTrait
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = (self::$hasJsToLoad) ? '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
-    if (true === empty(self::$js))
+    if (true === empty(self::$javaScript))
       return $content;
 
     $allJs = '';
 
-    foreach(self::$js as &$js)
+    foreach(self::$javaScript as &$javaScript)
     {
       ob_start();
 
@@ -182,11 +185,11 @@ trait ProdControllerTrait
     }
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return '<script async defer>' . $allJs . '</script>';
+      return '<script nonce="' . getRandomNonceForCSP() . '" async defer>' . $allJs . '</script>';
 
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
-    return $content . '<script src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
+    return $content . '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
   }
 }

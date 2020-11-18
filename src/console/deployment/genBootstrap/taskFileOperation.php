@@ -496,6 +496,10 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
   // we search the namespace in the content before the extends call
   $pos = strrpos($contentToAdd, 'namespace', $match - strlen($contentToAdd));
 
+  // no namespace found, we return false
+  if ($pos === false)
+    return false;
+
   // then we find the section that interests us
   $tempContent = substr($contentToAdd, $pos, $match - $pos);
 
@@ -958,7 +962,10 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
   // we create these variables only for the reference pass
   $inc = 0; // process steps counter (more granular than $level variable)
   $level = 0; //  depth level of require/include calls
-  $parsedFiles = [];
+  // TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
+  //   an use statement. Other comment to remove once fixed, before the fixFiles function call of genBootstrapTask.php
+  // For the moment, as a workaround, we had temporary explicitly added the OtraException file to solve issues.
+  $parsedFiles = [CORE_PATH . 'OtraException.php'];
   $contentToAdd = $content;
 
   if ('' !== $fileToInclude)
@@ -1033,7 +1040,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1);' . PHP_EOL . 'namespace cache\php; ' . $vendorNamespaces .
+  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL . 'namespace cache\php;use \\Exception; use \\stdClass; ' . $vendorNamespaces .
     (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
       ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
