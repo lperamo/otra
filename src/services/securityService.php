@@ -44,18 +44,18 @@ if (!function_exists('getRandomNonceForCSP'))
   }
 
   /**
-   * @param string $policy
-   * @param string $route
-   * @param string $routeSecurityFilePath
-   * @param array  $policyDirectives
+   * @param string      $policy
+   * @param string      $route
+   * @param string|null $routeSecurityFilePath
+   * @param array       $policyDirectives
    *
-   * @throws \otra\OtraException
+   * @return string
    */
-  function createPolicy(string $policy, string $route, string $routeSecurityFilePath, array &$policyDirectives) : string
+  function createPolicy(string $policy, string $route, ?string $routeSecurityFilePath, array &$policyDirectives) : string
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
     if (false === strpos($route, 'otra')
-      && isset($routeSecurityFilePath)
+      && $routeSecurityFilePath !== null
       && $routeSecurityFilePath)
     {
       // Retrieve security instructions from the routes configuration file

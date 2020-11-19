@@ -21,6 +21,7 @@ class BlocksTest extends TestCase
     parent::setUp();
     $_SERVER[APP_ENV] = 'prod';
     define('VERSION', 'v1');
+    $_SERVER['REQUEST_URI'] = '';
     self::$controller = new Controller(
       [
         'pattern' => '',
@@ -143,7 +144,12 @@ class BlocksTest extends TestCase
    * @author Lionel Péramo
    */
   public function testEvenMoreCompleteLayout() : void {
-    $content = self::$controller->renderView(TEST_PATH . 'src/bundles/views/evenMoreCompleteLayout.phtml');
+    $content = self::$controller->renderView(
+      TEST_PATH . 'src/bundles/views/evenMoreCompleteLayout.phtml',
+      [],
+      false,
+      false
+    );
     self::assertEquals('<!DOCTYPE html><html lang="en"><title>
   Welcome to the OTRA!</title><meta http-equiv="Accept" /><meta charset="UTF-8" /><link rel="prefetch" /><body>
   Hello World!
