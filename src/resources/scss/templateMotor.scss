@@ -1,0 +1,126 @@
+// defining colors
+$primary : #ddd;
+$secondary : #fff;
+$tertiary : #333;
+$quaternary : #999;
+$quinary : #bfb;
+$senary : #f77;
+$septenary : #66f;
+$octonary : #eee;
+$nonary : #0f4;
+$decenary : #0ef;
+
+// defining rules
+
+:root {
+  font-size : 10px;
+}
+
+body {
+  background-color : $primary;
+  font-family      : 'Times New Roman', serif;
+  font-size        : 1.6rem;
+  margin           : 1.5rem;
+}
+
+div.otra-block--base,
+pre.otra--code,
+div.otra-block--parent {
+  border-radius    : .5rem;
+  box-sizing       : border-box;
+  display          : inline-block;
+}
+
+div.otra-block--base,
+div.otra-block--parent {
+  padding  : 4rem 2rem 2rem;
+  position : relative;
+}
+
+div.otra-block--base {
+  // appearance
+  background-image : radial-gradient(ellipse at center, $primary, $secondary);
+  box-shadow       : .5rem .5rem .5rem $quaternary;
+  color            : $tertiary;
+
+  // size
+  margin-bottom : 2rem;
+  overflow      : auto;
+  resize        : vertical;
+  width         : 100%;
+
+  &:target {
+    background-image: radial-gradient(ellipse at center, transparentize($nonary, 0.8), transparentize($decenary, 0.8));
+  }
+
+  @at-root {
+    div.otra--block-tags {
+      // positioning
+      position : absolute;
+      top      : .5rem; // to see the padding of each tag
+      left     : 0;
+
+      @at-root {
+        span.otra--block-tags--key,
+        span.otra--block-tags--depth,
+        span.otra--block-tags--markup {
+          // appearance
+          color            : $primary;
+          background-color : $tertiary;
+        }
+
+        span.otra--block-tags--key,
+        span.otra--block-tags--depth,
+        span.otra--block-tags--markup,
+        span.otra--block-tags--ending-block {
+          // cursor
+          cursor : help;
+
+          // size
+          padding : .5rem 1rem;
+        }
+
+        span.otra--block-tags--key {
+          border-radius : 0 0 .5rem 0;
+        }
+
+        span.otra--block-tags--depth,
+        span.otra--block-tags--markup,
+        span.otra--block-tags--ending-block {
+          border-radius : 0 0 .5rem .5rem;
+        }
+
+        span.otra--block--ending-- {
+          // 1 for true
+          &1 {
+            background : $quinary;
+          }
+
+          &false {
+            background : $senary;
+          }
+        }
+      }
+    }
+
+    pre.otra--code {
+      color   : $septenary;
+      margin  : 0;
+    }
+
+    details.otra-block--parent--accordion {
+      margin-top : 1rem;
+
+      @at-root div.otra-block--parent {
+        background-image : radial-gradient(ellipse at center, $octonary, $secondary);
+        box-shadow       : -1rem -1rem 2rem 0 #d6d6d6, 1rem 1rem 2rem 0 #bfbfbf;
+        margin           : 1rem 0 0;
+        width            : 100%;
+      }
+    }
+  }
+}
+
+div.otra--separator {
+  width : 100%;
+}
