@@ -35,12 +35,13 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath): void
   {
-    header(createPolicy(
-      OTRA_KEY_FEATURE_POLICY,
-      $route,
-      $routeSecurityFilePath,
-      MasterController::$featurePolicy
-    ));
+    if (!headers_sent())
+      header(createPolicy(
+        OTRA_KEY_FEATURE_POLICY,
+        $route,
+        $routeSecurityFilePath,
+        MasterController::$featurePolicy
+      ));
   }
 
   /**
@@ -102,6 +103,9 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
+    if (headers_sent())
+      return;
+
     $policy = createPolicy(
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       $route,
