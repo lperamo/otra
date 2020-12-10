@@ -265,13 +265,12 @@ class MasterController
   protected static function processFinalTemplate(string &$templateFilename, array &$variables)
   {
     extract($variables);
-    xdebug_break();
     ob_start();
     require $templateFilename;
 
     // If the template motor is loaded then we use it
     return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
-      ? getTemplate()
+      ? BlocksSystem::getTemplate()
       : '';
   }
 }

@@ -6,19 +6,6 @@ namespace otra {
    * Class BlocksSystem
    */
   abstract class BlocksSystem {
-    public static array
-      $blocksStack = [],
-      $currentBlock = [
-        'content' => '',
-        'index' => 0,
-        'name' => 'root',
-        'parent' => null
-      ],
-      $blockNames = [];
-
-    public static int
-      $currentBlocksStackIndex = 0;
-
     public const
       OTRA_BLOCKS_KEY_CONTENT = 'content',
       OTRA_BLOCKS_KEY_ENDING_BLOCK = 'endingBlock',
@@ -27,6 +14,80 @@ namespace otra {
       OTRA_BLOCKS_KEY_PARENT = 'parent',
       OTRA_BLOCKS_KEY_REPLACED_BY = 'replacedBy',
       OTRA_BLOCK_NAME_ROOT = 'root';
+
+    public static array
+      $blocksStack = [],
+      $blockNames = [],
+      $currentBlock = [
+        'content' => '',
+        'index' => 0,
+        'name' => 'root',
+        'parent' => null
+      ];
+
+    public static int
+      $currentBlocksStackIndex = 0;
+
+    /**
+     * Assembles all the template blocks to returns the final string.
+     *
+     * @return string
+     */
+    public static function getTemplate() : string
+    {
+      $content = '';
+      BlocksSystem::$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
+      array_push(BlocksSystem::$blocksStack, BlocksSystem::$currentBlock);
+      $indexesToUnset = [];
+
+      // Loops through the block stack to compile the final content that have to be shown
+      foreach(BlocksSystem::$blocksStack as $blockKey => &$block)
+      {
+        $blockExists = array_key_exists($block[BlocksSystem::OTRA_BLOCKS_KEY_NAME], BlocksSystem::$blockNames);
+
+        // If there are no other blocks with this name...
+        if (!$blockExists
+          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === 'root'
+          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === '')
+        {
+          $content .= $block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
+          continue;
+        }
+
+        // If there are other blocks with this name...
+        $goodBlock = $block;
+
+        // We seeks for the last block with this name and we adds its content
+        while(array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY, $goodBlock))
+        {
+          $tmpKey = $blockKey - 1;
+
+          do
+          {
+            ++$tmpKey;
+            // Empties the block content, marks it to unset and returns the next block
+            BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
+            $indexesToUnset[BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
+            $tmpBlock = BlocksSystem::$blocksStack[$tmpKey + 1];
+          } while(
+            $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === BlocksSystem::$blocksStack[$tmpKey]
+            && $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME]
+          );
+
+          $goodBlock = BlocksSystem::$blocksStack[$goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]];
+        }
+
+        // We must also not show the endings blocks that have been replaced
+        if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], array_keys($indexesToUnset))) {
+          $content .= $goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
+        }
+
+        if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
+          BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
+      }
+
+      return $content;
+    }
   }
 }
 
@@ -186,80 +247,6 @@ namespace {
       }
 
       echo $content;
-    }
-
-    /**
-     * Empties the block content, marks it to unset and returns the next block
-     *
-     * @param array $indexesToUnset
-     * @param int   $key
-     *
-     * @return array
-     */
-    function removeAndAdvance(array &$indexesToUnset, int $key) : array
-    {
-      BlocksSystem::$blocksStack[$key][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
-      $indexesToUnset[BlocksSystem::$blocksStack[$key][BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
-
-      return BlocksSystem::$blocksStack[$key + 1];
-    }
-
-    /**
-     * Assembles all the template blocks to returns the final string.
-     *
-     * @return string
-     */
-    function getTemplate() : string
-    {
-      $content = '';
-      BlocksSystem::$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
-      array_push(BlocksSystem::$blocksStack, BlocksSystem::$currentBlock);
-      //    require CORE_PATH . 'templating/visualRendering.php';
-  //    showBlocksVisually();
-  //    xdebug_break();
-      $indexesToUnset = [];
-
-      // Loops through the block stack to compile the final content that have to be shown
-      foreach(BlocksSystem::$blocksStack as $blockKey => &$block)
-      {
-        $blockExists = array_key_exists($block[BlocksSystem::OTRA_BLOCKS_KEY_NAME], BlocksSystem::$blockNames);
-
-        // If there are no other blocks with this name...
-        if (!$blockExists
-          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === 'root'
-          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === '')
-        {
-          $content .= $block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
-          continue;
-        }
-
-        // If there are other blocks with this name...
-        $goodBlock = $block;
-
-        // We seeks for the last block with this name and we adds its content
-        while(array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY, $goodBlock))
-        {
-          $tmpKey = $blockKey;
-          $tmpBlock = removeAndAdvance($indexesToUnset, $tmpKey);
-
-          while ($tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === BlocksSystem::$blocksStack[$tmpKey]
-            && $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME])
-          {
-            $tmpBlock = removeAndAdvance($indexesToUnset, ++$tmpKey);
-          }
-
-          $goodBlock = BlocksSystem::$blocksStack[$goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]];
-        }
-
-        // We must also not show the endings blocks that have been replaced
-        if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], array_keys($indexesToUnset)))
-          $content .= $goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
-
-        if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
-          BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
-      }
-
-      return $content;
     }
   }
 }
