@@ -35,27 +35,28 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath): void
   {
-    header(createPolicy(
-      OTRA_KEY_FEATURE_POLICY,
-      $route,
-      $routeSecurityFilePath,
-      MasterController::$featurePolicy
-    ));
+    if (!headers_sent())
+      header(createPolicy(
+        OTRA_KEY_FEATURE_POLICY,
+        $route,
+        $routeSecurityFilePath,
+        MasterController::$featurePolicy
+      ));
   }
 
   /**
-   * @param string $policy
-   * @param string $route
-   * @param string $routeSecurityFilePath
-   * @param array  $policyDirectives
+   * @param string      $policy
+   * @param string      $route
+   * @param string|null $routeSecurityFilePath
+   * @param array       $policyDirectives
    *
-   * @throws \otra\OtraException
+   * @return string
    */
-  function createPolicy(string $policy, string $route, string $routeSecurityFilePath, array &$policyDirectives) : string
+  function createPolicy(string $policy, string $route, ?string $routeSecurityFilePath, array &$policyDirectives) : string
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
     if (false === strpos($route, 'otra')
-      && isset($routeSecurityFilePath)
+      && $routeSecurityFilePath !== null
       && $routeSecurityFilePath)
     {
       // Retrieve security instructions from the routes configuration file
@@ -102,6 +103,9 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
+    if (headers_sent())
+      return;
+
     $policy = createPolicy(
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       $route,

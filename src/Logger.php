@@ -66,9 +66,9 @@ abstract class Logger
         $path
       );
     else
-      echo 'Cannot log the errors due to a lack of permissions' . (APP_ENV === 'prod')
+      echo 'Cannot log the errors due to a lack of permissions' . (APP_ENV === 'prod'
         ? '!' . PHP_EOL
-        : ' for the file \'' . $path . '\'!' . PHP_EOL;
+        : ' for the file \'' . $path . '\'!' . PHP_EOL);
   }
 
   /**

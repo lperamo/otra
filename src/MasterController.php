@@ -15,15 +15,6 @@ class MasterController
   public ?string $routeSecurityFilePath = null;
 
   public static array
-    $blocksStack = [],
-    $currentBlock = [
-      'content' => '',
-      'index' => 0,
-      'name' => 'root',
-      'parent' => null
-    ],
-    $blockNames = [],
-    $blocksToUnset = [],
     $nonces = [],
     $contentSecurityPolicy = [
     'dev' =>
@@ -54,9 +45,6 @@ class MasterController
     'prod' => []
   ],
   $routesSecurity;
-
-  public static int
-    $currentBlocksStackIndex = 0;
 
   public string $route,
     $url,
@@ -171,7 +159,7 @@ class MasterController
       if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
       {
         // Stores the bundle, module, controller and action for later use
-        list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
+        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($baseParams);
 
         require CORE_PATH . 'services/securityService.php';
         $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
@@ -181,7 +169,7 @@ class MasterController
     }
 
     // Stores the bundle, module, controller and action for later use
-    list(
+    [
       $this->pattern,
       $this->bundle,
       $this->module,
@@ -189,7 +177,7 @@ class MasterController
       ,
       $this->route,
       self::$hasJsToLoad,
-      self::$hasCssToLoad) = array_values($baseParams);
+      self::$hasCssToLoad] = array_values($baseParams);
 
     require CORE_PATH . 'services/securityService.php';
     $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
@@ -277,52 +265,13 @@ class MasterController
   protected static function processFinalTemplate(string &$templateFilename, array &$variables)
   {
     extract($variables);
-
     ob_start();
     require $templateFilename;
-    self::$currentBlock['content'] .= ob_get_clean();
-    array_push(self::$blocksStack, self::$currentBlock);
-    $content = '';
-    $indexesToUnset = [];
 
-    // Loops through the block stack to compile the final content that have to be shown
-    foreach(self::$blocksStack as $key => &$block)
-    {
-      $blockExists = array_key_exists($block['name'], self::$blockNames);
-
-      // If there are other blocks with this name...
-      if ($blockExists === true)
-      {
-        $goodBlock = &$block;
-
-        // We seeks for the last block with this name and we adds its content
-        while(array_key_exists('replacedBy', $goodBlock) === true)
-        {
-          $goodBlock['content'] = '';
-          $indexesToUnset[$goodBlock['index']] = true;
-          $tmpKey = $key;
-          $tmpBlock = &self::$blocksStack[$tmpKey + 1];
-
-          while ($tmpBlock['parent'] === self::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
-          {
-            $tmpBlock['content'] = '';
-            $indexesToUnset[$tmpBlock['index']] = true;
-            $tmpBlock = &self::$blocksStack[++$tmpKey + 1];
-          }
-
-          $goodBlock = &self::$blocksStack[$goodBlock['replacedBy']];
-        }
-
-        // We must also not show the endings blocks that have been replaced
-        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
-          $content .= $goodBlock['content'];
-
-        $goodBlock['content'] = '';
-      } else
-        $content .= $block['content'];
-    }
-
-    return $content;
+    // If the template motor is loaded then we use it
+    return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
+      ? BlocksSystem::getTemplate()
+      : '';
   }
 }
 
