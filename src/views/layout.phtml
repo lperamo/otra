@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-require CORE_PATH . 'blocks.php' ?>
+// require_once because most of the time, blocks will be already used.
+require_once CORE_PATH . 'templating/blocks.php' ?>
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width" />

@@ -157,4 +157,18 @@ class BlocksTest extends TestCase
       Hello World!after</body>
 ', $content);
   }
+
+  public function testAnotherLayout():void
+  {
+    define('OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayout.phtml');
+    self::assertEquals(
+      file_get_contents(TEST_PATH . 'src/bundles/views/backups/' . OTRA_TEST_ANOTHER_LAYOUT),
+      self::$controller->renderView(
+        TEST_PATH . 'src/bundles/views/' . OTRA_TEST_ANOTHER_LAYOUT,
+        [],
+        false,
+        false
+      )
+    );
+  }
 }
