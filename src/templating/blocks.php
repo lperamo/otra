@@ -65,17 +65,21 @@ namespace otra {
           do
           {
             ++$tmpKey;
+            $tmpBlock = BlocksSystem::$blocksStack[$tmpKey];
+
             // Empties the block content, marks it to unset and returns the next block
             BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
-            $indexesToUnset[BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
-            $tmpBlock = BlocksSystem::$blocksStack[$tmpKey + 1];
+            $indexesToUnset[$tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
+            $nextTmpBlock = BlocksSystem::$blocksStack[$tmpKey + 1];
           } while(
-            $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === BlocksSystem::$blocksStack[$tmpKey]
-            && $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME]
+            $nextTmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === $tmpBlock
+            && $nextTmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME]
           );
 
           $goodBlock = BlocksSystem::$blocksStack[$goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]];
         }
+
+        unset($tmpKey, $tmpBlock, $nextTmpBlock);
 
         // We must also not show the endings blocks that have been replaced
         if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], array_keys($indexesToUnset))) {
