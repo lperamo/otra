@@ -1,0 +1,142 @@
+$font-variable : 13px;
+$another-shade : #666;
+$octonary      : #eee;
+
+div.otra-dump {
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    background-image : radial-gradient(#ddd, #fff);
+    box-shadow       : 1px 1px 3px #777;
+  }
+
+  @media all and (prefers-color-scheme : dark) {
+    background-color : #333;
+    box-shadow       : 1px 1px 3px #777;
+  }
+
+  // positioning
+  padding : .5rem;
+
+  // text
+  font-family : 'Courier New', monospace;
+  font-size   : $font-variable;
+  word-break  : break-all;
+
+  @at-root {
+    span.otra-dump--intro {
+      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+        color : #004e9c;
+      }
+
+      @media all and (prefers-color-scheme : dark) {
+        color : #05a;
+      }
+
+      font-size : $font-variable;
+      margin    : 0;
+    }
+
+    span.otra-dump--value {
+      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+        color : #004e9c;
+      }
+
+      @media all and (prefers-color-scheme : dark) {
+        color : #05a;
+      }
+
+      //font-size : 1.3em;
+      margin    : 0;
+
+      // text
+      white-space : pre-wrap;
+      word-break  : break-all;
+    }
+
+    pre.otra-dump--string {
+      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+        color : #155859;
+      }
+
+      @media all and (prefers-color-scheme : dark) {
+        color : #33d;
+      }
+
+      // positioning
+      display   : inline;
+      margin    : 0;
+
+      // text
+      font-family : 'Courier New', monospace;
+      //font-size   : 1em;
+      white-space : pre-wrap;
+      word-break  : break-all;
+
+      @at-root b.otra--code--container {
+        outline : 1px solid $another-shade;
+
+        @at-root mark.otra--code--container-highlight {
+          background-color : $octonary;
+          //background-color : transparent;
+          color            : inherit;
+          //outline : 1px solid $tertiary;
+          position         : relative;
+        }
+      }
+    }
+
+    label {
+      &.otra-dump--foldable {
+        cursor      : pointer;
+
+        // text
+        font-family : 'Courier New', monospace;
+        white-space : pre-wrap;
+        word-break  : break-all;
+
+        &:not(:hover) {
+          color : #a00;
+        }
+
+        &:hover {
+          color : #160;
+        }
+      }
+
+      &.otra-dump--margin-bottom {
+        display       : inline-block;
+        margin-bottom : 10px;
+      }
+
+      &.otra-dump--expand-icon {
+        font-size   : 20px;
+        line-height : 10px;
+      }
+    }
+
+    input[type=checkbox].otra-dump--foldable-checkbox {
+      display : none;
+
+      &:not(:checked) {
+        & + div {
+          display : none;
+        }
+      }
+
+      &:checked + div {
+        @at-root .otra-dump--help {
+          cursor : help;
+        }
+
+        & + br {
+          display : none;
+        }
+      }
+    }
+  }
+}
+
+// avoids too long lines in XDebug outputs
+.xdebug-var-dump {
+  white-space : pre-wrap;
+  word-break  : break-all;
+}

@@ -1022,7 +1022,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
       // line from src/Controller.php
       'require CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
       // line at the top of src/OtraException.php
-      'require_once CORE_PATH . \'debugTools.php\';',
+      'require_once CORE_PATH . \'tools/debug/debugTools.php\';',
       // line 115 in getDB, Sql class => src/bdd/Sql.php
       'require CORE_PATH . \'bdd/\' . $driver . \'.php\';',
       // line in renderView, file src/prod/Controller.php:57

@@ -11,7 +11,7 @@ use config\Routes;
 use Exception;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'debugTools.php';
+require_once CORE_PATH . 'tools/debug/debugTools.php';
 
 /**
  * @package otra
@@ -128,6 +128,7 @@ class OtraException extends Exception
     if (false === empty($this->context))
     {
       unset($this->context['variables']);
+      require CORE_PATH . 'tools/debug/traceArray.php';
       $showableContext = createShowableFromArray($this->context, 'Variables');
     } else
       $showableContext = '';

@@ -12,7 +12,7 @@ class DebugToolsTest extends TestCase
 {
   private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/debugTools.php:110:',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/tools/debug/debugTools.php:110:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(11) \"",
     XDEBUG_KEY_MAX_DATA = 'xdebug.var_display_max_data',
     XDEBUG_KEY_MAX_DEPTH = 'xdebug.var_display_max_depth',
@@ -31,7 +31,7 @@ class DebugToolsTest extends TestCase
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
 
     // @TODO we should be able to do a simple require and not require_once
-    require_once CORE_PATH . 'debugTools.php';
+    require_once CORE_PATH . 'tools/debug/debugTools.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);
@@ -323,6 +323,8 @@ class DebugToolsTest extends TestCase
    */
   public function testReformatSource() : void
   {
+    require CORE_PATH . 'tools/reformatSource.php';
+
     self::assertEquals(
       '&lt;p&gt;Hi&lt;/p&gt;<br/>&lt;p&gt;Ha&lt;/p&gt;',
       reformatSource('<p>Hi</p><p>Ha</p>')
