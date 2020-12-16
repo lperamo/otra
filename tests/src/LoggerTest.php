@@ -19,7 +19,8 @@ class LoggerTest extends TestCase
     $_SERVER[APP_ENV] = 'prod';
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
     // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
-œ    require_once CORE_PATH . 'tools/debug/dump.php';
+    require_once CORE_PATH . 'tools/debug/dump.php';
+    require_once CORE_PATH . 'tools/debug/tailCustom.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);

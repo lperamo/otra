@@ -60,6 +60,7 @@ class DatabaseTest extends TestCase
     parent::setUpBeforeClass();
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
+    require CORE_PATH . 'tools/debug/traceArray.php';
 
     cleanFileAndFolders([BASE_PATH . 'logs']);
   }
