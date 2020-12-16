@@ -149,5 +149,14 @@ abstract class Logger
         print_r(debug_backtrace(), true) . PHP_EOL
     );
   }
+
+  /**
+   * @param string $message
+   */
+  function lg(string $message) : void
+  {
+    require_once CORE_PATH . 'Logger.php';
+    self::logTo($message, 'trace');
+  }
 }
 

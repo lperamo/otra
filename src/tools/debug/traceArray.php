@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+define('OTRA_TD_OPENING_TAG', '<td>');
+define('OTRA_TD_ENDING_TAG', '</td>');
+define('OTRA_TR_ENDING_TAG', '</tr>');
+
 /**
  * @param $index
  * @param $value
