@@ -58,7 +58,7 @@ namespace otra {
         $goodBlock = $block;
 
         // We seeks for the last block with this name and we adds its content
-        while(array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY, $goodBlock))
+        while(isset($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
         {
           $tmpKey = $blockKey - 1;
 
@@ -69,7 +69,10 @@ namespace otra {
 
             // Empties the block content, marks it to unset and returns the next block
             BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
-            $indexesToUnset[$tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
+
+            if (!in_array($tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], $indexesToUnset))
+              $indexesToUnset[] = $tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX];
+
             $nextTmpBlock = BlocksSystem::$blocksStack[$tmpKey + 1];
           } while(
             $nextTmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === $tmpBlock
@@ -82,9 +85,8 @@ namespace otra {
         unset($tmpKey, $tmpBlock, $nextTmpBlock);
 
         // We must also not show the endings blocks that have been replaced
-        if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], array_keys($indexesToUnset))) {
+        if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], $indexesToUnset))
           $content .= $goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
-        }
 
         if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
           BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
