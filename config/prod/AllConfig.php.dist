@@ -23,6 +23,8 @@ abstract class AllConfig
     $cachePath = CACHE_PATH,
     $version = '1.0.0-alpha.2.2.0',
     $defaultConn = ''; // mandatory in order to modify it later if needed
-  public static array $dbConnections = []; // mandatory in order to modify it later if needed
+  public static array
+    $dbConnections = [], // mandatory in order to modify it later if needed
+    $debugConfig = []; // mandatory in order to modify it later if needed
 }
 
