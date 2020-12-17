@@ -72,7 +72,8 @@ div.otra-dump {
       word-break  : break-all;
 
       @at-root b.otra--code--container {
-        outline : 1px solid $another-shade;
+        font-weight : 400;
+        outline     : 1px solid $another-shade;
 
         @at-root mark.otra--code--container-highlight {
           background-color : $octonary;
