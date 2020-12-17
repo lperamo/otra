@@ -8,11 +8,11 @@ use phpunit\framework\TestCase;
 /**
  * @runTestsInSeparateProcesses
  */
-class DebugToolsTest extends TestCase
+class DumpTest extends TestCase
 {
   private const LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
-    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/tools/debug/debugTools.php:110:',
+    DUMP_STRING_SECOND = "\n" . '/var/www/html/perso/otra/src/tools/debug/dump.php:110:',
     DUMP_BEGIN_THIRD = ") {\n  [0] =>\n  string(11) \"",
     XDEBUG_KEY_MAX_DATA = 'xdebug.var_display_max_data',
     XDEBUG_KEY_MAX_DEPTH = 'xdebug.var_display_max_depth',
@@ -31,7 +31,7 @@ class DebugToolsTest extends TestCase
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
 
     // @TODO we should be able to do a simple require and not require_once
-    require_once CORE_PATH . 'tools/debug/debugTools.php';
+    require_once CORE_PATH . 'tools/debug/dump.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);

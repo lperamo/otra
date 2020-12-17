@@ -25,7 +25,7 @@
     </testsuite>
 
     <testsuite name="Debug and log tools">
-      <file>./src/tools/debug/DebugToolsTest.php</file>
+      <file>./src/tools/debug/DumpTest.php</file>
       <file>./src/LoggerTest.php</file>
       <file>./src/OtraExceptionTest.php</file>
       <file>./src/console/OtraExceptionCliTest.php</file>
