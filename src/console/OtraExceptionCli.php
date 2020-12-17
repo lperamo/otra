@@ -101,6 +101,7 @@ class OtraExceptionCli extends \Exception
     /*******************************
      * Write the BODY of the table *
      *******************************/
+    require_once CORE_PATH . 'tools/debug/traceArray.php';
     for($actualTraceIndex = 0, $trace = $exception->backtraces, $maxTraceIndex = count($trace);
         $actualTraceIndex < $maxTraceIndex;
         $actualTraceIndex += 1)
