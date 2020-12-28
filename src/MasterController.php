@@ -6,6 +6,8 @@ declare(strict_types=1);
  */
 namespace otra;
 
+use cache\php\BlocksSystem;
+
 /**
  * @package otra
  */

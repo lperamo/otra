@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /* Light templating engine */
-use otra\{MasterController, BlocksSystem};
+use cache\php\BlocksSystem;
 
 if (function_exists('showBlocksVisually') === false)
 {
