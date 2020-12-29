@@ -146,6 +146,9 @@ class DumpCli extends DumpMaster
 
     switch($propertyType)
     {
+      case 'boolean' :
+        echo $propertyType, ' => ', $propertyValue ? ' true' : ' false',  $property->getDocComment();
+        break;
       case 'integer' :
       case 'float' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
@@ -224,6 +227,9 @@ class DumpCli extends DumpMaster
     {
       case 'array' :
         self::dumpArray($paramType, $param, $notFirstDepth, $depth);
+        break;
+      case 'boolean' :
+        echo $param ? ' true' : ' false', PHP_EOL;
         break;
       case 'integer' :
       case 'float' :

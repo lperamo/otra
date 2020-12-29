@@ -168,6 +168,9 @@ abstract class DumpWeb extends DumpMaster {
 
     switch($propertyType)
     {
+      case 'boolean' :
+        echo $propertyType, ' => ', $propertyValue ? 'true' : 'false', $property->getDocComment();
+        break;
       case 'integer' :
       case 'float' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
@@ -250,6 +253,9 @@ abstract class DumpWeb extends DumpMaster {
     {
       case 'array' :
         self::dumpArray($paramType, $param, $notFirstDepth, $depth);
+        break;
+      case 'boolean' :
+        echo $paramType, $param ? ' true' : ' false', self::OTRA_DUMP_END_TEXT_BLOCK;
         break;
       case 'integer' :
       case 'float' :
