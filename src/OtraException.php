@@ -11,7 +11,7 @@ use config\Routes;
 use Exception;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'tools/debug/dump.php';
+require_once CORE_PATH . 'tools/debug/traceArray.php';
 
 /**
  * @package otra
