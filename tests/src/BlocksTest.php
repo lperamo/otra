@@ -12,10 +12,10 @@ use phpunit\framework\TestCase;
 class BlocksTest extends TestCase
 {
   private static Controller $controller;
+  private const
+    LAYOUTS_PATH = TEST_PATH . 'src/bundles/views/',
+    BACKUPS_PATH = self::LAYOUTS_PATH . 'backups/';
 
-  /**
-   * @throws \ReflectionException
-   */
   protected function setUp(): void
   {
     parent::setUp();
@@ -44,18 +44,11 @@ class BlocksTest extends TestCase
    */
   public function testSimpleBlockSystem() : void
   {
-    $content = self::$controller->renderView(
-      TEST_PATH . 'src/bundles/views/simpleLayout.phtml',
-      [],
-      false,
-      false
+    define('SIMPLE_LAYOUT', 'simpleLayout.phtml');
+    self::assertEquals(
+      file_get_contents(self::BACKUPS_PATH . SIMPLE_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . SIMPLE_LAYOUT, [], false, false)
     );
-    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
-    Welcome to OTRA!
-  </title><body>
-  Hello!
-</body>
-', $content);
   }
 
   /**
@@ -66,17 +59,11 @@ class BlocksTest extends TestCase
    */
   public function testAdvancedBlockSystem() : void
   {
-    $content = self::$controller->renderView(
-      TEST_PATH . 'src/bundles/views/advancedLayout.phtml',
-      [],
-      false,
-      false
+    define('ADVANCED_LAYOUT', 'advancedLayout.phtml');
+    self::assertEquals(
+      file_get_contents(self::BACKUPS_PATH . ADVANCED_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . ADVANCED_LAYOUT, [], false, false)
     );
-    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
-  Welcome to the OTRA!</title><body>
-  Hello World!
-</body>
-', $content);
   }
 
   /**
@@ -90,18 +77,11 @@ class BlocksTest extends TestCase
    */
   public function testComplexLayout() : void
   {
-    $content = self::$controller->renderView(
-      TEST_PATH . 'src/bundles/views/complexLayout.phtml',
-      [],
-      false,
-      false
+    define('COMPLEX_LAYOUT', 'complexLayout.phtml');
+    self::assertEquals(
+      file_get_contents(self::BACKUPS_PATH . COMPLEX_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . COMPLEX_LAYOUT, [], false, false)
     );
-    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
-  Welcome to the OTRA!</title><body>
-  Hello World!
-        test
-    </body>
-', $content);
   }
 
   /**
@@ -117,18 +97,11 @@ class BlocksTest extends TestCase
    */
   public function testCompleteLayout() : void
   {
-    $content = self::$controller->renderView(
-      TEST_PATH . 'src/bundles/views/completeLayout.phtml',
-      [],
-      false,
-      false
+    define('COMPLETE_LAYOUT', 'completeLayout.phtml');
+    self::assertEquals(
+      file_get_contents(self::BACKUPS_PATH . COMPLETE_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . COMPLETE_LAYOUT, [], false, false)
     );
-    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
-  Welcome to the OTRA!</title><body>
-  Hello World!
-        test
-      Hello World!after</body>
-', $content);
   }
 
   /**
@@ -144,31 +117,30 @@ class BlocksTest extends TestCase
    * @author Lionel Péramo
    */
   public function testEvenMoreCompleteLayout() : void {
-    $content = self::$controller->renderView(
-      TEST_PATH . 'src/bundles/views/evenMoreCompleteLayout.phtml',
-      [],
-      false,
-      false
+    define('EVEN_MORE_COMPLETE_LAYOUT', 'evenMoreCompleteLayout.phtml');
+    self::assertEquals(
+      file_get_contents(self::BACKUPS_PATH . EVEN_MORE_COMPLETE_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . EVEN_MORE_COMPLETE_LAYOUT, [], false, false)
     );
-    self::assertEquals('<!DOCTYPE html><html lang="en"><title>
-  Welcome to the OTRA!</title><meta http-equiv="Accept" /><meta charset="UTF-8" /><link rel="prefetch" /><body>
-  Hello World!
-        test
-      Hello World!after</body>
-', $content);
   }
 
+  /**
+   * Use :
+   * - overridden blocks,
+   * - an inline title block
+   * - parent block call
+   * - empty block placeholders
+   * - replacing block inside a different kind of block (different block name)
+   *
+   * @throws OtraException
+   * @author Lionel Péramo
+   */
   public function testAnotherLayout():void
   {
     define('OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayout.phtml');
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'src/bundles/views/backups/' . OTRA_TEST_ANOTHER_LAYOUT),
-      self::$controller->renderView(
-        TEST_PATH . 'src/bundles/views/' . OTRA_TEST_ANOTHER_LAYOUT,
-        [],
-        false,
-        false
-      )
+      file_get_contents(self::BACKUPS_PATH . OTRA_TEST_ANOTHER_LAYOUT),
+      self::$controller->renderView(self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT, [], false, false)
     );
   }
 }

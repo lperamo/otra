@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace otra {
+namespace cache\php {
   /**
-   * Class BlocksSystem
+   * Light templating engine "interface".
+   *
+   * @package cache\php
    */
   abstract class BlocksSystem {
     public const
@@ -36,58 +38,65 @@ namespace otra {
     public static function getTemplate() : string
     {
       $content = '';
-      BlocksSystem::$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
-      array_push(BlocksSystem::$blocksStack, BlocksSystem::$currentBlock);
+      self::$currentBlock[self::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
+      array_push(self::$blocksStack, self::$currentBlock);
       $indexesToUnset = [];
 
       // Loops through the block stack to compile the final content that have to be shown
-      foreach(BlocksSystem::$blocksStack as $blockKey => &$block)
+      foreach(self::$blocksStack as $blockKey => $block)
       {
-        $blockExists = array_key_exists($block[BlocksSystem::OTRA_BLOCKS_KEY_NAME], BlocksSystem::$blockNames);
-
-        // If there are no other blocks with this name...
-        if (!$blockExists
-          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === 'root'
-          || $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === '')
+        // If this block do not have to be replaced and which has not already been shown
+        if ((!isset($block[self::OTRA_BLOCKS_KEY_REPLACED_BY])
+          || $block[self::OTRA_BLOCKS_KEY_NAME] === 'root'
+          || $block[self::OTRA_BLOCKS_KEY_NAME] === '')
+          && !in_array($blockKey, $indexesToUnset))
         {
-          $content .= $block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
+          $content .= $block[self::OTRA_BLOCKS_KEY_CONTENT];
           continue;
         }
 
-        // If there are other blocks with this name...
-        $goodBlock = $block;
+        $prevKey = $tmpKey = $blockKey;
 
-        // We seeks for the last block with this name and we adds its content
-        while(array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY, $goodBlock))
-        {
-          $tmpKey = $blockKey - 1;
+        do {
+          // We add the key to an array of indexes that will not be showed again
+          if (!in_array($tmpKey, $indexesToUnset))
+            $indexesToUnset[]= $tmpKey;
 
-          do
+          self::$blocksStack[$prevKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
+          $prevKey = $tmpKey;
+          $replaced = isset(self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]);
+
+          // The block will be replaced, we retrieve the replacing block
+          if ($replaced)
           {
-            ++$tmpKey;
-            $tmpBlock = BlocksSystem::$blocksStack[$tmpKey];
+            $childrenKey = $tmpKey + 1;
+            $startIndex = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX];
+            $tmpKey = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
 
-            // Empties the block content, marks it to unset and returns the next block
-            BlocksSystem::$blocksStack[$tmpKey][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
-            $indexesToUnset[$tmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX]] = true;
-            $nextTmpBlock = BlocksSystem::$blocksStack[$tmpKey + 1];
-          } while(
-            $nextTmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] === $tmpBlock
-            && $nextTmpBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== $block[BlocksSystem::OTRA_BLOCKS_KEY_NAME]
-          );
+            // the children blocks will be unset/removed
+            while (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] > $startIndex)
+            {
+              if (!in_array($childrenKey, $indexesToUnset))
+                $indexesToUnset[]= $childrenKey++;
+            }
 
-          $goodBlock = BlocksSystem::$blocksStack[$goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]];
+            // If there is content after the children blocks but before the ending block
+            if (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_NAME] === $block[self::OTRA_BLOCKS_KEY_NAME]
+              && !in_array($childrenKey, $indexesToUnset))
+              $indexesToUnset[]= $childrenKey;
+          } else
+          {
+            // The block will not be replaced, we can add its content
+            $content .= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT];
+            self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
+
+            // We add the key to an array of indexes that will not be showed again
+            if (!in_array($tmpKey, $indexesToUnset))
+              $indexesToUnset[]= $tmpKey;
+          }
         }
-
-        unset($tmpKey, $tmpBlock, $nextTmpBlock);
-
-        // We must also not show the endings blocks that have been replaced
-        if (!in_array($goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX], array_keys($indexesToUnset))) {
-          $content .= $goodBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
-        }
-
-        if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
-          BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] = '';
+        // The previous block must be replaced, we process the replacing block...
+        while($replaced);
       }
 
       return $content;
@@ -96,7 +105,7 @@ namespace otra {
 }
 
 namespace {
-  use otra\BlocksSystem;
+  use cache\php\BlocksSystem;
 
   /* Light templating engine */
   // those functions can be redeclared if we have an exception later, exception that will also use the block system
@@ -112,7 +121,7 @@ namespace {
      * @param string      $name
      * @param string|null $inline If we just want an inline block then we echo this string and close the block directly.
      */
-    function block(string $name, ?string $inline = null)
+    function block(string $name, ?string $inline = null) : void
     {
       // Storing previous content before doing anything else
       $currentBlock = &BlocksSystem::$currentBlock;
@@ -158,13 +167,15 @@ namespace {
                 BlocksSystem::$blocksStack[$firstPreviousSameKindBlockKey][BlocksSystem::OTRA_BLOCKS_KEY_PARENT];
             }
 
-            BlocksSystem::$blocksStack[$firstPreviousSameKindBlockKey][BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] = $actualKey;
+            BlocksSystem::$blocksStack[$firstPreviousSameKindBlockKey][BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] =
+              $actualKey;
           }
         }
       }
 
       // Updates the list of block types with their position in the stack if it is not a root or empty block
-      if ($currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== BlocksSystem::OTRA_BLOCK_NAME_ROOT && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== '')
+      if ($currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== BlocksSystem::OTRA_BLOCK_NAME_ROOT
+        && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== '')
         BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]] = $actualKey;
 
       // Start listening for the block we just prepared
@@ -181,7 +192,7 @@ namespace {
     /**
      * Ends a template block.
      */
-    function endblock()
+    function endblock() : void
     {
       // Storing previous content before doing anything else
       $currentBlock = &BlocksSystem::$currentBlock;
@@ -216,7 +227,7 @@ namespace {
     /**
      * Shows the content of the parent block of the same type.
      */
-    function parent()
+    function parent() : void
     {
       $parentKey = array_search(
         BlocksSystem::$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME],

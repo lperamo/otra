@@ -1,30 +1,34 @@
-<?php require CORE_PATH . 'templating/blocks.php' ?>
+<?php
+declare(strict_types=1);
+require CORE_PATH . 'templating/blocks.php' ?>
 <!DOCTYPE html>
 <html lang="en">
-<title>
-  <?php block('title'); ?>
-  Welcome to OTRA!
-  <?php endblock(); ?>
-</title>
-
+<head>
+  <title><?php
+    block('title'); ?>
+    Welcome to OTRA!<?php
+    endblock(); ?>
+  </title>
+</head>
 <body>
 <?php block('body'); ?>
   Hello!
   <?php block('test'); ?>
     exact
-    <?php block('body'); ?>
-      test
-    <?php endblock(); ?>
-    exact 2
   <?php endblock(); ?>
-  Hello!End
+  super
 <?php endblock(); ?>
+top
 </body>
 <?php
 block('title', 'Welcome to the OTRA!');
 block('body');
 ?>
   Hello World!
-  <?php parent();?>
-  Hello World!after<?php
+<?php
 endblock();
+?><?php
+block('body'); ?>
+  test
+<?php parent();
+endblock(); ?>

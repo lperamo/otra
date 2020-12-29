@@ -4,14 +4,12 @@ require CORE_PATH . 'templating/blocks.php' ?>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>
-    <?php
+  <title><?php
     $title = 'Starter template homepage';
     block('title');
     echo $title;
     endblock();
-    ?>
-  </title>
+  ?></title>
 
   <meta property="og:site_name" content="<?= $title ?>">
   <?php block('preThings', '') ?>
@@ -19,18 +17,16 @@ require CORE_PATH . 'templating/blocks.php' ?>
 
 <body>
 <?php block('body'); ?>
-Hello!
-<?php endblock(); ?>
-</body>
+  Hello!<?php
+  endblock();
+?></body>
 
 <?php
 block('title', 'Hello world starter template');
 block('body');
-parent(); ?><br/>
-  It's the basic template.
-<?php
-block('preThings');
-echo '<monerreur></monerreur>';
+  parent(); ?><br/>
+  It's the basic template.<?php
+  block('preThings');
+    echo '<meta />';
+  endblock();
 endblock();
-?>
-<?php endblock();
