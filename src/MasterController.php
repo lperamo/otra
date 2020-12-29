@@ -270,6 +270,10 @@ class MasterController
     ob_start();
     require $templateFilename;
 
+//    require CORE_PATH . 'templating/visualRendering.php';
+//    showBlocksVisually();
+//    die;
+
     // If the template motor is loaded then we use it
     return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
       ? BlocksSystem::getTemplate()

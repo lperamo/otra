@@ -3,6 +3,7 @@ declare(strict_types=1);
 require CORE_PATH . 'templating/blocks.php' ?>
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name=viewport content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -34,7 +35,7 @@ require CORE_PATH . 'templating/blocks.php' ?>
 <meta property="og:title" content="Want to develop faster websites ?">
 <meta property="og:url" content="https://otra.tech/">
 <meta property="og:site_name" content="<?= $title ?>>">
-
+</head>
 <body>
 <?php block('body'); ?>
 Hello!
