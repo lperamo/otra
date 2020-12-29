@@ -127,7 +127,12 @@ if (!function_exists('getRandomNonceForCSP'))
         {
           // adding nonces to avoid error loop before throwing the exception
           $policyDirectives[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
-          throw new \otra\OtraException('Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' . $route . '\' if you use nonces!');
+
+          // this 'if' also avoids a loop because there is no security rules for the exception page for now
+          if ($route !== 'otra_exception')
+            throw new \otra\OtraException(
+              'Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' .
+              $route . '\' if you use nonces!');
         }
 
         header($policy . OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
