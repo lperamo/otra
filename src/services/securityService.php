@@ -66,18 +66,11 @@ if (!function_exists('getRandomNonceForCSP'))
       MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $route . '.php';
       MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
 
-      // If we have a policy for the development environment, we use it
-      if (isset(MasterController::$routesSecurity[OTRA_KEY_DEVELOPMENT_ENVIRONMENT][$policy]))
-        $policyDirectives[OTRA_KEY_DEVELOPMENT_ENVIRONMENT] = array_merge(
-          $policyDirectives[OTRA_KEY_DEVELOPMENT_ENVIRONMENT],
-          MasterController::$routesSecurity[OTRA_KEY_DEVELOPMENT_ENVIRONMENT][$policy]
-        );
-
-      // If we have a policy for the production environment, we use it
-      if (isset(MasterController::$routesSecurity[OTRA_KEY_PRODUCTION_ENVIRONMENT][$policy]))
-        $policyDirectives[OTRA_KEY_PRODUCTION_ENVIRONMENT] = array_merge(
-          $policyDirectives[OTRA_KEY_PRODUCTION_ENVIRONMENT],
-          MasterController::$routesSecurity[OTRA_KEY_PRODUCTION_ENVIRONMENT][$policy]
+      // If we have a policy for this environment, we use it
+      if (isset(MasterController::$routesSecurity[$_SERVER[APP_ENV]][$policy]))
+        $policyDirectives[$_SERVER[APP_ENV]] = array_merge(
+          $policyDirectives[$_SERVER[APP_ENV]],
+          MasterController::$routesSecurity[$_SERVER[APP_ENV]][$policy]
         );
     }
 
@@ -124,7 +117,7 @@ if (!function_exists('getRandomNonceForCSP'))
       if (!empty(MasterController::$nonces)) // but has nonces
       {
         // adding nonces to avoid error loop before throwing the exception
-        $policyDirectives[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
 
         // this 'if' also avoids a loop because there is no security rules for the exception page for now
         if ($route !== 'otra_exception')
