@@ -113,40 +113,37 @@ if (!function_exists('getRandomNonceForCSP'))
       MasterController::$contentSecurityPolicy
     );
 
-    if ($policy === OTRA_KEY_CONTENT_SECURITY_POLICY)
+    if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE]))
     {
-      if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE]))
+      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' \'strict-dynamic\' ';
+    } elseif (strpos(
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE],
+        '\'strict-dynamic\''
+      ) === false) // if a value is set for 'script-src' but no 'strict-dynamic' mode
+    {
+      if (!empty(MasterController::$nonces)) // but has nonces
       {
-        $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' \'strict-dynamic\' ';
-      } elseif (strpos(
-          MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE],
-          '\'strict-dynamic\''
-        ) === false) // if a value is set for 'script-src' but no 'strict-dynamic' mode
-      {
-        if (!empty(MasterController::$nonces)) // but has nonces
-        {
-          // adding nonces to avoid error loop before throwing the exception
-          $policyDirectives[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
+        // adding nonces to avoid error loop before throwing the exception
+        $policyDirectives[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
 
-          // this 'if' also avoids a loop because there is no security rules for the exception page for now
-          if ($route !== 'otra_exception')
-            throw new \otra\OtraException(
-              'Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' .
-              $route . '\' if you use nonces!');
-        }
-
-        header($policy . OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
-          MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ';');
-
-        return;
-      } else
-        $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
-          MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ' ';
-
-      foreach (MasterController::$nonces as &$nonce)
-      {
-        $policy .= '\'nonce-' . $nonce . '\' ';
+        // this 'if' also avoids a loop because there is no security rules for the exception page for now
+        if ($route !== 'otra_exception')
+          throw new \otra\OtraException(
+            'Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' .
+            $route . '\' if you use nonces!');
       }
+
+      header($policy . OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ';');
+
+      return;
+    } else
+      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ' ';
+
+    foreach (MasterController::$nonces as &$nonce)
+    {
+      $policy .= '\'nonce-' . $nonce . '\' ';
     }
 
     header($policy);
