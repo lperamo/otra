@@ -6,6 +6,21 @@ namespace otra;
 use config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 
+if (!defined('OTRA_DUMP_INDENT_COLORS'))
+{
+  define(
+    'OTRA_DUMP_INDENT_COLORS',
+    [
+      'CLI_BOLD_LIGHT_BLUE',
+      'CLI_BOLD_LIGHT_RED',
+      'CLI_LIGHT_GREEN',
+      'CLI_BOLD_LIGHT_CYAN',
+      'CLI_BOLD_VIOLET'
+    ]
+  );
+  define('OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
+}
+
 /**
  * Class that handles the dump mechanism, on web and CLI side.
  *
@@ -14,22 +29,37 @@ use ReflectionClass, ReflectionException, ReflectionProperty;
 class DumpCli extends DumpMaster
 {
   /**
+   * @param int $depth
+   *
+   * @return string
+   */
+  private static function indentColors(int $depth) : string
+  {
+    $content = '';
+
+    for ($index = 0; $index < $depth; ++$index)
+    {
+      $content .= constant(OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT]) . self::OTRA_DUMP_INDENT_STRING;
+    }
+
+    return $content . END_COLOR;
+  }
+
+  /**
    * @param int|string $paramType
    * @param            $param
-   * @param bool       $notFirstDepth
    * @param int        $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpArray($paramType, $param, bool $notFirstDepth, int $depth) : void
+  private static function dumpArray($paramType, $param, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
     // If we have reach the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
-      echo PHP_EOL, str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), ADD_BOLD, '...',
-        REMOVE_BOLD_INTENSITY, PHP_EOL;
+      echo PHP_EOL, self::indentColors($depth), ADD_BOLD, '...', REMOVE_BOLD_INTENSITY, PHP_EOL;
 
       return;
     }
@@ -81,8 +111,7 @@ class DumpCli extends DumpMaster
     // If we have reach the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
-      echo str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), ADD_BOLD, '...',
-        REMOVE_BOLD_INTENSITY, PHP_EOL;
+      echo self::indentColors($depth), ADD_BOLD, '...', REMOVE_BOLD_INTENSITY, PHP_EOL;
 
       return;
     }
@@ -115,9 +144,8 @@ class DumpCli extends DumpMaster
       | $property->isProtected() << 1
       | $property->isPrivate() << 2;
 
-    echo str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), ' ';
-    echo ADD_BOLD . self::OTRA_DUMP_VISIBILITIES[$visibilityMask][self::OTRA_DUMP_KEY_VISIBILITY_SYMBOL]
-      . REMOVE_BOLD_INTENSITY;
+    echo self::indentColors($depth), ' ', ADD_BOLD .
+      self::OTRA_DUMP_VISIBILITIES[$visibilityMask][self::OTRA_DUMP_KEY_VISIBILITY_SYMBOL] . REMOVE_BOLD_INTENSITY;
 
     echo ($property->isStatic()
       ? ADD_UNDERLINE . $propertyName . REMOVE_UNDERLINE
@@ -167,7 +195,6 @@ class DumpCli extends DumpMaster
       case 'array' : self::dumpArray(
         $propertyType,
         $propertyValue,
-        ($depth !== -1),
         $depth
       );
         break;
@@ -203,7 +230,7 @@ class DumpCli extends DumpMaster
     $padding = '';
 
     if ($notFirstDepth)
-      $padding = str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1);
+      $padding = self::indentColors($depth);
 
     if ($isArray)
       echo $padding;
@@ -215,7 +242,7 @@ class DumpCli extends DumpMaster
     switch($paramType)
     {
       case 'array' :
-        self::dumpArray($paramType, $param, $notFirstDepth, $depth);
+        self::dumpArray($paramType, $param, $depth);
         break;
       case 'boolean' :
         echo $param ? ' true' : ' false', PHP_EOL;
