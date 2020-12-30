@@ -13,14 +13,6 @@ use ReflectionClass, ReflectionException, ReflectionProperty;
  */
 class DumpCli extends DumpMaster
 {
-  // Display constants
-//  private const
-//    OTRA_DUMP_TEXT_BLOCK = '<span class="otra-dump--value">',
-//    OTRA_DUMP_END_TEXT_BLOCK = '</span>',
-    //      OTRA_DUMP_CLI_TEXT_BLOCK = '',
-    //      OTRA_DUMP_CLI_END_TEXT_BLOCK = '',
-//    OTRA_DUMP_HELP_CLASS = 'otra-dump--help';
-
   /**
    * @param int|string $paramType
    * @param            $param
@@ -42,10 +34,7 @@ class DumpCli extends DumpMaster
       return;
     }
 
-    echo $description;
-
-    if (!$notFirstDepth)
-      echo PHP_EOL;
+    echo $description, PHP_EOL;
 
     $loopIndex = 0;
 
