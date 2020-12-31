@@ -5,8 +5,6 @@ use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
 {
-  define('OTRA_KEY_DEVELOPMENT_ENVIRONMENT', 'dev');
-  define('OTRA_KEY_PRODUCTION_ENVIRONMENT', 'prod');
   define('OTRA_KEY_FEATURE_POLICY', 'featurePolicy');
   define('OTRA_KEY_CONTENT_SECURITY_POLICY', 'csp');
   define('OTRA_KEY_SCRIPT_SRC_DIRECTIVE', 'script-src');
@@ -40,7 +38,7 @@ if (!function_exists('getRandomNonceForCSP'))
         OTRA_KEY_FEATURE_POLICY,
         $route,
         $routeSecurityFilePath,
-        MasterController::$featurePolicy
+        MasterController::$featurePolicy[$_SERVER[APP_ENV]]
       ));
   }
 
@@ -63,27 +61,18 @@ if (!function_exists('getRandomNonceForCSP'))
       // /!\ Additional configuration could have been added for the debug toolbar
       $tempSecurity = isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [];
 
-      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $route . '.php';
+      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . $route .
+        '.php';
       MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
 
-      // If we have a policy for the development environment, we use it
-      if (isset(MasterController::$routesSecurity[OTRA_KEY_DEVELOPMENT_ENVIRONMENT][$policy]))
-        $policyDirectives[OTRA_KEY_DEVELOPMENT_ENVIRONMENT] = array_merge(
-          $policyDirectives[OTRA_KEY_DEVELOPMENT_ENVIRONMENT],
-          MasterController::$routesSecurity[OTRA_KEY_DEVELOPMENT_ENVIRONMENT][$policy]
-        );
-
-      // If we have a policy for the production environment, we use it
-      if (isset(MasterController::$routesSecurity[OTRA_KEY_PRODUCTION_ENVIRONMENT][$policy]))
-        $policyDirectives[OTRA_KEY_PRODUCTION_ENVIRONMENT] = array_merge(
-          $policyDirectives[OTRA_KEY_PRODUCTION_ENVIRONMENT],
-          MasterController::$routesSecurity[OTRA_KEY_PRODUCTION_ENVIRONMENT][$policy]
-        );
+      // If we have a policy for this environment, we use it
+      if (isset(MasterController::$routesSecurity[$policy]))
+        $policyDirectives = array_merge($policyDirectives, MasterController::$routesSecurity[$policy]);
     }
 
     $finalPolicy = POLICIES[$policy];
 
-    foreach ($policyDirectives[$_SERVER[APP_ENV]] as $directive => &$value)
+    foreach ($policyDirectives as $directive => &$value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
       if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE)
@@ -110,7 +99,7 @@ if (!function_exists('getRandomNonceForCSP'))
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       $route,
       $routeSecurityFilePath,
-      MasterController::$contentSecurityPolicy
+      MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]
     );
 
     if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE]))
@@ -124,7 +113,7 @@ if (!function_exists('getRandomNonceForCSP'))
       if (!empty(MasterController::$nonces)) // but has nonces
       {
         // adding nonces to avoid error loop before throwing the exception
-        $policyDirectives[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
 
         // this 'if' also avoids a loop because there is no security rules for the exception page for now
         if ($route !== 'otra_exception')
