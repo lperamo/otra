@@ -120,7 +120,7 @@ while (false !== ($file = readdir($folderHandler)))
   $bundleConfigs = glob($bundleConfigDir . '*Config.php');
   $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
   $bundleSchemas = glob($bundleConfigDir . 'data/yml/*Schema.yml');
-  $bundleSecurities = glob($bundleConfigDir . '*security.php');
+  $bundleSecurities = glob($bundleConfigDir . 'security/*', GLOB_ONLYDIR);
 
   if (!empty($bundleConfigs))
     $configs = array_merge($configs, $bundleConfigs);
@@ -187,12 +187,33 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent);
 
 /** SECURITIES MANAGEMENT */
 $securitiesArray = [];
+define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
+define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
+define('OTRA_PHP_DOT_EXTENSION', '.php');
 
-foreach($securities as &$route)
-  $securitiesArray = array_merge($securitiesArray, require $route);
+foreach($securities as $securityFileConfigFolder)
+{
+  $securitiesArray[basename($securityFileConfigFolder)] = [
+    OTRA_DEVELOPMENT_ENVIRONMENT => require $securityFileConfigFolder . '/' . OTRA_DEVELOPMENT_ENVIRONMENT .
+      OTRA_PHP_DOT_EXTENSION,
+    OTRA_PRODUCTION_ENVIRONMENT => require $securityFileConfigFolder . '/' . OTRA_PRODUCTION_ENVIRONMENT .
+      OTRA_PHP_DOT_EXTENSION
+  ];
+}
 
-if (!file_exists(SECURITIES_FOLDER))
-  mkdir(SECURITIES_FOLDER);
+// we ensure that security folders are
+if (!defined('OTRA_SECURITY_DEV_FOLDER'))
+{
+  define('OTRA_SECURITY_DEV_FOLDER', SECURITIES_FOLDER . 'dev/');
+  define('OTRA_SECURITY_PROD_FOLDER', SECURITIES_FOLDER . 'prod/');
+  define('OTRA_BEGINNING_OF_CONFIG_FILE', '<?php declare(strict_types=1);return [');
+}
+
+if (!file_exists(OTRA_SECURITY_DEV_FOLDER))
+  mkdir(OTRA_SECURITY_DEV_FOLDER, 0777, true);
+
+if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
+  mkdir(OTRA_SECURITY_PROD_FOLDER, 0777, true);
 
 $securityContent = '<?php declare(strict_types=1);return ';
 
@@ -227,8 +248,14 @@ function arrayExport(array $configurationArray) : string
   return $content;
 }
 
-foreach($securitiesArray as $route => &$securityContent)
+foreach($securitiesArray as $route => $securityArray)
 {
-  $securityContent = '<?php declare(strict_types=1);return [' . arrayExport($securityContent) . '];';
-  writeConfigFile(SECURITIES_FOLDER . $route . '.php', $securityContent);
+  $fileName = $route . '.php';
+  // dev environment
+  $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['dev']) . '];';
+  writeConfigFile(OTRA_SECURITY_DEV_FOLDER .  $fileName, $securityContent);
+
+  // prod environment
+  $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['prod']) . '];';
+  writeConfigFile(OTRA_SECURITY_PROD_FOLDER .  $fileName, $securityContent);
 }
