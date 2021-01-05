@@ -23,7 +23,7 @@ if (!function_exists('getRandomNonceForCSP'))
    * @return string
    * @throws Exception
    */
-  function getRandomNonceForCSP(string $directive): string
+  function getRandomNonceForCSP(string $directive = 'script-src'): string
   {
     $nonce = bin2hex(random_bytes(32));
     MasterController::$nonces[$directive][] = $nonce;
@@ -145,8 +145,8 @@ if (!function_exists('getRandomNonceForCSP'))
           );
       }
 
-      header($policy . $directive . ' ' .
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ';');
+      $policy .= $directive . ' ' .
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ';';
 
       return;
     } else
@@ -157,5 +157,7 @@ if (!function_exists('getRandomNonceForCSP'))
     {
       $policy .= '\'nonce-' . $nonce . '\' ';
     }
+
+    $policy .= ';';
   }
 }

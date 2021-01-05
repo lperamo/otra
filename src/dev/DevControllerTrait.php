@@ -184,7 +184,7 @@ trait DevControllerTrait
     $resources = $route['resources'];
     $debLink = "\n" . ($assetType === 'js'
         ? '<script nonce="<<<TO_REPLACE>>>" src="'
-        : '<link rel="stylesheet" href="'
+        : '<link rel="stylesheet" nonce="<<<TO_REPLACE>>>" href="'
       );
 
     $endLink = ($assetType === 'js')
