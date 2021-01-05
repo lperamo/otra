@@ -85,9 +85,9 @@ copyAndShow(
 
 // Adds a security configuration file
 copyAndShow(
-  'security.php',
-  BUNDLE_FOLDER . '/config/security.php',
-  'Security configuration file '
+  'security',
+  BUNDLE_FOLDER . '/config/security/',
+  'Security configuration folder '
 );
 
 // We create a starter layout
