@@ -146,7 +146,8 @@ trait ProdControllerTrait
   private function addCss(string $routeV) : string
   {
     // If we have CSS files to load, then we load them
-    return self::$hasCssToLoad ? '<link rel="stylesheet" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
+    return self::$hasCssToLoad ? '<link rel="stylesheet" nonce="' . getRandomNonceForCSP('script-src') .
+      '" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
 //    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
 //      return '<style>' . $allCss . '</style>';
   }
@@ -160,7 +161,7 @@ trait ProdControllerTrait
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP('script-src') . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
     if (true === empty(self::$javaScript))
       return $content;

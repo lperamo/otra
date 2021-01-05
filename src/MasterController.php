@@ -17,7 +17,10 @@ class MasterController
   public ?string $routeSecurityFilePath = null;
 
   public static array
-    $nonces = [],
+    $nonces = [
+      'script-src' => [],
+      'style-src' => []
+    ],
     $contentSecurityPolicy = [
     'dev' =>
       [
@@ -182,7 +185,7 @@ class MasterController
       self::$hasCssToLoad] = array_values($baseParams);
 
     require CORE_PATH . 'services/securityService.php';
-    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . '/' . $this->route . '.php';
 
     if (!file_exists($this->routeSecurityFilePath))
       $this->routeSecurityFilePath = null;

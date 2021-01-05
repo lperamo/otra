@@ -141,6 +141,7 @@ if (!defined('OTRA_LABEL_SECURITY_NONE'))
 {
   define('OTRA_LABEL_SECURITY_NONE', "'none'");
   define('OTRA_LABEL_SECURITY_SELF', "'self'");
+  define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
 }
 
 if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))

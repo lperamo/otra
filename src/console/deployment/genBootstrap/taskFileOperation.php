@@ -561,7 +561,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
 
         // we must not change this inclusion from CORE_PATH . Router.php and from securities configuration !
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
-          || $tempFile === 'CACHE_PATH . \'php/security/\' . $route . \'.php\''
+          || $tempFile === 'CACHE_PATH . \'php/security/\' . \'' . $_SERVER[APP_ENV] . '\' . \'/\' . $route . \'.php\''
         )
           continue;
 
