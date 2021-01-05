@@ -1,28 +1,32 @@
 <?php
 declare(strict_types=1);
 
-use otra\MasterController;
+use otra\{MasterController, OtraException};
 
 if (!function_exists('getRandomNonceForCSP'))
 {
   define('OTRA_KEY_FEATURE_POLICY', 'featurePolicy');
   define('OTRA_KEY_CONTENT_SECURITY_POLICY', 'csp');
   define('OTRA_KEY_SCRIPT_SRC_DIRECTIVE', 'script-src');
+  define('OTRA_KEY_STYLE_SRC_DIRECTIVE', 'style-src');
   define('OTRA_LABEL_SECURITY_NONE', "'none'");
   define('OTRA_LABEL_SECURITY_SELF', "'self'");
+  define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
   define('POLICIES', [
     OTRA_KEY_FEATURE_POLICY => 'Feature-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ]);
 
   /**
+   * @param string $directive
+   *
    * @return string
    * @throws Exception
    */
-  function getRandomNonceForCSP(): string
+  function getRandomNonceForCSP(string $directive): string
   {
     $nonce = bin2hex(random_bytes(32));
-    MasterController::$nonces[] = $nonce;
+    MasterController::$nonces[$directive][] = $nonce;
 
     return $nonce;
   }
@@ -61,8 +65,8 @@ if (!function_exists('getRandomNonceForCSP'))
       // /!\ Additional configuration could have been added for the debug toolbar
       $tempSecurity = isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [];
 
-      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . $route .
-        '.php';
+      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . $route . '.php';
+
       MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
 
       // If we have a policy for this environment, we use it
@@ -75,7 +79,7 @@ if (!function_exists('getRandomNonceForCSP'))
     foreach ($policyDirectives as $directive => &$value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
-      if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE)
+      if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE || $directive === OTRA_KEY_STYLE_SRC_DIRECTIVE)
         continue;
 
       $finalPolicy .= $directive . ' ' . $value . '; ';
@@ -88,7 +92,7 @@ if (!function_exists('getRandomNonceForCSP'))
    * @param string      $route
    * @param string|null $routeSecurityFilePath
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
@@ -102,39 +106,56 @@ if (!function_exists('getRandomNonceForCSP'))
       MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]
     );
 
-    if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE]))
+    handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $route);
+    handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $route);
+    header($policy);
+  }
+
+  /**
+   * Handles strict dynamic mode for CSP
+   *
+   * @param string $directive
+   * @param string $policy
+   * @param string $route
+   *
+   * @throws OtraException
+   */
+  function handleStrictDynamic(string $directive, string &$policy, string $route) : void
+  {
+    if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive]))
     {
-      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' \'strict-dynamic\' ';
+      $policy .= $directive . ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' ';
     } elseif (strpos(
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE],
-        '\'strict-dynamic\''
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive],
+        OTRA_LABEL_SECURITY_STRICT_DYNAMIC
       ) === false) // if a value is set for 'script-src' but no 'strict-dynamic' mode
     {
-      if (!empty(MasterController::$nonces)) // but has nonces
+      if (!empty(MasterController::$nonces[$directive])) // but has nonces
       {
         // adding nonces to avoid error loop before throwing the exception
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] = "'self' 'strict-dynamic'";
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] = OTRA_LABEL_SECURITY_SELF .
+          ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC;
 
         // this 'if' also avoids a loop because there is no security rules for the exception page for now
         if ($route !== 'otra_exception')
-          throw new \otra\OtraException(
-            'Content Security Policy error : you must have the mode \'strict-dynamic\' in the \'script-src\' directive for the route \'' .
-            $route . '\' if you use nonces!');
+          throw new OtraException(
+            'Content Security Policy error : you must have the mode ' .
+            OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' . $directive . '\' directive for the route \'' .
+            $route . '\' if you use nonces!'
+          );
       }
 
-      header($policy . OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ';');
+      header($policy . $directive . ' ' .
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ';');
 
       return;
     } else
-      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' .
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ' ';
+      $policy .= $directive . ' ' .
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ' ';
 
-    foreach (MasterController::$nonces as &$nonce)
+    foreach (MasterController::$nonces[$directive] as &$nonce)
     {
       $policy .= '\'nonce-' . $nonce . '\' ';
     }
-
-    header($policy);
   }
 }

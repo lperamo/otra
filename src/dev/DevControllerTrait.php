@@ -210,8 +210,9 @@ trait DevControllerTrait
         // We add a link to the CSS/JS array for each file we found
         foreach($resources[$resourceType] as $key => &$file)
         {
-          if ($assetType === 'js')
-            $resourceTypeInfoActual = str_replace('<<<TO_REPLACE>>>', getRandomNonceForCSP(), $resourceTypeInfo);
+          $resourceTypeInfoActual = str_replace('<<<TO_REPLACE>>>',
+            getRandomNonceForCSP($assetType === 'css' ? 'style-src' : 'script-src'),
+            $resourceTypeInfo);
 
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
