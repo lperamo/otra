@@ -114,7 +114,12 @@ if (
 
   $cptRoutes = count($routes);
 
-  echo $cptRoutes, ' route(s) to process. Processing the route(s) ... ', PHP_EOL, PHP_EOL;
+  $routePlural = '';
+
+  if ($cptRoutes > 1)
+    $routePlural = 's';
+
+  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL, PHP_EOL;
 
   for ($i = 0; $i < $cptRoutes; ++$i)
   {
