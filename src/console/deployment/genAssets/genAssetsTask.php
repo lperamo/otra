@@ -113,13 +113,13 @@ if (
   /*************** PROCESSING THE ROUTES ************/
 
   $cptRoutes = count($routes);
-
   $routePlural = '';
 
   if ($cptRoutes > 1)
     $routePlural = 's';
 
-  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL, PHP_EOL;
+  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL,
+    PHP_EOL;
 
   for ($i = 0; $i < $cptRoutes; ++$i)
   {
@@ -214,7 +214,7 @@ if (
     if (GEN_ASSETS_TEMPLATE)
     {
       if (false === isset($resources['template']))
-        echo status('No TEMPLATE', OTRA_CLI_CYAN_STRING);
+        echo status('NO TEMPLATE', OTRA_CLI_CYAN_STRING);
       else
       {
         // Generates the gzipped template files
