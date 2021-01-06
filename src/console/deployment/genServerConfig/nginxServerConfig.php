@@ -251,30 +251,42 @@ $content = handlesHTTPSRedirection() .
 
   (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev'
   ? PHP_EOL .
-  SPACE_INDENT . '# Handling CSS and JS (project and vendor)' . PHP_EOL .
-  SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
-  SPACE_INDENT . '{' . PHP_EOL .
-  checkHttpReferer() . PHP_EOL .
-  SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-  SPACE_INDENT . '}' . PHP_EOL .
-  PHP_EOL .
-  SPACE_INDENT . '# Handling CSS and JS source maps (project and vendor)' . PHP_EOL .
-  SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
-  SPACE_INDENT . '{' . PHP_EOL .
-  SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
-  SPACE_INDENT_2 . '{' . PHP_EOL .
-  SPACE_INDENT_3 . 'application/json map;' . PHP_EOL .
-  SPACE_INDENT_2 . '}' . PHP_EOL .
-  PHP_EOL .
-  SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-  SPACE_INDENT . '}' . PHP_EOL
+    SPACE_INDENT . '# Handling CSS and JS (project and vendor)' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
+    SPACE_INDENT . '{' . PHP_EOL .
+    checkHttpReferer() . PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
+    SPACE_INDENT . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT . '# Handling CSS and JS source maps (project and vendor)' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
+    SPACE_INDENT . '{' . PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'application/json map;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
+    SPACE_INDENT . '}' . PHP_EOL
   : PHP_EOL .
-  handleGzippedAsset('css') .
-  PHP_EOL .
-  handleGzippedAsset('js') .
-  PHP_EOL .
-  handleGzippedAsset('tpl')) .
-
+    handleGzippedAsset('css') .
+    PHP_EOL .
+    SPACE_INDENT . '# For local testing purpose only' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /vendor/.*\.css$' . PHP_EOL .
+    SPACE_INDENT . '{' . PHP_EOL .
+    SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL .
+    SPACE_INDENT_2 . '{' . PHP_EOL .
+    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
+    SPACE_INDENT_2 . '}' . PHP_EOL .
+    PHP_EOL .
+    SPACE_INDENT_2 . 'gzip_types text/css;' . PHP_EOL .
+    SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
+    SPACE_INDENT . '}' . PHP_EOL .
+    PHP_EOL .
+    handleGzippedAsset('js') .
+    PHP_EOL .
+    handleGzippedAsset('tpl')
+  ) .
   PHP_EOL .
   handleWebFolderAssets() .
   PHP_EOL .
