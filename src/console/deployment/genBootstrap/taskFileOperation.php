@@ -559,9 +559,13 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
         if ($posDir !== false)
           $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
 
-        // we must not change this inclusion from CORE_PATH . Router.php and from securities configuration !
+        // we must not change these inclusions from
+        // - CORE_PATH . Router.php
+        // - securities configuration
+        // - dump tool
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
           || $tempFile === 'CACHE_PATH . \'php/security/\' . \'' . $_SERVER[APP_ENV] . '\' . \'/\' . $route . \'.php\''
+          || $tempFile === 'CORE_PATH . \'tools/debug/\' . OTRA_DUMP_FINAL_CLASS . \'.php\''
         )
           continue;
 
