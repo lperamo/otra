@@ -15,8 +15,12 @@ function getSourceFromFile(string $sourceFile, int $sourceLine, int $padding = 0
   $sourceContent = '';
   $maxLine = $sourceLine + $range;
   $padding = str_repeat(' ', $padding);
+  $minLine = $sourceLine - $range;
 
-  for ($index = $sourceLine - $range;$index < $maxLine; ++$index)
+  if ($minLine < 1)
+    $minLine = 1;
+
+  for ($index = $minLine;$index < $maxLine && $fileHandler->valid(); ++$index)
   {
     $fileHandler->seek($index - 1);
     $sourceContent .= $padding . '<i>';
