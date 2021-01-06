@@ -5,10 +5,7 @@ echo 'Initializing the project...', PHP_EOL;
 
 // ********** CONFIGURATION FILES **********
 echo 'Copying configuration files...';
-
-$configFolder = BASE_PATH . 'config/';
-$devConfigFolder = $configFolder . 'dev/';
-$prodConfigFolder = $configFolder . 'prod/';
+define('OTRA_CONFIG_FOLDER', BASE_PATH . 'config/');
 
 require CORE_PATH . 'tools/copyFilesAndFolders.php';
 
@@ -19,19 +16,19 @@ copyFileAndFolders(
     CORE_PATH . 'init/tslint.json.dist'
   ],
   [
-    $configFolder,
+    OTRA_CONFIG_FOLDER,
     BASE_PATH . 'tsconfig.json.dist',
     BASE_PATH . 'tslint.json.dist'
   ]
 );
 
 $distFiles = [
-  $configFolder . 'dev/AllConfig.php.dist',
-  $configFolder . 'prod/AllConfig.php.dist',
-  $configFolder . 'AdditionalClassFiles.php.dist',
-  $configFolder . 'AllConfig.php.dist',
-  $configFolder . '.htaccess.dist',
-  $configFolder . 'Routes.php.dist',
+  OTRA_CONFIG_FOLDER . 'dev/AllConfig.php.dist',
+  OTRA_CONFIG_FOLDER . 'prod/AllConfig.php.dist',
+  OTRA_CONFIG_FOLDER . 'AdditionalClassFiles.php.dist',
+  OTRA_CONFIG_FOLDER . 'AllConfig.php.dist',
+  OTRA_CONFIG_FOLDER . '.htaccess.dist',
+  OTRA_CONFIG_FOLDER . 'Routes.php.dist',
   BASE_PATH . 'tsconfig.json.dist',
   BASE_PATH . 'tslint.json.dist'
 ];
@@ -46,12 +43,12 @@ foreach ($distFiles as $distFile)
 }
 
 // We need a routes configuration file even empty.
-$bundleConfigPath = BASE_PATH . 'bundles/config/';
+define('OTRA_BUNDLES_CONFIG_PATH', BASE_PATH . 'bundles/config/');
 
-if (file_exists($bundleConfigPath) === false)
-  mkdir($bundleConfigPath, 0777, true);
+if (file_exists(OTRA_BUNDLES_CONFIG_PATH) === false)
+  mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
 
-file_put_contents($bundleConfigPath . 'Routes.php', '<?php return [];');
+file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php', '<?php return [];');
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 
@@ -82,28 +79,28 @@ echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 // ********** LOGS FOLDER FILES **********
 echo 'Adding the base architecture for the logs...';
 
-$logsPath = BASE_PATH . 'logs/';
-$logsDevPath = $logsPath . 'dev/';
-$logsProdPath = $logsPath . 'prod/';
+define('OTRA_LOGS_PATH', BASE_PATH . 'logs/');
+define('OTRA_LOGS_DEV_PATH', OTRA_LOGS_PATH . 'dev/');
+define('OTRA_LOGS_PROD_PATH', OTRA_LOGS_PATH . 'prod/');
 
-if (false === file_exists($logsDevPath))
-  mkdir($logsDevPath, 0777, true);
+if (false === file_exists(OTRA_LOGS_DEV_PATH))
+  mkdir(OTRA_LOGS_DEV_PATH, 0777, true);
 
-if (false === file_exists($logsProdPath))
-  mkdir($logsProdPath);
+if (false === file_exists(OTRA_LOGS_PROD_PATH))
+  mkdir(OTRA_LOGS_PROD_PATH);
 
-$sqlLogPath = $logsDevPath . 'sql.txt';
+define('OTRA_SQL_LOG_PATH', OTRA_LOGS_DEV_PATH . 'sql.txt');
 
-if (false === file_exists($sqlLogPath))
-  touch($sqlLogPath);
-
-$traceLogPath = $logsDevPath . 'trace.txt';
-
-if (false === file_exists($traceLogPath))
-  touch($traceLogPath);
+if (false === file_exists(OTRA_SQL_LOG_PATH))
+  touch(OTRA_SQL_LOG_PATH);
 
 // Force the rights mode in order to be sure to be able to overwrite the file.
-chmod($sqlLogPath, 0666);
+chmod(OTRA_SQL_LOG_PATH, 0666);
+
+define('OTRA_TRACE_LOG_PATH', OTRA_LOGS_DEV_PATH . 'trace.txt');
+
+if (false === file_exists(OTRA_TRACE_LOG_PATH))
+  touch(OTRA_TRACE_LOG_PATH);
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
