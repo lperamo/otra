@@ -79,28 +79,34 @@ echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 // ********** LOGS FOLDER FILES **********
 echo 'Adding the base architecture for the logs...';
 
+// Creating log folders
 define('OTRA_LOGS_PATH', BASE_PATH . 'logs/');
 define('OTRA_LOGS_DEV_PATH', OTRA_LOGS_PATH . 'dev/');
 define('OTRA_LOGS_PROD_PATH', OTRA_LOGS_PATH . 'prod/');
 
-if (false === file_exists(OTRA_LOGS_DEV_PATH))
+if (!file_exists(OTRA_LOGS_DEV_PATH))
   mkdir(OTRA_LOGS_DEV_PATH, 0777, true);
 
-if (false === file_exists(OTRA_LOGS_PROD_PATH))
+if (!file_exists(OTRA_LOGS_PROD_PATH))
   mkdir(OTRA_LOGS_PROD_PATH);
 
-define('OTRA_SQL_LOG_PATH', OTRA_LOGS_DEV_PATH . 'sql.txt');
+// Creating log files
+define('OTRA_LOG_FILES_PATH', [
+  OTRA_LOGS_DEV_PATH . 'sql.txt',
+  OTRA_LOGS_DEV_PATH . 'trace.txt',
+  OTRA_LOGS_PROD_PATH . 'classNotFound.txt',
+  OTRA_LOGS_PROD_PATH . 'unknownExceptions.txt',
+  OTRA_LOGS_PROD_PATH . 'unknownFatalErrors.txt'
+]);
 
-if (false === file_exists(OTRA_SQL_LOG_PATH))
-  touch(OTRA_SQL_LOG_PATH);
+foreach (OTRA_LOG_FILES_PATH as $logFile)
+{
+  if (!file_exists($logFile))
+    touch($logFile);
 
-// Force the rights mode in order to be sure to be able to overwrite the file.
-chmod(OTRA_SQL_LOG_PATH, 0666);
-
-define('OTRA_TRACE_LOG_PATH', OTRA_LOGS_DEV_PATH . 'trace.txt');
-
-if (false === file_exists(OTRA_TRACE_LOG_PATH))
-  touch(OTRA_TRACE_LOG_PATH);
+  // Force the rights mode in order to be sure to be able to overwrite the file.
+  chmod($logFile, 0666);
+}
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
