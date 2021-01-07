@@ -24,7 +24,7 @@ function getSourceFromFile(string $sourceFile, int $sourceLine, int $padding = 0
   {
     $fileHandler->seek($index - 1);
     $sourceContent .= $padding . '<i>';
-    $sourceContentMiddle = $index . ' ' . '</i>' . $fileHandler->current();
+    $sourceContentMiddle = $index . ' ' . '</i>' . htmlentities($fileHandler->current());
 
     $sourceContent .= ($index === $sourceLine)
       ? '<b>' . $sourceContentMiddle . '</b>'

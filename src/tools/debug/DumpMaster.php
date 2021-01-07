@@ -4,11 +4,11 @@ namespace otra;
 use config\AllConfig;
 
 /**
- * Trait dumpTrait
+ * Class that provides things for both web and CLI sides of the dump function.
  *
  * @package otra
  */
-class DumpMaster {
+abstract class DumpMaster {
   protected const
     // 'How much' constants
     OTRA_DUMP_ARRAY = [128, 512, 3],
