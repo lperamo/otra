@@ -152,6 +152,10 @@ foreach($classes as $key => &$class)
 
     if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
       $prodClasses[$key] = $class;
+    // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
+    // dynamically loaded
+    elseif (mb_strpos($tmpClass, 'DumpMaster') !== false)
+      $prodClasses[$key] = $class;
   } else
     $prodClasses[$key]= $class;
 }
