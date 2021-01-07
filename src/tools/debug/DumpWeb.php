@@ -15,7 +15,7 @@ abstract class DumpWeb extends DumpMaster {
   private const
     OTRA_DUMP_TEXT_BLOCK = '<span class="otra-dump--value">',
     OTRA_DUMP_END_TEXT_BLOCK = '</span>',
-œ    OTRA_DUMP_HELP_CLASS = 'otra-dump--help';
+    OTRA_DUMP_HELP_CLASS = 'otra-dump--help';
 
   /**
    * Begins a foldable div
