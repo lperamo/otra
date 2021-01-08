@@ -233,7 +233,17 @@ class MasterController
   protected static function getCachedFile(string $cachedFile, bool $exists = false)
   {
     if ((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
-      return file_get_contents ($cachedFile);
+      return preg_replace(
+        [
+          '@(<script.*?nonce=")\w{64}@',
+          '@(<link.*?nonce=")\w{64}@',
+        ],
+        [
+          '${1}' . getRandomNonceForCSP(),
+          '${1}' . getRandomNonceForCSP('style-src')
+        ],
+        file_get_contents($cachedFile)
+      );
 
     return false;
   }
