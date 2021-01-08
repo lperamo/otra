@@ -137,16 +137,19 @@ trait ProdControllerTrait
     return $content;
   }
 
-  /** Returns the pre-generated css and the additional concatenated css
+  /**
+   * Returns the pre-generated css and the additional concatenated css
    *
    * @param string $routeV Route name plus the version
    *
    * @return string The links to the css files or the style markup with the css inside
+   *
+   * @throws \Exception
    */
   private function addCss(string $routeV) : string
   {
     // If we have CSS files to load, then we load them
-    return self::$hasCssToLoad ? '<link rel="stylesheet" nonce="' . getRandomNonceForCSP('script-src') .
+    return self::$hasCssToLoad ? '<link rel="stylesheet" nonce="' . getRandomNonceForCSP('style-src') .
       '" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
 //    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
 //      return '<style>' . $allCss . '</style>';
