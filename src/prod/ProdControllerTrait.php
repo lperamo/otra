@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace otra;
 
 use config\AllConfig;
+use Exception;
 
 /**
  * @package otra
@@ -97,8 +98,9 @@ trait ProdControllerTrait
    * @param string|null $cachedFile       The cache file name version of the file
    * @param bool        $layout           If we add a layout stored previously or not
    *
-   * @return string
    * @throws OtraException
+   * @throws Exception
+   * @return string
    */
   private function buildCachedFile(
     string $templateFilename, array $variables, ?string $cachedFile = null, bool $layout = true) : string
@@ -144,7 +146,7 @@ trait ProdControllerTrait
    *
    * @return string The links to the css files or the style markup with the css inside
    *
-   * @throws \Exception
+   * @throws Exception
    */
   private function addCss(string $routeV) : string
   {
