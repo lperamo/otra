@@ -77,8 +77,8 @@ class CreateHelloWorldTest extends TestCase
       'Action filled.' . OTRA_SUCCESS .
       'Route configuration file ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .'bundles/HelloWorld/config/Routes.php' .
         END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
-      'Security configuration file ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .
-        'bundles/HelloWorld/config/security.php' . END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
+      'Security configuration folder ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .
+        'bundles/HelloWorld/config/security/' . END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
       'Starter layout ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN . 'bundles/HelloWorld/views/layout.phtml' .
         END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
       'Starter template ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .
@@ -88,7 +88,9 @@ class CreateHelloWorldTest extends TestCase
         CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
       CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'bundles/config/Routes.php' . CLI_GREEN . ' updated.' . END_COLOR .
         PHP_EOL .
-      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'cache/php/security/HelloWorld.php' . CLI_GREEN . ' updated.' . END_COLOR .
+      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'cache/php/security/dev/HelloWorld.php' . CLI_GREEN . ' updated.' . END_COLOR .
+      PHP_EOL .
+      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'cache/php/security/prod/HelloWorld.php' . CLI_GREEN . ' updated.' . END_COLOR .
       PHP_EOL .
       CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL .
       PHP_EOL .
