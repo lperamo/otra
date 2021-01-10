@@ -51,10 +51,9 @@ namespace otra\console
 
     /** Initializes paths, commands and connections
      *
-     * @param string $dbConnKey Database connection key from the general configuration
+     * @param string|null $dbConnKey Database connection key from the general configuration
      *
      * @throws OtraException If there are no database or database engine configured.
-     *
      * @return bool | void
      */
     public static function init(string $dbConnKey = null)
@@ -161,7 +160,7 @@ namespace otra\console
       {
         $content = '';
 
-        foreach ($schemas as &$schema)
+        foreach ($schemas as $schema)
         {
           $content .= file_get_contents($schema);
         }
@@ -398,7 +397,7 @@ namespace otra\console
        */
       if (true === isset($tableData['relations']))
       {
-        foreach (array_keys($tableData['relations']) as &$relation)
+        foreach (array_keys($tableData['relations']) as $relation)
         {
           try
           {
@@ -409,7 +408,7 @@ namespace otra\console
             exit(1);
           }
 
-          foreach ($data as $otherTable => &$otherTableData)
+          foreach ($data as $otherTable => $otherTableData)
           {
             $fixturesMemory[$otherTable] = $otherTableData;
           }
@@ -658,8 +657,8 @@ namespace otra\console
     }
 
     /**
-     * @param string $file
-     * @param string $databaseName Where to execute the SQL file ?
+     * @param string      $file
+     * @param string|null $databaseName Where to execute the SQL file ?
      *
      * @throws OtraException if the file to execute doesn't exist
      */
@@ -811,7 +810,7 @@ namespace otra\console
           if ('columns' === $property)
           {
             // For each column
-            foreach ($attributes as $attribute => &$informations)
+            foreach ($attributes as $attribute => $informations)
             {
               self::$attributeInfos = $informations;
 
@@ -862,7 +861,7 @@ namespace otra\console
         {
           $primaries = '`';
 
-          foreach ($primaryKeys as &$primaryKey)
+          foreach ($primaryKeys as $primaryKey)
           {
             $primaries .= $primaryKey . '`, `';
           }
@@ -879,7 +878,7 @@ namespace otra\console
 
         if ($hasRelations = isset($properties['relations']))
         {
-          foreach ($properties['relations'] as $key => &$relation)
+          foreach ($properties['relations'] as $key => $relation)
           {
             if (false === isset($relation['local']))
               throw new OtraException('You don\'t have specified a local key for the constraint concerning table ' . $key, E_CORE_ERROR);
@@ -1035,11 +1034,10 @@ namespace otra\console
     /**
      * Ensures that the configuration to use and the database name are correct. Ensures also that the specified database exists.
      *
-     * @param string $database  (optional)
-     * @param string $confToUse (optional)
+     * @param string|null $database  (optional)
+     * @param string|null $confToUse (optional)
      *
      * @throws OtraException If the database doesn't exist.
-     *
      * @return mixed Returns a SQL instance.
      */
     private static function _initImports(?string &$database, ?string &$confToUse)
@@ -1066,8 +1064,8 @@ namespace otra\console
     /**
      * Creates the database schema from a database.
      *
-     * @param string $database  (optional)
-     * @param string $confToUse (optional)
+     * @param string|null $database  (optional)
+     * @param string|null $confToUse (optional)
      *
      * @throws OtraException If we cannot create the folder that will contain the schema
      */
@@ -1080,17 +1078,17 @@ namespace otra\console
       $content = '';
       $tables = $db->valuesOneCol($db->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\''));
 
-      foreach ($tables as $key => &$table)
+      foreach ($tables as $key => $table)
       {
         $content .= $table . ':' . PHP_EOL;
-        $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
+        $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\' ORDER BY ORDINAL_POSITION'));
 
         // If there are columns ...
         if (0 < count($cols))
           $content .= '  columns:' . PHP_EOL;
 
         // For each column in this table, we set the different properties
-        foreach ($cols as $colKey => &$col)
+        foreach ($cols as $colKey => $col)
         {
           $content .= '    ' . $col['COLUMN_NAME'] . ':' . PHP_EOL;
           $content .= '      type: ' . $col['COLUMN_TYPE'] . PHP_EOL;
@@ -1117,7 +1115,7 @@ namespace otra\console
           $content .= '  relations:' . PHP_EOL;
 
           // For each constraint of this table
-          foreach ($constraints as $constraintKey => &$constraint)
+          foreach ($constraints as $constraintKey => $constraint)
           {
             if (false === isset($constraint['REFERENCED_TABLE_NAME']))
               echo 'There is no REFERENCED_TABLE_NAME on ' . (isset($constraint['CONSTRAINT_NAME']) ? $constraint['CONSTRAINT_NAME'] : '/NO CONSTRAINT NAME/') . '.' . PHP_EOL;
@@ -1158,8 +1156,8 @@ namespace otra\console
     /**
      * Creates the database fixtures from a database.
      *
-     * @param string $database  (optional)
-     * @param string $confToUse (optional)
+     * @param string|null $database  (optional)
+     * @param string|null $confToUse (optional)
      *
      * @throws OtraException
      */
@@ -1199,7 +1197,7 @@ namespace otra\console
 
       $foreignKeysMemory = [];
 
-      foreach ($tablesOrder as &$table)
+      foreach ($tablesOrder as $table)
       {
         $content = $table . ':' . PHP_EOL;
         $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\''));
@@ -1209,7 +1207,7 @@ namespace otra\console
         {
           $sql = 'SELECT ';
 
-          foreach ($cols as &$col)
+          foreach ($cols as $col)
           {
             $sql .= '`' . $col['COLUMN_NAME'] . '`, ';
           }
@@ -1230,12 +1228,12 @@ namespace otra\console
 
             $foreignConstraintsCount = count($constraints);
 
-            foreach ($rows as $keyRow => &$row)
+            foreach ($rows as $keyRow => $row)
             {
               $fixtureId = $table . '_' . $keyRow;
               $content .= '  ' . $fixtureId . ':' . PHP_EOL;
 
-              foreach ($row as $keyCol => &$colOfRow)
+              foreach ($row as $keyCol => $colOfRow)
               {
                 $content .= '    ';
                 // We check if the column has a foreign key assigned or not
