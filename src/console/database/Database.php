@@ -1081,7 +1081,12 @@ namespace otra\console
       foreach ($tables as $key => $table)
       {
         $content .= $table . ':' . PHP_EOL;
-        $cols = $db->values($db->query('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\' ORDER BY ORDINAL_POSITION'));
+        $cols = $db->values($db->query('
+          SELECT `COLUMN_NAME`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
+            `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
+          FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table .
+            '\' ORDER BY ORDINAL_POSITION')
+        );
 
         // If there are columns ...
         if (0 < count($cols))
@@ -1091,7 +1096,15 @@ namespace otra\console
         foreach ($cols as $colKey => $col)
         {
           $content .= '    ' . $col['COLUMN_NAME'] . ':' . PHP_EOL;
-          $content .= '      type: ' . $col['COLUMN_TYPE'] . PHP_EOL;
+          $content .= '      type: ' . $col['DATA_TYPE'];
+
+          if (isset($col['CHARACTER_MAXIMUM_LENGTH']))
+            $content .= '(' . $col['CHARACTER_MAXIMUM_LENGTH'] . ')';
+
+          if ($col['IS_UNSIGNED'] === 'YES')
+            $content .= ' unsigned';
+
+          $content .= PHP_EOL;
 
           if ('NO' === $col['IS_NULLABLE'])
             $content .= '      notnull: true' . PHP_EOL;
