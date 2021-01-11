@@ -279,16 +279,14 @@ namespace otra\console
      * @param array $tablesWithRelations Remaining tables to sort
      * @param array $sortedTables        Final sorted tables array
      * @param int   $oldCountArrayToSort
-     *
-     * @return bool
      */
     private static function _sortTableByForeignKeys(
       array $tablesWithRelations,
       array &$sortedTables,
-      int $oldCountArrayToSort = 0)
+      int $oldCountArrayToSort = 0) : void
     {
       if (empty($tablesWithRelations))
-        return true;
+        return;
 
       $nextArrayToSort = $tablesWithRelations;
 
@@ -322,7 +320,7 @@ namespace otra\console
       {
         $sortedTables[] = $tableName;
 
-        return true;
+        return;
       }
 
       // If it remains some tables to sort we re-launch the function
