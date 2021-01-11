@@ -85,27 +85,13 @@ class DumpCli extends DumpMaster
 
   /**
    * @param      $param
-   * @param bool $notFirstDepth
    * @param int  $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
+  private static function dumpObject($param, int $depth) : void
   {
-    $className = get_class($param);
-    $reflectedClass = new ReflectionClass($className);
-    $classInterfaces = $reflectedClass->getInterfaceNames();
-    $parentClass = $reflectedClass->getParentClass();
-    $description = 'object (' . count((array) $param) . ') ' .
-      ($reflectedClass->isAbstract() ? 'abstract ': '') .
-      ($reflectedClass->isFinal() ? 'final ': '') . $className;
-
-    if ($parentClass !== false)
-      $description .= ' extends ' . $parentClass->getName();
-
-    if (!empty($classInterfaces))
-      $description .= ' implements ' . implode(',', $classInterfaces);
-
+    list($className, $description) = parent::getClassDescription($param);
     echo $description, PHP_EOL;
 
     // If we have reach the depth limit, we exit this function
@@ -202,7 +188,6 @@ class DumpCli extends DumpMaster
       case 'object' :
         self::dumpObject(
           $param,
-          ($depth !== -1),
           $depth
         );
         break;
@@ -253,7 +238,7 @@ class DumpCli extends DumpMaster
         break;
       case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
       case 'object' :
-        self::dumpObject($param, $notFirstDepth, $depth);
+        self::dumpObject($param, $depth);
         break;
 
       case 'string' :

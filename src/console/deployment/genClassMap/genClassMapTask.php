@@ -150,11 +150,11 @@ foreach($classes as $key => &$class)
     $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
-    if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
-      $prodClasses[$key] = $class;
-    // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
-    // dynamically loaded
-    elseif (mb_strpos($tmpClass, 'DumpMaster') !== false)
+    if (
+      (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
+      // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
+      // dynamically loaded
+      || (mb_strpos($tmpClass, 'DumpMaster') !== false))
       $prodClasses[$key] = $class;
   } else
     $prodClasses[$key]= $class;

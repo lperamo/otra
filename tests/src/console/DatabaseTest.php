@@ -9,6 +9,14 @@ use otra\{OtraException, console\Database, bdd\Sql, Session};
 use ReflectionException;
 
 define('INIT_IMPORTS_FUNCTION', '_initImports');
+define('OTRA_LABEL_FIXTURES_FOLDER', 'fixtures/');
+define('OTRA_VARIABLE_DATABASE_BASE_DIRS', 'baseDirs');
+define('OTRA_VARIABLE_DATABASE_PATH_SQL', 'pathSql');
+define('OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES', 'pathSqlFixtures');
+define('OTRA_VARIABLE_DATABASE_PATH_YML', 'pathYml');
+define('OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES', 'pathYmlFixtures');
+define('OTRA_VARIABLE_DATABASE_SCHEMA_FILE', 'schemaFile');
+define('OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE', 'tablesOrderFile');
 
 /**
  * @runTestsInSeparateProcesses
@@ -27,12 +35,12 @@ class DatabaseTest extends TestCase
     TABLES_ORDER_FILE = 'tables_order.yml',
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
-    CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . 'fixtures/',
-    CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . 'fixtures/',
+    CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . OTRA_LABEL_FIXTURES_FOLDER,
+    CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
-    CONFIG_FOLDER_YML_FIXTURES = self::CONFIG_FOLDER_YML . 'fixtures/',
+    CONFIG_FOLDER_YML_FIXTURES = self::CONFIG_FOLDER_YML . OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/',
-    CONFIG_FOLDER_YML_FIXTURES_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . 'fixtures/',
+    CONFIG_FOLDER_YML_FIXTURES_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . OTRA_LABEL_FIXTURES_FOLDER,
     SCHEMA_FILE_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
     IMPORTED_SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . 'importedSchema.yml',
@@ -116,37 +124,37 @@ class DatabaseTest extends TestCase
     // We test each private static variable that has been set by Database::initBase()
     self::assertEquals(
       Database::getDirs(),
-      removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_BASE_DIRS)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/yml/',
-      removeFieldScopeProtection(Database::class, 'pathYml')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_BASE_DIRS)->getValue()[0] . 'config/data/yml/',
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_YML)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . 'fixtures/',
-      removeFieldScopeProtection(Database::class, 'pathYmlFixtures')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_YML)->getValue() . OTRA_LABEL_FIXTURES_FOLDER,
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'baseDirs')->getValue()[0] . 'config/data/sql/',
-      removeFieldScopeProtection(Database::class, 'pathSql')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_BASE_DIRS)->getValue()[0] . 'config/data/sql/',
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'pathSql')->getValue() . 'fixtures/',
-      removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue() . OTRA_LABEL_FIXTURES_FOLDER,
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::SCHEMA_FILE,
-      removeFieldScopeProtection(Database::class, 'schemaFile')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_YML)->getValue() . self::SCHEMA_FILE,
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->getValue()
     );
 
     self::assertEquals(
-      removeFieldScopeProtection(Database::class, 'pathYml')->getValue() . self::TABLES_ORDER_FILE,
-      removeFieldScopeProtection(Database::class, 'tablesOrderFile')->getValue()
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_YML)->getValue() . self::TABLES_ORDER_FILE,
+      removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->getValue()
     );
   }
 
@@ -198,7 +206,7 @@ class DatabaseTest extends TestCase
     );
 
     Database::clean();
-    $sqlPath = removeFieldScopeProtection(Database::class, 'pathSql')->getValue();
+    $sqlPath = removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
     self::assertEquals([], glob($sqlPath . '/*.sql'));
     self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
   }
@@ -224,9 +232,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -306,9 +314,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -318,9 +326,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'pathSqlFixtures' => self::CONFIG_FOLDER_SQL_FIXTURES,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
@@ -395,9 +403,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -413,11 +421,11 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
-        'pathSqlFixtures' => self::CONFIG_FOLDER_SQL_FIXTURES,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
@@ -451,9 +459,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
@@ -497,9 +505,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -508,11 +516,11 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
-        'pathSqlFixtures' => self::CONFIG_FOLDER_SQL_FIXTURES,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
@@ -528,7 +536,7 @@ class DatabaseTest extends TestCase
    */
   public function testExecuteFile_DoesNotExist() : void
   {
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::SCHEMA_ABSOLUTE_PATH);
+    removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->setValue(self::SCHEMA_ABSOLUTE_PATH);
 
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('The file "blabla" does not exist !');
@@ -560,9 +568,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -616,14 +624,14 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
       ]
     );
     Database::createDatabase(self::DATABASE_NAME);
 
-    removeFieldScopeProtection(Database::class, 'pathSqlFixtures')->setValue(self::CONFIG_FOLDER_SQL_FIXTURES);
+    removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->setValue(self::CONFIG_FOLDER_SQL_FIXTURES);
 
     // launching task
 //    Database::createFixture(
@@ -663,9 +671,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -692,8 +700,8 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
       ]
     );
 
@@ -726,9 +734,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -759,9 +767,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
       ]
     );
 
@@ -816,9 +824,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
       ]
     );
 
@@ -879,9 +887,9 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
@@ -942,16 +950,16 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
       ]
     );
 
     Database::createDatabase(self::DATABASE_NAME);
 
     // we change the path to the schema.yml in order to not overwrite the existing one by precaution
-    removeFieldScopeProtection(Database::class, 'schemaFile')->setValue(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
+    removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->setValue(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
 
     // launching task
     Database::importSchema(self::DATABASE_NAME, self::DATABASE_CONNECTION);
@@ -989,10 +997,10 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
@@ -1002,18 +1010,18 @@ class DatabaseTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
-        'tablesOrderFile' => self::TABLES_ORDER_FILE_PATH,
-        'pathSql' => self::CONFIG_FOLDER_SQL,
-        'pathSqlFixtures' => self::CONFIG_FOLDER_SQL_FIXTURES,
-        'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES
+        OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
+        OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
+        OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
+        OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
+        OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
 
     Database::createFixtures(self::DATABASE_NAME, 1);
 
     // restores correct content in the variable overwritten by the function call
-    removeFieldScopeProtection(Database::class, 'tablesOrderFile')->setValue(self::TABLES_ORDER_FILE_PATH);
+    removeFieldScopeProtection(Database::class, OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->setValue(self::TABLES_ORDER_FILE_PATH);
 
     // launching the task
     Database::importFixtures(self::DATABASE_NAME, self::DATABASE_CONNECTION);

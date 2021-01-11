@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace otra;
 use config\AllConfig;
+use ReflectionClass;
 
 /**
  * Class that provides things for both web and CLI sides of the dump function.
@@ -79,5 +80,30 @@ abstract class DumpMaster {
     }
 
     return $oldConfig;
+  }
+
+  /**
+   * @param $param
+   *
+   * @throws \ReflectionException
+   * @return array
+   */
+  protected static function getClassDescription($param) : array
+  {
+    $className = get_class($param);
+    $reflectedClass = new ReflectionClass($className);
+    $classInterfaces = $reflectedClass->getInterfaceNames();
+    $parentClass = $reflectedClass->getParentClass();
+    $description = 'object (' . count((array) $param) . ') ' .
+      ($reflectedClass->isAbstract() ? 'abstract ': '') .
+      ($reflectedClass->isFinal() ? 'final ': '') . $className;
+
+    if ($parentClass !== false)
+      $description .= ' extends ' . $parentClass->getName();
+
+    if (!empty($classInterfaces))
+      $description .= ' implements ' . implode(',', $classInterfaces);
+
+    return [$className, $description];
   }
 }

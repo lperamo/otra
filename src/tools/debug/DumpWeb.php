@@ -87,20 +87,7 @@ abstract class DumpWeb extends DumpMaster {
    */
   private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
   {
-    $className = get_class($param);
-    $reflectedClass = new ReflectionClass($className);
-    $classInterfaces = $reflectedClass->getInterfaceNames();
-    $parentClass = $reflectedClass->getParentClass();
-    $description = 'object (' . count((array) $param) . ') ' .
-      ($reflectedClass->isAbstract() ? 'abstract ': '') .
-      ($reflectedClass->isFinal() ? 'final ': '') . $className;
-
-    if ($parentClass !== false)
-      $description .= ' extends ' . $parentClass->getName();
-
-    if (!empty($classInterfaces))
-      $description .= ' implements ' . implode(',', $classInterfaces);
-
+    list($className, $description) = parent::getClassDescription($param);
     echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
 
     if ($notFirstDepth)
@@ -315,9 +302,9 @@ abstract class DumpWeb extends DumpMaster {
         <?= 'OTRA DUMP - ' . $sourceFile . ':' . $sourceLine ?>
       </span><?php self::createFoldable(true); ?>
       <pre class="otra-dump--string"><!--
-     --><b class="otra--code--container"><mark class="otra--code--container-highlight"><?=
+     --><strong class="otra--code--container"><mark class="otra--code--container-highlight"><?=
             getSourceFromFile($sourceFile, $sourceLine, 2)
-            ?></mark></b></pre>
+            ?></mark></strong></pre>
     </div>
     <pre class="otra-dump--string">
 <br><?php

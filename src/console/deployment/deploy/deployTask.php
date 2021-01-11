@@ -158,9 +158,7 @@ CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
  * -m remove empty folders */
 
 $startCommand = 'rsync -qzaruvhP --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
-//$startCommand = 'rsync -zaruvhP --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
 $startCommandRelativeRsync = 'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
-//$startCommandRelativeRsync = 'rsync -zaruvhPR --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
 
 $workerManager = new WorkerManager();
 
