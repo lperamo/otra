@@ -156,7 +156,7 @@ class DumpCli extends DumpMaster
       case 'float' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
         break;
-      case 'string' :
+      case DumpMaster::OTRA_DUMP_TYPE_STRING :
         echo $propertyType, ' => ';
         $lengthParam = strlen($propertyValue);
 
@@ -178,7 +178,7 @@ class DumpCli extends DumpMaster
 
         echo ' (', $lengthParam, ') ', $property->getDocComment();
         break;
-      case 'array' : self::dumpArray(
+      case DumpMaster::OTRA_DUMP_TYPE_ARRAY : self::dumpArray(
         $propertyType,
         $propertyValue,
         $depth
@@ -221,12 +221,15 @@ class DumpCli extends DumpMaster
       echo $padding;
 
     // showing keys
-    echo (gettype($paramKey) !== 'string' ? $paramKey : '\'' . $paramKey . '\''), ' => ';
+    echo (gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
+      ? $paramKey
+      : '\'' . $paramKey . '\''
+      ), ' => ';
 
     // showing values
     switch($paramType)
     {
-      case 'array' :
+      case DumpMaster::OTRA_DUMP_TYPE_ARRAY :
         self::dumpArray($paramType, $param, $depth);
         break;
       case 'boolean' :
@@ -241,7 +244,7 @@ class DumpCli extends DumpMaster
         self::dumpObject($param, $depth);
         break;
 
-      case 'string' :
+      case DumpMaster::OTRA_DUMP_TYPE_STRING :
         $stringToShow = (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]] === -1
           ? $param
           : substr(

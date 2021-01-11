@@ -39,10 +39,14 @@ abstract class DumpMaster {
     ],
 
     // Display constants
-    OTRA_DUMP_INDENT_STRING = '│ ';
+    OTRA_DUMP_INDENT_STRING = '│ ',
 
   // Initial depth
-  protected const OTRA_DUMP_INITIAL_DEPTH = -1;
+  OTRA_DUMP_INITIAL_DEPTH = -1,
+
+  // Types
+  OTRA_DUMP_TYPE_STRING = 'string',
+  OTRA_DUMP_TYPE_ARRAY = 'array';
 
   /**
    * Sets the dump configuration to the defaults if the dump configuration is not set.
