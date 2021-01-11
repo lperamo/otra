@@ -422,6 +422,7 @@ namespace otra\console
       Sql::getDb();
 
       // We ensure us that we use the correct database
+      /** @var \PDO $dbConfig 'query' method returns PDOStatement but to avoid a PHPStorm warning we said PDO! */
       $dbConfig = Sql::$instance->query('USE ' . $databaseName);
       Sql::$instance->freeResult($dbConfig);
 
