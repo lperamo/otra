@@ -61,7 +61,7 @@ namespace otra\console
       $dbConn = AllConfig::$dbConnections;
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
 
-      if (false === isset($dbConn[$dbConnKey]))
+      if (!isset($dbConn[$dbConnKey]))
       {
         if (null === $dbConnKey)
           throw new OtraException('You haven\'t specified any database configuration in your configuration file.', E_CORE_WARNING);
@@ -71,7 +71,7 @@ namespace otra\console
 
       $infosDb = $dbConn[$dbConnKey];
 
-      if (false === isset($infosDb['motor']))
+      if (!isset($infosDb['motor']))
         throw new OtraException('You haven\'t specified the database engine in your configuration file.', E_CORE_WARNING);
 
       self::initBase();
@@ -127,14 +127,14 @@ namespace otra\console
       $folders = [];
 
       /** @var array $schemas Database schemas */
-      if (true === self::$boolSchema)
+      if (self::$boolSchema)
         $schemas = [];
 
       // We scan the bundles directory to retrieve all the bundles name ...
       while (false !== ($actualFile = readdir($folderHandler)))
       {
         // 'config' and 'views' are not bundles ...
-        if (true === in_array($actualFile, ['.', '..', 'config', 'views']))
+        if (in_array($actualFile, ['.', '..', 'config', 'views']))
           continue;
 
         $bundleDir = $folder . $actualFile;
@@ -145,11 +145,11 @@ namespace otra\console
 
         $folders[] = $bundleDir . '/';
 
-        if (true === self::$boolSchema)
+        if (self::$boolSchema)
         {
           $bundleSchemas = glob($bundleDir . '/config/data/yml/*Schema.yml');
 
-          if (false === empty($bundleSchemas))
+          if (!empty($bundleSchemas))
             $schemas = array_merge($schemas, $bundleSchemas);
         }
       }
@@ -180,7 +180,7 @@ namespace otra\console
     {
       self::initBase();
 
-      if (true === file_exists(self::$pathSqlFixtures))
+      if (file_exists(self::$pathSqlFixtures))
       {
         array_map('unlink', glob(self::$pathSqlFixtures . '/*.sql'));
         rmdir(self::$pathSqlFixtures);
@@ -191,7 +191,7 @@ namespace otra\console
         glob(self::$pathSql . 'truncate/*.sql')
       ));
 
-      if (true === $extensive && true === file_exists(self::$tablesOrderFile))
+      if ($extensive && file_exists(self::$tablesOrderFile))
         unlink(self::$tablesOrderFile);
 
       echo CLI_LIGHT_GREEN, ($extensive) ? 'Full cleaning done.' : 'Cleaning done.', END_COLOR, PHP_EOL;
@@ -211,7 +211,7 @@ namespace otra\console
         self::init();
 
       // No need to get DB twice (getDb is already used in dropDatabase function)
-      (true === $force)
+      ($force)
         ? self::dropDatabase($databaseName)
         : Sql::getDb(null, false);
 
@@ -249,7 +249,7 @@ namespace otra\console
      */
     public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
-      if (true === isset(self::$attributeInfos[$attribute]))
+      if (isset(self::$attributeInfos[$attribute]))
       {
         $value = self::$attributeInfos[$attribute];
 
@@ -287,19 +287,20 @@ namespace otra\console
       array &$sortedTables,
       int $oldCountArrayToSort = 0)
     {
-      if (true === empty($tablesWithRelations))
+      if (empty($tablesWithRelations))
         return true;
 
       $nextArrayToSort = $tablesWithRelations;
 
-      foreach ($tablesWithRelations as $table => $properties)
+      /** @var string $tableName */
+      foreach ($tablesWithRelations as $tableName => $properties)
       {
         $mustAddTableToSortedTables = ['valid' => true];
 
         // Are the relations of $properties['relations'] all in $sortedTables or are they recursive links (e.g. : parent property) ?
         foreach (array_keys($properties['relations']) as $relation)
         {
-          $alreadyExists = (in_array($relation, $sortedTables) || $relation === $table);
+          $alreadyExists = (in_array($relation, $sortedTables) || $relation === $tableName);
           /* If there is at least one problem because one foreign key references an non-existent table ...
              => that's invalid ...we put false */
           $mustAddTableToSortedTables['valid'] = $mustAddTableToSortedTables['valid'] && $alreadyExists;
@@ -309,17 +310,17 @@ namespace otra\console
            we add it to the other tables because we can do these relations safely */
         if (true === $mustAddTableToSortedTables['valid'])
         {
-          $sortedTables[] = $table;
-          unset($nextArrayToSort[$table]);
+          $sortedTables[] = $tableName;
+          unset($nextArrayToSort[$tableName]);
         }
       }
 
       $countArrayToSort = count($nextArrayToSort);
 
       /* Fix for the "recursive" tables */
-      if ($oldCountArrayToSort == $countArrayToSort && false === in_array($table, $sortedTables))
+      if ($oldCountArrayToSort == $countArrayToSort && !in_array($tableName, $sortedTables))
       {
-        $sortedTables[] = $table;
+        $sortedTables[] = $tableName;
 
         return true;
       }
@@ -359,12 +360,17 @@ namespace otra\console
       $ymlIdentifiers = $table . ': ' . PHP_EOL;
       $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
         'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+      /**
+       * @var array $localMemory This variable stores the identifiers found in this table that are not available in
+       * sorted tables ?
+       */
       $localMemory = $values = $properties = [];
       $theProperties = '';
 
       $databaseId = 1; // The database ids begin to 1 by default
 
-      /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but more a temporary id that represents the position of the line in the database ! */
+      /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but more a temporary id that
+       * represents the position of the line in the database ! */
 
       foreach (array_keys($fixturesData) as &$fixtureName)
       {
@@ -432,7 +438,6 @@ namespace otra\console
       /**
        * THE REAL, COMPLICATED, WORK BEGINS HERE.
        */
-
       $databaseId = 1; // The database ids begin to 1 by default
 
       foreach ($fixturesData as $fixtureName => $properties)
@@ -444,19 +449,26 @@ namespace otra\console
 
         foreach ($properties as $property => $value)
         {
-          if (true === in_array($property, $sortedTables) && false === isset($tableData['relations'][$property]))
-            throw new OtraException('Either it lacks a relation to the table `' . $table . '` for a `' . $property . '` like property or you have put this property name by error in file `' . $table . '.yml.', E_CORE_ERROR);
+          $propertyRefersToAnotherTable = in_array($property, $sortedTables);
 
-          // If the property refers to an other table, then we search the corresponding foreign key name (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
+          if ($propertyRefersToAnotherTable && !isset($tableData['relations'][$property]))
+            throw new OtraException(
+              'Either it lacks a relation to the table `' . $table . '` for a `' . $property .
+              '` like property or you have put this property name by error in file `' . $table . '.yml.',
+              E_CORE_ERROR
+            );
+
+          // If the property refers to an other table, then we search the corresponding foreign key name
+          // (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
           $theProperties .= '`' .
-            (in_array($property, $sortedTables)
+            ($propertyRefersToAnotherTable
               ? $tableData['relations'][$property]['local']
               : $property) .
             '`, ';
 
           $properties [] = $property;
 
-          if (!in_array($property, $sortedTables))
+          if (!$propertyRefersToAnotherTable)
           {
             if (is_bool($value))
               $value = $value ? 1 : 0;
@@ -495,7 +507,7 @@ namespace otra\console
           $values [] = [$fixtureName => $value];
         }
 
-        if (true === $first)
+        if ($first)
           $tableSql .= substr($theProperties, 0, -2) . ') VALUES';
 
         $tableSql .= '(' . substr($theValues, 0, -2) . '),';
@@ -505,7 +517,7 @@ namespace otra\console
       $tableSql = substr($tableSql, 0, -1) . ';';
 
       // We create sql file that can generate the fixtures in the BDD.
-      if (file_exists(self::$pathSqlFixtures) === false)
+      if (!file_exists(self::$pathSqlFixtures))
         mkdir(self::$pathSqlFixtures, 0777, true);
 
       file_put_contents($createdFile, $tableSql);
@@ -529,11 +541,11 @@ namespace otra\console
      */
     public static function createFixtures(string $databaseName, int $mask)
     {
-      if (false === self::$init)
+      if (!self::$init)
         self::init();
 
       // Analyzes the database schema in order to guess the properties types
-      if (false === file_exists(self::$schemaFile))
+      if (!file_exists(self::$schemaFile))
         throw new OtraException('You have to create a database schema file in config/data/schema.yml before using fixtures. Searching for : ' . self::$schemaFile, E_NOTICE);
 
       // Looks for the fixtures file
@@ -545,13 +557,13 @@ namespace otra\console
 
       $folder = opendir(self::$pathYmlFixtures);
 
-      if (false === file_exists(self::$tablesOrderFile))
+      if (!file_exists(self::$tablesOrderFile))
       {
         closedir($folder);
         throw new OtraException('You must use the database generation task before using the fixtures (no ' . substr(self::$tablesOrderFile, strlen(BASE_PATH)) . ' file)', E_CORE_WARNING);
       }
 
-      if (false === file_exists(self::$pathSqlFixtures) && false === mkdir(self::$pathSqlFixtures, 0777, true))
+      if (!file_exists(self::$pathSqlFixtures) && !mkdir(self::$pathSqlFixtures, 0777, true))
       {
         closedir($folder);
         throw new OtraException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
@@ -605,9 +617,9 @@ namespace otra\console
       $weNeedToTruncate = 0 < $mask;
       $truncatePath = self::$pathSql . 'truncate';
 
-      if (true === $weNeedToTruncate && false === file_exists($truncatePath))
+      if ($weNeedToTruncate && !file_exists($truncatePath))
       {
-        if (false === mkdir($truncatePath))
+        if (!mkdir($truncatePath))
           throw new OtraException('Cannot create the folder ' . $truncatePath);
       }
 
@@ -1069,19 +1081,19 @@ namespace otra\console
     /**
      * Creates the database schema from a database.
      *
-     * @param string|null $database  (optional)
+     * @param string|null $databaseName  (optional)
      * @param string|null $confToUse (optional)
      *
      * @throws OtraException If we cannot create the folder that will contain the schema
      */
-    public static function importSchema(?string $database = null, ?string $confToUse = null) : void
+    public static function importSchema(?string $databaseName = null, ?string $confToUse = null) : void
     {
       if (false === self::$init)
         self::init();
 
-      $database = self::_initImports($database, $confToUse);
+      $database = self::_initImports($databaseName, $confToUse);
       $content = '';
-      $tables = $database->valuesOneCol($database->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $database . '\''));
+      $tables = $database->valuesOneCol($database->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $databaseName . '\''));
 
       foreach ($tables as $arrayIndex => $table)
       {
@@ -1089,7 +1101,7 @@ namespace otra\console
         $columns = $database->values($database->query('
           SELECT `COLUMN_NAME`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
             `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
-          FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table .
+          FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $databaseName . '\' AND TABLE_NAME = \'' . $table .
             '\' ORDER BY ORDINAL_POSITION')
         );
 
@@ -1124,7 +1136,8 @@ namespace otra\console
         }
 
         $constraints = $database->values(
-          $database->query(' SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = \'' . $database . '\' AND TABLE_NAME = \'' . $table . '\' AND CONSTRAINT_NAME <> \'PRIMARY\'')
+          $database->query(
+            ' SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = \'' . $databaseName . '\' AND TABLE_NAME = \'' . $table . '\' AND CONSTRAINT_NAME <> \'PRIMARY\'')
         );
 
         // if there are constraints for this table
