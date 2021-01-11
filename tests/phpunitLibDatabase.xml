@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
     <testsuite name="Framework tests - Database tasks">
-        <file>./src/lib/otra/console/DatabaseTest.php</file>
+        <file>./src/console/DatabaseTest.php</file>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
@@ -21,6 +21,6 @@
     </filter>
     <logging>
         <log type="coverage-clover" target="./coverage.xml"/>
-        <log type="coverage-html" target="./coverageHtml" title="LP Framework" />
+        <log type="coverage-html" target="./coverageHtml" />
     </logging>
 </phpunit>
