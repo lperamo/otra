@@ -451,9 +451,10 @@ namespace otra\console
 
           $properties [] = $property;
 
-          if (false === in_array($property, $sortedTables))
+          if (!in_array($property, $sortedTables))
           {
-            if (true === is_bool($value))
+            var_dump($localMemory);
+            if (is_bool($value))
               $value = $value ? 1 : 0;
             elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
               $value = $localMemory[$value];
@@ -946,9 +947,9 @@ namespace otra\console
         echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_YELLOW, basename
           (self::$tablesOrderFile), END_COLOR, PHP_EOL;
       }
-
+s
       // We create the SQL schema file with the generated content.
-      file_put_contents($dbFile, $sql);
+      file_put_contents($dbFile, $sql . PHP_EOL);
 
       echo CLI_LIGHT_GREEN, 'SQL schema file created.', END_COLOR, PHP_EOL;
 
