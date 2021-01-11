@@ -422,7 +422,12 @@ namespace otra\console
       Sql::$instance->freeResult($dbConfig);
 
       // We ensure us that we can make multiple queries in one statement
-//      $dbConfig->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 0);
+      try {
+        $dbConfig->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 0);
+      } catch(\Exception $e)
+      {
+        // Then the driver does not handle this attribute
+      }
 
       /**
        * THE REAL, COMPLICATED, WORK BEGINS HERE.
@@ -453,7 +458,6 @@ namespace otra\console
 
           if (!in_array($property, $sortedTables))
           {
-            var_dump($localMemory);
             if (is_bool($value))
               $value = $value ? 1 : 0;
             elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
@@ -947,7 +951,7 @@ namespace otra\console
         echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_YELLOW, basename
           (self::$tablesOrderFile), END_COLOR, PHP_EOL;
       }
-s
+
       // We create the SQL schema file with the generated content.
       file_put_contents($dbFile, $sql . PHP_EOL);
 
