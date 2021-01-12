@@ -76,4 +76,4 @@ $content = preg_replace('@\s{2,}@', ' ', $content);
 // strips HTML comments that are not HTML conditional comments and write the content
 file_put_contents($pathAndFile, preg_replace('@<!--.*?-->@', '', $content));
 
-gzCompressFile($pathAndFile, $pathAndFile . '.gz', 9);
+gzCompressFile($pathAndFile, $pathAndFile . '.gz');

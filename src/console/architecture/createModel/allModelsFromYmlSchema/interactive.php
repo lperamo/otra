@@ -17,7 +17,7 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 } else
 {
   /** MODULE */
-  define('MODULE_NAME', getModuleName($bundleName, $bundlePath));
+  define('MODULE_NAME', getModuleName($bundlePath));
 
   echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_YELLOW, $bundleName, END_COLOR, ' for the module ', CLI_YELLOW,
   $moduleName, END_COLOR, ' ...', PHP_EOL;

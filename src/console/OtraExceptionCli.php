@@ -130,7 +130,7 @@ class OtraExceptionCli extends \Exception
       } else
         $compositeColoredPath = false;
 
-      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1),
       self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
       self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */

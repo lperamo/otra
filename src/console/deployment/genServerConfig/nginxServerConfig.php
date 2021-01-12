@@ -269,7 +269,7 @@ $content = handlesHTTPSRedirection() .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL
   : PHP_EOL .
-    handleGzippedAsset('css') .
+    handleGzippedAsset() .
     PHP_EOL .
     SPACE_INDENT . '# For local testing purpose only' . PHP_EOL .
     SPACE_INDENT . 'location ~ /vendor/.*\.css$' . PHP_EOL .

@@ -105,10 +105,10 @@ foreach($routes as $route => &$details)
   $chunks = $details['chunks'];
   $altColor = ($indexLines % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
   echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
-    str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
+    str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
 
-  echo str_pad(' ', WIDTH_LEFT, ' '),
-    str_pad('Path', WIDTH_MIDDLE, ' '),
+  echo str_pad(' ', WIDTH_LEFT),
+    str_pad('Path', WIDTH_MIDDLE),
     ': ' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[ROUTES_CHUNKS_MODULE] . '/' .
     $chunks[ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[ROUTES_CHUNKS_ACTION],
     PHP_EOL;
@@ -118,7 +118,7 @@ foreach($routes as $route => &$details)
 
   $basePath = BASE_PATH . 'cache/';
 
-  echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
+  echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
 
   // Resources management : show the state of each resource. Red => missing, green => exists
   if (isset($details['resources']))

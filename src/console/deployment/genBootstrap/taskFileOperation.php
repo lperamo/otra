@@ -334,8 +334,7 @@ function showFile(int &$level, string &$file, string $otherText = ' first file')
     echo str_pad(
       str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH),
       ANNOTATION_DEBUG_PAD,
-      '.',
-      STR_PAD_RIGHT
+      '.'
     ), CLI_YELLOW, $otherText, END_COLOR, PHP_EOL;
 }
 
@@ -988,7 +987,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     }
   }
 
-  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.', STR_PAD_RIGHT),
+  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.'),
     CLI_GREEN, ' [LOADED]', END_COLOR;
 
   /** We remove all the declare strict types declarations */
