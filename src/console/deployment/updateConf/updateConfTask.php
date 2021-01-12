@@ -194,12 +194,17 @@ define('OTRA_PHP_DOT_EXTENSION', '.php');
 
 foreach($securities as $securityFileConfigFolder)
 {
-  $securitiesArray[basename($securityFileConfigFolder)] = [
-    OTRA_DEVELOPMENT_ENVIRONMENT => require $securityFileConfigFolder . '/' . OTRA_DEVELOPMENT_ENVIRONMENT .
-      OTRA_PHP_DOT_EXTENSION,
-    OTRA_PRODUCTION_ENVIRONMENT => require $securityFileConfigFolder . '/' . OTRA_PRODUCTION_ENVIRONMENT .
-      OTRA_PHP_DOT_EXTENSION
-  ];
+  $devSecurityFile = $securityFileConfigFolder . '/' . OTRA_DEVELOPMENT_ENVIRONMENT .
+    OTRA_PHP_DOT_EXTENSION;
+
+  if (file_exists($devSecurityFile))
+    $securitiesArray[basename($securityFileConfigFolder)][OTRA_DEVELOPMENT_ENVIRONMENT] = require $devSecurityFile;
+
+  $prodSecurityFile = $securityFileConfigFolder . '/' . OTRA_PRODUCTION_ENVIRONMENT .
+    OTRA_PHP_DOT_EXTENSION;
+
+  if (file_exists($prodSecurityFile))
+    $securitiesArray[basename($securityFileConfigFolder)][OTRA_PRODUCTION_ENVIRONMENT] = require $prodSecurityFile;
 }
 
 // we ensure that security folders are
@@ -253,10 +258,16 @@ foreach($securitiesArray as $route => $securityArray)
 {
   $fileName = $route . '.php';
   // dev environment
-  $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['dev']) . '];';
-  writeConfigFile(OTRA_SECURITY_DEV_FOLDER .  $fileName, $securityContent);
+  if (isset($securityArray['dev']))
+  {
+    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['dev']) . '];';
+    writeConfigFile(OTRA_SECURITY_DEV_FOLDER .  $fileName, $securityContent);
+  }
 
   // prod environment
-  $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['prod']) . '];';
-  writeConfigFile(OTRA_SECURITY_PROD_FOLDER .  $fileName, $securityContent);
+  if (isset($securityArray['prod']))
+  {
+    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['prod']) . '];';
+    writeConfigFile(OTRA_SECURITY_PROD_FOLDER . $fileName, $securityContent);
+  }
 }
