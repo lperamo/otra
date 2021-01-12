@@ -161,7 +161,7 @@ class DumpCli extends DumpMaster
         $lengthParam = strlen($propertyValue);
 
         if ($lengthParam > 50)
-          echo '<br>';
+          echo PHP_EOL;
 
         echo "'",
         (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]] === -1
@@ -174,7 +174,7 @@ class DumpCli extends DumpMaster
         "'";
 
         if ($lengthParam > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]])
-          echo '<b>(cut)</b>';
+          echo ADD_BOLD, '(cut)', REMOVE_BOLD_INTENSITY;
 
         echo ' (', $lengthParam, ') ', $property->getDocComment();
         break;
@@ -184,7 +184,7 @@ class DumpCli extends DumpMaster
         $depth
       );
         break;
-      case 'NULL' : echo '<b>null</b>'; break;
+      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY; break;
       case 'object' :
         self::dumpObject(
           $param,
