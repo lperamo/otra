@@ -10,7 +10,7 @@ if (!function_exists('writeConfigFile'))
    * @param string $configFile
    * @param string $content
    */
-  function writeConfigFile(string $configFile, string &$content)
+  function writeConfigFile(string $configFile, string $content)
   {
     if (true === empty($content))
     {
@@ -150,7 +150,7 @@ if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
 /** CONFIGS MANAGEMENT */
 $configsContent = '';
 
-foreach ($configs as &$config)
+foreach ($configs as $config)
   $configsContent .= file_get_contents($config);
 
 writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Config.php', $configsContent);

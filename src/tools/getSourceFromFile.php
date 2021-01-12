@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Returns the portion of a file in a certain range around a specific line.
  *

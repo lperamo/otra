@@ -26,9 +26,9 @@ public static array $csp = [
 ```
 
 You can have a file `bundles/App/config/Config.php` where `App` is the name of your bundle.
-It will contains additional configuration that you want to pass like paths for example.
+It will contain additional configuration that you want to pass like paths for example.
 
-In the file `config/AdditionalClassFiles.php`, must contains the paths of OTRA classes that are included dynamically via
+In the file `config/AdditionalClassFiles.php`, must contain the paths of OTRA classes that are included dynamically via
 require(_once)/include(_once) directives. Most of the time, you do not have to touch this file.
 
 Next section : [Routes configuration file](routesConfiguration.md)

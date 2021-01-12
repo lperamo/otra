@@ -48,9 +48,10 @@ trait DevControllerTrait
    * @param bool        $ajax      Is this an ajax partial ?
    * @param bool|string $viewPath  If true, we adds the usual view path before the $file variable.
    *
+   * @throws OtraException
+   * @throws Exception
    * @return string parent::$template Content of the template
    *
-   * @throws OtraException
    */
   final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
@@ -91,12 +92,12 @@ trait DevControllerTrait
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string $templateFilename The file name
-   * @param array  $variables        Variables to pass to the template
-   * @param string $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
+   * @param string      $templateFilename The file name
+   * @param array       $variables        Variables to pass to the template
+   * @param string|null $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
    *
-   * @return mixed|string
    * @throws Exception
+   * @return mixed|string
    */
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {
@@ -124,6 +125,8 @@ trait DevControllerTrait
 
   /**
    * Adds a debug bar at the top of the template
+   *
+   * @throws Exception
    */
   private function addDebugBar()
   {
@@ -203,7 +206,7 @@ trait DevControllerTrait
     ];
 
     // For each kind of JS file, we will looks for them in their respective folders
-    foreach ($resourcesType as $resourceType => &$resourceTypeInfo)
+    foreach ($resourcesType as $resourceType => $resourceTypeInfo)
     {
       if (true === array_key_exists($resourceType, $resources))
       {
@@ -228,14 +231,14 @@ trait DevControllerTrait
 
     $resourcesArray = self::calculateArray($unorderedArray, $orderedArray);
 
-    foreach ($resourcesArray as &$file)
+    foreach ($resourcesArray as $file)
     {
       $resourceContent .= $file;
     }
 
     if ($assetType === 'js')
     {
-      foreach(self::$javaScript as $key => &$javaScript)
+      foreach(self::$javaScript as $key => $javaScript)
       {
         // If the key don't give info on async and defer then put them automatically
         if (true === is_int($key))
@@ -255,7 +258,7 @@ trait DevControllerTrait
   {
     $cssContent = '';
 
-    foreach(self::$css as &$css) { $cssContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />'; }
+    foreach(self::$css as $css) { $cssContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />'; }
 
     return $cssContent;
   }
@@ -268,7 +271,7 @@ trait DevControllerTrait
   {
     $jsContent = '';
 
-    foreach(self::$javaScript as &$javaScript)
+    foreach(self::$javaScript as $javaScript)
     {
       $jsContent .= "\n" . '<script nonce="' .
       getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';

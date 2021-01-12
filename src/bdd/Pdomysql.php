@@ -58,7 +58,7 @@ abstract class Pdomysql
    * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
-  public static function query($query)
+  public static function query(string $query)
   {
     $result = Sql::$_currentConn->query($query);
     // TODO use PDOStatement::debugDumpParams() ?
@@ -118,7 +118,7 @@ abstract class Pdomysql
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function values($statement)
+  public static function values(PDOStatement $statement)
   {
     if (0 == $statement->rowCount())
       return [];
@@ -206,7 +206,7 @@ abstract class Pdomysql
   /**
    * Get the ID generated in the last query
    *
-   * @param string $sequenceName
+   * @param string|null $sequenceName
    *
    * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php

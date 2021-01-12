@@ -128,7 +128,7 @@ if (
     next($routes);
 
     // Showing the route name
-    echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
+    echo CLI_LIGHT_CYAN, str_pad($routeName, 25), CLI_LIGHT_GRAY;
 
     $shaName = sha1('ca' . $routeName . VERSION . 'che');
 
@@ -274,11 +274,11 @@ if (GEN_ASSETS_SVG)
   // Searches in the 'web/images' folder for SVGs
   if (file_exists(FOLDER_TO_CHECK_FOR_SVGS))
   {
-    $dir_iterator = new \RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, \FilesystemIterator::SKIP_DOTS);
+    $dir_iterator = new RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, FilesystemIterator::SKIP_DOTS);
 
     $iterator = new RecursiveIteratorIterator($dir_iterator);
 
-    /** @var \SplFileInfo $entry */
+    /** @var SplFileInfo $entry */
     foreach($iterator as $entry)
     {
       $extension = $entry->getExtension();
@@ -367,7 +367,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   $type = substr(strrchr($key, '_'), 1);
   $path = $bundlePath . (true === $path ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $path) . 'resources/' . $type . '/';
 
-  foreach ($resources[$key] as &$resource)
+  foreach ($resources[$key] as $resource)
   {
     ob_start();
 

@@ -58,11 +58,11 @@ define(
  *
  * @return bool
  */
-function isNotInThePath(array $paths, string &$realPath) : bool
+function isNotInThePath(array $paths, string $realPath) : bool
 {
   $continue = true;
 
-  foreach ($paths as &$path)
+  foreach ($paths as $path)
   {
     // If we found a valid base path in the actual path
     if (mb_strpos($realPath, $path) !== false &&
@@ -80,9 +80,9 @@ function isNotInThePath(array $paths, string &$realPath) : bool
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
- * @param string    $resource Most of the time the name of a folder
- * @param string    $name     Most of the time the name of a file
- * @param bool|null $endColor Do we have to reset color at the end ?
+ * @param string      $resource Most of the time the name of a folder
+ * @param string|null $name     Most of the time the name of a file
+ * @param bool|null   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */
@@ -105,7 +105,7 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  *
  * @return bool
  */
-$isWatched = function (array &$argv, bool &$maskExists, int $genWatcherMask) : bool
+$isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
 {
   return (
       $maskExists === true

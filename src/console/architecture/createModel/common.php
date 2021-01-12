@@ -15,7 +15,7 @@ define('START_ACCOLADE', PHP_EOL . SPACE_INDENT . '{' . PHP_EOL);
  *
  * @throws \otra\OtraException
  */
-function modelCreation(int $modelLocation, string &$modelName,string &$modelFullName,string &$bundleName): void
+function modelCreation(int $modelLocation, string $modelName,string &$modelFullName,string $bundleName): void
 {
   $modelFullName = $modelName . '.php';
   $functions = $propertiesCode = '';

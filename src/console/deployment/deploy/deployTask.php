@@ -44,7 +44,7 @@ if (isset(AllConfig::$deployment) === false)
 
 $deploymentParameters = ['server', 'port', 'folder', 'privateSshKey', 'gcc'];
 
-foreach($deploymentParameters as &$deploymentParameter)
+foreach($deploymentParameters as $deploymentParameter)
 {
   if (isset(AllConfig::$deployment[$deploymentParameter]) === false)
   {
@@ -248,7 +248,7 @@ define('STRLEN_BASEPATH', strlen(BASE_PATH));
  *
  * @param string $folderToAnalyze
  */
-$seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server)
+$seekingToSendFiles = function (string $folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server)
 {
   $bundleFolders = new \DirectoryIterator($folderToAnalyze);
 
@@ -301,7 +301,7 @@ while (0 < count($workerManager::$workers))
   $workerManager->listen();
 
 // Cleaning
-foreach($workerManager::$workers as &$worker)
+foreach($workerManager::$workers as $worker)
   $workerManager->detach($worker);
 
 unset($workerManager);

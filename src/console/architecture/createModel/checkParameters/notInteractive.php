@@ -19,7 +19,7 @@ $checkParameter = function (string $constantName, string $message, $defaultValue
   echo $exit ? CLI_RED : CLI_YELLOW, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 
   if ($exit)
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
 
   return $defaultValue;
 };

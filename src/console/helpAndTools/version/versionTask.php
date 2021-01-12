@@ -20,7 +20,7 @@ echo CLI_BGD_LIGHT_BLACK, str_repeat(' ', END_PADDING + INITIAL_ADDITIONAL_PADDI
                        ";
 $byPeramoLionel = explode('*', "B*y* *P*é*r*a*m*o* *L*i*o*n*e*l*.");
 
-foreach($byPeramoLionel as $index => &$character)
+foreach($byPeramoLionel as $index => $character)
 {
   $keyTwice = $index << 2;
   echo "\e[38;2;" . (76 + $keyTwice) . ";" . (136 + $keyTwice) . ";" . (191 + $keyTwice) . "m" . $character;

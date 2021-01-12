@@ -77,7 +77,7 @@ function handleSecurity(): string
     SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
     SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwith and assets).' . PHP_EOL .
+    SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
     SPACE_INDENT . 'valid_referers none blocked ~.google. ~.bing. ~.yahoo. ' .
     AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .
     AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
@@ -269,7 +269,7 @@ $content = handlesHTTPSRedirection() .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL
   : PHP_EOL .
-    handleGzippedAsset('css') .
+    handleGzippedAsset() .
     PHP_EOL .
     SPACE_INDENT . '# For local testing purpose only' . PHP_EOL .
     SPACE_INDENT . 'location ~ /vendor/.*\.css$' . PHP_EOL .

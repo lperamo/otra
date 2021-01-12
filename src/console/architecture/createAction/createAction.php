@@ -24,7 +24,7 @@ if (!defined('BUNDLES_PATH'))
  * @throws \otra\OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
-                      string &$controllerPath, string $actionName, bool $interactive, bool $consoleForce)
+                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce)
 {
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -203,7 +203,7 @@ class ' . $upperActionName . 'Action extends Controller
  * @throws \otra\OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string &$controllerPath, string $actionName, bool $consoleForce = false)
+                        string $controllerPath, string $actionName, bool $consoleForce = false)
 {
   if ($interactive === true)
   {

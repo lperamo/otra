@@ -123,7 +123,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   }
 }
 
-foreach ($dirs as &$dir)
+foreach ($dirs as $dir)
 {
   // if the user wants to launch tasks in an empty project when there are not a class map yet
   // we need to check if the needed folders exist
@@ -142,7 +142,7 @@ $classes = array_merge($classes, $additionalClassesFiles);
 // classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
 $prodClasses = [];
 
-foreach($classes as $key => &$class)
+foreach($classes as $key => $class)
 {
   // We only let external libraries
   if (mb_strpos($class, BASE_PATH) !== false)
@@ -193,7 +193,7 @@ if (!defined('FIRST_CLASS_PADDING'))
 echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 
-foreach($classes as $startClassName => &$finalClassName)
+foreach($classes as $startClassName => $finalClassName)
 {
   echo CLI_LIGHT_BLUE, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_GREEN, ' => ';
   echo (strpos($finalClassName, BASE_PATH) !== false
@@ -214,7 +214,7 @@ if (empty($classesThatMayHaveToBeAdded) === false)
   echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
   'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
-  foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
+  foreach($classesThatMayHaveToBeAdded as $key => $namespace)
   {
     echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR, FIRST_CLASS_PADDING,
       '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;

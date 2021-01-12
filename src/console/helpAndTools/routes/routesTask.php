@@ -26,7 +26,7 @@ if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
  * @param string $shaName
  * @param string $altColor
  */
-function showResourceState(string $resourceExtension, string $resourceType, string &$basePath, string &$shaName, string &$altColor)
+function showResourceState(string $resourceExtension, string $resourceType, string $basePath, string $shaName, string $altColor)
 {
   echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[',
   $resourceType, ']', $altColor;
@@ -39,7 +39,7 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
  * @param string $route
  * @param string $altColor
  */
-function showPHPState(string &$basePath, string &$route, string &$altColor)
+function showPHPState(string $basePath, string $route, string $altColor)
 {
   echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[PHP]' . $altColor;
 }
@@ -96,7 +96,7 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
 } else
   $routes = Routes::$_;
 
-foreach($routes as $route => &$details)
+foreach($routes as $route => $details)
 {
   if ('otra_exception' === $route )
     continue;
@@ -105,10 +105,10 @@ foreach($routes as $route => &$details)
   $chunks = $details['chunks'];
   $altColor = ($indexLines % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
   echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
-    str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
+    str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
 
-  echo str_pad(' ', WIDTH_LEFT, ' '),
-    str_pad('Path', WIDTH_MIDDLE, ' '),
+  echo str_pad(' ', WIDTH_LEFT),
+    str_pad('Path', WIDTH_MIDDLE),
     ': ' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[ROUTES_CHUNKS_MODULE] . '/' .
     $chunks[ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[ROUTES_CHUNKS_ACTION],
     PHP_EOL;
@@ -118,7 +118,7 @@ foreach($routes as $route => &$details)
 
   $basePath = BASE_PATH . 'cache/';
 
-  echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
+  echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
 
   // Resources management : show the state of each resource. Red => missing, green => exists
   if (isset($details['resources']))

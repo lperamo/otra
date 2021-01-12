@@ -165,7 +165,6 @@ class Sql
    * @param mixed $params See the driver for more info.
    *
    * @return bool True if successful
-   * @throws OtraException
    */
   public function selectDb(...$params)
   {
@@ -356,7 +355,7 @@ class Sql
   /**
    * Return the last inserted id
    *
-   * @param string $sequenceName
+   * @param string|null $sequenceName
    *
    * @return string The last inserted id
    */

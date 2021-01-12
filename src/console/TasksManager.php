@@ -29,7 +29,8 @@ abstract class TasksManager
   {
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
+    echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE,
+      str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
@@ -37,7 +38,7 @@ abstract class TasksManager
 
     $category = '';
 
-    foreach ($methods as $method => &$paramsDesc)
+    foreach ($methods as $method => $paramsDesc)
     {
       if (isset($paramsDesc[self::TASK_CATEGORY]) === true)
       {
@@ -52,9 +53,8 @@ abstract class TasksManager
         echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
       }
 
-      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
-      $paramsDesc[self::TASK_DESCRIPTION],
-      PHP_EOL;
+      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON), CLI_LIGHT_GRAY, ': ',
+        CLI_CYAN, $paramsDesc[self::TASK_DESCRIPTION], PHP_EOL;
     }
 
     echo END_COLOR;

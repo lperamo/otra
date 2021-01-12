@@ -18,6 +18,8 @@ class Error404Action extends Controller
   /**
    * @param array $baseParams
    * @param array $getParams
+   *
+   * @throws \otra\OtraException
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {
@@ -25,7 +27,7 @@ class Error404Action extends Controller
     $routes = array_keys(Routes::$_);
     $defaultUrl = null;
 
-    foreach ($routes as &$route)
+    foreach ($routes as $route)
     {
       if (strpos($route, 'otra') !== false)
         continue;

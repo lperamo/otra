@@ -51,7 +51,7 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  private static function returnShortenFilePath(string $pathType, string &$file) : string
+  private static function returnShortenFilePath(string $pathType, string $file) : string
   {
     return CLI_BLUE . $pathType . '_PATH' . CLI_LIGHT_BLUE . ' + ' .
       mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
@@ -130,7 +130,7 @@ class OtraExceptionCli extends \Exception
       } else
         $compositeColoredPath = false;
 
-      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1, ' '),
+      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1),
       self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
       self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
@@ -169,7 +169,7 @@ class OtraExceptionCli extends \Exception
   {
     $output = '';
 
-    foreach($headers as &$value)
+    foreach($headers as $value)
     {
       $output .= CLI_LIGHT_BLUE . '│' . CLI_YELLOW . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) .
       '_WIDTH'));
@@ -190,10 +190,12 @@ class OtraExceptionCli extends \Exception
    */
   private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
-    $stdPadString = ('' === $alternateContent ? $rowData[$columnName] : $alternateContent);
-
     return CLI_LIGHT_BLUE . '│' . END_COLOR .
-      str_pad(isset($rowData[$columnName]) ? ' ' . $stdPadString . ' ' : ' -', $width);
+      str_pad(isset($rowData[$columnName])
+        ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
+        : ' -',
+        $width
+      );
   }
 }
 

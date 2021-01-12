@@ -43,7 +43,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
       unlinkFile($cachePath . $route . $extension, $cacheRelativePath . $route . $extension);
     else
     {
-      foreach(array_keys($routes) as &$routeToSuppress)
+      foreach(array_keys($routes) as $routeToSuppress)
       {
         if ($routeToSuppress === 'otra_exception')
           continue;

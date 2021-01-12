@@ -64,7 +64,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     [
       'Zend OPcache',
       'PHP extension \'zend-opcache\'',
-      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needeed to use the preloading feature available since PHP 7.4',
+      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed to use the preloading feature available since PHP 7.4',
       REQ_PHP_LIB
     ],
     [
@@ -77,7 +77,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
 
   echo CLI_LIGHT_BLUE;
 
-  foreach ($requirements as &$requirement)
+  foreach ($requirements as $requirement)
   {
     echo ADD_BOLD;
 

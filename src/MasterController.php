@@ -228,6 +228,7 @@ class MasterController
    * @param string $cachedFile The cache file name version of the file
    * @param bool   $exists     True if we know that the file exists.
    *
+   * @throws \Exception
    * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
    */
   protected static function getCachedFile(string $cachedFile, bool $exists = false)
@@ -277,7 +278,7 @@ class MasterController
    *
    * @return string
    */
-  protected static function processFinalTemplate(string &$templateFilename, array &$variables)
+  protected static function processFinalTemplate(string $templateFilename, array $variables)
   {
     extract($variables);
     ob_start();

@@ -24,7 +24,7 @@ trait ProdControllerTrait
    */
   public function checkCache(array $filesToCheck) : bool
   {
-    foreach($filesToCheck as &$fileToCheck)
+    foreach($filesToCheck as $fileToCheck)
     {
       $templateFile = $this->viewPath . $fileToCheck;
       $cachedFile = parent::getCacheFileName($templateFile);
@@ -161,19 +161,21 @@ trait ProdControllerTrait
    *
    * @param string $routeV Route name plus the version
    *
+   * @throws Exception
    * @return string The links to the js files or the script markup with the js inside
    */
   private function addJs(string $routeV) : string
   {
     // If we have JS files to load, then we load them
-    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP('script-src') . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+    $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP() . '" src="' .
+      parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
 
     if (true === empty(self::$javaScript))
       return $content;
 
     $allJs = '';
 
-    foreach(self::$javaScript as &$javaScript)
+    foreach(self::$javaScript as $javaScript)
     {
       ob_start();
 

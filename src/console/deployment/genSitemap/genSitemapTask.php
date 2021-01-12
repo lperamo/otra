@@ -6,7 +6,7 @@ $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
 
 define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
 
-foreach ($routes as &$route)
+foreach ($routes as $route)
 {
   $siteMapContent .= /** @lang text */
     SPACE_INDENT . '<url>' . PHP_EOL .

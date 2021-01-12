@@ -33,7 +33,7 @@ if (false === isset($tasksClassMap[$task]))
 
 /** WE DISPLAY HERE THE COMMAND HELP */
 $paramsDesc = require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Help.php';
-echo CLI_WHITE, str_pad($task, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING, ' '),
+echo CLI_WHITE, str_pad($task, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING),
   CLI_LIGHT_GRAY, ': ', CLI_CYAN, $paramsDesc[TasksManager::TASK_DESCRIPTION], PHP_EOL;
 
 // If we have parameters for this command, displays them
@@ -41,10 +41,10 @@ if (isset($paramsDesc[TasksManager::TASK_PARAMETERS]) === true)
 {
   $i = 0;
 
-  foreach ($paramsDesc[TasksManager::TASK_PARAMETERS] as $parameter => &$paramDesc)
+  foreach ($paramsDesc[TasksManager::TASK_PARAMETERS] as $parameter => $paramDesc)
   {
     // + parameter : (required|optional) Description
-    echo CLI_LIGHT_CYAN, '   + ', str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING, ' '), CLI_LIGHT_GRAY;
+    echo CLI_LIGHT_CYAN, '   + ', str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING), CLI_LIGHT_GRAY;
     echo ': ', CLI_LIGHT_CYAN, '(', $paramsDesc[TasksManager::TASK_STATUS][$i], ') ', CLI_CYAN, $paramDesc, PHP_EOL;
     ++$i;
   }

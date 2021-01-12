@@ -109,11 +109,11 @@ if (GEN_WATCHER_VERBOSE > 1 )
  *
  * @return bool
  */
-function isNotInThePath(array $paths, string &$realPath) : bool
+function isNotInThePath(array $paths, string $realPath) : bool
 {
   $continue = true;
 
-  foreach ($paths as &$path)
+  foreach ($paths as $path)
   {
     // If we found a valid base path in the actual path
     if (mb_strpos($realPath, $path) !== false){
@@ -128,9 +128,9 @@ function isNotInThePath(array $paths, string &$realPath) : bool
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
- * @param string    $resource Most of the time the name of a folder
- * @param string    $name     Most of the time the name of a file
- * @param bool|null $endColor Do we have to reset color at the end ?
+ * @param string      $resource Most of the time the name of a folder
+ * @param string|null $name     Most of the time the name of a file
+ * @param bool|null   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */
@@ -166,7 +166,7 @@ function debugHeader(string $header, int $padding)
  *
  * @return string The debug output
  */
-function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, bool &$headers = false) : string
+function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $headers = false) : string
 {
   $debugToPrint = '';
 
@@ -194,7 +194,7 @@ function debugEvent(int &$mask, int &$cookie, string &$name, string &$resource, 
  *
  * @return bool
  */
-$isWatched = function (array &$argv, bool &$maskExists, int $genWatcherMask) : bool
+$isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
 {
   return (
       $maskExists === true
@@ -236,7 +236,7 @@ $inotifyInstance = inotify_init();
 // (we then can do echos when we are listening to events)
 stream_set_blocking($inotifyInstance, 0);
 
-// ******************** ADDING WATCHS ********************
+// ******************** ADDING WATCHES ********************
 
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
@@ -334,7 +334,7 @@ while (true)
     $eventsDebug = '';
 
     // Loop though the events which occurred
-    foreach ($events as &$eventDetails)
+    foreach ($events as $eventDetails)
     {
       /**
        * @var int    $wd
@@ -450,7 +450,7 @@ while (true)
 
             $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-            list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
+            [, $return] = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
@@ -461,7 +461,7 @@ while (true)
           } else {
             $stringToTest = substr($fileInformations[0], 1);
 
-            foreach($sassMainResources as $key => &$mainResource)
+            foreach($sassMainResources as $key => $mainResource)
             {
                 $fileContent = file_get_contents($mainResource);
                 preg_match('@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
@@ -488,7 +488,7 @@ while (true)
 
                 $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
 
-                list(, $return) = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
+                [, $return] = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
 
                 echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
                   returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',

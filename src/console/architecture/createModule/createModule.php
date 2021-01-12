@@ -12,7 +12,7 @@ if (function_exists('createModule') === false)
    *
    * @throws \otra\OtraException
    */
-  function createModule(string $bundleBasePath, string &$moduleName, bool &$interactive): void
+  function createModule(string $bundleBasePath, string $moduleName, bool $interactive): void
   {
     $modulePath = $bundleBasePath . $moduleName;
 

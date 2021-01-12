@@ -1,15 +1,15 @@
-[Home](../../README.md) / [Contributing](../contributing.md) / HTML side
+[Home](../../README.md) / [Contributing](../../CONTRIBUTING.md) / HTML side
 
 Previous section : [JavaScript side](js.md)
 
-#### Best practices
+#### Best practices
 
 - Don’t use the attribute `type="text"` on input markups...it is the default.
 
 - No need to respect XHTML norm unless we want to use that document with XML code.
   We can use `<input>` instead of `<input/>` for example, it is shorter.
   
-- If we can, avoid to use `<br>` and prefer CSS classes instead.
+- If we can, avoid using `<br>` and prefer CSS classes instead.
 
 - Don’t forget to use ARIA. Here is the [documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA)
 
