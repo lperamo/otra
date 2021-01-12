@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Puts <br> between markups in order to add legibility to a code in debug mode and convert other markups in html
  * entities.

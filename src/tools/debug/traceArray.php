@@ -13,7 +13,7 @@ if (!function_exists('getArgumentType'))
    *
    * @return int|string
    */
-  function getArgumentType(&$index, &$value)
+  function getArgumentType($index, &$value)
   {
     switch($index)
     {
@@ -121,7 +121,7 @@ if (!function_exists('getArgumentType'))
    *
    * @return false|string
    */
-  function createShowableFromArray(array &$dataToShow, string $title, $indexToExclude = null)
+  function createShowableFromArray(array $dataToShow, string $title, $indexToExclude = null)
   {
       ob_start();?>
       <table class="test innerHeader">

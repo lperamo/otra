@@ -12,7 +12,7 @@ $delTree = function (string $dir) use (&$delTree) : bool
 {
   $files = array_diff(scandir($dir), ['.','..']);
 
-  foreach ($files as &$file)
+  foreach ($files as $file)
   {
     (is_dir("$dir/$file") === true)
       ? $delTree("$dir/$file")

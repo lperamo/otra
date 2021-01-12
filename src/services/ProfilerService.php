@@ -39,7 +39,7 @@ class ProfilerService
     require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
     ob_start();
-    foreach($requests as &$r)
+    foreach($requests as $r)
     {
       ?>
       <div>

@@ -213,7 +213,7 @@ function retrieveFunctionsAndProperties(
   ?string &$propertiesTxt = null
 )
 {
-  foreach ($columns as $column => &$columnData)
+  foreach ($columns as $column => $columnData)
   {
     $functionsCode .= PHP_EOL;
     $type = $columnData['type']; // e.g. int(5O)

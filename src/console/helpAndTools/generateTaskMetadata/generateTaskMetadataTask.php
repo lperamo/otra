@@ -47,13 +47,13 @@ if (!defined('PHP_CACHE_FOLDER'))
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new \RecursiveDirectoryIterator(CONSOLE_PATH, \FilesystemIterator::SKIP_DOTS);
-$iterator = new \RecursiveIteratorIterator($dir_iterator);
+$dir_iterator = new RecursiveDirectoryIterator(CONSOLE_PATH, FilesystemIterator::SKIP_DOTS);
+$iterator = new RecursiveIteratorIterator($dir_iterator);
 
 $helpFileContent = [];
 $taskClassMap = [];
 
-/** @var \SplFileInfo $entry */
+/** @var SplFileInfo $entry */
 foreach($iterator as $entry)
 {
   $pathname = $entry->getPathname();
@@ -115,7 +115,7 @@ $taskDescription = '';
 
 $taskCategoriesLong = $taskCategories = [];
 
-foreach($tasks as &$task)
+foreach($tasks as $task)
 {
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
   $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
@@ -134,7 +134,7 @@ foreach($tasks as &$task)
 
 $shellCompletionsContent .= ');' . PHP_EOL . PHP_EOL;
 
-foreach($taskCategories as $key => &$taskCategory)
+foreach($taskCategories as $key => $taskCategory)
 {
   $shellCompletionsContent .= 'typeset ' . $taskCategoriesLong[$key] . '="${BLC}[ '
     . str_pad($taskCategory, strlen('Help and tools'), ' ', STR_PAD_BOTH) . ' ]${WHI}";' . PHP_EOL;

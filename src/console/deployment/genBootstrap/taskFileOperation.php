@@ -198,7 +198,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 
   $classesFromFile = [];
 
-  foreach($useMatches[1] as &$useMatch)
+  foreach($useMatches[1] as $useMatch)
   {
     $chunks = explode(',', $useMatch[0]);
     $beginString = '';
@@ -280,7 +280,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
  *
  * @return array $isTemplate
  */
-function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatch) : array
+function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch) : array
 {
   // no path variables found
   if (false === strpos($trimmedMatch, '$'))
@@ -295,7 +295,7 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
     // we don't need the complete mask
     unset($pathVariables[0]);
 
-    foreach($pathVariables as &$pathVariable)
+    foreach($pathVariables as $pathVariable)
     {
       if (true === isset(PATH_CONSTANTS[$pathVariable[0]]))
         $tempFile = str_replace('$' . $pathVariable[0], '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'', $tempFile);
@@ -328,7 +328,7 @@ function evalPathVariables(string &$tempFile, string $file, string &$trimmedMatc
  * @param string $file
  * @param string $otherText
  */
-function showFile(int &$level, string &$file, string $otherText = ' first file')
+function showFile(int $level, string $file, string $otherText = ' first file')
 {
   if (0 < VERBOSE)
     echo str_pad(
@@ -370,7 +370,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
  *
  * @return array [$file, $isTemplate]
  */
-function getFileInfoFromRequireMatch(string &$trimmedMatch, string &$file) : array
+function getFileInfoFromRequireMatch(string $trimmedMatch, string $file) : array
 {
   // Extracts the file name in the require/include statement ...
   preg_match('@(?:require|include)(?:_once)?\s*([^;]+)\\)?@m', $trimmedMatch, $inclusionMatches);
@@ -394,7 +394,7 @@ function getFileInfoFromRequireMatch(string &$trimmedMatch, string &$file) : arr
  *
  * @return string $finalContent
  */
-function processTemplate(string &$finalContent, string &$contentToAdd, string &$match, int &$posMatch) : string
+function processTemplate(string &$finalContent, string &$contentToAdd, string $match, int $posMatch) : string
 {
   escapeQuotesInPhpParts($contentToAdd);
 
@@ -442,7 +442,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string &$
  * @param string $match
  * @param int    $posMatch
  */
-function processReturn(string &$finalContent, string &$contentToAdd, string &$match, int &$posMatch)
+function processReturn(string &$finalContent, string &$contentToAdd, string $match, int $posMatch)
 {
   //-5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
@@ -477,10 +477,10 @@ function processReturn(string &$finalContent, string &$contentToAdd, string &$ma
  *
  * @return string $tempFile
  */
-function searchForClass(array &$classesFromFile, string &$class, string &$contentToAdd, string $match)
+function searchForClass(array $classesFromFile, string $class, string $contentToAdd, string $match)
 {
   // Do we already have this class ?
-  foreach($classesFromFile as &$classFromFile)
+  foreach($classesFromFile as $classFromFile)
   {
     if (false !== strrpos($classFromFile, $class, (int) strrpos($classFromFile,',')))
       return false;
@@ -527,12 +527,12 @@ function searchForClass(array &$classesFromFile, string &$class, string &$conten
  * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
-function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, string &$file, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
+function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, string $file, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
 {
   preg_match_all(PATTERN, $contentToAdd, $matches, PREG_OFFSET_CAPTURE);
 
   // For all the inclusions
-  foreach($matches[0] as &$match)
+  foreach($matches[0] as $match)
   {
     if ('' === $match[0]) // TODO CAN WE SUPPRESS THIS CONDITION BY IMPROVING THE REGEXP ?
       continue;
@@ -687,7 +687,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string &$contentToAdd, st
  *
  * @return bool False we break, true we continue
  */
-function assembleFiles(int &$inc, int &$level, string &$file, string $contentToAdd, array &$parsedFiles)
+function assembleFiles(int &$inc, int &$level, string $file, string $contentToAdd, array &$parsedFiles)
 {
   if (0 === $level)
     showFile($level, $file);
@@ -716,13 +716,13 @@ function assembleFiles(int &$inc, int &$level, string &$file, string $contentToA
 
   if (false === empty($filesToConcat))
   {
-    foreach ($filesToConcat as $fileType => &$entries)
+    foreach ($filesToConcat as $fileType => $entries)
     {
       if ('php' === $fileType)
       {
-        foreach($entries as $inclusionMethod => &$phpEntries)
+        foreach($entries as $inclusionMethod => $phpEntries)
         {
-          foreach($phpEntries as $keyOrFile => &$nextFileOrInfo)
+          foreach($phpEntries as $keyOrFile => $nextFileOrInfo)
           {
             // We increase the process step (DEBUG)
             ++$inc;
@@ -949,12 +949,12 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
  * @param string $bundle
  * @param string $route
  * @param string $content       Content to fix
- * @param bool   $verbose
+ * @param int   $verbose
  * @param mixed  $fileToInclude Files to merge
  *
  * @return mixed
  */
-function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$fileToInclude = '')
+function fixFiles(string $bundle, string $route, string $content, int $verbose, $fileToInclude = '')
 {
   if (defined('VERBOSE') === false)
     define('VERBOSE', (int) $verbose);
@@ -979,7 +979,7 @@ function fixFiles(string $bundle, string &$route, string $content, &$verbose, &$
     preg_match_all('@^\\s{0,}use\\s{1,}[^;]{0,};\\s{0,}@mx', $finalContent, $useMatches, PREG_OFFSET_CAPTURE);
     $offset = 0;
 
-    foreach($useMatches[0] as &$useMatch)
+    foreach($useMatches[0] as $useMatch)
     {
       $length = strlen($useMatch[0]);
       $finalContent = substr_replace($finalContent, '', $useMatch[1] - $offset, $length);

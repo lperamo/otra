@@ -22,7 +22,7 @@ function bundleModelPreparation(string $bundleName, string $bundlePath) : void
  * @param string $propertiesCode
  * @param string $property
  */
-function addCode(string &$functions, string &$propertiesCode, string &$property) : void
+function addCode(string &$functions, string &$propertiesCode, string $property) : void
 {
   $functions .= PHP_EOL;
 
@@ -44,11 +44,11 @@ function addCode(string &$functions, string &$propertiesCode, string &$property)
  */
 function endingTask(
   int $modelLocation,
-  string &$modelName,
-  string &$modelFullName,
-  string &$propertiesCode,
-  string &$functions,
-  string &$bundleName
+  string $modelName,
+  string $modelFullName,
+  string $propertiesCode,
+  string $functions,
+  string $bundleName
 ) : void
 {
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);

@@ -24,7 +24,7 @@ trait ProdControllerTrait
    */
   public function checkCache(array $filesToCheck) : bool
   {
-    foreach($filesToCheck as &$fileToCheck)
+    foreach($filesToCheck as $fileToCheck)
     {
       $templateFile = $this->viewPath . $fileToCheck;
       $cachedFile = parent::getCacheFileName($templateFile);
@@ -175,7 +175,7 @@ trait ProdControllerTrait
 
     $allJs = '';
 
-    foreach(self::$javaScript as &$javaScript)
+    foreach(self::$javaScript as $javaScript)
     {
       ob_start();
 

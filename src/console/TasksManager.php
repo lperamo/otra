@@ -38,7 +38,7 @@ abstract class TasksManager
 
     $category = '';
 
-    foreach ($methods as $method => &$paramsDesc)
+    foreach ($methods as $method => $paramsDesc)
     {
       if (isset($paramsDesc[self::TASK_CATEGORY]) === true)
       {

@@ -58,11 +58,11 @@ define(
  *
  * @return bool
  */
-function isNotInThePath(array $paths, string &$realPath) : bool
+function isNotInThePath(array $paths, string $realPath) : bool
 {
   $continue = true;
 
-  foreach ($paths as &$path)
+  foreach ($paths as $path)
   {
     // If we found a valid base path in the actual path
     if (mb_strpos($realPath, $path) !== false &&
@@ -105,7 +105,7 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  *
  * @return bool
  */
-$isWatched = function (array &$argv, bool &$maskExists, int $genWatcherMask) : bool
+$isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
 {
   return (
       $maskExists === true

@@ -153,7 +153,7 @@ abstract class Logger
   /**
    * @param string $message
    */
-  function lg(string $message) : void
+  public static function lg(string $message) : void
   {
     require_once CORE_PATH . 'Logger.php';
     self::logTo($message, 'trace');

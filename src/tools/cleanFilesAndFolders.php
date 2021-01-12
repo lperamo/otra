@@ -14,7 +14,7 @@ if (!function_exists('cleanFileAndFolders'))
    */
   function cleanFileAndFolders(array $fileOrFolders) : void
   {
-    foreach ($fileOrFolders as &$folder)
+    foreach ($fileOrFolders as $folder)
     {
       if (true === file_exists($folder))
       {

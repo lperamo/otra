@@ -119,7 +119,7 @@ abstract class Router
   {
     $patternFound = false;
 
-    foreach (Routes::$_ as $routeName => &$routeData)
+    foreach (Routes::$_ as $routeName => $routeData)
     {
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
@@ -191,7 +191,7 @@ abstract class Router
 
     $paramsString = '';
 
-    foreach($params as &$value)
+    foreach($params as $value)
     {
       $paramsString .= '/' . $value;
     }

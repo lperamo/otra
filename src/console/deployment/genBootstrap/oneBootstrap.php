@@ -10,7 +10,7 @@ define('ONE_BOOTSTRAP_ARG_ROUTE', 2);
 define('OTRA_KEY_BOOTSTRAP', 'bootstrap');
 define('OTRA_KEY_DRIVER', 'driver');
 
-$verbose = $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
+$verbose = (int) $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT
@@ -71,7 +71,7 @@ $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
 if (isset($params['session']))
 {
-  foreach($params['session'] as $key => &$param)
+  foreach($params['session'] as $key => $param)
   {
     $_SESSION[$key] = $param;
   }
@@ -143,7 +143,7 @@ try
     ),
     $file_
   );
-} catch(\Exception $e)
+} catch(Exception $e)
 {
   echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'

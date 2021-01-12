@@ -10,9 +10,9 @@ define('OTRA_LABEL_TSCONFIG_JSON', 'tsconfig.json');
 function generateJavaScript(
   int $verbose,
   bool $launch,
-  string &$resourceFolder,
-  string &$baseName,
-  string &$resourceName
+  string $resourceFolder,
+  string $baseName,
+  string $resourceName
 ) : void
 {
   /* TypeScript seems to not handle the compilation of one file using the json configuration file !

@@ -278,7 +278,7 @@ class MasterController
    *
    * @return string
    */
-  protected static function processFinalTemplate(string &$templateFilename, array &$variables)
+  protected static function processFinalTemplate(string $templateFilename, array $variables)
   {
     extract($variables);
     ob_start();

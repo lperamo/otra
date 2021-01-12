@@ -17,7 +17,7 @@ define(
  * @param string $bundlePath
  * @param string $moduleName
  */
-function defineModelPath(int $modelLocation, string &$bundlePath, string &$moduleName) : void
+function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
   if (defined('MODEL_PATH') === false)
     define('MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . '/' : ''));
@@ -28,7 +28,7 @@ function defineModelPath(int $modelLocation, string &$bundlePath, string &$modul
  *
  * @return array
  */
-function preparingBidule(string &$modelName) : array
+function preparingBidule(string $modelName) : array
 {
   $modelFullName = $modelName . '.php';
   define('AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
@@ -45,7 +45,7 @@ function preparingBidule(string &$modelName) : array
  *
  * @return array $modelExists, $tableExists
  */
-function checksModelAndTableExistence(string &$modelFullName, string &$modelName) : array
+function checksModelAndTableExistence(string $modelFullName, string $modelName) : array
 {
   return [
     file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName),
@@ -59,7 +59,7 @@ function checksModelAndTableExistence(string &$modelFullName, string &$modelName
  * @param string $modelName
  * @param string $errorLabel
  */
-function preparingErrorMessage(bool &$modelExists, bool &$tableExists, string &$modelName, string &$errorLabel) : void
+function preparingErrorMessage(bool $modelExists, bool $tableExists, string $modelName, string &$errorLabel) : void
 {
   if (true === $modelExists)
     $errorLabel .= 'This model \'' . $modelName . '\' already exists. ';

@@ -76,7 +76,7 @@ if (!function_exists('getRandomNonceForCSP'))
 
     $finalPolicy = POLICIES[$policy];
 
-    foreach ($policyDirectives as $directive => &$value)
+    foreach ($policyDirectives as $directive => $value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
       if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE || $directive === OTRA_KEY_STYLE_SRC_DIRECTIVE)
@@ -153,7 +153,7 @@ if (!function_exists('getRandomNonceForCSP'))
       $policy .= $directive . ' ' .
         MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ' ';
 
-    foreach (MasterController::$nonces[$directive] as &$nonce)
+    foreach (MasterController::$nonces[$directive] as $nonce)
     {
       $policy .= '\'nonce-' . $nonce . '\' ';
     }

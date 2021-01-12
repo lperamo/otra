@@ -274,11 +274,11 @@ if (GEN_ASSETS_SVG)
   // Searches in the 'web/images' folder for SVGs
   if (file_exists(FOLDER_TO_CHECK_FOR_SVGS))
   {
-    $dir_iterator = new \RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, \FilesystemIterator::SKIP_DOTS);
+    $dir_iterator = new RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, FilesystemIterator::SKIP_DOTS);
 
     $iterator = new RecursiveIteratorIterator($dir_iterator);
 
-    /** @var \SplFileInfo $entry */
+    /** @var SplFileInfo $entry */
     foreach($iterator as $entry)
     {
       $extension = $entry->getExtension();
@@ -367,7 +367,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   $type = substr(strrchr($key, '_'), 1);
   $path = $bundlePath . (true === $path ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $path) . 'resources/' . $type . '/';
 
-  foreach ($resources[$key] as &$resource)
+  foreach ($resources[$key] as $resource)
   {
     ob_start();
 

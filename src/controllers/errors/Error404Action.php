@@ -27,7 +27,7 @@ class Error404Action extends Controller
     $routes = array_keys(Routes::$_);
     $defaultUrl = null;
 
-    foreach ($routes as &$route)
+    foreach ($routes as $route)
     {
       if (strpos($route, 'otra') !== false)
         continue;

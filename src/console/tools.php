@@ -61,7 +61,7 @@ if (function_exists('promptUser') === false)
     $closest = null;
     $shortest = -1;
 
-    foreach ($words as &$currentWord)
+    foreach ($words as $currentWord)
     {
       // Calculates the distance between the input word and the current word
       $levenshtein = levenshtein($input, $currentWord);

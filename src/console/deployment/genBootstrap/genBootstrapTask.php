@@ -89,7 +89,7 @@ $_SERVER[APP_ENV] = 'prod';
 
 $key = 0;
 
-foreach(array_keys($routes) as &$route)
+foreach(array_keys($routes) as $route)
 {
   if ('exception' === $route)
     continue;

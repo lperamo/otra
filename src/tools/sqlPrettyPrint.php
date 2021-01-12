@@ -155,7 +155,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   // Display parameters at end.
   if ($replaceParameters === false) {
-    foreach ($parameters as $key => &$parameter) {
+    foreach ($parameters as $key => $parameter) {
       $output .= str_pad($key, 30, '.') . ' => ' . $parameter . "\n";
     }
   }
