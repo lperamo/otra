@@ -1,20 +1,25 @@
 @import 'devModeColors';
 
 body {
-  background : linear-gradient(
-          to bottom,
-          rgba(180, 187, 237, 0.12) 0%,
-          rgba(2, 17, 27, 0.2) 79%) no-repeat fixed !important; /* TODO why important */
+  background :
+    linear-gradient(
+      to bottom,
+      rgba(180, 187, 237, 0.12) 0%,
+      rgba(2, 17, 27, 0.2) 79%
+    ) no-repeat fixed !important; /* TODO why important */
+
   margin  : 0;
   padding : 0;
 }
 
 .exception {
   /* background */
-  background  : linear-gradient(
-          to bottom,
-          rgba(197, 204, 255, 0.23) 0%,
-          rgba(0, 2, 3, 0.5) 13%) no-repeat fixed;
+  background  :
+    linear-gradient(
+      to bottom,
+      rgba(197, 204, 255, 0.23) 0%,
+      rgba(0, 2, 3, 0.5) 13%
+    ) no-repeat fixed;
 
   /* box */
   padding     : 5px 0;
@@ -28,7 +33,7 @@ body {
   padding : 20px;
 
   @at-root {
-    .exception-{
+    .exception- {
       &file {
         color: $exception--file-color;
         font-weight: bold;
@@ -52,36 +57,43 @@ body {
       white-space    : normal;
     }
 
-    td, th {
+    td,
+    th {
       border       : solid $exception--table-cell-color;
       border-width : 0 0 1px 1px;
       padding      : 3px 6px;
-      transition   : background .25s
+      transition   : background .25s;
     }
 
-    tr:nth-of-type(odd) > td { background : $exception--table-odd-cell-background-color }
+    tr:nth-of-type(odd) > td {
+      background : $exception--table-odd-cell-background-color;
+    }
 
     tr > td:hover {
       background    : $exception--table-cell-hover-color;
       border-radius : 0;
-      /*text-shadow   : 1px 1px #ccc*/
+
+      /* text-shadow   : 1px 1px #ccc */
     }
 
     /* border bottom left */
-    /*tr:last-child > td:first-child { border-radius : 0 0 0 10px }*/
+
+    /* tr:last-child > td:first-child { border-radius : 0 0 0 10px } */
 
     /* border bottom right */
-    /*tr:last-child > td:last-child { border-radius : 0 0 10px 0 }*/
-    table:not(.test) td:first-child { width : 150px }
 
-    td:first-child, th:first-child { border-left : 0 }
+    /* tr:last-child > td:last-child { border-radius : 0 0 10px 0 } */
+    table:not(.test) td:first-child { width : 150px; }
 
-    tr:last-child > td { border-bottom : 0 }
+    td:first-child,
+    th:first-child { border-left : 0; }
+
+    tr:last-child > td { border-bottom : 0; }
 
     .show-args {
       font-style: italic;
 
-      &:hover { cursor : pointer }
+      &:hover { cursor : pointer; }
     }
 
     .deep-content {
@@ -89,8 +101,7 @@ body {
 
       @at-root {
         .test {
-          &:not(.innerHeader)
-          {
+          &:not(.innerHeader) {
             border-top: 0;
           }
 
@@ -110,12 +121,12 @@ body {
           /* TODO why important */
           &:hover {
             background-color : $exception--table-foldable-background-color;
-            color: #DDD;
+            color: #ddd;
             text-shadow : none;
           }
 
-          &:hover .dummy::after, &.no-dummy:hover::after
-          {
+          &:hover .dummy::after,
+          &.no-dummy:hover::after {
             /* display */
             content: 'Foldable !';
             display: table-cell;
@@ -128,13 +139,13 @@ body {
           }
         }
 
-        .dummy { width : 100% !important }/* TODO why important */
+        .dummy { width : 100% !important; }/* TODO why important */
       }
     }
   }
 }
 
-.text-center { text-align : center }
+.text-center { text-align : center; }
 
 .correct-display {
   /* box */
@@ -147,9 +158,10 @@ body {
   white-space     : pre-wrap;
   hyphens         : auto;
   word-wrap       : break-word;
+
   /* overflow:word-wrap; we must replace this value because it will be the new standard */
 }
 
-/*.radius { border-radius : 10px }*/
+/* .radius { border-radius : 10px } */
 
 .noBorder { border : 0; }

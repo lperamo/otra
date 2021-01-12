@@ -1,6 +1,13 @@
 @keyframes lightbox-start {
-  from { opacity : 0; left : -100% }
-  to { opacity : 1; left : 0 }
+  from {
+    opacity : 0;
+    left : -100%;
+  }
+
+  to {
+    opacity : 1;
+    left : 0;
+  }
 }
 
 .lightbox {
@@ -11,7 +18,7 @@
   &-container {
     align-items     : center;
     animation       : lightboxStart .25s ease-out 0s;
-    color           : #EEE;
+    color           : #eee;
     display         : flex;
     justify-content : center;
     left            : 0;
@@ -21,9 +28,9 @@
     overflow        : hidden;
     text-shadow     : 0 0 3px #777;
     top             : 0;
-    transition      : opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
+    transition      : opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
     width           : 100%;
-    z-index         : 10000
+    z-index         : 10000;
   }
 
   /* Class for the exit animation */
@@ -55,5 +62,3 @@
     float         : right;
   }
 }
-
-

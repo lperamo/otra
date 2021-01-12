@@ -30,8 +30,9 @@ $debug-buttons-hover-text-shadow-color : #444;
 // TOGGLE
 $debug--toggle-color : #fd9;
 $debug--toggle-text-shadow-color : #540;
+
 @mixin debugToggleHoverTextShadow {
-  text-shadow : 0 0 1px #0b255e, 0 0 8px #fff, 0 0 8px #fff, 0 0 8px #fff
+  text-shadow : 0 0 1px #0b255e, 0 0 8px #fff, 0 0 8px #fff, 0 0 8px #fff;
 }
 
 // === PROFILER ===>
@@ -72,11 +73,11 @@ $exception--line-color : #65e;
 //TABLE
 $exception--table-border-color : #ccf;
 
-  // CELL
-  $exception--table-cell-color : #ccf;
-  $exception--table-cell-hover-color : rgba(15, 16, 17, 0.06);
-  $exception--table-odd-cell-background-color : rgba(255, 255, 255, 0.48);
+// CELL
+$exception--table-cell-color : #ccf;
+$exception--table-cell-hover-color : rgba(15, 16, 17, 0.06);
+$exception--table-odd-cell-background-color : rgba(255, 255, 255, 0.48);
 
-  // FOLDABLE
-  $exception--table-foldable-background-color : rgba(68, 68, 68, 0.5);
-  $exception--table-foldable-hover-color : #EEE;
+// FOLDABLE
+$exception--table-foldable-background-color : rgba(68, 68, 68, 0.5);
+$exception--table-foldable-hover-color : #eee;

@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Contributing](../contributing.md) / PHP side
+[Home](../../README.md) / [Contributing](../../CONTRIBUTING.md) / PHP side
 
 Previous section : [Generic rules](generic.md)
 
