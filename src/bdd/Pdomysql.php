@@ -206,7 +206,7 @@ abstract class Pdomysql
   /**
    * Get the ID generated in the last query
    *
-   * @param string $sequenceName
+   * @param string|null $sequenceName
    *
    * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php

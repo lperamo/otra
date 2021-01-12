@@ -228,6 +228,7 @@ class MasterController
    * @param string $cachedFile The cache file name version of the file
    * @param bool   $exists     True if we know that the file exists.
    *
+   * @throws \Exception
    * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
    */
   protected static function getCachedFile(string $cachedFile, bool $exists = false)

@@ -29,7 +29,7 @@ abstract class TasksManager
   {
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
+    echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 

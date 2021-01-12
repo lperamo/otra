@@ -91,12 +91,12 @@ trait DevControllerTrait
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string $templateFilename The file name
-   * @param array  $variables        Variables to pass to the template
-   * @param string $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
+   * @param string      $templateFilename The file name
+   * @param array       $variables        Variables to pass to the template
+   * @param string|null $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
    *
-   * @return mixed|string
    * @throws Exception
+   * @return mixed|string
    */
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {

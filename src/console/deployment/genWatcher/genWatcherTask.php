@@ -128,9 +128,9 @@ function isNotInThePath(array $paths, string &$realPath) : bool
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
- * @param string    $resource Most of the time the name of a folder
- * @param string    $name     Most of the time the name of a file
- * @param bool|null $endColor Do we have to reset color at the end ?
+ * @param string      $resource Most of the time the name of a folder
+ * @param string|null $name     Most of the time the name of a file
+ * @param bool|null   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */
@@ -236,7 +236,7 @@ $inotifyInstance = inotify_init();
 // (we then can do echos when we are listening to events)
 stream_set_blocking($inotifyInstance, 0);
 
-// ******************** ADDING WATCHS ********************
+// ******************** ADDING WATCHES ********************
 
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
@@ -450,7 +450,7 @@ while (true)
 
             $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-            list(, $return) = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
+            [, $return] = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
@@ -488,7 +488,7 @@ while (true)
 
                 $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
 
-                list(, $return) = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
+                [, $return] = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
 
                 echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
                   returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',

@@ -25,11 +25,11 @@ The file can be as simple as this one.
   * the app name;
   * the bundle name;
   * the controller name;
-  * the action name. Always specify this name in PascalCase.
+  * the action's name. Always specify this name in PascalCase.
   
-* `resources` contains informations on client side.
+* `resources` contains information on client side.
 
-  * `template` at true, it will tells that it is a static page.<br>
+  * `template` at true, it will tell that it is a static page.<br>
   It allows performance improvement by caching the generated page.
   
   * `bundle_css` must be an array that contains all the css file names (without the extension) that are related to the bundle

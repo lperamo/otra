@@ -5,7 +5,7 @@ Previous section : [Routes configuration file](routesConfiguration.md)
 
 #### Watching files
 
-#### On unix systems
+#### On unix systems
 You can initiate a watcher to listening for class mapping, typescript files, scss files and route configuration updates
 by typing this command :
 
@@ -21,12 +21,12 @@ Do not hesitate to look the [following section](synchronizationTips.md) to impro
 As usual, you can filter what you want to watch with parameters, see the command help for more 
  information.
 
-#### On Windows
+#### On Windows
 If you use PHPStorm, I have put some things to help you to configure file watchers in the folder `ideConfiguration` like 
 scopes and file watchers presets.
 
 For the scopes, you need to copy the folder `scopes` in your related `.idea` folder.
 
-For the file watchers, you can import them via _File > Settings > Tools > File Watchers > Import_.
+For the file watchers, you can import them via _File > Settings > Tools > File Watchers > Import.
 
 Next section : [Tips for faster synchronization](synchronizationTips.md)

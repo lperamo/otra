@@ -4,7 +4,7 @@ Previous section : [PHP side](php.md)
 
 ### CSS side or SCSS side
 
-#### Coding style
+#### Coding style
 
 - Do not use uppercase in classes, the css rules and properties do not do that => consistency.
 
@@ -13,7 +13,7 @@ Previous section : [PHP side](php.md)
 #### Best practices
 
 - Use SCSS or SASS. SCSS is probably best because if one day, it becomes useless due to CSS enhancement ... SCSS has
-  almost the same coding style so it will be simpler to adapt the code.
+  almost the same coding style, so it will be simpler to adapt the code.
   
 - Keep the lowest specificity as possible. Some people even say never use ids but classes instead for reusability !
 

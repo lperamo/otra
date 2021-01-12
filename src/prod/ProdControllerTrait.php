@@ -161,6 +161,7 @@ trait ProdControllerTrait
    *
    * @param string $routeV Route name plus the version
    *
+   * @throws Exception
    * @return string The links to the js files or the script markup with the js inside
    */
   private function addJs(string $routeV) : string

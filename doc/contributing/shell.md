@@ -6,4 +6,4 @@ Previous section : [HTML side](html.md)
 
 #### Coding style
 
-- Use _snake_case_ for unexported variables and _SCREAMING_SNAKE_CASE_ for constants and exported variables.
+- Use _snake_case_ for not exported variables and _SCREAMING_SNAKE_CASE_ for constants and exported variables.

@@ -21,7 +21,7 @@ There is still a lot of things to do :
 - features
 - optimizations
 - compatibility
-- and so on ^^.
+- ...and so on ^^.
  
 I am working on giving to the community a list of tasks that I compiled until now.
 

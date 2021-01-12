@@ -6,7 +6,7 @@ Previous section : [Generic rules](generic.md)
 
 #### Coding style
 
-- Organize use statements particularly when they share path e.g. :
+- Organize use statements particularly when they share a path e.g. :
 
     ```php
     use config\{All_Config, Routes};
@@ -29,7 +29,7 @@ Previous section : [Generic rules](generic.md)
     }
     ```
   
-  Here, there is no need for documentation.
+  Here, there is no need for a documentation.
   
 - Always type the variables and put a return type
 
