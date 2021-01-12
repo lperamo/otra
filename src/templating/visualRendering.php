@@ -32,7 +32,7 @@ if (function_exists('showBlocksVisually') === false)
     if ($code !== '') {
     ?>
     <pre class="otra--code"><!--
-    --><b class="otra--code--container"><mark class="otra--code--container-highlight"><?= htmlentities($code) ?></mark></b><!--
+    --><strong class="otra--code--container"><mark class="otra--code--container-highlight"><?= htmlentities($code) ?></mark></strong><!--
  --></pre>
     <?php
     } else {
@@ -58,18 +58,18 @@ if (function_exists('showBlocksVisually') === false)
         showCode($block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]);
         ?>
         <?php
-        if (isset($block['replacedBy']))
+        if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
         {
-          $replacingBlocks[$block['replacedBy']] = $blockKey;
-          echo '<p>Replaced by the <a href="#block' . $block['replacedBy'] . '" title="' .
-            htmlentities(BlocksSystem::$blocksStack[$block['replacedBy']][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) . '">block ' .
-            $block['replacedBy'] . '</a></p>';
+          $replacingBlocks[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]] = $blockKey;
+          echo '<p>Replaced by the <a href="#block' . $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] . '" title="' .
+            htmlentities(BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
+            '">block ' . $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] . '</a></p>';
         }
 
         if (isset($replacingBlocks[$blockKey]))
           echo '<p>Replacing the <a href="#block' . $replacingBlocks[$blockKey] . '" title="' .
-            htmlentities(BlocksSystem::$blocksStack[$replacingBlocks[$blockKey]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) . '">block ' .
-            $replacingBlocks[$blockKey] . '</a></p>';
+            htmlentities(BlocksSystem::$blocksStack[$replacingBlocks[$blockKey]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
+            '">block ' . $replacingBlocks[$blockKey] . '</a></p>';
 
         while ($block[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] !== null)
         {

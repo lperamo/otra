@@ -85,27 +85,13 @@ class DumpCli extends DumpMaster
 
   /**
    * @param      $param
-   * @param bool $notFirstDepth
    * @param int  $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
+  private static function dumpObject($param, int $depth) : void
   {
-    $className = get_class($param);
-    $reflectedClass = new ReflectionClass($className);
-    $classInterfaces = $reflectedClass->getInterfaceNames();
-    $parentClass = $reflectedClass->getParentClass();
-    $description = 'object (' . count((array) $param) . ') ' .
-      ($reflectedClass->isAbstract() ? 'abstract ': '') .
-      ($reflectedClass->isFinal() ? 'final ': '') . $className;
-
-    if ($parentClass !== false)
-      $description .= ' extends ' . $parentClass->getName();
-
-    if (!empty($classInterfaces))
-      $description .= ' implements ' . implode(',', $classInterfaces);
-
+    list($className, $description) = parent::getClassDescription($param);
     echo $description, PHP_EOL;
 
     // If we have reach the depth limit, we exit this function
@@ -170,12 +156,12 @@ class DumpCli extends DumpMaster
       case 'float' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
         break;
-      case 'string' :
+      case DumpMaster::OTRA_DUMP_TYPE_STRING :
         echo $propertyType, ' => ';
         $lengthParam = strlen($propertyValue);
 
         if ($lengthParam > 50)
-          echo '<br>';
+          echo PHP_EOL;
 
         echo "'",
         (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]] === -1
@@ -188,21 +174,20 @@ class DumpCli extends DumpMaster
         "'";
 
         if ($lengthParam > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]])
-          echo '<b>(cut)</b>';
+          echo ADD_BOLD, '(cut)', REMOVE_BOLD_INTENSITY;
 
         echo ' (', $lengthParam, ') ', $property->getDocComment();
         break;
-      case 'array' : self::dumpArray(
+      case DumpMaster::OTRA_DUMP_TYPE_ARRAY : self::dumpArray(
         $propertyType,
         $propertyValue,
         $depth
       );
         break;
-      case 'NULL' : echo '<b>null</b>'; break;
+      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY; break;
       case 'object' :
         self::dumpObject(
           $param,
-          ($depth !== -1),
           $depth
         );
         break;
@@ -236,12 +221,15 @@ class DumpCli extends DumpMaster
       echo $padding;
 
     // showing keys
-    echo (gettype($paramKey) !== 'string' ? $paramKey : '\'' . $paramKey . '\''), ' => ';
+    echo (gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
+      ? $paramKey
+      : '\'' . $paramKey . '\''
+      ), ' => ';
 
     // showing values
     switch($paramType)
     {
-      case 'array' :
+      case DumpMaster::OTRA_DUMP_TYPE_ARRAY :
         self::dumpArray($paramType, $param, $depth);
         break;
       case 'boolean' :
@@ -253,10 +241,10 @@ class DumpCli extends DumpMaster
         break;
       case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
       case 'object' :
-        self::dumpObject($param, $notFirstDepth, $depth);
+        self::dumpObject($param, $depth);
         break;
 
-      case 'string' :
+      case DumpMaster::OTRA_DUMP_TYPE_STRING :
         $stringToShow = (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]] === -1
           ? $param
           : substr(
