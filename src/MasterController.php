@@ -211,15 +211,15 @@ class MasterController
   /**
    * Encodes the value passed as parameter in order to create a cache file name
    *
-   * @param string $filename File name to modify
-   * @param string $path File's path
-   * @param string $prefix Prefix of the file name
+   * @param string $route
+   * @param string $path     File's path
+   * @param string $suffix   Suffix of the file name
    * @param string $extension
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = VERSION, string $extension = '.cache') : string {
-    return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
+  protected static function getCacheFileName(string $route, string $path = CACHE_PATH, string $suffix = VERSION, string $extension = '.cache') : string {
+    return $path . sha1('ca' . $route . $suffix . 'che') . $extension;
   }
 
   /**

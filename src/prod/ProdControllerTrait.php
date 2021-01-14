@@ -27,7 +27,7 @@ trait ProdControllerTrait
     foreach($filesToCheck as $fileToCheck)
     {
       $templateFile = $this->viewPath . $fileToCheck;
-      $cachedFile = parent::getCacheFileName($templateFile);
+      $cachedFile = parent::getCacheFileName($this->route);
 
       if (false === file_exists($cachedFile))
         return false;
@@ -79,11 +79,11 @@ trait ProdControllerTrait
       parent::$template = self::$rendered[$templateFile];
     else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
     {
-      $cachedFile = parent::getCacheFileName($templateFile);
+      $cachedFile = parent::getCacheFileName($this->route);
       parent::$template = (false === parent::getCachedFile($cachedFile)
         || (property_exists(AllConfig::class, 'cache') === true && AllConfig::$cache === false))
         ? $this->buildCachedFile($templateFile, $variables, $cachedFile)
-        : parent::getCachedFile(parent::getCacheFileName($templateFile), true);
+        : parent::getCachedFile(parent::getCacheFileName($this->route), true);
     }
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
@@ -107,17 +107,15 @@ trait ProdControllerTrait
   {
     $content = MasterController::processFinalTemplate($templateFilename, $variables);
 
-    $routeV = $this->route . VERSION;
-
     // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
     $content = preg_replace('/>\s+</', '><',
       ($layout === true)
         ? false === self::$ajax
         ? str_replace(
           '/title>',
-          '/title>'. self::addCss($routeV),
-          $content . self::addJs($routeV))
-        : self::addCss($routeV) . $content . self::addJs($routeV)
+          '/title>'. self::addCss(),
+          $content . self::addJs())
+        : self::addCss() . $content . self::addJs()
         : $content
     ); // suppress useless spaces
 
@@ -142,34 +140,31 @@ trait ProdControllerTrait
   /**
    * Returns the pre-generated css and the additional concatenated css
    *
-   * @param string $routeV Route name plus the version
-   *
    * @return string The links to the css files or the style markup with the css inside
    *
    * @throws Exception
    */
-  private function addCss(string $routeV) : string
+  private function addCss() : string
   {
     // If we have CSS files to load, then we load them
     return self::$hasCssToLoad ? '<link rel="stylesheet" nonce="' . getRandomNonceForCSP('style-src') .
-      '" href="' . parent::getCacheFileName($routeV, '/cache/css/', '', '.gz') . '" />' : '';
+      '" href="' . parent::getCacheFileName($this->route,'/cache/css/', VERSION, '.gz') . '" />' : '';
 //    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
 //      return '<style>' . $allCss . '</style>';
   }
 
   /** Returns the pre-generated js and the additional concatenated js
    *
-   * @param string $routeV Route name plus the version
-   *
    * @throws Exception
    * @return string The links to the js files or the script markup with the js inside
    */
-  private function addJs(string $routeV) : string
+  private function addJs() : string
   {
     // If we have JS files to load, then we load them
     $content = (self::$hasJsToLoad) ? '<script nonce="' . getRandomNonceForCSP() . '" src="' .
-      parent::getCacheFileName($routeV, '/cache/js/', '', '.gz') . '" async defer></script>' : '';
+      parent::getCacheFileName($this->route,'/cache/js/', VERSION, '.gz') . '" async defer></script>' : '';
 
+    // If there are no scripts loaded dynamically (not from the routes configuration)
     if (true === empty(self::$javaScript))
       return $content;
 
@@ -179,12 +174,12 @@ trait ProdControllerTrait
     {
       ob_start();
 
-      if (false === strpos($lastFile, ('http')))
-        echo file_get_contents(parent::$path . $lastFile);
+      if (false === strpos($javaScript, ('http')))
+        echo file_get_contents(parent::$path . $javaScript);
       else
       {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $lastFile);
+        curl_setopt($ch, CURLOPT_URL, $javaScript);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_exec($ch);
         curl_close($ch);
@@ -196,8 +191,10 @@ trait ProdControllerTrait
       return '<script nonce="' . getRandomNonceForCSP() . '" async defer>' . $allJs . '</script>';
 
     // Creates/erase the corresponding cleaned js file
-    file_put_contents(parent::getCacheFileName($routeV, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
+    file_put_contents(parent::getCacheFileName($this->route, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
-    return $content . '<script nonce="' . getRandomNonceForCSP() . '" src="' . parent::getCacheFileName($routeV, '/cache/js/', '_dyn', '.js') . '" async defer></script>';
+    return $content . '<script nonce="' . getRandomNonceForCSP() . '" src="' .
+      parent::getCacheFileName($this->route, '/cache/js/', '_dyn', '.js') .
+      '" async defer></script>';
   }
 }
