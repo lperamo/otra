@@ -66,7 +66,6 @@ if (!function_exists('getRandomNonceForCSP'))
       $tempSecurity = isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [];
 
       MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . $route . '.php';
-
       MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
 
       // If we have a policy for this environment, we use it
@@ -132,12 +131,12 @@ if (!function_exists('getRandomNonceForCSP'))
     {
       if (!empty(MasterController::$nonces[$directive])) // but has nonces
       {
-        // adding nonces to avoid error loop before throwing the exception
+        // changes 'script-src' (CSP) directive to avoid error loop before throwing the exception
         MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] = OTRA_LABEL_SECURITY_SELF .
           ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC;
 
         // this 'if' also avoids a loop because there is no security rules for the exception page for now
-        if ($route !== 'otra_exception')
+        if ($route !== 'otra_exception' && (!isset(\config\AllConfig::$debug) || !\config\AllConfig::$debug))
           throw new OtraException(
             'Content Security Policy error : you must have the mode ' .
             OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' . $directive . '\' directive for the route \'' .
