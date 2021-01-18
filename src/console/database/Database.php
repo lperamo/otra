@@ -264,7 +264,7 @@ namespace otra\console
 
         if ('notnull' === $attribute)
           $attribute = 'not null';
-        elseif ('type' === $attribute && false !== strpos($value, 'string'))
+        elseif ('type' === $attribute && str_contains($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
         if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
@@ -1174,12 +1174,10 @@ namespace otra\console
           if ('NO' === $column['IS_NULLABLE'])
             $content .= '      notnull: true' . PHP_EOL;
 
-          if (false !== strpos($column['EXTRA'],
-              'auto_increment')
-          )
+          if (str_contains($column['EXTRA'], 'auto_increment'))
             $content .= '      auto_increment: true' . PHP_EOL;
 
-          if ('PRI' == $column['COLUMN_KEY'])
+          if ('PRI' === $column['COLUMN_KEY'])
             $content .= '      primary: true' . PHP_EOL;
         }
 
@@ -1372,7 +1370,7 @@ namespace otra\console
                 elseif (is_string($colOfRow))
                 {
                   // For some obscure reasons, PHP_EOL cannot work in this case as it is always returning \n in my tests...
-                  if (false === strpos($colOfRow, "\n"))
+                  if (!str_contains($colOfRow, "\n"))
                   {
                     $quoteIfString = in_array(
                       $columnMetaData['DATA_TYPE'],

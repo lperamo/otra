@@ -55,7 +55,7 @@ trait ProdControllerTrait
    */
   final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    if (strpos($this->route, 'otra_') === false)
+    if (!str_contains($this->route, 'otra_'))
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
     else
       $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
@@ -174,7 +174,7 @@ trait ProdControllerTrait
     {
       ob_start();
 
-      if (false === strpos($javaScript, ('http')))
+      if (!str_contains($javaScript, ('http')))
         echo file_get_contents(parent::$path . $javaScript);
       else
       {

@@ -55,7 +55,7 @@ trait DevControllerTrait
    */
   final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    $otraRoute = strpos($this->route, 'otra_') !== false;
+    $otraRoute = str_contains($this->route, 'otra_');
 
     if ($otraRoute === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
@@ -133,7 +133,7 @@ trait DevControllerTrait
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
     require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
-    parent::$template = (false === strpos(parent::$template, 'body'))
+    parent::$template = (!str_contains(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
       : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 

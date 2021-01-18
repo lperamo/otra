@@ -40,19 +40,19 @@ function checkDataType(string $modelName, string $columnName, string $type)
  */
 function getDataType(string $modelName, string $columnName, string $type) : string
 {
-  if (false !== strpos($type, 'char') || false !== strpos($type, 'text'))
+  if (str_contains($type, 'char') || str_contains($type, 'text'))
     return 'string';
 
-  if (false !== strpos($type, 'int'))
+  if (str_contains($type, 'int'))
     return 'int';
 
-  if (false !== strpos($type, 'float') || false !== strpos($type, 'double'))
+  if (str_contains($type, 'float') || str_contains($type, 'double'))
     return 'float';
 
-  if (false !== strpos($type, 'bool'))
+  if (str_contains($type, 'bool'))
     return 'bool';
 
-  if (false !== strpos($type, 'timestamp') || false !== strpos($type, 'date'))
+  if (str_contains($type, 'timestamp') || str_contains($type, 'date'))
     return 'DateTime';
 
   // If we don't know this type !

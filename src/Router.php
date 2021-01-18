@@ -125,7 +125,7 @@ abstract class Router
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
       // This is the route we are looking for !
-      if (false !== strpos($pattern, $mainPattern))
+      if (str_contains($pattern, $mainPattern))
       {
         $patternFound = true;
         break;

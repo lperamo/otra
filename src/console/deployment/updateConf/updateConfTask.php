@@ -65,7 +65,7 @@ if (!function_exists('writeConfigFile'))
             Once found, we add it to the route configuration.
             It will help the router to go faster to name the parameters. */
 
-          if ('\'chunks\'=>' === $actualRouteKey && false !== strpos($arrayChunk, '{'))
+          if ('\'chunks\'=>' === $actualRouteKey && str_contains($arrayChunk, '{'))
           {
             $bracketPosition = strpos($arrayChunk, '{');
             $mainPattern     = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);

@@ -70,11 +70,11 @@ class OtraExceptionCli extends \Exception
     {
       $exceptionFile = $exception->file;
 
-      if (strpos($exceptionFile, CONSOLE_PATH) !== false)
+      if (str_contains($exceptionFile, CONSOLE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
-      elseif (strpos($exceptionFile, CORE_PATH) !== false)
+      elseif (str_contains($exceptionFile, CORE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
-      elseif (strpos($exceptionFile, BASE_PATH) !== false)
+      elseif (str_contains($exceptionFile, BASE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
       echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,

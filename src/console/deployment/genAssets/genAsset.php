@@ -7,7 +7,7 @@ define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);
 define('ARG_SHA_NAME', $argv[3]);
 
-define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'

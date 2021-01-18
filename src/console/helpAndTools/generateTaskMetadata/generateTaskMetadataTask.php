@@ -7,7 +7,7 @@ use otra\console\TasksManager;
 if (defined('BASE_PATH') === false)
 {
   // @codeCoverageIgnoreStart
-  define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+  define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 
   // BASE_PATH calculation
   $temporaryBasePath = (OTRA_PROJECT

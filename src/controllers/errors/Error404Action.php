@@ -29,7 +29,7 @@ class Error404Action extends Controller
 
     foreach ($routes as $route)
     {
-      if (strpos($route, 'otra') !== false)
+      if (str_contains($route, 'otra'))
         continue;
 
       $defaultUrl = Routes::$_[$route]['chunks'][0];

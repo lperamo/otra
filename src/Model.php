@@ -48,7 +48,7 @@ abstract class Model
       $name = $prop->name;
       $properties[$name] = empty($this->$name) ? null : $this->$name;
 
-      if (strpos($name, 'id') !== false)
+      if (str_contains($name, 'id'))
       {
         $id = $name;
 

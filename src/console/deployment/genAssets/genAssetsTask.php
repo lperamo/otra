@@ -156,7 +156,7 @@ if (
     /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
     if (GEN_ASSETS_CSS)
     {
-      if (strpos(implode(array_keys($resources)), 'css') !== false)
+      if (str_contains(implode(array_keys($resources)), 'css'))
       {
         $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
 
@@ -173,12 +173,12 @@ if (
     /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
     if (GEN_ASSETS_JS)
     {
-      if (strpos(implode(array_keys($resources)), 'js') !== false)
+      if (str_contains(implode(array_keys($resources)), 'js'))
       {
         $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
 
         // Linux or Windows ? We have java or jamvm ?
-        if (false === strpos(php_uname('s'), 'Windows')) // LINUX CASE
+        if (!str_contains(php_uname('s'), 'Windows')) // LINUX CASE
         {
           if (true !== empty(exec('which java'))) // JAVA CASE
           {
@@ -371,7 +371,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   {
     ob_start();
 
-    if (false === strpos($resource, 'http'))
+    if (!str_contains($resource, 'http'))
       echo file_get_contents($path . $resource . '.' . $type);
     else
     {
