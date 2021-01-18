@@ -113,7 +113,7 @@ class RoutesTest extends TestCase
         '/dbg/refreshSQLLogs',
         '/otra/profilerController/refreshSQLLogsAction',
         '[PHP]',
-        ' No other resources. [aaf5b99241b8ca17500e63bcdc7fe2c1fd45daf1]',
+        ' No other resources. [a42f984c604230353390071b56f3ecf5476da82c]',
         true
       ) .
       self::showRouteInformations(
@@ -122,7 +122,7 @@ class RoutesTest extends TestCase
         '/dbg/clearSQLLogs',
         '/otra/profilerController/clearSQLLogsAction',
         '[PHP]',
-        ' No other resources. [f12d8cd7ca8ed48da320a5674ea6740828aafed5]',
+        ' No other resources. [527dadb06d335d3fd1810f3a9f4772a137fc210e]',
         true
       ) .
       self::showRouteInformations(
@@ -131,7 +131,7 @@ class RoutesTest extends TestCase
         '/dbg',
         '/otra/profilerController/indexAction',
         '[PHP]',
-        ' No other resources. [1ddb0cc7fe3de4d3ea1d25c640264572b78f302e]',
+        ' No other resources. [0bebf28ae270fcd9d29136f5e48f28543f84b45b]',
         true
       ) .
       self::showRouteInformations(
@@ -140,7 +140,7 @@ class RoutesTest extends TestCase
         '/404',
         '/otra/errorsController/error404Action',
         '[PHP]',
-        ' No other resources. [f034aa32d95877a154a0f6aed106d25ab50d1370]',
+        ' No other resources. [3a95d6505bd70f30fe340609c9246709d6025fc5]',
         true
       ) .
       self::showRouteInformations(
@@ -149,7 +149,7 @@ class RoutesTest extends TestCase
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',
         '[TEMPLATE]',
-        '[f40ed5d7e08cd2a4a1b8fe2b5c4191722f35fae2]',
+        '[ee81412660816b84c10bda5ec4679b72b0d8f132]',
         false
       ) . END_COLOR
     );
