@@ -1,7 +1,7 @@
 testDB_table:
   columns:
     id:
-      type: int(11)
+      type: int
       notnull: true
       auto_increment: true
       primary: true
@@ -12,11 +12,11 @@ testDB_table:
       type: timestamp
       notnull: true
     fk_id_table2:
-      type: int(11)
+      type: int
       notnull: true
       primary: true
     fk_id_table3:
-      type: int(11)
+      type: int
       notnull: true
   relations:
     testDB_table2:
@@ -31,20 +31,20 @@ testDB_table:
 testDB_table2:
   columns:
     id:
-      type: int(11)
+      type: int
       notnull: true
       primary: true
     type:
-      type: tinyint(1) unsigned
+      type: tinyint unsigned
     type_cfg_id:
-      type: smallint(5) unsigned
+      type: smallint unsigned
     aEnfants:
-      type: tinyint(1)
+      type: tinyint
       notnull: true
 
 testDB_table3:
   columns:
     id:
-      type: int(11)
+      type: int
       notnull: true
       primary: true

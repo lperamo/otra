@@ -65,7 +65,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
 
-  foreach (BUNDLE_FOLDERS as $key => &$folder)
+  foreach (BUNDLE_FOLDERS as $key => $folder)
   {
     // Checks if the folder have to be created or not.
     if (BUNDLE_FOLDERS_MASK & pow(2, $key))

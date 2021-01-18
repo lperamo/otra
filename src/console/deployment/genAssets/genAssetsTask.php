@@ -2,16 +2,27 @@
 declare(strict_types=1);
 
 use config\Routes;
+use otra\OtraException;
 
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
 require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/compression.php';
 
-define('ASSET_MASK', 2);
+define('GEN_ASSETS_ARG_ASSETS_MASK', 2);
 define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3] ?? 1]);
-define('ROUTE', 4);
+define('GEN_ASSETS_ARG_ROUTE', 4);
 define('GZIP_COMPRESSION_LEVEL', 9);
+
+define('GEN_ASSETS_MASK_TEMPLATE', 1);
+define('GEN_ASSETS_MASK_CSS', 2);
+define('GEN_ASSETS_MASK_JS', 4);
+define('GEN_ASSETS_MASK_MANIFEST', 8);
+define('GEN_ASSETS_MASK_SVG', 16);
+define('GEN_ASSETS_MASK_TOTAL', 31);
+
+define('ROUTES_CHUNKS_BUNDLE', 1);
+define('ROUTES_CHUNKS_MODULE', 2);
 
 define('OTRA_UNLINK_CALLBACK', 'unlink');
 define('OTRA_CLI_CYAN_STRING', 'CLI_CYAN');
@@ -30,26 +41,41 @@ function unlinkResourceFile(string $folder, string $shaName)
     unlink($file);
 }
 
-if (true === isset($argv[ASSET_MASK]) && false === is_numeric($argv[ASSET_MASK]))
+if (true === isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && false === is_numeric($argv[GEN_ASSETS_ARG_ASSETS_MASK]))
 {
-  echo CLI_RED, 'This not a valid mask ! It must be between 1 and 7.', END_COLOR;
-  exit(1);
+  echo CLI_RED, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
+    '.', END_COLOR;
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
-$mask = (true === isset($argv[ASSET_MASK])) ? $argv[ASSET_MASK] + 0 : 15; // 15 = default to all assets
+define(
+  'ASSETS_MASK',
+  (true === isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
+); // 31 = default to all assets
 
-// If we only need the manifest, skips the assets generation loop
-if ($mask !== 8)
+define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
+define('GEN_ASSETS_CSS', (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1);
+define('GEN_ASSETS_JS', (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2);
+define('GEN_ASSETS_MANIFEST', (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3);
+define('GEN_ASSETS_SVG', (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4);
+
+// If we only need the manifest or the SVGs, skips the assets generation loop
+if (
+  !in_array(
+    ASSETS_MASK,
+    [GEN_ASSETS_MASK_MANIFEST, GEN_ASSETS_MASK_SVG, GEN_ASSETS_MASK_MANIFEST | GEN_ASSETS_MASK_SVG]
+  )
+)
 {
   // If we ask just for only one route
-  if (true === isset($argv[ROUTE]))
+  if (isset($argv[GEN_ASSETS_ARG_ROUTE]))
   {
-    $theRoute = $argv[ROUTE];
+    $theRoute = $argv[GEN_ASSETS_ARG_ROUTE];
 
-    if (false === isset($routes[$theRoute]))
+    if (!isset($routes[$theRoute]))
     {
       echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
-      exit(1);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     echo 'Cleaning the resources cache...';
@@ -58,28 +84,27 @@ if ($mask !== 8)
 
     /***************** CLEANING THE FILES *******************
      ******* specific to the route passed in parameter ******/
-
     $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
-    if ($mask & 1)
+    if (GEN_ASSETS_TEMPLATE)
       unlinkResourceFile('tpl/', $shaName);
 
-    if (($mask & 2) >> 1)
+    if (GEN_ASSETS_CSS)
       unlinkResourceFile('css/', $shaName);
 
-    if (($mask & 4) >> 2)
+    if (GEN_ASSETS_JS)
       unlinkResourceFile('js/', $shaName);
   } else
   {
     echo PHP_EOL, 'Cleaning the resources cache...';
 
-    if ($mask & 1)
+    if (GEN_ASSETS_TEMPLATE)
       array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
 
-    if (($mask & 2) >> 1)
+    if (GEN_ASSETS_CSS)
       array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'css/*'));
 
-    if (($mask & 4) >> 2)
+    if (GEN_ASSETS_JS)
       array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
   }
 
@@ -88,21 +113,26 @@ if ($mask !== 8)
   /*************** PROCESSING THE ROUTES ************/
 
   $cptRoutes = count($routes);
+  $routePlural = '';
 
-  echo $cptRoutes, ' route(s) to process. Processing the route(s) ... ', PHP_EOL, PHP_EOL;
+  if ($cptRoutes > 1)
+    $routePlural = 's';
 
-  for($i = 0; $i < $cptRoutes; ++$i)
+  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL,
+    PHP_EOL;
+
+  for ($i = 0; $i < $cptRoutes; ++$i)
   {
     $route = current($routes);
     $routeName = key($routes);
     next($routes);
 
     // Showing the route name
-    echo CLI_LIGHT_CYAN, str_pad($routeName, 25, ' '), CLI_LIGHT_GRAY;
+    echo CLI_LIGHT_CYAN, str_pad($routeName, 25), CLI_LIGHT_GRAY;
 
     $shaName = sha1('ca' . $routeName . VERSION . 'che');
 
-    if (false === isset($route['resources']))
+    if (!isset($route['resources']))
     {
       echo status('Nothing to do', OTRA_CLI_CYAN_STRING), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
         CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
@@ -113,22 +143,18 @@ if ($mask !== 8)
     $chunks = $route['chunks'];
 
     // TODO suppress this block and do the appropriate fixes
-    if (false === isset($chunks[1]))
+    if (!isset($chunks[ROUTES_CHUNKS_BUNDLE]))
     {
       echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',
       CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
-    $bundlePath = (true === isset($chunks[1])
-      ? BASE_PATH . 'bundles/' . $chunks[1] . '/'
-      : CORE_PATH
-    );
-
+    $bundlePath = BASE_PATH . 'bundles/' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/';
     $noErrors = true;
 
     /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
-    if (($mask & 2) >> 1)
+    if (GEN_ASSETS_CSS)
     {
       if (strpos(implode(array_keys($resources)), 'css') !== false)
       {
@@ -145,7 +171,7 @@ if ($mask !== 8)
     }
 
     /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
-    if (($mask & 4) >> 2)
+    if (GEN_ASSETS_JS)
     {
       if (strpos(implode(array_keys($resources)), 'js') !== false)
       {
@@ -185,10 +211,10 @@ if ($mask !== 8)
     }
 
     /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
-    if ($mask & 1)
+    if (GEN_ASSETS_TEMPLATE)
     {
       if (false === isset($resources['template']))
-        echo status('No TEMPLATE', OTRA_CLI_CYAN_STRING);
+        echo status('NO TEMPLATE', OTRA_CLI_CYAN_STRING);
       else
       {
         // Generates the gzipped template files
@@ -214,30 +240,68 @@ if ($mask !== 8)
   }
 }
 
-if (($mask & 8) >> 3)
+if (GEN_ASSETS_MANIFEST)
 {
   $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
   if (!file_exists($jsonManifestPath))
-  {
     echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.',
       END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+  else
+  {
+    $message = 'Generation of the gzipped JSON manifest';
+    echo $message . '...', PHP_EOL;
+
+    $contents = file_get_contents($jsonManifestPath);
+    $contents = preg_replace('@([{,:])\s{1,}(")@', '$1$2', $contents);
+    $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
+    $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
+    $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
+    $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
+
+    file_put_contents($generatedJsonManifestPath, $contents);
+    gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
+    echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
   }
+}
 
-  $message = 'Generation of the gzipped JSON manifest';
-  echo $message . '...', PHP_EOL;
+if (GEN_ASSETS_SVG)
+{
+  define('FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
+  echo 'Checking for uncompressed SVGs in the folder ', CLI_LIGHT_CYAN, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
+    PHP_EOL;
 
-  $contents = file_get_contents($jsonManifestPath);
-  $contents = preg_replace('@([{,:])\s{1,}(")@', '$1$2', $contents);
-  $contents = preg_replace('@([\[,])\s{1,}(\{)@', '$1$2', $contents);
-  $contents = preg_replace('@(")\s{1,}(\})@', '$1$2', $contents);
-  $contents = preg_replace('@(\})\s{1,}(\])@', '$1$2', $contents);
-  $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
+  // Searches in the 'web/images' folder for SVGs
+  if (file_exists(FOLDER_TO_CHECK_FOR_SVGS))
+  {
+    $dir_iterator = new RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, FilesystemIterator::SKIP_DOTS);
 
-  file_put_contents($generatedJsonManifestPath, $contents);
-  gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
-  echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
+    $iterator = new RecursiveIteratorIterator($dir_iterator);
+
+    /** @var SplFileInfo $entry */
+    foreach($iterator as $entry)
+    {
+      $extension = $entry->getExtension();
+
+      if ($extension !== 'svg' || $entry->isDir() === true)
+        continue;
+
+      $realPath = $entry->getRealPath();
+
+      if (!gzCompressFile($realPath, $realPath . '.gz', GZIP_COMPRESSION_LEVEL))
+      {
+        echo CLI_RED, 'There was an error during the gzip compression of the file ', CLI_LIGHT_CYAN,
+        mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
+      } else {
+        echo 'The file ', CLI_LIGHT_CYAN, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
+        ' has been compressed successfully.', END_COLOR, PHP_EOL;
+      }
+    }
+
+    echo 'All SVGs are compressed.', PHP_EOL;
+  } else
+    echo CLI_YELLOW, 'There is no folder ', CLI_LIGHT_CYAN, FOLDER_TO_CHECK_FOR_SVGS, CLI_YELLOW, '.', END_COLOR,
+      PHP_EOL;
 }
 
 /**
@@ -251,22 +315,22 @@ function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { re
 
 /**
  * @param array  $resources
- * @param array  $routeInfos
+ * @param array  $routeChunks
  * @param string $type       'css' or 'js'
  * @param string $bundlePath
  * @param string $shaName
  *
  * @return null|string Return the path of the 'macro' resource file
  */
-function loadAndSaveResources(array $resources, array $routeInfos, string $type, string $bundlePath, string $shaName)
+function loadAndSaveResources(array $resources, array $routeChunks, string $type, string $bundlePath, string $shaName)
 : ?string
 {
   ob_start();
-  loadResource($resources, $routeInfos, 'first_' . $type, $bundlePath);
-  loadResource($resources, $routeInfos, 'bundle_' . $type, $bundlePath, '');
-  //loadResource($resources, $routeInfos, 'module_' . $type, $bundlePath, $routeInfos[2] . '/');
-  loadResource($resources, $routeInfos, 'module_' . $type, $bundlePath . $routeInfos[2] . '/');
-  loadResource($resources, $routeInfos, '_' . $type, $bundlePath);
+  loadResource($resources, $routeChunks, 'first_' . $type, $bundlePath);
+  loadResource($resources, $routeChunks, 'bundle_' . $type, $bundlePath, '');
+  //loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath, $routeChunks[2] . '/');
+  loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath . $routeChunks[2] . '/');
+  loadResource($resources, $routeChunks, '_' . $type, $bundlePath);
 
   $allResources = ob_get_clean();
 
@@ -297,13 +361,13 @@ function loadAndSaveResources(array $resources, array $routeInfos, string $type,
 function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $path = true)
 {
   // If this kind of resource does not exist, we leave
-  if (false === isset($resources[$key]))
+  if (!isset($resources[$key]))
     return;
 
   $type = substr(strrchr($key, '_'), 1);
-  $path = $bundlePath . (true === $path ? $chunks[2] . '/' : $path) . 'resources/' . $type . '/';
+  $path = $bundlePath . (true === $path ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $path) . 'resources/' . $type . '/';
 
-  foreach ($resources[$key] as &$resource)
+  foreach ($resources[$key] as $resource)
   {
     ob_start();
 

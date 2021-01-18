@@ -2,11 +2,12 @@
 declare(strict_types=1);
 
 use config\Routes;
+use otra\OtraException;
 
-if (file_exists(BASE_PATH . 'bundles/config/Routes.php') === false)
+if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
 {
   echo CLI_YELLOW, 'No custom routes are defined.', END_COLOR, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 /** Task that show all or one of the routes available for the application.
  * It shows for each related route :
@@ -25,7 +26,7 @@ if (file_exists(BASE_PATH . 'bundles/config/Routes.php') === false)
  * @param string $shaName
  * @param string $altColor
  */
-function showResourceState(string $resourceExtension, string $resourceType, string &$basePath, string &$shaName, string &$altColor)
+function showResourceState(string $resourceExtension, string $resourceType, string $basePath, string $shaName, string $altColor)
 {
   echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[',
   $resourceType, ']', $altColor;
@@ -38,20 +39,37 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
  * @param string $route
  * @param string $altColor
  */
-function showPHPState(string &$basePath, string &$route, string &$altColor)
+function showPHPState(string $basePath, string $route, string $altColor)
 {
   echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[PHP]' . $altColor;
 }
 
-$alt = 0;
-const WIDTH_LEFT = 25;
-const WIDTH_MIDDLE = 10;
-const WIDTH_RIGHT = 70; // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
+require BASE_PATH . 'config/AllConfig.php';
+const ROUTES_ARG_ROUTE = 2,
+  ROUTES_CHUNKS_URL = 0;
+
+// 'require_once' needed instead of 'require', if we execute TasksManager::execute multiple times as in tests or some
+// scripts
+if (!defined('ROUTES_CHUNKS_BUNDLE'))
+{
+  define('ROUTES_CHUNKS_BUNDLE', 1);
+  define('ROUTES_CHUNKS_MODULE', 2);
+  define('WIDTH_LEFT', 25);
+  define('WIDTH_MIDDLE', 10);
+  // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
+  define('WIDTH_RIGHT', 70);
+}
+
+const
+  ROUTES_CHUNKS_CONTROLLER = 3,
+  ROUTES_CHUNKS_ACTION = 4;
+
+$indexLines = 0;
 
 // Check if we want one or all the routes
-if (true === isset($argv[2]))
+if (isset($argv[ROUTES_ARG_ROUTE]))
 {
-  $route = $argv[2];
+  $route = $argv[ROUTES_ARG_ROUTE];
 
   // If the route does not exist
   if (false === isset(Routes::$_[$route]))
@@ -68,7 +86,7 @@ if (true === isset($argv[2]))
     if ('n' === $choice)
     {
       echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
-      exit(1);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     $route = $newRoute;
@@ -78,43 +96,45 @@ if (true === isset($argv[2]))
 } else
   $routes = Routes::$_;
 
-foreach($routes as $route => &$details)
+foreach($routes as $route => $details)
 {
   if ('otra_exception' === $route )
     continue;
 
   // Routes and paths management
   $chunks = $details['chunks'];
-  $altColor = ($alt % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
-  echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route), str_pad('Url', WIDTH_MIDDLE, ' '), ': ' , $chunks[0], PHP_EOL;
+  $altColor = ($indexLines % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
+  echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
+    str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
 
-  echo str_pad(' ', WIDTH_LEFT, ' '),
-    str_pad('Path', WIDTH_MIDDLE, ' '),
-    ': ' . $chunks[1] . '/' . $chunks[2] . '/' . $chunks[3] . 'Controller/' . $chunks[4],
+  echo str_pad(' ', WIDTH_LEFT),
+    str_pad('Path', WIDTH_MIDDLE),
+    ': ' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[ROUTES_CHUNKS_MODULE] . '/' .
+    $chunks[ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[ROUTES_CHUNKS_ACTION],
     PHP_EOL;
 
   // shaName is the encrypted key that match a particular route / version
-  $shaName = sha1('ca' . $route . config\AllConfig::$version . 'che');
+  $shaName = sha1('ca' . $route . VERSION . 'che');
 
   $basePath = BASE_PATH . 'cache/';
 
-  echo str_pad(' ', WIDTH_LEFT, ' '), 'Resources : ';
+  echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
 
   // Resources management : show the state of each resource. Red => missing, green => exists
-  if (true === isset($details['resources']))
+  if (isset($details['resources']))
   {
     $resources = $details['resources'];
 
-    if (false === isset($resources['template']))
+    if (!isset($resources['template']))
       showPHPState($basePath, $route, $altColor);
 
-    if (true === isset($resources['_css']) || true === isset($resources['bundle_css']) ||true === isset($resources['module_css']))
+    if (isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
       showResourceState('css', 'CSS', $basePath, $shaName, $altColor);
 
-    if (true === isset($resources['_js']) || true === isset($resources['bundle_js']) || true === isset($resources['module_js']) || true === isset($resources['first_js']))
+    if (isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
       showResourceState('js', 'JS', $basePath, $shaName, $altColor);
 
-    if (true === isset($resources['template']))
+    if (isset($resources['template']))
       showResourceState('tpl', 'TEMPLATE', $basePath, $shaName, $altColor);
   } else
   {
@@ -130,7 +150,7 @@ foreach($routes as $route => &$details)
   if ($route !== key($routes))
     echo str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT), PHP_EOL;
 
-  ++$alt;
+  ++$indexLines;
 }
 
 

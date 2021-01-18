@@ -44,7 +44,7 @@ function createController(string $controllersFolder, string $controllerName, boo
  *
  * @throws \otra\OtraException
  */
-function controllerHandling(bool $interactive, string &$controllersFolder, string &$controllerName)
+function controllerHandling(bool $interactive, string $controllersFolder, string &$controllerName)
 {
   if ($interactive === true)
   {

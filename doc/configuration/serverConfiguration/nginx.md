@@ -20,7 +20,7 @@ It also specifies the kind of environment you want like development or productio
 
 `fastcgi_param APP_ENV dev;`
 
-and the database test ids ...
+...and the database test ids ...
 
 ```
 fastcgi_param TEST_LOGIN root;
@@ -33,7 +33,7 @@ For your own database, you can use the same system.
 
 You can put other things like cache and security.
 
-Do not hesitate to look at https://github.com/nginx-boilerplate/nginx-boilerplate for further informations on how to
+Do not hesitate to look at https://github.com/nginx-boilerplate/nginx-boilerplate for further information on how to
 complete your configuration.
 
 Once it is done, create a symbolic link to activate your site :
@@ -42,7 +42,7 @@ Once it is done, create a symbolic link to activate your site :
     
 You can disable your site later with the `unlink` command.    
     
-Create the logs folder if you did not do it yet :
+Create the logs' folder if you did not do it yet :
 
     sudo mkdir /var/log/nginx/yourdomain
     

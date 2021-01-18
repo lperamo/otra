@@ -43,7 +43,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
       unlinkFile($cachePath . $route . $extension, $cacheRelativePath . $route . $extension);
     else
     {
-      foreach(array_keys($routes) as &$routeToSuppress)
+      foreach(array_keys($routes) as $routeToSuppress)
       {
         if ($routeToSuppress === 'otra_exception')
           continue;
@@ -51,7 +51,7 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
         $routeFileName = $routeToSuppress . $extension;
 
         if ($extension !== '.php')
-          $routeFileName = sha1('ca' . $routeToSuppress . config\AllConfig::$version . 'che') . $extension;
+          $routeFileName = sha1('ca' . $routeToSuppress . VERSION . 'che') . $extension;
 
         unlinkFile(
           $cachePath . $routeFileName,

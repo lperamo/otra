@@ -14,27 +14,30 @@ if (function_exists('promptUser') === false)
    *
    * @param string $question
    * @param string $altQuestion
+   * @codeCoverageIgnore
    *
    * @return string Answer.
    */
-  function promptUser(string $question, string $altQuestion = ''): string {
+  function promptUser(string $question, string $altQuestion = ''): string
+  {
     $questionAlt = DOUBLE_ERASE_SEQUENCE . ('' === $altQuestion ? 'Bad answer. ' . $question : $altQuestion);
 
-    $line = askQuestion($question);
+    $userInput = askQuestion($question);
 
-    while ('' === $line)
+    while ('' === $userInput)
     {
       // TODO Bug with wsl ? it always loops and does not wait the input !
-      $line = askQuestion($questionAlt);
+      $userInput = askQuestion($questionAlt);
     }
 
-    return $line;
+    return $userInput;
   }
 
   /**
    * Show a question and let the user answers it.
    *
    * @param string $question
+   * @codeCoverageIgnore
    *
    * @return string
    */
@@ -58,24 +61,24 @@ if (function_exists('promptUser') === false)
     $closest = null;
     $shortest = -1;
 
-    foreach ($words as &$word)
+    foreach ($words as $currentWord)
     {
       // Calculates the distance between the input word and the current word
-      $lev = levenshtein($input, $word);
+      $levenshtein = levenshtein($input, $currentWord);
 
       // Checks for an exact match
-      if (0 === $lev)
+      if (0 === $levenshtein)
       {
-        $closest = $word;
+        $closest = $currentWord;
         $shortest = 0;
         break;
       }
 
       // If this distance is less than the next found shortest distance OR if a next shortest word has not yet been found
-      if ($lev <= $shortest || 0 >= $shortest)
+      if ($levenshtein <= $shortest || 0 >= $shortest)
       {
-        $closest  = $word;
-        $shortest = $lev;
+        $closest  = $currentWord;
+        $shortest = $levenshtein;
       }
     }
 
@@ -93,22 +96,26 @@ if (function_exists('promptUser') === false)
    */
   function showContext(string $file, int $errorLine, int $context)
   {
+    $errorLine -= 1;
     $lines = file($file);
     $midContext = (int) $context >> 1;
 
     // Shows the context of the error
-    for ($i = $errorLine - $midContext, $max = $errorLine + $midContext; $i < $max; ++$i)
+    for ($currentLine = $errorLine - $midContext,
+         $maxLines = $errorLine + $midContext;
+         $currentLine <= $maxLines;
+         ++$currentLine)
     {
       // if we are at the end because the portion is at the end of the file, we break the loop
-      if (false === isset($lines[$i]))
+      if (false === isset($lines[$currentLine]))
         break;
 
-      if(-1 !== $errorLine)
+      if (-1 !== $errorLine)
       {
-        echo ($i === $errorLine
-          ? CLI_RED . $i
-          : CLI_GREEN . $i . CLI_LIGHT_GRAY
-        ), ' ', $lines[$i];
+        echo ($currentLine === $errorLine
+          ? CLI_RED . ($currentLine + 1)
+          : CLI_GREEN . ($currentLine + 1) . CLI_LIGHT_GRAY
+        ), ' ', $lines[$currentLine];
       }
     }
   }
@@ -144,9 +151,9 @@ if (function_exists('promptUser') === false)
       str_replace(
         ['\\\\', ' => ', SPACE_INDENT . '\'', "\n", 'array (', ',' . SPACE_INDENT . SPACE_INDENT . '),',
           ',' . SPACE_INDENT . '),', '[' . SPACE_INDENT . SPACE_INDENT . '),', SPACE_INDENT,
-          SPACE_INDENT . SPACE_INDENT, ',]'],
+          SPACE_INDENT . SPACE_INDENT, ',]', ',)'],
         ['\\'  , '=>'  , '\''               , ''  , '['      , ',' . SPACE_INDENT . SPACE_INDENT . '],',
-          ',' . SPACE_INDENT . '],', '[],', '', '', ']'],
+          ',' . SPACE_INDENT . '],', '[],', '', '', ']', ']'],
         $code
       );
   }

@@ -1,12 +1,12 @@
-[Home](../../README.md) / [Contributing](../contributing.md) / Generic rules
+[Home](../../README.md) / [Contributing](../../CONTRIBUTING.md) / Generic rules
 
-### Generic rules
+### Generic rules
 
 #### Coding style
 
 - Tabulation :
     - Spaces, not tabs
-    - 2 spaces => to avoid to scroll horizontally when they are much nestings
+    - 2 spaces => to avoid scrolling horizontally when they are much nesting
 
 - Curly brackets on the same column
     - more aeration

@@ -1,0 +1,10 @@
+{
+  "extends": ["/usr/local/lib/node_modules/stylelint-config-standard"],
+  "rules": {
+    "declaration-colon-space-before" : null,
+    "number-leading-zero": null,
+    "at-rule-no-unknown": null,
+    "no-descending-specificity": null,
+    "media-feature-colon-space-before": "always"
+  }
+}

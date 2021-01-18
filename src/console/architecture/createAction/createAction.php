@@ -24,7 +24,7 @@ if (!defined('BUNDLES_PATH'))
  * @throws \otra\OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
-                      string &$controllerPath, string $actionName, bool $interactive, bool $consoleForce)
+                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce)
 {
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -53,17 +53,30 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
+  define('OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
   file_put_contents(
     $actionPath,
     '<?php
-namespace bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName . ';
+declare(strict_types=1);
+
+namespace ' . OTRA_ACTION_PATH . ';
 
 use otra\Controller;
 
+/**
+ * @package ' . OTRA_ACTION_PATH . '
+ */
 class ' . $upperActionName . 'Action extends Controller
 {
-  public function ' . $actionName . 'Action() {
-
+  /**
+   * ' . $upperActionName . 'Action constructor.
+   *
+   * @param array $baseParams
+   * @param array $getParams
+   */
+  public function __construct(array $baseParams = [], array $getParams = [])
+  {
+    parent::__construct($baseParams, $getParams);
   }
 }' . PHP_EOL);
 
@@ -190,7 +203,7 @@ class ' . $upperActionName . 'Action extends Controller
  * @throws \otra\OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string &$controllerPath, string $actionName, bool $consoleForce = false)
+                        string $controllerPath, string $actionName, bool $consoleForce = false)
 {
   if ($interactive === true)
   {

@@ -1,4 +1,4 @@
-[Home](../../README.md) / [Contributing](../contributing.md) / JavaScript side
+[Home](../../README.md) / [Contributing](../../CONTRIBUTING.md) / JavaScript side
 
 Previous section : [CSS side or SCSS side](css.md)
 
@@ -6,7 +6,7 @@ Previous section : [CSS side or SCSS side](css.md)
 
 #### Best practices
 
-- Use TypeScript, it provides types, annotations, object oriented code and so more.
+- Use TypeScript, it provides types, annotations, object-oriented code and so more.
   So type every variable, put return types …
   
 - Use the ‘use strict’ statement in order to have a clean code

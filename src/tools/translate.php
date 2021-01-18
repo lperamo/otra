@@ -21,7 +21,7 @@ if (function_exists('t') === false)
       $lang = strtok($lang, ';');
     };
 
-    $filterLangs = function (string &$lang) use ($acceptedLanguages) : bool
+    $filterLangs = function (string $lang) use ($acceptedLanguages) : bool
     {
       return in_array($lang, $acceptedLanguages);
     };

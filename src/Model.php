@@ -43,7 +43,7 @@ abstract class Model
     $properties = [];
     $update = false;
 
-    foreach($props as &$prop)
+    foreach($props as $prop)
     {
       $name = $prop->name;
       $properties[$name] = empty($this->$name) ? null : $this->$name;
@@ -64,7 +64,7 @@ abstract class Model
       $idValue = $properties[$id];
       unset($properties[$id]);
 
-      foreach($properties as $name => &$value)
+      foreach($properties as $name => $value)
       {
         $query .= '`' . $name . '`=' ;
         $query .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ' ';
@@ -77,7 +77,7 @@ abstract class Model
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
       $values = '';
 
-      foreach($properties as $name => &$value)
+      foreach($properties as $name => $value)
       {
         $query .= '`' . $name . '`,';
         $values .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ',';

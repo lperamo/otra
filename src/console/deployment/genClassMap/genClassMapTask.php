@@ -119,15 +119,11 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-    return substr(
-      '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped),
-      0,
-      -2
-    ) . ']);';
+    return '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
   }
 }
 
-foreach ($dirs as &$dir)
+foreach ($dirs as $dir)
 {
   // if the user wants to launch tasks in an empty project when there are not a class map yet
   // we need to check if the needed folders exist
@@ -146,7 +142,7 @@ $classes = array_merge($classes, $additionalClassesFiles);
 // classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
 $prodClasses = [];
 
-foreach($classes as $key => &$class)
+foreach($classes as $key => $class)
 {
   // We only let external libraries
   if (mb_strpos($class, BASE_PATH) !== false)
@@ -154,7 +150,11 @@ foreach($classes as $key => &$class)
     $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
-    if (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
+    if (
+      (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
+      // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
+      // dynamically loaded
+      || (mb_strpos($tmpClass, 'DumpMaster') !== false))
       $prodClasses[$key] = $class;
   } else
     $prodClasses[$key]= $class;
@@ -167,29 +167,33 @@ $classMapPath = BASE_PATH . 'cache/php/';
 if (file_exists($classMapPath) === false)
   mkdir($classMapPath, 0755, true);
 
+// Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
 // Generating development class map
-file_put_contents(
-  $classMapPath . 'ClassMap.php',
-  convertClassMapToPHPFile($classMap)
-);
+$filePointer = fopen($classMapPath . 'ClassMap.php', 'w');
+$contentToWrite = convertClassMapToPHPFile($classMap) . PHP_EOL;
+fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+fclose($filePointer);
 
 // Generating production class map
-file_put_contents(
-  $classMapPath . 'ProdClassMap.php',
-  convertClassMapToPHPFile($prodClassMap)
-);
+$filePointer = fopen($classMapPath . 'ProdClassMap.php', 'w');
+$contentToWrite = convertClassMapToPHPFile($prodClassMap) . PHP_EOL;
+fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+fclose($filePointer);
 
-echo CLI_LIGHT_GREEN , ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
+echo CLI_LIGHT_GREEN, ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
 
 // If we want verbose output, then we display the files found related to the classes
 if (VERBOSE !== 1)
   return;
 
-define('FIRST_CLASS_PADDING', 80);
+// If we come from the deploy task, this constant may already have been defined.
+if (!defined('FIRST_CLASS_PADDING'))
+  define('FIRST_CLASS_PADDING', 80);
+
 echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
 
-foreach($classes as $startClassName => &$finalClassName)
+foreach($classes as $startClassName => $finalClassName)
 {
   echo CLI_LIGHT_BLUE, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_GREEN, ' => ';
   echo (strpos($finalClassName, BASE_PATH) !== false
@@ -210,7 +214,7 @@ if (empty($classesThatMayHaveToBeAdded) === false)
   echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
   'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
-  foreach($classesThatMayHaveToBeAdded as $key => &$namespace)
+  foreach($classesThatMayHaveToBeAdded as $key => $namespace)
   {
     echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR, FIRST_CLASS_PADDING,
       '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;

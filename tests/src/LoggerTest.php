@@ -19,7 +19,8 @@ class LoggerTest extends TestCase
     $_SERVER[APP_ENV] = 'prod';
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
     // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
-    require_once CORE_PATH . 'debugTools.php';
+    require_once CORE_PATH . 'tools/debug/dump.php';
+    require_once CORE_PATH . 'tools/debug/tailCustom.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);
@@ -40,8 +41,15 @@ class LoggerTest extends TestCase
   public function testLog() : void
   {
     // context
-    Logger::log('[OTRA_LOGGER_TEST]');
     $logFile = self::$LOGS_PROD_PATH . 'log.txt';
+
+    if (!file_exists(self::$LOGS_PROD_PATH))
+      mkdir(self::$LOGS_PROD_PATH, 0777,true);
+
+    if (!file_exists($logFile))
+      touch($logFile);
+
+    Logger::log('[OTRA_LOGGER_TEST]');
     self::assertRegExp(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
       tailCustom($logFile, 1)
@@ -58,7 +66,7 @@ class LoggerTest extends TestCase
   public function testLogToPath() : void
   {
     // context
-    // @TODO duplication of code to require debugTools.php. Why putting this code in setUpBeforeClass creates a fatal
+    // @TODO duplication of code to require dump.php. Why putting this code in setUpBeforeClass creates a fatal
     // error "Cannot redeclare lg()" etc. ? This method should be executed only once ...
     $path = 'logs/otraTests/';
     $logCustomFolder = '../' . $path;

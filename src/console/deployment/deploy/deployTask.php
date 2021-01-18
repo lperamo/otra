@@ -7,21 +7,33 @@ namespace otra\console;
 
 use config\AllConfig;
 use \otra\OtraException;
+use otra\tools\workers\{Worker, WorkerManager};
 
 define('DEPLOY_ARG_MASK', 2);
 define('DEPLOY_ARG_VERBOSE', 3);
 define('DEPLOY_ARG_GCC_LEVEL_COMPILATION', 4);
+
+define('GEN_BOOTSTRAP_ARG_CLASS_MAPPING', 2);
+define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+
+define('BUILD_DEV_MASK_SCSS', 1);
+const BUILD_DEV_MASK_TS = 2;
+
 define('DEPLOY_MASK_ONLY_RSYNC', 0);
 define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
 define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
-define('DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC', 8);
+define('DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC', 8);
+
+define('GEN_ASSETS_MASK_TEMPLATE', 1);
+define('GEN_ASSETS_MASK_MANIFEST', 8);
+define('GEN_ASSETS_MASK_SVG', 16);
 
 define('OTRA_CLI_CONTROL_MODE', "\033[");
 
 define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
 define('OTRA_CLI_COMMAND_MKDIR', 'mkdir');
-define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', 'mkdir -p ');
+define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
 
 // **** Checking the deployment config parameters ****
 if (isset(AllConfig::$deployment) === false)
@@ -32,7 +44,7 @@ if (isset(AllConfig::$deployment) === false)
 
 $deploymentParameters = ['server', 'port', 'folder', 'privateSshKey', 'gcc'];
 
-foreach($deploymentParameters as &$deploymentParameter)
+foreach($deploymentParameters as $deploymentParameter)
 {
   if (isset(AllConfig::$deployment[$deploymentParameter]) === false)
   {
@@ -41,15 +53,25 @@ foreach($deploymentParameters as &$deploymentParameter)
   }
 }
 
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
-$mask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
+unset($deploymentParameter);
+
+$mainBundlesFolder = BASE_PATH . 'bundles';
+
+if (!file_exists($mainBundlesFolder))
+{
+  echo CLI_RED . 'You do not have any bundles yet to deploy!', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
+define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
+$deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
 $verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
 define(
   'DEPLOY_GCC_LEVEL_COMPILATION',
   isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
 );
 
-if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
+if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 {
   // We generate the class mapping...
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -58,28 +80,27 @@ if ($mask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // bootstraps
-  $argv[2] = 0; // prevents the class mapping
-  $argv[3] = $verbose; // if true, print warnings when the task fails
+  $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
+  $argv[GEN_BOOTSTRAP_ARG_VERBOSE] = $verbose; // if true, print warnings when the task fails
   require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
 }
 
 require CORE_PATH . 'tools/cli.php';
 
-$mode = 0;
+$buildDevMode = 0;
 
-if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-  $mode |= 4;
-elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-  $mode |= 2;
-elseif (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 3)
-  $mode |= 9;
+if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  $buildDevMode |= BUILD_DEV_MASK_TS;
 
-if ($mode > 0)
+if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  $buildDevMode |= BUILD_DEV_MASK_SCSS;
+
+if ($buildDevMode > 0)
 {
   echo END_COLOR, 'Assets transcompilation...';
 
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $mode . ' ' . ((string) AllConfig::$deployment['gcc']));
+  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']));
 
   if ($result[0] === false)
   {
@@ -88,19 +109,22 @@ if ($mode > 0)
   }
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[1], PHP_EOL;
+}
 
+$genAssetsMode = 0;
+
+if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
+
+if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
+
+if (($deployMask & DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC) >> 3)
+  $genAssetsMode |= DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC | GEN_ASSETS_MASK_TEMPLATE | GEN_ASSETS_MASK_SVG;
+
+if ($genAssetsMode > 0)
+{
   echo 'Assets minification and compression...';
-  $genAssetsMode = 0;
-
-  if (($mask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
-    $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
-
-  if (($mask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
-    $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
-
-  if (($mask & DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC) >> 3)
-    $genAssetsMode |= DEPLOY_MASK_TEMPLATES_AND_MANIFEST_BEFORE_RSYNC | 1;
-
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
 
@@ -116,12 +140,12 @@ if ($mode > 0)
 // Deploy the files on the server...
 [
   'server' => $server,
-  'port' => $port,
+  'port' => $destinationPort,
   'folder' => $folder,
   'privateSshKey' => $privateSshKey
 ] = AllConfig::$deployment;
 
-echo PHP_EOL, 'Deploys the files on the server ', CLI_LIGHT_BLUE, $server, ':', $port, END_COLOR, ' in ',
+echo PHP_EOL, 'Deploys the files on the server ', CLI_LIGHT_BLUE, $server, ':', $destinationPort, END_COLOR, ' in ',
 CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
 
 /* --delete allows to delete things that are no present anymore on the source to keep a really synchronized folder
@@ -133,85 +157,88 @@ CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
  * -R is for --relative, it will create missing folders
  * -m remove empty folders */
 
-$startCommand = 'rsync -zaruvhP --delete --progress -e \'ssh -i ' . $privateSshKey . ' -p ' . $port;
-$cursorUpOne = "\033[1A";
-//$cursorBackFour = "\033[4D";
+$startCommand = 'rsync -qzaruvhP --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
+$startCommandRelativeRsync = 'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
 
-$handleTransfer = function ($message, $command, string $operation = 'rsync') use(&$verbose, &$cursorUpOne)
+$workerManager = new WorkerManager();
+
+/**
+ * @param string $waitingMessage
+ * @param string $successMessage
+ * @param string $command
+ */
+$handleTransfer = function (
+  string $waitingMessage,
+  string $successMessage,
+  string $command
+) use(&$verbose, &$workerManager)
 {
-  echo $message, ' ...', PHP_EOL;
-
-  /* TODO Fix the verbosity by showing the progress of rsync commands via proc_open */
-  if ($verbose === 1)
-  {
-    $result = cli($command);
-//    echo PHP_EOL;
-//    $result = [cliStream($cacheCommand), ''];
-  } else
-    $result = cli($command);
-
-  if ($result[0] !== 0)
-  {
-    echo CLI_RED, 'Error when using ' . $operation . ' command.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
-  }
-
-  /* TODO adapt the code for verbosity === 1 when we succeed to use proc_open without asking n times for a passphrase,
-   * TODO showing things correctly and knowing when all that ends. */
-  if ($verbose === 1)
-    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C ", OTRA_SUCCESS;
-  else
-    echo $cursorUpOne, OTRA_CLI_CONTROL_MODE . strlen($message) . "C", OTRA_SUCCESS;
+  $workerManager->attach(new Worker($command, $successMessage, $waitingMessage, $verbose));
 };
 
 $handleTransfer(
-  'Sending cache',
-  $startCommand . '\' cache/ ' . $server . ':' . $folder . '/cache/'
+  'Creating the site main folder if needed ...',
+  'Site main folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder
+);
+
+$handleTransfer(
+  'Sending cache ...',
+  'Cache' . OTRA_SUCCESS,
+  $startCommandRelativeRsync . '\' cache ' . $server . ':' . $folder
 );
 
 $preloadFilename = 'preload.php';
 
 if (file_exists(BASE_PATH . $preloadFilename) === true)
   $handleTransfer(
-    'Sending preload file',
-    $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . '/' . $preloadFilename
+    'Sending preload file ...',
+    'Preload file' . OTRA_SUCCESS,
+    $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename
   );
 
 $handleTransfer(
-  'Sending web folder',
-  $startCommand . '\' web/ ' . $server . ':' . $folder . '/web/'
+  'Sending web folder ...',
+  'Web folder' . OTRA_SUCCESS,
+  $startCommand . '\' web/ ' . $server . ':' . $folder . 'web/'
 );
 
 $handleTransfer(
-  'Creating the config folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/config',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the config folder ...',
+  'Config folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'config'
 );
 
 $handleTransfer(
-  'Adding the OTRA constants',
-  $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . '/config/constants.php'
+  'Adding the OTRA constants ...',
+  'OTRA constants' . OTRA_SUCCESS,
+  $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php'
 );
 
 $handleTransfer(
-  'Creating the vendor folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/vendor',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the vendor folder ...',
+  'Vendor folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'vendor'
 );
 
 $handleTransfer(
-  'Sending the OTRA templating engine, the translate tool and the production controller',
+  'Sending the OTRA templating engine, the translate tool and the production controller ...',
+  'OTRA templating engine, the translate tool and the production controller' . OTRA_SUCCESS,
   $startCommand .
   '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
-  ' --include=\'otra/otra/src/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
+  ' --include=\'otra/otra/src/templating/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
+  ' --include=\'otra/otra/src/services/securityService.php\'' .
   ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
   '/vendor/'
 );
 
 $handleTransfer(
-  'Creating the bundles folder',
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/bundles',
-  OTRA_CLI_COMMAND_MKDIR
+  'Creating the bundles folder ...',
+  'Bundles folder' . OTRA_SUCCESS,
+  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+  $folder . 'bundles'
 );
 
 define('STRLEN_BASEPATH', strlen(BASE_PATH));
@@ -221,7 +248,7 @@ define('STRLEN_BASEPATH', strlen(BASE_PATH));
  *
  * @param string $folderToAnalyze
  */
-$seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$port, &$server)
+$seekingToSendFiles = function (string $folderToAnalyze) use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server)
 {
   $bundleFolders = new \DirectoryIterator($folderToAnalyze);
 
@@ -241,18 +268,19 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
     if ($folderFilename === 'views')
     {
       $handleTransfer(
-        'Sending ' . $folderRelativePath . ' folder',
+        'Sending ' . $folderRelativePath . ' folder ...',
+        $folderRelativePath . ' folder' . OTRA_SUCCESS,
         $startCommand .
-        '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . '/' . $folderRelativePath
+        '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath
       );
       continue;
     }
 
     // Ensuring the folder exists before creating stuff inside
     $handleTransfer(
-      'Creating the ' . $folderRelativePath .' folder',
-      OTRA_CLI_COMMAND_SSH_AND_PORT . $port . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . '/' . $folderRelativePath,
-      OTRA_CLI_COMMAND_MKDIR
+      'Creating the ' . $folderRelativePath .' folder ...',
+      $folderRelativePath . ' folder' . OTRA_SUCCESS,
+      OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder . $folderRelativePath
     );
 
     // Then we create the inside stuff
@@ -260,10 +288,20 @@ $seekingToSendFiles = function (string &$folderToAnalyze) use (&$handleTransfer,
   }
 };
 
-$mainBundlesFolder = BASE_PATH . 'bundles';
 $seekingToSendFiles($mainBundlesFolder);
 
 $handleTransfer(
-  'Checking log folder',
-  $startCommand . '\' --include=\'*/\' --exclude=\'*\' logs/ ' . $server . ':' . $folder . '/logs/'
+  'Checking log folder ...',
+  'Log folder' . OTRA_SUCCESS,
+  $startCommandRelativeRsync . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder
 );
+
+// Launching the workers
+while (0 < count($workerManager::$workers))
+  $workerManager->listen();
+
+// Cleaning
+foreach($workerManager::$workers as $worker)
+  $workerManager->detach($worker);
+
+unset($workerManager);

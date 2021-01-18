@@ -22,8 +22,14 @@ abstract class AllConfig
     (if we not use AllConfig::foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
     accessible ) */
     $cachePath = CACHE_PATH,
-    $debugBarPosition = 'bottom',
     $defaultConn = ''; // mandatory in order to modify it later if needed
-  public static array $dbConnections = []; // mandatory in order to modify it later if needed
+  public static array
+    $dbConnections = [],// mandatory in order to modify it later if needed
+    $debugConfig = [
+      'barPosition' => 'bottom',
+      'maxChildren' => 128,
+      'maxData' => 512,
+      'maxDepth' => 3
+    ];
 }
 

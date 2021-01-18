@@ -10,7 +10,7 @@ define('ONE_BOOTSTRAP_ARG_ROUTE', 2);
 define('OTRA_KEY_BOOTSTRAP', 'bootstrap');
 define('OTRA_KEY_DRIVER', 'driver');
 
-$verbose = $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
+$verbose = (int) $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 require __DIR__ . (OTRA_PROJECT
@@ -56,7 +56,7 @@ $defaultRoute = Routes::$default['bundle'];
 // in order to pass some conditions
 $_SERVER['REMOTE_ADDR'] = 'console';
 $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
-$_SERVER['HTTP_HOST'] = 'www.dev.save-our-space.com'; // TODO to put into a file to configure for each project ?
+$_SERVER['HTTP_HOST'] = AllConfig::$deployment['domainName'];
 
 // Preparation of default parameters for the routes
 if (isset($params['post']))
@@ -71,7 +71,7 @@ $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
 if (isset($params['session']))
 {
-  foreach($params['session'] as $key => &$param)
+  foreach($params['session'] as $key => $param)
   {
     $_SESSION[$key] = $param;
   }
@@ -127,19 +127,23 @@ set_error_handler(function ($errno, $message, $file, $line, $context) {
 
 $chunks = $params['chunks'];
 
+// TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
+//   an use statement. Other comment to remove once fixed, in fixFiles function of taskFileOperation.php
+// For the moment, as a workaround, we will temporary explicitly add the OtraException file to solve issues.
+
 try
 {
   contentToFile(
     fixFiles(
       $chunks[1],
       $route,
-      file_get_contents($fileToInclude),
+      file_get_contents(CORE_PATH . 'OtraException.php') . '?>' . file_get_contents($fileToInclude),
       $verbose,
       $fileToInclude
     ),
     $file_
   );
-} catch(\Exception $e)
+} catch(Exception $e)
 {
   echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
     ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'

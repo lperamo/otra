@@ -6,36 +6,54 @@ use otra\console\TasksManager;
 
 if (defined('BASE_PATH') === false)
 {
+  // @codeCoverageIgnoreStart
   define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
 
-  require __DIR__ . (OTRA_PROJECT
-      ? '/../../../../../../..' // long path from vendor
-      : '/..'
-    ) . '/config/constants.php';
+  // BASE_PATH calculation
+  $temporaryBasePath = (OTRA_PROJECT
+    ? '/../../../../../../..' // long path from vendor
+    : '/..'
+  );
+
+  define('CONSTANTS_ENDING_PATH', '/config/constants.php');
+  define('CONSTANTS_PATH', __DIR__ . $temporaryBasePath . CONSTANTS_ENDING_PATH);
+
+  if (file_exists(CONSTANTS_PATH))
+    require CONSTANTS_PATH;
+  else
+  {
+    $_SERVER['APP_ENV'] = 'dev';
+    require __DIR__ . '/../../../..' . CONSTANTS_ENDING_PATH;
+  }
+
   require CONSOLE_PATH . 'colors.php';
-
-  // Generating the class map if needed
-  if (file_exists(CLASS_MAP_PATH) === false)
-    require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
-
-  // loading the class map
-  require CLASS_MAP_PATH;
-  spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
-
-  require CONSOLE_PATH . 'colors.php';
+  // @codeCoverageIgnoreEnd
 }
+
+// Generating the class map if needed
+if (file_exists(CLASS_MAP_PATH) === false)
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+
+// loading the class map if not defined
+if (!defined('CLASSMAP'))
+  require CLASS_MAP_PATH;
+
+spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
+
+if (!defined('PHP_CACHE_FOLDER'))
+  define ('PHP_CACHE_FOLDER', CACHE_PATH . 'php/');
 
 /**************************************
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new \RecursiveDirectoryIterator(CONSOLE_PATH, \FilesystemIterator::SKIP_DOTS);
-$iterator = new \RecursiveIteratorIterator($dir_iterator);
+$dir_iterator = new RecursiveDirectoryIterator(CONSOLE_PATH, FilesystemIterator::SKIP_DOTS);
+$iterator = new RecursiveIteratorIterator($dir_iterator);
 
 $helpFileContent = [];
 $taskClassMap = [];
 
-/** @var \SplFileInfo $entry */
+/** @var SplFileInfo $entry */
 foreach($iterator as $entry)
 {
   $pathname = $entry->getPathname();
@@ -60,20 +78,15 @@ require CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
-$helpFileFinalContent = substr(convertArrayFromVarExportToShortVersion($helpFileFinalContent), 0, -2) . '];';
-$phpCacheFolder = CACHE_PATH . 'php/';
+$helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';';
 
-if (file_exists($phpCacheFolder) === false)
-  mkdir($phpCacheFolder, 0777, true);
-
-file_put_contents($phpCacheFolder . 'tasksHelp.php', $helpFileFinalContent);
+file_put_contents(PHP_CACHE_FOLDER . 'tasksHelp.php', $helpFileFinalContent);
 
 // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
-$taskClassMap = '<?php return ' . var_export($taskClassMap, true);
-$taskClassMap = substr(convertArrayFromVarExportToShortVersion($taskClassMap), 0, -2) . '];';
+$taskClassMap = '<?php return ' . var_export($taskClassMap, true) . ';';
 $taskClassMap = convertArrayFromVarExportToShortVersion($taskClassMap);
 
-file_put_contents($phpCacheFolder . 'tasksClassMap.php',
+file_put_contents(PHP_CACHE_FOLDER . 'tasksClassMap.php',
     str_replace("'" . BASE_PATH,
       'BASE_PATH.\'',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
@@ -102,7 +115,7 @@ $taskDescription = '';
 
 $taskCategoriesLong = $taskCategories = [];
 
-foreach($tasks as &$task)
+foreach($tasks as $task)
 {
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
   $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
@@ -121,7 +134,7 @@ foreach($tasks as &$task)
 
 $shellCompletionsContent .= ');' . PHP_EOL . PHP_EOL;
 
-foreach($taskCategories as $key => &$taskCategory)
+foreach($taskCategories as $key => $taskCategory)
 {
   $shellCompletionsContent .= 'typeset ' . $taskCategoriesLong[$key] . '="${BLC}[ '
     . str_pad($taskCategory, strlen('Help and tools'), ' ', STR_PAD_BOTH) . ' ]${WHI}";' . PHP_EOL;

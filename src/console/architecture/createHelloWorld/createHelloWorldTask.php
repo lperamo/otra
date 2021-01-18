@@ -76,11 +76,18 @@ define('HELLO_WORLD_STARTER_FOLDER', ARCHITECTURE_FOLDER . '/starters/helloWorld
 copyFileAndFolders([HELLO_WORLD_STARTER_FOLDER . 'HomeAction.php'], [$starterAction]);
 echo 'Action filled.', OTRA_SUCCESS;
 
-// Adds a routes config file
+// Adds a routes configuration file
 copyAndShow(
   'Routes.php',
   BUNDLE_FOLDER . '/config/Routes.php',
   'Route configuration file '
+);
+
+// Adds a security configuration file
+copyAndShow(
+  'security',
+  BUNDLE_FOLDER . '/config/security/',
+  'Security configuration folder '
 );
 
 // We create a starter layout

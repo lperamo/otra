@@ -110,5 +110,5 @@ else // otherwise we'll try to guess if it looks like an existing one
     $argv[1] = $newTask;
     launchTask($tasksClassMap, $argv, $argc);
   } else
-    TasksManager::showCommands('This command doesn\'t exist. ');
+    TasksManager::showCommands('This command does not exist. ');
 }

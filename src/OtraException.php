@@ -11,7 +11,7 @@ use config\Routes;
 use Exception;
 
 // Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'debugTools.php';
+require_once CORE_PATH . 'tools/debug/traceArray.php';
 
 /**
  * @package otra
@@ -45,15 +45,17 @@ class OtraException extends Exception
   /**
    * OtraException constructor.
    *
-   * @param string $message
-   * @param int    $code
-   * @param string $file
-   * @param int    $line
-   * @param array  $context
-   * @param bool   $otraCliWarning True only if we came from a console task that wants to do an exit.
+   * @param string   $message
+   * @param int|null $code
+   * @param string   $file
+   * @param int|null $line
+   * @param array    $context
+   * @param bool     $otraCliWarning True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
+   * @throws Exception
    */
+
   public function __construct(
     string $message = 'Error !',
     int $code = NULL,
@@ -77,6 +79,8 @@ class OtraException extends Exception
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
+    elseif ($_SERVER['APP_ENV'] === 'prod')
+      return;
     else
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
@@ -105,7 +109,7 @@ class OtraException extends Exception
           'hasJsToLoad' => false
         ]
       );
-    } catch(Exception $e)
+    } catch(Exception $exception)
     {
       if (PHP_SAPI === 'cli')
       {
@@ -124,19 +128,20 @@ class OtraException extends Exception
     if (false === empty($this->context))
     {
       unset($this->context['variables']);
+      require CORE_PATH . 'tools/debug/traceArray.php';
       $showableContext = createShowableFromArray($this->context, 'Variables');
     } else
       $showableContext = '';
 
     // Is the error code a native error code ?
-    $code = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
     return $renderController->renderView(
       '/errors/exception.phtml',
       [
         'message' => $this->message,
-        'code' => $code,
+        'code' => $errorCode,
         'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
         'context' => $showableContext,
@@ -150,11 +155,11 @@ class OtraException extends Exception
   /**
    * To use with set_error_handler().
    *
-   * @param int    $errno
-   * @param string $message
-   * @param string $file
-   * @param int    $line
-   * @param array  $context
+   * @param int        $errno
+   * @param string     $message
+   * @param string     $file
+   * @param int        $line
+   * @param array|null $context
    *
    * @throws OtraException
    */
@@ -195,4 +200,3 @@ class OtraException extends Exception
     exit($exception->getCode());
   }
 }
-

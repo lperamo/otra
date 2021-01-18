@@ -8,6 +8,8 @@ use otra\OtraException;
 abstract class TasksManager
 {
   public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
+    PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
+    PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
     TASK_CLASS_MAP_TASK_STATUS = 1,
     TASK_DESCRIPTION = 0,
@@ -27,7 +29,8 @@ abstract class TasksManager
   {
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
-    echo 'The available commmands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE, str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON, ' '),
+    echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE,
+      str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
@@ -35,7 +38,7 @@ abstract class TasksManager
 
     $category = '';
 
-    foreach ($methods as $method => &$paramsDesc)
+    foreach ($methods as $method => $paramsDesc)
     {
       if (isset($paramsDesc[self::TASK_CATEGORY]) === true)
       {
@@ -50,9 +53,8 @@ abstract class TasksManager
         echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
       }
 
-      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON, ' '), CLI_LIGHT_GRAY, ': ', CLI_CYAN,
-      $paramsDesc[self::TASK_DESCRIPTION],
-      PHP_EOL;
+      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON), CLI_LIGHT_GRAY, ': ',
+        CLI_CYAN, $paramsDesc[self::TASK_DESCRIPTION], PHP_EOL;
     }
 
     echo END_COLOR;
@@ -67,7 +69,9 @@ abstract class TasksManager
   {
     ini_set('display_errors', '1');
     error_reporting(E_ALL & ~E_DEPRECATED);
-    require CORE_PATH . 'OtraException.php';
+    // 'require_once' needed instead of 'require', if we execute this function multiple times as in tests or some
+    // scripts
+    require_once CORE_PATH . 'OtraException.php';
 
     if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {

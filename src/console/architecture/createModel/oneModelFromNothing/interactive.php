@@ -11,7 +11,7 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 else
 {
   /** MODULE */
-  $moduleName = getModuleName($bundleName, $bundlePath);
+  $moduleName = getModuleName($bundlePath);
   echo MODULE_BUNDLE_MESSAGE;
   define('MODEL_PATH', $bundlePath . $moduleName . '/');
 }

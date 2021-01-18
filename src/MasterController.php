@@ -6,27 +6,53 @@ declare(strict_types=1);
  */
 namespace otra;
 
+use cache\php\BlocksSystem;
+
 /**
  * @package otra
  */
 class MasterController
 {
   public static string $path;
-  public static array
-    $blocksStack = [],
-    $currentBlock = [
-      'content' => '',
-      'index' => 0,
-      'name' => 'root',
-      'parent' => null
-    ],
-    $blockNames = [],
-    $blocksToUnset = [];
+  public ?string $routeSecurityFilePath = null;
 
-  public static int
-    $currentBlocksStackIndex = 0;
+  public static array
+    $nonces = [
+      'script-src' => [],
+      'style-src' => []
+    ],
+    $contentSecurityPolicy = [
+    'dev' =>
+      [
+        'frame-ancestors' => "'self'",
+        'default-src' => "'self'",
+        'font-src' => "'self'",
+        'img-src' => "'self'",
+        'object-src' => "'self'",
+        'connect-src' => "'self'",
+        'child-src' => "'self'",
+        'manifest-src' => "'self'",
+        'style-src' => "'self'"
+      ],
+    'prod' => [] // assigned in the constructor
+  ],
+    $featurePolicy = [
+    'dev' =>
+      [
+        'layout-animations' => "'self'",
+        'legacy-image-formats' => "'none'",
+        'oversized-images' => "'none'",
+        'sync-script' => "'none'",
+        'sync-xhr' => "'none'",
+        'unoptimized-images' => "'none'",
+        'unsized-media' => "'none'"
+      ],
+    'prod' => []
+  ],
+  $routesSecurity;
 
   public string $route,
+    $url,
     $bundle = '',
     $module = '',
     $viewPath = '/'; // index/index/ for indexController and indexAction
@@ -44,37 +70,8 @@ class MasterController
 
   protected static array
     $css = [],
-    $js = [],
-    $rendered = [],
-    $nonces = [],
-    $csp = [
-      'dev' =>
-        [
-          'frame-ancestors' => "'self'",
-          'default-src' => "'self'",
-          'font-src' => "'self'",
-          'img-src' => "'self'",
-          'object-src' => "'self'",
-          'connect-src' => "'self'",
-          'child-src' => "'self'",
-          'manifest-src' => "'self'",
-          'style-src' => "'self'"
-        ],
-      'prod' => [] // assigned in the constructor
-    ],
-  $featurePolicy = [
-    'dev' =>
-      [
-        'layout-animations' => "'self'",
-        'legacy-image-formats' => "'none'",
-        'oversized-images' => "'none'",
-        'sync-script' => "'none'",
-        'sync-xhr' => "'none'",
-        'unoptimized-images' => "'none'",
-        'unsized-media' => "'none'"
-      ],
-    'prod' => []
-  ];
+    $javaScript = [],
+    $rendered = [];
 
   protected static bool
     $ajax = false,
@@ -83,9 +80,10 @@ class MasterController
 
   protected static string
     $id,
-    /* @var string $template The actual template being processed */
-    $template,
     $layout;
+
+  /* @var string $template The actual template being processed */
+  protected static $template;
 
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
@@ -164,14 +162,33 @@ class MasterController
     if (false === isset($baseParams['controller']))
     {
       if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
+      {
         // Stores the bundle, module, controller and action for later use
-        list($this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad) = array_values($baseParams);
+        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($baseParams);
+
+        require CORE_PATH . 'services/securityService.php';
+        $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
+      }
 
       return;
     }
 
     // Stores the bundle, module, controller and action for later use
-    list($this->pattern, $this->bundle, $this->module, $this->controller, , $this->route, self::$hasJsToLoad, self::$hasCssToLoad) = array_values($baseParams);
+    [
+      $this->pattern,
+      $this->bundle,
+      $this->module,
+      $this->controller,
+      ,
+      $this->route,
+      self::$hasJsToLoad,
+      self::$hasCssToLoad] = array_values($baseParams);
+
+    require CORE_PATH . 'services/securityService.php';
+    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . '/' . $this->route . '.php';
+
+    if (!file_exists($this->routeSecurityFilePath))
+      $this->routeSecurityFilePath = null;
 
     $this->action = substr($baseParams['action'], 0, -6);
 
@@ -187,21 +204,22 @@ class MasterController
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-    self::$csp['prod'] = self::$csp['dev'];
+    self::$contentSecurityPolicy['prod'] = self::$contentSecurityPolicy['dev'];
+    $this->url = $_SERVER['REQUEST_URI'];
   }
 
   /**
    * Encodes the value passed as parameter in order to create a cache file name
    *
-   * @param string $filename File name to modify
-   * @param string $path File's path
-   * @param string $prefix Prefix of the file name
+   * @param string $route
+   * @param string $path     File's path
+   * @param string $suffix   Suffix of the file name
    * @param string $extension
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $filename, string $path = CACHE_PATH, string $prefix = VERSION, string $extension = '.cache') : string {
-    return $path . sha1('ca' . $prefix . $filename . 'che') . $extension;
+  protected static function getCacheFileName(string $route, string $path = CACHE_PATH, string $suffix = VERSION, string $extension = '.cache') : string {
+    return $path . sha1('ca' . $route . $suffix . 'che') . $extension;
   }
 
   /**
@@ -210,12 +228,23 @@ class MasterController
    * @param string $cachedFile The cache file name version of the file
    * @param bool   $exists     True if we know that the file exists.
    *
+   * @throws \Exception
    * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
    */
   protected static function getCachedFile(string $cachedFile, bool $exists = false)
   {
     if ((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
-      return file_get_contents ($cachedFile);
+      return preg_replace(
+        [
+          '@(<script.*?nonce=")\w{64}@',
+          '@(<link.*?nonce=")\w{64}@',
+        ],
+        [
+          '${1}' . getRandomNonceForCSP(),
+          '${1}' . getRandomNonceForCSP('style-src')
+        ],
+        file_get_contents($cachedFile)
+      );
 
     return false;
   }
@@ -238,7 +267,7 @@ class MasterController
    */
   protected static function js($js = []) : void
   {
-    self::$js = array_merge(self::$js, (is_array($js)) ? $js : [$js]);
+    self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
   }
 
   /**
@@ -249,121 +278,16 @@ class MasterController
    *
    * @return string
    */
-  protected static function processFinalTemplate(string &$templateFilename, array &$variables)
+  protected static function processFinalTemplate(string $templateFilename, array $variables)
   {
     extract($variables);
-
     ob_start();
     require $templateFilename;
-    self::$currentBlock['content'] .= ob_get_clean();
-    array_push(self::$blocksStack, self::$currentBlock);
-    $content = '';
-    $indexesToUnset = [];
 
-    // Loops through the block stack to compile the final content that have to be shown
-    foreach(self::$blocksStack as $key => &$block)
-    {
-      $blockExists = array_key_exists($block['name'], self::$blockNames);
-
-      // If there are other blocks with this name...
-      if ($blockExists === true)
-      {
-        $goodBlock = &$block;
-
-        // We seeks for the last block with this name and we adds its content
-        while(array_key_exists('replacedBy', $goodBlock) === true)
-        {
-          $goodBlock['content'] = '';
-          $indexesToUnset[$goodBlock['index']] = true;
-          $tmpKey = $key;
-          $tmpBlock = &self::$blocksStack[$tmpKey + 1];
-
-          while ($tmpBlock['parent'] === self::$blocksStack[$tmpKey] && $tmpBlock['name'] !== $block['name'])
-          {
-            $tmpBlock['content'] = '';
-            $indexesToUnset[$tmpBlock['index']] = true;
-            $tmpBlock = &self::$blocksStack[++$tmpKey + 1];
-          }
-
-          $goodBlock = &self::$blocksStack[$goodBlock['replacedBy']];
-        }
-
-        // We must also not show the endings blocks that have been replaced
-        if (in_array($goodBlock['index'], array_keys($indexesToUnset)) === false)
-          $content .= $goodBlock['content'];
-
-        $goodBlock['content'] = '';
-      } else
-        $content .= $block['content'];
-    }
-
-    return $content;
-  }
-
-  /**
-   * @return string
-   * @throws \Exception
-   */
-  protected static function getRandomNonceForCSP() : string
-  {
-    $nonce = bin2hex(random_bytes(32));
-    self::$nonces[] = $nonce;
-
-    return $nonce;
-  }
-
-  protected static function addCspHeader() : void
-  {
-    $csp = 'Content-Security-Policy: ';
-
-    foreach (self::$csp[$_SERVER[APP_ENV]] as $directive => &$value)
-    {
-      $csp .= $directive . ' ' . $value . '; ';
-    }
-
-    // If no value has been set for 'script-src', we define automatically a secure policy for this directive
-    if (!isset(self::$csp[$_SERVER[APP_ENV]]['script-src']))
-    {
-      $csp .= 'script-src' . ' \'strict-dynamic\' ';
-
-      foreach (self::$nonces as &$nonce)
-      {
-        $csp .= '\'nonce-' . $nonce . '\' ';
-      }
-    }
-
-    header($csp);
-  }
-
-  /**
-   * @static
-   * @param array  $policiesArray
-   * @param string $policies
-   */
-  private static function addFeaturePolicies(array $policiesArray, string &$policies) : void
-  {
-    foreach ($policiesArray as $feature => &$policy)
-    {
-      $policies .= $feature . ' ' . $policy . ';';
-    }
-  }
-
-  protected static function addFeaturePoliciesHeader()
-  {
-    $featurePolicies = '';
-
-    if ($_SERVER[APP_ENV] === 'dev')
-      self::addFeaturePolicies(
-        self::$featurePolicy['dev'],
-        $featurePolicies
-      );
-
-    MasterController::addFeaturePolicies(
-      self::$featurePolicy['prod'],
-      $featurePolicies
-    );
-
-    header('Feature-Policy: ' . $featurePolicies);
+    // If the template motor is loaded then we use it
+    return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
+      ? BlocksSystem::getTemplate()
+      : '';
   }
 }
 
@@ -372,4 +296,3 @@ class MasterController
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER[APP_ENV] === 'prod' && PHP_SAPI !== 'cli')
   class_alias('\cache\php\MasterController', '\otra\MasterController');
-

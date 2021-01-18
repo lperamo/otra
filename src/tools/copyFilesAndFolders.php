@@ -16,7 +16,7 @@ if (!function_exists('copyFileAndFolders'))
   function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest): void
   {
     /** @var int $key */
-    foreach ($filesOrFoldersSrc as $key => &$fileOrFolderSrc)
+    foreach ($filesOrFoldersSrc as $key => $fileOrFolderSrc)
     {
       $fileOrFolderDest = $filesOrFoldersDest[$key];
 
@@ -41,7 +41,7 @@ if (!function_exists('copyFileAndFolders'))
    *
    * @throws OtraException
    */
-  function iterateOnFilesAndFolders(&$source, &$destination): void
+  function iterateOnFilesAndFolders($source, $destination): void
   {
     if (false === file_exists($destination) && false === mkdir($destination, 0777, true))
       throw new OtraException('Cannot create the folder ' . $destination);

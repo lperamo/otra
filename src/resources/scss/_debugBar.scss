@@ -16,11 +16,11 @@
 
 .dbg- {
   &fl {
-    float : left
+    float : left;
   }
 
   &fr {
-    float : right
+    float : right;
   }
 
   &hide {
@@ -86,7 +86,7 @@
 
   &on {
     color       : $debug--on-color;
-    text-shadow : 0 0 3px $debug--on-text-shadow-color
+    text-shadow : 0 0 3px $debug--on-text-shadow-color;
   }
 
   &off {
@@ -97,16 +97,17 @@
   &btn:active {
     box-shadow : 0 0 25px #fff inset;
     position   : relative;
-    top        : 1px
+    top        : 1px;
   }
 
   &left-block {
-    width : calc(100% - 60px)
+    width : calc(100% - 60px);
   }
 
   &file {
     @include glowingRed();
-    word-break: break-all;
+
+    word-break : break-all;
   }
 
   &line {
@@ -114,7 +115,6 @@
   }
 
   &sql-logs {
-
     &::selection {
       background : $debug--logs-selection-color;
     }
@@ -217,8 +217,7 @@ div.profiler {
   font-size   : 10px;
   line-height : 2em;
 
-  @at-root
-  {
+  @at-root {
     button.profiler-button {
       margin-right: .5em;
     }
@@ -228,7 +227,7 @@ div.profiler {
     }
   }
 
-  &>div {
+  & > div {
     font-size: 1.6em;
   }
 }
@@ -240,13 +239,15 @@ input.dbg--toggle {
     left     : -10000px;
   }
 
-  &-top, span.dbg--toggle-top {
+  &-top,
+  span.dbg--toggle-top {
     &:checked ~ div#dbg-bar {
       transform: rotateZ(0deg);
     }
   }
 
-  &-right, span.dbg--toggle-right {
+  &-right,
+  span.dbg--toggle-right {
     &:checked ~ div#dbg-bar {
       transform-origin : right;
       transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
@@ -258,14 +259,16 @@ input.dbg--toggle {
     }
   }
 
-  &-bottom, span.dbg--toggle-bottom {
+  &-bottom,
+  span.dbg--toggle-bottom {
     &:checked ~ div#dbg-bar {
       transform-origin : top left;
       transform        : translate(0, calc(100vh - 38px));
     }
   }
 
-  &-left, span.dbg--toggle-left {
+  &-left,
+  span.dbg--toggle-left {
     &:checked + div#dbg-bar {
       transform-origin : left;
       transform        : rotateZ(90deg) translate(-19px, -19px);

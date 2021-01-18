@@ -8,28 +8,30 @@ require __DIR__ . (OTRA_PROJECT
   ) . '/config/constants.php';
 define('BUNDLES_PATH', BASE_PATH . 'bundles/');
 
-require CACHE_PATH . 'php/ClassMap.php';
-
-spl_autoload_register(function(string $className)
+if (file_exists(CACHE_PATH . 'php/ClassMap.php'))
 {
-  if (false === isset(CLASSMAP[$className]))
+  require CACHE_PATH . 'php/ClassMap.php';
+
+  spl_autoload_register(function (string $className) {
+    if (false === isset(CLASSMAP[$className]))
+    {
+      // Handle the particular test configuration
+      if ('AllConfig' === $className)
+        require TEST_PATH . 'config/AllConfig.php';
+      else
+        echo PHP_EOL, 'Path not found for the class name : ', $className, PHP_EOL;
+    } else
+      require CLASSMAP[$className];
+  });
+
+  require CONSOLE_PATH . 'colors.php';
+  require CORE_PATH . 'tools/removeFieldProtection.php';
+
+  if (OTRA_PROJECT === false)
   {
-    // Handle the particular test configuration
-    if('AllConfig' === $className)
-      require TEST_PATH . 'config/AllConfig.php';
-    else
-      echo PHP_EOL, 'Path not found for the class name : ', $className, PHP_EOL;
-  }else
-    require CLASSMAP[$className];
-});
+    require CORE_PATH . 'tools/deleteTree.php';
 
-require CONSOLE_PATH . 'colors.php';
-require CORE_PATH . 'tools/removeFieldProtection.php';
-
-if (OTRA_PROJECT === false)
-{
-  require CORE_PATH . 'tools/deleteTree.php';
-
-  if (file_exists(BUNDLES_PATH))
-    $delTree(BUNDLES_PATH);
+    if (file_exists(BUNDLES_PATH))
+      $delTree(BUNDLES_PATH);
+  }
 }

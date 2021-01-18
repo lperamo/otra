@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-/**
- * OTRA starter action
- */
 namespace bundles\HelloWorld\frontend\controllers\index;
 
-use otra\{Controller, MasterController};
+use otra\Controller;
 
 /**
+ * OTRA starter action
+ *
  * @package bundles\HelloWorld\frontend\controllers\index
  */
 class HomeAction extends Controller
@@ -18,11 +17,12 @@ class HomeAction extends Controller
    *
    * @param array $baseParams
    * @param array $getParams
+   *
+   * @throws \otra\OtraException
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     parent::__construct($baseParams, $getParams);
-    MasterController::$featurePolicy['dev']['sync-script'] = "'self'";
     echo $this->renderView('home.phtml', []);
   }
 }
