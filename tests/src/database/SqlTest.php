@@ -198,7 +198,7 @@ class SqlTest extends TestCase
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
     self::assertEquals(
       $sqlLogContent
-        . '[{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
+        . '[{"file":"phar:///var/www/html/lib/phpunit_php8.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
@@ -411,7 +411,7 @@ class SqlTest extends TestCase
 
     $this->expectException(\TypeError::class);
     $this->expectExceptionMessage(
-      'call_user_func_array() expects parameter 1 to be a valid callback, class \'otra\bdd\Pdomysql\' does not have a method \'selectDb\''
+      'call_user_func_array(): Argument #1 ($callback) must be a valid callback, class otra\bdd\Pdomysql does not have a method "selectDb"'
     );
 
     $sqlInstance = Sql::getDB('test');

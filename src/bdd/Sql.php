@@ -395,7 +395,14 @@ class Sql
    */
   public function commit() : bool
   {
-    return call_user_func(self::$_currentDBMS . '::commit');
+    // this condition is useful because ... quoting from php.net
+    // Some databases, including MySQL, automatically issue an implicit COMMIT when a database definition language
+    // (DDL) statement such as DROP TABLE or CREATE TABLE is issued within a transaction. The implicit COMMIT will
+    // prevent you from rolling back any other changes within the transaction boundary.
+    if (Sql::$instance->inTransaction())
+      return call_user_func(self::$_currentDBMS . '::commit');
+
+    return true;
   }
 
   /**

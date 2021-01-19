@@ -177,11 +177,11 @@ class OtraException extends Exception
   /**
    * To use with set_exception_handler().
    *
-   * @param mixed $exception Can be TypeError, OtraException, maybe something else.
+   * @param Exception|\Error|OtraException $exception Can be TypeError, OtraException, maybe something else.
    *
    * @throws OtraException
    */
-  public static function exceptionHandler($exception)
+  public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
   {
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request

@@ -231,14 +231,13 @@ namespace otra\console
       try
       {
         $dbResult = $instance->query(file_get_contents($databaseFile));
+        $instance->commit();
         $instance->freeResult($dbResult);
       } catch(Exception $exception)
       {
         $instance->rollBack();
         throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
       }
-
-      $instance->commit();
 
       /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
       echo CLI_LIGHT_GREEN, 'Database ', CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' created.', END_COLOR,

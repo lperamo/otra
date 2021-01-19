@@ -302,10 +302,10 @@ trait DevControllerTrait
    * @param array      &$unorderedArray
    * @param array      &$orderedArray
    * @param int        &$i
-   * @param int|string $key
-   * @param string     $code
+   * @param int|string  $key
+   * @param string      $code
    */
-  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, $key, string $code)
+  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, int|string $key, string $code)
   {
     if (true === is_string($key))
       $orderedArray[intval(substr($key,1))] = $code;
