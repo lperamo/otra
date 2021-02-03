@@ -230,7 +230,7 @@ if (
           echo status('TEMPLATE');
         else
         {
-          status('TEMPLATE', 'CLI_RED');
+          echo status('TEMPLATE', 'CLI_RED');
           $noErrors = false;
         }
       }

@@ -35,12 +35,12 @@ if (!function_exists('getArgumentType'))
   /** Recursive function that converts a php array into a stylish tbody
    *
    * @param array|object $data           Array or object to convert
-   * @param int|string   $indexToExclude Index to exclude from the render
+   * @param int|null         $indexToExclude Index to exclude from the render
    * @param int          $loop           Number of recursions
    *
    * @return int
    */
-  function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
+  function recurArrayConvertTab(array|object $data, ?int $indexToExclude = null, int $loop = -1)
   {
     $i = 0;
     $oldLoop = $loop;
