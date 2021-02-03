@@ -88,6 +88,8 @@ if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
   }
 }
 
+/** @var Closure $removeCachedFiles */
+
 /**
  * @param string $file
  * @param string $fileShownInTheError

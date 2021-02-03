@@ -8,6 +8,7 @@ const ARG_BUNDLE_NAME = 2,
   ARG_INTERACTIVE = 4;
 
 $consoleForce = false;
+/** @var bool $interactive */
 require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 
 // Checking argument : bundle name

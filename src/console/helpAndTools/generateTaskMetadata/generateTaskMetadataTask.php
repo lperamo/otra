@@ -120,7 +120,8 @@ foreach($tasks as $task)
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
   $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
 
-  if (in_array($taskCategory, $taskCategories) === false) {
+  /** @var $taskCategoryLong */
+  if (!in_array($taskCategory, $taskCategories)) {
     $taskCategories[] = $taskCategory;
     $taskCategoryLong = 'CAT_'
       . str_replace(' ', '_', strtoupper($helpFileContent[$task][TasksManager::TASK_CATEGORY]));
