@@ -163,6 +163,7 @@ foreach($routes as &$route)
 
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
+/** @var Closure $sortRoutes */
 if (!function_exists('sortRoutes'))
 {
   if (!defined('ROUTE_PATH'))

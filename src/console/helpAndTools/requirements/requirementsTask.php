@@ -81,6 +81,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
   {
     echo ADD_BOLD;
 
+    /** @var string $error */
     // different check whether it's a PHP src or a program
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
       $error = cli('which ' . $requirement[REQ_PKG_NAME]);

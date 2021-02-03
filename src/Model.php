@@ -35,59 +35,59 @@ abstract class Model
   public function save()
   {
     $dbName = Session::get('db');
-    /* @var \otra\bdd\Sql $db */
-    $db = Session::get('dbConn');
+    /* @var \otra\bdd\Sql $dbConn */
+    $dbConn = Session::get('dbConn');
 
-    $refl = new \ReflectionObject($this);
-    $props = $refl->getProperties();
-    $properties = [];
+    $reflectedObject = new \ReflectionObject($this);
+    $reflectedProperties = $reflectedObject->getProperties();
+    $computedProperties = [];
     $update = false;
 
-    foreach($props as $prop)
+    foreach($reflectedProperties as $reflectedProperty)
     {
-      $name = $prop->name;
-      $properties[$name] = empty($this->$name) ? null : $this->$name;
+      $propertyName = $reflectedProperty->name;
+      $computedProperties[$propertyName] = empty($this->$propertyName) ? null : $this->$propertyName;
 
-      if (str_contains($name, 'id'))
+      if (str_contains($propertyName, 'id'))
       {
-        $id = $name;
+        $id = $propertyName;
 
-        if (!empty($properties[$name]))
+        if (!empty($computedProperties[$propertyName]))
           $update  = true;
       }
     }
-    unset($properties['table'], $props, $prop, $refl);
+    unset($computedProperties['table'], $reflectedProperties, $propertyName, $reflectedProperty, $reflectedObject);
 
     if ($update === true)
     { // It's an update of the model
       $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
-      $idValue = $properties[$id];
-      unset($properties[$id]);
+      $idValue = $computedProperties[$id];
+      unset($computedProperties[$id]);
 
-      foreach($properties as $name => $value)
+      foreach($computedProperties as $propertyName => $value)
       {
-        $query .= '`' . $name . '`=' ;
+        $query .= '`' . $propertyName . '`=' ;
         $query .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ' ';
       }
 
       $query = substr($query, 0, -1) . ' WHERE `'. $id . '`=' . $idValue;
     } else // we add a entry
     {
-      unset($properties[$id]);
+      unset($computedProperties[$id]);
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
       $values = '';
 
-      foreach($properties as $name => $value)
+      foreach($computedProperties as $propertyName => $value)
       {
-        $query .= '`' . $name . '`,';
+        $query .= '`' . $propertyName . '`,';
         $values .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ',';
       }
       $query = substr($query , 0, -1) . ') VALUES (' . substr($values,0,-1) . ')';
     }
 
-    $db->fetchAssoc($db->query($query));
+    $dbConn->fetchAssoc($dbConn->query($query));
 
-    return $db->lastInsertedId();
+    return $dbConn->lastInsertedId();
   }
 }
 

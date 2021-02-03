@@ -118,6 +118,11 @@ abstract class Router
   public static function getByPattern(string $pattern) : array
   {
     $patternFound = false;
+    /**
+     * @var string $mainPattern
+     * @var string $routeName
+     * @var string $routeUrl
+     */
 
     foreach (Routes::$_ as $routeName => $routeData)
     {
