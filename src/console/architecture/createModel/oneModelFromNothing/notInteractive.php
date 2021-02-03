@@ -2,7 +2,7 @@
 declare(strict_types=1);
 /** @var string $bundleName */
 /** @var string $bundlePath */
-/** @var string $modelLocation */
+/** @var int    $modelLocation */
 /** @var string $modelFullName */
 /** @var string $modelName */
 
