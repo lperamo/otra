@@ -13,6 +13,8 @@ class LoggerTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/';
   private static string $LOGS_PROD_PATH;
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src;
+namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
 

@@ -15,6 +15,8 @@ class OtraExceptionTest extends TestCase
   private const 
     BUNDLES_CONFIG_FOLDER = BUNDLES_PATH . 'config/',
     BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

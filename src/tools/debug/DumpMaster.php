@@ -80,6 +80,10 @@ abstract class DumpMaster {
       {
         AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] =
           $options[$optionKey] ?? AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]];
+
+        // Handles the -1 value
+        if (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] === -1)
+          AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] = 100000;
       }
     }
 

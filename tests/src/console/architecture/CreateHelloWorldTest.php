@@ -22,6 +22,8 @@ if (!defined('OTRA_SUCCESS'))
 class CreateHelloWorldTest extends TestCase
 {
   const HELLO_WORLD_BUNDLE_PATH = BASE_PATH . 'bundles/HelloWorld';
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

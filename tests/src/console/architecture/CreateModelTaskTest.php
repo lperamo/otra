@@ -66,7 +66,10 @@ class CreateModelTaskTest extends TestCase
     MODULE_PATH = TEST_BUNDLE_PATH . CreateModelTaskTest::MODULE_NAME . '/',
     YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH = 'config/data/yml/' . self::SCHEMA_YML_FILE,
     YAML_SCHEMA = TEST_BUNDLE_PATH . self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH,
-    OTRA_SUCCESS = CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
+    OTRA_SUCCESS = CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL;
+
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   protected function tearDown() : void
   {

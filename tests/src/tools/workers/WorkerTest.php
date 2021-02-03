@@ -19,6 +19,9 @@ class WorkerTest extends TestCase
     TIMEOUT = 120,
     WHITE = "\e[15;2]";
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws \ReflectionException
    *
