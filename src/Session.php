@@ -5,6 +5,8 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 namespace otra;
 
+use JetBrains\PhpStorm\Pure;
+
 /**
  * @package otra
  */
@@ -33,6 +35,6 @@ abstract class Session
    *
    * @return mixed
    */
-  public static function get(string $key) { return $_SESSION[sha1(self::$id . $key)]; }
+  #[Pure] public static function get(string $key) { return $_SESSION[sha1(self::$id . $key)]; }
 }
 

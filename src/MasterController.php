@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace otra;
 
 use cache\php\BlocksSystem;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @package otra
@@ -218,7 +219,12 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $route, string $path = CACHE_PATH, string $suffix = VERSION, string $extension = '.cache') : string {
+  #[Pure] protected static function getCacheFileName(
+    string $route,
+    string $path = CACHE_PATH,
+    string $suffix = VERSION,
+    string $extension = '.cache'
+  ) : string {
     return $path . sha1('ca' . $route . $suffix . 'che') . $extension;
   }
 

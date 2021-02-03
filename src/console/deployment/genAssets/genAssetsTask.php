@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use config\Routes;
+use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 
 require_once BASE_PATH . 'config/AllConfig.php';
@@ -311,7 +312,7 @@ if (GEN_ASSETS_SVG)
  *
  * @return string
  */
-function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
+#[Pure] function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
 
 /**
  * @param array  $resources

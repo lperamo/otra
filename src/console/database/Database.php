@@ -12,6 +12,7 @@ namespace otra\console
   use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
   use config\AllConfig;
   use otra\{bdd\Sql, Session, OtraException};
+  use JetBrains\PhpStorm\Pure;
 
   define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
@@ -255,7 +256,7 @@ namespace otra\console
      *
      * @return string $attribute Concerned attribute in uppercase
      */
-    public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
+    #[Pure] public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
       if (isset(self::$attributeInfos[$attribute]))
       {

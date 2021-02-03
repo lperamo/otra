@@ -9,6 +9,7 @@ namespace otra;
 use otra\{Controller, console\OtraExceptionCli};
 use config\Routes;
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 
 // Sometimes it is already defined ! so we put '_once' ...
 require_once CORE_PATH . 'tools/debug/traceArray.php';
@@ -163,7 +164,7 @@ class OtraException extends Exception
    *
    * @throws OtraException
    */
-  public static function errorHandler(int $errno, string $message, string $file, int $line, ?array $context)
+  #[NoReturn] public static function errorHandler(int $errno, string $message, string $file, int $line, ?array $context) : void
   {
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
@@ -181,7 +182,7 @@ class OtraException extends Exception
    *
    * @throws OtraException
    */
-  public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
+  #[NoReturn] public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
   {
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra\console;
 
 use config\AllConfig;
+use JetBrains\PhpStorm\Pure;
 use RecursiveIteratorIterator;
 
 require BASE_PATH . 'config/Routes.php';
@@ -58,7 +59,7 @@ define(
  *
  * @return bool
  */
-function isNotInThePath(array $paths, string $realPath) : bool
+#[Pure] function isNotInThePath(array $paths, string $realPath) : bool
 {
   $continue = true;
 
@@ -86,7 +87,7 @@ function isNotInThePath(array $paths, string $realPath) : bool
  *
  * @return string
  */
-function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
+#[Pure] function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
   if ($name !== '')

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 /* Light templating engine */
 use cache\php\BlocksSystem;
+use JetBrains\PhpStorm\NoReturn;
 
 if (function_exists('showBlocksVisually') === false)
 {
@@ -40,7 +41,10 @@ if (function_exists('showBlocksVisually') === false)
     }
   }
 
-  function showBlocksVisually()
+  /**
+   * Shows the template blocks as seen by the OTRA template engine.
+   */
+  #[NoReturn] function showBlocksVisually() : void
   {
     ob_clean();
     ?>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra;
 
 use config\AllConfig;
+use JetBrains\PhpStorm\Pure;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 
 if (!defined('OTRA_DUMP_INDENT_COLORS'))
@@ -33,7 +34,7 @@ class DumpCli extends DumpMaster
    *
    * @return string
    */
-  private static function indentColors(int $depth) : string
+  #[Pure] private static function indentColors(int $depth) : string
   {
     $content = '';
 

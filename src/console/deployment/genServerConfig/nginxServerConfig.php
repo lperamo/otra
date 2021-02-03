@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use config\AllConfig;
+use JetBrains\PhpStorm\Pure;
 
 define('OTRA_LABEL_RETURN_403', 'return 403;');
 define('OTRA_LABEL_TYPES', 'types');
@@ -10,7 +11,7 @@ define('OTRA_LABEL_ROOT_PATH', 'root $rootPath;');
 /**
  * @return string
  */
-function handlesHTTPSRedirection():string
+#[Pure] function handlesHTTPSRedirection():string
 {
   return 'server' . PHP_EOL .
     '{' . PHP_EOL .
@@ -119,7 +120,7 @@ function checkHttpReferer() : string
  *
  * @return string
  */
-function handleManifest(): string
+#[Pure] function handleManifest(): string
 {
   return SPACE_INDENT . '# Handling the gzipped web manifest' . PHP_EOL .
     SPACE_INDENT . 'location ~ /manifest\.gz' . PHP_EOL .
@@ -169,7 +170,7 @@ function handleGzippedAsset(string $assetType = 'css'): string
  *
  * @return string
  */
-function handleWebFolderAssets() : string
+#[Pure] function handleWebFolderAssets() : string
 {
   return SPACE_INDENT . '# Handling service worker, robots.txt and sitemaps' . PHP_EOL .
     SPACE_INDENT . 'location ~ /.*\.(js|txt|xml)$' . PHP_EOL .
