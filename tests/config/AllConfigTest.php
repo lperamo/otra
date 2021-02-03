@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use phpunit\framework\TestCase;
 
@@ -7,6 +8,9 @@ use phpunit\framework\TestCase;
  */
 class AllConfigTest extends TestCase
 {
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   protected function setUp(): void
   {
     $_SERVER[APP_ENV] = 'prod';

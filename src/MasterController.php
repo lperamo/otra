@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace otra;
 
 use cache\php\BlocksSystem;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @package otra
@@ -82,8 +83,8 @@ class MasterController
     $id,
     $layout;
 
-  /* @var string $template The actual template being processed */
-  protected static $template;
+  /* @var bool|string $template The actual template being processed */
+  protected static bool|string $template;
 
   // HTTP codes !
   public const HTTP_CONTINUE = 100;
@@ -218,7 +219,12 @@ class MasterController
    *
    * @return string The cache file name version of the file
    */
-  protected static function getCacheFileName(string $route, string $path = CACHE_PATH, string $suffix = VERSION, string $extension = '.cache') : string {
+  #[Pure] protected static function getCacheFileName(
+    string $route,
+    string $path = CACHE_PATH,
+    string $suffix = VERSION,
+    string $extension = '.cache'
+  ) : string {
     return $path . sha1('ca' . $route . $suffix . 'che') . $extension;
   }
 
@@ -252,9 +258,9 @@ class MasterController
   /**
    * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
-   * @param array $css The css file to add (Array of string)
+   * @param array|string $css The css file to add (Array of string)
    */
-  protected static function css($css = []) : void
+  protected static function css(array|string $css = []) : void
   {
     array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
   }
@@ -263,9 +269,9 @@ class MasterController
    * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
    * If the keys are string it will add the string to the link.
    *
-   * @param array $js The javascript file to add (Array of strings)
+   * @param array|string $js The javascript file to add (Array of strings)
    */
-  protected static function js($js = []) : void
+  protected static function js(array|string $js = []) : void
   {
     self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
   }

@@ -12,6 +12,7 @@ namespace otra\console
   use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
   use config\AllConfig;
   use otra\{bdd\Sql, Session, OtraException};
+  use JetBrains\PhpStorm\Pure;
 
   define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
   define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
@@ -231,14 +232,13 @@ namespace otra\console
       try
       {
         $dbResult = $instance->query(file_get_contents($databaseFile));
+        $instance->commit();
         $instance->freeResult($dbResult);
       } catch(Exception $exception)
       {
         $instance->rollBack();
         throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
       }
-
-      $instance->commit();
 
       /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
       echo CLI_LIGHT_GREEN, 'Database ', CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' created.', END_COLOR,
@@ -256,7 +256,7 @@ namespace otra\console
      *
      * @return string $attribute Concerned attribute in uppercase
      */
-    public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
+    #[Pure] public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
       if (isset(self::$attributeInfos[$attribute]))
       {
@@ -264,7 +264,7 @@ namespace otra\console
 
         if ('notnull' === $attribute)
           $attribute = 'not null';
-        elseif ('type' === $attribute && false !== strpos($value, 'string'))
+        elseif ('type' === $attribute && str_contains($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
         if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
@@ -1174,12 +1174,10 @@ namespace otra\console
           if ('NO' === $column['IS_NULLABLE'])
             $content .= '      notnull: true' . PHP_EOL;
 
-          if (false !== strpos($column['EXTRA'],
-              'auto_increment')
-          )
+          if (str_contains($column['EXTRA'], 'auto_increment'))
             $content .= '      auto_increment: true' . PHP_EOL;
 
-          if ('PRI' == $column['COLUMN_KEY'])
+          if ('PRI' === $column['COLUMN_KEY'])
             $content .= '      primary: true' . PHP_EOL;
         }
 
@@ -1372,7 +1370,7 @@ namespace otra\console
                 elseif (is_string($colOfRow))
                 {
                   // For some obscure reasons, PHP_EOL cannot work in this case as it is always returning \n in my tests...
-                  if (false === strpos($colOfRow, "\n"))
+                  if (!str_contains($colOfRow, "\n"))
                   {
                     $quoteIfString = in_array(
                       $columnMetaData['DATA_TYPE'],

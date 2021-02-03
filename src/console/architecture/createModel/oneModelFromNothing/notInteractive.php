@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+/** @var string $bundleName */
+/** @var string $bundlePath */
+/** @var int    $modelLocation */
+/** @var string $modelFullName */
+/** @var string $modelName */
+
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';
 echo MODEL_CREATED_FROM_NOTHING_MESSAGE;
 

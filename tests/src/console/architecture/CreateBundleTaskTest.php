@@ -19,6 +19,8 @@ class CreateBundleTaskTest extends TestCase
 {
   public const TEST_BUNDLE = 'test';
   private const TEST_TASK = 'createBundle';
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {

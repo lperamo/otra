@@ -35,9 +35,14 @@ if (!defined('OTRA_SUCCESS'))
   define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
 
 // creates bundles, modules, controllers, actions and their related folders
+/** @var bool $interactive */
 require ARCHITECTURE_FOLDER . '/checkInteractiveMode.php';
+/** @var string $bundleName */
 require ARCHITECTURE_FOLDER . '/createBundle/checkBundleExistence.php';
+/** @var string $moduleName */
 require ARCHITECTURE_FOLDER . '/createModule/checkModuleExistence.php';
+/** @var string $controllerName */
+/** @var string $controllerPath */
 require ARCHITECTURE_FOLDER . '/createController/checkControllerExistence.php';
 require ARCHITECTURE_FOLDER . '/createAction/createAction.php';
 require CORE_PATH . 'tools/copyFilesAndFolders.php';

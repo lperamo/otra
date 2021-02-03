@@ -15,32 +15,29 @@ if (!function_exists('getArgumentType'))
    */
   function getArgumentType($index, &$value)
   {
-    switch($index)
+    if ($index === 0)
     {
-      case 0:
-        if (true === is_int($value) && true === isset(otra\OtraException::$codes[$value]))
-        {
-          $value = otra\OtraException::$codes[$value];
-          return 'Error type';
-        }
+      if (is_int($value) && isset(otra\OtraException::$codes[$value]))
+      {
+        $value = otra\OtraException::$codes[$value];
+        return 'Error type';
+      }
 
-        return $index;
-      case 1: return 'Error';
-      case 2: return 'File';
-      case 3: return 'Line';
-      case 4: return 'Arguments';
+      return $index;
     }
+
+    return ['Error','File','Line','Arguments'][$index - 1];
   }
 
   /** Recursive function that converts a php array into a stylish tbody
    *
    * @param array|object $data           Array or object to convert
-   * @param int|string   $indexToExclude Index to exclude from the render
+   * @param int|null         $indexToExclude Index to exclude from the render
    * @param int          $loop           Number of recursions
    *
    * @return int
    */
-  function recurArrayConvertTab($data, $indexToExclude = null, int $loop = -1)
+  function recurArrayConvertTab(array|object $data, ?int $indexToExclude = null, int $loop = -1)
   {
     $i = 0;
     $oldLoop = $loop;

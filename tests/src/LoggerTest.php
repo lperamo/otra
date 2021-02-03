@@ -13,6 +13,8 @@ class LoggerTest extends TestCase
 {
   const LOG_PATH = BASE_PATH . 'logs/';
   private static string $LOGS_PROD_PATH;
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {
@@ -50,7 +52,7 @@ class LoggerTest extends TestCase
       touch($logFile);
 
     Logger::log('[OTRA_LOGGER_TEST]');
-    self::assertRegExp(
+    self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
       tailCustom($logFile, 1)
     );
@@ -79,7 +81,7 @@ class LoggerTest extends TestCase
 
     // testing the logger...
     Logger::logToRelativePath('[OTRA_LOGGER_TEST]', $logCustomPath);
-    $this->assertRegExp(
+    $this->assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
       tailCustom($absolutePathToLogFilename, 1)
     );

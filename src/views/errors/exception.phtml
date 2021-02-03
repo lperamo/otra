@@ -41,7 +41,7 @@ block('body');
         <td><?php if (true === isset($now['file']))
           {
             $traceFile = str_replace('\\', '/', $now['file']);
-            echo (false !== strpos($traceFile, BASE_PATH)
+            echo (str_contains($traceFile, BASE_PATH)
               ? '<span title="' . $traceFile . '">' . substr($traceFile, strlen(BASE_PATH)) . '</span>'
               : $traceFile);
           } else

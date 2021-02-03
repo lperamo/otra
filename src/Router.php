@@ -24,12 +24,12 @@ abstract class Router
    * Retrieve the controller's path that we want or launches the route !
    *
    * @param string 			 $route  The wanted route
-   * @param string|array $params Additional params
+   * @param array|string $params Additional params
    * @param bool 				 $launch True if we have to launch the route or just retrieve the path (do we really need this ?)
    *
    * @return string|Controller Controller's path
    */
-  public static function get(string $route = 'index', array $params = [], bool $launch = true)
+  public static function get(string $route = 'index', array|string $params = [], bool $launch = true)
   {
     // We ensure that our input array really contains 5 parameters in order to make array_combine works
     /**
@@ -118,6 +118,11 @@ abstract class Router
   public static function getByPattern(string $pattern) : array
   {
     $patternFound = false;
+    /**
+     * @var string $mainPattern
+     * @var string $routeName
+     * @var string $routeUrl
+     */
 
     foreach (Routes::$_ as $routeName => $routeData)
     {
@@ -125,7 +130,7 @@ abstract class Router
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
 
       // This is the route we are looking for !
-      if (false !== strpos($pattern, $mainPattern))
+      if (str_contains($pattern, $mainPattern))
       {
         $patternFound = true;
         break;

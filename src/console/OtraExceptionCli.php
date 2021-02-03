@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace otra\console;
 
+use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 
 /**
@@ -51,7 +52,7 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  private static function returnShortenFilePath(string $pathType, string $file) : string
+  #[Pure] private static function returnShortenFilePath(string $pathType, string $file) : string
   {
     return CLI_BLUE . $pathType . '_PATH' . CLI_LIGHT_BLUE . ' + ' .
       mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
@@ -70,11 +71,11 @@ class OtraExceptionCli extends \Exception
     {
       $exceptionFile = $exception->file;
 
-      if (strpos($exceptionFile, CONSOLE_PATH) !== false)
+      if (str_contains($exceptionFile, CONSOLE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
-      elseif (strpos($exceptionFile, CORE_PATH) !== false)
+      elseif (str_contains($exceptionFile, CORE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
-      elseif (strpos($exceptionFile, BASE_PATH) !== false)
+      elseif (str_contains($exceptionFile, BASE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
       echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
@@ -165,7 +166,7 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  private static function consoleHeaders(array $headers) : string
+  #[Pure] private static function consoleHeaders(array $headers) : string
   {
     $output = '';
 
@@ -188,7 +189,7 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
+  #[Pure] private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
   {
     return CLI_LIGHT_BLUE . '│' . END_COLOR .
       str_pad(isset($rowData[$columnName])

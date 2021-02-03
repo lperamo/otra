@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use otra\console\TasksManager;
 
-define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../..' // long path from vendor
     : '/..'

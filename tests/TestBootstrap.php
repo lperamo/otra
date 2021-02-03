@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
   ? '/../../../..' // long path from vendor
   : '/..'
@@ -12,8 +12,9 @@ if (file_exists(CACHE_PATH . 'php/ClassMap.php'))
 {
   require CACHE_PATH . 'php/ClassMap.php';
 
-  spl_autoload_register(function (string $className) {
-    if (false === isset(CLASSMAP[$className]))
+  spl_autoload_register(function (string $className)
+  {
+    if (!isset(CLASSMAP[$className]))
     {
       // Handle the particular test configuration
       if ('AllConfig' === $className)
@@ -27,11 +28,13 @@ if (file_exists(CACHE_PATH . 'php/ClassMap.php'))
   require CONSOLE_PATH . 'colors.php';
   require CORE_PATH . 'tools/removeFieldProtection.php';
 
-  if (OTRA_PROJECT === false)
+  if (!OTRA_PROJECT)
   {
+    /** @var Closure $delTree */
     require CORE_PATH . 'tools/deleteTree.php';
 
     if (file_exists(BUNDLES_PATH))
       $delTree(BUNDLES_PATH);
   }
 }
+

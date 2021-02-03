@@ -12,6 +12,7 @@ preg_match(
 
 if (!empty($extension))
 {
+  /** @var string $path */
   switch($extension[0])
   {
     case '.css':

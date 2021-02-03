@@ -5,6 +5,7 @@ use otra\OtraException;
 
 // Testing interactive argument
 define('ARG_INTERACTIVE', 4);
+/** @var bool $interactive */
 require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 
 // Other task arguments
@@ -44,6 +45,8 @@ require CREATE_MODEL_FOLDER . 'createModel.php';
  */
 // Checking parameters...
 $missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
+/** @var string $bundleName */
+/** @var string $bundlePath */
 require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive === true ? 'i' : 'notI') . OTRA_NTERACTIVE;
 
 echo 'We use the ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' bundle.', PHP_EOL;

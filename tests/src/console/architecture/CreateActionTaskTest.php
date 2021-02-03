@@ -40,6 +40,9 @@ class CreateActionTaskTest extends TestCase
     TEST_CONTROLLER = 'test',
     TEST_ACTION = 'test';
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   protected function setUp(): void
   {
     parent::setUp();

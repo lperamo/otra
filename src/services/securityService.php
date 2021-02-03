@@ -57,7 +57,7 @@ if (!function_exists('getRandomNonceForCSP'))
   function createPolicy(string $policy, string $route, ?string $routeSecurityFilePath, array &$policyDirectives) : string
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
-    if (false === strpos($route, 'otra')
+    if (!str_contains($route, 'otra')
       && $routeSecurityFilePath !== null
       && $routeSecurityFilePath)
     {
@@ -124,10 +124,10 @@ if (!function_exists('getRandomNonceForCSP'))
     if (!isset(MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive]))
     {
       $policy .= $directive . ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' ';
-    } elseif (strpos(
+    } elseif (!str_contains(
         MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive],
         OTRA_LABEL_SECURITY_STRICT_DYNAMIC
-      ) === false) // if a value is set for 'script-src' but no 'strict-dynamic' mode
+      )) // if a value is set for 'script-src' but no 'strict-dynamic' mode
     {
       if (!empty(MasterController::$nonces[$directive])) // but has nonces
       {

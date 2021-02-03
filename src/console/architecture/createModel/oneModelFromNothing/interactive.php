@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+/** @var string $bundleName */
+/** @var string $bundlePath */
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';
 echo MODEL_CREATED_FROM_NOTHING_MESSAGE;
 $modelLocation = getModelLocation();

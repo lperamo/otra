@@ -9,8 +9,10 @@ const ARG_BUNDLE_NAME = 2,
 $consoleForce = false;
 
 require CONSOLE_PATH . 'tools.php';
+/** @var bool $interactive */
 require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
+/** @var string $modulePath */
 require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
 require CONSOLE_PATH . 'architecture/createController/createController.php';
 

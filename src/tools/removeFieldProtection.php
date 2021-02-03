@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *
- * @param mixed $class
+ * @param string $class
  * @param string $field
  *
  * @return ReflectionProperty
  *
  * @throws ReflectionException
  */
-function removeFieldScopeProtection($class, string $field) : ReflectionProperty
+function removeFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
   $class = new ReflectionClass($class);
   $_field = $class->getProperty($field);
@@ -22,14 +22,14 @@ function removeFieldScopeProtection($class, string $field) : ReflectionProperty
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *
- * @param mixed $class
+ * @param string $class
  * @param string $field
  *
  * @return ReflectionProperty
  *
  * @throws ReflectionException
  */
-function restoreFieldScopeProtection($class, string $field) : ReflectionProperty
+function restoreFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
   $class = new ReflectionClass($class);
   $_field = $class->getProperty($field);

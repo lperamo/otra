@@ -1,15 +1,18 @@
+@use 'devModeColors';
+@use 'devModeFonts';
+
 // Mixins
 @mixin glowingRed() {
-  color                   : $debug--file-color;
-  text-shadow             : 0 0 1px $debug--file-text-shadow-color;
-  background-image        : linear-gradient(90deg, $debug--file-gradient-primary-color, $debug--file-gradient-secondary-color);
+  color                   : devModeColors.$debug--file-color;
+  text-shadow             : 0 0 1px devModeColors.$debug--file-text-shadow-color;
+  background-image        : linear-gradient(90deg, devModeColors.$debug--file-gradient-primary-color, devModeColors.$debug--file-gradient-secondary-color);
   -webkit-background-clip : text;
   -webkit-text-fill-color : transparent;
 }
 
 @mixin glowingYellowGreen() {
-  color       : $debug--line-color;
-  text-shadow : 0 0 1px $debug--line-text-shadow-color;
+  color       : devModeColors.$debug--line-color;
+  text-shadow : 0 0 1px devModeColors.$debug--line-text-shadow-color;
 }
 
 // Rules
@@ -29,7 +32,7 @@
 
   &bar {
     // background
-    background : linear-gradient(90deg, $debug-bar-background-primary-color, $debug-bar-background-secondary-color);
+    background : linear-gradient(90deg, devModeColors.$debug-bar-background-primary-color, devModeColors.$debug-bar-background-secondary-color);
     box-shadow : 0 0 30px 0 #555 inset;
 
     // box
@@ -48,10 +51,10 @@
 
     // text
     color       : #eee;
-    font-family : $debug--font;
+    font-family : devModeFonts.$debug--font;
     // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
     font-size   : 16px;
-    text-shadow : 0 0 3px $debug--text-shadow-color;
+    text-shadow : 0 0 3px devModeColors.$debug--text-shadow-color;
 
     // animation
     transition: transform .2s;
@@ -70,28 +73,28 @@
         will-change : text-shadow;
 
         // text
-        color       : $debug--toggle-color;
+        color       : devModeColors.$debug--toggle-color;
         font-size   : 1.3em;
-        text-shadow : 0 0 1px $debug--toggle-text-shadow-color;
+        text-shadow : 0 0 1px devModeColors.$debug--toggle-text-shadow-color;
 
         // others
         cursor      : pointer;
 
         &:hover {
-          @include debugToggleHoverTextShadow;
+          @include devModeColors.debugToggleHoverTextShadow;
         }
       }
     }
   }
 
   &on {
-    color       : $debug--on-color;
-    text-shadow : 0 0 3px $debug--on-text-shadow-color;
+    color       : devModeColors.$debug--on-color;
+    text-shadow : 0 0 3px devModeColors.$debug--on-text-shadow-color;
   }
 
   &off {
-    color       : $debug--off-color;
-    text-shadow : 0 0 9px $debug--off-text-shadow-color;
+    color       : devModeColors.$debug--off-color;
+    text-shadow : 0 0 9px devModeColors.$debug--off-text-shadow-color;
   }
 
   &btn:active {
@@ -116,16 +119,16 @@
 
   &sql-logs {
     &::selection {
-      background : $debug--logs-selection-color;
+      background : devModeColors.$debug--logs-selection-color;
     }
 
     &::-moz-selection {
-      background : $debug--logs-selection-color;
+      background : devModeColors.$debug--logs-selection-color;
     }
 
     & > div {
       // background
-      background : $debug--sql-logs-background-color;
+      background : devModeColors.$debug--sql-logs-background-color;
       box-shadow : 0 0 2px 0 #aaa;
 
       // box
@@ -139,7 +142,7 @@
       display    : inline-block;
 
       &:hover {
-        background : $debug--sql-logs-background-hover-color;
+        background : devModeColors.$debug--sql-logs-background-hover-color;
       }
     }
 
@@ -149,9 +152,14 @@
       }
 
       .sql-field {
-        background              : linear-gradient(90deg, $debug--field-gradient-primary-color, $debug--field-gradient-secondary-color);
-        color                   : $debug--field-color;
-        text-shadow             : 0 0 1px $debug--field-text-shadow-color;
+        background              :
+          linear-gradient(
+            90deg,
+            devModeColors.$debug--field-gradient-primary-color,
+            devModeColors.$debug--field-gradient-secondary-color
+          );
+        color                   : devModeColors.$debug--field-color;
+        text-shadow             : 0 0 1px devModeColors.$debug--field-text-shadow-color;
         -webkit-background-clip : text;
         -webkit-text-fill-color : transparent;
       }
@@ -170,10 +178,14 @@ div.profiler .lb-btn {
   will-change: box-shadow, color, text-shadow;
 
   // background
-  background-image : radial-gradient($debug--button-background-gradient-primary-color, $debug--button-background-gradient-secondary-color);
+  background-image :
+    radial-gradient(
+      devModeColors.$debug--button-background-gradient-primary-color,
+      devModeColors.$debug--button-background-gradient-secondary-color
+    );
   border        : none;
   border-radius : 4px;
-  box-shadow    : 0 0 3px $debug--button-box-shadow-color;
+  box-shadow    : 0 0 3px devModeColors.$debug--button-box-shadow-color;
 
   // box
   height  : auto;
@@ -181,23 +193,23 @@ div.profiler .lb-btn {
   display : inline-block;
 
   // text
-  color       : $debug-buttons-text-color;
-  text-shadow : 0 0 3px $debug--button-text-shadow-color;
+  color       : devModeColors.$debug-buttons-text-color;
+  text-shadow : 0 0 3px devModeColors.$debug--button-text-shadow-color;
   font-weight : 400;
 
   // others
   cursor : pointer;
 
   &:hover {
-    color       : $debug-buttons-hover-text-color;
-    box-shadow  : 0 0 4px $debug-buttons-hover-box-shadow-primary-color, 0 0 7px 3px $debug-buttons-hover-box-shadow-secondary-color;
-    text-shadow : 0 0 1px $debug-buttons-hover-text-shadow-color;
+    color       : devModeColors.$debug-buttons-hover-text-color;
+    box-shadow  : 0 0 4px devModeColors.$debug-buttons-hover-box-shadow-primary-color, 0 0 7px 3px devModeColors.$debug-buttons-hover-box-shadow-secondary-color;
+    text-shadow : 0 0 1px devModeColors.$debug-buttons-hover-text-shadow-color;
   }
 }
 
 .div-error {
   // background
-  background : $debug-error-background-color;
+  background : devModeColors.$debug-error-background-color;
 
   // box
   height     : 100%;
@@ -213,7 +225,7 @@ div.profiler {
   padding     : 1em;
 
   // text
-  font-family : $debug--font;
+  font-family : devModeFonts.$debug--font;
   font-size   : 10px;
   line-height : 2em;
 

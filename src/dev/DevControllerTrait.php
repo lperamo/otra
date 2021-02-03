@@ -55,7 +55,7 @@ trait DevControllerTrait
    */
   final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
   {
-    $otraRoute = strpos($this->route, 'otra_') !== false;
+    $otraRoute = str_contains($this->route, 'otra_');
 
     if ($otraRoute === false)
       $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
@@ -97,7 +97,7 @@ trait DevControllerTrait
    * @param string|null $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
    *
    * @throws Exception
-   * @return mixed|string
+   * @return string
    */
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {
@@ -128,12 +128,12 @@ trait DevControllerTrait
    *
    * @throws Exception
    */
-  private function addDebugBar()
+  private function addDebugBar() : void
   {
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
     require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
-    parent::$template = (false === strpos(parent::$template, 'body'))
+    parent::$template = (!str_contains(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
       : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
 
@@ -244,8 +244,10 @@ trait DevControllerTrait
 
   /**
    * Adds the OTRA CSS for the debug bar.
+   *
+   * @return string
    */
-  public static function addDebugCSS()
+  public static function addDebugCSS() : string
   {
     $cssContent = '';
 
@@ -256,9 +258,11 @@ trait DevControllerTrait
 
   /**
    * Adds the OTRA CSS for the debug bar.
+   *
    * @throws Exception
+   * @return string
    */
-  public static function addDebugJS()
+  public static function addDebugJS() : string
   {
     $jsContent = '';
 
@@ -302,10 +306,10 @@ trait DevControllerTrait
    * @param array      &$unorderedArray
    * @param array      &$orderedArray
    * @param int        &$i
-   * @param int|string $key
-   * @param string     $code
+   * @param int|string  $key
+   * @param string      $code
    */
-  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, $key, string $code)
+  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, int|string $key, string $code)
   {
     if (true === is_string($key))
       $orderedArray[intval(substr($key,1))] = $code;

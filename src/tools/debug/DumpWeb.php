@@ -33,13 +33,13 @@ abstract class DumpWeb extends DumpMaster {
 
   /**
    * @param int|string $paramType
-   * @param            $param
+   * @param mixed      $param
    * @param bool       $notFirstDepth
    * @param int        $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpArray($paramType, $param, bool $notFirstDepth, int $depth) : void
+  private static function dumpArray(int|string $paramType, mixed $param, bool $notFirstDepth, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
@@ -87,7 +87,7 @@ abstract class DumpWeb extends DumpMaster {
    */
   private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
   {
-    list($className, $description) = parent::getClassDescription($param);
+    [$className, $description] = parent::getClassDescription($param);
     echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
 
     if ($notFirstDepth)
@@ -216,7 +216,7 @@ abstract class DumpWeb extends DumpMaster {
    *
    * @throws ReflectionException
    */
-  public static function analyseVar($paramKey, $param, int $depth, bool $isArray = false) : void
+  public static function analyseVar(int|string $paramKey, mixed $param, int $depth, bool $isArray = false) : void
   {
     $notFirstDepth = ($depth !== -1);
     $paramType = gettype($param);

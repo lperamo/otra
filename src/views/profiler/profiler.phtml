@@ -4,5 +4,8 @@
     <button id="dbg-clear-sql-logs" class="lb-btn dbg-marginR5 profiler-button"><?=t('Clear SQL logs') ?></button>
     <button id="dbg-refresh-sql-logs" class="lb-btn profiler-button"><?= t('Refresh SQL logs') ?></button><br><br>
   </div>
-  <div id="dbg-sql-logs" class="dbg-sql-logs"><?= $sqlLogs; ?></div>
+  <div id="dbg-sql-logs" class="dbg-sql-logs"><?php
+    /** @var string $sqlLogs */
+    echo $sqlLogs;
+  ?></div>
 </div>

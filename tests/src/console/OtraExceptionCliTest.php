@@ -11,6 +11,9 @@ use phpunit\framework\TestCase;
  */
 class OtraExceptionCliTest extends TestCase
 {
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   protected function setUp(): void
   {
     parent::setUp();

@@ -7,7 +7,7 @@ use otra\console\TasksManager;
 if (defined('BASE_PATH') === false)
 {
   // @codeCoverageIgnoreStart
-  define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+  define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 
   // BASE_PATH calculation
   $temporaryBasePath = (OTRA_PROJECT
@@ -120,7 +120,8 @@ foreach($tasks as $task)
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
   $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
 
-  if (in_array($taskCategory, $taskCategories) === false) {
+  /** @var $taskCategoryLong */
+  if (!in_array($taskCategory, $taskCategories)) {
     $taskCategories[] = $taskCategory;
     $taskCategoryLong = 'CAT_'
       . str_replace(' ', '_', strtoupper($helpFileContent[$task][TasksManager::TASK_CATEGORY]));

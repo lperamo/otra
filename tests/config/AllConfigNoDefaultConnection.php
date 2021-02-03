@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace config;
 
 define('CACHE_PATH', BASE_PATH . 'cache/');

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-define(OTRA_LABEL_SELECT, 'SELECT ');
+define('OTRA_LABEL_SELECT', 'SELECT ');
 // TODO Not fully tested !
 
 define('SQL_CLAUSES', [

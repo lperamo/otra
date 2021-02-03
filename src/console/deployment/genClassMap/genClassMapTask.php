@@ -62,7 +62,7 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
 
         // We only need files that match with the actual environment
         // so, for example, we'll not include dev config if we are in prod mode !
-        if(strpos($_entry, BASE_PATH . 'config/dev') !== false && $_SERVER[APP_ENV] === 'prod')
+        if(str_contains($_entry, BASE_PATH . 'config/dev') && $_SERVER[APP_ENV] === 'prod')
           continue;
 
         $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
@@ -196,7 +196,7 @@ echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related f
 foreach($classes as $startClassName => $finalClassName)
 {
   echo CLI_LIGHT_BLUE, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_GREEN, ' => ';
-  echo (strpos($finalClassName, BASE_PATH) !== false
+  echo (str_contains($finalClassName, BASE_PATH)
     // for classes inside the BASE_PATH
     ? CLI_WHITE . '[BASE_PATH]' . CLI_LIGHT_BLUE . substr($finalClassName, strlen(BASE_PATH))
     // for classes outside the BASE_PATH

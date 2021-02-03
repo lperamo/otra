@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+/** @var string $bundleName */
+/** @var string $bundlePath */
+/** @var string $modelName */
+/** @var string $moduleName */
 require CREATE_MODEL_FOLDER . '/allModelsFromYmlSchema/common.php';
 
 echo CREATE_ALL_MODELS_FROM_YAML_SCHEMA;

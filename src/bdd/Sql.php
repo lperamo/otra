@@ -46,7 +46,7 @@ class Sql
    * @param bool $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
    *                           needed in this case.
    *
-   * @return bool|Sql|resource
+   * @return bool|Sql
    *
    * @throws OtraException
    *
@@ -54,7 +54,7 @@ class Sql
    * @internal param string $conn     Connection used (see AllConfig files)
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    */
-  public static function getDb($conn = null, bool $haveDatabase = true) : Sql
+  public static function getDb($conn = null, bool $haveDatabase = true) : bool|Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
@@ -395,7 +395,14 @@ class Sql
    */
   public function commit() : bool
   {
-    return call_user_func(self::$_currentDBMS . '::commit');
+    // this condition is useful because ... quoting from php.net
+    // Some databases, including MySQL, automatically issue an implicit COMMIT when a database definition language
+    // (DDL) statement such as DROP TABLE or CREATE TABLE is issued within a transaction. The implicit COMMIT will
+    // prevent you from rolling back any other changes within the transaction boundary.
+    if (Sql::$instance->inTransaction())
+      return call_user_func(self::$_currentDBMS . '::commit');
+
+    return true;
   }
 
   /**

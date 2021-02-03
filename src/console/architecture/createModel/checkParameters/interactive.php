@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+/** @var string $bundlesPath */
+/** @var string $missingBundleErrorMessage */
 if (!isset($argv[ARG_BUNDLE_NAME]))
 {
   $bundleName = promptUser('You did not specified the name of the bundle. What is it ?');

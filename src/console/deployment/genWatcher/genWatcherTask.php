@@ -6,6 +6,7 @@ namespace otra\console;
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 
+use JetBrains\PhpStorm\Pure;
 use otra\console\Tasks;
 use RecursiveIteratorIterator;
 
@@ -109,7 +110,7 @@ if (GEN_WATCHER_VERBOSE > 1 )
  *
  * @return bool
  */
-function isNotInThePath(array $paths, string $realPath) : bool
+#[Pure] function isNotInThePath(array $paths, string $realPath) : bool
 {
   $continue = true;
 
@@ -134,7 +135,7 @@ function isNotInThePath(array $paths, string $realPath) : bool
  *
  * @return string
  */
-function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
+#[Pure] function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
   if ($name !== '')
@@ -152,7 +153,7 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  *
  * @return string
  */
-function debugHeader(string $header, int $padding)
+#[Pure] function debugHeader(string $header, int $padding)
 {
   return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
 }
@@ -166,7 +167,7 @@ function debugHeader(string $header, int $padding)
  *
  * @return string The debug output
  */
-function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $headers = false) : string
+#[Pure] function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $headers = false) : string
 {
   $debugToPrint = '';
 

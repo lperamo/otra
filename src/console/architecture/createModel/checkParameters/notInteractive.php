@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use otra\OtraException;
 
+/** @var string $bundlesPath */
+
 /**
  * @param string $constantName
  * @param string $message

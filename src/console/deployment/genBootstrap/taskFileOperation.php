@@ -283,7 +283,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch) : array
 {
   // no path variables found
-  if (false === strpos($trimmedMatch, '$'))
+  if (!str_contains($trimmedMatch, '$'))
     return [$tempFile, false];
 
   // the flag is necessary in order to validate correctly the next condition (with empty($pathVariables) I mean)
@@ -452,7 +452,7 @@ function processReturn(string &$finalContent, string &$contentToAdd, string $mat
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
-  if (false !== strpos($match, OTRA_LABEL_REQUIRE) &&
+  if (str_contains($match, OTRA_LABEL_REQUIRE) &&
     0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
     ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
@@ -542,7 +542,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
-    if (false !== strpos($trimmedMatch, OTRA_LABEL_REQUIRE))
+    if (str_contains($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
       list($tempFile, $isTemplate) = getFileInfoFromRequireMatch($trimmedMatch, $file);
 
@@ -580,7 +580,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
         if ($tempFile === BASE_PATH . 'bundles/config/Config.php')
           continue;
 
-        if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
+        if (VERBOSE > 0 && !str_contains($tempFile, BASE_PATH))
           echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
           '\' in ', $file, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
            outside of the project folder.', END_COLOR, PHP_EOL;
@@ -602,7 +602,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } elseif(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
+    } elseif(str_contains($trimmedMatch, 'extends')) /** EXTENDS */
     {
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
@@ -625,7 +625,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
       }
 
       $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
-    } elseif(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+    } elseif(!str_contains($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
     {
       $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
 
@@ -654,7 +654,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
             if ($trimmedMatch === '/exception.phtml')
               $tempDir = CORE_PATH . 'views/' ;
             // no ? so where is that file ?
-            elseif (strpos($trimmedMatch, 'html') === false)
+            elseif (!str_contains($trimmedMatch, 'html'))
             {
               echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
                 CLI_YELLOW,
@@ -750,7 +750,7 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
 
             // If it is a class from an external library (not from the framework),
             // we let the inclusion code and we do not add the content to the bootstrap file.
-            if (false !== strpos($tempFile, 'vendor') && false === strpos($tempFile, 'otra'))
+            if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
             {
               echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
               // for example
@@ -785,7 +785,7 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
             if (OTRA_KEY_REQUIRE === $inclusionMethod
               /* if the file has contents that begin by a return statement and strict type declaration then we apply a
                particular process*/
-              && false !== strpos(
+              && str_contains(
                 substr(
                   $nextContentToAdd,
                   PHP_OPEN_TAG_LENGTH + 1,
@@ -803,7 +803,7 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
               );
             }
 
-            if (strpos($file, 'config/AllConfig') !== false)
+            if (str_contains($file, 'config/AllConfig'))
             {
               $finalContentParts[]= $contentToAdd;
               $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;

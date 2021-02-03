@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra;
 
 use config\AllConfig;
+use JetBrains\PhpStorm\Pure;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 
 if (!defined('OTRA_DUMP_INDENT_COLORS'))
@@ -33,7 +34,7 @@ class DumpCli extends DumpMaster
    *
    * @return string
    */
-  private static function indentColors(int $depth) : string
+  #[Pure] private static function indentColors(int $depth) : string
   {
     $content = '';
 
@@ -52,7 +53,7 @@ class DumpCli extends DumpMaster
    *
    * @throws ReflectionException
    */
-  private static function dumpArray($paramType, $param, int $depth) : void
+  private static function dumpArray(int|string $paramType, $param, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
@@ -91,7 +92,7 @@ class DumpCli extends DumpMaster
    */
   private static function dumpObject($param, int $depth) : void
   {
-    list($className, $description) = parent::getClassDescription($param);
+    [$className, $description] = parent::getClassDescription($param);
     echo $description, PHP_EOL;
 
     // If we have reach the depth limit, we exit this function
@@ -208,7 +209,7 @@ class DumpCli extends DumpMaster
    *
    * @throws ReflectionException
    */
-  public static function analyseVar($paramKey, $param, int $depth, bool $isArray = false) : void
+  public static function analyseVar(int|string $paramKey, mixed $param, int $depth, bool $isArray = false) : void
   {
     $notFirstDepth = ($depth !== -1);
     $paramType = gettype($param);

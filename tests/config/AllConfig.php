@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace config;
 
 define('VERSION', 'v1');
@@ -17,5 +19,11 @@ class AllConfig
     $cachePath = CACHE_PATH,
     $version = 'v1',
     $defaultConn = ''; // mandatory in order to modify it later if needed
-  public static array $dbConnections = []; // mandatory in order to modify it later if needed
+  public static array $dbConnections = [], // mandatory in order to modify it later if needed
+    $debugConfig = [
+      'barPosition' => 'bottom',
+      'maxChildren' => 130,
+      'maxData' => 514,
+      'maxDepth' => 6
+    ];
 }
