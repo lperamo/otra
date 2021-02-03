@@ -128,7 +128,7 @@ trait DevControllerTrait
    *
    * @throws Exception
    */
-  private function addDebugBar()
+  private function addDebugBar() : void
   {
     ob_start();
     // send variables to the debug toolbar (if debug is active, cache don't)
@@ -244,8 +244,10 @@ trait DevControllerTrait
 
   /**
    * Adds the OTRA CSS for the debug bar.
+   *
+   * @return string
    */
-  public static function addDebugCSS()
+  public static function addDebugCSS() : string
   {
     $cssContent = '';
 
@@ -256,9 +258,11 @@ trait DevControllerTrait
 
   /**
    * Adds the OTRA CSS for the debug bar.
+   *
    * @throws Exception
+   * @return string
    */
-  public static function addDebugJS()
+  public static function addDebugJS() : string
   {
     $jsContent = '';
 

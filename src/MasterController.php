@@ -258,9 +258,9 @@ class MasterController
   /**
    * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
-   * @param array $css The css file to add (Array of string)
+   * @param array|string $css The css file to add (Array of string)
    */
-  protected static function css($css = []) : void
+  protected static function css(array|string $css = []) : void
   {
     array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
   }
@@ -269,9 +269,9 @@ class MasterController
    * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
    * If the keys are string it will add the string to the link.
    *
-   * @param array $js The javascript file to add (Array of strings)
+   * @param array|string $js The javascript file to add (Array of strings)
    */
-  protected static function js($js = []) : void
+  protected static function js(array|string $js = []) : void
   {
     self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
   }
