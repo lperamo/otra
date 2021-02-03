@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 use config\AllConfig;
 
-if (function_exists('generateArrows') === false)
+if (!function_exists('generateArrows'))
 {
   /**
    * @param string $type
    */
-  function generateArrows($type = 'radio')
+  function generateArrows(string $type = 'radio') : void
   {
     $debugBarPosition = isset(AllConfig::$debugConfig) && isset(AllConfig::$debugConfig['barPosition'])
       ? AllConfig::$debugConfig['barPosition']
@@ -25,7 +25,7 @@ if (function_exists('generateArrows') === false)
       if ($type === 'radio')
       {
         ?>
-        <input type="radio" id="dbg--toggle--<?= $position ?>" name="dbg--position"
+        <input type="radio" id="dbg--toggle-<?= $position ?>" name="dbg--position"
                class="dbg--toggle-direction dbg--toggle-<?= $position ?>"<?php
         if ($debugBarPosition === $position)
           echo ' checked';
@@ -34,7 +34,8 @@ if (function_exists('generateArrows') === false)
       } else
       {
         ?>
-        <label for="dbg--toggle--<?= $position ?>" class="dbg--toggle dbg--toggle-<?= $position ?>"><?= $arrow ?></label>
+        <label for="dbg--toggle-<?= $position ?>" class="dbg--toggle dbg--toggle-<?= $position ?>"
+               title="Move the debug bar to the <?= $position ?>"><?= $arrow ?></label>
         <?php
       }
     }
@@ -43,14 +44,26 @@ if (function_exists('generateArrows') === false)
 $this::css(CORE_CSS_PATH . 'devMode'); ?>
 <?php generateArrows(); ?>
 
-<div id="dbg-bar" class="dbg-bar">
-   <?= '\'', $this->route, '\' | ', $this->bundle, '/', $this->module, '/', $this->controller, '/', $this->action,
-   ' | ', round(microtime(true) - BEFORE, 3) ?>s&nbsp;&nbsp;|&nbsp;&nbsp;<?php
-  if (isset($_SESSION['sid']) === true) {
-     ?><span class="dbg-on">Connected</span><?php
+<div id="dbg--bar" class="dbg--bar">
+  <span class="dbg--help-cursor dbg--white" title="Route">'<?= $this->route ?>'</span>
+  <span class="dbg--white dbg--separator">|</span>
+  <span class="dbg--help-cursor dbg--white" title="Bundle"><?= $this->bundle ?></span><!--
+  --><span class="dbg--white dbg--separator">/</span><!--
+  --><span class="dbg--help-cursor dbg--white" title="Module"><?= $this->module ?></span><!--
+  --><span class="dbg--white dbg--separator">/</span><!--
+  --><span class="dbg--help-cursor dbg--white" title="Controller"><?= $this->controller ?></span><!--
+  --><span class="dbg--white dbg--separator">/</span><!--
+  --><span class="dbg--help-cursor dbg--white" title="Action"><?= $this->action ?></span><!--
+  --><span class="dbg--white dbg--separator">|</span><!--
+  --><span class="dbg--help-cursor dbg--white" title="Elapsed time"><?= round(microtime(true) - BEFORE, 3) ?>s</span><!--
+  --><span class="dbg--white dbg--separator">|</span><?php
+  if (isset($_SESSION['sid'])) {
+     ?><span class="dbg--on dbg--help-cursor" title="Is a user logged in?">Connected</span><?php
   } else {
-    ?><span class="dbg-off">Disconnected</span><?php
-  } ?> &nbsp;&nbsp;|&nbsp;&nbsp;<button id="show-sql" class="dbg-btn">Inspect SQL</button>
+    ?><span class="dbg--off dbg--help-cursor" title="Is a user logged in?"">Disconnected</span><?php
+  } ?>
+  <span class="dbg--white dbg--separator">|</span>
+  <button id="show-sql" class="dbg--btn">Inspect SQL</button>
   <?php generateArrows('label') ?>
 </div>
 <?php $this::js(CORE_JS_PATH . 'debug_bar');

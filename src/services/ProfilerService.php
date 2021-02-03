@@ -43,12 +43,12 @@ class ProfilerService
     {
       ?>
       <div>
-        <div class="dbg-left-block dbg-fl">
-          <?= t('In file') . ' <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> '
-            . t('at line') . '&nbsp;<span class="dbg-line">', $r['line'], '</span>&nbsp;:',
+        <div class="dbg--left-block dbg--fl">
+          <?= t('In file') . ' <span class="dbg--file">', substr($r['file'], strlen(BASE_PATH)), '</span> '
+            . t('at line') . '&nbsp;<span class="dbg--line">', $r['line'], '</span>&nbsp;:',
           '<p>', rawSqlPrettyPrint($r['query']), '</p>'?>
         </div>
-        <button class="dbg-fr lb-btn"><?= t('Copy') ?></button>
+        <button class="dbg--fr lb--btn"><?= t('Copy') ?></button>
       </div>
       <?php
     }

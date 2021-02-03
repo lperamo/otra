@@ -1,7 +1,14 @@
 @use 'devModeColors';
 @use 'devModeFonts';
 
-// Mixins
+////
+/// @author Lionel Péramo
+/// @group Debug bar
+////
+
+///
+/// Mixin for a glowing red font
+///
 @mixin glowingRed() {
   color                   : devModeColors.$debug--file-color;
   text-shadow             : 0 0 1px devModeColors.$debug--file-text-shadow-color;
@@ -10,6 +17,9 @@
   -webkit-text-fill-color : transparent;
 }
 
+///
+/// Mixin for a glowing yellow green font
+///
 @mixin glowingYellowGreen() {
   color       : devModeColors.$debug--line-color;
   text-shadow : 0 0 1px devModeColors.$debug--line-text-shadow-color;
@@ -17,7 +27,7 @@
 
 // Rules
 
-.dbg- {
+.dbg-- {
   &fl {
     float : left;
   }
@@ -50,17 +60,34 @@
     z-index     : 10000;
 
     // text
-    color       : #eee;
     font-family : devModeFonts.$debug--font;
-    // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
-    font-size   : 16px;
-    text-shadow : 0 0 3px devModeColors.$debug--text-shadow-color;
 
     // animation
-    transition: transform .2s;
-    will-change: transform;
+    transition  : transform .2s;
+    will-change : transform;
 
     @at-root {
+      .dbg--white {
+        color       : #eee;
+        text-shadow : 0 0 3px devModeColors.$debug--text-shadow-color;
+      }
+
+      .dbg--white,
+      .dbg--on,
+      .dbg--off {
+        // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
+        font-size   : 16px;
+      }
+
+      .dbg--separator {
+        margin-left  : 5px;
+        margin-right : 5px;
+      }
+
+      .dbg--help-cursor {
+        cursor : help;
+      }
+
       .dbg--toggle {
         // size
         box-sizing : border-box;
@@ -74,11 +101,14 @@
 
         // text
         color       : devModeColors.$debug--toggle-color;
-        font-size   : 1.3em;
-        text-shadow : 0 0 1px devModeColors.$debug--toggle-text-shadow-color;
+        font-size   : 20px;
 
         // others
         cursor      : pointer;
+
+        &:not(:hover) {
+          text-shadow : 0 0 1px devModeColors.$debug--toggle-text-shadow-color;
+        }
 
         &:hover {
           @include devModeColors.debugToggleHoverTextShadow;
@@ -171,8 +201,8 @@
   }
 }
 
-.dbg-btn,
-div.profiler .lb-btn {
+.dbg--btn,
+.profiler .lb--btn {
   // animation
   transition : box-shadow .2s, color .2s, text-shadow .2s;
   will-change: box-shadow, color, text-shadow;
@@ -221,7 +251,7 @@ div.profiler .lb-btn {
 }
 
 // The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
-div.profiler {
+.profiler {
   padding     : 1em;
 
   // text
@@ -230,7 +260,7 @@ div.profiler {
   line-height : 2em;
 
   @at-root {
-    button.profiler-button {
+    .profiler-button {
       margin-right: .5em;
     }
 
@@ -244,7 +274,7 @@ div.profiler {
   }
 }
 
-input.dbg--toggle {
+.dbg--toggle {
   &-direction {
     // positioning
     position : fixed;
@@ -252,41 +282,41 @@ input.dbg--toggle {
   }
 
   &-top,
-  span.dbg--toggle-top {
-    &:checked ~ div#dbg-bar {
+  .dbg--toggle-top {
+    &:checked ~ #dbg--bar {
       transform: rotateZ(0deg);
     }
   }
 
   &-right,
-  span.dbg--toggle-right {
-    &:checked ~ div#dbg-bar {
+  .dbg--toggle-right {
+    &:checked ~ #dbg--bar {
       transform-origin : right;
       transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
       width            : 100vh;
 
-      & > label.dbg--toggle {
+      & > .dbg--toggle {
         transform : rotateZ(90deg);
       }
     }
   }
 
   &-bottom,
-  span.dbg--toggle-bottom {
-    &:checked ~ div#dbg-bar {
+  .dbg--toggle-bottom {
+    &:checked ~ #dbg--bar {
       transform-origin : top left;
       transform        : translate(0, calc(100vh - 38px));
     }
   }
 
   &-left,
-  span.dbg--toggle-left {
-    &:checked + div#dbg-bar {
+  .dbg--toggle-left {
+    &:checked + #dbg--bar {
       transform-origin : left;
       transform        : rotateZ(90deg) translate(-19px, -19px);
       width            : 100vh;
 
-      & > label.dbg--toggle {
+      & > .dbg--toggle {
         transform : rotateZ(-90deg);
       }
     }
