@@ -97,7 +97,7 @@ trait DevControllerTrait
    * @param string|null $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
    *
    * @throws Exception
-   * @return mixed|string
+   * @return string
    */
   private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
   {
