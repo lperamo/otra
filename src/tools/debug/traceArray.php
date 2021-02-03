@@ -15,21 +15,18 @@ if (!function_exists('getArgumentType'))
    */
   function getArgumentType($index, &$value)
   {
-    switch($index)
+    if ($index === 0)
     {
-      case 0:
-        if (true === is_int($value) && true === isset(otra\OtraException::$codes[$value]))
-        {
-          $value = otra\OtraException::$codes[$value];
-          return 'Error type';
-        }
+      if (is_int($value) && isset(otra\OtraException::$codes[$value]))
+      {
+        $value = otra\OtraException::$codes[$value];
+        return 'Error type';
+      }
 
-        return $index;
-      case 1: return 'Error';
-      case 2: return 'File';
-      case 3: return 'Line';
-      case 4: return 'Arguments';
+      return $index;
     }
+
+    return ['Error','File','Line','Arguments'][$index - 1];
   }
 
   /** Recursive function that converts a php array into a stylish tbody
