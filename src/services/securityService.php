@@ -23,7 +23,7 @@ if (!function_exists('getRandomNonceForCSP'))
    * @return string
    * @throws Exception
    */
-  function getRandomNonceForCSP(string $directive = 'script-src'): string
+  function getRandomNonceForCSP(string $directive = 'script-src') : string
   {
     $nonce = bin2hex(random_bytes(32));
     MasterController::$nonces[$directive][] = $nonce;
@@ -32,41 +32,24 @@ if (!function_exists('getRandomNonceForCSP'))
   }
 
   /**
-   * @param string      $route
-   * @param string|null $routeSecurityFilePath
-   */
-  function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath): void
-  {
-    if (!headers_sent())
-      header(createPolicy(
-        OTRA_KEY_FEATURE_POLICY,
-        $route,
-        $routeSecurityFilePath,
-        MasterController::$featurePolicy[$_SERVER[APP_ENV]]
-      ));
-  }
-
-  /**
    * @param string      $policy
    * @param string      $route
    * @param string|null $routeSecurityFilePath
-   * @param array       $policyDirectives
+   * @param array       $policyDirectives      The default policy directives from MasterController by default
    *
    * @return string
    */
   function createPolicy(string $policy, string $route, ?string $routeSecurityFilePath, array &$policyDirectives) : string
   {
     // OTRA routes are not secure with CSP and feature policies for the moment
-    if (!str_contains($route, 'otra')
-      && $routeSecurityFilePath !== null
-      && $routeSecurityFilePath)
+    if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
       // Retrieve security instructions from the routes configuration file
-      // /!\ Additional configuration could have been added for the debug toolbar
-      $tempSecurity = isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [];
-
-      MasterController::$routesSecurity = require CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . $route . '.php';
-      MasterController::$routesSecurity = array_merge($tempSecurity, MasterController::$routesSecurity);
+      // /!\ Additional configuration could have been added for the debug toolbar into MasterController::$routesSecurity
+      MasterController::$routesSecurity = array_merge(
+        isset(MasterController::$routesSecurity) ? MasterController::$routesSecurity : [],
+        require $routeSecurityFilePath
+      );
 
       // If we have a policy for this environment, we use it
       if (isset(MasterController::$routesSecurity[$policy]))
@@ -85,6 +68,21 @@ if (!function_exists('getRandomNonceForCSP'))
     }
 
     return $finalPolicy;
+  }
+
+  /**
+   * @param string      $route
+   * @param string|null $routeSecurityFilePath
+   */
+  function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
+  {
+    if (!headers_sent())
+      header(createPolicy(
+        OTRA_KEY_FEATURE_POLICY,
+        $route,
+        $routeSecurityFilePath,
+        MasterController::$featurePolicy[$_SERVER[APP_ENV]]
+      ));
   }
 
   /**
