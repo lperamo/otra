@@ -26,7 +26,8 @@ if (!function_exists('getArgumentType'))
       return $index;
     }
 
-    return ['Error','File','Line','Arguments'][$index - 1];
+    if (is_int($index))
+      return ['Error','File','Line','Arguments'][$index - 1];
   }
 
   /** Recursive function that converts a php array into a stylish tbody

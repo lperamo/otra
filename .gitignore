@@ -3,6 +3,7 @@
 /cert
 /config
 /logs
+/sassdoc
 /vendor
 /web
 !**.gitkeep
