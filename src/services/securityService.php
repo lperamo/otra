@@ -57,7 +57,13 @@ if (!function_exists('getRandomNonceForCSP'))
     if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
       // Retrieve security instructions from the routes configuration file
-      $customPolicyDirectives = (require $routeSecurityFilePath)[$policy];
+      $policiesFromUserConfig = require $routeSecurityFilePath;
+
+      // Forces the policies to be an empty array for the rest of the algorithm
+      if (!isset($policiesFromUserConfig[$policy]))
+        $policiesFromUserConfig[$policy] = [];
+
+      $customPolicyDirectives = $policiesFromUserConfig[$policy];
 
       if (empty($finalProcessedPolicies))
         $finalProcessedPolicies = $customPolicyDirectives;
