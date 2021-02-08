@@ -13,8 +13,7 @@ use phpunit\framework\TestCase;
 class SecurityServiceTest extends TestCase
 {
   private const
-    CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC = "Content-Security-Policy: frame-ancestors 'none';",
-    CSP_POLICY_VALUE_WITHOUT_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';script-src 'self';",
+    CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';",
     DOT_PHP = '.php',
     DIRECTIVES = 1,
     ENV_DEV = 'dev',
@@ -317,7 +316,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -345,7 +344,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -370,7 +369,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -397,16 +396,9 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_STYLE_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
-    getRandomNonceForCSP();
-
-    // testing
-    self::expectException(OtraException::class);
-    self::expectExceptionMessage(
-      'Content Security Policy error : you must have the mode ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' .
-      OTRA_KEY_SCRIPT_SRC_DIRECTIVE . '\' directive for the route \'' . self::ROUTE . '\' if you use nonces!'
-    );
+    $nonce = getRandomNonceForCSP();
 
     // launching
     handleStrictDynamic(
@@ -415,6 +407,9 @@ class SecurityServiceTest extends TestCase
       (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
       self::ROUTE
     );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'self' otra.tech 'nonce-" . $nonce . "';", $cspPolicy);
   }
 
   /**
@@ -457,7 +452,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_PROD;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -484,7 +479,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_PROD;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -508,7 +503,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_PROD;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_STYLE_SRC;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -520,6 +515,6 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'self';style-src 'none' ;", $cspPolicy);
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';style-src 'none' ;", $cspPolicy);
   }
 }

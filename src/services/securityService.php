@@ -17,6 +17,7 @@ if (!function_exists('getRandomNonceForCSP'))
     OTRA_KEY_FEATURE_POLICY => 'Feature-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ]);
+  define('OTRA_STRLEN_SCRIPT_SRC', 10);
 
   /**
    * @param string $directive
@@ -157,15 +158,20 @@ if (!function_exists('getRandomNonceForCSP'))
 
     // if a value is set for 'script-src' but do not have the 'strict-dynamic' mode enabled
     if (!str_contains($policy, OTRA_LABEL_SECURITY_STRICT_DYNAMIC)
-      && !empty(MasterController::$nonces[$directive])) // if it has nonces
+      && !empty(MasterController::$nonces[$directive]) // if it has nonces
+      && (
+        (isset(\config\AllConfig::$debug) && \config\AllConfig::$debug) // is debug mode active ?
+        || $route === 'otra_exception'
+      )
+    )
     {
-      // this 'if' avoids a loop because there is no security rules for the exception page nor debug mode for now
-      if ($route !== 'otra_exception' && $route != null)
-        throw new OtraException(
-          'otra\OtraException : Content Security Policy error : you must have the mode ' .
-          OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' . $directive . '\' directive for the route \'' .
-          $route . '\' if you use nonces!'
-        );
+      // we insert 'strict-dynamic' in the 'script-src' or 'style-src' policy (depends on $directive).
+      $policy = substr_replace(
+        $policy,
+        ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC,
+        mb_strpos($policy, $directive) + OTRA_STRLEN_SCRIPT_SRC,
+        0
+      );
     }
 
     foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
