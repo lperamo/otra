@@ -105,19 +105,19 @@ if (!function_exists('getRandomNonceForCSP'))
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
-    if (headers_sent())
-      return;
-
+    if (!headers_sent())
+    {
       [$policy, $cspDirectives] = createPolicy(
-      OTRA_KEY_CONTENT_SECURITY_POLICY,
-      $route,
-      $routeSecurityFilePath,
-      MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]
-    );
+        OTRA_KEY_CONTENT_SECURITY_POLICY,
+        $route,
+        $routeSecurityFilePath,
+        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]
+      );
 
-    handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
-    handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
-    header($policy);
+      handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
+      handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
+      header($policy);
+    }
   }
 
   /**
@@ -160,17 +160,20 @@ if (!function_exists('getRandomNonceForCSP'))
       && !empty(MasterController::$nonces[$directive])) // if it has nonces
     {
       // this 'if' avoids a loop because there is no security rules for the exception page nor debug mode for now
-      if ($route !== 'otra_exception' && (!isset(\config\AllConfig::$debug) || !\config\AllConfig::$debug))
+      if ($route !== 'otra_exception' && $route != null)
         throw new OtraException(
-          'Content Security Policy error : you must have the mode ' .
+          'otra\OtraException : Content Security Policy error : you must have the mode ' .
           OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' . $directive . '\' directive for the route \'' .
           $route . '\' if you use nonces!'
         );
     }
 
-    foreach (MasterController::$nonces[$directive] as $nonce)
+    foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
     {
-      $policy .= '\'nonce-' . $nonce . '\' ';
+      $policy .= '\'nonce-' . $nonce . '\'';
+
+      if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
+        $policy .= ' ';
     }
 
     $policy .= ';';

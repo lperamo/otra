@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\services;
 
+use Exception;
 use otra\{MasterController, OtraException};
 use phpunit\framework\TestCase;
 
@@ -19,20 +20,22 @@ class SecurityServiceTest extends TestCase
     ENV_DEV = 'dev',
     ENV_PROD = 'prod',
     ROUTE = 'route',
-    ROUTE_SECURITY_DEV_FILE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE . self::DOT_PHP,
-    ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
+    ROUTE_SECURITY_DEV_BASE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE,
+    ROUTE_SECURITY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . self::DOT_PHP,
+    ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'Empty' . self::DOT_PHP,
     ROUTE_SECURITY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
     SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
     TEST_SECURITY_PATH = TEST_PATH . 'security/',
     TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . self::ENV_DEV . '/',
-    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/';
+    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/',
+    ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php';
 
   /**
    * Use of blocks without override
    *
    * @author Lionel Péramo
-   * @throws \Exception
+   * @throws Exception
    */
   public function testGetRandomNonceForCSP() : void
   {
@@ -42,6 +45,118 @@ class SecurityServiceTest extends TestCase
 
     self::assertIsString($nonce);
     self::assertMatchesRegularExpression('@\w{64}@', $nonce);
+  }
+
+  public function testCreatePolicy_Dev_ContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_DEV_FILE_PATH,
+      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$contentSecurityPolicy[self::ENV_DEV],
+        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Dev_NoContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_DEV_BASE_PATH . 'MissingPolicy.php',
+      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'self'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      MasterController::$contentSecurityPolicy[self::ENV_DEV],
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Dev_EmptyContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+    $cspDevPolicyReworked = MasterController::$contentSecurityPolicy[self::ENV_DEV];
+    unset($cspDevPolicyReworked[OTRA_KEY_SCRIPT_SRC_DIRECTIVE]);
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH,
+      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'self'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      $cspDevPolicyReworked,
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Prod_ContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_PROD_FILE_PATH,
+      MasterController::$contentSecurityPolicy[self::ENV_PROD]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$contentSecurityPolicy[self::ENV_PROD],
+        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
   }
 
   public function testCreatePolicy_Dev_FeaturePolicy() : void
@@ -97,64 +212,6 @@ class SecurityServiceTest extends TestCase
       array_merge(
         MasterController::$featurePolicy[self::ENV_PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
-      ),
-      $returnArray[self::DIRECTIVES]
-    );
-  }
-
-  public function testCreatePolicy_Dev_ContentSecurityPolicy() : void
-  {
-    // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
-    require self::SECURITY_SERVICE;
-
-    // launching
-    $returnArray = createPolicy(
-      OTRA_KEY_CONTENT_SECURITY_POLICY,
-      self::ROUTE,
-      self::ROUTE_SECURITY_DEV_FILE_PATH,
-      MasterController::$contentSecurityPolicy[self::ENV_DEV]
-    );
-
-    // testing
-    self::assertIsArray($returnArray);
-    self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
-      $returnArray[OTRA_POLICY]
-    );
-    self::assertEquals(
-      array_merge(
-        MasterController::$contentSecurityPolicy[self::ENV_DEV],
-        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
-      ),
-      $returnArray[self::DIRECTIVES]
-    );
-  }
-
-  public function testCreatePolicy_Prod_ContentSecurityPolicy() : void
-  {
-    // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
-    require self::SECURITY_SERVICE;
-
-    // launching
-    $returnArray = createPolicy(
-      OTRA_KEY_CONTENT_SECURITY_POLICY,
-      self::ROUTE,
-      self::ROUTE_SECURITY_PROD_FILE_PATH,
-      MasterController::$contentSecurityPolicy[self::ENV_PROD]
-    );
-
-    // testing
-    self::assertIsArray($returnArray);
-    self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
-      $returnArray[OTRA_POLICY]
-    );
-    self::assertEquals(
-      array_merge(
-        MasterController::$contentSecurityPolicy[self::ENV_PROD],
-        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
     );
@@ -301,6 +358,93 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech ;", $cspPolicy);
+  }
+
+  /**
+   * If we have an empty policy, we simply remove that directive.
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_NoStrictDynamic_NoNonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';", $cspPolicy);
+  }
+
+  /**
+   * If we have nonces with a script-src policy that does not contain 'strict-dynamic' mode, we must throw an exception.
+   * Beware, here we only test 'script-src'.
+   *
+   * @depends testGetRandomNonceForCSP
+   * @throws OtraException
+   * @throws Exception
+   */
+  public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_NoStrictDynamic_Nonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_STYLE_SRC;
+    require self::SECURITY_SERVICE;
+    getRandomNonceForCSP();
+
+    // testing
+    self::expectException(OtraException::class);
+    self::expectExceptionMessage(
+      'Content Security Policy error : you must have the mode ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC . ' in the \'' .
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE . '\' directive for the route \'' . self::ROUTE . '\' if you use nonces!'
+    );
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+  }
+
+  /**
+   * If we have an empty policy, we simply remove that directive.
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_StrictDynamic_Nonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $cspPolicy = "Content-Security-Policy: frame-ancestors 'none';";
+    require self::SECURITY_SERVICE;
+    $nonce = getRandomNonceForCSP();
+    $nonce2 = getRandomNonceForCSP();
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_DEV_BASE_PATH . 'StrictDynamic.php')[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'nonce-" . $nonce . "' 'nonce-" . $nonce2 . "';",
+      $cspPolicy
+    );
   }
 
   /**
