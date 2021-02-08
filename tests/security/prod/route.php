@@ -1,0 +1,1 @@
+<?php declare(strict_types=1);return ['csp'=>['frame-ancestors' => "'none'", 'style-src'=>"'none'", 'script-src'=>"'none'", 'connect-src'=>"'none'"],'featurePolicy'=>['accelerometer'=>"'none'",'ambient-light-sensor'=>"'none'"]];

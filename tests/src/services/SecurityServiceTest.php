@@ -1,0 +1,381 @@
+<?php
+declare(strict_types=1);
+
+namespace src\services;
+
+use otra\{MasterController, OtraException};
+use phpunit\framework\TestCase;
+
+/**
+ * @runTestsInSeparateProcesses
+ */
+class SecurityServiceTest extends TestCase
+{
+  private const
+    CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC = "Content-Security-Policy: frame-ancestors 'none';",
+    CSP_POLICY_VALUE_WITHOUT_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';script-src 'self';",
+    DOT_PHP = '.php',
+    DIRECTIVES = 1,
+    ENV_DEV = 'dev',
+    ENV_PROD = 'prod',
+    ROUTE = 'route',
+    ROUTE_SECURITY_DEV_FILE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE . self::DOT_PHP,
+    ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
+    ROUTE_SECURITY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . self::DOT_PHP,
+    ROUTE_SECURITY_EMPTY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
+    SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
+    TEST_SECURITY_PATH = TEST_PATH . 'security/',
+    TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . self::ENV_DEV . '/',
+    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/';
+
+  /**
+   * Use of blocks without override
+   *
+   * @author Lionel Péramo
+   * @throws \Exception
+   */
+  public function testGetRandomNonceForCSP() : void
+  {
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+    $nonce = getRandomNonceForCSP();
+
+    self::assertIsString($nonce);
+    self::assertMatchesRegularExpression('@\w{64}@', $nonce);
+  }
+
+  public function testCreatePolicy_Dev_FeaturePolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching ['csp']
+    $returnArray = createPolicy(
+      OTRA_KEY_FEATURE_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_DEV_FILE_PATH,
+      MasterController::$featurePolicy[self::ENV_DEV]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Feature-Policy: layout-animations 'self'; legacy-image-formats 'none'; oversized-images 'none'; sync-script 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; accelerometer 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$featurePolicy[self::ENV_DEV],
+        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Prod_FeaturePolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_FEATURE_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_PROD_FILE_PATH,
+      MasterController::$featurePolicy[self::ENV_PROD]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Feature-Policy: accelerometer 'none'; ambient-light-sensor 'none'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$featurePolicy[self::ENV_PROD],
+        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Dev_ContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_DEV_FILE_PATH,
+      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$contentSecurityPolicy[self::ENV_DEV],
+        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  public function testCreatePolicy_Prod_ContentSecurityPolicy() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    $returnArray = createPolicy(
+      OTRA_KEY_CONTENT_SECURITY_POLICY,
+      self::ROUTE,
+      self::ROUTE_SECURITY_PROD_FILE_PATH,
+      MasterController::$contentSecurityPolicy[self::ENV_PROD]
+    );
+
+    // testing
+    self::assertIsArray($returnArray);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
+      $returnArray[OTRA_POLICY]
+    );
+    self::assertEquals(
+      array_merge(
+        MasterController::$contentSecurityPolicy[self::ENV_PROD],
+        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
+      ),
+      $returnArray[self::DIRECTIVES]
+    );
+  }
+
+  /**
+   * @depends testHandleStrictDynamic_Dev_WithScriptSrc_NoStrictDynamic_NoNonces
+   * @depends testCreatePolicy_Dev_ContentSecurityPolicy
+   * @throws OtraException
+   */
+  public function testAddCspHeader_Dev() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    addCspHeader('route', self::ROUTE_SECURITY_DEV_FILE_PATH);
+
+    // testing
+    $headers = xdebug_get_headers();
+    self::assertNotEmpty($headers);
+    self::assertCount(1, $headers);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; script-src 'self' otra.tech ;style-src 'self' ;",
+      $headers[0]
+    );
+  }
+
+  /**
+   * @depends testHandleStrictDynamic_Prod_WithScriptSrc_NoStrictDynamic_NoNonces
+   * @depends testHandleStrictDynamic_Prod_WithStyleSrc_NoStrictDynamic_NoNonces
+   * @depends testCreatePolicy_Prod_ContentSecurityPolicy
+   * @throws OtraException
+   */
+  public function testAddCspHeader_Prod() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    addCspHeader('route', self::ROUTE_SECURITY_PROD_FILE_PATH);
+
+    // testing
+    $headers = xdebug_get_headers();
+    self::assertNotEmpty($headers);
+    self::assertCount(1, $headers);
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; script-src 'none' ;style-src 'none' ;",
+      $headers[0]
+    );
+  }
+
+  /**
+   * @depends testCreatePolicy_Dev_FeaturePolicy
+   */
+  public function testAddFeaturePoliciesHeader_Dev() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    addFeaturePoliciesHeader('route', self::ROUTE_SECURITY_DEV_FILE_PATH);
+
+    // testing
+    $headers = xdebug_get_headers();
+    self::assertNotEmpty($headers);
+    self::assertCount(1, $headers);
+    self::assertEquals(
+      "Feature-Policy: layout-animations 'self'; legacy-image-formats 'none'; oversized-images 'none'; sync-script 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; accelerometer 'self';",
+      $headers[0]
+    );
+  }
+
+  /**
+   * @depends testCreatePolicy_Prod_FeaturePolicy
+   */
+  public function testAddFeaturePoliciesHeader_Prod() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    addFeaturePoliciesHeader('route', self::ROUTE_SECURITY_PROD_FILE_PATH);
+
+    // testing
+    $headers = xdebug_get_headers();
+    self::assertNotEmpty($headers);
+    self::assertCount(1, $headers);
+    self::assertEquals("Feature-Policy: accelerometer 'none'; ambient-light-sensor 'none';", $headers[0]);
+  }
+
+  /**
+   * If we do not have the related directive, then we put the default value from MasterController.
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Dev_WithoutScriptSrc() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_EMPTY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none';script-src 'self' ;",
+      $cspPolicy
+    );
+  }
+
+  /**
+   * If we do not have a defined policy, we put the default directives for this policy.
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Dev_WithScriptSrc_NoStrictDynamic_NoNonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech ;", $cspPolicy);
+  }
+
+  /**
+   * If we do not have the related directive, then we put the default value from MasterController.
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Prod_WithoutScriptSrc() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_EMPTY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals(
+      "Content-Security-Policy: frame-ancestors 'none';script-src 'self' ;",
+      $cspPolicy
+    );
+  }
+
+  /**
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Prod_WithScriptSrc_NoStrictDynamic_NoNonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'none' ;", $cspPolicy);
+  }
+
+  /**
+   * Beware, here we only test 'script-src'.
+   *
+   * @throws OtraException
+   */
+  public function testHandleStrictDynamic_Prod_WithStyleSrc_NoStrictDynamic_NoNonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_STYLE_SRC;
+    require self::SECURITY_SERVICE;
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_STYLE_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'self';style-src 'none' ;", $cspPolicy);
+  }
+}

@@ -14,29 +14,30 @@ use JetBrains\PhpStorm\Pure;
  */
 class MasterController
 {
+  private const CSP_ARRAY = [
+    'frame-ancestors' => "'self'",
+    'default-src' => "'self'",
+    'font-src' => "'self'",
+    'img-src' => "'self'",
+    'object-src' => "'self'",
+    'connect-src' => "'self'",
+    'child-src' => "'self'",
+    'manifest-src' => "'self'",
+    'style-src' => "'self'",
+    'script-src' => "'self'"
+  ];
+
   public static string $path;
   public ?string $routeSecurityFilePath = null;
-
   public static array
     $nonces = [
       'script-src' => [],
       'style-src' => []
     ],
     $contentSecurityPolicy = [
-    'dev' =>
-      [
-        'frame-ancestors' => "'self'",
-        'default-src' => "'self'",
-        'font-src' => "'self'",
-        'img-src' => "'self'",
-        'object-src' => "'self'",
-        'connect-src' => "'self'",
-        'child-src' => "'self'",
-        'manifest-src' => "'self'",
-        'style-src' => "'self'"
-      ],
-    'prod' => [] // assigned in the constructor
-  ],
+      'dev' => self::CSP_ARRAY,
+      'prod' => self::CSP_ARRAY
+    ],
     $featurePolicy = [
     'dev' =>
       [
@@ -205,7 +206,6 @@ class MasterController
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-    self::$contentSecurityPolicy['prod'] = self::$contentSecurityPolicy['dev'];
     $this->url = $_SERVER['REQUEST_URI'];
   }
 
