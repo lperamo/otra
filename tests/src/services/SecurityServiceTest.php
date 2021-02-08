@@ -30,6 +30,9 @@ class SecurityServiceTest extends TestCase
     TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/',
     ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php';
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * Use of blocks without override
    *

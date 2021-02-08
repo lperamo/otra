@@ -52,6 +52,9 @@
     <testsuite name="Console architecture tasks">
       <directory>./src/console/architecture</directory>
     </testsuite>
+    <testsuite name="Services">
+      <directory suffix="Test.php">./src/services</directory>
+    </testsuite>
     <testsuite name="Worker tools">
       <directory suffix="Test.php">./src/tools/workers</directory>
     </testsuite>
