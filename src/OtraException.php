@@ -37,8 +37,8 @@ class OtraException extends Exception
     E_WARNING           => 'E_WARNING'
   ];
 
-  public array $backtraces,
-    $context;
+  public array $backtraces;
+  public array|null $context;
   // String version of error code
   public string $scode;
   private bool $otraCliWarning;
@@ -164,7 +164,13 @@ class OtraException extends Exception
    *
    * @throws OtraException
    */
-  #[NoReturn] public static function errorHandler(int $errno, string $message, string $file, int $line, ?array $context) : void
+  #[NoReturn] public static function errorHandler(
+    int $errno,
+    string $message,
+    string $file,
+    int $line,
+    ?array $context = null
+  ) : void
   {
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
