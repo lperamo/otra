@@ -4,40 +4,33 @@ declare(strict_types=1);
 namespace otra\tools\workers;
 
 /**
+ * A worker is a process that can be launch in parallel with another workers, asynchronously.
+ *
  * @package otra\tools
  */
 class Worker
 {
-  public int
-    $verbose,
-    $timeout,
-    $keyInWorkersArray = -1;
-
-  public string
-    $command,
-    $waitingMessage;
-
-  private string $successMessage;
+  public int $keyInWorkersArray = -1;
 
   /**
+   * Worker constructor.
+   *
    * @param string $command
    * @param string $successMessage
    * @param string $waitingMessage
    * @param int    $verbose
    * @param int    $timeout
+   * @param array  $workers
    */
   public function __construct(
-    string $command,
-    string $successMessage = '',
-    string $waitingMessage = 'Waiting ...',
-    int $verbose = 1,
-    int $timeout = 60)
+    public string $command,
+    private string $successMessage = '',
+    public string $waitingMessage = 'Waiting ...',
+    public int $verbose = 1,
+    public int $timeout = 60,
+    public array $workers = []
+  )
   {
-    $this->command = $command;
-    $this->successMessage = $successMessage;
-    $this->waitingMessage = $waitingMessage;
-    $this->verbose = $verbose;
-    $this->timeout = $timeout;
   }
 
   /**

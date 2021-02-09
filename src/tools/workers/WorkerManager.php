@@ -73,7 +73,7 @@ class WorkerManager
       $dataRead[] = $this->stdoutStreams[$workerKey];
       $dataRead[] = $this->stderrStreams[$workerKey];
 
-      if ($verbose > 0 && self::$hasStarted === false)
+      if ($verbose > 0 && !self::$hasStarted)
       {
         $worker->keyInWorkersArray = $workerKey;
         self::$allMessages[$workerKey] = $worker->waitingMessage;
@@ -208,6 +208,22 @@ class WorkerManager
     } while (self::$informations[$foundKey]['running']);
 
     proc_close($this->processes[$foundKey]);
+
+    // Handles workers chaining
+    if (!empty(self::$workers[$foundKey]->workers))
+    {
+      // We search the first worker to chain
+      $firstWorkerToChain = self::$workers[$foundKey]->workers[0];
+
+      // We remove it from the workers list to chain
+      unset(self::$workers[$foundKey]->workers[0]);
+
+      // We set the remaining workers to chain to the worker we just retrieved
+      $firstWorkerToChain->workers = self::$workers[$foundKey]->workers;
+
+      // Finally, we attach the new main worker to the WorkerManager
+      $this->attach($firstWorkerToChain);
+    }
 
     unset(
       self::$workers[$foundKey],
