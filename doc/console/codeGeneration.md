@@ -1,7 +1,6 @@
-[Home](../README.md) / Generating all you needed
+[Home](../README.md) / [Console](../console.md) / Generating all you needed
 
 ## Generating all you needed
-
 ### Updating routes
 Once you have configured your application, don't forget to do :
 ```bash
@@ -36,3 +35,5 @@ You can generate optimized versions of your assets ... :
 ```bash
 php console.php genAssets
 ```
+
+Next section : [Your own console tasks](yourOwnConsoleTasks.md)

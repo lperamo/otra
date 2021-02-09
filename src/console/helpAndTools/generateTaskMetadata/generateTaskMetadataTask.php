@@ -47,27 +47,35 @@ if (!defined('PHP_CACHE_FOLDER'))
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
 
-$dir_iterator = new RecursiveDirectoryIterator(CONSOLE_PATH, FilesystemIterator::SKIP_DOTS);
-$iterator = new RecursiveIteratorIterator($dir_iterator);
+// temporarily forces to look into the development configuration
+$_SERVER[APP_ENV] = 'dev';
+$foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...\config\AllConfig::$taskFolders]);
+$_SERVER[APP_ENV] = 'prod';
 
 $helpFileContent = [];
 $taskClassMap = [];
 
-/** @var SplFileInfo $entry */
-foreach($iterator as $entry)
+foreach($foldersToCheckForTasks as $foldersToCheckForTask)
 {
-  $pathname = $entry->getPathname();
+  $dir_iterator = new RecursiveDirectoryIterator($foldersToCheckForTask, FilesystemIterator::SKIP_DOTS);
+  $iterator = new RecursiveIteratorIterator($dir_iterator);
 
-  if (mb_strpos($pathname, 'Help.') === false)
-    continue;
+  /** @var SplFileInfo $entry */
+  foreach($iterator as $entry)
+  {
+    $pathname = $entry->getPathname();
 
-  $task = mb_substr($pathname, mb_strrpos($pathname, '/') + 1);
-  $task = mb_substr($task, 0, mb_strrpos($task, 'Help'));
-  $helpFileContent [$task]= require $pathname;
-  $taskClassMap[$task] = [
-    dirname($pathname),
-    $helpFileContent[$task][TasksManager::TASK_STATUS]
-  ];
+    if (mb_strpos($pathname, 'Help.') === false)
+      continue;
+
+    $consoleTask = mb_substr($pathname, mb_strrpos($pathname, '/') + 1);
+    $consoleTask = mb_substr($consoleTask, 0, mb_strrpos($consoleTask, 'Help'));
+    $helpFileContent [$consoleTask]= require $pathname;
+    $taskClassMap[$consoleTask] = [
+      dirname($pathname),
+      $helpFileContent[$consoleTask][TasksManager::TASK_STATUS]
+    ];
+  }
 }
 
 $tasks = array_keys($helpFileContent);
@@ -115,29 +123,29 @@ $taskDescription = '';
 
 $taskCategoriesLong = $taskCategories = [];
 
-foreach($tasks as $task)
+foreach($tasks as $consoleTask)
 {
-  $shellCompletionsContent .= SPACE_INDENT . '\'' . $task . '\'' . PHP_EOL;
-  $taskCategory = ucfirst($helpFileContent[$task][TasksManager::TASK_CATEGORY]);
+  $shellCompletionsContent .= SPACE_INDENT . '\'' . $consoleTask . '\'' . PHP_EOL;
+  $taskCategory = ucfirst($helpFileContent[$consoleTask][TasksManager::TASK_CATEGORY]);
 
   /** @var $taskCategoryLong */
   if (!in_array($taskCategory, $taskCategories)) {
     $taskCategories[] = $taskCategory;
     $taskCategoryLong = 'CAT_'
-      . str_replace(' ', '_', strtoupper($helpFileContent[$task][TasksManager::TASK_CATEGORY]));
+      . str_replace(' ', '_', strtoupper($helpFileContent[$consoleTask][TasksManager::TASK_CATEGORY]));
     $taskCategoriesLong[] = $taskCategoryLong;
   }
 
   $taskDescription .= SPACE_INDENT . '"${' .  $taskCategoryLong .'} '
-    . str_pad($task, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' . $helpFileContent[$task][TasksManager::TASK_DESCRIPTION] . '${ECO}"'
+    . str_pad($consoleTask, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' . $helpFileContent[$consoleTask][TasksManager::TASK_DESCRIPTION] . '${ECO}"'
     . PHP_EOL;
 }
 
 $shellCompletionsContent .= ');' . PHP_EOL . PHP_EOL;
 
-foreach($taskCategories as $key => $taskCategory)
+foreach($taskCategories as $taskCategoryKey => $taskCategory)
 {
-  $shellCompletionsContent .= 'typeset ' . $taskCategoriesLong[$key] . '="${BLC}[ '
+  $shellCompletionsContent .= 'typeset ' . $taskCategoriesLong[$taskCategoryKey] . '="${BLC}[ '
     . str_pad($taskCategory, strlen('Help and tools'), ' ', STR_PAD_BOTH) . ' ]${WHI}";' . PHP_EOL;
 }
 
