@@ -67,6 +67,13 @@
       <option name="TAB_SIZE" value="2" />
     </indentOptions>
   </codeStyleSettings>
+  <codeStyleSettings language="Markdown">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="2" />
+      <option name="CONTINUATION_INDENT_SIZE" value="2" />
+      <option name="TAB_SIZE" value="2" />
+    </indentOptions>
+  </codeStyleSettings>
   <codeStyleSettings language="PHP">
     <option name="BRACE_STYLE" value="2" />
     <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
@@ -106,6 +113,13 @@
         </section>
       </rules>
     </arrangement>
+  </codeStyleSettings>
+  <codeStyleSettings language="SQL">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="2" />
+      <option name="CONTINUATION_INDENT_SIZE" value="2" />
+      <option name="TAB_SIZE" value="2" />
+    </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="Twig">
     <indentOptions>
