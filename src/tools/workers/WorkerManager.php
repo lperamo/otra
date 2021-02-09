@@ -210,16 +210,16 @@ class WorkerManager
     proc_close($this->processes[$foundKey]);
 
     // Handles workers chaining
-    if (!empty(self::$workers[$foundKey]->workers))
+    if (!empty(self::$workers[$foundKey]->subworkers))
     {
       // We search the first worker to chain
-      $firstWorkerToChain = self::$workers[$foundKey]->workers[0];
+      $firstWorkerToChain = self::$workers[$foundKey]->subworkers[0];
 
       // We remove it from the workers list to chain
-      unset(self::$workers[$foundKey]->workers[0]);
+      unset(self::$workers[$foundKey]->subworkers[0]);
 
       // We set the remaining workers to chain to the worker we just retrieved
-      $firstWorkerToChain->workers = self::$workers[$foundKey]->workers;
+      $firstWorkerToChain->subworkers = self::$workers[$foundKey]->subworkers;
 
       // Finally, we attach the new main worker to the WorkerManager
       $this->attach($firstWorkerToChain);

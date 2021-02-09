@@ -20,7 +20,7 @@ class Worker
    * @param string $waitingMessage
    * @param int    $verbose
    * @param int    $timeout
-   * @param array  $workers
+   * @param array  $subworkers
    */
   public function __construct(
     public string $command,
@@ -28,7 +28,7 @@ class Worker
     public string $waitingMessage = 'Waiting ...',
     public int $verbose = 1,
     public int $timeout = 60,
-    public array $workers = []
+    public array $subworkers = []
   )
   {
   }
