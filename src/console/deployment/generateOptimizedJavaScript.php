@@ -48,7 +48,7 @@ function generateJavaScript(
 
     /* Launches typescript compilation on the file with project json configuration
        and launches Google Closure Compiler on the output just after */
-    list($return, $output) = cli('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
+    [, $output] = cli('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
 
     unlink($temporaryTypescriptConfig);
 
@@ -56,7 +56,7 @@ function generateJavaScript(
     $jsFileExists = file_exists($generatedTemporaryJsFile);
     $temporarySourceMap = $generatedTemporaryJsFile . '.map';
 
-    if ($return === 0 && $jsFileExists === true)
+    if ($jsFileExists)
     {
       if (BUILD_DEV_VERBOSE > 0)
       {
@@ -93,17 +93,17 @@ function generateJavaScript(
 
         // TODO add those lines to handle class map and fix the resulting issue
         // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
-        list($return, $output) = cli('java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
+        list(, $output) = cli(
+          'java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
           . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
           . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
-          . $generatedJsFile);
+          . $generatedJsFile,
+          CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL
+        );
 
         if ($verbose > 0)
-        {
-          echo ($return === 0) ?
-            $output . CLI_GREEN . 'Javascript ' . returnLegiblePath($generatedJsFile) . ' has been optimized.'
-            . PHP_EOL : CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL;
-        }
+          echo $output . CLI_GREEN . 'Javascript ' . returnLegiblePath($generatedJsFile) . ' has been optimized.'
+            . PHP_EOL;
 
         // Cleaning temporary files ...(js and the mapping)
         unlink($generatedTemporaryJsFile);
