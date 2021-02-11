@@ -49,7 +49,7 @@ if (!defined('PHP_CACHE_FOLDER'))
 
 // temporarily forces to look into the development configuration
 $_SERVER[APP_ENV] = 'dev';
-$foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...\config\AllConfig::$taskFolders]);
+$foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...\config\AllConfig::$taskFolders ?? []]);
 $_SERVER[APP_ENV] = 'prod';
 
 $helpFileContent = [];
