@@ -62,22 +62,3 @@ $debug--sql-logs-background-hover-color : #303030;
 
 // ERROR
 $debug-error-background-color : #fff;
-
-// === EXCEPTION ===>
-
-// GENERAL
-$exception--text-shadow : #fff;
-$exception--file-color : #f55;
-$exception--line-color : #65e;
-
-//TABLE
-$exception--table-border-color : #ccf;
-
-// CELL
-$exception--table-cell-color : #ccf;
-$exception--table-cell-hover-color : rgba(15, 16, 17, 0.06);
-$exception--table-odd-cell-background-color : rgba(255, 255, 255, 0.48);
-
-// FOLDABLE
-$exception--table-foldable-background-color : rgba(68, 68, 68, 0.5);
-$exception--table-foldable-hover-color : #eee;

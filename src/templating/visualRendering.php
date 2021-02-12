@@ -48,7 +48,7 @@ if (function_exists('showBlocksVisually') === false)
   {
     ob_clean();
     ?>
-    <link rel="stylesheet" href="<?= CORE_CSS_PATH . 'templateMotor.css' ?>"/>
+    <link rel="stylesheet" href="<?= CORE_CSS_PATH . 'pages/templateMotor.css' ?>"/>
     <h1 class="otra--template-rendering--title">Template rendering</h1>
     <?php
     $replacingBlocks = [];

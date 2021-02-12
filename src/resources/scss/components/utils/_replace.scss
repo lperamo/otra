@@ -1,0 +1,37 @@
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
+
+///
+/// Replaces a value by another one into a list. Can be recursive.
+///
+/// @param {List}   $list
+/// @param {mixed}  $old-value
+/// @param {mixed}  $new-value
+/// @param {Bool}   $recursive
+///
+/// @example
+/// $list: a, b, r, a, c a, d a, b, r, a;
+/// $new-list: replace($list, a, u); // u, b, r, u, c a, d a, b, r, u;
+/// $new-list: replace($list, a, u, true); // u, b, r, u, c u, d u, b, r, u;
+///
+/// @return {List}
+///
+@function replace($list, $old-value, $new-value, $recursive: false) {
+  $result : ();
+
+  @for $i from 1 through length($list) {
+    $nth : list.nth($list, $i);
+
+    @if meta.type-of($nth) == list and $recursive {
+      $result : list.append($result, replace($nth, $old-value, $new-value, $recursive));
+    }
+
+    @else {
+      $result : list.append($result, if($nth == $old-value, $new-value, $nth));
+    }
+  }
+
+  @return $result;
+}

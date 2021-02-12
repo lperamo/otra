@@ -1,0 +1,52 @@
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
+
+///
+/// Inserts a value into a list at a given index.
+///
+/// @param {List}   $list
+/// @param {Number} $index
+/// @param {mixed}  $value
+///
+/// @example
+/// $list: a, b, c, e, f;
+/// I want to add “c” as the 3rd index in the list
+/// $new-list: insert-nth($list, 4, d); // a, b, c, d, e, f
+/// $new-list: insert-nth($list, -1, z); // error
+/// $new-list: insert-nth($list, 0, z); // error
+/// $new-list: insert-nth($list, 20, z); // error
+/// $new-list: insert-nth($list, yip, z); // error
+///
+/// @return {List}
+///
+@function insert-nth($list, $index, $value) {
+  $result : null;
+
+  @if meta.type-of($index) != number {
+    @error '$index: #{string.quote($index)} is not a number for `insert-nth`.';
+  }
+
+  @if $index < 1 {
+    @error 'List index 0 must be a non-zero integer for `insert-nth`';
+  }
+
+  $list-length : list.length($list);
+
+  @if $index > $list-length {
+    @error 'List index is #{$index} but list is only #{$list-length} item long for `insert-nth\'.';
+  }
+
+  $result : ();
+
+  @for $i from 1 through $list-length {
+    @if $i == $index {
+      $result : list.append($result, $value);
+    }
+
+    $result : list.append($result, list.nth($list, $i));
+  }
+
+  @return $result;
+}

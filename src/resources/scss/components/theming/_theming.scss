@@ -1,0 +1,282 @@
+////
+/// Theming component.
+/// @access public
+///
+/// @since 1.2
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+
+// loading utility remove function
+@use '../../components/utils/removeNth' as utils;
+
+// initializing an array that will be used to determine which values to pass to the components
+$themes : ();
+
+// initializing an array that will be passed to the global-mass-theme mixin
+$to-theme: ();
+
+// Only used for debug purposes
+$processing-theme : '';
+
+///
+/// Loads a user defined theme in the 'static' variables $themes.
+///
+/// @access public
+/// @param  {map} $_themes
+///
+@mixin init-themes($_themes) {
+  $themes : map.merge($themes, $_themes) !global;
+}
+
+///
+/// Used by the other mixins of this component, this applies a given theme for a given property
+///
+/// @access public
+/// @param  {map}    $theme                      - The theme 'light' or 'dark'.
+/// @param  {string} $property
+/// @param  {string} $color
+/// @param  {string} $additionalPropertiesBefore '' Will be put at the beginning of the value
+/// @param  {string} $additionalPropertiesAfter  '' Will be put at the end of the value
+///
+@mixin theme-property($theme, $property, $color, $additionalPropertiesBefore: '', $additionalPropertiesAfter: '') {
+  $darkenPosition : str-index($additionalPropertiesBefore, 'darken');
+  $lightenPosition : str-index($additionalPropertiesBefore, 'lighten');
+
+  @if ($darkenPosition != null) { // darken function used
+    $color : darken(map-get($theme, $color), $additionalPropertiesAfter);
+    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $darkenPosition - 1);
+
+    #{$property}: unquote($additionalPropertiesBefore + ' ' + $color);
+  }
+
+  @else if($lightenPosition != null) { // lighten function used
+    $color : lighten(map-get($theme, $color), $additionalPropertiesAfter);
+    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $lightenPosition - 1);
+
+    #{$property}: unquote($additionalPropertiesBefore + ' ' + $color);
+  }
+
+  @else {
+    #{$property}: unquote($additionalPropertiesBefore + ' ' + map-get($theme, $color) + ' ' + $additionalPropertiesAfter);
+  }
+}
+
+///
+/// Launched inside a rule, applies a theme for a given properties
+///
+/// @access public
+/// @param  {string} $property
+/// @param  {string} $color
+/// @param  {string} $additionalPropertiesBefore '' Will be put at the beginning of the value
+/// @param  {string} $additionalPropertiesAfter  '' Will be put at the end of the value
+///
+@mixin theme($property, $color, $additionalPropertiesBefore : '', $additionalPropertiesAfter : '') {
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    @include theme-property(map-get($themes, 'light'), $property, $color, $additionalPropertiesBefore, $additionalPropertiesAfter);
+  }
+
+  @media (prefers-color-scheme : dark) {
+    @include theme-property(map-get($themes, 'dark'), $property, $color, $additionalPropertiesBefore, $additionalPropertiesAfter);
+  }
+}
+
+///
+/// Fills the third and the fourth element of a list with ''
+/// SASS removes a dimension if the list contains only one element, so we treat this particular case in an if statement
+///
+/// @access private
+/// @param  {list} $property-to-theme
+///
+/// @return {list} $property-to-theme
+///
+@function _fill-list-with-empty-strings($property-to-theme) {
+  @if (list.length($property-to-theme) == 2) {
+    $property-to-theme: list.append($property-to-theme, '');
+    $property-to-theme: list.append($property-to-theme, '');
+  }
+
+  @else if (list.length($property-to-theme) == 3) {
+    $property-to-theme: list.append($property-to-theme, '');
+  }
+
+  @return $property-to-theme;
+}
+
+///
+/// Internal function to determine which color code to use (code passed, default component code ...)
+///
+/// @access private
+/// @param  {map}    $theme  - The theme 'light' or 'dark'.
+/// @param  {string} $suffix - Suffix put after all the selectors
+/// @param  {string} $color
+///
+/// @return {list} $property-to-theme
+///
+@function _get-color($theme, $suffix, $color) {
+  // testing if color code exists in the themes map
+  $suffixed-color : $color + $suffix;
+
+  // Is there a color code for the suffix provided with the class?
+  @if ($suffixed-color != $color and map.get($theme, $suffixed-color) != null) {
+    $color : $suffixed-color;
+  }
+  // Is there a color code without suffix for this component?
+  @else if (map.get($theme, $color) == null) {
+    $default-color : 'default--' + $color;
+
+    // Do we need the default component color code?
+    @if (map.get($theme, $default-color) != null) {
+      $color : $default-color;
+    }
+
+    @else {
+      @error "The color '" + $suffixed-color + "' does not exist in your " + $processing-theme
+        + " theme map or you did not use a correct syntax.";
+    }
+  }
+
+  @return $color;
+}
+
+///
+/// Launched inside a rule, it sets the theme for an array of properties for a given theme ('light' or 'dark' list)
+///
+/// @access public
+/// @param  {map}     $theme               - The theme 'light' or 'dark'.
+/// @param  {list}    $properties-to-theme
+///
+@mixin mass-theme-properties($theme, $properties-to-theme) {
+  $suffix : list.nth($properties-to-theme, 1);
+  $properties-to-theme : utils.remove-nth($properties-to-theme, 1);
+
+  @if (list.length(list.nth($properties-to-theme, 1)) < 2) {
+    $property-to-theme: $properties-to-theme;
+    $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
+
+    @include theme-property(
+      $theme,
+      list.nth($property-to-theme, 1), // property
+      _get-color($theme, $suffix, list.nth($property-to-theme, 2)),
+      list.nth($property-to-theme, 3), // before
+      list.nth($property-to-theme, 4)  // after
+    );
+  }
+
+  @else {
+    @each $property-to-theme in $properties-to-theme {
+      @if (list.length($property-to-theme) > 1) {
+        $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
+
+        @include theme-property(
+          $theme,
+          list.nth($property-to-theme, 1), // property
+          _get-color($theme, $suffix, list.nth($property-to-theme, 2)),
+          list.nth($property-to-theme, 3), // before
+          list.nth($property-to-theme, 4)  // after
+        );
+      }
+    }
+  }
+}
+
+///
+/// Launched inside a rule, sets the both themes ('light' and 'dark') for an array of properties.
+///
+/// @access public
+/// @param  {list}    $properties-to-theme
+///
+@mixin mass-theme($properties-to-theme) {
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    $processing-theme : 'light' !global;
+
+    @include mass-theme-properties(map-get($themes, 'light'), $properties-to-theme);
+  }
+
+  @media (prefers-color-scheme : dark) {
+    $processing-theme : 'dark' !global;
+
+    @include mass-theme-properties(map-get($themes, 'dark'), $properties-to-theme);
+  }
+}
+
+///
+/// Uses blend modes to adjust theming on background images.
+///
+/// @access public
+/// @param {string} $image
+/// @param {string} $after      ''
+/// @param {string} $blend-mode 'soft-light'
+///
+@mixin blend-image($image, $after : '', $blend-mode : 'soft-light') {
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    background : url(unquote($image)) unquote($after);
+  }
+
+  @media all and (prefers-color-scheme : dark) {
+    background            : linear-gradient(#000, #000), url(unquote($image)) unquote($after);
+    background-blend-mode : unquote($blend-mode), normal;
+  }
+}
+
+///
+/// Applies themes for rules and properties stored in the $to-theme 'static' variable.
+///
+/// @access public
+///
+@mixin global-mass-theme() {
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    $processing-theme : 'light' !global;
+
+    @each $rule, $properties in $to-theme {
+      #{$rule} {
+        @include mass-theme-properties(map-get($themes, 'light'), $properties);
+      }
+    }
+  }
+
+  @media (prefers-color-scheme : dark) {
+    $processing-theme : 'dark' !global;
+
+    @each $rule, $properties in $to-theme {
+      #{$rule} {
+        @include mass-theme-properties(map-get($themes, 'dark'), $properties);
+      }
+    }
+  }
+}
+
+///
+/// Add themes to the 'static' variables $themes.
+///
+/// @access public
+///
+/// @param {map} $_themes
+///
+@mixin add-themes($_themes) {
+  $themes : map.deep-merge($themes, $_themes) !global;
+}
+
+///
+/// Adds rules for the global-mass-theme mixin.
+///
+/// @access public
+///
+/// @param {map}    $_to_theme
+/// @param {string} $suffix    '' - Suffix put after all the selectors
+///
+@mixin to-theme($_to-theme, $suffix: '') {
+  $suffixed-to-theme : ();
+
+  @each $rule, $properties in $_to-theme {
+    // prepending the selector suffix
+    $properties : list.join($suffix, $properties);
+    $suffixed-to-theme : map.merge($suffixed-to-theme, ($rule : ($properties)));
+  }
+
+  $to-theme : map.merge($to-theme, $suffixed-to-theme) !global;
+}

@@ -130,7 +130,8 @@ class OtraException extends Exception
     {
       unset($this->context['variables']);
       require CORE_PATH . 'tools/debug/traceArray.php';
-      $showableContext = createShowableFromArray($this->context, 'Variables');
+//      $showableContext = createShowableFromArray($this->context, 'Variables');
+      $showableContext = $this->context;
     } else
       $showableContext = '';
 

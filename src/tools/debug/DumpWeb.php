@@ -299,7 +299,7 @@ abstract class DumpWeb extends DumpMaster {
     $sourceLine = $secondTrace['line'];
     require_once CORE_PATH . 'tools/removeFieldProtection.php';
     require_once CORE_PATH . 'tools/getSourceFromFile.php';
-    ?><link rel="stylesheet" href="<?= CORE_CSS_PATH ?>otraDump.css"/>
+    ?><link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>
     <div class="otra-dump">
       <span class="otra-dump--intro">
         <?= 'OTRA DUMP - ' . $sourceFile . ':' . $sourceLine ?>
