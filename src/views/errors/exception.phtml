@@ -51,7 +51,12 @@ if (!defined('BASE_PATH_LENGTH'))
         {
           ?><pre class="exception-main--code-block"><?php
           echo getSourceFromFile($contextItem['file'], $contextItem['line']);
-          ?></pre><?php
+          ?></pre>
+          <?php
+          if (!empty($contextItem['variables']))
+          {
+            dump([], $contextItem['variables']);
+          }
         }
         ?>
       </div>
@@ -82,18 +87,18 @@ if (!defined('BASE_PATH_LENGTH'))
   require CORE_PATH . 'tools/debug/dump.php';
 
   showTraceLine([
-    'class' => $backtraces[0]['class'],
+    'class' => $backtraces[0]['class'] ?? null,
     'file' => BASE_PATH . $file,
-    'function' => $backtraces[0]['function'],
+    'function' => $backtraces[0]['function'] ?? null,
     'line' => $line,
-    'type' => $backtraces[0]['type']
+    'type' => $backtraces[0]['type'],
+    'args' => $backtraces[0]['variables'] ?? null
   ]);
 
   // We begin to 1 as we do not care about the exception handler
   foreach($context as $contextItem)
   {
     showTraceLine($contextItem);
-
   }
   ?>
 </div>

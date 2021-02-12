@@ -126,15 +126,6 @@ class OtraException extends Exception
     $renderController->viewPath = CORE_VIEWS_PATH . '/errors';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
-    if (false === empty($this->context))
-    {
-      unset($this->context['variables']);
-      require CORE_PATH . 'tools/debug/traceArray.php';
-//      $showableContext = createShowableFromArray($this->context, 'Variables');
-      $showableContext = $this->context;
-    } else
-      $showableContext = '';
-
     // Is the error code a native error code ?
     $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
@@ -146,7 +137,7 @@ class OtraException extends Exception
         'code' => $errorCode,
         'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
-        'context' => $showableContext,
+        'context' => (array)$this->context,
         'backtraces' => $this->getTrace()
       ],
       false,
