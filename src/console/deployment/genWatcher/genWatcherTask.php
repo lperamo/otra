@@ -235,7 +235,7 @@ $inotifyInstance = inotify_init();
 
 // this is needed so inotify_read while operate in non blocking mode
 // (we then can do echos when we are listening to events)
-stream_set_blocking($inotifyInstance, 0);
+stream_set_blocking($inotifyInstance, false);
 
 // ******************** ADDING WATCHES ********************
 
@@ -511,7 +511,7 @@ while (true)
   }
 
   // Avoid watching too much to avoid performance issues
-  sleep(0.1);
+  usleep(100);
 }
 
 
