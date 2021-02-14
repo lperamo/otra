@@ -425,11 +425,11 @@ while (true)
         if (in_array($resourceName, $phpEntriesToWatch) === true)
         {
           // We generate the class mapping...
-          Tasks::genClassMap();
+          require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
           // We updates routes configuration if the php file is a routes configuration file
           if ($name === 'Routes.php')
-            Tasks::upConf();
+            require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
         } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
