@@ -40,7 +40,7 @@ class MasterController {
 }
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'services/securityService.php';
-$securityRoutePath = CACHE_PATH . 'security/php/' . OTRA_ROUTE . '.php';
+$securityRoutePath = CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . OTRA_ROUTE . '.php';
 header('Content-Encoding: gzip');
 
 addCspHeader(OTRA_ROUTE, $securityRoutePath);
