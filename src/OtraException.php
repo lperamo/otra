@@ -77,9 +77,7 @@ class OtraException extends Exception
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
-    elseif ($_SERVER['APP_ENV'] === 'prod')
-      return;
-    else
+    elseif ($_SERVER['APP_ENV'] !== 'prod')
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
 
