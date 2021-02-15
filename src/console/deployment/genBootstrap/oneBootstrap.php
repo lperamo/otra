@@ -121,7 +121,7 @@ define(
   ]
 );
 
-set_error_handler(function ($errno, $message, $file, $line, $context) {
+set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) {
   throw new \otra\OtraException($message, $errno, $file, $line, $context);
 });
 
