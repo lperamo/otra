@@ -38,7 +38,6 @@ class OtraExceptionCli extends \Exception
     $exception->message = preg_replace('/\<br\s*\/?\>/i', '', $exception->message);
 
     self::showMessage($exception);
-//    require(CORE_PATH . 'views\exceptionConsole.phtml');
   }
 
   /**

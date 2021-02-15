@@ -159,6 +159,9 @@ class OtraException extends Exception
     ?array $context = null
   ) : void
   {
+    if (PHP_SAPI === 'cli')
+      exit($errno);
+
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
@@ -177,6 +180,9 @@ class OtraException extends Exception
    */
   #[NoReturn] public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
   {
+    if (PHP_SAPI === 'cli' && $exception instanceof OtraException)
+      exit($exception->getCode());
+
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';
