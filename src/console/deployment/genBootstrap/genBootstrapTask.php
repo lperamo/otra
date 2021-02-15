@@ -26,7 +26,7 @@ if (false === (isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GE
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
 
-  list($status, $return) = cli(
+  [$status, $return] = cli(
     PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
   );
   echo $return;

@@ -1,0 +1,48 @@
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+
+///
+/// Removes an element from a list at a given index.
+///
+/// @param {List}   $list
+/// @param {Number}  $index
+///
+/// @example
+/// $list: a, b, z, c, d, e, f;
+/// $new-list: remove-nth($list, 4); // a, b, z, d, e, f
+/// $new-list: remove-nth($list, 0); // error
+/// $new-list: remove-nth($list, -3); // a, b, z, c, e, f
+/// $new-list: remove-nth($list, -10); // error
+/// $new-list: remove-nth($list, 15); // error
+/// $new-list: remove-nth($list, yip); // error
+///
+/// @return {List}
+///
+@function remove-nth($list, $index) {
+  $result : null;
+
+  @if meta.type-of($index) != number {
+    @error "$index: #{quote($index)} is not a number for `remove-nth`.";
+  }
+
+  @if $index == 0 {
+    @error "List index 0 must be a non-zero integer for `remove-nth`.";
+  }
+
+  @if abs($index) > list.length($list) {
+    @error "List index is #{$index} but list is only #{list.length($list)} item long for `remove-nth`.";
+  }
+
+  $result : ();
+  $list-length : list.length($list);
+  $index : if($index < 0, $list-length + $index + 1, $index);
+
+  @for $i from 1 through $list-length {
+    @if $i != $index {
+      $result : list.append($result, list.nth($list, $i));
+    }
+  }
+
+  @return $result;
+}

@@ -100,16 +100,12 @@ if ($buildDevMode > 0)
   echo END_COLOR, 'Assets transcompilation...';
 
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']));
+  [, $output] = cli(
+    'php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
+    CLI_RED . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
+  );
 
-  // If it fails
-  if ($result[OTRA_CLI_RETURN] === 1)
-  {
-    echo CLI_RED . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
-  }
-
-  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[OTRA_CLI_OUTPUT], PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
 }
 
 $genAssetsMode = 0;
@@ -127,16 +123,12 @@ if ($genAssetsMode > 0)
 {
   echo 'Assets minification and compression...';
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  $result = cli('php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION);
+  [, $output] = cli(
+    'php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION,
+    CLI_RED . 'There was a problem during the assets minification and compression.'
+  );
 
-  // If it fails
-  if ($result[OTRA_CLI_RETURN] === 1)
-  {
-    echo CLI_RED . 'There was a problem during the assets minification and compression.';
-    throw new OtraException('', 1, '', NULL, [], true);
-  }
-
-  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $result[OTRA_CLI_OUTPUT], PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
 }
 
 // Deploy the files on the server...
@@ -186,14 +178,10 @@ $handleTransfer = function (
   else
   {
     echo $waitingMessage, PHP_EOL;
-    $return = cli($command);
-
-    // if it fails
-    if ($return[OTRA_CLI_RETURN] === 1)
-    {
-      echo CLI_RED, $synchronousErrorMessage, $return[OTRA_CLI_OUTPUT], END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
-    }
+    cli(
+      $command,
+      CLI_RED . $synchronousErrorMessage . END_COLOR . PHP_EOL
+    );
 
     echo "\033[1A" . WorkerManager::ERASE_TO_END_OF_LINE, $successMessage, PHP_EOL;
   }

@@ -1,0 +1,38 @@
+$themes: (
+  'light': (
+    // generic color codes
+    // -------------------
+    'body--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
+    'body--color' : #333,
+    'exception--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'exception--title--text-shadow' : 0 0 3px #fff,
+    'exception--color--error-code' : #f55,
+    'exception--color--file' : #f55,
+    'accordion--text-shadow' : 0 3px 6px #aaa,
+    'accordion--inner--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
+    // components styles
+    // ================
+    // accordion
+    // ---------
+    'accordion--arrow--background-image' : linear-gradient(90deg, #bcd, #99c, #78b),
+    'accordion--background-image' : linear-gradient(45deg, #bcf, #ddf, #bcf),
+  ),
+  'dark': (
+    // generic color codes
+    // -------------------
+    'body--background-image' : linear-gradient(185deg, #333, #446),
+    'body--color' : #eee,
+    'exception--title--background-image' : linear-gradient(45deg, #333, #78b),
+    'exception--title--text-shadow' : 0 0 3px #000,
+    'exception--color--error-code' : #fda,
+    'exception--color--file' : #fda,
+    'accordion--text-shadow' : 0 3px 6px #334,
+    'accordion--inner--background-image' : linear-gradient(185deg, hsl(240deg 20% 23%), #585884),
+    // components styles
+    // =================
+    // accordion
+    // ---------
+    'accordion--arrow--background-image' : linear-gradient(90deg, #bcd, #99c, #78b),
+    'accordion--background-image' : linear-gradient(45deg, #78b, #569, #78b),
+  )
+);

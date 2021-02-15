@@ -7,22 +7,24 @@ namespace otra;
  * @package otra
  */
 class MasterController {
+  private const CSP_ARRAY = [
+    'frame-ancestors' => "'self'",
+    'default-src' => "'self'",
+    'font-src' => "'self'",
+    'img-src' => "'self'",
+    'object-src' => "'self'",
+    'connect-src' => "'self'",
+    'child-src' => "'self'",
+    'manifest-src' => "'self'",
+    'style-src' => "'self'",
+    'script-src' => "'self'"
+  ];
+
   public static array $nonces = [],
     $contentSecurityPolicy = [
-    'dev' =>
-      [
-        'frame-ancestors' => "'self'",
-        'default-src' => "'self'",
-        'font-src' => "'self'",
-        'img-src' => "'self'",
-        'object-src' => "'self'",
-        'connect-src' => "'self'",
-        'child-src' => "'self'",
-        'manifest-src' => "'self'",
-        'style-src' => "'self'"
-      ],
-    'prod' => [] // assigned in the constructor
-  ],
+      'dev' => self::CSP_ARRAY,
+      'prod' => self::CSP_ARRAY
+    ],
     $featurePolicy = [
     'dev' =>
       [
@@ -40,7 +42,7 @@ class MasterController {
 }
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'services/securityService.php';
-$securityRoutePath = CACHE_PATH . 'security/php/' . OTRA_ROUTE . '.php';
+$securityRoutePath = CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . '/' . OTRA_ROUTE . '.php';
 header('Content-Encoding: gzip');
 
 addCspHeader(OTRA_ROUTE, $securityRoutePath);

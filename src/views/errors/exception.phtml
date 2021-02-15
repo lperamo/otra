@@ -5,66 +5,101 @@ declare(strict_types=1);
  * @var string $code
  * @var string $file
  * @var int    $line
- * @var string $context
+ * @var array  $context
  * @var array  $backtraces
  */
 
 require CORE_VIEWS_PATH . '/layout.phtml';
 block('title', 'Exception !');
 block('body');
-?>
-<div class="exception text-center">Exception</div>
-<div class="explications text-center correct-display"><?php
-  if (true === isset($code))
-  	echo 'Error code <span class="exception-brown">', $code , '</span> in <span class="exception-file">' , $file , '</span> at line <span class="exception-line">' , $line, '</span><br />', $message;
-  ?>
-	<br />
-	<table>
-		<thead>
-	  	<tr>
-	  		<th>Error Code</th>
-				<th>Function</th>
-				<th>Line</th>
-				<th>File</th>
-				<th>Arguments</th>
-			</tr>
-		</thead>
-		<tbody>
-		  <?php
-      for($i = 0, $trace = $backtraces, $max = count($trace); $i < $max; $i += 1)
-		  {
-		  	$now = $trace[$i];
-		  	?><tr>
-		  		<td></td>
-		  	 	<td><?= (true === isset($now['function'])) ? $now['function'] : '-' ?></td>
-				<td><?= (true === isset($now['line'])) ? $now['line'] : '-' ?></td>
-        <td><?php if (true === isset($now['file']))
+
+if (!defined('BASE_PATH_LENGTH'))
+{
+  define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+  require CORE_PATH . 'tools/getSourceFromFile.php';
+
+  function showTraceLine(array $contextItem)
+  {
+    $hasFile = isset($contextItem['file']);
+    ?>
+    <details class="accordion">
+      <summary class="accordion"><!--
+      --><?php
+        echo ($contextItem['class'] ?? ''), ($contextItem['type'] ?? ''), ($contextItem['function'] ?? '-'), ' in ';
+        $traceLine = ($contextItem['line'] ?? '-');
+
+        if ($hasFile)
+        {
+          $traceFile = str_replace('\\', '/', $contextItem['file']);
+
+          if (str_contains($traceFile, BASE_PATH))
           {
-            $traceFile = str_replace('\\', '/', $now['file']);
-            echo (str_contains($traceFile, BASE_PATH)
-              ? '<span title="' . $traceFile . '">' . substr($traceFile, strlen(BASE_PATH)) . '</span>'
-              : $traceFile);
-          } else
-          {
-            echo '-';
+            ?><span class="exception-main--color--file-and-line" title="' . $traceFile . '">
+            <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . $traceLine ?>
+            </span>
+            <?php
+          } else {
+            echo $traceFile;
           }
-        ?></td>
-				<?php if (true === empty($now['args']))
-				{ ?> <td></td></tr> <?php } else { ?>
-				<td class="show-args">
-						<em>Show</em>
-				</td>
-			</tr>
-			<tr class="deep-content">
-				<td colspan="5"><?php if(0 === $i) unset($now['args']['variables']);
-          echo createShowableFromArray($now['args'], 'Arguments', 'variables');
-        ?></td>
-			</tr>
-			<?php }
-      } ?>
-	  </tbody>
-	</table>
-	<br />
-	<?= $context ?>
+        } else
+          echo '-' . $traceLine;
+        ?>
+      </summary>
+      <div class="accordion--block">
+        <?php
+        if ($hasFile && isset($contextItem['line']))
+        {
+          ?><pre class="exception-main--code-block"><?php
+          echo getSourceFromFile($contextItem['file'], $contextItem['line']);
+          ?></pre>
+          <?php
+          if (!empty($contextItem['variables']))
+          {
+            dump([], $contextItem['variables']);
+          }
+        }
+        ?>
+      </div>
+    </details><!--
+  --><?php
+  }
+}
+?>
+<h1 class="exception-title">Exception</h1>
+<div class="exception-main">
+  <p class="exception-main--paragraph-first">
+    Error code
+    <span class="exception-main--color--error-code"><?= $code ?></span>
+    in
+    <span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $file ?>">
+      <?= $file ?><!--
+    --></span><!--
+    -->:<!--
+    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $line ?>"><!--
+      --><?= $line ?>
+    </span>
+  </p>
+
+  <p class="exception-main--paragraph-second mb20">
+    <?= $message ?>
+  </p>
+  <?php
+  require CORE_PATH . 'tools/debug/dump.php';
+
+  showTraceLine([
+    'class' => $backtraces[0]['class'] ?? null,
+    'file' => BASE_PATH . $file,
+    'function' => $backtraces[0]['function'] ?? null,
+    'line' => $line,
+    'type' => $backtraces[0]['type'],
+    'args' => $backtraces[0]['variables'] ?? null
+  ]);
+
+  // We begin to 1 as we do not care about the exception handler
+  foreach($context as $contextItem)
+  {
+    showTraceLine($contextItem);
+  }
+  ?>
 </div>
 <?php endblock();

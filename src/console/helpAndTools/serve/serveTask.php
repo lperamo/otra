@@ -18,8 +18,4 @@ if (OTRA_LIVE_APP_ENV === 'dev')
   $command .= 'Dev';
 
 // We use redirections to be able to use unit tests (stderr blocks PHPUnit execution)
-$codeAndOutput = cli($command . '.php 2>&1');
-
-// Shows errors
-if ($codeAndOutput[OTRA_CLI_RETURN] !== 0)
-  echo $codeAndOutput[OTRA_CLI_OUTPUT];
+cli($command . '.php 2>&1');

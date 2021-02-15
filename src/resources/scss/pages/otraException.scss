@@ -1,0 +1,141 @@
+// loading configuration
+@use '../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../components/accordion/accordion';
+@use '../components/theming/theming';
+
+// initializing components
+@include theming.init-themes($themes);
+@include accordion.create();
+
+// specific style
+:root {
+  color-scheme : light dark;
+  font-size    : 10px;
+}
+
+body {
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('background-image', 'body--background-image'),
+        ('color', 'body--color')
+      )
+    )
+  );
+
+  // appearance
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  // positioning
+  margin  : 0;
+  padding : 0;
+
+  // text
+  font-family : 'Times New Roman', serif;
+}
+
+.exception-title {
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('background-image', 'exception--title--background-image'),
+        ('text-shadow', 'exception--title--text-shadow'),
+        //('color', 'exception--title--color')
+      )
+    )
+  );
+
+  // appearance
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  box-shadow : 0 0 3px #000f70;
+
+  // positioning
+  margin  : 0;
+  padding : 1rem 0;
+
+  // size
+  width : 100%;
+
+  /* text */
+  font-size   : 2rem;
+  font-weight : 400;
+  text-align  : center;
+}
+
+.exception-main {
+  $main : &;
+
+  // size
+  margin-bottom : 1rem;
+  padding       : 2rem;
+
+  // text
+  font-size : 2em;
+
+  @at-root .mb20 {
+    margin-bottom : 2rem;
+  }
+
+  &--paragraph {
+    &-first,
+    &-second {
+      margin-top    : 0;
+    }
+
+    &-first {
+      margin-bottom : 0;
+    }
+
+    &-second {
+      margin-bottom : 2rem;
+    }
+  }
+
+  &--color-- {
+    &error-code,
+    &file-and-line {
+      font-weight : 700;
+    }
+
+    &error-code {
+      @include theming.to-theme(
+        (#{&} :('color', 'exception--color--error-code'))
+      );
+    }
+
+    &file-and-line {
+      @include theming.to-theme(
+        (#{&} :('color', 'exception--color--file'))
+      );
+    }
+  }
+
+  .accordion {
+    @include theming.to-theme(
+      (
+        #{&} :('box-shadow', 'accordion--text-shadow')
+      )
+    );
+
+    &--block {
+      @include theming.to-theme(
+        (
+          #{&} :('background-image', 'accordion--inner--background-image')
+        )
+      );
+
+      @at-root #{$main}--code-block {
+        font-size     : 1.5rem;
+        margin-bottom : 0;
+        margin-top    : 0;
+      }
+    }
+  }
+}
+
+// applying theme
+@include theming.global-mass-theme();

@@ -304,7 +304,7 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
       elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
-        && 'require CACHE_PATH . \'php/security/\' . $route . \'.php\';' !== $trimmedMatch
+        && 'require $routeSecurityFilePath;' !== $trimmedMatch
       )
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
@@ -563,7 +563,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
         // - securities configuration
         // - dump tool
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
-          || $tempFile === 'CACHE_PATH . \'php/security/\' . \'' . $_SERVER[APP_ENV] . '\' . \'/\' . $route . \'.php\''
+          || $tempFile === '$routeSecurityFilePath'
           || $tempFile === 'CORE_PATH . \'tools/debug/\' . OTRA_DUMP_FINAL_CLASS . \'.php\''
         )
           continue;
@@ -1017,7 +1017,8 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) .
     PHP_END_TAG_STRING : '';
 
-  /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
+  /** TODO Remove those ugly temporary fixes (all but lines about PHPStorm Attributes) by implementing a clever solution
+   *   to handle "require" statements to remove
    *  START SECTION
    */
   $finalContent = str_replace(
@@ -1033,7 +1034,12 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
       // line in OtraException at the beginning of the method errorMessage()
       'require_once BASE_PATH . \'config/AllConfig.php\';',
       // line in generic AllConfig file
-      'require_once BASE_PATH . \'config/\' . $_SERVER[\'APP_ENV\'] . \'/AllConfig.php\';'
+      'require_once BASE_PATH . \'config/\' . $_SERVER[APP_ENV] . \'/AllConfig.php\';',
+      // line in MasterController
+      'require CORE_PATH . \'services/securityService.php\';',
+      // PHPStorm PHP attributes
+      '#[Pure] ',
+      '#[NoReturn] '
     ],
     '',
     $finalContent);

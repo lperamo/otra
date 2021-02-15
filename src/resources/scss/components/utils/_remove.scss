@@ -1,0 +1,35 @@
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+
+///
+/// Removes an element from a list. Can be recursive.
+///
+/// @param {List}   $list
+/// @param {mixed}  $value
+/// @param {Bool}   $recursive
+///
+/// @example
+/// $list: a, b z, c, z, d, z, e, f;
+/// $new-list: remove($list, z); // a, b z, c, d, e, f;
+/// $new-list: remove($list, z, true); // a, b, c, d, e, f
+///
+/// @return {List}
+///
+@function remove($list, $value, $recursive: false) {
+  $result : ();
+
+  @for $i from 1 through list.length($list) {
+    $nth : list.nth($list, $i);
+
+    @if meta.type-of($nth) == list and $recursive {
+      $result : list.append($result, remove($nth, $value, $recursive));
+    }
+
+    @else if $nth != $value {
+      $result : list.append($result, $nth);
+    }
+  }
+
+  @return $result;
+}

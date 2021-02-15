@@ -235,7 +235,7 @@ $inotifyInstance = inotify_init();
 
 // this is needed so inotify_read while operate in non blocking mode
 // (we then can do echos when we are listening to events)
-stream_set_blocking($inotifyInstance, 0);
+stream_set_blocking($inotifyInstance, false);
 
 // ******************** ADDING WATCHES ********************
 
@@ -425,11 +425,11 @@ while (true)
         if (in_array($resourceName, $phpEntriesToWatch) === true)
         {
           // We generate the class mapping...
-          Tasks::genClassMap();
+          require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
           // We updates routes configuration if the php file is a routes configuration file
           if ($name === 'Routes.php')
-            Tasks::upConf();
+            require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
         } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
         {
           $fileInformations = explode('.', $name);
@@ -511,7 +511,7 @@ while (true)
   }
 
   // Avoid watching too much to avoid performance issues
-  sleep(0.1);
+  usleep(100);
 }
 
 

@@ -11,9 +11,6 @@ use config\Routes;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 
-// Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'tools/debug/traceArray.php';
-
 /**
  * @package otra
  */
@@ -80,9 +77,7 @@ class OtraException extends Exception
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
-    elseif ($_SERVER['APP_ENV'] === 'prod')
-      return;
-    else
+    elseif ($_SERVER['APP_ENV'] !== 'prod')
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
 
@@ -126,14 +121,6 @@ class OtraException extends Exception
     $renderController->viewPath = CORE_VIEWS_PATH . '/errors';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
-    if (false === empty($this->context))
-    {
-      unset($this->context['variables']);
-      require CORE_PATH . 'tools/debug/traceArray.php';
-      $showableContext = createShowableFromArray($this->context, 'Variables');
-    } else
-      $showableContext = '';
-
     // Is the error code a native error code ?
     $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
@@ -145,7 +132,7 @@ class OtraException extends Exception
         'code' => $errorCode,
         'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
         'line' => $this->line,
-        'context' => $showableContext,
+        'context' => (array)$this->context,
         'backtraces' => $this->getTrace()
       ],
       false,
@@ -172,6 +159,9 @@ class OtraException extends Exception
     ?array $context = null
   ) : void
   {
+    if (PHP_SAPI === 'cli')
+      exit($errno);
+
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
@@ -190,6 +180,9 @@ class OtraException extends Exception
    */
   #[NoReturn] public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
   {
+    if (PHP_SAPI === 'cli' && $exception instanceof OtraException)
+      exit($exception->getCode());
+
     if (true === isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';

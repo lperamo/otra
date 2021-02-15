@@ -11,7 +11,9 @@ if (!function_exists('cli'))
   /**
    * Execute a CLI command.
    *
-   * @param string $cmd Command to pass
+   * @param string      $cmd Command to pass
+   * @param string|null $errorMessage
+   * @param bool        $handleError
    *
    * @throws \otra\OtraException
    * @return array [int, string] Exit status code, content
@@ -20,15 +22,19 @@ if (!function_exists('cli'))
     'int',
     'string'
   ])]
-  function cli(string $cmd) : array
+  function cli(string $cmd, string $errorMessage = null, bool $handleError = true) : array
   {
     // We don't use 2>&1 (to show errors along the output) after $cmd because there is a bug otherwise ...
     // "The handle could not be duplicated when redirecting handle 1"
+    // Moreover the developer could have already used those redirections or similar things
     $result = exec($cmd, $output, $return);
     $output = ($output !== null) ? implode(PHP_EOL, $output) : '';
 
-    if ($result === false)
-      throw new otra\OtraException('Problem when loading the command ' . CLI_LIGHT_YELLOW . $cmd . END_COLOR . '.' . $output);
+    if (($result === false || $return !== 0) && $handleError)
+      throw new otra\OtraException(
+        ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_LIGHT_YELLOW . $cmd . END_COLOR) .
+        PHP_EOL . 'Shell error code ' . $return . '. ' . $output
+      );
 
     return [$return, $output];
   }

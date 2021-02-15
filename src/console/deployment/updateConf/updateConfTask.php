@@ -134,8 +134,11 @@ while (false !== ($file = readdir($folderHandler)))
 closedir($folderHandler);
 
 // now we have all the informations, we can create the files in 'bundles/config'
-const BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
-  SECURITIES_FOLDER = CACHE_PATH . 'php/security/';
+if (!defined('BUNDLES_MAIN_CONFIG_DIR'))
+{
+  define('BUNDLES_MAIN_CONFIG_DIR', BUNDLES_PATH . 'config/');
+  define('SECURITIES_FOLDER', CACHE_PATH . 'php/security/');
+}
 
 if (!defined('OTRA_LABEL_SECURITY_NONE'))
 {
@@ -189,9 +192,13 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent);
 
 /** SECURITIES MANAGEMENT */
 $securitiesArray = [];
-define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
-define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
-define('OTRA_PHP_DOT_EXTENSION', '.php');
+
+if(!defined('OTRA_DEVELOPMENT_ENVIRONMENT'))
+{
+  define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
+  define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
+  define('OTRA_PHP_DOT_EXTENSION', '.php');
+}
 
 foreach($securities as $securityFileConfigFolder)
 {
@@ -224,36 +231,40 @@ if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
 
 $securityContent = '<?php declare(strict_types=1);return ';
 
-/**
- * @param array $configurationArray
- *
- * @return string
- */
-function arrayExport(array $configurationArray) : string
+if (!function_exists('arrayExport'))
 {
-  $content = '';
-
-  foreach($configurationArray as $key => $value)
+  /**
+   * @param array $configurationArray
+   *
+   * @return string
+   */
+  function arrayExport(array $configurationArray) : string
   {
-    $content .= "'" . $key . '\'=>';
+    $content = '';
 
-    if (is_array($value))
+    foreach($configurationArray as $key => $value)
     {
-      $content .= '[' . arrayExport($value) . ']';
+      $content .= "'" . $key . '\'=>';
 
-      if (array_key_last($configurationArray) !== $key)
-        $content .= ',';
-    } else
-    {
-      $content .= '"' . $value . '"';
+      if (is_array($value))
+      {
+        $content .= '[' . arrayExport($value) . ']';
 
-      if (array_key_last($configurationArray) !== $key)
-        $content .= ',';
+        if (array_key_last($configurationArray) !== $key)
+          $content .= ',';
+      } else
+      {
+        $content .= '"' . $value . '"';
+
+        if (array_key_last($configurationArray) !== $key)
+          $content .= ',';
+      }
     }
-  }
 
-  return $content;
+    return $content;
+  }
 }
+
 
 foreach($securitiesArray as $route => $securityArray)
 {

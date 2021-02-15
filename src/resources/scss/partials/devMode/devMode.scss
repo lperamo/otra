@@ -1,0 +1,9 @@
+// loading configuration
+@use '../../configuration/devModeFonts';
+@use '../../configuration/devModeColors';
+
+// loading components
+@use '../../components/lightbox/lightbox';
+
+// use other partials
+@use '../debugBar/debugBar';
