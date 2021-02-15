@@ -265,21 +265,25 @@ if (!function_exists('arrayExport'))
   }
 }
 
-
 foreach($securitiesArray as $route => $securityArray)
 {
   $fileName = $route . '.php';
+
   // dev environment
-  if (isset($securityArray['dev']))
+  if (isset($securityArray[OTRA_DEVELOPMENT_ENVIRONMENT]))
   {
-    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['dev']) . '];';
-    writeConfigFile(OTRA_SECURITY_DEV_FOLDER .  $fileName, $securityContent);
+    writeConfigFile(
+      OTRA_SECURITY_DEV_FOLDER . $fileName,
+      OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray[OTRA_DEVELOPMENT_ENVIRONMENT]) . '];'
+    );
   }
 
   // prod environment
-  if (isset($securityArray['prod']))
+  if (isset($securityArray[OTRA_PRODUCTION_ENVIRONMENT]))
   {
-    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['prod']) . '];';
-    writeConfigFile(OTRA_SECURITY_PROD_FOLDER . $fileName, $securityContent);
+    writeConfigFile(
+      OTRA_SECURITY_PROD_FOLDER . $fileName,
+      OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray[OTRA_PRODUCTION_ENVIRONMENT]) . '];'
+    );
   }
 }
