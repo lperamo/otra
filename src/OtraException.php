@@ -11,9 +11,6 @@ use config\Routes;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 
-// Sometimes it is already defined ! so we put '_once' ...
-require_once CORE_PATH . 'tools/debug/traceArray.php';
-
 /**
  * @package otra
  */

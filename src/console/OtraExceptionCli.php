@@ -29,10 +29,7 @@ class OtraExceptionCli extends \Exception
     parent::__construct();
 
     if (false === empty($exception->context))
-    {
       unset($exception->context[self::KEY_VARIABLES]);
-//      createShowableFromArrayConsole($this->context, 'Variables');
-    }
 
     $exception->backtraces = $exception->getTrace();
 
@@ -102,7 +99,6 @@ class OtraExceptionCli extends \Exception
     /*******************************
      * Write the BODY of the table *
      *******************************/
-    require_once CORE_PATH . 'tools/debug/traceArray.php';
     for($actualTraceIndex = 0, $trace = $exception->backtraces, $maxTraceIndex = count($trace);
         $actualTraceIndex < $maxTraceIndex;
         $actualTraceIndex += 1)
@@ -111,8 +107,6 @@ class OtraExceptionCli extends \Exception
       $actualTraceFile = $actualTrace['file'] ?? '';
 
       if (0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
-
-      createShowableFromArrayConsole($actualTrace['args'], 'Arguments', self::KEY_VARIABLES);
 
       $compositeColoredPath = true;
 
