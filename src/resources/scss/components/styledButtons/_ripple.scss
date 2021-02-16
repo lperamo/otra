@@ -1,0 +1,100 @@
+////
+/// @group Styled buttons - Ripple
+/// @since 2.0
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:map';
+
+// loading theming component
+@use '../../components/theming/theming';
+$light-button-color: #47a7f5;
+
+$defaults : (
+  'border-radius' : .5rem,
+  'padding' : 1rem 2rem,
+  'ripple--active--background-color' : 'ripple--animated--background-color',
+  'ripple--hover--background-color' : 'ripple--animated--background-color',
+  'ripple--background-color' : 'ripple--background-color',
+  'suffix' : '',
+  'themes' : (
+    'light' : (
+      'ripple--active--background-color' : lighten($light-button-color, 10),
+      'ripple--hover--background-color' : $light-button-color,
+      'ripple--background-color' : darken($light-button-color, 10)
+    ),
+    'dark' : (
+      'ripple--active--background-color' : lighten($light-button-color, 10),
+      'ripple--hover--background-color' : $light-button-color,
+      'ripple--background-color' : darken($light-button-color, 10)
+    )
+  )
+);
+
+///
+/// Main mixin that creates buttons with the 'ripples' style.
+///
+/// @access public
+/// @param  {array} $options ()
+///
+@mixin create($options : ()) {
+  $options : map.merge($defaults, $options);
+
+  // extracting variables...
+  $suffix : map.get($options, 'suffix');
+
+  @include theming.add-themes(map-get($options, 'themes'));
+
+  .ripple#{$suffix} {
+    // animation
+    transition : background 1.5s;
+
+    // background
+    @include theming.to-theme(
+      (
+        #{&} : ('background-color', 'ripple--background-color')
+      ),
+      $suffix
+    );
+
+    background-position : center;
+
+    // border
+    border        : 0;
+    border-radius : map.get($options, 'border-radius');
+    outline       : 0;
+
+    // cursor
+    cursor : pointer;
+
+    // size
+    padding : map.get($options, 'padding');
+
+    &:hover {
+      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+        $hover--background-color: map.get(theming.$themes, 'light', 'ripple--hover--background-color');
+
+        background : $hover--background-color radial-gradient(circle, transparent 1%, $hover--background-color 1%) center/15000%;
+      }
+
+      @media all and (prefers-color-scheme : dark) {
+        $hover--background-color: map.get(theming.$themes, 'dark', 'ripple--hover--background-color');
+
+        background : $hover--background-color radial-gradient(circle, transparent 1%, $hover--background-color 1%) center/15000%;
+      }
+    }
+
+    &:active {
+      @include theming.to-theme(
+        (
+          #{&} : ('background-color', 'ripple--active--background-color')
+        ),
+        $suffix
+      );
+
+      background-size : 100% !important;
+      transition      : background 0s !important;
+    }
+  }
+}

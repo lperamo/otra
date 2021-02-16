@@ -11,8 +11,9 @@
 }
 
 .lightbox {
-  background-image : url('../img/footer_lodyas_guetzli.jpg');
+  background-image : url('../../../img/footer_lodyas_guetzli.jpg');
   background-size  : contain;
+  border-radius    : 5px;
   overflow         : hidden;
 
   &-container {

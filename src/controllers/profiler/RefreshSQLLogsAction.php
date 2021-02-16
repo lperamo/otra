@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * LPFramework - Core - Profiler - RefreshSQLLogs
+ * Core - Profiler - RefreshSQLLogs
  *
  * @author Lionel Péramo */
 
@@ -17,6 +17,8 @@ class RefreshSQLLogsAction extends Controller
   /**
    * @param array $baseParams
    * @param array $getParams
+   *
+   * @throws \otra\OtraException
    */
   public function __construct(array $baseParams = [], array $getParams = [])
   {

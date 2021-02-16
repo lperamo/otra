@@ -14,9 +14,9 @@
 **/tests/coverage.xml
 **/tests/report.xml
 /**/.phpunit.result.cache
-**/css/*.css*
+**/css/**/*.css*
 **/scss/.sass-cache/**
-**/js/*.js*
+**/js/**/*.js*
 /tslint*
 /tsconfig*
 /tmp/

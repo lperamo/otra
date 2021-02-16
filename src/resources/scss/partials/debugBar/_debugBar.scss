@@ -1,41 +1,19 @@
-@use '../../configuration/devModeColors';
-@use '../../configuration/devModeFonts';
-
 ////
 /// @author Lionel Péramo
 /// @group Debug bar
 ////
 
-///
-/// Mixin for a glowing red font
-///
-@mixin glowingRed() {
-  color                   : devModeColors.$debug--file-color;
-  text-shadow             : 0 0 1px devModeColors.$debug--file-text-shadow-color;
-  background-image        : linear-gradient(90deg, devModeColors.$debug--file-gradient-primary-color, devModeColors.$debug--file-gradient-secondary-color);
-  -webkit-background-clip : text;
-  -webkit-text-fill-color : transparent;
-}
+// loading configuration
+@use '../../configuration/devModeColors';
+@use '../../configuration/devModeFonts';
 
-///
-/// Mixin for a glowing yellow green font
-///
-@mixin glowingYellowGreen() {
-  color       : devModeColors.$debug--line-color;
-  text-shadow : 0 0 1px devModeColors.$debug--line-text-shadow-color;
-}
+// loading mixins
+@use 'mixins';
 
-// Rules
+// loading partials
+@use 'profiler';
 
 .dbg-- {
-  &fl {
-    float : left;
-  }
-
-  &fr {
-    float : right;
-  }
-
   &hide {
     display : none !important;
   }
@@ -132,73 +110,6 @@
     position   : relative;
     top        : 1px;
   }
-
-  &left-block {
-    width : calc(100% - 60px);
-  }
-
-  &file {
-    @include glowingRed();
-
-    word-break : break-all;
-  }
-
-  &line {
-    @include glowingYellowGreen();
-  }
-
-  &sql-logs {
-    &::selection {
-      background : devModeColors.$debug--logs-selection-color;
-    }
-
-    &::-moz-selection {
-      background : devModeColors.$debug--logs-selection-color;
-    }
-
-    & > div {
-      // background
-      background : devModeColors.$debug--sql-logs-background-color;
-      box-shadow : 0 0 2px 0 #aaa;
-
-      // box
-      box-sizing : border-box;
-      margin     : 0 5px 5px 0;
-      padding    : 5px;
-      width      : 100%;
-
-      // positioning
-      clear      : both;
-      display    : inline-block;
-
-      &:hover {
-        background : devModeColors.$debug--sql-logs-background-hover-color;
-      }
-    }
-
-    @at-root {
-      .sql-request {
-        white-space : pre-wrap;
-      }
-
-      .sql-field {
-        background              :
-          linear-gradient(
-            90deg,
-            devModeColors.$debug--field-gradient-primary-color,
-            devModeColors.$debug--field-gradient-secondary-color
-          );
-        color                   : devModeColors.$debug--field-color;
-        text-shadow             : 0 0 1px devModeColors.$debug--field-text-shadow-color;
-        -webkit-background-clip : text;
-        -webkit-text-fill-color : transparent;
-      }
-
-      .sql-clause {
-        @include glowingRed();
-      }
-    }
-  }
 }
 
 .dbg--btn,
@@ -250,30 +161,7 @@
   top        : 0;
 }
 
-// The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
-.profiler {
-  padding     : 1em;
-
-  // text
-  font-family : devModeFonts.$debug--font;
-  font-size   : 10px;
-  line-height : 2em;
-
-  @at-root {
-    .profiler-button {
-      margin-right: .5em;
-    }
-
-    pre.sql-request {
-      font-size: 0.8125em;
-    }
-  }
-
-  & > div {
-    font-size: 1.6em;
-  }
-}
-
+// Arrows
 .dbg--toggle {
   &-direction {
     // positioning
