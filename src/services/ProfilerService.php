@@ -32,13 +32,26 @@ class ProfilerService
    */
   public static function getLogs(string $file) : false|string
   {
-    if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
-      return t('No stored queries in ') . $file . '.';
+//    if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
+//      return t('No stored queries in ') . $file . '.';
+//
+//    $requests = json_decode(
+//      str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
+//      true
+//    );
 
-    $requests = json_decode(
-      str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
-      true
-    );
+    $requests = [
+      [
+        'query' => 'SELECT thing FROM table',
+        'file' => BASE_PATH . 'coucou.php',
+        'line' => '58'
+      ],
+      [
+        'query' => 'SELECT otherThing FROM table2',
+        'file' => BASE_PATH . 'coucou2.php',
+        'line' => '59'
+      ]
+    ];
 
     require CORE_PATH . 'tools/sqlPrettyPrint.php';
 

@@ -6,9 +6,9 @@ use config\AllConfig;
 if (!function_exists('generateArrows'))
 {
   /**
-   * @param string $type
+   * @param string $inputType
    */
-  function generateArrows(string $type = 'radio') : void
+  function generateArrows(string $inputType = 'radio') : void
   {
     $debugBarPosition = isset(AllConfig::$debugConfig) && isset(AllConfig::$debugConfig['barPosition'])
       ? AllConfig::$debugConfig['barPosition']
@@ -22,11 +22,11 @@ if (!function_exists('generateArrows'))
 
     foreach($positions as $arrow => $position)
     {
-      if ($type === 'radio')
+      if ($inputType === 'radio')
       {
         ?>
-        <input type="radio" id="dbg--toggle-<?= $position ?>" name="dbg--position"
-               class="dbg--toggle-direction dbg--toggle-<?= $position ?>"<?php
+        <input type="radio" id="dbg-bar--toggle-<?= $position ?>" name="dbg-bar--position"
+               class="dbg-bar--toggle-direction dbg-bar--toggle-<?= $position ?>"<?php
         if ($debugBarPosition === $position)
           echo ' checked';
         ?>>
@@ -34,7 +34,7 @@ if (!function_exists('generateArrows'))
       } else
       {
         ?>
-        <label for="dbg--toggle-<?= $position ?>" class="dbg--toggle dbg--toggle-<?= $position ?>"
+        <label for="dbg-bar--toggle-<?= $position ?>" class="dbg-bar--toggle dbg-bar--toggle-<?= $position ?>"
                title="Move the debug bar to the <?= $position ?>"><?= $arrow ?></label>
         <?php
       }
@@ -44,26 +44,27 @@ if (!function_exists('generateArrows'))
 $this::css(CORE_CSS_PATH . 'partials/devMode/devMode'); ?>
 <?php generateArrows(); ?>
 
-<div id="dbg--bar" class="dbg--bar">
-  <span class="dbg--help-cursor dbg--white" title="Route">'<?= $this->route ?>'</span>
-  <span class="dbg--white dbg--separator">|</span>
-  <span class="dbg--help-cursor dbg--white" title="Bundle"><?= $this->bundle ?></span><!--
-  --><span class="dbg--white dbg--separator">/</span><!--
-  --><span class="dbg--help-cursor dbg--white" title="Module"><?= $this->module ?></span><!--
-  --><span class="dbg--white dbg--separator">/</span><!--
-  --><span class="dbg--help-cursor dbg--white" title="Controller"><?= $this->controller ?></span><!--
-  --><span class="dbg--white dbg--separator">/</span><!--
-  --><span class="dbg--help-cursor dbg--white" title="Action"><?= $this->action ?></span><!--
-  --><span class="dbg--white dbg--separator">|</span><!--
-  --><span class="dbg--help-cursor dbg--white" title="Elapsed time"><?= round(microtime(true) - BEFORE, 3) ?>s</span><!--
-  --><span class="dbg--white dbg--separator">|</span><?php
-  if (isset($_SESSION['sid'])) {
-     ?><span class="dbg--on dbg--help-cursor" title="Is a user logged in?">Connected</span><?php
+<div id="dbg-bar" class="dbg-bar">
+  <span class="dbg--help-cursor dbg-bar--primary" title="Route">'<?= $this->route ?>'</span>
+  <span class="dbg-bar--primary dbg-bar--separator">|</span>
+  <span class="otra--help-cursor dbg-bar--primary" title="Bundle"><?= $this->bundle ?></span><!--
+  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
+  --><span class="otra--help-cursor dbg-bar--primary" title="Module"><?= $this->module ?></span><!--
+  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
+  --><span class="otra--help-cursor dbg-bar--primary" title="Controller"><?= $this->controller ?></span><!--
+  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
+  --><span class="otra--help-cursor dbg-bar--primary" title="Action"><?= $this->action ?></span><!--
+  --><span class="dbg-bar--primary dbg-bar--separator">|</span><!--
+  --><span class="otra--help-cursor dbg-bar--primary" title="Elapsed time"><?= round(microtime(true) - BEFORE, 3) ?>s</span><!--
+  --><span class="dbg-bar--primary dbg-bar--separator">|</span><?php
+  if (isset($_SESSION['sid']))
+  {
+     ?><span class="dbg-bar--logged otra--help-cursor" title="Is a user logged in?">Connected</span><?php
   } else {
-    ?><span class="dbg--off dbg--help-cursor" title="Is a user logged in?">Disconnected</span><?php
+    ?><span class="dbg-bar--not-logged otra--help-cursor" title="Is a user logged in?">Disconnected</span><?php
   } ?>
-  <span class="dbg--white dbg--separator">|</span>
-  <button id="show-sql" class="dbg--btn">Inspect SQL</button>
+  <span class="dbg--bar--primary dbg-bar--separator">|</span>
+  <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
   <?php generateArrows('label') ?>
 </div>
 <?php $this::js(CORE_JS_PATH . 'debug_bar');

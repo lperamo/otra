@@ -4,7 +4,6 @@
 ////
 
 // loading configuration
-@use '../../configuration/devModeColors';
 @use '../../configuration/devModeFonts';
 @use '../../configuration/themes' as *;
 
@@ -12,101 +11,133 @@
 @use 'mixins';
 
 // loading components
-@use '../../components/styledButtons/ripple';
+@use '../../components/theming/theming';
 
 // configuring components
-@include ripple.create(
-  (
-    'padding' : 10px 20px,
-  )
-);
+@include theming.init-themes($themes);
 
-// The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
-.profiler {
-  padding     : 2em;
-
-  // text
-  font-family : devModeFonts.$debug--font;
-  font-size   : 10px;
-  line-height : 2em;
-
-  &--sql- {
-    &logs {
-      &::selection {
-        background : devModeColors.$debug--logs-selection-color;
-      }
-
-      &::-moz-selection {
-        background : devModeColors.$debug--logs-selection-color;
-      }
-
-      &--element {
-        // background
-        background : devModeColors.$debug--sql-logs-background-color;
-        box-shadow : 0 0 2px 0 #aaa;
-
-        // box
-        box-sizing : border-box;
-        margin     : 0 5px 5px 0;
-        padding    : 20px 20px 0;
-        width      : 100%;
-
-        // positioning
-        display    : flex;
-
-        &:hover {
-          background : devModeColors.$debug--sql-logs-background-hover-color;
-        }
-
-        &--file {
-          @include mixins.glowingRed();
-
-          word-break : break-all;
-        }
-
-        &--line {
-          @include mixins.glowingYellowGreen();
-        }
-
-        &--left-block {
-          width : calc(100% - 85px);
-        }
-
-        &--ripple {
-          align-self: center;
-        }
-      }
-
-      &--request {
-        white-space : pre-wrap;
-      }
-
-      &--field {
-        background              :
-          linear-gradient(
-            90deg,
-            devModeColors.$debug--field-gradient-primary-color,
-            devModeColors.$debug--field-gradient-secondary-color
-          );
-        color                   : devModeColors.$debug--field-color;
-        text-shadow             : 0 0 1px devModeColors.$debug--field-text-shadow-color;
-        -webkit-background-clip : text;
-        -webkit-text-fill-color : transparent;
-      }
-
-      &--clause {
-        @include mixins.glowingRed();
-      }
-    }
+.lightbox {
+  @media all and (prefers-color-scheme : light),
+    all and (prefers-color-scheme : no-preference) {
+    box-shadow : 0 0 10px #aaa;
   }
 
-  & > div {
-    font-size: 1.6em;
-  }
+  @include theming.to-theme(
+    (
+      #{&} : ('background-image', 'lightbox--background-image')
+    )
+  );
 
-  @at-root {
-    pre.sql-request {
-      font-size: 0.8125em;
+  &--container {
+    @include theming.to-theme(
+      (
+        #{&} : (
+          ('color', 'lightbox--container--color'),
+          ('text-shadow', 'lightbox--container--text-shadow')
+        )
+      )
+    );
+
+    // The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
+    @at-root .profiler {
+      padding     : 2em;
+
+      // text
+      font-family : devModeFonts.$debug--font;
+      font-size   : 10px;
+      line-height : 2em;
+
+      &--sql- {
+        &logs {
+          &::selection {
+            @include theming.to-theme(
+              (
+                #{&} : ('background', 'profiler--sql--logs--selection-color')
+              )
+            );
+          }
+
+          &--element {
+            // background
+            @include theming.to-theme(
+              (
+                #{&} + ':not(:hover)' : ('background', 'profiler--sql--logs--background-color')
+              )
+            );
+
+            box-shadow : 0 0 2px 0 #aaa;
+
+            // box
+            box-sizing    : border-box;
+            margin-bottom : 5px;
+            padding       : 20px 20px 0;
+            width         : 100%;
+
+            // positioning
+            display         : flex;
+            justify-content : space-between;
+
+            &:hover {
+              @include theming.to-theme(
+                  (
+                    #{&} : ('background', 'profiler--sql--logs--hover--background-color')
+                  )
+              );
+            }
+
+            &--file {
+              @include mixins.glowingRed();
+
+              word-break : break-all;
+            }
+
+            &--line {
+              @include mixins.glowingYellowGreen();
+            }
+
+            &--left-block {
+              width : calc(100% - 85px);
+            }
+
+            &--ripple {
+              align-self: center;
+            }
+          }
+
+          &--request {
+            white-space : pre-wrap;
+          }
+
+          &--field {
+            @include theming.to-theme(
+                (
+                  #{&} : (
+                      ('background-image', 'profiler--field--gradient'),
+                      ('color', 'profiler--field--color'),
+                      ('text-shadow', 'profiler--field--text-shadow')
+                  )
+                )
+            );
+
+            -webkit-background-clip : text;
+            -webkit-text-fill-color : transparent;
+          }
+
+          &--clause {
+            @include mixins.glowingRed();
+          }
+        }
+      }
+
+      & > div {
+        font-size: 1.6em;
+      }
+
+      @at-root {
+        pre.sql-request {
+          font-size: 0.8125em;
+        }
+      }
     }
   }
 }

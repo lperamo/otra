@@ -4,8 +4,11 @@
 ////
 
 // loading configuration
-@use '../../configuration/devModeColors';
 @use '../../configuration/devModeFonts';
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
 
 // loading mixins
 @use 'mixins';
@@ -13,120 +16,206 @@
 // loading partials
 @use 'profiler';
 
-.dbg-- {
-  &hide {
-    display : none !important;
-  }
+// initializing components
+@include theming.init-themes($themes);
 
-  &bar {
-    // background
-    background : linear-gradient(90deg, devModeColors.$debug-bar-background-primary-color, devModeColors.$debug-bar-background-secondary-color);
-    box-shadow : 0 0 30px 0 #555 inset;
+.otra--help-cursor {
+  cursor : help;
+}
 
-    // box
-    padding    : 5px 5px 8px;
-    box-sizing : border-box;
+.dbg-bar {
+  // background
+  @include theming.to-theme(
+    (
+      #{&} : ('background-image', 'debug-bar--background-image')
+    )
+  );
 
-    // positioning
-    align-items : center;
-    display     : flex;
-    flex-wrap   : wrap;
-    left        : 0;
-    position    : fixed;
-    right       : 0;
-    top         : 0;
-    z-index     : 10000;
+  box-shadow : 0 0 30px 0 #555 inset;
 
-    // text
-    font-family : devModeFonts.$debug--font;
+  // box
+  padding    : 5px 5px 8px;
+  box-sizing : border-box;
 
-    // animation
-    transition  : transform .2s;
-    will-change : transform;
+  // positioning
+  align-items : center;
+  display     : flex;
+  flex-wrap   : wrap;
+  left        : 0;
+  position    : fixed;
+  right       : 0;
+  top         : 0;
+  z-index     : 10000;
 
-    @at-root {
-      .dbg--white {
-        color       : #eee;
-        text-shadow : 0 0 3px devModeColors.$debug--text-shadow-color;
+  // text
+  font-family : devModeFonts.$debug--font;
+
+  // animation
+  transition  : transform .2s;
+  will-change : transform;
+
+  // & = dbg-bar
+  &-- {
+    &btn:active {
+      box-shadow : 0 0 25px #fff inset;
+      position   : relative;
+      top        : 1px;
+    }
+
+    &hide {
+      display : none !important;
+    }
+
+    &primary {
+      color       : #eee;
+
+      @include theming.to-theme(
+        (
+          #{&} : ('text-shadow', 'debug-bar--primary--text-shadow')
+        )
+      );
+    }
+
+    &logged {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('color', 'debug-bar--logged-color'),
+            ('text-shadow', 'debug-bar--logged-text-shadow')
+          )
+        )
+      );
+    }
+
+    &not-logged {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('color', 'debug-bar--not-logged-color'),
+            ('text-shadow', 'debug-bar--not-logged-text-shadow')
+          )
+        )
+      );
+    }
+
+    &primary,
+    &on,
+    &off {
+      // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
+      font-size   : 16px;
+    }
+
+    &separator {
+      margin-left  : 5px;
+      margin-right : 5px;
+    }
+
+    &toggle {
+      // size
+      box-sizing : border-box;
+
+      // positioning
+      margin-left : 10px;
+
+      // animation
+      transition  : text-shadow .25s;
+      will-change : text-shadow;
+
+      // text
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'debug-bar--toggle--color')
+        )
+      );
+
+      font-size   : 20px;
+
+      // others
+      cursor      : pointer;
+
+      &:not(:hover) {
+        @include theming.to-theme(
+          (
+            #{&} : ('text-shadow', 'debug-bar--toggle--text-shadow')
+          )
+        );
       }
 
-      .dbg--white,
-      .dbg--on,
-      .dbg--off {
-        // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
-        font-size   : 16px;
+      &:hover {
+        @include mixins.debugToggleHoverTextShadow;
       }
 
-      .dbg--separator {
-        margin-left  : 5px;
-        margin-right : 5px;
-      }
-
-      .dbg--help-cursor {
-        cursor : help;
-      }
-
-      .dbg--toggle {
-        // size
-        box-sizing : border-box;
-
+      // Arrows
+      &-direction {
         // positioning
-        margin-left : 10px;
+        position : fixed;
+        left     : -10000px;
+      }
 
-        // animation
-        transition  : text-shadow .25s;
-        will-change : text-shadow;
-
-        // text
-        color       : devModeColors.$debug--toggle-color;
-        font-size   : 20px;
-
-        // others
-        cursor      : pointer;
-
-        &:not(:hover) {
-          text-shadow : 0 0 1px devModeColors.$debug--toggle-text-shadow-color;
+      &-top,
+      .dbg-bar--toggle-top {
+        &:checked ~ #dbg-bar {
+          transform: rotateZ(0deg);
         }
+      }
 
-        &:hover {
-          @include devModeColors.debugToggleHoverTextShadow;
+      &-right,
+      .dbg-bar--toggle-right {
+        &:checked ~ #dbg-bar {
+          transform-origin : right;
+          transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
+          width            : 100vh;
+
+          & > .dbg-bar--toggle {
+            transform : rotateZ(90deg);
+          }
+        }
+      }
+
+      &-bottom,
+      .dbg-bar--toggle-bottom {
+        &:checked ~ #dbg-bar {
+          transform-origin : top left;
+          transform        : translate(0, calc(100vh - 38px));
+        }
+      }
+
+      &-left,
+      .dbg-bar--toggle-left {
+        &:checked + #dbg-bar {
+          transform-origin : left;
+          transform        : rotateZ(90deg) translate(-19px, -19px);
+          width            : 100vh;
+
+          & > .dbg-bar--toggle {
+            transform : rotateZ(-90deg);
+          }
         }
       }
     }
   }
-
-  &on {
-    color       : devModeColors.$debug--on-color;
-    text-shadow : 0 0 3px devModeColors.$debug--on-text-shadow-color;
-  }
-
-  &off {
-    color       : devModeColors.$debug--off-color;
-    text-shadow : 0 0 9px devModeColors.$debug--off-text-shadow-color;
-  }
-
-  &btn:active {
-    box-shadow : 0 0 25px #fff inset;
-    position   : relative;
-    top        : 1px;
-  }
 }
 
-.dbg--btn,
+.dbg-bar--btn,
 .profiler .lb--btn {
   // animation
   transition : box-shadow .2s, color .2s, text-shadow .2s;
   will-change: box-shadow, color, text-shadow;
 
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('background-image', 'debug-bar--button--background-image'),
+        ('box-shadow', 'debug-bar--button--box-shadow'),
+        ('color', 'debug-bar-buttons--color'),
+        ('text-shadow', 'debug-bar--button--text-shadow')
+      )
+    )
+  );
+
   // background
-  background-image :
-    radial-gradient(
-      devModeColors.$debug--button-background-gradient-primary-color,
-      devModeColors.$debug--button-background-gradient-secondary-color
-    );
   border        : none;
   border-radius : 4px;
-  box-shadow    : 0 0 3px devModeColors.$debug--button-box-shadow-color;
 
   // box
   height  : auto;
@@ -134,23 +223,31 @@
   display : inline-block;
 
   // text
-  color       : devModeColors.$debug-buttons-text-color;
-  text-shadow : 0 0 3px devModeColors.$debug--button-text-shadow-color;
   font-weight : 400;
 
   // others
   cursor : pointer;
 
   &:hover {
-    color       : devModeColors.$debug-buttons-hover-text-color;
-    box-shadow  : 0 0 4px devModeColors.$debug-buttons-hover-box-shadow-primary-color, 0 0 7px 3px devModeColors.$debug-buttons-hover-box-shadow-secondary-color;
-    text-shadow : 0 0 1px devModeColors.$debug-buttons-hover-text-shadow-color;
+    @include theming.to-theme(
+      (
+        #{&} : (
+          ('color', 'debug-bar--buttons--hover--color'),
+          ('box-shadow', 'debug-bar--buttons--hover--box-shadow'),
+          ('text-shadow', 'debug-bar--buttons--hover--text-shadow')
+        )
+      )
+    );
   }
 }
 
 .div-error {
   // background
-  background : devModeColors.$debug-error-background-color;
+  @include theming.to-theme(
+    (
+      #{&} : ('background-color', 'debug-bar--error--background-color')
+    )
+  );
 
   // box
   height     : 100%;
@@ -159,54 +256,4 @@
   // positioning
   position   : absolute;
   top        : 0;
-}
-
-// Arrows
-.dbg--toggle {
-  &-direction {
-    // positioning
-    position : fixed;
-    left     : -10000px;
-  }
-
-  &-top,
-  .dbg--toggle-top {
-    &:checked ~ #dbg--bar {
-      transform: rotateZ(0deg);
-    }
-  }
-
-  &-right,
-  .dbg--toggle-right {
-    &:checked ~ #dbg--bar {
-      transform-origin : right;
-      transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
-      width            : 100vh;
-
-      & > .dbg--toggle {
-        transform : rotateZ(90deg);
-      }
-    }
-  }
-
-  &-bottom,
-  .dbg--toggle-bottom {
-    &:checked ~ #dbg--bar {
-      transform-origin : top left;
-      transform        : translate(0, calc(100vh - 38px));
-    }
-  }
-
-  &-left,
-  .dbg--toggle-left {
-    &:checked + #dbg--bar {
-      transform-origin : left;
-      transform        : rotateZ(90deg) translate(-19px, -19px);
-      width            : 100vh;
-
-      & > .dbg--toggle {
-        transform : rotateZ(-90deg);
-      }
-    }
-  }
 }

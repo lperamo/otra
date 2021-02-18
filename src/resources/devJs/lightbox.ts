@@ -6,7 +6,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
       callbackYes,
       callbackNo;
 
-  const beginning = '<div class="lightbox-container"><div class="lightbox"><div class="final-div',
+  const beginning = '<div class="lightbox--container"><div class="lightbox"><div class="final-div',
       lightboxBeginning = beginning + '">',
       confirmBeginning = beginning + ' confirm">',
       ending = '</div></div></div>',

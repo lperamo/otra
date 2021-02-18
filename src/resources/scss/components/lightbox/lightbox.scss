@@ -11,15 +11,13 @@
 }
 
 .lightbox {
-  background-image : url('../../../img/footer_lodyas_guetzli.jpg');
   background-size  : contain;
   border-radius    : 5px;
   overflow         : hidden;
 
-  &-container {
+  &--container {
     align-items     : center;
     animation       : lightboxStart .25s ease-out 0s;
-    color           : #eee;
     display         : flex;
     justify-content : center;
     left            : 0;
@@ -27,7 +25,6 @@
     opacity         : 1;
     position        : absolute;
     overflow        : hidden;
-    text-shadow     : 0 0 3px #777;
     top             : 0;
     transition      : opacity .5s ease-out, left .5s ease-out; /* for exiting animation */
     width           : 100%;
