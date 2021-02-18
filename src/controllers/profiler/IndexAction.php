@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * LPFramework - Core - Profiler - Index
+ * Core - Profiler - Index
  *
  * @author Lionel Péramo */
 

@@ -5,7 +5,7 @@
 @use '../components/accordion/accordion';
 @use '../components/theming/theming';
 
-// initializing components
+// configuring components
 @include theming.init-themes($themes);
 @include accordion.create();
 
@@ -26,8 +26,8 @@ body {
   );
 
   // appearance
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-repeat     : no-repeat;
+  background-attachment : fixed;
 
   // positioning
   margin  : 0;
@@ -42,16 +42,15 @@ body {
     (
       #{&} : (
         ('background-image', 'exception--title--background-image'),
-        ('text-shadow', 'exception--title--text-shadow'),
-        //('color', 'exception--title--color')
+        ('text-shadow', 'exception--title--text-shadow')
       )
     )
   );
 
   // appearance
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  box-shadow : 0 0 3px #000f70;
+  background-repeat     : no-repeat;
+  background-attachment : fixed;
+  box-shadow            : 0 0 3px #000f70;
 
   // positioning
   margin  : 0;

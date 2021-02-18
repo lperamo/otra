@@ -1,10 +1,10 @@
 <div id="profiler" class="profiler">
   <div>
-    <button id="dbg-hide-profiler" class="lb-btn dbg-marginR5 profiler-button"><?= t('Hide the profiler') ?></button>
-    <button id="dbg-clear-sql-logs" class="lb-btn dbg-marginR5 profiler-button"><?=t('Clear SQL logs') ?></button>
-    <button id="dbg-refresh-sql-logs" class="lb-btn profiler-button"><?= t('Refresh SQL logs') ?></button><br><br>
+    <button id="profiler--hide-profiler" class="ripple"><?= t('Hide the profiler') ?></button>
+    <button id="profiler--clear-sql-logs" class="ripple"><?=t('Clear SQL logs') ?></button>
+    <button id="profiler--refresh-sql-logs" class="ripple"><?= t('Refresh SQL logs') ?></button><br><br>
   </div>
-  <div id="dbg-sql-logs" class="dbg-sql-logs"><?php
+  <div id="profiler--sql--logs" class="profiler--sql--logs"><?php
     /** @var string $sqlLogs */
     echo $sqlLogs;
   ?></div>
