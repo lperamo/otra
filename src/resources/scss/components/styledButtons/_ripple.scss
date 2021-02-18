@@ -53,12 +53,10 @@ $defaults : (
     // background
     @include theming.to-theme(
       (
-        #{&} : ('background-color', map-get($options, 'ripple--background-color'))
+        #{&} + ':not(:hover)' : ('background-color', map-get($options, 'ripple--background-color'))
       ),
       $suffix
     );
-
-    background-position : center;
 
     // border
     border        : 0;
@@ -70,6 +68,10 @@ $defaults : (
 
     // size
     padding : map.get($options, 'padding');
+
+    &:not(:hover) {
+      background-position : center;
+    }
 
     &:hover {
       @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
