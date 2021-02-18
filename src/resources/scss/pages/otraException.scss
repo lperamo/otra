@@ -128,9 +128,13 @@ body {
       );
 
       @at-root #{$main}--code-block {
-        font-size     : 1.5rem;
+        // margins
         margin-bottom : 0;
         margin-top    : 0;
+
+        // text
+        font-size   : 1.5rem;
+        white-space : pre-wrap;
       }
     }
   }
