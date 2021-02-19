@@ -275,11 +275,11 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param mixed ...$params
+   * @param mixed $params
    *
    * @throws ReflectionException
    */
-  public static function dump(...$params)
+  public static function dump(mixed $params)
   {
     $secondTrace = debug_backtrace()[2];
 

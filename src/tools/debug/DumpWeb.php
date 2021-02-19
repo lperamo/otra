@@ -292,7 +292,7 @@ abstract class DumpWeb extends DumpMaster {
    *
    * @throws ReflectionException
    */
-  public static function dump(...$params) : void
+  public static function dump(mixed $params) : void
   {
     $secondTrace = debug_backtrace()[2];
     $sourceFile = $secondTrace['file'];

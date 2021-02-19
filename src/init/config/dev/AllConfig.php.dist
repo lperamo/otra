@@ -26,6 +26,7 @@ abstract class AllConfig
   public static array
     $dbConnections = [],// mandatory in order to modify it later if needed
     $debugConfig = [
+      'autoLaunch' => true,
       'barPosition' => 'bottom',
       'maxChildren' => 128,
       'maxData' => 512,

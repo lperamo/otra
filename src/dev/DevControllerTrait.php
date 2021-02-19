@@ -27,6 +27,10 @@ trait DevControllerTrait
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     parent::__construct($baseParams, $getParams);
+
+    if (AllConfig::$debugConfig['autoLaunch'])
+      require CORE_PATH . 'tools/debug/dump.php';
+
     Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, OTRA_FILENAME_TRACE);
   }
 
