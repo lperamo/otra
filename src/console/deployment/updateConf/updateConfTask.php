@@ -2,7 +2,11 @@
 declare(strict_types=1);
 
 if (!defined('CHUNKS_KEY_LENGTH'))
+{
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
+  define('UPDATE_CONF_ARG_ROUTE_NAME', 2);
+  define('UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+}
 
 if (!function_exists('writeConfigFile'))
 {
@@ -120,7 +124,11 @@ while (false !== ($file = readdir($folderHandler)))
   $bundleConfigs = glob($bundleConfigDir . '*Config.php');
   $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
   $bundleSchemas = glob($bundleConfigDir . 'data/yml/*Schema.yml');
-  $bundleSecurities = glob($bundleConfigDir . 'security/*', GLOB_ONLYDIR);
+
+  if (UPDATE_CONF_ROUTE_NAME === null)
+    $bundleSecurities = glob($bundleConfigDir . 'security/*', GLOB_ONLYDIR);
+  else
+    $bundleSecurities = glob($bundleConfigDir . 'security/' . UPDATE_CONF_ROUTE_NAME . '/', GLOB_ONLYDIR);
 
   if (!empty($bundleConfigs))
     $configs = array_merge($configs, $bundleConfigs);
