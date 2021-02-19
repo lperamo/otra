@@ -4,11 +4,11 @@ declare(strict_types=1);
 use config\AllConfig;
 use otra\OtraException;
 
+// arguments
 define('CLEAR_CACHE_ARG_MASK', 2);
 define('CLEAR_CACHE_ARG_ROUTE', 3);
 
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
-
+// masks
 define('CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE', 1);
 define('CLEAR_CACHE_MASK_PHP_BOOTSTRAPS', 2);
 define('CLEAR_CACHE_MASK_CSS', 4);
@@ -17,7 +17,14 @@ define('CLEAR_CACHE_MASK_TEMPLATES', 16);
 define('CLEAR_CACHE_MASK_ROUTE_MANAGEMENT', 32);
 define('CLEAR_CACHE_MASK_CLASS_MAPPING', 64);
 define('CLEAR_CACHE_MASK_METADATA', 128);
-define('CLEAR_CACHE_MASK_DEBUGGING', 256);
+define('CLEAR_CACHE_MASK_SECURITY', 256);
+
+// formatting
+define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
+
+// paths
+define('PHP_CACHE_PATH', CACHE_PATH . 'php/');
+define('RELATIVE_PHP_CACHE_PATH', 'cache/php');
 
 $mask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
@@ -146,22 +153,19 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
   echo 'PHP OTRA internal cache cleared', OTRA_SUCCESS;
 }
 
-$phpCachePath = CACHE_PATH . 'php/';
-$phpRelativePath = 'cache/php';
-
-// If we want to remove route management, class mapping, metadata and debugging files, we need to check the PHP folder
+// If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
 if ((
     ($mask / CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
     | ($mask / CLEAR_CACHE_MASK_CLASS_MAPPING)
     | ($mask / CLEAR_CACHE_MASK_METADATA)
-    | ($mask / CLEAR_CACHE_MASK_DEBUGGING)
+    | ($mask / CLEAR_CACHE_MASK_SECURITY)
   ) & 1)
-  checkFolder($phpCachePath, $phpRelativePath);
+  checkFolder(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH);
 
 /* **************** PHP BOOTSTRAPS **************** */
 if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 {
-  $removeCachedFiles($phpCachePath, $phpRelativePath, '.php');
+  $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
   echo 'PHP bootstrap(s) cleared', OTRA_SUCCESS;
 }
 
@@ -191,8 +195,8 @@ if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 {
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
-    $phpCachePath . $routeManagementFile,
-    $phpRelativePath . $routeManagementFile
+    PHP_CACHE_PATH . $routeManagementFile,
+    RELATIVE_PHP_CACHE_PATH . $routeManagementFile
   );
 
   echo 'Route management file cleared', OTRA_SUCCESS;
@@ -203,14 +207,14 @@ if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
-    $phpCachePath . $classMapFile,
-    $phpRelativePath . $classMapFile
+    PHP_CACHE_PATH . $classMapFile,
+    RELATIVE_PHP_CACHE_PATH . $classMapFile
   );
 
   $prodClassMapFile = 'ProdClassMap.php';
   unlinkFile(
-    $phpCachePath . $prodClassMapFile,
-    $phpRelativePath . $prodClassMapFile
+    PHP_CACHE_PATH . $prodClassMapFile,
+    RELATIVE_PHP_CACHE_PATH . $prodClassMapFile
   );
 
   echo 'Class mapping files cleared', OTRA_SUCCESS;
@@ -221,28 +225,30 @@ if (($mask & CLEAR_CACHE_MASK_METADATA) >> 7)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
-    $phpCachePath . $taskClassMapFile,
-    $phpRelativePath . $taskClassMapFile
+    PHP_CACHE_PATH . $taskClassMapFile,
+    RELATIVE_PHP_CACHE_PATH . $taskClassMapFile
   );
 
   $tasksHelpFile = 'tasksHelp.php';
   unlinkFile(
-    $phpCachePath . $tasksHelpFile,
-    $phpRelativePath . $tasksHelpFile
+    PHP_CACHE_PATH . $tasksHelpFile,
+    RELATIVE_PHP_CACHE_PATH . $tasksHelpFile
   );
 
   echo 'Metadata cleared', OTRA_SUCCESS;
 }
 
-/* **************** DEBUGGING FILES **************** */
-if (($mask & CLEAR_CACHE_MASK_DEBUGGING) >> 8)
+/* **************** SECURITY FILES **************** */
+if (($mask & CLEAR_CACHE_MASK_SECURITY) >> 8)
 {
-  $profilerFile = 'profiler.php';
-  unlinkFile(
-    $phpCachePath . $profilerFile,
-    $phpRelativePath . $profilerFile
+  array_map(
+    'unlink',
+    array_merge(
+      glob(PHP_CACHE_PATH . 'security/dev/*.php'),
+      glob(PHP_CACHE_PATH . '/security/prod/*.php')
+    )
   );
 
-  echo 'Debugging files cleared', OTRA_SUCCESS;
+  echo 'Security files cleared', OTRA_SUCCESS;
 }
 

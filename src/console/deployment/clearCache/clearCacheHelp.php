@@ -14,7 +14,7 @@ return [
       STRING_PAD_FOR_OPTION_FORMATTING . ' 32 => Route management' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . ' 64 => Class mapping (development & production)' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '128 => Console tasks metadata' . PHP_EOL .
-      STRING_PAD_FOR_OPTION_FORMATTING . '256 => Debugging files' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '256 => Security files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '511 => All files from the cache (default)'
     ,
     'route name' => 'If you want to clear cache for only one route. (useful only for bits 2, 4, 8 of the ' .
