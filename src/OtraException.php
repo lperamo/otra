@@ -118,22 +118,45 @@ class OtraException extends Exception
           '</span>';
     }
 
-    $renderController->viewPath = CORE_VIEWS_PATH . '/errors';
+    $renderController->viewPath = CORE_VIEWS_PATH . 'errors/';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
     // Is the error code a native error code ?
     $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
 
+    $traces = $this->getTrace();
+    $simplifiedFilePath = mb_substr($this->file, mb_strlen(BASE_PATH));
+
+    // This test avoid trying to render an exception that cannot be rendered by classic ways...
+    if (isset($traces[1], $traces[1]['function']) && $traces[1]['function'] === 'renderView')
+    {
+      if ($_SERVER[APP_ENV] === 'dev')
+      {
+        [$message, $code, $file, $line, $context, $backtraces] = [
+          $this->message,
+          $errorCode,
+          $simplifiedFilePath,
+          $this->line,
+          (array)$this->context,
+          $traces
+        ];
+        require $renderController->viewPath . 'renderedWithoutController.phtml';
+      } else
+        echo 'A major problem has occurred. Sorry for the inconvenience. Please contact the site administrator.';
+
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
+    }
+
     return $renderController->renderView(
       '/errors/exception.phtml',
       [
         'message' => $this->message,
         'code' => $errorCode,
-        'file' => mb_substr($this->file, mb_strlen(BASE_PATH)),
+        'file' => $simplifiedFilePath,
         'line' => $this->line,
         'context' => (array)$this->context,
-        'backtraces' => $this->getTrace()
+        'backtraces' => $traces
       ],
       false,
       false

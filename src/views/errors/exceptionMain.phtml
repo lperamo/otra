@@ -1,0 +1,55 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @var string $message
+ * @var string $code
+ * @var string $file
+ * @var int    $line
+ * @var array  $context
+ * @var array  $backtraces
+ */
+if (!defined('BASE_PATH_LENGTH'))
+{
+define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+require CORE_PATH . 'tools/getSourceFromFile.php';
+require CORE_PATH . 'tools/files/showTraceLine.php';
+}
+?>
+<h1 class="exception-title">Exception</h1>
+<div class="exception-main">
+  <p class="exception-main--paragraph-first">
+    Error code
+    <span class="exception-main--color--error-code"><?= $code ?></span>
+    in
+    <span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $file ?>">
+      <?= $file ?><!--
+    --></span><!--
+    -->:<!--
+    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $line ?>"><!--
+      --><?= $line ?>
+    </span>
+  </p>
+
+  <p class="exception-main--paragraph-second mb20">
+    <?= $message ?>
+  </p>
+  <?php
+  require CORE_PATH . 'tools/debug/dump.php';
+
+  showTraceLine([
+    'class' => $backtraces[0]['class'] ?? null,
+    'file' => BASE_PATH . $file,
+    'function' => $backtraces[0]['function'] ?? null,
+    'line' => $line,
+    'type' => $backtraces[0]['type'],
+    'args' => $backtraces[0]['variables'] ?? null
+  ]);
+
+  // We begin to 1 as we do not care about the exception handler
+  foreach($context as $contextItem)
+  {
+    showTraceLine($contextItem);
+  }
+  ?>
+</div>

@@ -305,6 +305,7 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
         $isTemplate = true;
       elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
         && 'require $routeSecurityFilePath;' !== $trimmedMatch
+        && 'require $renderController->viewPath . \'renderedWithoutController.phtml\';' !== $trimmedMatch
       )
       {
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
@@ -565,6 +566,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
         if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
           || $tempFile === '$routeSecurityFilePath'
           || $tempFile === 'CORE_PATH . \'tools/debug/\' . OTRA_DUMP_FINAL_CLASS . \'.php\''
+          || $tempFile === '$renderController->viewPath . \'renderedWithoutController.phtml\''
         )
           continue;
 
@@ -588,9 +590,7 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
         if (false === file_exists($tempFile))
         {
           echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' => ', CLI_YELLOW,
-          $tempFile,
-          CLI_RED
-          , ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
+          $tempFile, CLI_RED, ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
           exit(1);
         }
 
