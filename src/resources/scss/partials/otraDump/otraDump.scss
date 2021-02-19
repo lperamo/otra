@@ -1,16 +1,31 @@
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading components
+@use '../../components/theming/theming';
+
+// initializing components
+@include theming.init-themes($themes);
+
+:root {
+  color-scheme : light dark;
+}
+
 $font-variable : 13px;
-$another-shade : #666;
-$octonary      : #eee;
 
 div.otra-dump {
+  @include theming.to-theme(
+    (
+      #{&} : ('box-shadow', 'dump--box-shadow')
+    )
+  );
+
   @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
     background-image : radial-gradient(#ddd, #fff);
-    box-shadow       : 1px 1px 3px #777;
   }
 
   @media all and (prefers-color-scheme : dark) {
     background-color : #333;
-    box-shadow       : 1px 1px 3px #777;
   }
 
   // positioning
@@ -23,28 +38,23 @@ div.otra-dump {
 
   @at-root {
     span.otra-dump--intro {
-      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
-        color : #004e9c;
-      }
-
-      @media all and (prefers-color-scheme : dark) {
-        color : #05a;
-      }
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--intro--color')
+        )
+      );
 
       font-size : $font-variable;
       margin    : 0;
     }
 
     span.otra-dump--value {
-      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
-        color : #004e9c;
-      }
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--value--color')
+        )
+      );
 
-      @media all and (prefers-color-scheme : dark) {
-        color : #05a;
-      }
-
-      //font-size : 1.3em;
       margin    : 0;
 
       // text
@@ -53,13 +63,11 @@ div.otra-dump {
     }
 
     pre.otra-dump--string {
-      @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
-        color : #155859;
-      }
-
-      @media all and (prefers-color-scheme : dark) {
-        color : #33d;
-      }
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--string--color')
+        )
+      );
 
       // positioning
       display   : inline;
@@ -72,14 +80,22 @@ div.otra-dump {
       word-break  : break-all;
 
       @at-root b.otra--code--container {
+        @include theming.to-theme(
+          (
+            #{&} : ('outline', 'dump--code-container--outline')
+          )
+        );
+
         font-weight : 400;
-        outline     : 1px solid $another-shade;
 
         @at-root mark.otra--code--container-highlight {
-          background-color : $octonary;
-          //background-color : transparent;
+          @include theming.to-theme(
+            (
+              #{&} : ('background-color', 'dump--code-container--highlight--background-color')
+            )
+          );
+
           color            : inherit;
-          //outline : 1px solid $tertiary;
           position         : relative;
         }
       }
@@ -87,7 +103,7 @@ div.otra-dump {
 
     label {
       &.otra-dump--foldable {
-        cursor      : pointer;
+        cursor : pointer;
 
         // text
         font-family : 'Courier New', monospace;
@@ -141,3 +157,6 @@ div.otra-dump {
   white-space : pre-wrap;
   word-break  : break-all;
 }
+
+// applying theme
+@include theming.global-mass-theme();

@@ -62,6 +62,13 @@ $themes: (
     'profiler--sql--logs--background-color' : transparentize(#000, 0.9),
     'profiler--sql--logs--hover--background-color' : #ccc,
     'profiler--sql--logs--selection-color' : #667,
+    // ** dump
+    'dump--code-container--outline' : 1px solid #666,
+    'dump--code-container--highlight--background-color' : #eee,
+    'dump--box-shadow' : 1px 1px 3px #777,
+    'dump--intro--color' : #004e9c,
+    'dump--value--color' : #004e9c,
+    'dump--string--color' : #155859,
     // components styles
     // ================
     // accordion
@@ -137,6 +144,13 @@ $themes: (
     'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
     'profiler--sql--logs--hover--background-color' : #303030,
     'profiler--sql--logs--selection-color' : #667,
+    // ** dump
+    'dump--code-container--outline' : 1px solid #666,
+    'dump--code-container--highlight--background-color' : #eee,
+    'dump--box-shadow' : 1px 1px 3px #777,
+    'dump--intro--color' : #05a,
+    'dump--value--color' : #05a,
+    'dump--string--color' : #33d,
     // components styles
     // =================
     // accordion
