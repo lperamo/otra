@@ -5,7 +5,7 @@ autocomplete()
     # shellcheck source=./shellCompletions.sh
     . "${CURRENT_DIR}"/shellCompletions.sh
 
-    typeset SUGGESTIONS="";
+    typeset SUGGESTIONS=""
   else
     # shellcheck source=./shellCompletions.sh
     . "${CORE_DIR}"/console/shellCompletions/shellCompletions.sh
