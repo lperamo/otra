@@ -18,6 +18,37 @@ if (!function_exists('getRandomNonceForCSP'))
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ]);
   define('OTRA_STRLEN_SCRIPT_SRC', 10);
+  define('CSP_ARRAY', [
+    'base-uri' => "'self'",
+    'form-action' => "'self'",
+    'frame-ancestors' => "'self'",
+    'default-src' => "'none'",
+    'font-src' => "'self'",
+    'img-src' => "'self'",
+    'object-src' => "'self'",
+    'connect-src' => "'self'",
+    'child-src' => "'self'",
+    'manifest-src' => "'self'",
+    'style-src' => "'self'",
+    'script-src' => "'self'"
+  ]);
+  define('CONTENT_SECURITY_POLICY', [
+    'dev' => CSP_ARRAY,
+    'prod' => CSP_ARRAY
+  ]);
+  define('FEATURE_POLICY', [
+    'dev' =>
+      [
+        'layout-animations' => "'self'",
+        'legacy-image-formats' => "'none'",
+        'oversized-images' => "'none'",
+        'sync-script' => "'none'",
+        'sync-xhr' => "'none'",
+        'unoptimized-images' => "'none'",
+        'unsized-media' => "'none'"
+      ],
+    'prod' => []
+  ]);
 
   /**
    * @param string $directive
@@ -112,7 +143,7 @@ if (!function_exists('getRandomNonceForCSP'))
         OTRA_KEY_CONTENT_SECURITY_POLICY,
         $route,
         $routeSecurityFilePath,
-        MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]]
+        CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]]
       );
 
       handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
@@ -132,7 +163,7 @@ if (!function_exists('getRandomNonceForCSP'))
         OTRA_KEY_FEATURE_POLICY,
         $route,
         $routeSecurityFilePath,
-        MasterController::$featurePolicy[$_SERVER[APP_ENV]]
+        FEATURE_POLICY[$_SERVER[APP_ENV]]
       )[OTRA_POLICY]);
   }
 
@@ -150,7 +181,7 @@ if (!function_exists('getRandomNonceForCSP'))
   {
     // If the directive (eg. 'script-src') is not there, then we only use the defaults
     if (!isset($cspDirectives[$directive]))
-      $policy .= $directive . ' ' . MasterController::$contentSecurityPolicy[$_SERVER[APP_ENV]][$directive] . ' ';
+      $policy .= $directive . ' ' . CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]][$directive] . ' ';
     elseif ($cspDirectives[$directive] !== '')
       $policy .= $directive . ' ' . $cspDirectives[$directive] . ' ';
     else

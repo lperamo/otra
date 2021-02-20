@@ -60,18 +60,18 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_FILE_PATH,
-      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[self::ENV_DEV]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
       array_merge(
-        MasterController::$contentSecurityPolicy[self::ENV_DEV],
+        CONTENT_SECURITY_POLICY[self::ENV_DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -89,17 +89,17 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_BASE_PATH . 'MissingPolicy.php',
-      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[self::ENV_DEV]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'self'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'self'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
-      MasterController::$contentSecurityPolicy[self::ENV_DEV],
+      CONTENT_SECURITY_POLICY[self::ENV_DEV],
       $returnArray[self::DIRECTIVES]
     );
   }
@@ -109,7 +109,7 @@ class SecurityServiceTest extends TestCase
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
     require self::SECURITY_SERVICE;
-    $cspDevPolicyReworked = MasterController::$contentSecurityPolicy[self::ENV_DEV];
+    $cspDevPolicyReworked = CONTENT_SECURITY_POLICY[self::ENV_DEV];
     unset($cspDevPolicyReworked[OTRA_KEY_SCRIPT_SRC_DIRECTIVE]);
 
     // launching
@@ -117,13 +117,13 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH,
-      MasterController::$contentSecurityPolicy[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[self::ENV_DEV]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'self'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'self'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
@@ -143,18 +143,18 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_PROD_FILE_PATH,
-      MasterController::$contentSecurityPolicy[self::ENV_PROD]
+      CONTENT_SECURITY_POLICY[self::ENV_PROD]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
       array_merge(
-        MasterController::$contentSecurityPolicy[self::ENV_PROD],
+        CONTENT_SECURITY_POLICY[self::ENV_PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -172,7 +172,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_FEATURE_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_FILE_PATH,
-      MasterController::$featurePolicy[self::ENV_DEV]
+      FEATURE_POLICY[self::ENV_DEV]
     );
 
     // testing
@@ -183,7 +183,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        MasterController::$featurePolicy[self::ENV_DEV],
+        FEATURE_POLICY[self::ENV_DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -201,7 +201,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_FEATURE_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_PROD_FILE_PATH,
-      MasterController::$featurePolicy[self::ENV_PROD]
+      FEATURE_POLICY[self::ENV_PROD]
     );
 
     // testing
@@ -212,7 +212,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        MasterController::$featurePolicy[self::ENV_PROD],
+        FEATURE_POLICY[self::ENV_PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
       ),
       $returnArray[self::DIRECTIVES]

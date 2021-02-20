@@ -14,44 +14,13 @@ use JetBrains\PhpStorm\Pure;
  */
 class MasterController
 {
-  private const CSP_ARRAY = [
-    'frame-ancestors' => "'self'",
-    'default-src' => "'self'",
-    'font-src' => "'self'",
-    'img-src' => "'self'",
-    'object-src' => "'self'",
-    'connect-src' => "'self'",
-    'child-src' => "'self'",
-    'manifest-src' => "'self'",
-    'style-src' => "'self'",
-    'script-src' => "'self'"
-  ];
-
   public static string $path;
   public ?string $routeSecurityFilePath = null;
   public static array
     $nonces = [
       'script-src' => [],
       'style-src' => []
-    ],
-    $contentSecurityPolicy = [
-      'dev' => self::CSP_ARRAY,
-      'prod' => self::CSP_ARRAY
-    ],
-    $featurePolicy = [
-    'dev' =>
-      [
-        'layout-animations' => "'self'",
-        'legacy-image-formats' => "'none'",
-        'oversized-images' => "'none'",
-        'sync-script' => "'none'",
-        'sync-xhr' => "'none'",
-        'unoptimized-images' => "'none'",
-        'unsized-media' => "'none'"
-      ],
-    'prod' => []
-  ],
-  $routesSecurity;
+    ];
 
   public string $route,
     $url,
