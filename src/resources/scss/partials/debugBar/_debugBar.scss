@@ -155,15 +155,13 @@
         left     : -10000px;
       }
 
-      &-top,
-      .dbg-bar--toggle-top {
+      &-top {
         &:checked ~ #dbg-bar {
           transform: rotateZ(0deg);
         }
       }
 
-      &-right,
-      .dbg-bar--toggle-right {
+      &-right {
         &:checked ~ #dbg-bar {
           transform-origin : right;
           transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
@@ -175,16 +173,14 @@
         }
       }
 
-      &-bottom,
-      .dbg-bar--toggle-bottom {
+      &-bottom {
         &:checked ~ #dbg-bar {
           transform-origin : top left;
           transform        : translate(0, calc(100vh - 38px));
         }
       }
 
-      &-left,
-      .dbg-bar--toggle-left {
+      &-left {
         &:checked + #dbg-bar {
           transform-origin : left;
           transform        : rotateZ(90deg) translate(-19px, -19px);

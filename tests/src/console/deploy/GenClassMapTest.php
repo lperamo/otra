@@ -9,7 +9,7 @@ use phpunit\framework\TestCase;
 /**
  * @runTestsInSeparateProcesses
  */
-class genClassMapTest extends TestCase
+class GenClassMapTest extends TestCase
 {
   private const
     CLASS_MAP_FILENAME = 'ClassMap.php',

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace src\console\helpAndTools;
 
-use otra\console\TasksManager;
 use phpunit\framework\TestCase;
 
 /**
@@ -11,10 +10,12 @@ use phpunit\framework\TestCase;
  */
 class ToolsTest extends TestCase
 {
-  private const
-    OTRA_TASK_HASH = 'hash',
-    OTRA_TASK_HELP = 'help',
-    BLOWFISH_SALT_LENGTH = 22;
+  public static function setUpBeforeClass(): void
+  {
+    parent::setUpBeforeClass();
+
+    require CONSOLE_PATH . 'tools.php';
+  }
 
   /**
    * @author Lionel Péramo
@@ -29,7 +30,7 @@ class ToolsTest extends TestCase
     );
 
     // launching
-    require CONSOLE_PATH . 'tools.php';
+
     showContextByError(TEST_PATH . '/examples/tools/toolsExample.php', 'error in line 5', 2);
   }
 
@@ -48,14 +49,12 @@ class ToolsTest extends TestCase
     );
 
     // launching
-    require CONSOLE_PATH . 'tools.php';
     showContext(TEST_PATH . '/examples/tools/toolsExample.php', 5, 4);
   }
 
   public function testConvertArrayFromVarExportToShortVersion(): void
   {
     // launching
-    require CONSOLE_PATH . 'tools.php';
     $reducedArray = convertArrayFromVarExportToShortVersion(
       var_export(
         [

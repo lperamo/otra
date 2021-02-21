@@ -7,6 +7,7 @@ use otra\console\TasksManager;
 use phpunit\framework\TestCase;
 
 define('OTRA_LABEL_CREATED', ' created.');
+define('OTRA_LABEL_UPDATED', ' updated.');
 define('OTRA_LABEL_FOLDER', 'Folder ');
 define('OTRA_LABEL_BASE_PATH_PLUS', 'BASE_PATH + ');
 define('OTRA_TASK_CREATE_HELLO_WORLD', 'createHelloWorld');
@@ -88,11 +89,11 @@ class CreateHelloWorldTest extends TestCase
       'Adding favicons...' . PHP_EOL .
       CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_CYAN . '/var/www/html/perso/otra/bundles/config/Config.php' .
         CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
-      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'bundles/config/Routes.php' . CLI_GREEN . ' updated.' . END_COLOR .
+      CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN . 'bundles/config/Routes.php' . CLI_GREEN . OTRA_LABEL_UPDATED . END_COLOR .
         PHP_EOL .
-      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'cache/php/security/dev/HelloWorld.php' . CLI_GREEN . ' updated.' . END_COLOR .
+      CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN . 'cache/php/security/dev/HelloWorld.php' . CLI_GREEN . OTRA_LABEL_UPDATED . END_COLOR .
       PHP_EOL .
-      CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . 'cache/php/security/prod/HelloWorld.php' . CLI_GREEN . ' updated.' . END_COLOR .
+      CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN . 'cache/php/security/prod/HelloWorld.php' . CLI_GREEN . OTRA_LABEL_UPDATED . END_COLOR .
       PHP_EOL .
       CLI_LIGHT_GREEN . ' Class mapping finished.' . END_COLOR . PHP_EOL .
       PHP_EOL .
