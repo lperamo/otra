@@ -79,9 +79,9 @@
 
             &:hover {
               @include theming.to-theme(
-                  (
-                    #{&} : ('background', 'profiler--sql--logs--hover--background-color')
-                  )
+                (
+                  #{&} : ('background', 'profiler--sql--logs--hover--background-color')
+                )
               );
             }
 
@@ -110,13 +110,13 @@
 
           &--field {
             @include theming.to-theme(
-                (
-                  #{&} : (
-                      ('background-image', 'profiler--field--gradient'),
-                      ('color', 'profiler--field--color'),
-                      ('text-shadow', 'profiler--field--text-shadow')
-                  )
+              (
+                #{&} : (
+                  ('background-image', 'profiler--field--gradient'),
+                  ('color', 'profiler--field--color'),
+                  ('text-shadow', 'profiler--field--text-shadow')
                 )
+              )
             );
 
             -webkit-background-clip : text;

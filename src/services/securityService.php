@@ -174,8 +174,6 @@ if (!function_exists('getRandomNonceForCSP'))
    * @param string $policy
    * @param array  $cspDirectives
    * @param string $route
-   *
-   * @throws OtraException
    */
   function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
   {
