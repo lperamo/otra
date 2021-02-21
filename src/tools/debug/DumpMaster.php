@@ -114,4 +114,29 @@ abstract class DumpMaster {
 
     return [$className, $description];
   }
+
+  /**
+   * @param mixed ...$params
+   */
+  public static function dump(... $params)
+  {
+    $debugBacktrace = debug_backtrace();
+
+    // We check if we come from the 'dump' function shortcut or the 'paramDump' function
+    $secondTrace = ($debugBacktrace[3]['file'] === CORE_PATH . 'tools/debug/dump.php')
+      ? $debugBacktrace[4]
+      : $debugBacktrace[3];
+
+    require_once CORE_PATH . 'tools/removeFieldProtection.php';
+    require_once CORE_PATH . 'tools/getSourceFromFile.php';
+
+    ob_start();
+
+    foreach ($params as $paramKey => $param)
+    {
+      static::analyseVar($paramKey, $param, self::OTRA_DUMP_INITIAL_DEPTH, is_array($param));
+    }
+
+    static::dumpCallback($secondTrace['file'], $secondTrace['line'], ob_get_clean());
+  }
 }

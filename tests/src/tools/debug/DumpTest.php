@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\tools\debug;
 
+use config\AllConfig;
 use phpunit\framework\TestCase;
 
 /**
@@ -158,7 +159,7 @@ class DumpTest extends TestCase
     );
 
     // launching
-    dump([0, 0, 0], self::getDumpTestArray());
+    paramDump([0, 0, 0], self::getDumpTestArray());
   }
 
   /**
@@ -176,7 +177,7 @@ class DumpTest extends TestCase
     );
 
     // launching
-    dump([0, -1, 0], self::getDumpTestArray());
+    paramDump([0, -1, 0], self::getDumpTestArray());
   }
 
   public function testDump_MaxChildrenTrueMaxDataTrueMaxDepthFalse() : void
@@ -196,7 +197,7 @@ class DumpTest extends TestCase
     );
 
     // launching
-    dump([-1, -1, 0], self::getDumpTestArray());
+    paramDump([-1, -1, 0], self::getDumpTestArray());
   }
 
   public function testDump_MaxChildrenTrueMaxDataTrueMaxDepthTrue() : void
@@ -219,6 +220,6 @@ class DumpTest extends TestCase
     );
 
     // launching
-    dump([-1, -1, -1], self::getDumpTestArray());
+    paramDump([-1, -1, -1], self::getDumpTestArray());
   }
 }

@@ -18,5 +18,10 @@ AllConfig::$dbConnections = [ // mandatory
     'db' => 'testDB', // do not modify this !
   ]
 ];
+AllConfig::$debugConfig = [
+  'maxChildren' => 130,
+  'maxData' => 514,
+  'maxDepth' => 11
+];
 AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
 AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];

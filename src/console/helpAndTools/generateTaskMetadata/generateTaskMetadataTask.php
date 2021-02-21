@@ -86,7 +86,7 @@ require CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
 $helpFileFinalContent = '<?php return ' . var_export($helpFileContent, true);
-$helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';';
+$helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';' . PHP_EOL;
 
 file_put_contents(PHP_CACHE_FOLDER . 'tasksHelp.php', $helpFileFinalContent);
 
@@ -98,7 +98,7 @@ file_put_contents(PHP_CACHE_FOLDER . 'tasksClassMap.php',
     str_replace("'" . BASE_PATH,
       'BASE_PATH.\'',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
-    )
+    ) . PHP_EOL
 );
 
 if (PHP_SAPI === 'cli')

@@ -13,7 +13,7 @@ if (!function_exists('dump'))
 
   function dump(... $params) : void
   {
-    paramDump(null, $params);
+    paramDump(null, ...$params);
   }
 
   /**
@@ -27,15 +27,14 @@ if (!function_exists('dump'))
    */
   function paramDump(?array $options = [], ... $params) : void
   {
-    if (!defined('OTRA_DUMP_VERSION'))
+    if (!defined('OTRA_DUMP_FINAL_CLASS'))
     {
-      define('OTRA_DUMP_VERSION', php_sapi_name() === 'cli' ? 'Cli' : 'Web');
-      define('OTRA_DUMP_FINAL_CLASS', 'Dump' . OTRA_DUMP_VERSION);
+      define('OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
       define('OTRA_NAMESPACED_FINAL_CLASS', 'otra\\' . OTRA_DUMP_FINAL_CLASS);
     }
 
     require_once CORE_PATH . 'tools/debug/' . OTRA_DUMP_FINAL_CLASS . '.php';
-    $oldOtraDebugValues = call_user_func(OTRA_NAMESPACED_FINAL_CLASS . '::setDumpConfig', $options);
+    $oldOtraDebugValues = call_user_func('\otra\DumpMaster::setDumpConfig', $options);
     call_user_func(OTRA_NAMESPACED_FINAL_CLASS . '::dump', ...$params);
     AllConfig::$debugConfig = $oldOtraDebugValues;
   }

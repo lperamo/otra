@@ -286,36 +286,38 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * A nice dump function that takes as much parameters as we want to put.
-   *
-   * @param mixed $params
-   *
-   * @throws ReflectionException
+   * @param string $sourceFile
+   * @param int    $sourceLine
+   * @param string $content
    */
-  public static function dump(mixed $params) : void
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content)
   {
-    $secondTrace = debug_backtrace()[2];
-    $sourceFile = $secondTrace['file'];
-    $sourceLine = $secondTrace['line'];
-    require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    require_once CORE_PATH . 'tools/getSourceFromFile.php';
-    ?><link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>
+    ?>
+    <link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>
     <div class="otra-dump">
       <span class="otra-dump--intro">
         <?= 'OTRA DUMP - ' . $sourceFile . ':' . $sourceLine ?>
       </span><?php self::createFoldable(true); ?>
       <pre class="otra-dump--string"><!--
      --><strong class="otra--code--container"><mark class="otra--code--container-highlight"><?=
-            getSourceFromFile($sourceFile, $sourceLine, 2)
-            ?></mark></strong></pre>
+          getSourceFromFile($sourceFile, $sourceLine, 2)
+          ?></mark></strong></pre>
     </div>
     <pre class="otra-dump--string">
-<br><?php
-      foreach ($params as $paramKey => $param)
-      {
-        self::analyseVar($paramKey, $param, self::OTRA_DUMP_INITIAL_DEPTH, is_array($param));
-      }
-      ?></pre>
-    </div><?php
+      <br><?= $content ?>
+    </pre>
+    </div>
+    <?php
+  }
+
+  /**
+   * A nice dump function that takes as much parameters as we want to put.
+   * Calls the DumpMaster::dump that will use the 'dumpCallback' function.
+   *
+   * @param mixed $params
+   */
+  public static function dump(... $params) : void
+  {
+    parent::dump(... $params);
   }
 }

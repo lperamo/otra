@@ -275,25 +275,24 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param mixed $params
-   *
-   * @throws ReflectionException
+   * @param string $sourceFile
+   * @param int    $sourceLine
+   * @param string $content
    */
-  public static function dump(mixed $params)
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content)
   {
-    $secondTrace = debug_backtrace()[2];
-
-    $sourceFile = $secondTrace['file'];
-    $sourceLine = $secondTrace['line'];
-    require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    require_once CORE_PATH . 'tools/getSourceFromFile.php';
-
     echo CLI_BLUE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;
     echo getSourceFromFileCli($sourceFile, $sourceLine), PHP_EOL;
+    echo $content;
+  }
 
-    foreach ($params as $paramKey => $param)
-    {
-      self::analyseVar($paramKey, $param, self::OTRA_DUMP_INITIAL_DEPTH, is_array($param));
-    }
+  /**
+   * Calls the DumpMaster::dump that will use the 'dumpCallback' function.
+   *
+   * @param mixed $params
+   */
+  public static function dump(... $params)
+  {
+    parent::dump(... $params);
   }
 }

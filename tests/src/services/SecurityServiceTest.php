@@ -238,7 +238,7 @@ class SecurityServiceTest extends TestCase
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; script-src 'self' otra.tech ;style-src 'self' ;",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; script-src 'self' otra.tech ;style-src 'self' ;",
       $headers[0]
     );
   }
@@ -263,7 +263,7 @@ class SecurityServiceTest extends TestCase
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
     self::assertEquals(
-      "Content-Security-Policy: frame-ancestors 'none'; default-src 'self'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; script-src 'none' ;style-src 'none' ;",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; script-src 'none' ;style-src 'none' ;",
       $headers[0]
     );
   }
