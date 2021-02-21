@@ -13,12 +13,14 @@ class RoutesTest extends TestCase
 {
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
+    OTRA_CONSOLE_FILENAME = 'otra.php',
     TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
-    OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BASE_PATH . 'bundles/config/Routes.php';
+    OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BASE_PATH . 'bundles/config/Routes.php',
+    PHP_STATUS = '[PHP]';
 
   /**
    * @param string $parameter
@@ -95,13 +97,13 @@ class RoutesTest extends TestCase
     TasksManager::execute(
       $tasksClassMap,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+      [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_CREATE_HELLO_WORLD]
     );
 
     TasksManager::execute(
       $tasksClassMap,
       self::OTRA_TASK_GEN_ASSETS,
-      ['otra.php', self::OTRA_TASK_GEN_ASSETS]
+      [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_GEN_ASSETS]
     );
     ob_end_clean();
 
@@ -112,7 +114,7 @@ class RoutesTest extends TestCase
         'otra_refreshSQLLogs',
         '/dbg/refreshSQLLogs',
         '/otra/profilerController/refreshSQLLogsAction',
-        '[PHP]',
+        self::PHP_STATUS,
         ' No other resources. [a42f984c604230353390071b56f3ecf5476da82c]',
         true
       ) .
@@ -121,7 +123,7 @@ class RoutesTest extends TestCase
         'otra_clearSQLLogs',
         '/dbg/clearSQLLogs',
         '/otra/profilerController/clearSQLLogsAction',
-        '[PHP]',
+        self::PHP_STATUS,
         ' No other resources. [527dadb06d335d3fd1810f3a9f4772a137fc210e]',
         true
       ) .
@@ -130,7 +132,7 @@ class RoutesTest extends TestCase
         'otra_profiler',
         '/dbg',
         '/otra/profilerController/indexAction',
-        '[PHP]',
+        self::PHP_STATUS,
         ' No other resources. [0bebf28ae270fcd9d29136f5e48f28543f84b45b]',
         true
       ) .
@@ -139,7 +141,7 @@ class RoutesTest extends TestCase
         'otra_404',
         '/404',
         '/otra/errorsController/error404Action',
-        '[PHP]',
+        self::PHP_STATUS,
         ' No other resources. [3a95d6505bd70f30fe340609c9246709d6025fc5]',
         true
       ) .
@@ -158,7 +160,7 @@ class RoutesTest extends TestCase
     TasksManager::execute(
       $tasksClassMap,
       self::TASK_ROUTES,
-      ['otra.php', self::TASK_ROUTES]
+      [self::OTRA_CONSOLE_FILENAME, self::TASK_ROUTES]
     );
   }
 
@@ -183,7 +185,7 @@ class RoutesTest extends TestCase
     TasksManager::execute(
       require self::TASKS_CLASS_MAP,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::TASK_ROUTES]
+      [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_HELP, self::TASK_ROUTES]
     );
   }
 }

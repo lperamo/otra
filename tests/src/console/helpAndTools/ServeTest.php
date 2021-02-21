@@ -16,8 +16,7 @@ class ServeTest extends TestCase
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_SERVE = 'serve',
-    OTRA_TASK_HELP = 'help',
-    DISABLE_FUNCTIONS = 'disable_functions';
+    OTRA_TASK_HELP = 'help';
 
   protected function setUp(): void
   {

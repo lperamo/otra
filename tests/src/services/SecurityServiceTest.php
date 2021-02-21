@@ -19,15 +19,15 @@ class SecurityServiceTest extends TestCase
     ENV_DEV = 'dev',
     ENV_PROD = 'prod',
     ROUTE = 'route',
+    TEST_SECURITY_PATH = TEST_PATH . 'security/',
+    TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . self::ENV_DEV . '/',
+    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/',
     ROUTE_SECURITY_DEV_BASE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE,
     ROUTE_SECURITY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'Empty' . self::DOT_PHP,
     ROUTE_SECURITY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
     SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
-    TEST_SECURITY_PATH = TEST_PATH . 'security/',
-    TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . self::ENV_DEV . '/',
-    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/',
     ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php';
 
   // fixes issues like when AllConfig is not loaded while it should be
@@ -231,7 +231,7 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
-    addCspHeader('route', self::ROUTE_SECURITY_DEV_FILE_PATH);
+    addCspHeader(self::ROUTE, self::ROUTE_SECURITY_DEV_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();
@@ -256,7 +256,7 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
-    addCspHeader('route', self::ROUTE_SECURITY_PROD_FILE_PATH);
+    addCspHeader(self::ROUTE, self::ROUTE_SECURITY_PROD_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();
@@ -278,7 +278,7 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
-    addFeaturePoliciesHeader('route', self::ROUTE_SECURITY_DEV_FILE_PATH);
+    addFeaturePoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_DEV_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();
@@ -300,7 +300,7 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
-    addFeaturePoliciesHeader('route', self::ROUTE_SECURITY_PROD_FILE_PATH);
+    addFeaturePoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_PROD_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();

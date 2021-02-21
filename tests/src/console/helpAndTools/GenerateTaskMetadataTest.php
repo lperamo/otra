@@ -17,7 +17,8 @@ class GenerateTaskMetadataTest extends TestCase
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
-    OTRA_TASK_HELP = 'help';
+    OTRA_TASK_HELP = 'help',
+    METADATA_EXAMPLES_PATH = TEST_PATH . 'examples/generateTaskMetadata/';
 
   /**
    * @author Lionel Péramo
@@ -34,19 +35,19 @@ class GenerateTaskMetadataTest extends TestCase
     // testing
     self::assertFileExists(self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME);
     self::assertFileEquals(
-      TEST_PATH . 'examples/generateTaskMetadata/' . self::TASKS_HELP_FILENAME,
+      self::METADATA_EXAMPLES_PATH . self::TASKS_HELP_FILENAME,
       self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME
     );
 
     self::assertFileExists(self::PHP_CACHE_PATH  . self::TASKS_CLASSMAP_FILENAME);
     self::assertFileEquals(
-      TEST_PATH . 'examples/generateTaskMetadata/' . self::TASKS_CLASSMAP_FILENAME,
+      self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME,
       self::PHP_CACHE_PATH . self::TASKS_CLASSMAP_FILENAME
     );
 
     self::assertFileExists(CONSOLE_PATH . 'shellCompletions/' . self::SHELL_COMPLETIONS_FILENAME);
     self::assertFileEquals(
-      TEST_PATH . 'examples/generateTaskMetadata/' . self::SHELL_COMPLETIONS_FILENAME,
+      self::METADATA_EXAMPLES_PATH . self::SHELL_COMPLETIONS_FILENAME,
       CONSOLE_PATH . 'shellCompletions/' . self::SHELL_COMPLETIONS_FILENAME
     );
 

@@ -19,18 +19,18 @@ if (!function_exists('getRandomNonceForCSP'))
   ]);
   define('OTRA_STRLEN_SCRIPT_SRC', 10);
   define('CSP_ARRAY', [
-    'base-uri' => "'self'",
-    'form-action' => "'self'",
-    'frame-ancestors' => "'self'",
-    'default-src' => "'none'",
-    'font-src' => "'self'",
-    'img-src' => "'self'",
-    'object-src' => "'self'",
-    'connect-src' => "'self'",
-    'child-src' => "'self'",
-    'manifest-src' => "'self'",
-    'style-src' => "'self'",
-    'script-src' => "'self'"
+    'base-uri' => OTRA_LABEL_SECURITY_SELF,
+    'form-action' => OTRA_LABEL_SECURITY_SELF,
+    'frame-ancestors' => OTRA_LABEL_SECURITY_SELF,
+    'default-src' => OTRA_LABEL_SECURITY_NONE,
+    'font-src' => OTRA_LABEL_SECURITY_SELF,
+    'img-src' => OTRA_LABEL_SECURITY_SELF,
+    'object-src' => OTRA_LABEL_SECURITY_SELF,
+    'connect-src' => OTRA_LABEL_SECURITY_SELF,
+    'child-src' => OTRA_LABEL_SECURITY_SELF,
+    'manifest-src' => OTRA_LABEL_SECURITY_SELF,
+    OTRA_KEY_STYLE_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF,
+    OTRA_KEY_SCRIPT_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF
   ]);
   define('CONTENT_SECURITY_POLICY', [
     'dev' => CSP_ARRAY,
@@ -39,13 +39,13 @@ if (!function_exists('getRandomNonceForCSP'))
   define('FEATURE_POLICY', [
     'dev' =>
       [
-        'layout-animations' => "'self'",
-        'legacy-image-formats' => "'none'",
-        'oversized-images' => "'none'",
-        'sync-script' => "'none'",
-        'sync-xhr' => "'none'",
-        'unoptimized-images' => "'none'",
-        'unsized-media' => "'none'"
+        'layout-animations' => OTRA_LABEL_SECURITY_SELF,
+        'legacy-image-formats' => OTRA_LABEL_SECURITY_NONE,
+        'oversized-images' => OTRA_LABEL_SECURITY_NONE,
+        'sync-script' => OTRA_LABEL_SECURITY_NONE,
+        'sync-xhr' => OTRA_LABEL_SECURITY_NONE,
+        'unoptimized-images' => OTRA_LABEL_SECURITY_NONE,
+        'unsized-media' => OTRA_LABEL_SECURITY_NONE
       ],
     'prod' => []
   ]);
@@ -56,7 +56,7 @@ if (!function_exists('getRandomNonceForCSP'))
    * @return string
    * @throws Exception
    */
-  function getRandomNonceForCSP(string $directive = 'script-src') : string
+  function getRandomNonceForCSP(string $directive = OTRA_KEY_SCRIPT_SRC_DIRECTIVE) : string
   {
     $nonce = bin2hex(random_bytes(32));
     MasterController::$nonces[$directive][] = $nonce;
