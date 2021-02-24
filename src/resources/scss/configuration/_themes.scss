@@ -19,10 +19,15 @@ $themes: (
     'debug-bar--primary--color' : #444,
     'debug-bar--primary--text-shadow' : 0 0 3px #ccc,
     // ** debug bar - connection
-    'debug-bar--logged-color' : #afffae,
-    'debug-bar--logged-text-shadow' : 0 0 3px #7fcf7e,
+    'debug-bar--logged-color' : #7dff7a,
+    'debug-bar--logged-text-shadow' : .5px .5px .5px #444,
     'debug-bar--not-logged-color' : #d00,
     'debug-bar--not-logged-text-shadow' : 0 0 9px #fda,
+    // ** debug bar - cache
+    'debug-bar--cache--disabled--color' : #d00,
+    'debug-bar--cache--disabled--text-shadow' : 0 0 9px #fda,
+    'debug-bar--cache--enabled--color' : #7dff7a,
+    'debug-bar--cache--enabled--text-shadow' : .5px .5px .5px #444,
     // ** debug bar - buttons
     'debug-bar--button--background-image' : radial-gradient(#ff8, #fdc),
     'debug-bar--button--box-shadow' : 0 0 3px #bbb,
@@ -105,6 +110,11 @@ $themes: (
     'debug-bar--logged-text-shadow' : 0 0 3px #7fcf7e,
     'debug-bar--not-logged-color' : #fc7,
     'debug-bar--not-logged-text-shadow' : 0 0 9px #fda,
+    // ** debug bar - cache
+    'debug-bar--cache--disabled--color' : #d00,
+    'debug-bar--cache--disabled--text-shadow' : 0 0 9px #fda,
+    'debug-bar--cache--enabled--color' : #afffae,
+    'debug-bar--cache--enabled--text-shadow' : 0 0 3px #7fcf7e,
     // ** debug bar - buttons
     'debug-bar--button--background-image' : radial-gradient(#fd4, #f90),
     'debug-bar--button--box-shadow' : 0 0 3px #47a,

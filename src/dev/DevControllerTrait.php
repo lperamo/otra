@@ -11,8 +11,6 @@ use Exception;
 
 define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
 define('ROUTE_CHUNKS_MODULE_PARAM', 2);
-
-define('OTRA_LABEL_ENDING_TITLE_TAG', '/title>');
 define('OTRA_FILENAME_TRACE', 'trace');
 
 /**
@@ -20,6 +18,8 @@ define('OTRA_FILENAME_TRACE', 'trace');
  */
 trait DevControllerTrait
 {
+  private static bool $debugBarHasBeenAdded = false;
+
   /**
    * @param array $baseParams
    * @param array $getParams
@@ -28,21 +28,11 @@ trait DevControllerTrait
   {
     parent::__construct($baseParams, $getParams);
 
-    if (AllConfig::$debugConfig['autoLaunch'])
+    if (!isset(AllConfig::$debugConfig['autoLaunch']) || AllConfig::$debugConfig['autoLaunch'])
       require CORE_PATH . 'tools/debug/dump.php';
 
     Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, OTRA_FILENAME_TRACE);
   }
-
-  /**
-   * If the files are in cache, put them directly in $rendered
-   * @TODO Fix this function !!
-   *
-   * @param array $filesToCheck Files to check in cache
-   *
-   * @return bool True if ALL the files are in cache, false otherwise
-   */
-  public function checkCache(array $filesToCheck) : bool { return false; }
 
   /**
    * Renders a view. NB: Even if the cache is activated, the template can be not fresh !
@@ -57,35 +47,41 @@ trait DevControllerTrait
    * @return string parent::$template Content of the template
    *
    */
-  final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
+  final public function renderView(
+    string $file,
+    array $variables = [],
+    bool $ajax = false,
+    bool $viewPath = true) : string
   {
-    $otraRoute = str_contains($this->route, 'otra_');
+    [$templateFile, $otraRoute] = $this->getTemplateFile($file, $viewPath);
 
-    if ($otraRoute === false)
-      $templateFile = ($viewPath === true) ? $this->viewPath . $file : $file;
-    else
-      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
+    // We log : ajax state, action variables and the template file name into logs/trace.txt
+    Logger::logTo("\tAjax : " . ($ajax ? 'true' : 'false') . PHP_EOL .
+      "\tVariables :" . PHP_EOL .
+      print_r($variables, true) . PHP_EOL .
+      'File : ' . $templateFile,
+      OTRA_FILENAME_TRACE
+    );
 
-    Logger::logTo("\t" . 'Ajax : ' . ((true === $ajax) ? 'true' : 'false'), OTRA_FILENAME_TRACE);
-
-    if (false === file_exists($templateFile))
+    if (!file_exists($templateFile))
       throw new OtraException('File not found ! : ' . $templateFile);
 
-    if (true === $ajax)
-      self::$ajax = $ajax;
+    // If the cache was not used then ...
+    parent::handleCache($templateFile, $variables, $ajax, $this->route, $this->viewResourcePath);
 
-    // we use self::ajax in this function (it is why we cannot merge the two if with self::$ajax
-    parent::$template = $this->buildCachedFile($templateFile, $variables);
+    $debugConfigurationExists = property_exists(AllConfig::class, 'debug');
 
-    // If it is not an ajax route, debug is active (or not defined) and it is not an internal route, we show the debug bar
-    if (false === $ajax
-      && (
-        property_exists(AllConfig::class, 'debug') === false
-        || property_exists(AllConfig::class, 'debug') === true && AllConfig::$debug !== false
-      )
-      && $otraRoute === false
+    // If it is not an ajax route, debug is active (or not defined) and it is not an internal route,
+    // we show the debug bar
+    if (!$ajax &&
+      ($debugConfigurationExists && AllConfig::$debug || !$debugConfigurationExists)
+      && !$otraRoute
+      && !self::$debugBarHasBeenAdded
     )
+    {
       self::addDebugBar();
+      self::$debugBarHasBeenAdded = true;
+    }
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
     addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
@@ -94,37 +90,18 @@ trait DevControllerTrait
   }
 
   /**
-   * Parses the template file and updates parent::$template
-   *
-   * @param string      $templateFilename The file name
-   * @param array       $variables        Variables to pass to the template
-   * @param string|null $cachedFile       The cache file name version of the file (Unused in dev mode... TODO WE MUST FIX IT !
+   * @param string $route
+   * @param array  $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
-   * @return string
+   * @return array
    */
-  private function buildCachedFile(string $templateFilename, array $variables, string $cachedFile = null) : string
+  public static function getTemplateResources(string $route, array $viewResourcePath = []) : array
   {
-    // We log the action variables into logs/trace.txt
-    Logger::logTo(print_r($variables, true), OTRA_FILENAME_TRACE);
-
-    $content = MasterController::processFinalTemplate($templateFilename, $variables);
-
-    // We log the template file name into logs/trace.txt
-    Logger::logTo("\t" . 'File : ' . $templateFilename, OTRA_FILENAME_TRACE);
-
-    // /!\ We have to put these functions in this order to put the css before ! (in order to optimize the loading)
-    $content = false === self::$ajax
-      ? str_replace(
-        OTRA_LABEL_ENDING_TITLE_TAG,
-        OTRA_LABEL_ENDING_TITLE_TAG. self::addResource('css'),
-        $content . self::addResource('js'))
-      : self::addResource('css') . $content . self::addResource('js');
-
-    // We clear these variables in order to put css and js for other modules that will not be cached (in case there are css and js imported in the layout)
-    self::$javaScript = self::$css = [];
-
-    return $content;
+    return [
+      self::addResources('css', $route, $viewResourcePath),
+      self::addResources('js', $route, $viewResourcePath)
+    ];
   }
 
   /**
@@ -135,52 +112,61 @@ trait DevControllerTrait
   private function addDebugBar() : void
   {
     ob_start();
-    // send variables to the debug toolbar (if debug is active, cache don't)
+    // send variables to the debug toolbar
     require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
     parent::$template = (!str_contains(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
-      : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
+      : preg_replace(
+        '`(<body[^>]*>)`',
+        '$1' . ob_get_clean(),
+        parent::$template
+      );
 
     // suppress useless spaces
     parent::$template = str_replace(
-      OTRA_LABEL_ENDING_TITLE_TAG,
-      OTRA_LABEL_ENDING_TITLE_TAG. self::addDebugCSS(),
-      parent::$template . self::addDebugJS()
+      MasterController::OTRA_LABEL_ENDING_TITLE_TAG,
+      MasterController::OTRA_LABEL_ENDING_TITLE_TAG . self::addDebugCSS(),
+      str_replace(
+        '</body>',
+        self::addDebugJS() . '</body>',
+        parent::$template
+      )
     );
   }
 
   /**
    * Adds resources file to the template. Can be 'css' or 'js' resources.
    *
-   * @param string $assetType 'css' or 'js'
+   * @param string $assetType        'css' or 'js'
+   * @param string $route
+   * @param array  $viewResourcePath
    *
-   * @return string
    * @throws Exception
+   * @return string
    */
-  private function addResource(string $assetType) : string
+  private static function addResources(string $assetType, string $route, array $viewResourcePath) : string
   {
-    $route = Routes::$_;
+    $routes = Routes::$_;
 
     // The route does not exist ?!
-    if (false === array_key_exists($this->route, $route))
+    if (!isset($routes[$route]))
       return '';
 
-    $route = $route[$this->route];
+    $route = $routes[$route];
 
     // No resources section so no CSS/JS to load
-    if (false === array_key_exists('resources', $route))
+    if (!isset($route['resources']))
       return '';
 
     $resourceContent = '';
-
     $chunks = $route['chunks'];
 
     // Bundle and module informations do not exist on exceptions
-    if (array_key_exists(ROUTE_CHUNKS_BUNDLE_PARAM, $chunks) === false)
+    if (!isset($chunks[ROUTE_CHUNKS_BUNDLE_PARAM]))
       $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[ROUTE_CHUNKS_MODULE_PARAM] = '';
 
     $resources = $route['resources'];
-    $debLink = "\n" . ($assetType === 'js'
+    $debLink = PHP_EOL . ($assetType === 'js'
         ? '<script nonce="<<<TO_REPLACE>>>" src="'
         : '<link rel="stylesheet" nonce="<<<TO_REPLACE>>>" href="'
       );
@@ -189,36 +175,41 @@ trait DevControllerTrait
       ? '.js" ></script>'
       : '.css" />';
 
-    $i = 0;
+    $naturalPriorityIndex = 0;
     $unorderedArray = $orderedArray = [];
     $debLink2 = $debLink . '/bundles/';
 
     $resourcesType = [
       'bundle_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
       'module_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
-      '_' . $assetType => $debLink . $this->viewResourcePath[$assetType],
+      '_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
     ];
 
     // For each kind of JS file, we will looks for them in their respective folders
     foreach ($resourcesType as $resourceType => $resourceTypeInfo)
     {
-      if (true === array_key_exists($resourceType, $resources))
+      if (isset($resources[$resourceType]))
       {
         // We add a link to the CSS/JS array for each file we found
-        foreach($resources[$resourceType] as $key => &$file)
+        foreach($resources[$resourceType] as $forcedPriorityIndex => $resourceFile)
         {
-          $resourceTypeInfoActual = str_replace('<<<TO_REPLACE>>>',
-            getRandomNonceForCSP($assetType === 'css' ? 'style-src' : 'script-src'),
+          $resourceTypeInfoActual = str_replace(
+            '<<<TO_REPLACE>>>',
+            getRandomNonceForCSP(
+              $assetType === 'css'
+                ? OTRA_KEY_STYLE_SRC_DIRECTIVE
+                : OTRA_KEY_SCRIPT_SRC_DIRECTIVE
+            ),
             $resourceTypeInfo);
 
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
             $unorderedArray,
             $orderedArray,
-            $i,
-            $key,
-            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $file . $endLink
+            $naturalPriorityIndex,
+            $forcedPriorityIndex,
+            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile . $endLink
           );
         }
       }
@@ -226,9 +217,9 @@ trait DevControllerTrait
 
     $resourcesArray = self::calculateArray($unorderedArray, $orderedArray);
 
-    foreach ($resourcesArray as $file)
+    foreach ($resourcesArray as $resourceHtml)
     {
-      $resourceContent .= $file;
+      $resourceContent .= $resourceHtml;
     }
 
     if ($assetType === 'js')
@@ -236,10 +227,11 @@ trait DevControllerTrait
       foreach(self::$javaScript as $key => $javaScript)
       {
         // If the key don't give info on async and defer then put them automatically
-        if (true === is_int($key))
+        if (is_int($key))
           $key = '';
 
-        $resourceContent .= "\n" . '<script src="' . $javaScript . '.js" nonce="' . getRandomNonceForCSP() . '" ' . $key . '></script>';
+        $resourceContent .= PHP_EOL . '<script src="' . $javaScript . '.js" nonce="' . getRandomNonceForCSP() . '" ' .
+          $key . '></script>';
       }
     }
 
@@ -255,7 +247,10 @@ trait DevControllerTrait
   {
     $cssContent = '';
 
-    foreach(self::$css as $css) { $cssContent .= "\n" . '<link rel="stylesheet" href="' . $css . '.css" />'; }
+    foreach(self::$stylesheets as $stylesheet)
+    {
+      $cssContent .= "\n" . '<link rel="stylesheet" href="' . $stylesheet . '.css" />';
+    }
 
     return $cssContent;
   }
@@ -272,7 +267,7 @@ trait DevControllerTrait
 
     foreach(self::$javaScript as $javaScript)
     {
-      $jsContent .= "\n" . '<script nonce="' .
+      $jsContent .= PHP_EOL . parent::LABEL_SCRIPT_NONCE .
       getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
     }
 
@@ -291,9 +286,11 @@ trait DevControllerTrait
   {
     $scripts = [];
 
-    for($i = 0, $max = count($unorderedArray) + count($orderedArray); $i< $max; ++$i )
+    for($i = 0, $maximum = count($unorderedArray) + count($orderedArray);
+        $i< $maximum;
+        ++$i )
     {
-      if (true === in_array($i, array_keys($orderedArray)))
+      if (in_array($i, array_keys($orderedArray)))
       {
         $scripts[$i] = $orderedArray[$i];
         unset($orderedArray[$i]);
@@ -306,20 +303,28 @@ trait DevControllerTrait
 
   /**
    * Updates the CSS or JS scripts array in order to allow scripts generation order calculations.
+   * If we put things like '_js' => ['_5'=>'users']
+   * then the $key will be 5 and not the key that follows natural order.
    *
    * @param array      &$unorderedArray
    * @param array      &$orderedArray
-   * @param int        &$i
-   * @param int|string  $key
+   * @param int        &$naturalPriorityIndex Used if $forcedPriorityIndex is not a string
+   * @param int|string  $forcedPriorityIndex  Used only if it is a string
    * @param string      $code
    */
-  private static function updateScriptsArray(array &$unorderedArray, array &$orderedArray, int &$i, int|string $key, string $code)
+  private static function updateScriptsArray(
+    array &$unorderedArray,
+    array &$orderedArray,
+    int &$naturalPriorityIndex,
+    int|string $forcedPriorityIndex,
+    string $code)
   {
-    if (true === is_string($key))
-      $orderedArray[intval(substr($key,1))] = $code;
+    // A 'substr' is done to remove the '_' before the priority index
+    if (is_string($forcedPriorityIndex))
+      $orderedArray[intval(substr($forcedPriorityIndex,1))] = $code;
     else
-      $unorderedArray[$i] = $code;
+      $unorderedArray[$naturalPriorityIndex] = $code;
 
-    ++$i;
+    ++$naturalPriorityIndex;
   }
 }

@@ -5,6 +5,8 @@ use config\AllConfig;
 
 if (!function_exists('generateArrows'))
 {
+  define('OTRA_SLASH_SEPARATOR', '/');
+
   /**
    * @param string $inputType
    */
@@ -40,22 +42,47 @@ if (!function_exists('generateArrows'))
       }
     }
   }
+
+  /**
+   * @param string $content
+   * @param string $title
+   * @param string $separator
+   */
+  function generateDebugBarPart(string $content, string $title, string $separator = '|') : void
+  {
+    ?>
+    <span class="otra--help-cursor dbg-bar--primary" title="<?= $title ?>"><?= $content ?></span>
+    <span class="dbg-bar--primary dbg-bar--separator"><?= $separator ?></span>
+    <?php
+  }
 }
 $this::css(CORE_CSS_PATH . 'partials/devMode/devMode'); ?>
 <?php generateArrows(); ?>
 
 <div id="dbg-bar" class="dbg-bar">
-  <span class="dbg--help-cursor dbg-bar--primary" title="Route">'<?= $this->route ?>'</span>
-  <span class="dbg-bar--primary dbg-bar--separator">|</span>
-  <span class="otra--help-cursor dbg-bar--primary" title="Bundle"><?= $this->bundle ?></span><!--
-  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
-  --><span class="otra--help-cursor dbg-bar--primary" title="Module"><?= $this->module ?></span><!--
-  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
-  --><span class="otra--help-cursor dbg-bar--primary" title="Controller"><?= $this->controller ?></span><!--
-  --><span class="dbg-bar--primary dbg-bar--separator">/</span><!--
-  --><span class="otra--help-cursor dbg-bar--primary" title="Action"><?= $this->action ?></span><!--
-  --><span class="dbg-bar--primary dbg-bar--separator">|</span><!--
-  --><span class="otra--help-cursor dbg-bar--primary" title="Elapsed time"><?= round(microtime(true) - BEFORE, 3) ?>s</span><!--
+  <?php
+  generateDebugBarPart("'" . $this->route . "'", 'Route');
+  generateDebugBarPart($this->bundle, 'Bundle', OTRA_SLASH_SEPARATOR);
+  generateDebugBarPart($this->module, 'Module', OTRA_SLASH_SEPARATOR);
+  generateDebugBarPart($this->controller, 'Controller', OTRA_SLASH_SEPARATOR);
+  generateDebugBarPart($this->action, 'Action');
+  generateDebugBarPart(
+    round(microtime(true) - BEFORE, 3) . 's',
+    'Elapsed time'
+  );
+  ?>
+ <span class="otra--help-cursor dbg-bar--cache dbg-bar--block
+  dbg-bar--cache<?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? '--enabled' : '--disabled'?>"
+       title="Controller">Cache</span>
+  <div class="dbg-bar--block--container">
+    <p class="dbg-bar--block--container--element"><?= $this::$cacheUsed ?></p>
+    <p class="dbg-bar--block--container--element">Templates stored in memory :</p>
+    <?php foreach (array_keys($this::$rendered) as $template)
+    {
+      ?><p class="dbg-bar--block--container--element"><?= $template ?></p><?php
+    }
+    ?>
+  </div><!--
   --><span class="dbg-bar--primary dbg-bar--separator">|</span><?php
   if (isset($_SESSION['sid']))
   {

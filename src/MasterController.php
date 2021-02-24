@@ -7,20 +7,22 @@ declare(strict_types=1);
 namespace otra;
 
 use cache\php\BlocksSystem;
+use config\AllConfig;
 use JetBrains\PhpStorm\Pure;
 
 /**
  * @package otra
  */
-class MasterController
+abstract class MasterController
 {
   public static string $path;
   public ?string $routeSecurityFilePath = null;
-  public static array
-    $nonces = [
-      'script-src' => [],
-      'style-src' => []
-    ];
+  public static array $nonces = [
+    'script-src' => [],
+    'style-src' => []
+  ];
+
+  public static string $cacheUsed = 'Unused';
 
   public string $route,
     $url,
@@ -40,7 +42,7 @@ class MasterController
     $getParams = [];
 
   protected static array
-    $css = [],
+    $stylesheets = [],
     $javaScript = [],
     $rendered = [];
 
@@ -49,75 +51,77 @@ class MasterController
     $hasJsToLoad,
     $hasCssToLoad;
 
-  protected static string
-    $id,
-    $layout;
+  protected static string $layout;
 
   /* @var bool|string $template The actual template being processed */
-  protected static bool|string $template;
+  protected static bool|string|null $template;
 
-  // HTTP codes !
-  public const HTTP_CONTINUE = 100;
-  public const HTTP_SWITCHING_PROTOCOLS = 101;
-  public const HTTP_PROCESSING = 102;            // RFC2518
-  public const HTTP_OK = 200;
-  public const HTTP_CREATED = 201;
-  public const HTTP_ACCEPTED = 202;
-  public const HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
-  public const HTTP_NO_CONTENT = 204;
-  public const HTTP_RESET_CONTENT = 205;
-  public const HTTP_PARTIAL_CONTENT = 206;
-  public const HTTP_MULTI_STATUS = 207;          // RFC4918
-  public const HTTP_ALREADY_REPORTED = 208;      // RFC5842
-  public const HTTP_IM_USED = 226;               // RFC3229
-  public const HTTP_MULTIPLE_CHOICES = 300;
-  public const HTTP_MOVED_PERMANENTLY = 301;
-  public const HTTP_FOUND = 302;
-  public const HTTP_SEE_OTHER = 303;
-  public const HTTP_NOT_MODIFIED = 304;
-  public const HTTP_USE_PROXY = 305;
-  public const HTTP_RESERVED = 306;
-  public const HTTP_TEMPORARY_REDIRECT = 307;
-  public const HTTP_PERMANENTLY_REDIRECT = 308;  // RFC7238
-  public const HTTP_BAD_REQUEST = 400;
-  public const HTTP_UNAUTHORIZED = 401;
-  public const HTTP_PAYMENT_REQUIRED = 402;
-  public const HTTP_FORBIDDEN = 403;
-  public const HTTP_NOT_FOUND = 404;
-  public const HTTP_METHOD_NOT_ALLOWED = 405;
-  public const HTTP_NOT_ACCEPTABLE = 406;
-  public const HTTP_PROXY_AUTHENTICATION_REQUIRED = 407;
-  public const HTTP_REQUEST_TIMEOUT = 408;
-  public const HTTP_CONFLICT = 409;
-  public const HTTP_GONE = 410;
-  public const HTTP_LENGTH_REQUIRED = 411;
-  public const HTTP_PRECONDITION_FAILED = 412;
-  public const HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
-  public const HTTP_REQUEST_URI_TOO_LONG = 414;
-  public const HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
-  public const HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
-  public const HTTP_EXPECTATION_FAILED = 417;
-  public const HTTP_I_AM_A_TEAPOT = 418;                                               // RFC2324
-  public const HTTP_UNPROCESSABLE_ENTITY = 422;                                        // RFC4918
-  public const HTTP_LOCKED = 423;                                                      // RFC4918
-  public const HTTP_FAILED_DEPENDENCY = 424;                                           // RFC4918
-  public const HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL = 425;   // RFC2817
-  public const HTTP_UPGRADE_REQUIRED = 426;                                            // RFC2817
-  public const HTTP_PRECONDITION_REQUIRED = 428;                                       // RFC6585
-  public const HTTP_TOO_MANY_REQUESTS = 429;                                           // RFC6585
-  public const HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;                             // RFC6585
-  public const HTTP_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
-  public const HTTP_INTERNAL_SERVER_ERROR = 500;
-  public const HTTP_NOT_IMPLEMENTED = 501;
-  public const HTTP_BAD_GATEWAY = 502;
-  public const HTTP_SERVICE_UNAVAILABLE = 503;
-  public const HTTP_GATEWAY_TIMEOUT = 504;
-  public const HTTP_VERSION_NOT_SUPPORTED = 505;
-  public const HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL = 506;                        // RFC2295
-  public const HTTP_INSUFFICIENT_STORAGE = 507;                                        // RFC4918
-  public const HTTP_LOOP_DETECTED = 508;                                               // RFC5842
-  public const HTTP_NOT_EXTENDED = 510;                                                // RFC2774
-  public const HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;                             // RFC6585
+  // mainly HTTP codes !
+  public const
+    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+    HTTP_CONTINUE = 100,
+    HTTP_SWITCHING_PROTOCOLS = 101,
+    HTTP_PROCESSING = 102,            // RFC2518
+    HTTP_OK = 200,
+    HTTP_CREATED = 201,
+    HTTP_ACCEPTED = 202,
+    HTTP_NON_AUTHORITATIVE_INFORMATION = 203,
+    HTTP_NO_CONTENT = 204,
+    HTTP_RESET_CONTENT = 205,
+    HTTP_PARTIAL_CONTENT = 206,
+    HTTP_MULTI_STATUS = 207,          // RFC4918
+    HTTP_ALREADY_REPORTED = 208,      // RFC5842
+    HTTP_IM_USED = 226,               // RFC3229
+    HTTP_MULTIPLE_CHOICES = 300,
+    HTTP_MOVED_PERMANENTLY = 301,
+    HTTP_FOUND = 302,
+    HTTP_SEE_OTHER = 303,
+    HTTP_NOT_MODIFIED = 304,
+    HTTP_USE_PROXY = 305,
+    HTTP_RESERVED = 306,
+    HTTP_TEMPORARY_REDIRECT = 307,
+    HTTP_PERMANENTLY_REDIRECT = 308,  // RFC7238
+    HTTP_BAD_REQUEST = 400,
+    HTTP_UNAUTHORIZED = 401,
+    HTTP_PAYMENT_REQUIRED = 402,
+    HTTP_FORBIDDEN = 403,
+    HTTP_NOT_FOUND = 404,
+    HTTP_METHOD_NOT_ALLOWED = 405,
+    HTTP_NOT_ACCEPTABLE = 406,
+    HTTP_PROXY_AUTHENTICATION_REQUIRED = 407,
+    HTTP_REQUEST_TIMEOUT = 408,
+    HTTP_CONFLICT = 409,
+    HTTP_GONE = 410,
+    HTTP_LENGTH_REQUIRED = 411,
+    HTTP_PRECONDITION_FAILED = 412,
+    HTTP_REQUEST_ENTITY_TOO_LARGE = 413,
+    HTTP_REQUEST_URI_TOO_LONG = 414,
+    HTTP_UNSUPPORTED_MEDIA_TYPE = 415,
+    HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416,
+    HTTP_EXPECTATION_FAILED = 417,
+    HTTP_I_AM_A_TEAPOT = 418,                                               // RFC2324
+    HTTP_UNPROCESSABLE_ENTITY = 422,                                        // RFC4918
+    HTTP_LOCKED = 423,                                                      // RFC4918
+    HTTP_FAILED_DEPENDENCY = 424,                                           // RFC4918
+    HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL = 425,   // RFC2817
+    HTTP_UPGRADE_REQUIRED = 426,                                            // RFC2817
+    HTTP_PRECONDITION_REQUIRED = 428,                                       // RFC6585
+    HTTP_TOO_MANY_REQUESTS = 429,                                           // RFC6585
+    HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431,                             // RFC6585
+    HTTP_UNAVAILABLE_FOR_LEGAL_REASONS = 451,
+    HTTP_INTERNAL_SERVER_ERROR = 500,
+    HTTP_NOT_IMPLEMENTED = 501,
+    HTTP_BAD_GATEWAY = 502,
+    HTTP_SERVICE_UNAVAILABLE = 503,
+    HTTP_GATEWAY_TIMEOUT = 504,
+    HTTP_VERSION_NOT_SUPPORTED = 505,
+    HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL = 506,                        // RFC2295
+    HTTP_INSUFFICIENT_STORAGE = 507,                                        // RFC4918
+    HTTP_LOOP_DETECTED = 508,                                               // RFC5842
+    HTTP_NOT_EXTENDED = 510,                                                // RFC2774
+    HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;                             // RFC6585
+
+  protected const LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
    * @param array $baseParams [
@@ -130,9 +134,9 @@ class MasterController
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
-    if (false === isset($baseParams['controller']))
+    if (!isset($baseParams['controller']))
     {
-      if (isset($baseParams['route']) === true && $baseParams['route'] === 'otra_exception')
+      if (isset($baseParams['route']) && $baseParams['route'] === 'otra_exception')
       {
         // Stores the bundle, module, controller and action for later use
         [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($baseParams);
@@ -162,10 +166,7 @@ class MasterController
       $this->routeSecurityFilePath = null;
 
     $this->action = substr($baseParams['action'], 0, -6);
-
-    self::$id = $this->bundle . $this->module . $this->controller . $this->action;
     $this->getParams = $getParams;
-
     $mainPath = 'bundles/' . $this->bundle . '/' . $this->module . '/';
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
@@ -198,40 +199,43 @@ class MasterController
   }
 
   /**
-   * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE AllConfig::$cache TO TRUE !!
+   * If the file is in the cache and is "fresh" then gets it.
    *
    * @param string $cachedFile The cache file name version of the file
-   * @param bool   $exists     True if we know that the file exists.
    *
    * @throws \Exception
-   * @return string|bool $content The cached (and cleaned) content if exists, false otherwise
+   * @return bool|string $content The cached (and cleaned) content if exists, false otherwise
    */
-  protected static function getCachedFile(string $cachedFile, bool $exists = false)
+  protected static function getCachedFileContent(string $cachedFile) : bool|string
   {
-    if ((true === $exists || true === file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
-      return preg_replace(
-        [
-          '@(<script.*?nonce=")\w{64}@',
-          '@(<link.*?nonce=")\w{64}@',
-        ],
-        [
-          '${1}' . getRandomNonceForCSP(),
-          '${1}' . getRandomNonceForCSP('style-src')
-        ],
-        file_get_contents($cachedFile)
-      );
-
-    return false;
+    return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
+      ? false
+      : preg_replace(
+      [
+        '@(<script.*?nonce=")\w{64}@',
+        '@(<link.*?nonce=")\w{64}@',
+      ],
+      [
+        '${1}' . getRandomNonceForCSP(),
+        '${1}' . getRandomNonceForCSP('style-src')
+      ],
+      file_get_contents($cachedFile)
+    );
   }
 
   /**
    * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
-   * @param array|string $css The css file to add (Array of string)
+   * @param array|string $stylesheets The css file to add (Array of string)
    */
-  protected static function css(array|string $css = []) : void
+  protected static function css(array|string $stylesheets = []) : void
   {
-    array_splice(self::$css, count(self::$css), 0, (is_array($css)) ? $css : [$css]);
+    array_splice(
+      self::$stylesheets,
+      count(self::$stylesheets),
+      0,
+      is_array($stylesheets) ? $stylesheets : [$stylesheets]
+    );
   }
 
   /**
@@ -242,7 +246,7 @@ class MasterController
    */
   protected static function js(array|string $js = []) : void
   {
-    self::$javaScript = array_merge(self::$javaScript, (is_array($js)) ? $js : [$js]);
+    self::$javaScript = array_merge(self::$javaScript, is_array($js) ? $js : [$js]);
   }
 
   /**
@@ -263,6 +267,132 @@ class MasterController
     return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
       ? BlocksSystem::getTemplate()
       : '';
+  }
+
+  /**
+   * @param string $file     The file to render
+   * @param bool   $viewPath If true, we adds the usual view path before the $file variable.
+   *
+   * @return array [$templateFile, $otraRoute]
+   */
+  #[Pure] protected function getTemplateFile(string $file, bool $viewPath) : array
+  {
+    $otraRoute = str_contains($this->route, 'otra_');
+
+    if (!$otraRoute)
+      $templateFile = $viewPath ? $this->viewPath . $file : $file;
+    else
+      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
+
+    return [$templateFile, $otraRoute];
+  }
+
+  /**
+   * @param string $content     The main content of the template
+   * @param string $cssResource The css resources to link to the template
+   * @param string $jsResource  The js resources to link to the template
+   */
+  protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource)
+  {
+    // the 'preg_replace' suppress useless spaces
+    $content = preg_replace('/>\s+</', '><',
+      !self::$ajax
+        ? str_replace(
+        self::OTRA_LABEL_ENDING_TITLE_TAG,
+        self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
+        $content . $jsResource)
+        : $cssResource . $content . $jsResource
+    );
+  }
+
+  /**
+   * @param string $templateFile
+   * @param array  $variables
+   * @param bool   $ajax
+   * @param string $route
+   * @param array  $viewResourcePath Paths to CSS and JS files
+   *
+   * @throws \Exception
+   */
+  protected static function handleCache(
+    string $templateFile,
+    array $variables,
+    bool $ajax,
+    string $route,
+    array $viewResourcePath)
+  {
+    // Is the cache activated?
+    $cacheActivated = property_exists(AllConfig::class, 'cache') && AllConfig::$cache;
+
+    if ($cacheActivated)
+    {
+      // cacheUsed is used in order to simplify conditions and show a status on the debug bar
+      if (isset(self::$rendered[$templateFile]))
+        self::$cacheUsed = 'From memory';
+
+      if (self::$cacheUsed === 'From memory')
+        self::$template = self::$rendered[$templateFile];
+      else // otherwise if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
+      {
+        $cachedFile = self::getCacheFileName($route);
+        $cachedFileContent = self::getCachedFileContent($cachedFile);
+
+        // There is no .cache file for this template so we render it and store it in a file
+        if (false === $cachedFileContent)
+        {
+          // Will be used in 'addResourcesToTemplate' method via 'render' method
+          if ($ajax)
+            self::$ajax = $ajax;
+
+          self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
+
+          if (file_put_contents($cachedFile, self::$template) === false && $route !== 'otra_exception')
+            throw new OtraException('We cannot create/update the cache for the route \'' . $route . '\'.' .
+              PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
+        } else // otherwise we just get it
+        {
+          self::$template = $cachedFileContent;
+          self::$cacheUsed = 'From .cache file';
+        }
+
+        // We store the freshly rendered template into memory
+        self::$rendered[$templateFile] = self::$template;
+      }
+    } else // cache is not activated
+    {
+      // Will be used in 'addResourcesToTemplate' method via 'render' method
+      if ($ajax)
+        self::$ajax = $ajax;
+
+      self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
+    }
+  }
+
+  /**
+   * Parses the template file and updates parent::$template
+   *
+   * @param string      $templateFile The file name
+   * @param array       $variables    Variables to pass to the template
+   * @param string      $route
+   * @param array       $viewResourcePath
+   *
+   * @return string
+   */
+  protected static function render(
+    string $templateFile,
+    array $variables,
+    string $route,
+    array $viewResourcePath = []) : string
+  {
+    $content = MasterController::processFinalTemplate($templateFile, $variables);
+    [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
+    self::addResourcesToTemplate($content, $cssResource, $jsResource);
+
+    // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
+    // css and js imported in the layout)
+    self::$javaScript = self::$stylesheets = [];
+
+    return $content;
   }
 }
 
