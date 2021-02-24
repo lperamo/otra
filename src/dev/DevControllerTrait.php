@@ -18,6 +18,8 @@ define('OTRA_FILENAME_TRACE', 'trace');
  */
 trait DevControllerTrait
 {
+  private static bool $debugBarHasBeenAdded = false;
+
   /**
    * @param array $baseParams
    * @param array $getParams
@@ -67,15 +69,19 @@ trait DevControllerTrait
     // If the cache was not used then ...
     parent::handleCache($templateFile, $variables, $ajax, $this->route, $this->viewResourcePath);
 
-    $debugExists = property_exists(AllConfig::class, 'debug');
+    $debugConfigurationExists = property_exists(AllConfig::class, 'debug');
 
     // If it is not an ajax route, debug is active (or not defined) and it is not an internal route,
     // we show the debug bar
     if (!$ajax &&
-      ($debugExists && AllConfig::$debug || !$debugExists)
+      ($debugConfigurationExists && AllConfig::$debug || !$debugConfigurationExists)
       && !$otraRoute
+      && !self::$debugBarHasBeenAdded
     )
+    {
       self::addDebugBar();
+      self::$debugBarHasBeenAdded = true;
+    }
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
     addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
@@ -106,17 +112,25 @@ trait DevControllerTrait
   private function addDebugBar() : void
   {
     ob_start();
-    // send variables to the debug toolbar (if debug is active, cache don't)
+    // send variables to the debug toolbar
     require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
     parent::$template = (!str_contains(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
-      : preg_replace('`(<body[^>]*>)`', '$1' . ob_get_clean(), parent::$template);
+      : preg_replace(
+        '`(<body[^>]*>)`',
+        '$1' . ob_get_clean(),
+        parent::$template
+      );
 
     // suppress useless spaces
     parent::$template = str_replace(
       MasterController::OTRA_LABEL_ENDING_TITLE_TAG,
-      MasterController::OTRA_LABEL_ENDING_TITLE_TAG. self::addDebugCSS(),
-      parent::$template . self::addDebugJS()
+      MasterController::OTRA_LABEL_ENDING_TITLE_TAG . self::addDebugCSS(),
+      str_replace(
+        '</body>',
+        self::addDebugJS() . '</body>',
+        parent::$template
+      )
     );
   }
 

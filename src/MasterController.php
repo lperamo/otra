@@ -54,7 +54,7 @@ abstract class MasterController
   protected static string $layout;
 
   /* @var bool|string $template The actual template being processed */
-  protected static bool|string $template;
+  protected static bool|string|null $template;
 
   // mainly HTTP codes !
   public const
