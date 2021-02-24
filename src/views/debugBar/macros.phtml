@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+
+use config\AllConfig;
+
+if (!function_exists('generateArrows'))
+{
+  define('OTRA_SLASH_SEPARATOR', '/');
+
+  /**
+   * @param string $inputType
+   */
+  function generateArrows(string $inputType = 'radio') : void
+  {
+    $debugBarPosition = isset(AllConfig::$debugConfig) && isset(AllConfig::$debugConfig['barPosition'])
+      ? AllConfig::$debugConfig['barPosition']
+      : 'top';
+    $positions = [
+      '▲' => 'top',
+      '▶' => 'right',
+      '▼' => 'bottom',
+      '◀' => 'left'
+    ];
+
+    foreach($positions as $arrow => $position)
+    {
+      if ($inputType === 'radio')
+      {
+        ?>
+        <input type="radio" id="dbg-bar--toggle-<?= $position ?>" name="dbg-bar--position"
+               class="dbg-bar--toggle-direction dbg-bar--toggle-<?= $position ?>"<?php
+        if ($debugBarPosition === $position)
+          echo ' checked';
+        ?>>
+        <?php
+      } else
+      {
+        ?>
+        <label for="dbg-bar--toggle-<?= $position ?>" class="dbg-bar--toggle dbg-bar--toggle-<?= $position ?>"
+               title="Move the debug bar to the <?= $position ?>"><?= $arrow ?></label>
+        <?php
+      }
+    }
+  }
+
+  /**
+   * @param string $content
+   * @param string $title
+   * @param string $separator
+   */
+  function generateDebugBarPart(string $content, string $title, string $separator = '|') : void
+  {
+    ?>
+    <span class="otra--help-cursor dbg-bar--primary" title="<?= $title ?>"><?= $content ?></span>
+    <span class="dbg-bar--primary dbg-bar--separator"><?= $separator ?></span>
+    <?php
+  }
+}

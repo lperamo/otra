@@ -1,0 +1,12 @@
+<span class="otra--help-cursor dbg-bar--block" title="Route">@<?= $this->route ?></span>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">
+    Route : <b><?= $this->route ?></b>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Action : <b>bundles/<?=
+    $this->bundle . '/' . $this->module . '/controllers/' . $this->controller . '/' . $this->action . 'Action.php'
+    ?></b>
+  </p>
+</div>
+<span class="dbg-bar--primary dbg-bar--separator">|</span>

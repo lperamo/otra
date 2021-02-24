@@ -1,0 +1,19 @@
+<?php
+use config\AllConfig;
+?>
+<span class="otra--help-cursor dbg-bar--cache dbg-bar--block
+  dbg-bar--cache<?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? '--enabled' : '--disabled'?>"
+      title="Controller">Cache</span>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">Loaded from <b><?= $this::$cacheUsed ?></b>.</p>
+  <p class="dbg-bar--block--container--element">Templates stored in memory :</p>
+  <?php
+  $basePathLength = strlen(BASE_PATH);
+  foreach (array_keys($this::$rendered) as $template)
+  {
+    ?><p class="dbg-bar--block--container--element"><?=
+  str_contains($template, BASE_PATH) ? 'BASE_PATH + ' . substr($template, $basePathLength) : $template
+    ?></p><?php
+  }
+  ?>
+</div>

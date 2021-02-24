@@ -328,9 +328,9 @@ abstract class MasterController
     {
       // cacheUsed is used in order to simplify conditions and show a status on the debug bar
       if (isset(self::$rendered[$templateFile]))
-        self::$cacheUsed = 'From memory';
+        self::$cacheUsed = 'memory';
 
-      if (self::$cacheUsed === 'From memory')
+      if (self::$cacheUsed === 'memory')
         self::$template = self::$rendered[$templateFile];
       else // otherwise if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
       {
@@ -352,7 +352,7 @@ abstract class MasterController
         } else // otherwise we just get it
         {
           self::$template = $cachedFileContent;
-          self::$cacheUsed = 'From .cache file';
+          self::$cacheUsed = '.cache file';
         }
 
         // We store the freshly rendered template into memory

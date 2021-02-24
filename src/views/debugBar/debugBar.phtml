@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+require CORE_VIEWS_PATH . 'debugBar/macros.phtml';
+$this::css(CORE_CSS_PATH . 'partials/devMode/devMode');
+generateArrows();
+?>
+<div id="dbg-bar" class="dbg-bar">
+  <?php
+  require CORE_VIEWS_PATH . 'debugBar/otra.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/php.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/route.phtml';
+  generateDebugBarPart(
+    strval(http_response_code()),
+    'HTTP response code'
+  );
+  generateDebugBarPart(
+    '🕑 ' . round(microtime(true) - BEFORE, 3) * 1000 . 'ms',
+    'Elapsed time'
+  );
+  require CORE_VIEWS_PATH . 'debugBar/cache.phtml';
+  ?>
+ <span class="dbg-bar--primary dbg-bar--separator">|</span><?php
+  if (isset($_SESSION['sid']))
+  {
+     ?><span class="dbg-bar--logged otra--help-cursor" title="Is a user logged in?">Connected</span><?php
+  } else {
+    ?><span class="dbg-bar--not-logged otra--help-cursor" title="Is a user logged in?">Disconnected</span><?php
+  } ?>
+  <span class="dbg--bar--primary dbg-bar--separator">|</span>
+  <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
+  <?php generateArrows('label') ?>
+</div>
+<?php $this::js(CORE_JS_PATH . 'debug_bar');
+  $this::js(CORE_JS_PATH . 'lightbox');

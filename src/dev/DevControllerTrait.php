@@ -113,7 +113,7 @@ trait DevControllerTrait
   {
     ob_start();
     // send variables to the debug toolbar
-    require CORE_VIEWS_PATH . '/profiler/debugBar.phtml';
+    require CORE_VIEWS_PATH . '/debugBar/debugBar.phtml';
     parent::$template = (!str_contains(parent::$template, 'body'))
       ? ob_get_clean() . parent::$template
       : preg_replace(
