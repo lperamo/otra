@@ -71,10 +71,18 @@ $this::css(CORE_CSS_PATH . 'partials/devMode/devMode'); ?>
     'Elapsed time'
   );
   ?>
- <span class="otra--help-cursor dbg-bar--primary" title="Controller">Cache ⓘ</span><!--
-  --><span><?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? 'Enabled' : 'Disabled'?></span><!--
-  --><span class="dbg-bar--primary dbg-bar--separator">|</span><!--
-  --><span><?= $this::$cacheUsed ?></span><!--
+ <span class="otra--help-cursor dbg-bar--cache dbg-bar--block
+  dbg-bar--cache<?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? '--enabled' : '--disabled'?>"
+       title="Controller">Cache</span>
+  <div class="dbg-bar--block--container">
+    <p class="dbg-bar--block--container--element"><?= $this::$cacheUsed ?></p>
+    <p class="dbg-bar--block--container--element">Templates stored in memory :</p>
+    <?php foreach (array_keys($this::$rendered) as $template)
+    {
+      ?><p class="dbg-bar--block--container--element"><?= $template ?></p><?php
+    }
+    ?>
+  </div><!--
   --><span class="dbg-bar--primary dbg-bar--separator">|</span><?php
   if (isset($_SESSION['sid']))
   {

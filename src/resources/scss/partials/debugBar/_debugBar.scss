@@ -114,6 +114,70 @@
       margin-right : 5px;
     }
 
+    &block {
+      &--container {
+        @include theming.to-theme(
+          (
+            #{&} :
+            (
+              ('background-image', 'debug-bar--background-image'),
+              ('box-shadow', 'debug-bar--box-shadow'),
+              ('color', 'debug-bar--primary--color')
+            )
+          )
+        );
+
+        // appearance
+        border-radius : 5px 5px 0 0;
+
+        // positioning
+        bottom   : 38px;
+        left     : 0;
+        position : absolute;
+
+        // size
+        padding       : 10px;
+
+        // text
+        color : #444;
+
+        &--element {
+          margin-bottom : 0;
+          margin-top    : 0;
+        }
+      }
+
+      &:not(:hover) + div {
+        display : none;
+      }
+
+      &:hover + div {
+        display : block;
+      }
+    }
+
+    &cache {
+      // positioning
+      position : relative;
+
+      // text
+      font-size   : 16px;
+      line-height : 16px;
+
+      @include theming.to-theme(
+        (
+          #{&} + '--disabled' : (
+            ('color', 'debug-bar--cache--disabled--color'),
+            ('text-shadow', 'debug-bar--cache--disabled--text-shadow')
+          ),
+          #{&} + '--enabled' : (
+            ('color', 'debug-bar--cache--enabled--color'),
+            ('text-shadow', 'debug-bar--cache--enabled--text-shadow')
+          )
+        )
+      );
+    }
+
     &toggle {
       // size
       box-sizing : border-box;
