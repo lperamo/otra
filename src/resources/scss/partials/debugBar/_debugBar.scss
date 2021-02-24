@@ -106,6 +106,7 @@
     &off {
       // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
       font-size   : 16px;
+      line-height : 16px;
     }
 
     &separator {

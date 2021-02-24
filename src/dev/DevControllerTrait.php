@@ -67,17 +67,15 @@ trait DevControllerTrait
     // If the cache was not used then ...
     parent::handleCache($templateFile, $variables, $ajax, $this->route, $this->viewResourcePath);
 
-    if (!self::$cacheUsed)
-    {
-      $debugExists = property_exists(AllConfig::class, 'debug');
-      // If it is not an ajax route, debug is active (or not defined) and it is not an internal route,
-      // we show the debug bar
-      if (!$ajax &&
-        ($debugExists && AllConfig::$debug || !$debugExists)
-        && !$otraRoute
-      )
-        self::addDebugBar();
-    }
+    $debugExists = property_exists(AllConfig::class, 'debug');
+
+    // If it is not an ajax route, debug is active (or not defined) and it is not an internal route,
+    // we show the debug bar
+    if (!$ajax &&
+      ($debugExists && AllConfig::$debug || !$debugExists)
+      && !$otraRoute
+    )
+      self::addDebugBar();
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
     addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);

@@ -22,7 +22,7 @@ abstract class MasterController
     'style-src' => []
   ];
 
-  public static bool $cacheUsed = false;
+  public static string $cacheUsed = 'Unused';
 
   public string $route,
     $url,
@@ -199,30 +199,28 @@ abstract class MasterController
   }
 
   /**
-   * If the file is in the cache and is "fresh" then gets it. WE HAVE TO HAVE AllConfig::$cache TO TRUE !!
+   * If the file is in the cache and is "fresh" then gets it.
    *
    * @param string $cachedFile The cache file name version of the file
-   * @param bool   $exists     True if we know that the file exists.
    *
    * @throws \Exception
    * @return bool|string $content The cached (and cleaned) content if exists, false otherwise
    */
-  protected static function getCachedFile(string $cachedFile, bool $exists = false) : bool|string
+  protected static function getCachedFileContent(string $cachedFile) : bool|string
   {
-    if (($exists || file_exists($cachedFile)) && (filemtime($cachedFile) + CACHE_TIME) > time())
-      return preg_replace(
-        [
-          '@(<script.*?nonce=")\w{64}@',
-          '@(<link.*?nonce=")\w{64}@',
-        ],
-        [
-          '${1}' . getRandomNonceForCSP(),
-          '${1}' . getRandomNonceForCSP('style-src')
-        ],
-        file_get_contents($cachedFile)
-      );
-
-    return false;
+    return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
+      ? false
+      : preg_replace(
+      [
+        '@(<script.*?nonce=")\w{64}@',
+        '@(<link.*?nonce=")\w{64}@',
+      ],
+      [
+        '${1}' . getRandomNonceForCSP(),
+        '${1}' . getRandomNonceForCSP('style-src')
+      ],
+      file_get_contents($cachedFile)
+    );
   }
 
   /**
@@ -308,33 +306,6 @@ abstract class MasterController
   }
 
   /**
-   * If the files are in cache, put them directly in $rendered
-   *
-   * @param array $filesToCheck Files to check in cache
-   *
-   * @throws \Exception
-   * @return bool True if ALL the files are in cache, false otherwise
-   */
-  public function checkCache(array $filesToCheck) : bool
-  {
-    foreach($filesToCheck as $fileToCheck)
-    {
-      $templateFile = $this->viewPath . $fileToCheck;
-      $cachedFile = self::getCacheFileName($this->route);
-
-      if (!file_exists($cachedFile))
-        return false;
-
-      self::$rendered[$templateFile] = self::getCachedFile($cachedFile, true);
-
-      if (false === self::$rendered[$templateFile])
-        return false;
-    }
-
-    return true;
-  }
-
-  /**
    * @param string $templateFile
    * @param array  $variables
    * @param bool   $ajax
@@ -350,41 +321,67 @@ abstract class MasterController
     string $route,
     array $viewResourcePath)
   {
-    if ($ajax)
-      self::$ajax = $ajax;
+    // Is the cache activated?
+    $cacheActivated = property_exists(AllConfig::class, 'cache') && AllConfig::$cache;
 
-    self::$cacheUsed = isset(self::$rendered[$templateFile]);
-
-    // If we already have the file in 'cache memory' then we serve it
-    if (self::$cacheUsed)
-      self::$template = self::$rendered[$templateFile];
-    else // otherwise if we have the file in a 'cache file' then we serve it, otherwise we build the 'cache file'
+    if ($cacheActivated)
     {
-      $cachedFile = self::getCacheFileName($route);
-      self::$template = (false === self::getCachedFile($cachedFile)
-        || (property_exists(AllConfig::class, 'cache') && !AllConfig::$cache))
-        ? self::buildCachedFile($templateFile, $variables, $route, $cachedFile, $viewResourcePath)
-        : self::getCachedFile($cachedFile, true);
+      // cacheUsed is used in order to simplify conditions and show a status on the debug bar
+      if (isset(self::$rendered[$templateFile]))
+        self::$cacheUsed = 'From memory';
+
+      if (self::$cacheUsed === 'From memory')
+        self::$template = self::$rendered[$templateFile];
+      else // otherwise if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
+      {
+        $cachedFile = self::getCacheFileName($route);
+        $cachedFileContent = self::getCachedFileContent($cachedFile);
+
+        // There is no .cache file for this template so we render it and store it in a file
+        if (false === $cachedFileContent)
+        {
+          // Will be used in 'addResourcesToTemplate' method via 'render' method
+          if ($ajax)
+            self::$ajax = $ajax;
+
+          self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
+
+          if (file_put_contents($cachedFile, self::$template) === false && $route !== 'otra_exception')
+            throw new OtraException('We cannot create/update the cache for the route \'' . $route . '\'.' .
+              PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
+        } else // otherwise we just get it
+        {
+          self::$template = $cachedFileContent;
+          self::$cacheUsed = 'From .cache file';
+        }
+
+        // We store the freshly rendered template into memory
+        self::$rendered[$templateFile] = self::$template;
+      }
+    } else // cache is not activated
+    {
+      // Will be used in 'addResourcesToTemplate' method via 'render' method
+      if ($ajax)
+        self::$ajax = $ajax;
+
+      self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
     }
   }
 
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string      $templateFile     The file name
-   * @param array       $variables        Variables to pass to the template
+   * @param string      $templateFile The file name
+   * @param array       $variables    Variables to pass to the template
    * @param string      $route
-   * @param string|null $cachedFile       The cache file name version of the file
    * @param array       $viewResourcePath
    *
-   * @throws Exception|OtraException
    * @return string
    */
-  protected static function buildCachedFile(
+  protected static function render(
     string $templateFile,
     array $variables,
     string $route,
-    string $cachedFile = null,
     array $viewResourcePath = []) : string
   {
     $content = MasterController::processFinalTemplate($templateFile, $variables);
@@ -394,18 +391,6 @@ abstract class MasterController
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
     self::$javaScript = self::$stylesheets = [];
-
-    if ('cli' === PHP_SAPI)
-      return $content;
-
-    // If the cached filename is specified and if the cache is activated, we create a cached file.
-    if (null !== $cachedFile
-      && (!property_exists(AllConfig::class, 'cache') || AllConfig::$cache))
-    {
-      if (file_put_contents($cachedFile, $content) === false && $route !== 'otra_exception')
-        throw new OtraException('We cannot create/update the cache for the route \'' . $route . '\'.' .
-          PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
-    }
 
     return $content;
   }
