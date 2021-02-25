@@ -3,8 +3,9 @@
   configVersion="3"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="https://www.phpdoc.org"
-  xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd"
+  xsi:noNamespaceSchemaLocation="phpdoc.xsd"
 >
+  <title>OTRA</title>
   <paths>
     <output>phpdoc/api</output>
     <cache>phpdoc/cache</cache>
@@ -14,6 +15,22 @@
       <source dsn=".">
         <path>src</path>
       </source>
+      <ignore hidden="true" symlinks="true">
+        <path>bundles/**/*</path>
+        <path>phpdoc/**/*</path>
+        <path>tests/**/*</path>
+        <path>vendor/**/*</path>
+      </ignore>
+      <extensions>
+        <extension>php</extension>
+      </extensions>
+      <default-package-name>OTRA</default-package-name>
     </api>
+    <guide>
+      <source dsn=".">
+        <path>doc</path>
+      </source>
+      <output>guide</output>
+    </guide>
   </version>
 </phpdocumentor>
