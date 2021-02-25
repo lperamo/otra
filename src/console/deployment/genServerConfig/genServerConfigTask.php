@@ -1,7 +1,10 @@
 <?php
-/** Server configuration generation task
+/**
+ * Server configuration generation task
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 namespace otra\console;
 

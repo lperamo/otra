@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\tools\debug
+ */
+
 use config\AllConfig;
 
 if (!function_exists('dump'))

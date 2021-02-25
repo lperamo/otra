@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 const BUNDLE_MASK_QUESTION_BEGINNING = 'Do you want to associate ';
 /** @var string $bundleName */
 define('BUNDLE_MASK_QUESTION_END', ' with that bundle ' . END_COLOR . CLI_LIGHT_CYAN . $bundleName . CLI_YELLOW . ' (n or y)?');

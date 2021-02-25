@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 define('BLUE_ON_LIGHT_BLACK', CLI_BLUE . CLI_BGD_LIGHT_BLACK);
 define('LIGHTBLUE_ON_LIGHT_BLACK', CLI_LIGHT_BLUE . CLI_BGD_LIGHT_BLACK);
 define('END_PADDING', 21);

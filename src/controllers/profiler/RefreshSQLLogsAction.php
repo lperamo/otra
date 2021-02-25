@@ -1,15 +1,11 @@
 <?php
 declare(strict_types=1);
-/**
- * Core - Profiler - RefreshSQLLogs
- *
- * @author Lionel Péramo */
-
 namespace otra\controllers\profiler;
 
 use otra\{Controller, services\ProfilerService};
 
 /**
+ * @author Lionel Péramo
  * @package otra\controllers\profiler
  */
 class RefreshSQLLogsAction extends Controller

@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 if (!defined('SPACE_INDENT_2'))
   define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
 

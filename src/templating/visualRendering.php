@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\templating
+ */
+
 /* Light templating engine */
 use cache\php\BlocksSystem;
 use JetBrains\PhpStorm\NoReturn;

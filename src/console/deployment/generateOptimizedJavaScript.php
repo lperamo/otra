@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
+
 use otra\OtraException;
 use function otra\console\returnLegiblePath;
 use const otra\console\GOOGLE_CLOSURE_COMPILER_VERBOSITY;

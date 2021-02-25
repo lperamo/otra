@@ -5,7 +5,8 @@ namespace cache\php {
   /**
    * Light templating engine "interface".
    *
-   * @package cache\php
+   * @author Lionel Péramo
+   * @package otra\templating
    */
   abstract class BlocksSystem {
     public const

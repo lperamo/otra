@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 
 define('OTRA_BUNDLES_MAIN_FOLDER_NAME', 'bundles/');

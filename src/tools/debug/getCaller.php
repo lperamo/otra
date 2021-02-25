@@ -2,6 +2,11 @@
 declare(strict_types=1);
 
 /**
+ * @author Lionel Péramo
+ * @package otra\tools\debug
+ */
+
+/**
  * Returns file and line of the caller for debugging purposes.
  *
  * @return string

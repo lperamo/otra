@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 define('HASH_ARG_BLOWFISH_ROUNDS', 2);
 $argv[HASH_ARG_BLOWFISH_ROUNDS] = isset($argv[HASH_ARG_BLOWFISH_ROUNDS]) === true ? $argv[HASH_ARG_BLOWFISH_ROUNDS] : 7;
 $blowfishSalt = '';

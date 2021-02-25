@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Profiler service
  *
  * @author Lionel Péramo
+ * @package otra\services
  */
 
 namespace otra\services;

@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
+
 if (!defined('CHUNKS_KEY_LENGTH'))
 {
   define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["

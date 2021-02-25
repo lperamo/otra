@@ -11,6 +11,7 @@ use config\AllConfig;
 use JetBrains\PhpStorm\Pure;
 
 /**
+ * @author Lionel Péramo
  * @package otra
  */
 abstract class MasterController

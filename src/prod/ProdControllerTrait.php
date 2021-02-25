@@ -1,19 +1,18 @@
 <?php
-/** A classic MVC production controller class
- *
- * @author Lionel Péramo
- */
 declare(strict_types=1);
 namespace otra;
 
 use Exception;
 
-/**
- * @package otra
+/** A classic MVC production controller class
+ *
+ * @author Lionel Péramo
+ * @package otra\controllers
  */
 trait ProdControllerTrait
 {
-  /** Renders a view. NB: Even is cache is activated, the template can be not fresh !
+  /**
+   * Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
    * @param string $file      The file to render
    * @param array  $variables Variables to pass

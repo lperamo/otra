@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
+
 if (function_exists('t') === false)
 {
   // Will be the future translation feature

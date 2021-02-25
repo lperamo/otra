@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\tools\debug
+ */
+
 namespace otra;
 
 use config\AllConfig;

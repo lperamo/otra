@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 define('CRYPT_ARG_PASSWORD', 2);
 define('CRYPT_ARG_ITERATIONS', 3);
 

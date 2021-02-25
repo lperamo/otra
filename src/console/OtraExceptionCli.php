@@ -1,8 +1,4 @@
 <?php
-/**
- * Customized console exception class
- *
- * @author Lionel Péramo */
 declare(strict_types=1);
 namespace otra\console;
 
@@ -11,6 +7,8 @@ use otra\OtraException;
 
 /**
  * Shows an exception 'colorful' display for command line commands.
+ *
+ * @author Lionel Péramo
  */
 class OtraExceptionCli extends \Exception
 {

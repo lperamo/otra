@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 // loading functions, not executing anything
 require CONSOLE_PATH . 'tools.php';
 require CONSOLE_PATH . 'architecture/createModule/createModule.php';

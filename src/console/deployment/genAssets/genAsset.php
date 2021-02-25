@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
+
 use otra\Router;
 
 define('ARG_CACHE_PATH', $argv[1]);
