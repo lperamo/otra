@@ -1,7 +1,10 @@
 <?php
-/** Production deployment task
+/**
+ * Production deployment task
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 namespace otra\console;
 

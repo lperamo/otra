@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 const ARG_BUNDLE_NAME = 2,
   ARG_MODULE_NAME = 3,
   ARG_CONTROLLER_NAME = 4,

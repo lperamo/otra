@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 require CORE_PATH . 'tools/cli.php';
 
 define('PARAMETER_PORT', 2);

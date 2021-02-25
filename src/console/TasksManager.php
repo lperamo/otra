@@ -4,7 +4,10 @@ namespace otra\console;
 
 use otra\OtraException;
 
-/** @author Lionel Péramo */
+/**
+ * @author Lionel Péramo
+ * @package otra
+ */
 abstract class TasksManager
 {
   public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,

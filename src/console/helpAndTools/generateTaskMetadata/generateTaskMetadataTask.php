@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 // If we do not come from the 'otra' command...
 use otra\console\TasksManager;
 

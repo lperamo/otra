@@ -2,6 +2,11 @@
 declare(strict_types=1);
 
 /**
+ * @author Lionel Péramo
+ * @package otra\tools\debug
+ */
+
+/**
  * Slightly modified version of the original.
  * No verification of the fileDescriptor, we must check that before.
  *

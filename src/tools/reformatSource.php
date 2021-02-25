@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
+
 /**
  * Puts <br> between markups in order to add legibility to a code in debug mode and convert other markups in html
  * entities.

@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
+
 use JetBrains\PhpStorm\ArrayShape;
 
 // If we come from the deploy task, those functions may already have been defined.

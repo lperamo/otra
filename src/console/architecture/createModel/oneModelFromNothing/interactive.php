@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 /** @var string $bundleName */
 /** @var string $bundlePath */
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';

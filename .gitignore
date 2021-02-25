@@ -2,7 +2,7 @@
 /cache
 /cert
 /config
-/logs
+/phpdoc/
 /sassdoc
 /vendor
 /web
@@ -21,3 +21,4 @@
 /tsconfig*
 /tmp/
 /.scannerwork/
+

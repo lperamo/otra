@@ -2,6 +2,11 @@
 declare(strict_types=1);
 
 /**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
+
+/**
  * Deletes a tree recursively.
  *
  * @param string $dir

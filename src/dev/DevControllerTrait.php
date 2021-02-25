@@ -1,8 +1,4 @@
 <?php
-/**
- * A classic MVC development controller class
- *
- * @author Lionel Péramo */
 declare(strict_types=1);
 namespace otra;
 
@@ -14,7 +10,10 @@ define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 define('OTRA_FILENAME_TRACE', 'trace');
 
 /**
- * @package otra
+ * A classic MVC development controller class
+ *
+ * @author Lionel Péramo
+ * @package otra\controllers
  */
 trait DevControllerTrait
 {

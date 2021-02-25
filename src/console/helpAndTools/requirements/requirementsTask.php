@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\helpAndTools
+ */
+
 echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 

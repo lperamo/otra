@@ -3,6 +3,7 @@
  * Framework database functions
  *
  * @author Lionel Péramo
+ * @package otra\console\database
  */
 declare(strict_types=1);
 

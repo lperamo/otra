@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 /** @var string $bundlesPath */
 /** @var string $missingBundleErrorMessage */
 if (!isset($argv[ARG_BUNDLE_NAME]))

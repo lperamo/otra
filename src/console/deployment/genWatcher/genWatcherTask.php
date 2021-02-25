@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
+
 namespace otra\console;
 
 require BASE_PATH . 'config/Routes.php';

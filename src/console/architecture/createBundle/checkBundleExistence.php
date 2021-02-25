@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 namespace otra\console;
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);

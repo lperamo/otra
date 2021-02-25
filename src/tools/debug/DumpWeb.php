@@ -8,6 +8,7 @@ use ReflectionClass, ReflectionException, ReflectionProperty;
 /**
  * Class that handles the dump mechanism, on web and CLI side.
  *
+ * @author Lionel Péramo
  * @package otra
  */
 abstract class DumpWeb extends DumpMaster {

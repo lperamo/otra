@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 if (file_exists(BASE_PATH . 'bundles/HelloWorld'))
 {
   echo CLI_YELLOW, 'The bundle ', CLI_CYAN, 'HelloWorld', CLI_YELLOW, ' already exists.', END_COLOR, PHP_EOL;

@@ -9,6 +9,7 @@ use config\AllConfig;
  * A classic MVC model class
  *
  * @author Lionel Péramo
+ * @package otra
  */
 abstract class Model
 {

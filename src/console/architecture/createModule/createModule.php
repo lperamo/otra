@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
 if (function_exists('createModule') === false)

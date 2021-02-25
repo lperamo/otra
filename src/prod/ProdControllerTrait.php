@@ -1,15 +1,13 @@
 <?php
-/** A classic MVC production controller class
- *
- * @author Lionel Péramo
- */
 declare(strict_types=1);
 namespace otra;
 
 use Exception;
 
-/**
- * @package otra
+/** A classic MVC production controller class
+ *
+ * @author Lionel Péramo
+ * @package otra\controllers
  */
 trait ProdControllerTrait
 {

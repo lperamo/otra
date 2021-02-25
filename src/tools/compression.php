@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
+
 /**
  * GZIPs a file on disk. Based on function by Kioob at:
  * http://www.php.net/manual/en/function.gzwrite.php#34955

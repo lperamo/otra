@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace otra;
 use config\AllConfig;
 use ReflectionClass;
@@ -7,7 +8,8 @@ use ReflectionClass;
 /**
  * Class that provides things for both web and CLI sides of the dump function.
  *
- * @package otra
+ * @author Lionel Péramo
+ * @package otra\tools\debug
  */
 abstract class DumpMaster {
   protected const

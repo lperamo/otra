@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Class mapping generation task
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
 $dirs = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',

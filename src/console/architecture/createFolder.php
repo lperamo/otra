@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 if (function_exists('createFolder') === false)
 {
   /**

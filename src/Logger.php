@@ -5,6 +5,7 @@ namespace otra;
 
 /** Simple logger class
  *
+ * @package otra
  * @author Lionel Péramo
  */
 

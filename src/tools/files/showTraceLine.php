@@ -2,6 +2,11 @@
 declare(strict_types=1);
 
 /**
+ * @author Lionel Péramo
+ * @package otra\tools\files
+ */
+
+/**
  * @param array $contextItem
  */
 function showTraceLine(array $contextItem)

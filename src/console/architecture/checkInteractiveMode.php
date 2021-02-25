@@ -1,5 +1,11 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * @author Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 $interactive = 'true';
 
 if (array_key_exists(ARG_INTERACTIVE, $argv) === true )
