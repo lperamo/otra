@@ -3,8 +3,9 @@
   configVersion="3"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="https://www.phpdoc.org"
-  xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd"
+  xsi:noNamespaceSchemaLocation="phpdoc.xsd"
 >
+  <title>OTRA</title>
   <paths>
     <output>phpdoc/api</output>
     <cache>phpdoc/cache</cache>
