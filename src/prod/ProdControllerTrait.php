@@ -11,7 +11,8 @@ use Exception;
  */
 trait ProdControllerTrait
 {
-  /** Renders a view. NB: Even is cache is activated, the template can be not fresh !
+  /**
+   * Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
    * @param string $file      The file to render
    * @param array  $variables Variables to pass

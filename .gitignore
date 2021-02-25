@@ -2,7 +2,6 @@
 /cache
 /cert
 /config
-/.phpdoc/
 /phpdoc/
 /sassdoc
 /vendor
