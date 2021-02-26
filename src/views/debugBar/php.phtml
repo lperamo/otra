@@ -14,7 +14,7 @@ $phpVersion = phpversion();
     Modules : <?php
     $extensions = '';
     $extensionsArray = get_loaded_extensions();
-    sort($extensionsArray);
+    natcasesort($extensionsArray);
 
     foreach ($extensionsArray as $phpExtension)
     {
