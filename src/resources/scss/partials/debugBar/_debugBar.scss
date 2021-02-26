@@ -19,6 +19,8 @@
 // initializing components
 @include theming.init-themes($themes);
 
+$debug-bar--size : 38px;
+
 .otra--help-cursor {
   cursor : help;
 }
@@ -115,6 +117,41 @@
     }
 
     &block {
+      @at-root .dbg-bar--toggle- {
+        &bottom,
+        &left {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+            border-radius : 5px 5px 0 0;
+            bottom : $debug-bar--size;
+          }
+        }
+
+        &top,
+        &right {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+            border-radius : 0 0 5px 5px;
+            top : $debug-bar--size;
+          }
+        }
+
+        &left:checked ~ .dbg-bar > .dbg-bar--block--container {
+          bottom           : $debug-bar--size;
+          left             : 0;
+          right            : auto;
+          top              : -100vh;
+          transform        : rotate(180deg);
+          writing-mode: vertical-rl;
+        }
+
+        &right:checked ~ .dbg-bar > .dbg-bar--block--container {
+          bottom       : $debug-bar--size;
+          left         : auto;
+          right        : 0;
+          top          : -100vh;
+          writing-mode : tb-rl;
+        }
+      }
+
       &--container {
         @include theming.to-theme(
           (
@@ -127,16 +164,12 @@
           )
         );
 
-        // appearance
-        border-radius : 5px 5px 0 0;
-
         // positioning
-        bottom   : 38px;
         left     : 0;
         position : absolute;
 
         // size
-        padding       : 10px;
+        padding : 10px;
 
         // text
         color : #444;
@@ -229,7 +262,7 @@
       &-right {
         &:checked ~ #dbg-bar {
           transform-origin : right;
-          transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
+          transform        : rotateZ(-90deg) translate(#{$debug-bar--size/2}, calc(100vw - 102.1vh));
           width            : 100vh;
 
           & > .dbg-bar--toggle {
@@ -241,14 +274,14 @@
       &-bottom {
         &:checked ~ #dbg-bar {
           transform-origin : top left;
-          transform        : translate(0, calc(100vh - 38px));
+          transform        : translate(0, calc(100vh - #{$debug-bar--size}));
         }
       }
 
       &-left {
         &:checked + #dbg-bar {
           transform-origin : left;
-          transform        : rotateZ(90deg) translate(-19px, -19px);
+          transform        : rotateZ(90deg) translate(-#{$debug-bar--size/2}, -#{$debug-bar--size/2});
           width            : 100vh;
 
           & > .dbg-bar--toggle {
