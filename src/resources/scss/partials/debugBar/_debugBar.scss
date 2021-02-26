@@ -236,11 +236,13 @@ $debug-bar--size : 38px;
         }
       }
 
-      &:not(:focus) + div {
+      &:not(:focus) + div:not(:focus):not(:hover) {
         display : none;
       }
 
-      &:focus + div {
+      &:focus + div,
+      & + div:focus,
+      & + div:hover {
         display : block;
       }
     }
