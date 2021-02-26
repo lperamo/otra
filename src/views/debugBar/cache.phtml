@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 use config\AllConfig;
+// Value used also in CORE_PATH . 'debugBar/templateMotor.phtml'
+$cacheEnabled = (!isset(AllConfig::$cache) || AllConfig::$cache);
 ?>
 <button type="button" class="otra--help-cursor dbg-bar--cache dbg-bar--block dbg-bar--block--border-left
-  dbg-bar--cache<?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? '--enabled' : '--disabled'?>"
+  dbg-bar--cache<?= $cacheEnabled ? '--enabled' : '--disabled'?>"
 title="Controller">Cache</button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">Loaded from <b><?= $this::$cacheUsed ?></b>.</p>

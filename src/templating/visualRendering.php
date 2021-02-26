@@ -49,9 +49,8 @@ if (function_exists('showBlocksVisually') === false)
   /**
    * Shows the template blocks as seen by the OTRA template engine.
    */
-  #[NoReturn] function showBlocksVisually() : void
+  function showBlocksVisually() : void
   {
-    ob_clean();
     ?>
     <link rel="stylesheet" href="<?= CORE_CSS_PATH . 'pages/templateMotor.css' ?>"/>
     <h1 class="otra--template-rendering--title">Template rendering</h1>
@@ -100,6 +99,5 @@ if (function_exists('showBlocksVisually') === false)
         ?>
       </div><?php
     }
-    die;
   }
 }

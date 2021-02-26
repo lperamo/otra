@@ -230,6 +230,11 @@ $debug-bar--size : 38px;
         // text
         color : #444;
 
+        &-motor-template {
+          overflow : auto;
+          top      : calc(-100vh + #{$debug-bar--size});
+        }
+
         &--element {
           margin-bottom : 0;
           margin-top    : 0;

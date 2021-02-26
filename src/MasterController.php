@@ -265,6 +265,16 @@ abstract class MasterController
     ob_start();
     require $templateFilename;
 
+    // Puts the motor template visualization system into session if we are in a development environment
+    if ($_SERVER[APP_ENV] === 'dev')
+    {
+      ob_start();
+      require CORE_PATH . 'templating/visualRendering.php';
+      ob_clean();
+      showBlocksVisually();
+      $_SESSION['templateVisualization'] = ob_get_clean();
+    }
+
     // If the template motor is loaded then we use it
     return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
       ? BlocksSystem::getTemplate()
