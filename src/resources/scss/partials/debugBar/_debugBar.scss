@@ -230,9 +230,24 @@ $debug-bar--size : 38px;
         // text
         color : #444;
 
+        @at-root .dbg-bar--toggle- {
+          &bottom:checked,
+          &left:checked {
+            & ~ .dbg-bar > .dbg-bar--block:focus + .dbg-bar--block--container-motor-template {
+              top : calc(-100vh + #{$debug-bar--size});
+            }
+          }
+
+          &top:checked,
+          &right:checked {
+            & ~ .dbg-bar > .dbg-bar--block:focus + .dbg-bar--block--container-motor-template {
+              bottom : -100vh;
+            }
+          }
+        }
+
         &-motor-template {
           overflow : auto;
-          top      : calc(-100vh + #{$debug-bar--size});
         }
 
         &--element {
