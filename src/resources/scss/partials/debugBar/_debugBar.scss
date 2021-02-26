@@ -135,12 +135,24 @@ $debug-bar--size : 38px;
         }
 
         &left:checked ~ .dbg-bar > .dbg-bar--block--container {
-          bottom           : $debug-bar--size;
-          left             : 0;
-          right            : auto;
-          top              : -100vh;
-          transform        : rotate(180deg);
-          writing-mode: vertical-rl;
+          bottom       : $debug-bar--size;
+          left         : 0;
+          right        : auto;
+          top          : -100vh;
+          transform    : rotate(180deg);
+          writing-mode : vertical-rl;
+
+          // handles margins of the info boxes when the debug bar is on left/right sides
+          @at-root .dbg-bar--toggle-left,
+          .dbg-bar--toggle-right {
+            &:checked ~ .dbg-bar .dbg-bar--block--container--element {
+              margin-right : 0;
+
+              &:last-child {
+                margin-left : 0;
+              }
+            }
+          }
         }
 
         &right:checked ~ .dbg-bar > .dbg-bar--block--container {
