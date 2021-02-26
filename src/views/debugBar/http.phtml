@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+$responseCode = strval(http_response_code());
+?>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="HTTP response code"><?= $responseCode ?></button>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">
+    HTTP response code :
+    <b><?= $responseCode ?></b>
+    :
+    <b><?= array_search($responseCode, \otra\MasterController::HTTP_CODES) ?></b>
+  </p>
+</div>

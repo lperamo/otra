@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 use config\AllConfig;
 ?>
-<span class="otra--help-cursor dbg-bar--cache dbg-bar--block
+<button type="button" class="otra--help-cursor dbg-bar--cache dbg-bar--block dbg-bar--block--border-left
   dbg-bar--cache<?= (!isset(AllConfig::$cache) || AllConfig::$cache) ? '--enabled' : '--disabled'?>"
-      title="Controller">Cache</span>
+title="Controller">Cache</button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">Loaded from <b><?= $this::$cacheUsed ?></b>.</p>
   <p class="dbg-bar--block--container--element">Templates stored in memory :</p>

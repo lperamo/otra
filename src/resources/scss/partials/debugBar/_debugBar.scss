@@ -38,7 +38,7 @@ $debug-bar--size : 38px;
   );
 
   // box
-  padding    : 5px 5px 8px;
+  padding    : 0 5px 0 0;
   box-sizing : border-box;
 
   // positioning
@@ -117,11 +117,56 @@ $debug-bar--size : 38px;
     }
 
     &block {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('border-color', 'debug-bar--block--border-color'),
+            ('color', 'debug-bar--block--color')
+          )
+        )
+      );
+
+      border-style     : solid;
+      border-width     : 0 1px 0 0;
+      // Chrome (not Firefox) needs this to avoid that native button font-family overrides the debug bar font family
+      font-family      : devModeFonts.$debug--font;
+      padding          : 11px 5px;
+
+      &:not(:focus) {
+        @include theming.to-theme(
+          (
+            #{&} : ('background-color', 'debug-bar--block--background-color')
+          )
+        );
+      }
+
+      &:focus {
+        background-color : rgba(0, 0, 0, .2);
+        outline : 0;
+      }
+
+      &--border-left {
+        border-left-width : 1px;
+      }
+
       @at-root .dbg-bar--toggle- {
+        &bottom,
+        &right {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+            border-radius : 5px 5px 0 0;
+          }
+        }
+
+        &left,
+        &top {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+            border-radius : 0 0 5px 5px;
+          }
+        }
+
         &bottom,
         &left {
           &:checked ~ .dbg-bar > .dbg-bar--block--container {
-            border-radius : 5px 5px 0 0;
             bottom : $debug-bar--size;
           }
         }
@@ -129,7 +174,6 @@ $debug-bar--size : 38px;
         &top,
         &right {
           &:checked ~ .dbg-bar > .dbg-bar--block--container {
-            border-radius : 0 0 5px 5px;
             top : $debug-bar--size;
           }
         }
@@ -192,11 +236,11 @@ $debug-bar--size : 38px;
         }
       }
 
-      &:not(:hover) + div {
+      &:not(:focus) + div {
         display : none;
       }
 
-      &:hover + div {
+      &:focus + div {
         display : block;
       }
     }
@@ -315,7 +359,7 @@ $debug-bar--size : 38px;
       #{&} : (
         ('background-image', 'debug-bar--button--background-image'),
         ('box-shadow', 'debug-bar--button--box-shadow'),
-        ('color', 'debug-bar-buttons--color'),
+        ('color', 'debug-bar--button--color'),
         ('text-shadow', 'debug-bar--button--text-shadow')
       )
     )
@@ -326,9 +370,10 @@ $debug-bar--size : 38px;
   border-radius : 5px;
 
   // box
-  height  : auto;
-  padding : 5px;
-  display : inline-block;
+  height      : auto;
+  padding     : 5px;
+  display     : inline-block;
+  margin-left : 10px;
 
   // text
   font-weight : 400;

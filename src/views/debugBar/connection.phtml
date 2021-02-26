@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+$logged = isset($_SESSION['sid']);
+?>
+  <button type="button" class="otra--help-cursor dbg-bar--block" title="Is a user logged in?">
+    <?= $logged
+      ? '<span class="dbg-bar--logged otra--help-cursor" title="Is a user logged in?">Connected</span>'
+      : '<span class="dbg-bar--not-logged otra--help-cursor" title="Is a user logged in?">Disconnected</span>'
+    ?>
+  </button>
+  <div class="dbg-bar--block--container">
+    <p class="dbg-bar--block--container--element">
+      The user is <b><?= $logged ? 'connected' : 'disconnected'?></b>
+    </p>
+  </div>
+
+
