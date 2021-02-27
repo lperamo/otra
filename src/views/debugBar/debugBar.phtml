@@ -9,24 +9,12 @@ generateArrows();
   require CORE_VIEWS_PATH . 'debugBar/otra.phtml';
   require CORE_VIEWS_PATH . 'debugBar/php.phtml';
   require CORE_VIEWS_PATH . 'debugBar/route.phtml';
-  generateDebugBarPart(
-    strval(http_response_code()),
-    'HTTP response code'
-  );
-  generateDebugBarPart(
-    '🕑 ' . round(microtime(true) - BEFORE, 3) * 1000 . 'ms',
-    'Elapsed time'
-  );
+  require CORE_VIEWS_PATH . 'debugBar/http.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/chrono.phtml';
   require CORE_VIEWS_PATH . 'debugBar/cache.phtml';
-  ?>
- <span class="dbg-bar--primary dbg-bar--separator">|</span><?php
-  if (isset($_SESSION['sid']))
-  {
-     ?><span class="dbg-bar--logged otra--help-cursor" title="Is a user logged in?">Connected</span><?php
-  } else {
-    ?><span class="dbg-bar--not-logged otra--help-cursor" title="Is a user logged in?">Disconnected</span><?php
-  } ?>
-  <span class="dbg--bar--primary dbg-bar--separator">|</span>
+  require CORE_VIEWS_PATH . 'debugBar/connection.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/templateMotor.phtml';
+?>
   <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
   <?php generateArrows('label') ?>
 </div>

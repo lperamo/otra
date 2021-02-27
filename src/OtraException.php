@@ -123,7 +123,7 @@ class OtraException extends Exception
 
     // Is the error code a native error code ?
     $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
-    http_response_code(MasterController::HTTP_INTERNAL_SERVER_ERROR);
+    http_response_code(MasterController::HTTP_CODES['HTTP_INTERNAL_SERVER_ERROR']);
 
     $traces = $this->getTrace();
     $simplifiedFilePath = mb_substr($this->file, mb_strlen(BASE_PATH));

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 $phpVersion = phpversion();
 ?>
-<span class="otra--help-cursor dbg-bar--block" title="PHP informations">PHP <?= $phpVersion ?></span>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="PHP informations">PHP <?= $phpVersion ?></button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">
     Version : <b><?= $phpVersion ?></b>
@@ -13,7 +14,7 @@ $phpVersion = phpversion();
     Modules : <?php
     $extensions = '';
     $extensionsArray = get_loaded_extensions();
-    sort($extensionsArray);
+    natcasesort($extensionsArray);
 
     foreach ($extensionsArray as $phpExtension)
     {
@@ -24,4 +25,3 @@ $phpVersion = phpversion();
     ?>
   </p>
 </div>
-<span class="dbg-bar--primary dbg-bar--separator">|</span>

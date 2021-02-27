@@ -14,10 +14,14 @@
 @use 'mixins';
 
 // loading partials
+@use 'blocks';
+@use 'toggle';
 @use 'profiler';
 
 // initializing components
 @include theming.init-themes($themes);
+
+$debug-bar--size : 38px;
 
 .otra--help-cursor {
   cursor : help;
@@ -36,7 +40,7 @@
   );
 
   // box
-  padding    : 5px 5px 8px;
+  padding    : 0 5px 0 0;
   box-sizing : border-box;
 
   // positioning
@@ -114,48 +118,6 @@
       margin-right : 5px;
     }
 
-    &block {
-      &--container {
-        @include theming.to-theme(
-          (
-            #{&} :
-            (
-              ('background-image', 'debug-bar--background-image'),
-              ('box-shadow', 'debug-bar--box-shadow'),
-              ('color', 'debug-bar--primary--color')
-            )
-          )
-        );
-
-        // appearance
-        border-radius : 5px 5px 0 0;
-
-        // positioning
-        bottom   : 38px;
-        left     : 0;
-        position : absolute;
-
-        // size
-        padding       : 10px;
-
-        // text
-        color : #444;
-
-        &--element {
-          margin-bottom : 0;
-          margin-top    : 0;
-        }
-      }
-
-      &:not(:hover) + div {
-        display : none;
-      }
-
-      &:hover + div {
-        display : block;
-      }
-    }
-
     &cache {
       // positioning
       position : relative;
@@ -177,89 +139,10 @@
         )
       );
     }
-
-    &toggle {
-      // size
-      box-sizing : border-box;
-
-      // positioning
-      margin-left : 10px;
-
-      // animation
-      transition  : text-shadow .25s;
-      will-change : text-shadow;
-
-      // text
-      @include theming.to-theme(
-        (
-          #{&} : ('color', 'debug-bar--toggle--color')
-        )
-      );
-
-      font-size   : 20px;
-
-      // others
-      cursor      : pointer;
-
-      &:not(:hover) {
-        @include theming.to-theme(
-          (
-            #{&} : ('text-shadow', 'debug-bar--toggle--text-shadow')
-          )
-        );
-      }
-
-      &:hover {
-        @include mixins.debugToggleHoverTextShadow;
-      }
-
-      // Arrows
-      &-direction {
-        // positioning
-        position : fixed;
-        left     : -10000px;
-      }
-
-      &-top {
-        &:checked ~ #dbg-bar {
-          transform: rotateZ(0deg);
-        }
-      }
-
-      &-right {
-        &:checked ~ #dbg-bar {
-          transform-origin : right;
-          transform        : rotateZ(-90deg) translate(19px, calc(100vw - 102.1vh));
-          width            : 100vh;
-
-          & > .dbg-bar--toggle {
-            transform : rotateZ(90deg);
-          }
-        }
-      }
-
-      &-bottom {
-        &:checked ~ #dbg-bar {
-          transform-origin : top left;
-          transform        : translate(0, calc(100vh - 38px));
-        }
-      }
-
-      &-left {
-        &:checked + #dbg-bar {
-          transform-origin : left;
-          transform        : rotateZ(90deg) translate(-19px, -19px);
-          width            : 100vh;
-
-          & > .dbg-bar--toggle {
-            transform : rotateZ(-90deg);
-          }
-        }
-      }
-    }
   }
 }
 
+// Button "Inspect SQL"
 .dbg-bar--btn {
   // animation
   transition : box-shadow .2s, color .2s, text-shadow .2s;
@@ -270,7 +153,7 @@
       #{&} : (
         ('background-image', 'debug-bar--button--background-image'),
         ('box-shadow', 'debug-bar--button--box-shadow'),
-        ('color', 'debug-bar-buttons--color'),
+        ('color', 'debug-bar--button--color'),
         ('text-shadow', 'debug-bar--button--text-shadow')
       )
     )
@@ -281,9 +164,10 @@
   border-radius : 5px;
 
   // box
-  height  : auto;
-  padding : 5px;
-  display : inline-block;
+  height      : auto;
+  padding     : 5px;
+  display     : inline-block;
+  margin-left : 10px;
 
   // text
   font-weight : 400;

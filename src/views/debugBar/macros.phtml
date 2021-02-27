@@ -47,17 +47,4 @@ if (!function_exists('generateArrows'))
       }
     }
   }
-
-  /**
-   * @param string $content
-   * @param string $title
-   * @param string $separator
-   */
-  function generateDebugBarPart(string $content, string $title, string $separator = '|') : void
-  {
-    ?>
-    <span class="otra--help-cursor dbg-bar--primary" title="<?= $title ?>"><?= $content ?></span>
-    <span class="dbg-bar--primary dbg-bar--separator"><?= $separator ?></span>
-    <?php
-  }
 }

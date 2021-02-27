@@ -1,0 +1,183 @@
+////
+/// @author Lionel Péramo
+/// @group Debug bar
+////
+
+// loading configuration
+@use '../../configuration/devModeFonts';
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
+
+$debug-bar--size : 38px;
+
+.dbg-bar--block {
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('border-color', 'debug-bar--block--border-color'),
+        ('color', 'debug-bar--block--color')
+      )
+    )
+  );
+
+  border-style     : solid;
+  border-width     : 0 1px 0 0;
+  // Chrome (not Firefox) needs this to avoid that native button font-family overrides the debug bar font family
+  font-family      : devModeFonts.$debug--font;
+  padding          : 11px 5px;
+
+  &:not(:focus) {
+    @include theming.to-theme(
+      (
+        #{&} : ('background-color', 'debug-bar--block--background-color')
+      )
+    );
+  }
+
+  &:focus {
+    background-color : rgba(0, 0, 0, .2);
+    outline : 0;
+  }
+
+  &--border-left {
+    border-left-width : 1px;
+  }
+
+  @at-root .dbg-bar--toggle- {
+    &bottom,
+    &right {
+      &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+        border-radius : 5px 5px 0 0;
+      }
+    }
+
+    &left,
+    &top {
+      &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+        border-radius : 0 0 5px 5px;
+      }
+    }
+
+    &bottom,
+    &left {
+      &:checked ~ .dbg-bar > .dbg-bar--block--container {
+        bottom : $debug-bar--size;
+      }
+    }
+
+    &top {
+      &:checked ~ .dbg-bar > .dbg-bar--block--container {
+        top : $debug-bar--size;
+      }
+    }
+
+    &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template,
+    &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+      bottom       : $debug-bar--size;
+      left         : 0;
+      right        : auto;
+      top          : -100vh;
+    }
+
+    &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+      transform : rotate(-90deg);
+    }
+
+    &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+      transform : rotate(90deg);
+    }
+
+    &left:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      bottom       : $debug-bar--size;
+      left         : 0;
+      right        : auto;
+      top          : -100vh;
+      transform    : rotate(180deg);
+      writing-mode : vertical-rl;
+    }
+
+    // handles margins of the info boxes when the debug bar is on left/right sides
+    &left,
+    &right {
+      &:checked ~ .dbg-bar .dbg-bar--block--container--element {
+        margin-right : 0;
+
+        &:last-child {
+          margin-left : 0;
+        }
+      }
+    }
+
+    &right:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      bottom       : $debug-bar--size;
+      left         : auto;
+      right        : 0;
+      top          : -100vh;
+      writing-mode : tb-rl;
+    }
+  }
+
+  &--container {
+    @include theming.to-theme(
+      (
+        #{&} :
+        (
+          ('background-image', 'debug-bar--background-image'),
+          ('box-shadow', 'debug-bar--box-shadow'),
+          ('color', 'debug-bar--primary--color')
+        )
+      )
+    );
+
+    // positioning
+    left     : 0;
+    position : absolute;
+
+    // size
+    padding : 10px;
+
+    @at-root .dbg-bar--toggle- {
+      // Handles template visualization info box when it is visible on bottom side
+      &bottom:checked {
+        & ~ .dbg-bar > .dbg-bar--block {
+          &:focus + .dbg-bar--block--container-motor-template,
+          & + .dbg-bar--block--container-motor-template:focus,
+          & + .dbg-bar--block--container-motor-template:hover {
+            top : calc(-100vh + #{$debug-bar--size});
+          }
+        }
+      }
+
+      // Handles template visualization info box when it is visible on top side
+      &top:checked ~ .dbg-bar > .dbg-bar--block {
+        &:focus + .dbg-bar--block--container-motor-template,
+        & + .dbg-bar--block--container-motor-template:focus,
+        & + .dbg-bar--block--container-motor-template:hover {
+          bottom : -100vh;
+          height : calc(100vh - #{$debug-bar--size});
+        }
+      }
+    }
+
+    &-motor-template {
+      overflow : auto;
+    }
+
+    &--element {
+      margin-bottom : 0;
+      margin-top    : 0;
+    }
+  }
+
+  &:not(:focus) + div:not(:focus):not(:hover) {
+    display : none;
+  }
+
+  &:focus + div,
+  & + div:focus,
+  & + div:hover {
+    display : block;
+  }
+}
