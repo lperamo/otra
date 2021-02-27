@@ -1,0 +1,95 @@
+////
+/// @author Lionel Péramo
+/// @group Debug bar
+////
+
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
+
+// loading mixins
+@use 'mixins';
+
+$debug-bar--size : 38px;
+
+.dbg-bar--toggle {
+  // size
+  box-sizing : border-box;
+
+  // positioning
+  margin-left : 10px;
+
+  // animation
+  transition  : text-shadow .25s;
+  will-change : text-shadow;
+
+  // text
+  @include theming.to-theme(
+    (
+      #{&} : ('color', 'debug-bar--toggle--color')
+    )
+  );
+
+  font-size   : 20px;
+
+  // others
+  cursor      : pointer;
+
+  &:not(:hover) {
+    @include theming.to-theme(
+      (
+        #{&} : ('text-shadow', 'debug-bar--toggle--text-shadow')
+      )
+    );
+  }
+
+  &:hover {
+    @include mixins.debugToggleHoverTextShadow;
+  }
+
+  // Arrows
+  &-direction {
+    // positioning
+    position : fixed;
+    left     : -10000px;
+  }
+
+  &-top {
+    &:checked ~ #dbg-bar {
+      transform: rotateZ(0deg);
+    }
+  }
+
+  &-right {
+    &:checked ~ #dbg-bar {
+      transform-origin : right;
+      transform        : rotateZ(-90deg) translate(#{$debug-bar--size/2}, calc(100vw - 102.1vh));
+      width            : 100vh;
+
+      & > .dbg-bar--toggle {
+        transform : rotateZ(90deg);
+      }
+    }
+  }
+
+  &-bottom {
+    &:checked ~ #dbg-bar {
+      transform-origin : top left;
+      transform        : translate(0, calc(100vh - #{$debug-bar--size}));
+    }
+  }
+
+  &-left {
+    &:checked + #dbg-bar {
+      transform-origin : left;
+      transform        : rotateZ(90deg) translate(-#{$debug-bar--size/2}, -#{$debug-bar--size/2});
+      width            : 100vh;
+
+      & > .dbg-bar--toggle {
+        transform : rotateZ(-90deg);
+      }
+    }
+  }
+}
