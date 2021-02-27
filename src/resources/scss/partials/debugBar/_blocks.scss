@@ -176,19 +176,13 @@ $debug-bar--size : 38px;
         }
       }
 
-      // Handles template visualization info box when it is visible on top and right sides
-      &top:checked {
-        & ~ .dbg-bar > .dbg-bar--block {
-          &:focus + .dbg-bar--block--container-motor-template {
-            bottom : -100vh;
-          }
-
-          & + .dbg-bar--block--container-motor-template {
-            &:focus,
-            &:hover {
-              bottom : -100vh;
-            }
-          }
+      // Handles template visualization info box when it is visible on top side
+      &top:checked ~ .dbg-bar > .dbg-bar--block {
+        &:focus + .dbg-bar--block--container-motor-template,
+        & + .dbg-bar--block--container-motor-template:focus,
+        & + .dbg-bar--block--container-motor-template:hover {
+          bottom : -100vh;
+          height : calc(100vh - #{$debug-bar--size});
         }
       }
     }
