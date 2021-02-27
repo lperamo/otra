@@ -22,20 +22,17 @@ define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 define('BUILD_DEV_MASK_SCSS', 1);
 const BUILD_DEV_MASK_TS = 2;
 
-define('DEPLOY_MASK_ONLY_RSYNC', 0);
 define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
 define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
 define('DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC', 8);
 
 define('GEN_ASSETS_MASK_TEMPLATE', 1);
-define('GEN_ASSETS_MASK_MANIFEST', 8);
 define('GEN_ASSETS_MASK_SVG', 16);
 
 define('OTRA_CLI_CONTROL_MODE', "\033[");
 
 define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
-define('OTRA_CLI_COMMAND_MKDIR', 'mkdir');
 define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
 
 // **** Checking the deployment config parameters ****

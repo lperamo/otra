@@ -137,8 +137,6 @@ if (!function_exists('getRandomNonceForCSP'))
   /**
    * @param string      $route
    * @param string|null $routeSecurityFilePath
-   *
-   * @throws OtraException
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {

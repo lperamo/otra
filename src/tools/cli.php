@@ -11,8 +11,6 @@ use JetBrains\PhpStorm\ArrayShape;
 // If we come from the deploy task, those functions may already have been defined.
 if (!function_exists('cli'))
 {
-  define('OTRA_CLI_RETURN', 0);
-  define('OTRA_CLI_OUTPUT', 1);
   /**
    * Execute a CLI command.
    *

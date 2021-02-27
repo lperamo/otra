@@ -14,12 +14,6 @@ define(
   'We will create one model from ' . CLI_LIGHT_CYAN . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
 );
 
-define(
-  'MODEL_NAME_CREATED_FOR_BUNDLE_NAME',
-  DOUBLE_ERASE_SEQUENCE . ERASE_SEQUENCE . 'Creating the model ' . CLI_YELLOW . $modelName . END_COLOR .
-  ' for the bundle ' . CLI_YELLOW . $bundleName . ' ...' . PHP_EOL
-);
-
 /**
  * @param int    $modelLocation
  * @param string $bundlePath

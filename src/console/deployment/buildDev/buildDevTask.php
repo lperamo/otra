@@ -26,13 +26,6 @@ BUILD_DEV_MASK_PHP = 8,
 GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
 RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
 
-PATHS_TO_HAVE_PHP =
-[
-  BASE_PATH . 'bundles',
-  BASE_PATH . 'config',
-  CORE_PATH
-],
-
 PATHS_TO_HAVE_RESOURCES =
 [
   BASE_PATH . 'bundles',

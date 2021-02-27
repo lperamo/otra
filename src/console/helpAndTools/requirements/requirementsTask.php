@@ -10,7 +10,6 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 
   require CORE_PATH . 'tools/cli.php';
-  define('CLI_ERROR_CODE', 0);
   define('REQUIREMENTS_PADDING', 30);
 
   // Requirement array
