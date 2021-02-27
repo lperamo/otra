@@ -249,8 +249,17 @@ $debug-bar--size : 38px;
 
           &top:checked,
           &right:checked {
-            & ~ .dbg-bar > .dbg-bar--block:focus + .dbg-bar--block--container-motor-template {
-              bottom : -100vh;
+            & ~ .dbg-bar > .dbg-bar--block {
+              &:focus + .dbg-bar--block--container-motor-template {
+                bottom : -100vh;
+              }
+
+              & + .dbg-bar--block--container-motor-template {
+                &:focus,
+                &:hover {
+                  bottom : -100vh;
+                }
+              }
             }
           }
         }
