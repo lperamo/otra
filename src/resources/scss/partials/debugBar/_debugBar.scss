@@ -233,8 +233,17 @@ $debug-bar--size : 38px;
         @at-root .dbg-bar--toggle- {
           &bottom:checked,
           &left:checked {
-            & ~ .dbg-bar > .dbg-bar--block:focus + .dbg-bar--block--container-motor-template {
-              top : calc(-100vh + #{$debug-bar--size});
+            & ~ .dbg-bar > .dbg-bar--block {
+              &:focus + .dbg-bar--block--container-motor-template {
+                top : calc(-100vh + #{$debug-bar--size});
+              }
+
+              & + .dbg-bar--block--container-motor-template {
+                &:focus,
+                &:hover {
+                  top : calc(-100vh + #{$debug-bar--size});
+                }
+              }
             }
           }
 
