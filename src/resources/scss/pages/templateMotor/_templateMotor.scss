@@ -1,0 +1,121 @@
+@use 'colors';
+
+.otra--template-rendering--title {
+  // Beware, this property is not standard, maybe it will not be compatible with browsers in the future!
+  -webkit-text-stroke : 1px colors.$another-shade;
+  color               : colors.$secondary;
+  text-align          : center;
+  text-shadow         : 0 0 2px colors.$tertiary, 1px 1px 1px colors.$tertiary, 2px 2px 2px colors.$tertiary;
+}
+
+.otra-block--base,
+.otra--code,
+.otra-block--parent {
+  border-radius    : .5rem;
+  box-sizing       : border-box;
+  display          : inline-block;
+}
+
+.otra-block--base,
+.otra-block--parent {
+  padding  : 4rem 2rem 2rem;
+  position : relative;
+}
+
+.otra-block--base {
+  // appearance
+  background-image : radial-gradient(ellipse at center, colors.$primary, colors.$secondary);
+  box-shadow       : .5rem .5rem .5rem colors.$quaternary;
+  color            : colors.$tertiary;
+
+  // size
+  margin-bottom : 2rem;
+  overflow      : auto;
+  resize        : vertical;
+  width         : 100%;
+
+  &:target {
+    background-image: radial-gradient(ellipse at center, transparentize(colors.$nonary, 0.8), transparentize(colors.$decenary, 0.8));
+  }
+
+  @at-root {
+    .otra--block-tags {
+      // positioning
+      position : absolute;
+      top      : .5rem; // to see the padding of each tag
+      left     : 0;
+
+      @at-root {
+        .otra--block-tags--key,
+        .otra--block-tags--depth,
+        .otra--block-tags--markup {
+          // appearance
+          color            : colors.$primary;
+          background-color : colors.$tertiary;
+        }
+
+        .otra--block-tags--key,
+        .otra--block-tags--depth,
+        .otra--block-tags--markup,
+        .otra--block-tags--ending-block {
+          // cursor
+          cursor : help;
+
+          // size
+          padding : .5rem 1rem;
+        }
+
+        .otra--block-tags--key {
+          border-radius : 0 0 .5rem 0;
+        }
+
+        .otra--block-tags--depth,
+        .otra--block-tags--markup,
+        .otra--block-tags--ending-block {
+          border-radius : 0 0 .5rem .5rem;
+        }
+
+        .otra--block--ending-- {
+          // 1 for true
+          &1 {
+            background-image : linear-gradient(45deg, lighten(colors.$quinary, 5), darken(colors.$quinary, 5));
+          }
+
+          &false {
+            background : linear-gradient(45deg, lighten(colors.$senary, 5), darken(colors.$senary, 5));
+          }
+        }
+      }
+    }
+
+    .otra--code {
+      color       : colors.$septenary;
+      margin      : 0;
+      word-break  : break-all;
+      white-space : pre-wrap;
+
+      @at-root .otra--code--container {
+        outline : 1px solid colors.$another-shade;
+
+        @at-root .otra--code--container-highlight {
+          background-color : colors.$octonary;
+          //background-color : transparent;
+          color            : inherit;
+          //outline : 1px solid colors.$tertiary;
+          position         : relative;
+        }
+      }
+    }
+
+    .otra-block--parent--accordion {
+      margin-top : 1rem;
+
+      @at-root .otra-block--parent {
+        background-image : radial-gradient(ellipse at center, colors.$octonary, colors.$secondary);
+        box-shadow       : -1rem -1rem 2rem 0 #d6d6d6, 1rem 1rem 2rem 0 #bfbfbf;
+        margin           : 1rem 0 0;
+        width            : 100%;
+      }
+    }
+  }
+}

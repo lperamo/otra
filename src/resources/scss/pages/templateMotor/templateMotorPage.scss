@@ -1,0 +1,14 @@
+@use 'colors';
+@use 'templateMotor';
+
+// defining rules
+:root {
+  font-size : 10px;
+}
+
+body {
+  background-color : colors.$primary;
+  font-family      : 'Times New Roman', serif;
+  font-size        : 1.6rem;
+  margin           : 1.5rem;
+}

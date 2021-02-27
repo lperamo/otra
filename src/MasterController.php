@@ -271,7 +271,7 @@ abstract class MasterController
       ob_start();
       require CORE_PATH . 'templating/visualRendering.php';
       ob_clean();
-      showBlocksVisually();
+      showBlocksVisually(false);
       $_SESSION['templateVisualization'] = ob_get_clean();
     }
 

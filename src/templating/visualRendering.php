@@ -48,11 +48,18 @@ if (function_exists('showBlocksVisually') === false)
 
   /**
    * Shows the template blocks as seen by the OTRA template engine.
+   *
+   * @param bool $page
    */
-  function showBlocksVisually() : void
+  function showBlocksVisually($page = true) : void
   {
+    if ($page)
+    {
     ?>
-    <link rel="stylesheet" href="<?= CORE_CSS_PATH . 'pages/templateMotor.css' ?>"/>
+    <link rel="stylesheet" href="<?= CORE_CSS_PATH . 'pages/templateMotor/templateMotorPage.css' ?>"/>
+    <?php
+    }
+    ?>
     <h1 class="otra--template-rendering--title">Template rendering</h1>
     <?php
     $replacingBlocks = [];
