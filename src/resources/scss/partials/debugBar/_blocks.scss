@@ -142,36 +142,10 @@ $debug-bar--size : 38px;
       // Handles template visualization info box when it is visible on bottom side
       &bottom:checked {
         & ~ .dbg-bar > .dbg-bar--block {
-          &:focus + .dbg-bar--block--container-motor-template {
-            top : calc(-100vh + #{$debug-bar--size});
-          }
-
-          & + .dbg-bar--block--container-motor-template {
-            &:focus,
-            &:hover {
-              top : calc(-100vh + #{$debug-bar--size});
-            }
-          }
-        }
-      }
-
-      // Handles template visualization info box when it is visible on left side
-      &left:checked {
-        & ~ .dbg-bar > .dbg-bar--block {
           &:focus + .dbg-bar--block--container-motor-template,
           & + .dbg-bar--block--container-motor-template:focus,
           & + .dbg-bar--block--container-motor-template:hover {
-            //right  : 0;
-            //top    : calc(-100vw + #{$debug-bar--size});
-            //
-            //div.otra-block--base {
-            //  height : 100%;
-            //  width  : auto;
-            //
-            //  @at-root .otra--block-tags {
-            //    right : 0;
-            //  }
-            //}
+            top : calc(-100vh + #{$debug-bar--size});
           }
         }
       }
