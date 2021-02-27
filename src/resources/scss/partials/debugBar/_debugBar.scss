@@ -152,14 +152,14 @@ $debug-bar--size : 38px;
       @at-root .dbg-bar--toggle- {
         &bottom,
         &right {
-          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
             border-radius : 5px 5px 0 0;
           }
         }
 
         &left,
         &top {
-          &:checked ~ .dbg-bar > .dbg-bar--block--container {
+          &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
             border-radius : 0 0 5px 5px;
           }
         }
