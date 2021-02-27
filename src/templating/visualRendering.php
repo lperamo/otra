@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 /* Light templating engine */
 use cache\php\BlocksSystem;
-use JetBrains\PhpStorm\NoReturn;
 
 if (function_exists('showBlocksVisually') === false)
 {

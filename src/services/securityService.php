@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @package otra\services
  */
 
-use otra\{MasterController, OtraException};
+use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
 {
