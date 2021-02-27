@@ -16,24 +16,24 @@ abstract class Model
   private string $table;
 
   /**
-   * @param $property
+   * @param string $property
    *
    * @return mixed
    */
-  public function get($property) { return $this->$property; }
+  public function get(string $property) { return $this->$property; }
 
   /**
-   * @param $property
-   * @param $value
+   * @param string $property
+   * @param mixed $value
    */
-  public function set($property, $value) { $this->$property = $value; }
+  public function set(string $property, mixed $value) : void { $this->$property = $value; }
 
   /**
    * Save or update if the id is known
    *
-   * @return int The last id used
+   * @return string The last id used
    */
-  public function save()
+  public function save() : string
   {
     $dbName = Session::get('db');
     /* @var \otra\bdd\Sql $dbConn */
@@ -51,7 +51,7 @@ abstract class Model
 
       if (str_contains($propertyName, 'id'))
       {
-        $id = $propertyName;
+        $identifier = $propertyName;
 
         if (!empty($computedProperties[$propertyName]))
           $update  = true;
@@ -62,8 +62,8 @@ abstract class Model
     if ($update === true)
     { // It's an update of the model
       $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
-      $idValue = $computedProperties[$id];
-      unset($computedProperties[$id]);
+      $idValue = $computedProperties[$identifier];
+      unset($computedProperties[$identifier]);
 
       foreach($computedProperties as $propertyName => $value)
       {
@@ -71,10 +71,10 @@ abstract class Model
         $query .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ' ';
       }
 
-      $query = substr($query, 0, -1) . ' WHERE `'. $id . '`=' . $idValue;
+      $query = substr($query, 0, -1) . ' WHERE `'. $identifier . '`=' . $idValue;
     } else // we add a entry
     {
-      unset($computedProperties[$id]);
+      unset($computedProperties[$identifier]);
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
       $values = '';
 
