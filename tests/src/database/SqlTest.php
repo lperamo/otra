@@ -36,7 +36,7 @@ class SqlTest extends TestCase
     $_SERVER[APP_ENV] = 'prod';
 
     try {
-      Sql::getDB()->__destruct();
+      Sql::getDb()->__destruct();
     } catch (Exception $exception) {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
@@ -86,7 +86,7 @@ class SqlTest extends TestCase
   private function createDatabaseForTest() : void {
     require(self::TEST_CONFIG_GOOD_PATH);
 
-    Sql::getDB(null, false);
+    Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
     $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
     Sql::$instance->freeResult($dbResult);
@@ -105,7 +105,7 @@ class SqlTest extends TestCase
     require self::TEST_CONFIG_GOOD_PATH;
 
     // launching task
-    $sqlInstance = Sql::getDB(null, false);
+    $sqlInstance = Sql::getDb(null, false);
     self::assertInstanceOf(Sql::class, $sqlInstance);
   }
 
@@ -119,7 +119,7 @@ class SqlTest extends TestCase
    */
   public function fetch(string $fetchMethod, $column = null)
   {
-    Sql::getDB();
+    Sql::getDb();
 
     $this->createTemporaryTestTable();
     $this->createTemporaryTestValues();
@@ -151,7 +151,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
   }
 
@@ -167,7 +167,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertEquals(null, Sql::$instance->query('SELECT 1'));
   }
 
@@ -193,7 +193,7 @@ class SqlTest extends TestCase
       touch($sqlLogPath);
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
     self::assertEquals(
@@ -414,7 +414,7 @@ class SqlTest extends TestCase
       'call_user_func_array(): Argument #1 ($callback) must be a valid callback, class otra\bdd\Pdomysql does not have a method "selectDb"'
     );
 
-    $sqlInstance = Sql::getDB('test');
+    $sqlInstance = Sql::getDb('test');
     $sqlInstance->selectDb();
   }
 
@@ -432,7 +432,7 @@ class SqlTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'.');
 
-    $sqlInstance = Sql::getDB('testOtherDriver');
+    $sqlInstance = Sql::getDb('testOtherDriver');
     $sqlInstance->selectDb();
   }
 
@@ -449,7 +449,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     $this->expectOutputString('Test \\\' string');
     echo Sql::$instance->quote('Test \' string');
   }
@@ -468,7 +468,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
@@ -487,7 +487,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
   }
 
@@ -505,7 +505,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertIsArray(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
@@ -524,7 +524,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertNull(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
@@ -542,7 +542,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
@@ -561,7 +561,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
   }
 
@@ -575,10 +575,10 @@ class SqlTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
 
-    $sqlInstance = Sql::getDB();
+    $sqlInstance = Sql::getDb();
     $sqlInstance->__destruct();
 
-    self::assertEquals(null, Sql::$_currentConn);
+    self::assertEquals(null, Sql::$currentConn);
   }
 
   /**
@@ -591,10 +591,10 @@ class SqlTest extends TestCase
   {
     // Creating the context (having a SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
-    $sqlInstance = Sql::getDB('test');
+    $sqlInstance = Sql::getDb('test');
 
     // Launching the task
-    $sqlInstance2 = Sql::getDB('test');
+    $sqlInstance2 = Sql::getDb('test');
 
     // Testing !
     self::assertEquals($sqlInstance, $sqlInstance2);
@@ -613,7 +613,7 @@ class SqlTest extends TestCase
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
 
     // Launching the task
-    Sql::getDB();
+    Sql::getDb();
   }
 
   /**
@@ -632,7 +632,7 @@ class SqlTest extends TestCase
     $this->expectExceptionMessage('This DBMS \'Hello\' is not available...yet ! Available DBMS are : Pdomysql');
 
     // Launching the task
-    Sql::getDB('test');
+    Sql::getDb('test');
   }
 
   /**
@@ -648,7 +648,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     $sqlInstance = Sql::$instance->query('SELECT 1');
     self::assertNull(Sql::$instance->freeResult($sqlInstance));
   }
@@ -664,7 +664,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->beginTransaction();
     self::assertTrue(Sql::$instance->inTransaction());
     Sql::$instance->commit();
@@ -681,7 +681,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->beginTransaction();
     self::assertTrue(Sql::$instance->rollBack());
   }
@@ -697,7 +697,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
 
     try {
       Sql::$instance->query('bogus sql');
@@ -724,7 +724,7 @@ class SqlTest extends TestCase
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
-    Sql::getDB();
+    Sql::getDb();
 
     // testing
     Sql::$instance = null;

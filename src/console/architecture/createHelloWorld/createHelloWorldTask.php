@@ -71,7 +71,7 @@ define('BASE_PATH_LENGTH', strlen(BASE_PATH));
  *
  * @throws \otra\OtraException
  */
-function copyAndShow(string $source, string $destination, string $message)
+function copyAndShow(string $source, string $destination, string $message) : void
 {
   copyFileAndFolders([HELLO_WORLD_STARTER_FOLDER . $source], [$destination]);
   echo $message, CLI_BLUE,  'BASE_PATH + ', CLI_LIGHT_CYAN, substr($destination, BASE_PATH_LENGTH), END_COLOR,
@@ -135,7 +135,7 @@ require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
  * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the
  * class map generation task.
 */
-if (defined('VERBOSE') === false)
+if (!defined('VERBOSE'))
   define('VERBOSE', 0);
 
 require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';

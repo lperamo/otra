@@ -50,7 +50,7 @@ foreach ($distFiles as $distFile)
 // We need a routes configuration file even empty.
 define('OTRA_BUNDLES_CONFIG_PATH', BASE_PATH . 'bundles/config/');
 
-if (file_exists(OTRA_BUNDLES_CONFIG_PATH) === false)
+if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
   mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
 
 file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php', '<?php return [];');

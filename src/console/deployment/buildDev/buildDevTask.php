@@ -61,10 +61,11 @@ define(
 {
   $continue = true;
 
-  foreach ($paths as $path)
+  /** @var string $path */
+  foreach ($paths as $filePath)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false &&
+    if (mb_strpos($realPath, $filePath) !== false &&
         (BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
           || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
           || BUILD_DEV_SCOPE === 2)
@@ -80,20 +81,20 @@ define(
  * otherwise returns resource name as is.
  *
  * @param string      $resource Most of the time the name of a folder
- * @param string|null $name     Most of the time the name of a file
+ * @param string|null $fileName Most of the time the name of a file
  * @param bool|null   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */
-#[Pure] function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
+#[Pure] function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
 {
-  // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
-  if ($name !== '')
-    $name = '/' . $name;
+  // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
+  if ($fileName !== '')
+    $fileName = '/' . $fileName;
 
   return (str_contains($resource, BASE_PATH)
-      ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $name . END_COLOR
-      : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
+      ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $fileName . END_COLOR
+      : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR)
     . ($endColor ? END_COLOR : '');
 }
 
@@ -107,16 +108,16 @@ define(
 $isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
 {
   return (
-      $maskExists === true
+      $maskExists
       && ($argv[BUILD_DEV_ARG_MASK] & $genWatcherMask) === $genWatcherMask
     )
-    || $maskExists === false;
+    || !$maskExists;
 };
 
 $maskExists = array_key_exists(BUILD_DEV_ARG_MASK, $argv);
 
 // Check if the binary mask is numeric
-if ($maskExists === true && is_numeric($argv[BUILD_DEV_ARG_MASK]) === false)
+if ($maskExists && !is_numeric($argv[BUILD_DEV_ARG_MASK]))
 {
   echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
   exit(1);
@@ -138,10 +139,10 @@ unset($isWatched);
 define(
   'WATCH_FOR_ROUTES',
   (
-    $maskExists === true
+    $maskExists
     && ($argv[BUILD_DEV_ARG_MASK] & BUILD_DEV_MASK_ROUTES) === BUILD_DEV_MASK_ROUTES
   )
-  || $maskExists === false
+  || !$maskExists
 );
 
 unset($maskExists);
@@ -149,14 +150,14 @@ unset($maskExists);
 $filesProcessed = false;
 
 // Handle PHP files
-if (WATCH_FOR_PHP_FILES === true)
+if (WATCH_FOR_PHP_FILES)
 {
   // We generate the class mapping...
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
   $filesProcessed = true;
 }
 
-if (WATCH_FOR_ROUTES === true)
+if (WATCH_FOR_ROUTES)
 {
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
@@ -176,7 +177,7 @@ foreach($iterator as $entry)
 {
   $extension = $entry->getExtension();
 
-  if (in_array($extension, RESOURCES_TO_WATCH) === false || $entry->isDir() === true)
+  if (!in_array($extension, RESOURCES_TO_WATCH) || $entry->isDir())
     continue;
 
   $realPath = $entry->getRealPath();
@@ -185,10 +186,10 @@ foreach($iterator as $entry)
     continue;
 
   // Adding watches for resources files if needed
-  if (WATCH_FOR_CSS_RESOURCES === true || WATCH_FOR_TS_RESOURCES === true)
+  if (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES)
   {
     // Does the resources path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath) === true)
+    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath))
       continue;
 
     $filesProcessed = true;
@@ -221,7 +222,7 @@ foreach($iterator as $entry)
       // 6 = length of devJs/
       $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
 
-      if (WATCH_FOR_TS_RESOURCES === true)
+      if (WATCH_FOR_TS_RESOURCES)
         generateJavaScript(
           BUILD_DEV_VERBOSE,
           BUILD_DEV_GCC,
@@ -232,7 +233,7 @@ foreach($iterator as $entry)
     }
     elseif (substr($baseName, 0, 1) !== '_')
     {
-      if (WATCH_FOR_CSS_RESOURCES === true)
+      if (WATCH_FOR_CSS_RESOURCES)
       {
         $generatedCssFile = $baseName . '.css';
 
@@ -242,12 +243,12 @@ foreach($iterator as $entry)
 
         // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
         // as well as its subfolders
-        if (file_exists($cssFolder) === false)
+        if (!file_exists($cssFolder))
           mkdir($cssFolder, 0777,true);
 
         $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-        cli('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath);
+        cliCommand('sass ' . (BUILD_DEV_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath);
 
         $sourceMapPath = $cssPath . '.map';
 
@@ -266,7 +267,7 @@ foreach($iterator as $entry)
 
 unset($dir_iterator, $iterator, $entry, $realPath);
 
-if ($filesProcessed === true)
+if ($filesProcessed)
 {
   if (BUILD_DEV_VERBOSE === 0)
     echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;

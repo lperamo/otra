@@ -25,7 +25,7 @@ define(
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
-  if (defined('MODEL_PATH') === false)
+  if (!defined('MODEL_PATH'))
     define('MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . '/' : ''));
 }
 

@@ -16,7 +16,13 @@ require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/compression.php';
 
 define('GEN_ASSETS_ARG_ASSETS_MASK', 2);
-define('JS_LEVEL_COMPILATION', ['WHITESPACE_ONLY', 'SIMPLE_OPTIMIZATIONS', 'ADVANCED_OPTIMIZATIONS'][$argv[3] ?? 1]);
+define(
+  'JS_LEVEL_COMPILATION',
+  [
+    'WHITESPACE_ONLY',
+    'SIMPLE_OPTIMIZATIONS',
+    'ADVANCED_OPTIMIZATIONS'
+  ][isset($argv[3]) ? intval($argv[3]) : 1]);
 define('GEN_ASSETS_ARG_ROUTE', 4);
 define('GZIP_COMPRESSION_LEVEL', 9);
 
@@ -33,21 +39,21 @@ define('ROUTES_CHUNKS_MODULE', 2);
 define('OTRA_UNLINK_CALLBACK', 'unlink');
 define('OTRA_CLI_CYAN_STRING', 'CLI_CYAN');
 
-$routes = Routes::$_;
+$routes = Routes::$allRoutes;
 
 /**
  * @param string $folder  The resource folder name
  * @param string $shaName The route's name encoded in sha1
  */
-function unlinkResourceFile(string $folder, string $shaName)
+function unlinkResourceFile(string $folder, string $shaName) : void
 {
-  $file = CACHE_PATH . $folder . $shaName . '.gz';
+  $fileName = CACHE_PATH . $folder . $shaName . '.gz';
 
-  if (true === file_exists($file))
-    unlink($file);
+  if (file_exists($fileName))
+    unlink($fileName);
 }
 
-if (true === isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && false === is_numeric($argv[GEN_ASSETS_ARG_ASSETS_MASK]))
+if (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argv[GEN_ASSETS_ARG_ASSETS_MASK]))
 {
   echo CLI_RED, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
     '.', END_COLOR;
@@ -56,7 +62,7 @@ if (true === isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && false === is_numeric($a
 
 define(
   'ASSETS_MASK',
-  (true === isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
+  (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
 ); // 31 = default to all assets
 
 define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
@@ -127,12 +133,8 @@ if (
   echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL,
     PHP_EOL;
 
-  for ($i = 0; $i < $cptRoutes; ++$i)
+  foreach($routes as $routeName => $route)
   {
-    $route = current($routes);
-    $routeName = key($routes);
-    next($routes);
-
     // Showing the route name
     echo CLI_LIGHT_CYAN, str_pad($routeName, 25), CLI_LIGHT_GRAY;
 
@@ -141,7 +143,7 @@ if (
     if (!isset($route['resources']))
     {
       echo status('Nothing to do', OTRA_CLI_CYAN_STRING), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
-        CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+      CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
@@ -186,19 +188,20 @@ if (
         // Linux or Windows ? We have java or jamvm ?
         if (!str_contains(php_uname('s'), 'Windows')) // LINUX CASE
         {
-          if (true !== empty(exec('which java'))) // JAVA CASE
+          if (!empty(exec('which java'))) // JAVA CASE
           {
             // JAVA CASE
             /** TODO Find a way to store the logs (and then remove -W QUIET) */
             exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH . 'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
               $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
             gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
-          } else {
+          } else
+          {
             // JAMVM CASE
             exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
             gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
           }
-        } elseif (true === empty(exec('where java'))) // WINDOWS AND JAMVM CASE
+        } elseif (empty(exec('where java'))) // WINDOWS AND JAMVM CASE
         {
           exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
           gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
@@ -219,7 +222,7 @@ if (
     /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
     if (GEN_ASSETS_TEMPLATE)
     {
-      if (false === isset($resources['template']))
+      if (!isset($resources['template']))
         echo status('NO TEMPLATE', OTRA_CLI_CYAN_STRING);
       else
       {
@@ -241,7 +244,7 @@ if (
       }
     }
 
-    echo ' => ', $noErrors === true ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
+    echo ' => ', $noErrors ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
     CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
   }
 }
@@ -289,7 +292,7 @@ if (GEN_ASSETS_SVG)
     {
       $extension = $entry->getExtension();
 
-      if ($extension !== 'svg' || $entry->isDir() === true)
+      if ($extension !== 'svg' || $entry->isDir())
         continue;
 
       $realPath = $entry->getRealPath();
@@ -298,7 +301,8 @@ if (GEN_ASSETS_SVG)
       {
         echo CLI_RED, 'There was an error during the gzip compression of the file ', CLI_LIGHT_CYAN,
         mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
-      } else {
+      } else
+      {
         echo 'The file ', CLI_LIGHT_CYAN, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
         ' has been compressed successfully.', END_COLOR, PHP_EOL;
       }
@@ -317,7 +321,10 @@ if (GEN_ASSETS_SVG)
  *
  * @return string
  */
-#[Pure] function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string { return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']'; }
+#[Pure] function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string
+{
+  return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']';
+}
 
 /**
  * @param array  $resources
@@ -328,8 +335,13 @@ if (GEN_ASSETS_SVG)
  *
  * @return null|string Return the path of the 'macro' resource file
  */
-function loadAndSaveResources(array $resources, array $routeChunks, string $type, string $bundlePath, string $shaName)
-: ?string
+function loadAndSaveResources(
+  array $resources,
+  array $routeChunks,
+  string $type,
+  string $bundlePath,
+  string $shaName
+) : ?string
 {
   ob_start();
   loadResource($resources, $routeChunks, 'first_' . $type, $bundlePath);
@@ -347,7 +359,7 @@ function loadAndSaveResources(array $resources, array $routeChunks, string $type
   $resourceFolderPath = CACHE_PATH . $type . '/';
   $pathAndFile = $resourceFolderPath . $shaName;
 
-  if (file_exists($resourceFolderPath) === false)
+  if (!file_exists($resourceFolderPath))
     mkdir($resourceFolderPath, 0755, true);
 
   file_put_contents($pathAndFile, $allResources);
@@ -362,35 +374,37 @@ function loadAndSaveResources(array $resources, array $routeChunks, string $type
  * @param array       $chunks
  * @param string      $key        first_js, module_css kind of ...
  * @param string      $bundlePath
- * @param string|bool $path
+ * @param string|bool $resourcePath
  */
-function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $path = true)
+function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $resourcePath = true)
 {
   // If this kind of resource does not exist, we leave
   if (!isset($resources[$key]))
     return;
 
-  $type = substr(strrchr($key, '_'), 1);
-  $path = $bundlePath . (true === $path ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $path) . 'resources/' . $type . '/';
+  $resourceType = substr(strrchr($key, '_'), 1);
+  $resourcePath = $bundlePath .
+    (true === $resourcePath ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
+    'resources/' . $resourceType . '/';
 
   foreach ($resources[$key] as $resource)
   {
     ob_start();
 
     if (!str_contains($resource, 'http'))
-      echo file_get_contents($path . $resource . '.' . $type);
+      echo file_get_contents($resourcePath . $resource . '.' . $resourceType);
     else
     {
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $resource . '.' . $type);
-      curl_setopt($ch, CURLOPT_HEADER, false);
-      curl_exec($ch);
-      curl_close($ch);
+      $curlHandle = curl_init();
+      curl_setopt($curlHandle, CURLOPT_URL, $resource . '.' . $resourceType);
+      curl_setopt($curlHandle, CURLOPT_HEADER, false);
+      curl_exec($curlHandle);
+      curl_close($curlHandle);
     }
 
     $content = ob_get_clean();
 
-    if ($type === 'css')
+    if ($resourceType === 'css')
     {
       $content = str_replace(
         ['  ', PHP_EOL, ' :', ': ', ', ', ' {', '{ ','; '],

@@ -53,12 +53,12 @@ class DumpCli extends DumpMaster
 
   /**
    * @param int|string $paramType
-   * @param            $param
+   * @param array      $param
    * @param int        $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpArray(int|string $paramType, $param, int $depth) : void
+  private static function dumpArray(int|string $paramType, array $param, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
@@ -90,12 +90,12 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param      $param
-   * @param int  $depth
+   * @param object $param
+   * @param int    $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpObject($param, int $depth) : void
+  private static function dumpObject(object $param, int $depth) : void
   {
     [$className, $description] = parent::getClassDescription($param);
     echo $description, PHP_EOL;

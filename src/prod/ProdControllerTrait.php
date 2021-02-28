@@ -24,7 +24,12 @@ trait ProdControllerTrait
    * @return string
    * @throws OtraException
    */
-  final public function renderView(string $file, array $variables = [], bool $ajax = false, bool $viewPath = true) : string
+  final public function renderView(
+    string $file,
+    array $variables = [],
+    bool $ajax = false,
+    bool $viewPath = true
+  ) : string
   {
     [$templateFile, ] = $this->getTemplateFile($file, $viewPath);
 

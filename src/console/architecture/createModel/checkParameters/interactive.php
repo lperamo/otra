@@ -49,7 +49,7 @@ if (!isset($argv[ARG_METHOD]) || !in_array($argv[ARG_METHOD], $possibleChoices))
   $wrongMode = 'This creation mode does not exist ! Try once again :';
 
   // If the creation mode requested is incorrect, we ask once more until we are satisfied with the user answer
-  while (false === in_array($creationMode, $possibleChoices))
+  while (!in_array($creationMode, $possibleChoices))
   {
     echo DOUBLE_ERASE_SEQUENCE;
     $creationMode = (int)promptUser($wrongMode, $wrongMode);

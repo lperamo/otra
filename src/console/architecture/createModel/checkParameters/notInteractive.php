@@ -13,12 +13,17 @@ use otra\OtraException;
 /**
  * @param string $constantName
  * @param string $message
- * @param null   $defaultValue
+ * @param mixed   $defaultValue
  * @param bool   $exit
  *
- * @return mixed|null
+ * @return mixed
  */
-$checkParameter = function (string $constantName, string $message, $defaultValue = null, $exit = true) use (&$argv)
+$checkParameter = function (
+  string $constantName,
+  string $message,
+  mixed $defaultValue = null,
+  bool $exit = true
+) use (&$argv) : mixed
 {
   if (isset($argv[constant($constantName)]))
     return $argv[constant($constantName)];
@@ -83,7 +88,7 @@ else
       Symfony\Component\Yaml\Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
     );
 
-    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)) === true)
+    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
       ? CREATION_MODE_ONE_MODEL
       : CREATION_MODE_FROM_NOTHING;
   }
@@ -102,6 +107,4 @@ if ($creationMode === CREATION_MODE_FROM_NOTHING)
   );
 }
 
-
 unset($checkParameter);
-

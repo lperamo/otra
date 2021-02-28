@@ -9,13 +9,13 @@ declare(strict_types=1);
 /* Light templating engine */
 use cache\php\BlocksSystem;
 
-if (function_exists('showBlocksVisually') === false)
+if (!function_exists('showBlocksVisually'))
 {
   /**
    * @param int   $key
    * @param array $block
    */
-  function showBlockTags(int $key, array $block): void
+  function showBlockTags(int $key, array $block) : void
   {
     ?>
     <div class="otra--block-tags">
@@ -32,10 +32,10 @@ if (function_exists('showBlocksVisually') === false)
     <?php
   }
 
-  function showCode(string $code): void
+  function showCode(string $code) : void
   {
-    if ($code !== '') {
-    ?>
+    if ($code !== '')
+    {?>
     <pre class="otra--code"><!--
     --><strong class="otra--code--container"><mark class="otra--code--container-highlight"><?= htmlentities($code) ?></mark></strong><!--
  --></pre>
@@ -63,6 +63,10 @@ if (function_exists('showBlocksVisually') === false)
     <?php
     $replacingBlocks = [];
 
+    /**
+     * @var int|string $blockKey
+     * @var array      $block
+     */
     foreach (BlocksSystem::$blocksStack as $blockKey => $block)
     {
       ?>

@@ -8,10 +8,17 @@ declare(strict_types=1);
 
 const BUNDLE_MASK_QUESTION_BEGINNING = 'Do you want to associate ';
 /** @var string $bundleName */
-define('BUNDLE_MASK_QUESTION_END', ' with that bundle ' . END_COLOR . CLI_LIGHT_CYAN . $bundleName . CLI_YELLOW . ' (n or y)?');
+define(
+  'BUNDLE_MASK_QUESTION_END',
+  ' with that bundle ' . END_COLOR . CLI_LIGHT_CYAN . $bundleName . CLI_YELLOW . ' (n or y)?'
+);
 $bundleMask = 0; // By default, we create 0 additional folders
 
-foreach(BUNDLE_FOLDERS as $key => $folder)
+/**
+ * @var int    $numericKey
+ * @var string $folder
+ */
+foreach(BUNDLE_FOLDERS as $numericKey => $folder)
 {
   $question = BUNDLE_MASK_QUESTION_BEGINNING . CLI_LIGHT_CYAN . $folder . CLI_YELLOW . BUNDLE_MASK_QUESTION_END;
   $answer = promptUser($question);
@@ -23,5 +30,5 @@ foreach(BUNDLE_FOLDERS as $key => $folder)
     echo ERASE_SEQUENCE;
   }
 
-  $bundleMask += pow(2, $key) * ($answer === 'y' ? 1 : 0);
+  $bundleMask += pow(2, $numericKey) * ($answer === 'y' ? 1 : 0);
 }

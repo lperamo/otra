@@ -6,7 +6,6 @@ declare(strict_types=1);
  * @package otra\console\database
  */
 
-
 use otra\console\TasksManager;
 
 return [

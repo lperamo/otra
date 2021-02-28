@@ -37,10 +37,10 @@ function createAction(string $bundleName, string $moduleName, string $controller
   $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN .
     substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.' . END_COLOR;
 
-  while (file_exists($actionPath) === true)
+  while (file_exists($actionPath))
   {
     // If the file does not exist and we are not in interactive mode, we exit the program.
-    if ($interactive === false)
+    if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
       throw new \otra\OtraException('', 1, '', NULL, [], true);
@@ -49,7 +49,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
 
     if ($actionName === 'n')
-      exit(0);
+      throw new \otra\OtraException('', 0, '', NULL, [], true);
 
     $upperActionName = ucfirst($actionName);
     $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -91,7 +91,7 @@ class ' . $upperActionName . 'Action extends Controller
   $viewFolder = BUNDLES_PATH . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
 
   // If the action folder does not exist
-  if (file_exists($viewFolder) === false)
+  if (!file_exists($viewFolder))
     mkdir($viewFolder, 0777, true);
   else
     echo CLI_YELLOW, 'For your information, the folder ', CLI_LIGHT_CYAN, $viewFolder, CLI_YELLOW, ' already existed.',
@@ -100,14 +100,14 @@ class ' . $upperActionName . 'Action extends Controller
   $template = $viewFolder . '/' . $actionName . '.phtml';
 
   // If the template file already exists
-  if (file_exists($template) === true)
+  if (file_exists($template))
     echo CLI_YELLOW, 'For your information, the template file ', CLI_LIGHT_CYAN, $template, CLI_YELLOW,
       ' already existed.', END_COLOR, PHP_EOL;
 
   // We just create an empty template file
   touch($template);
 
-  if ($consoleForce === true)
+  if ($consoleForce)
     return;
 
   $routesConfigFolder = BUNDLES_PATH . $bundleName . '/config';
@@ -121,9 +121,9 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT . "]";
 
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
-  if (file_exists($routesConfigFolder) === true)
+  if (file_exists($routesConfigFolder))
   {
-    $routesArray = file_exists($routeConfigurationFile) === true ? require $routeConfigurationFile : [];
+    $routesArray = file_exists($routeConfigurationFile) ? require $routeConfigurationFile : [];
     $routesArray[$controllerName . $upperActionName] = [
       'chunks' => [
         '/' . $controllerName . $upperActionName,
@@ -190,7 +190,7 @@ class ' . $upperActionName . 'Action extends Controller
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // We update the class mapping since we have one action more.
-  if (defined('VERBOSE') === false)
+  if (!defined('VERBOSE'))
     define('VERBOSE', 0);
 
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -208,9 +208,9 @@ class ' . $upperActionName . 'Action extends Controller
  * @throws \otra\OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string $controllerPath, string $actionName, bool $consoleForce = false)
+                        string $controllerPath, string $actionName, bool $consoleForce = false) : void
 {
-  if ($interactive === true)
+  if ($interactive)
   {
     while($actionName !== 'n')
     {

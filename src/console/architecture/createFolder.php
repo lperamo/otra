@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @package otra\console\architecture
  */
 
-if (function_exists('createFolder') === false)
+if (!function_exists('createFolder'))
 {
   /**
    * @param string $absoluteFolderPath
@@ -16,15 +16,18 @@ if (function_exists('createFolder') === false)
    *
    * @throws \otra\OtraException
    */
-  function createFolder(string &$absoluteFolderPath, string $relativeFolderPath, string $folderType,
-                        bool $interactive)
+  function createFolder(
+    string &$absoluteFolderPath,
+    string $relativeFolderPath,
+    string $folderType,
+    bool $interactive) : void
   {
-    while (file_exists($absoluteFolderPath) === true)
+    while (file_exists($absoluteFolderPath))
     {
       $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN .
         substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
 
-      if ($interactive === false)
+      if (!$interactive)
       {
         echo $sentence, END_COLOR, PHP_EOL;
         throw new \otra\OtraException('', 1, '', NULL, [], true);
@@ -33,7 +36,7 @@ if (function_exists('createFolder') === false)
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 
       if ($folderName === 'n')
-        exit(0);
+        throw new \otra\OtraException('', 0, '', NULL, [], true);
 
       $absoluteFolderPath = $relativeFolderPath . $folderName;
 

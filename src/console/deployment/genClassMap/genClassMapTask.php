@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-$dirs = [
+$folders = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',
   BASE_PATH . 'src',
@@ -16,13 +16,13 @@ $dirs = [
 $classes = [];
 $processedDir = 0;
 
-if (defined('VERBOSE') === false)
-  define('VERBOSE', isset($argv[2]) === true ? (int) $argv[2] : 0);
+if (!defined('VERBOSE'))
+  define('VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
 
 $additionalClassesFilesPath = BASE_PATH . 'config/AdditionalClassFiles.php';
 $additionalClassesFiles = [];
 
-if (file_exists($additionalClassesFilesPath) === true)
+if (file_exists($additionalClassesFilesPath))
   $additionalClassesFiles = require $additionalClassesFilesPath;
 
 $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
@@ -30,18 +30,29 @@ $classesThatMayHaveToBeAdded = [];
 
 require CONSOLE_PATH . 'tools.php';
 
-if (empty($dirs) === false && function_exists('iterateCM') === false)
+if (!empty($folders) && !function_exists('iterateCM'))
 {
   /**
-   * @param array  $classes
-   * @param string $dir
-   * @param array  $additionalClassesFilesKeys
-   * @param int    $processedDir
-   * @param array  $classesThatMayHaveToBeAdded
+   * @param string[] $classes
+   * @param string   $dir
+   * @param array    $additionalClassesFilesKeys
+   * @param int      $processedDir
+   * @param array    $classesThatMayHaveToBeAdded
    *
+   * @throws \otra\OtraException
    * @return array
    */
-  function iterateCM(array &$classes, string $dir, array &$additionalClassesFilesKeys, int &$processedDir, array &$classesThatMayHaveToBeAdded)
+  #[\JetBrains\PhpStorm\ArrayShape([
+    'array',
+    'int',
+    'array'
+  ])]
+  function iterateCM(
+    array &$classes,
+    string $dir,
+    array &$additionalClassesFilesKeys,
+    int &$processedDir,
+    array &$classesThatMayHaveToBeAdded) : array
   {
     if ($folderHandler = opendir($dir))
     {
@@ -51,11 +62,17 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
         if ('.' === $entry || '..' === $entry)
           continue;
 
-        $_entry = $dir . '/' . $entry;
+        $entryAbsolutePath = $dir . '/' . $entry;
 
         // recursively...
-        if (is_dir($_entry) === true)
-          list($classes, $processedDir) = iterateCM($classes, $_entry, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
+        if (is_dir($entryAbsolutePath))
+          [$classes, $processedDir] = iterateCM(
+            $classes,
+            $entryAbsolutePath,
+            $additionalClassesFilesKeys,
+            $processedDir,
+            $classesThatMayHaveToBeAdded
+          );
 
         // Only php files are interesting
         $posDot = strrpos($entry, '.');
@@ -65,27 +82,26 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
 
         // We only need files that match with the actual environment
         // so, for example, we'll not include dev config if we are in prod mode !
-        if(str_contains($_entry, BASE_PATH . 'config/dev') && $_SERVER[APP_ENV] === 'prod')
+        if (str_contains($entryAbsolutePath, BASE_PATH . 'config/dev') && $_SERVER[APP_ENV] === 'prod')
           continue;
 
-        $content = file_get_contents(str_replace('\\', '/', realpath($_entry)));
+        $content = file_get_contents(str_replace('\\', '/', realpath($entryAbsolutePath)));
         preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
 
         // we calculate the shortest string of path with realpath and str_replace function
-        $fullFilePath = str_replace('\\', '/', realpath($_entry));
+        $revisedEntryAbsolutePath = str_replace('\\', '/', realpath($entryAbsolutePath));
         $className    = substr($entry, 0, $posDot);
 
-        if (isset($matches[1][0]) === true && $matches[1][0] !== '')
+        if (isset($matches[1][0]) && $matches[1][0] !== '')
         {
-          // We put the namespace into $classesKey
-          $classesKey = trim($matches[1][0]) . '\\' . $className;
+          $classNamespace = trim($matches[1][0]) . '\\' . $className;
 
-          if (isset($classes[$classesKey]) === false)
-            $classes[$classesKey] = $fullFilePath;
-          elseif (in_array($classesKey, $additionalClassesFilesKeys) === false)
-            $classesThatMayHaveToBeAdded[$classesKey] = str_replace(BASE_PATH, '', $fullFilePath);
+          if (!isset($classes[$classNamespace]))
+            $classes[$classNamespace] = $revisedEntryAbsolutePath;
+          elseif (!in_array($classNamespace, $additionalClassesFilesKeys))
+            $classesThatMayHaveToBeAdded[$classNamespace] = str_replace(BASE_PATH, '', $revisedEntryAbsolutePath);
           else
-            $classes[$classesKey] = $fullFilePath;
+            $classes[$classNamespace] = $revisedEntryAbsolutePath;
         }
       }
 
@@ -101,11 +117,11 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
     closedir($folderHandler);
 
     echo CLI_RED, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    exit(1);
+    throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
   /**
-   * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
+   * Strips spaces, use the short array notation [] and changes \\\\ by \\.
    * We take care of the spaces contained into folders and files names.
    * We also reduce paths using constants.
    *
@@ -126,14 +142,20 @@ if (empty($dirs) === false && function_exists('iterateCM') === false)
   }
 }
 
-foreach ($dirs as $dir)
+foreach ($folders as $folder)
 {
   // if the user wants to launch tasks in an empty project when there are not a class map yet
   // we need to check if the needed folders exist
-  if (file_exists($dir) === false)
-    mkdir($dir);
+  if (!file_exists($folder))
+    mkdir($folder);
 
-  list($classes, $processedDir, $classesThatMayHaveToBeAdded) = iterateCM($classes, $dir, $additionalClassesFilesKeys, $processedDir, $classesThatMayHaveToBeAdded);
+  [$classes, $processedDir, $classesThatMayHaveToBeAdded] = iterateCM(
+    $classes,
+    $folder,
+    $additionalClassesFilesKeys,
+    $processedDir,
+    $classesThatMayHaveToBeAdded
+  );
 }
 
 if (VERBOSE === 1)
@@ -145,7 +167,11 @@ $classes = array_merge($classes, $additionalClassesFiles);
 // classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
 $prodClasses = [];
 
-foreach($classes as $key => $class)
+/**
+ * @var string $classNamespace
+ * @var string  $class
+ */
+foreach($classes as $classNamespace => $class)
 {
   // We only let external libraries
   if (mb_strpos($class, BASE_PATH) !== false)
@@ -154,20 +180,20 @@ foreach($classes as $key => $class)
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
     if (
-      (in_array($firstFolderAfterBasePath, ['src', 'web']) === true && mb_strpos($tmpClass, 'src') === false)
+      (in_array($firstFolderAfterBasePath, ['src', 'web']) && mb_strpos($tmpClass, 'src') === false)
       // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
       // dynamically loaded
       || (mb_strpos($tmpClass, 'DumpMaster') !== false))
-      $prodClasses[$key] = $class;
+      $prodClasses[$classNamespace] = $class;
   } else
-    $prodClasses[$key]= $class;
+    $prodClasses[$classNamespace]= $class;
 }
 
 $classMap = var_export($classes, true);
 $prodClassMap = var_export($prodClasses, true);
 $classMapPath = BASE_PATH . 'cache/php/';
 
-if (file_exists($classMapPath) === false)
+if (!file_exists($classMapPath))
   mkdir($classMapPath, 0755, true);
 
 // Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
@@ -212,16 +238,20 @@ echo END_COLOR;
 
 /** Shows an help to find classes that may have to be added to the custom configuration in order to complete
  *  this automatic task */
-if (empty($classesThatMayHaveToBeAdded) === false)
+if (!empty($classesThatMayHaveToBeAdded))
 {
   echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
   'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
-  foreach($classesThatMayHaveToBeAdded as $key => $namespace)
+  /**
+   * @var string $namespace
+   * @var string $classFile
+   */
+  foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)
   {
-    echo str_pad('Class ' . CLI_YELLOW . $key . END_COLOR, FIRST_CLASS_PADDING,
-      '.'), '=> possibly related file ', CLI_YELLOW, $namespace, END_COLOR, PHP_EOL;
+    echo str_pad('Class ' . CLI_YELLOW . $namespace . END_COLOR, FIRST_CLASS_PADDING,
+      '.'), '=> possibly related file ', CLI_YELLOW, $classFile, END_COLOR, PHP_EOL;
   }
 }
 
-return null;
+return;

@@ -27,7 +27,7 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 
   // We cleans the last sentence
   echo 'Creating all the models for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' in the module ',
-  CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
+    CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
 modelsCreation($modelLocation, $bundleName, $modelName . '.php');

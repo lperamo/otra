@@ -28,7 +28,7 @@ $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion)
 list($modelFullName, $modelExists) = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
 echo DOUBLE_ERASE_SEQUENCE;
 
-while (true === file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName))
+while (file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName))
 {
   $modelName = promptUser($modelExists, $modelExists);
   // We update the informations right now in order to deliver precise error messages

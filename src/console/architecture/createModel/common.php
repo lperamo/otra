@@ -26,8 +26,22 @@ function modelCreation(int $modelLocation, string $modelName,string &$modelFullN
 {
   $modelFullName = $modelName . '.php';
   $functions = $propertiesCode = '';
-  retrieveFunctionsAndProperties(SCHEMA_DATA[$modelName]['columns'], $modelName, $functions, $propertiesCode, $propertiesTxt);
-  writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
+  retrieveFunctionsAndProperties(
+    SCHEMA_DATA[$modelName]['columns'],
+    $modelName,
+    $functions,
+    $propertiesCode,
+    $propertiesTxt
+  );
+  writeModelFile(
+    $modelLocation,
+    $bundleName,
+    MODEL_PATH,
+    $modelName,
+    $modelFullName,
+    $propertiesCode,
+    $functions
+  );
   modelCreationSuccess($bundleName, $modelName, $propertiesTxt);
 }
 

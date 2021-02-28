@@ -35,15 +35,16 @@ abstract class Router
     /**
      * We extract potentially those variables from $baseParams
      *
-     * @var $action
-     * @var $bundle
-     * @var $controller
-     * @var $module
-     * @var $pattern
+     * @var string $action
+     * @var string $bundle
+     * @var Controller $controller
+     * @var string $module
+     * @var string $pattern
+     * @var array $baseParams
      */
     extract($baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
-      array_pad(Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
+      array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
     ));
 
     $finalAction = '';
@@ -52,7 +53,7 @@ abstract class Router
       $finalAction = 'cache\\php\\' . $action; //'cache\\php\\' . $controller . 'Controller'
     else
     {
-      if (!isset(Routes::$_[$route]['core']))
+      if (!isset(Routes::$allRoutes[$route]['core']))
         $finalAction = 'bundles\\';
 
       $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
@@ -65,9 +66,9 @@ abstract class Router
     $baseParams['css'] = $baseParams['js'] = false;
 
     // Do we have some resources for this route...
-    if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
+    if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
-      $resources = Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY];
+      $resources = Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY];
       $baseParams['js'] = (
         isset($resources['bundle_js'])
         || isset($resources['module_js'])
@@ -92,7 +93,7 @@ abstract class Router
       ), 0, 9) !== 'web/index')
     {
       // Is it a static page
-      if (isset(Routes::$_[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
+      if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
         header('Content-Encoding: gzip');
         echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
@@ -124,7 +125,7 @@ abstract class Router
      * @var string $routeUrl
      */
 
-    foreach (Routes::$_ as $routeName => $routeData)
+    foreach (Routes::$allRoutes as $routeName => $routeData)
     {
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
       $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
@@ -141,7 +142,7 @@ abstract class Router
     {
       header('HTTP/1.0 404 Not Found');
 
-      return in_array('404', array_keys(Routes::$_)) === true ? ['404', []] : ['otra_404', []];
+      return in_array('404', array_keys(Routes::$allRoutes)) === true ? ['404', []] : ['otra_404', []];
     }
 
     $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
@@ -201,7 +202,7 @@ abstract class Router
       $paramsString .= '/' . $value;
     }
 
-    return Routes::$_[$route][self::OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
+    return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
   }
 }
 

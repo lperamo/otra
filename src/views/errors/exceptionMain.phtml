@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 /**
  * @var string $message
- * @var string $code
- * @var string $file
- * @var int    $line
+ * @var string $errorCode
+ * @var string $fileName
+ * @var int    $fileLine
  * @var array  $context
  * @var array  $backtraces
  */
@@ -20,14 +20,14 @@ require CORE_PATH . 'tools/files/showTraceLine.php';
 <div class="exception-main">
   <p class="exception-main--paragraph-first">
     Error code
-    <span class="exception-main--color--error-code"><?= $code ?></span>
+    <span class="exception-main--color--error-code"><?= $errorCode ?></span>
     in
-    <span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $file ?>">
-      <?= $file ?><!--
+    <span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $fileName ?>">
+      <?= $fileName ?><!--
     --></span><!--
     -->:<!--
-    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $line ?>"><!--
-      --><?= $line ?>
+    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $fileLine ?>"><!--
+      --><?= $fileLine ?>
     </span>
   </p>
 
@@ -39,9 +39,9 @@ require CORE_PATH . 'tools/files/showTraceLine.php';
 
   showTraceLine([
     'class' => $backtraces[0]['class'] ?? null,
-    'file' => BASE_PATH . $file,
+    'file' => BASE_PATH . $fileName,
     'function' => $backtraces[0]['function'] ?? null,
-    'line' => $line,
+    'line' => $fileLine,
     'type' => $backtraces[0]['type'],
     'args' => $backtraces[0]['variables'] ?? null
   ]);

@@ -35,7 +35,7 @@ $firstFilesIncluded = get_included_files();
 // Force to show all errors
 error_reporting(-1 & ~E_DEPRECATED);
 
-spl_autoload_register(function($className)
+spl_autoload_register(function(string $className) : void
 {
   if (isset(CLASSMAP[$className]))
   {
@@ -44,14 +44,15 @@ spl_autoload_register(function($className)
     echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
     debug_print_backtrace();
     echo PHP_EOL;
-    var_dump(CLASSMAP);
+    require CORE_PATH . 'tools/debug/dump.php';
+    dump(CLASSMAP);
     echo PHP_EOL, END_COLOR;
   }
 });
 
 require BASE_PATH . 'config/AllConfig.php';
 
-$params = Routes::$_[$route];
+$params = Routes::$allRoutes[$route];
 
 // Init require section
 require CORE_PATH . 'Session.php';
@@ -76,15 +77,15 @@ $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
 if (isset($params['session']))
 {
-  foreach($params['session'] as $key => $param)
+  foreach($params['session'] as $sessionKey => $param)
   {
-    $_SESSION[$key] = $param;
+    $_SESSION[$sessionKey] = $param;
   }
 }
 
 // We fix the created problems, check syntax errors and then minifies it
-$file = BASE_PATH . 'cache/php/' . $route;
-$file_ = $file . '_.php';
+$phpRouteFile = BASE_PATH . 'cache/php/' . $route;
+$temporaryPhpRouteFile = $phpRouteFile . '_.php';
 
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 
@@ -117,16 +118,17 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    OTRA_KEY_DRIVER => empty(AllConfig::$dbConnections) === false
-      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+    OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
+      && isset(AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER])
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
       : '',
-    "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
+    '_SERVER[APP_ENV]' => $_SERVER[APP_ENV],
     'temporaryEnv' => 'prod'
   ]
 );
 
-set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) {
+set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) : void
+{
   throw new \otra\OtraException($message, $errno, $file, $line, $context);
 });
 
@@ -135,7 +137,6 @@ $chunks = $params['chunks'];
 // TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
 //   an use statement. Other comment to remove once fixed, in fixFiles function of taskFileOperation.php
 // For the moment, as a workaround, we will temporary explicitly add the OtraException file to solve issues.
-
 try
 {
   contentToFile(
@@ -146,19 +147,19 @@ try
       $verbose,
       $fileToInclude
     ),
-    $file_
+    $temporaryPhpRouteFile
   );
-} catch(Exception $e)
+} catch(Exception $exception)
 {
   echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode($e->getMessage()) . '}'
-    : $e->getMessage();
+    ? '{"success": "exception", "msg":' . json_encode($exception->getMessage()) . '}'
+    : $exception->getMessage();
 
   return;
 }
 
-if (hasSyntaxErrors($file_))
+if (hasSyntaxErrors($temporaryPhpRouteFile))
   return;
 
-compressPHPFile($file_, $file);
+compressPHPFile($temporaryPhpRouteFile, $phpRouteFile);
 

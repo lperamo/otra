@@ -9,7 +9,7 @@ declare(strict_types=1);
 use config\AllConfig;
 use JetBrains\PhpStorm\Pure;
 
-/** @var string $file */
+/** @var string $fileName */
 
 define('OTRA_LABEL_RETURN_403', 'return 403;');
 define('OTRA_LABEL_TYPES', 'types');
@@ -18,7 +18,7 @@ define('OTRA_LABEL_ROOT_PATH', 'root $rootPath;');
 /**
  * @return string
  */
-#[Pure] function handlesHTTPSRedirection():string
+#[Pure] function handlesHTTPSRedirection() : string
 {
   return 'server' . PHP_EOL .
     '{' . PHP_EOL .
@@ -39,7 +39,7 @@ define('OTRA_LABEL_ROOT_PATH', 'root $rootPath;');
  *
  * @return string
  */
-function handleBasicConfiguration(): string
+function handleBasicConfiguration() : string
 {
   return SPACE_INDENT . 'listen 443 ssl http2;' . PHP_EOL .
     SPACE_INDENT . 'listen [::]:443 ssl http2;' . PHP_EOL .
@@ -301,8 +301,8 @@ $content = handlesHTTPSRedirection() .
   handleRewriting() . PHP_EOL .
   '}' . PHP_EOL;
 
-file_put_contents($file, $content);
+file_put_contents($fileName, $content);
 
 echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'development' : 'production') .
-  ' server configuration generated in ' . CLI_LIGHT_CYAN . $file . END_COLOR . '.' . PHP_EOL;
+  ' server configuration generated in ' . CLI_LIGHT_CYAN . $fileName . END_COLOR . '.' . PHP_EOL;
 return 0;

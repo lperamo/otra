@@ -38,7 +38,7 @@ class PdomysqlTest extends TestCase
 
     try
     {
-      Sql::getDB()->__destruct();
+      Sql::getDb()->__destruct();
     } catch (\Exception $e)
     {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
@@ -52,7 +52,7 @@ class PdomysqlTest extends TestCase
   {
     require(self::TEST_CONFIG_GOOD_PATH);
 
-    Sql::getDB(null, false);
+    Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
     $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
     Sql::$instance->freeResult($dbResult);
@@ -69,7 +69,7 @@ class PdomysqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->freeResult(
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
@@ -87,7 +87,7 @@ class PdomysqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->freeResult(
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
@@ -104,7 +104,7 @@ class PdomysqlTest extends TestCase
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
-    Sql::getDB();
+    Sql::getDb();
 
     // testing
     self::assertTrue(\otra\bdd\Pdomysql::close(Sql::$instance));

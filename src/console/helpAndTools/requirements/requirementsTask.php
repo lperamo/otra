@@ -89,11 +89,11 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     /** @var string $error */
     // different check whether it's a PHP src or a program
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
-      [$error,] = cli('which ' . $requirement[REQ_PKG_NAME], null, false);
+      [$error,] = cliCommand('which ' . $requirement[REQ_PKG_NAME], null, false);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
-      [$error,] = cli('php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"', null, false);
+      [$error,] = cliCommand('php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"', null, false);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
-      [$error,] = cli('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"', null, false);
+      [$error,] = cliCommand('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"', null, false);
 
     echo $error !== 1
       ? CLI_GREEN . '  ✔  '

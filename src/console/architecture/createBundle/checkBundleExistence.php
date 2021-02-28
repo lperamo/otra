@@ -12,16 +12,16 @@ $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';
 
 // BUNDLE STEP
-if (file_exists($bundlePath) === false)
+if (!file_exists($bundlePath))
 {
   /** @var bool $consoleForce */
-  if ($consoleForce === false)
+  if (!$consoleForce)
     echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */
-  if ($interactive === false)
+  if (!$interactive)
   {
-    if ($consoleForce === false)
+    if (!$consoleForce)
       throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
@@ -35,7 +35,7 @@ if (file_exists($bundlePath) === false)
     }
 
     if ($answer === 'n')
-      exit (0);
+      throw new \otra\OtraException('', 0, '', NULL, [], true);
   }
 
   require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';

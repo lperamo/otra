@@ -11,17 +11,17 @@ declare(strict_types=1);
  * http://www.php.net/manual/en/function.gzwrite.php#34955
  *
  * @param string      $source Path to file that should be compressed
- * @param string|null $dest   Name of the file once gzipped. By default, we add 'gz' to the name.
+ * @param string|null $destination   Name of the file once gzipped. By default, we add 'gz' to the name.
  * @param int         $level  GZIP compression level (default: 9)
  * @param bool        $keep   Do we have to keep the source file
  *
  * @return bool Success or not
  */
-function gzCompressFile(string $source, string $dest = null, int $level = 9, $keep = false) : bool
+function gzCompressFile(string $source, string $destination = null, int $level = 9, $keep = false) : bool
 {
-  $dest = $dest === null ? $source . '.gz' : $dest;
+  $destination = $destination === null ? $source . '.gz' : $destination;
 
-  $fp_out = gzopen($dest, 'wb' . $level);
+  $fp_out = gzopen($destination, 'wb' . $level);
 
   if ($fp_out === false)
     return false;
@@ -41,7 +41,7 @@ function gzCompressFile(string $source, string $dest = null, int $level = 9, $ke
   gzclose($fp_out);
 
   // Avoids to keep a file without .gz extension and one with .gz extension for example.
-  if ($keep === false && $source !== $dest)
+  if ($keep === false && $source !== $destination)
     unlink($source);
 
   return true;

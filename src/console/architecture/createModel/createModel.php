@@ -19,16 +19,16 @@ $bundlesPath = BASE_PATH . 'bundles/';
  *
  * @param string $modelName
  * @param string $columnName
- * @param string $type
+ * @param ?string $type
  *
  * @throws OtraException
  */
-function checkDataType(string $modelName, string $columnName, string $type)
+function checkDataType(string $modelName, string $columnName, ?string $type) : void
 {
-  if (false === isset($type))
+  if (!isset($type))
   {
-    echo CLI_RED, 'SCHEMA.YML => Model ', CLI_YELLOW, $modelName, CLI_RED, ' : There are no type for the property ', CLI_YELLOW,
-    $columnName, CLI_RED, '.', END_COLOR;
+    echo CLI_RED, 'SCHEMA.YML => Model ', CLI_YELLOW, $modelName, CLI_RED, ' : There are no type for the property ',
+      CLI_YELLOW, $columnName, CLI_RED, '.', END_COLOR;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -61,8 +61,8 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
     return 'DateTime';
 
   // If we don't know this type !
-  echo CLI_RED, 'We don\'t know the type ', CLI_YELLOW, $type, CLI_RED, ' in ', CLI_YELLOW, $modelName, CLI_RED, ' for the property 
-  ', CLI_YELLOW, $columnName, CLI_RED, ' !', END_COLOR;
+  echo CLI_RED, 'We don\'t know the type ', CLI_YELLOW, $type, CLI_RED, ' in ', CLI_YELLOW, $modelName, CLI_RED,
+    ' for the property ', CLI_YELLOW, $columnName, CLI_RED, ' !', END_COLOR;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -70,10 +70,10 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
  * Returns the code of the getters and setters related to this property
  *
  * @param string $columnName
- * @param string $type          Column type
- * @param string $functions     Existing creation code for functions
+ * @param string $type       Column type
+ * @param string $functions  Existing creation code for functions
  */
-function addGettersAndSetters(string $columnName, string $type, string &$functions)
+function addGettersAndSetters(string $columnName, string $type, string &$functions) : void
 {
   $ucfirstColumnName = ucfirst($columnName);
   $functionEnd = $columnName . ';' . PHP_EOL . '  }' . PHP_EOL;
@@ -84,6 +84,7 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
     'set' . $ucfirstColumnName . '(' . ($type === '' ? '' : $type . ' ') . '$' . $columnName . ') : void' . START_ACCOLADE . SPACE_INDENT . SPACE_INDENT . '$this->' .
     $columnName . ' = ' . '$' . $functionEnd;
 }
+
 /**
  * Shows the success sentence after the successful creation of a model.
  *
@@ -91,7 +92,7 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
  * @param string      $modelName
  * @param string|null $propertiesTxt
  */
-function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null)
+function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null) : void
 {
   echo 'The model ', CLI_LIGHT_CYAN, $modelName, END_COLOR, ' has been created in the bundle ', CLI_LIGHT_CYAN,
     $bundleName, END_COLOR;
@@ -120,16 +121,16 @@ function writeModelFile(
   string $modelName,
   string $modelFullName,
   string $propertiesCode,
-  string $functions)
+  string $functions) : void
 {
   // If the 'models' folder doesn't exist => creates it.
   $modelsPath = $bundlePath . MODEL_DIRECTORY;
 
-  if (false === file_exists($modelsPath))
+  if (!file_exists($modelsPath))
     mkdir($modelsPath, 0755, true);
 
   // Creates the model with all the content that we gathered.
-  $fp = fopen($modelsPath . ucfirst($modelFullName), 'w');
+  $filePointer = fopen($modelsPath . ucfirst($modelFullName), 'w');
 
   // If we use DateTime type then we add a use statement to handle this type.
   $useDateTime = '';
@@ -137,13 +138,13 @@ function writeModelFile(
   if (mb_strpos($functions, 'DateTime') !== false)
     $useDateTime = PHP_EOL . 'use \DateTime;' . PHP_EOL;
 
-  fwrite($fp, '<?php' . PHP_EOL .
+  fwrite($filePointer, '<?php' . PHP_EOL .
     'namespace bundles\\' . ucfirst($bundleName) .
     ($modelLocation === MODEL_LOCATION_MODULE ? '\\' . MODULE_NAME : '') . '\\models;' . PHP_EOL .
     $useDateTime . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
     '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL);
-  fclose($fp);
+  fclose($filePointer);
 }
 
 /**
@@ -192,7 +193,7 @@ function getModuleName(string $bundlePath) : string
   $question = 'In which module do you want to create the model ?';
   $moduleName = promptUser($question);
 
-  while(false === file_exists($bundlePath . $moduleName))
+  while(!file_exists($bundlePath . $moduleName))
   {
     echo DOUBLE_ERASE_SEQUENCE;
     $moduleName = promptUser('This module does not exist.' . $question);
@@ -216,13 +217,18 @@ function retrieveFunctionsAndProperties(
   string &$functionsCode,
   string &$propertiesCode,
   ?string &$propertiesTxt = null
-)
+) : void
 {
+  /**
+   * @var string $column
+   * @var array $columnData
+   */
   foreach ($columns as $column => $columnData)
   {
     $functionsCode .= PHP_EOL;
-    $type = $columnData['type']; // e.g. int(5O)
-    $typeSimple = $type === '' ? '' : getDataType($modelName, $column, $type); // e.g. int
+    /** @var string $columnDataType */
+    $columnDataType = $columnData['type']; // e.g. int(5O)
+    $typeSimple = $columnDataType === '' ? '' : getDataType($modelName, $column, $columnDataType); // e.g. int
 
     // Adds property declaration
     $propertiesCode .= SPACE_INDENT . 'protected ' . ($typeSimple === '' ? '' : $typeSimple . ' ') . '$' . $column .
@@ -231,7 +237,7 @@ function retrieveFunctionsAndProperties(
     if ($propertiesTxt !== null)
       $propertiesTxt .= $column . ', ';
 
-    checkDataType($modelName, $column, $type);
+    checkDataType($modelName, $column, $columnDataType);
     /** @var string $startAccolade */
     addGettersAndSetters(
       $column,

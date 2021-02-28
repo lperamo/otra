@@ -31,23 +31,27 @@ define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
 define('PHP_CACHE_PATH', CACHE_PATH . 'php/');
 define('RELATIVE_PHP_CACHE_PATH', 'cache/php');
 
-$mask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
+$binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
 // Handling route
-if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
-  || ($mask & CLEAR_CACHE_MASK_CSS) >> 2
-  || ($mask & CLEAR_CACHE_MASK_JS) >> 3
-  || ($mask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
+if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
+  || ($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2
+  || ($binaryMask & CLEAR_CACHE_MASK_JS) >> 3
+  || ($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
 {
-  $routes = \config\Routes::$_;
+  $routes = \config\Routes::$allRoutes;
 
   /**
    * @param string $cachePath
    * @param string $cacheRelativePath
    * @param string $extension
    */
-  $removeCachedFiles = function (string $cachePath, string $cacheRelativePath, string $extension) use($routes): void
+  $removeCachedFiles = function (
+    string $cachePath,
+    string $cacheRelativePath,
+    string $extension
+  ) use($routes, $route) : void
   {
     checkFolder($cachePath, $cacheRelativePath);
 
@@ -138,7 +142,7 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
 }
 
 /* **************** PHP INTERNAL CACHE **************** */
-if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
+if ($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 {
   if (isset($route))
   {
@@ -160,43 +164,43 @@ if ($mask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 
 // If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
 if ((
-    ($mask / CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
-    | ($mask / CLEAR_CACHE_MASK_CLASS_MAPPING)
-    | ($mask / CLEAR_CACHE_MASK_METADATA)
-    | ($mask / CLEAR_CACHE_MASK_SECURITY)
+    ($binaryMask / CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
+    | ($binaryMask / CLEAR_CACHE_MASK_CLASS_MAPPING)
+    | ($binaryMask / CLEAR_CACHE_MASK_METADATA)
+    | ($binaryMask / CLEAR_CACHE_MASK_SECURITY)
   ) & 1)
   checkFolder(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH);
 
 /* **************** PHP BOOTSTRAPS **************** */
-if (($mask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
+if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 {
   $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
   echo 'PHP bootstrap(s) cleared', OTRA_SUCCESS;
 }
 
 /* **************** CSS **************** */
-if (($mask & CLEAR_CACHE_MASK_CSS) >> 2)
+if (($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2)
 {
   $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.gz');
   echo 'CSS files cleared', OTRA_SUCCESS;
 }
 
 /* **************** JS **************** */
-if (($mask & CLEAR_CACHE_MASK_JS) >> 3)
+if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3)
 {
   $removeCachedFiles(CACHE_PATH . 'js/', 'cache/js', '.gz');
   echo 'JS files cleared', OTRA_SUCCESS;
 }
 
 /* **************** TEMPLATES **************** */
-if (($mask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
+if (($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
 {
   $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
   echo 'Templates cleared', OTRA_SUCCESS;
 }
 
 /* **************** ROUTE MANAGEMENT **************** */
-if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
+if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 {
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
@@ -208,7 +212,7 @@ if (($mask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 }
 
 /* **************** CLASS MAPPING **************** */
-if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
+if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
@@ -226,7 +230,7 @@ if (($mask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 }
 
 /* **************** CONSOLE TASKS METADATA **************** */
-if (($mask & CLEAR_CACHE_MASK_METADATA) >> 7)
+if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
@@ -244,7 +248,7 @@ if (($mask & CLEAR_CACHE_MASK_METADATA) >> 7)
 }
 
 /* **************** SECURITY FILES **************** */
-if (($mask & CLEAR_CACHE_MASK_SECURITY) >> 8)
+if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
 {
   array_map(
     'unlink',

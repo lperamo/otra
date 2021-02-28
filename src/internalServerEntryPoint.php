@@ -25,20 +25,20 @@ if (!empty($extension))
       header('Content-Type: application/json');
       break;
     default :
-      $path = (mb_strpos($_SERVER[OTRA_KEY_REQUEST_URI], 'src')
+      $filePath = (mb_strpos($_SERVER[OTRA_KEY_REQUEST_URI], 'src')
         ? BASE_PATH
         : 'web'
         ) . $_SERVER[OTRA_KEY_REQUEST_URI];
       $finfo = finfo_open(FILEINFO_MIME_TYPE|FILEINFO_EXTENSION); // Retourne le type mime à l'extension mimetype
-      $mime_type = finfo_file($finfo, $path);
+      $mime_type = finfo_file($finfo, $filePath);
       finfo_close($finfo);
       header('Content-Type:' . $mime_type);
   }
 
   if (in_array($extension[0], ['.css', '.js', '.json', '.gz']))
-    $path = BASE_PATH . $_SERVER[OTRA_KEY_REQUEST_URI];
+    $filePath = BASE_PATH . $_SERVER[OTRA_KEY_REQUEST_URI];
 
-  echo file_get_contents($path);
+  echo file_get_contents($filePath);
   return true;
 }
 

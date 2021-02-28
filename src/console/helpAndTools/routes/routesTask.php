@@ -31,10 +31,18 @@ if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
  * @param string $shaName
  * @param string $altColor
  */
-function showResourceState(string $resourceExtension, string $resourceType, string $basePath, string $shaName, string $altColor)
+function showResourceState(
+  string $resourceExtension,
+  string $resourceType,
+  string $basePath,
+  string $shaName,
+  string $altColor
+) : void
 {
-  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz')) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[',
-  $resourceType, ']', $altColor;
+  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz'))
+    ? CLI_LIGHT_GREEN
+    : CLI_LIGHT_RED,
+    '[', $resourceType, ']', $altColor;
 }
 
 /**
@@ -44,9 +52,12 @@ function showResourceState(string $resourceExtension, string $resourceType, stri
  * @param string $route
  * @param string $altColor
  */
-function showPHPState(string $basePath, string $route, string $altColor)
+function showPHPState(string $basePath, string $route, string $altColor) : void
 {
-  echo (file_exists($basePath . 'php' . '/' . $route. '.php') === true) ? CLI_LIGHT_GREEN : CLI_LIGHT_RED, '[PHP]' . $altColor;
+  echo (file_exists($basePath . 'php' . '/' . $route. '.php'))
+    ? CLI_LIGHT_GREEN
+    : CLI_LIGHT_RED,
+    '[PHP]', $altColor;
 }
 
 require BASE_PATH . 'config/AllConfig.php';
@@ -77,11 +88,11 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
   $route = $argv[ROUTES_ARG_ROUTE];
 
   // If the route does not exist
-  if (false === isset(Routes::$_[$route]))
+  if (!isset(Routes::$allRoutes[$route]))
   {
     // We try to find a route which the name is similar
     require CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(Routes::$_));
+    list($newRoute) = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -97,9 +108,9 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
     $route = $newRoute;
   }
 
-  $routes = [$route => Routes::$_[$route]];
+  $routes = [$route => Routes::$allRoutes[$route]];
 } else
-  $routes = Routes::$_;
+  $routes = Routes::$allRoutes;
 
 foreach($routes as $route => $details)
 {
@@ -120,7 +131,6 @@ foreach($routes as $route => $details)
 
   // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . VERSION . 'che');
-
   $basePath = BASE_PATH . 'cache/';
 
   echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
@@ -136,7 +146,10 @@ foreach($routes as $route => $details)
     if (isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
       showResourceState('css', 'CSS', $basePath, $shaName, $altColor);
 
-    if (isset($resources['_js']) || isset($resources['bundle_js']) || isset($resources['module_js']) || isset($resources['first_js']))
+    if (isset($resources['_js'])
+      || isset($resources['bundle_js'])
+      || isset($resources['module_js'])
+      || isset($resources['first_js']))
       showResourceState('js', 'JS', $basePath, $shaName, $altColor);
 
     if (isset($resources['template']))
