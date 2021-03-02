@@ -241,6 +241,7 @@ trait DevControllerTrait
   /**
    * Adds the OTRA CSS for the debug bar.
    *
+   * @throws Exception
    * @return string
    */
   public static function addDebugCSS() : string
@@ -249,7 +250,8 @@ trait DevControllerTrait
 
     foreach(self::$stylesheets as $stylesheet)
     {
-      $cssContent .= "\n" . '<link rel="stylesheet" href="' . $stylesheet . '.css" />';
+      $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet . '.css" />';
     }
 
     return $cssContent;
