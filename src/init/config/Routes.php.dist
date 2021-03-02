@@ -52,8 +52,8 @@ abstract class Routes
 
   public static function init()
   {
-    self::$_ = array_merge(
-      self::$_,
+    self::$allRoutes = array_merge(
+      self::$allRoutes,
       require BASE_PATH . 'bundles/config/Routes.php'); // TODO find a way to allow the parenthesis to be correctly placed ! For now, change it breaks the production task code :/
   }
 }
