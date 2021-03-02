@@ -145,7 +145,7 @@ trait DevControllerTrait
    */
   private static function addResources(string $assetType, string $route, array $viewResourcePath) : string
   {
-    $routes = Routes::$_;
+    $routes = Routes::$allRoutes;
 
     // The route does not exist ?!
     if (!isset($routes[$route]))
@@ -223,14 +223,15 @@ trait DevControllerTrait
 
     if ($assetType === 'js')
     {
-      foreach(self::$javaScript as $key => $javaScript)
+      // $jsResourceKey can be 'async', 'defer' or a numerical array index
+      foreach(self::$javaScript as $jsResourceKey => $javaScript)
       {
         // If the key don't give info on async and defer then put them automatically
-        if (is_int($key))
-          $key = '';
+        if (is_int($jsResourceKey))
+          $jsResourceKey = '';
 
         $resourceContent .= PHP_EOL . '<script src="' . $javaScript . '.js" nonce="' . getRandomNonceForCSP() . '" ' .
-          $key . '></script>';
+          $jsResourceKey . '></script>';
       }
     }
 
@@ -285,16 +286,16 @@ trait DevControllerTrait
   {
     $scripts = [];
 
-    for($i = 0, $maximum = count($unorderedArray) + count($orderedArray);
-        $i< $maximum;
-        ++$i )
+    for($priorityIndex = 0, $maximum = count($unorderedArray) + count($orderedArray);
+        $priorityIndex< $maximum;
+        ++$priorityIndex )
     {
-      if (in_array($i, array_keys($orderedArray)))
+      if (in_array($priorityIndex, array_keys($orderedArray)))
       {
-        $scripts[$i] = $orderedArray[$i];
-        unset($orderedArray[$i]);
+        $scripts[$priorityIndex] = $orderedArray[$priorityIndex];
+        unset($orderedArray[$priorityIndex]);
       } else
-        $scripts[$i] = array_shift($unorderedArray);
+        $scripts[$priorityIndex] = array_shift($unorderedArray);
     }
 
     return $scripts;

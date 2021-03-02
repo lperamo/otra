@@ -6,8 +6,6 @@ use otra\Controller;
 use config\Routes;
 
 /**
- *
- *
  * @author Lionel Péramo
  * @package otra\controllers\errors
  */
@@ -22,7 +20,7 @@ class Error404Action extends Controller
   public function __construct(array $baseParams = [], array $getParams = [])
   {
     parent::__construct($baseParams, $getParams);
-    $routes = array_keys(Routes::$_);
+    $routes = array_keys(Routes::$allRoutes);
     $defaultUrl = null;
 
     foreach ($routes as $route)
@@ -30,7 +28,7 @@ class Error404Action extends Controller
       if (str_contains($route, 'otra'))
         continue;
 
-      $defaultUrl = Routes::$_[$route]['chunks'][0];
+      $defaultUrl = Routes::$allRoutes[$route]['chunks'][0];
       break;
     }
 

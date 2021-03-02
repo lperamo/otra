@@ -9,20 +9,20 @@ declare(strict_types=1);
 /**
  * Deletes a tree recursively.
  *
- * @param string $dir
+ * @param string $folder
  *
  * @return bool
  */
-$delTree = function (string $dir) use (&$delTree) : bool
+$delTree = function (string $folder) use (&$delTree) : bool
 {
-  $files = array_diff(scandir($dir), ['.','..']);
+  $files = array_diff(scandir($folder), ['.','..']);
 
-  foreach ($files as $file)
+  foreach ($files as $fileName)
   {
-    (is_dir("$dir/$file") === true)
-      ? $delTree("$dir/$file")
-      : unlink("$dir/$file");
+    (is_dir("$folder/$fileName") === true)
+      ? $delTree("$folder/$fileName")
+      : unlink("$folder/$fileName");
   }
 
-  return rmdir($dir);
+  return rmdir($folder);
 };

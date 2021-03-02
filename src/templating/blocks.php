@@ -1,14 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace cache\php {
+namespace cache\php
+{
   /**
    * Light templating engine "interface".
    *
    * @author Lionel Péramo
    * @package otra\templating
    */
-  abstract class BlocksSystem {
+  abstract class BlocksSystem
+  {
     public const
       OTRA_BLOCKS_KEY_CONTENT = 'content',
       OTRA_BLOCKS_KEY_ENDING_BLOCK = 'endingBlock',
@@ -44,6 +46,10 @@ namespace cache\php {
       $indexesToUnset = [];
 
       // Loops through the block stack to compile the final content that have to be shown
+      /**
+       * @var int|string $blockKey
+       * @var array      $block
+       */
       foreach(self::$blocksStack as $blockKey => $block)
       {
         // If this block do not have to be replaced and which has not already been shown
@@ -58,7 +64,8 @@ namespace cache\php {
 
         $prevKey = $tmpKey = $blockKey;
 
-        do {
+        do
+        {
           // We add the key to an array of indexes that will not be showed again
           if (!in_array($tmpKey, $indexesToUnset))
             $indexesToUnset[]= $tmpKey;
@@ -110,7 +117,7 @@ namespace {
 
   /* Light templating engine */
   // those functions can be redeclared if we have an exception later, exception that will also use the block system
-  if (function_exists('block') === false)
+  if (!function_exists('block'))
   {
     /* Little remainder
      * Key is the key of the block stacks array. It is the position of the block in the stack

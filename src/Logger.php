@@ -22,7 +22,7 @@ abstract class Logger
   private static function logIpTest() : string
   {
     // Only needed to ease maintainability, maybe pass those to class static variables on order to get rid of the condition ?
-    if (defined('SESSION_DATE') === false)
+    if (!defined('SESSION_DATE'))
     {
       define('SESSION_DATE', '_date');
       define('HTTP_USER_AGENT', 'HTTP_USER_AGENT');
@@ -30,25 +30,25 @@ abstract class Logger
       define('REMOTE_ADDR', 'REMOTE_ADDR');
     }
 
-    if (false === isset($_SESSION[SESSION_DATE]))
+    if (!isset($_SESSION[SESSION_DATE]))
       $_SESSION[SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[SESSION_BROWSER] = '';
 
     $infos = '';
-    $date = date(DATE_ATOM, time());
+    $todayDate = date(DATE_ATOM, time());
 
-    if ($date !== $_SESSION[SESSION_DATE])
-      $infos .= '[' . ($_SESSION[SESSION_DATE] = $date) . '] ';
+    if ($todayDate !== $_SESSION[SESSION_DATE])
+      $infos .= '[' . ($_SESSION[SESSION_DATE] = $todayDate) . '] ';
 
     // if we come from console, adds it to the log
     $infos .= (PHP_SAPI === 'cli') ? '[OTRA_CONSOLE] ' : '';
 
     // remote address ip is not set if we come from the console or if we are in localhost
-    $infos .= (true === isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
+    $infos .= (isset($_SERVER[REMOTE_ADDR]) && $_SERVER[REMOTE_ADDR] !== $_SESSION['_ip'])
       ? '[' . ($_SESSION['_ip'] = $_SERVER[REMOTE_ADDR]) . '] '
       : '';
 
     // user agent not set if we come from the console
-    if (true === isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
+    if (isset($_SERVER[HTTP_USER_AGENT]) && $_SERVER[HTTP_USER_AGENT] != $_SESSION[SESSION_BROWSER])
       return $infos . '[' .  ($_SESSION[SESSION_BROWSER] = $_SERVER[HTTP_USER_AGENT]) . '] ';
 
     return $infos;
@@ -58,7 +58,7 @@ abstract class Logger
    * @param string $path
    * @param string $message
    */
-  public static function logging(string $path, string $message)
+  public static function logging(string $path, string $message) : void
   {
     if (is_writable($path))
       error_log(
@@ -77,7 +77,7 @@ abstract class Logger
    *
    * @param string $message
    */
-  public static function log(string $message)
+  public static function log(string $message) : void
   {
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
@@ -91,7 +91,7 @@ abstract class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logToRelativePath(string $message, string $path = '')
+  public static function logToRelativePath(string $message, string $path = '') : void
   {
     self::logging(
       __DIR__ . '/' . $path . '.txt',
@@ -105,7 +105,7 @@ abstract class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logTo(string $message, string  $path = '')
+  public static function logTo(string $message, string  $path = '') : void
   {
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt',
@@ -121,7 +121,7 @@ abstract class Logger
    * @param string $message
    * @param string $path
    */
-  public static function logSQLTo(string $file, int $line, string $message, string $path = '')
+  public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {
     $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt';
 

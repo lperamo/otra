@@ -14,12 +14,6 @@ define(
   'We will create one model from ' . CLI_LIGHT_CYAN . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
 );
 
-define(
-  'MODEL_NAME_CREATED_FOR_BUNDLE_NAME',
-  DOUBLE_ERASE_SEQUENCE . ERASE_SEQUENCE . 'Creating the model ' . CLI_YELLOW . $modelName . END_COLOR .
-  ' for the bundle ' . CLI_YELLOW . $bundleName . ' ...' . PHP_EOL
-);
-
 /**
  * @param int    $modelLocation
  * @param string $bundlePath
@@ -27,7 +21,7 @@ define(
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
-  if (defined('MODEL_PATH') === false)
+  if (!defined('MODEL_PATH'))
     define('MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . '/' : ''));
 }
 
@@ -53,6 +47,10 @@ function preparingBidule(string $modelName) : array
  *
  * @return array $modelExists, $tableExists
  */
+#[\JetBrains\PhpStorm\ArrayShape([
+  'bool',
+  'bool'
+])]
 function checksModelAndTableExistence(string $modelFullName, string $modelName) : array
 {
   return [
@@ -69,10 +67,10 @@ function checksModelAndTableExistence(string $modelFullName, string $modelName) 
  */
 function preparingErrorMessage(bool $modelExists, bool $tableExists, string $modelName, string &$errorLabel) : void
 {
-  if (true === $modelExists)
+  if ($modelExists)
     $errorLabel .= 'This model \'' . $modelName . '\' already exists. ';
 
-  if (false === $tableExists)
+  if (!$tableExists)
     $errorLabel .= 'The schema does not contains this table ' . $modelName . ' (maybe ... check the case).';
 }
 

@@ -21,7 +21,7 @@ abstract class Routes
     'route' => 'homePage'
   ],
 
-  $_ = [
+  $allRoutes = [
     'otra_exception' => [
       'chunks' => ['exception'],
       'core' => true,

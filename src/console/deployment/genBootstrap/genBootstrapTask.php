@@ -5,7 +5,6 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-
 namespace otra\console;
 
 use config\{Routes, AllConfig};
@@ -18,13 +17,12 @@ if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
 }
 
 define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
-
 define('OTRA_KEY_DRIVER', 'driver');
 
 $verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
 
 // We generate the class mapping file if we need it.
-if (false === (isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
+if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
 {
   // Generation of the class mapping
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -32,7 +30,7 @@ if (false === (isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GE
   // Re-execute our task now that we have a correct class mapping
   require CORE_PATH . 'tools/cli.php';
 
-  [$status, $return] = cli(
+  [$status, $return] = cliCommand(
     PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
   );
   echo $return;
@@ -59,12 +57,12 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
   $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
 
-  if (!isset(Routes::$_[$route]))
+  if (!isset(Routes::$allRoutes[$route]))
   {
     // We try to find a route which the name is similar
     // (require_once 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
     require_once CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(Routes::$_));
+    list($newRoute) = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -80,11 +78,11 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     $route = $newRoute;
   }
 
-  $routes = [$route => Routes::$_[$route]];
+  $routes = [$route => Routes::$allRoutes[$route]];
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else
 {
-  $routes = Routes::$_;
+  $routes = Routes::$allRoutes;
   // otra_exception route has no controller
   unset($routes['otra_exception']);
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
@@ -93,17 +91,13 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 // In CLI mode, the $_SERVER variable is not set so we set it !
 $_SERVER[APP_ENV] = 'prod';
 
-$key = 0;
-
-foreach(array_keys($routes) as $route)
+foreach(array_keys($routes) as $routeKey => $route)
 {
   if ('exception' === $route)
     continue;
 
-  if (0 !== $key)
+  if (array_key_first($routes) !== $routeKey)
     echo PHP_EOL;
-
-  ++$key;
 
   if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
@@ -124,8 +118,8 @@ define(
   'PATH_CONSTANTS',
   [
     'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
-    OTRA_KEY_DRIVER => empty(AllConfig::$dbConnections) === false
-      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)]) === true
+    OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
+      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)])
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
       : '',
     "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
@@ -134,9 +128,7 @@ define(
 );
 
 $routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
-
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
-
 $fileToInclude = CORE_PATH . 'Router.php';
 
 contentToFile(

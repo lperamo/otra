@@ -9,7 +9,7 @@ declare(strict_types=1);
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *
- * @param string $class
+ * @param class-string $class
  * @param string $field
  *
  * @return ReflectionProperty
@@ -19,16 +19,16 @@ declare(strict_types=1);
 function removeFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
   $class = new ReflectionClass($class);
-  $_field = $class->getProperty($field);
-  $_field->setAccessible(true);
+  $alteredField = $class->getProperty($field);
+  $alteredField->setAccessible(true);
 
-  return $_field;
+  return $alteredField;
 }
 
 /**
  * Removes protection from a field in order to test it easily and returns it.
  *
- * @param string $class
+ * @param class-string $class
  * @param string $field
  *
  * @return ReflectionProperty
@@ -38,44 +38,44 @@ function removeFieldScopeProtection(string $class, string $field) : ReflectionPr
 function restoreFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
   $class = new ReflectionClass($class);
-  $_field = $class->getProperty($field);
-  $_field->setAccessible(false);
+  $alteredField = $class->getProperty($field);
+  $alteredField->setAccessible(false);
 
-  return $_field;
+  return $alteredField;
 }
 
 /**
  * Removes temporarily the scope protection of fields to set values.
  *
- * @param       $class
- * @param array $fieldsAndValues
+ * @param class-string $class
+ * @param array        $fieldsAndValues
  *
  * @throws ReflectionException
  */
-function setScopeProtectedFields($class, array $fieldsAndValues) : void
+function setScopeProtectedFields(string $class, array $fieldsAndValues) : void
 {
   $class = new ReflectionClass($class);
 
   foreach ($fieldsAndValues as $field => $value)
   {
-    $_field = $class->getProperty($field);
-    $_field->setAccessible(true);
-    $_field->setValue($value);
-    $_field->setAccessible(false);
+    $alteredField = $class->getProperty($field);
+    $alteredField->setAccessible(true);
+    $alteredField->setValue($value);
+    $alteredField->setAccessible(false);
   }
 }
 
 /**
  * Removes protection from a method in order to test it easily and returns it.
  *
- * @param        $class
- * @param string $method
+ * @param class-string $class
+ * @param string       $method
  *
  * @return ReflectionMethod
  *
  * @throws ReflectionException
  */
-function removeMethodScopeProtection($class, string $method) : ReflectionMethod
+function removeMethodScopeProtection(string $class, string $method) : ReflectionMethod
 {
   $method = new ReflectionMethod($class, $method);
   $method->setAccessible(true);

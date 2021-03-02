@@ -32,7 +32,7 @@ class OtraExceptionCli extends \Exception
     $exception->backtraces = $exception->getTrace();
 
     // Is the error code a native error code ?
-    $exception->scode = true === isset(OtraException::$codes[$exception->code]) ? OtraException::$codes[$exception->code] : 'UNKNOWN';
+    $exception->scode = isset(OtraException::$codes[$exception->code]) ? OtraException::$codes[$exception->code] : 'UNKNOWN';
     $exception->message = preg_replace('/\<br\s*\/?\>/i', '', $exception->message);
 
     self::showMessage($exception);
@@ -57,11 +57,11 @@ class OtraExceptionCli extends \Exception
    *
    * @param OtraException $exception
    */
-  public static function showMessage(OtraException $exception)
+  public static function showMessage(OtraException $exception) : void
   {
     echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
-    if (true === isset($exception->scode))
+    if (isset($exception->scode))
     {
       $exceptionFile = $exception->file;
 
@@ -161,10 +161,11 @@ class OtraExceptionCli extends \Exception
   {
     $output = '';
 
+    /** @var string $value */
     foreach($headers as $value)
     {
-      $output .= CLI_LIGHT_BLUE . '│' . CLI_YELLOW . str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) .
-      '_WIDTH'));
+      $output .= CLI_LIGHT_BLUE . '│' . CLI_YELLOW .
+        str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) . '_WIDTH'));
     }
 
     return $output;
@@ -180,7 +181,12 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  #[Pure] private static function consoleLine(array $rowData, string $columnName, int $width, string $alternateContent = '') : string
+  #[Pure] private static function consoleLine(
+    array $rowData,
+    string $columnName,
+    int $width,
+    string $alternateContent = ''
+  ) : string
   {
     return CLI_LIGHT_BLUE . '│' . END_COLOR .
       str_pad(isset($rowData[$columnName])

@@ -28,12 +28,12 @@ if (!function_exists('cleanFileAndFolders'))
           RecursiveIteratorIterator::CHILD_FIRST
         );
 
-        foreach ($files as $file)
+        foreach ($files as $fileObject)
         {
-          $realPath = $file->getRealPath();
-          $method = true === $file->isDir() ? 'rmdir' : 'unlink';
+          $realPath = $fileObject->getRealPath();
+          $method = $fileObject->isDir() ? 'rmdir' : 'unlink';
 
-          if (false === $method($realPath))
+          if (!$method($realPath))
             throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
         }
 
@@ -41,11 +41,15 @@ if (!function_exists('cleanFileAndFolders'))
 
         try
         {
-          if (false === rmdir($folder))
+          if (!rmdir($folder))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch (Exception $e)
+        } catch (Exception $exception)
         {
-          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException(
+            'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' .
+              $exceptionMessage,
+            $exception->getCode()
+          );
         }
       }
     }

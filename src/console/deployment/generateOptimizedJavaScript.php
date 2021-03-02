@@ -34,6 +34,7 @@ function generateJavaScript(
          * or a list of files without json configuration ... but not a list with json configuration ...
          * so we create one temporary json that list only the file we want */
 
+  /** @var array|null $typescriptConfig */
   $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
 
   if ($typescriptConfig !== null)
@@ -41,7 +42,7 @@ function generateJavaScript(
     // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
     // and remove the dummy file ...
     // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
-    if (file_exists($resourceFolder) === false)
+    if (!file_exists($resourceFolder))
       mkdir($resourceFolder, 0777, true);
 
     $generatedTemporaryJsFile = $resourceFolder . $baseName . '_viaTypescript.js';
@@ -63,7 +64,7 @@ function generateJavaScript(
 
     /* Launches typescript compilation on the file with project json configuration
        and launches Google Closure Compiler on the output just after */
-    [, $output] = cli('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
+    [, $output] = cliCommand('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
 
     unlink($temporaryTypescriptConfig);
 
@@ -74,19 +75,19 @@ function generateJavaScript(
     if (!$jsFileExists)
     {
       echo CLI_YELLOW,
-      'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
-      CLI_LIGHT_CYAN, OTRA_LABEL_TSCONFIG_JSON, CLI_YELLOW, ' file.', END_COLOR, PHP_EOL, $output;
+        'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
+        CLI_LIGHT_CYAN, OTRA_LABEL_TSCONFIG_JSON, CLI_YELLOW, ' file.', END_COLOR, PHP_EOL, $output;
       throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
     if (BUILD_DEV_VERBOSE > 0)
     {
-      echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '',
-        false), CLI_GREEN, ' have generated the temporary file';
+      echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '', false), CLI_GREEN,
+        ' have generated the temporary file';
 
       if (file_exists($temporarySourceMap))
         echo 's ', $legibleCreatedTemporaryJsFile, CLI_GREEN, ' and ',
-        returnLegiblePath($generatedTemporaryJsFile . '.map', '', false);
+          returnLegiblePath($generatedTemporaryJsFile . '.map', '', false);
       else
         echo ' ', $legibleCreatedTemporaryJsFile;
 
@@ -101,7 +102,7 @@ function generateJavaScript(
 
       // TODO add those lines to handle class map and fix the resulting issue
       // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
-      [, $output] = cli(
+      [, $output] = cliCommand(
         'java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
         . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
         . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
@@ -110,8 +111,7 @@ function generateJavaScript(
       );
 
       if ($verbose > 0)
-        echo $output . CLI_GREEN . 'Javascript ' . returnLegiblePath($generatedJsFile) . ' has been optimized.'
-          . PHP_EOL;
+        echo $output, CLI_GREEN, 'Javascript ', returnLegiblePath($generatedJsFile), ' has been optimized.', PHP_EOL;
 
       // Cleaning temporary files ...(js and the mapping)
       unlink($generatedTemporaryJsFile);
@@ -166,7 +166,7 @@ function generateJavaScript(
       }
 
       echo 'Service worker files moved to ', CLI_LIGHT_CYAN, returnLegiblePath($serviceWorkerPath), END_COLOR,
-      ' and ', CLI_LIGHT_CYAN, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
+        ' and ', CLI_LIGHT_CYAN, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
     }
   } else
     echo 'There is an error with your ', returnLegiblePath(OTRA_LABEL_TSCONFIG_JSON), ' file. : '

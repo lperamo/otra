@@ -26,9 +26,9 @@ require BASE_PATH . 'config/AllConfig.php';
 // Loads the production class mapping
 require CACHE_PATH . 'php/ClassMap.php';
 
-spl_autoload_register(function ($className)
+spl_autoload_register(function (string $className) : void
 {
-  if (false === isset(CLASSMAP[$className]))
+  if (!isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
     \otra\Logger::logTo(

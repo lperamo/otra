@@ -9,7 +9,7 @@ declare(strict_types=1);
 // If we do not come from the 'otra' command...
 use otra\console\TasksManager;
 
-if (defined('BASE_PATH') === false)
+if (!defined('BASE_PATH'))
 {
   // @codeCoverageIgnoreStart
   define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
@@ -36,14 +36,14 @@ if (defined('BASE_PATH') === false)
 }
 
 // Generating the class map if needed
-if (file_exists(CLASS_MAP_PATH) === false)
+if (!file_exists(CLASS_MAP_PATH))
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
 // loading the class map if not defined
 if (!defined('CLASSMAP'))
   require CLASS_MAP_PATH;
 
-spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
+spl_autoload_register(function(string $className) : void { require CLASSMAP[$className]; });
 
 if (!defined('PHP_CACHE_FOLDER'))
   define ('PHP_CACHE_FOLDER', CACHE_PATH . 'php/');
@@ -75,7 +75,7 @@ foreach($foldersToCheckForTasks as $foldersToCheckForTask)
 
     $consoleTask = mb_substr($pathname, mb_strrpos($pathname, '/') + 1);
     $consoleTask = mb_substr($consoleTask, 0, mb_strrpos($consoleTask, 'Help'));
-    $helpFileContent [$consoleTask]= require $pathname;
+    $helpFileContent[$consoleTask] = require $pathname;
     $taskClassMap[$consoleTask] = [
       dirname($pathname),
       $helpFileContent[$consoleTask][TasksManager::TASK_STATUS]
@@ -99,7 +99,8 @@ file_put_contents(PHP_CACHE_FOLDER . 'tasksHelp.php', $helpFileFinalContent);
 $taskClassMap = '<?php return ' . var_export($taskClassMap, true) . ';';
 $taskClassMap = convertArrayFromVarExportToShortVersion($taskClassMap);
 
-file_put_contents(PHP_CACHE_FOLDER . 'tasksClassMap.php',
+file_put_contents(
+  PHP_CACHE_FOLDER . 'tasksClassMap.php',
     str_replace("'" . BASE_PATH,
       'BASE_PATH.\'',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
@@ -114,7 +115,7 @@ if (PHP_SAPI === 'cli')
  ********************************/
 
 // if we launch this task, the console will already launch this task before so for now, we check the variable existence
-if (defined('COMPLETIONS_SPACES_STR_PAD') === false)
+if (!defined('COMPLETIONS_SPACES_STR_PAD'))
   define('COMPLETIONS_SPACES_STR_PAD', 28);
 
 $shellCompletionsContent = '#!/usr/bin/env bash' . PHP_EOL
@@ -134,7 +135,8 @@ foreach($tasks as $consoleTask)
   $taskCategory = ucfirst($helpFileContent[$consoleTask][TasksManager::TASK_CATEGORY]);
 
   /** @var $taskCategoryLong */
-  if (!in_array($taskCategory, $taskCategories)) {
+  if (!in_array($taskCategory, $taskCategories))
+  {
     $taskCategories[] = $taskCategory;
     $taskCategoryLong = 'CAT_'
       . str_replace(' ', '_', strtoupper($helpFileContent[$consoleTask][TasksManager::TASK_CATEGORY]));
@@ -142,7 +144,8 @@ foreach($tasks as $consoleTask)
   }
 
   $taskDescription .= SPACE_INDENT . '"${' .  $taskCategoryLong .'} '
-    . str_pad($consoleTask, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' . $helpFileContent[$consoleTask][TasksManager::TASK_DESCRIPTION] . '${ECO}"'
+    . str_pad($consoleTask, COMPLETIONS_SPACES_STR_PAD) . ': ${CYA}' .
+    $helpFileContent[$consoleTask][TasksManager::TASK_DESCRIPTION] . '${ECO}"'
     . PHP_EOL;
 }
 
@@ -151,7 +154,8 @@ $shellCompletionsContent .= ');' . PHP_EOL . PHP_EOL;
 foreach($taskCategories as $taskCategoryKey => $taskCategory)
 {
   $shellCompletionsContent .= 'typeset ' . $taskCategoriesLong[$taskCategoryKey] . '="${BLC}[ '
-    . str_pad($taskCategory, strlen('Help and tools'), ' ', STR_PAD_BOTH) . ' ]${WHI}";' . PHP_EOL;
+    . str_pad($taskCategory, strlen('Help and tools'), ' ', STR_PAD_BOTH) . ' ]${WHI}";' .
+    PHP_EOL;
 }
 
 $shellCompletionsContent .= PHP_EOL . 'typeset -a OTRA_COMMANDS_DESCRIPTIONS=(' . PHP_EOL

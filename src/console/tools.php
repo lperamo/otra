@@ -10,10 +10,13 @@ declare(strict_types=1);
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)
  */
-if (false === defined('ERASE_SEQUENCE')) define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-if (false === defined('DOUBLE_ERASE_SEQUENCE')) define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
+if (!defined('ERASE_SEQUENCE'))
+  define('ERASE_SEQUENCE', "\033[1A\r\033[K");
 
-if (function_exists('promptUser') === false)
+if (!defined('DOUBLE_ERASE_SEQUENCE'))
+  define('DOUBLE_ERASE_SEQUENCE', ERASE_SEQUENCE . ERASE_SEQUENCE);
+
+if (!function_exists('promptUser'))
 {
   /**
    * Asks the user a question again and again until the answer was correct.
@@ -24,9 +27,13 @@ if (function_exists('promptUser') === false)
    *
    * @return string Answer.
    */
-  function promptUser(string $question, string $altQuestion = ''): string
+  function promptUser(string $question, string $altQuestion = '') : string
   {
-    $questionAlt = DOUBLE_ERASE_SEQUENCE . ('' === $altQuestion ? 'Bad answer. ' . $question : $altQuestion);
+    $questionAlt = DOUBLE_ERASE_SEQUENCE .
+      ('' === $altQuestion
+        ? 'Bad answer. ' . $question
+        : $altQuestion
+      );
 
     $userInput = askQuestion($question);
 
@@ -47,7 +54,7 @@ if (function_exists('promptUser') === false)
    *
    * @return string
    */
-  function askQuestion(string $question): string
+  function askQuestion(string $question) : string
   {
     echo CLI_YELLOW, $question, END_COLOR, PHP_EOL;
 
@@ -57,11 +64,15 @@ if (function_exists('promptUser') === false)
   /**
    * Loops through words to find the closest word
    *
-   * @param string $input
-   * @param array  $words
+   * @param string   $input
+   * @param string[] $words
    *
    * @return array [$closest, $shortest]
    */
+  #[\JetBrains\PhpStorm\ArrayShape([
+    'null|string',
+    'int'
+  ])]
   function guessWords(string $input, array $words) : array
   {
     $closest = null;
@@ -100,11 +111,11 @@ if (function_exists('promptUser') === false)
    * @param int    $errorLine N° of the error
    * @param int    $context   How much lines for context ?
    */
-  function showContext(string $file, int $errorLine, int $context)
+  function showContext(string $file, int $errorLine, int $context) : void
   {
     $errorLine -= 1;
     $lines = file($file);
-    $midContext = (int) $context >> 1;
+    $midContext = $context >> 1;
 
     // Shows the context of the error
     for ($currentLine = $errorLine - $midContext,
@@ -113,7 +124,7 @@ if (function_exists('promptUser') === false)
          ++$currentLine)
     {
       // if we are at the end because the portion is at the end of the file, we break the loop
-      if (false === isset($lines[$currentLine]))
+      if (!isset($lines[$currentLine]))
         break;
 
       if (-1 !== $errorLine)
@@ -133,7 +144,7 @@ if (function_exists('promptUser') === false)
    * @param string $error   Error to analyze
    * @param int    $context How much lines for context ?
    */
-  function showContextByError(string $file, string $error, int $context)
+  function showContextByError(string $file, string $error, int $context) : void
   {
     showContext(
       $file,

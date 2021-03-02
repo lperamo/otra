@@ -19,17 +19,17 @@ $controllersFolder = $modulePath . '/controllers/';
 $controllerName = $argv[ARG_CONTROLLER_NAME];
 $controllerPath = $controllersFolder . $controllerName . '/';
 
-if (file_exists($controllerPath) === false)
+if (!file_exists($controllerPath))
 {
   /** @var bool $consoleForce */
-  if ($consoleForce === false)
-    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $moduleRelativePath . '/controllers/' . $controllerName, CLI_RED, ' does not exist.' , END_COLOR,
-      PHP_EOL;
+  if (!$consoleForce)
+    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $moduleRelativePath . '/controllers/' . $controllerName, CLI_RED,
+    ' does not exist.' , END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */
-  if ($interactive === false)
+  if (!$interactive)
   {
-    if ($consoleForce === false)
+    if (!$consoleForce)
       throw new \otra\OtraException('', 1, '', NULL, [], true);
   } else {
     $answer = promptUser('Do we create it ?(y or n)');
@@ -42,7 +42,7 @@ if (file_exists($controllerPath) === false)
     }
 
     if ($answer === 'n')
-      exit(0);
+      throw new \otra\OtraException('', 0, '', NULL, [], true);
   }
 
   createController($controllersFolder, $controllerName, $interactive);

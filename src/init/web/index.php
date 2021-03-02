@@ -33,8 +33,8 @@ try
   // Is it a static page
   if ('cli' !== PHP_SAPI &&
     isset(
-      \cache\php\Routes::$_[OTRA_ROUTE]['resources']['template']
-    ) && \cache\php\Routes::$_[OTRA_ROUTE]['resources']['template'] === true)
+      \cache\php\Routes::$allRoutes[OTRA_ROUTE]['resources']['template']
+    ) && \cache\php\Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);

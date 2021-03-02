@@ -16,17 +16,17 @@ use config\AllConfig;
 class Sql
 {
   /**
-   * @type array  $_dbmsCollection       Available dbmsCollection
+   * @type array  $dbmsCollection       Available dbmsCollection
    * @type array  $_activeConn
    */
   private static array
-    $_dbmsCollection = ['Pdomysql'],
+    $dbmsCollection = ['Pdomysql'],
     $_activeConn = [];
 
-  public static ?\PDO $_currentConn = null;
+  public static ?\PDO $currentConn = null;
   public static string
-    $_currentDBMS = '',
-    $_currentConnectionName;
+    $currentDBMS = '',
+    $currentConnectionName;
 
   public static ?Sql $instance;
 
@@ -42,8 +42,8 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param      $conn
-   * @param bool $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
+   * @param ?string $connection
+   * @param bool    $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
    *                           needed in this case.
    *
    * @return bool|Sql
@@ -51,41 +51,46 @@ class Sql
    * @throws OtraException
    *
    * @internal param string $dbms     Kind of dbms
-   * @internal param string $conn     Connection used (see AllConfig files)
+   * @internal param string $connection     Connection used (see AllConfig files)
    * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
    */
-  public static function getDb($conn = null, bool $haveDatabase = true) : bool|Sql
+  public static function getDb(?string $connection = null, bool $haveDatabase = true) : bool|Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection and we adds it
      */
-    if (null !== $conn)
+    if (null !== $connection)
     {
-      if (true === isset(self::$_activeConn[$conn]))
+      if (isset(self::$_activeConn[$connection]))
       {
-        $currentConnection = $conn;
-      } elseif (true === isset(AllConfig::$dbConnections[$conn]))
+        $currentConnection = $connection;
+      } elseif (isset(AllConfig::$dbConnections[$connection]))
       {
-        $currentConnection = $conn;
-        self::$_activeConn[$conn] = null;
+        $currentConnection = $connection;
+        self::$_activeConn[$connection] = null;
       } else
-        throw new OtraException('There is no \'' . $conn . '\' configuration available in the AllConfig file !');
+        throw new OtraException(
+          'There is no \'' . $connection . '\' configuration available in the AllConfig file !'
+        );
     } else
     {
       if (AllConfig::$defaultConn === '')
-        throw new OtraException('There is no default connection in your configuration ! Check your configuration.', E_CORE_ERROR);
+        throw new OtraException(
+          'There is no default connection in your configuration ! Check your configuration.',
+          E_CORE_ERROR
+        );
 
-      $conn = AllConfig::$defaultConn;
+      $connection = AllConfig::$defaultConn;
 
       // If it's not already added, we add it
-      if (false === isset(self::$_activeConn[$conn]))
-        self::$_activeConn[$conn] = null;
+      if (!isset(self::$_activeConn[$connection]))
+        self::$_activeConn[$connection] = null;
 
-      $currentConnection = $conn;
+      $currentConnection = $connection;
     }
 
-    extract(AllConfig::$dbConnections[$conn]);
+    extract(AllConfig::$dbConnections[$connection]);
 
     /**
      * Extractions give those variables
@@ -101,16 +106,16 @@ class Sql
     $driver = ucfirst(strtolower($driver));
 
     // Is this driver available ?
-    if (true === in_array($driver, self::$_dbmsCollection))
+    if (in_array($driver, self::$dbmsCollection))
     {
-      if (null == self::$_activeConn[$currentConnection])
+      if (null === self::$_activeConn[$currentConnection])
       {
-        self::$_currentDBMS = __NAMESPACE__ . '\\' . ucfirst(strtolower($driver));
+        self::$currentDBMS = __NAMESPACE__ . '\\' . ucfirst(strtolower($driver));
         self::$_activeConn[$currentConnection]['instance'] = new Sql();
         require CORE_PATH . 'bdd/' . $driver . '.php';
       }
 
-      extract(AllConfig::$dbConnections[$conn ?: AllConfig::$defaultConn]);
+      extract(AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn]);
       /**
        *  Extractions give those variables
        *
@@ -129,20 +134,24 @@ class Sql
       {
         $activeConn['conn'] = $activeConn['instance']->connect(
           strtolower(substr($driver, 3))
-            . (true === $haveDatabase  ? ':dbname=' . $db . ';' : ':')
+            . ($haveDatabase  ? ':dbname=' . $db . ';' : ':')
             . 'host=' . ('' == $port ? $host : $host . ':' . $port),
           $login,
           $password
         );
 
-        self::$_currentConn = $activeConn['conn'];
-        self::$_currentConnectionName = $currentConnection;
-      }catch(Exception $e)
+        self::$currentConn = $activeConn['conn'];
+        self::$currentConnectionName = $currentConnection;
+      } catch(Exception $exception)
       {
-        throw new OtraException($e->getMessage());
+        throw new OtraException($exception->getMessage());
       }
     }else
-      throw new OtraException('This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' . implode(', ', self::$_dbmsCollection), E_CORE_ERROR);
+      throw new OtraException(
+        'This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' .
+        implode(', ', self::$dbmsCollection),
+        E_CORE_ERROR
+      );
 
     return $activeConn['instance'];
   }
@@ -156,7 +165,7 @@ class Sql
    */
   public static function connect(...$params)
   {
-    return call_user_func_array([self::$_currentDBMS, 'connect'], $params);
+    return call_user_func_array([self::$currentDBMS, 'connect'], $params);
   }
 
   /**
@@ -166,9 +175,9 @@ class Sql
    *
    * @return bool True if successful
    */
-  public function selectDb(...$params)
+  public function selectDb(...$params) : bool
   {
-    $return = call_user_func_array(self::$_currentDBMS . '::selectDb', $params);
+    $return = call_user_func_array(self::$currentDBMS . '::selectDb', $params);
     // @codeCoverageIgnoreStart
     $this->query('SET NAMES UTF8');
 
@@ -182,11 +191,11 @@ class Sql
    * @param string $query SQL query.
    * The query string should not end with a semicolon. Data inside the query should be properly escaped.
    *
-   * @return resource Returns a resource on success, otherwise an exception is raised
+   * @return null|resource Returns a resource on success, otherwise an exception is raised
    */
   public function query(string $query)
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     if('dev' === $_SERVER[APP_ENV])
@@ -200,7 +209,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func(self::$_currentDBMS . '::query', $query, self::$_currentConn);
+    return call_user_func(self::$currentDBMS . '::query', $query, self::$currentConn);
   }
 
   /**
@@ -208,14 +217,14 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return array The results
+   * @return ?array The results
    */
-  public function fetchAssoc(...$params)
+  public function fetchAssoc(...$params) : ?array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::fetchAssoc', $params);
+    return call_user_func_array(self::$currentDBMS . '::fetchAssoc', $params);
   }
 
     /**
@@ -223,14 +232,14 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return array The results
+   * @return ?array The results
    */
-  public function fetchArray(...$params)
+  public function fetchArray(...$params) : ?array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::fetchArray', $params);
+    return call_user_func_array(self::$currentDBMS . '::fetchArray', $params);
   }
 
   /**
@@ -238,14 +247,14 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return array The results
+   * @return ?array The results
    */
-  public function getColumnMeta(...$params)
+  public function getColumnMeta(...$params) : ?array
   {
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::getColumnMeta', $params);
+    return call_user_func_array(self::$currentDBMS . '::getColumnMeta', $params);
   }
 
   /**
@@ -260,7 +269,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::fetchObject', $params);
+    return call_user_func_array(self::$currentDBMS . '::fetchObject', $params);
   }
 
   /**
@@ -275,7 +284,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::fetchRow', $params);
+    return call_user_func_array(self::$currentDBMS . '::fetchRow', $params);
   }
 
   /**
@@ -290,7 +299,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::values', $params);
+    return call_user_func_array(self::$currentDBMS . '::values', $params);
   }
 
   /**
@@ -305,7 +314,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::valuesOneCol', $params);
+    return call_user_func_array(self::$currentDBMS . '::valuesOneCol', $params);
   }
 
   /**
@@ -319,7 +328,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::single', $params);
+    return call_user_func_array(self::$currentDBMS . '::single', $params);
   }
 
   /**
@@ -332,7 +341,7 @@ class Sql
   private static function close($instanceToClose = true) : bool
   {
     if (isset(self::$instance) === true)
-      return call_user_func_array(self::$_currentDBMS . '::close', [&$instanceToClose]);
+      return call_user_func_array(self::$currentDBMS . '::close', [&$instanceToClose]);
 
     return false;
   }
@@ -349,7 +358,7 @@ class Sql
     if (true === isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$_currentDBMS . '::freeResult', $params);
+    return call_user_func_array(self::$currentDBMS . '::freeResult', $params);
   }
 
   /**
@@ -361,7 +370,7 @@ class Sql
    */
   public function lastInsertedId(string $sequenceName = null) : string
   {
-    return call_user_func(self::$_currentDBMS . '::lastInsertedId', $sequenceName);
+    return call_user_func(self::$currentDBMS . '::lastInsertedId', $sequenceName);
   }
 
   /**
@@ -371,7 +380,7 @@ class Sql
    */
   public function quote(string $string) : string
   {
-    return call_user_func(self::$_currentDBMS . '::quote', $string);
+    return call_user_func(self::$currentDBMS . '::quote', $string);
   }
 
   /**
@@ -379,7 +388,7 @@ class Sql
    */
   public function beginTransaction() : bool
   {
-    return call_user_func(self::$_currentDBMS . '::beginTransaction');
+    return call_user_func(self::$currentDBMS . '::beginTransaction');
   }
 
   /**
@@ -387,7 +396,7 @@ class Sql
    */
   public function inTransaction() : bool
   {
-    return call_user_func(self::$_currentDBMS . '::inTransaction');
+    return call_user_func(self::$currentDBMS . '::inTransaction');
   }
 
   /**
@@ -400,7 +409,7 @@ class Sql
     // (DDL) statement such as DROP TABLE or CREATE TABLE is issued within a transaction. The implicit COMMIT will
     // prevent you from rolling back any other changes within the transaction boundary.
     if (Sql::$instance->inTransaction())
-      return call_user_func(self::$_currentDBMS . '::commit');
+      return call_user_func(self::$currentDBMS . '::commit');
 
     return true;
   }
@@ -410,7 +419,7 @@ class Sql
    */
   public function rollBack() : bool
   {
-    return call_user_func(self::$_currentDBMS . '::rollBack');
+    return call_user_func(self::$currentDBMS . '::rollBack');
   }
 
   /**
@@ -418,7 +427,7 @@ class Sql
    */
   public function errorInfo() : array
   {
-    return call_user_func(self::$_currentDBMS . '::errorInfo');
+    return call_user_func(self::$currentDBMS . '::errorInfo');
   }
 }
 

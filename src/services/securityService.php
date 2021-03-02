@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @package otra\services
  */
 
-use otra\{MasterController, OtraException};
+use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
 {
@@ -81,6 +81,10 @@ if (!function_exists('getRandomNonceForCSP'))
    *
    * @return array
    */
+  #[\JetBrains\PhpStorm\ArrayShape([
+    'string',
+    'array'
+  ])]
   function createPolicy(
     string $policy,
     string $route,
@@ -111,6 +115,10 @@ if (!function_exists('getRandomNonceForCSP'))
 
         if (!empty($common))
         {
+          /**
+           * @var string $finalProcessedPolicyName
+           * @var string $finalProcessedPolicy
+           */
           foreach ($finalProcessedPolicies as $finalProcessedPolicyName => $finalProcessedPolicy)
           {
             if ($finalProcessedPolicy === '')
@@ -122,6 +130,10 @@ if (!function_exists('getRandomNonceForCSP'))
 
     $finalPolicy = OTRA_POLICIES[$policy];
 
+    /**
+     * @var string $directive
+     * @var string $value
+     */
     foreach ($finalProcessedPolicies as $directive => $value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
@@ -137,13 +149,15 @@ if (!function_exists('getRandomNonceForCSP'))
   /**
    * @param string      $route
    * @param string|null $routeSecurityFilePath
-   *
-   * @throws OtraException
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
     if (!headers_sent())
     {
+      /**
+       * @var string $policy
+       * @var array $cspDirectives
+       */
       [$policy, $cspDirectives] = createPolicy(
         OTRA_KEY_CONTENT_SECURITY_POLICY,
         $route,

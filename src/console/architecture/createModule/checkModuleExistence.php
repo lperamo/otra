@@ -16,18 +16,19 @@ $moduleName = $argv[ARG_MODULE_NAME];
 $moduleRelativePath = 'bundles/' . $bundleName . '/' . $moduleName;
 $modulePath = BASE_PATH . $moduleRelativePath;
 
-if (file_exists($modulePath) === false)
+if (!file_exists($modulePath))
 {
   /** @var bool $consoleForce */
-  if ($consoleForce === false)
+  if (!$consoleForce)
     echo CLI_RED, 'The module ', CLI_LIGHT_CYAN, $moduleRelativePath, CLI_RED, ' does not exist.' , END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */
-  if ($interactive === false)
+  if (!$interactive)
   {
-    if ($consoleForce === false)
+    if (!$consoleForce)
       throw new \otra\OtraException('', 1, '', NULL, [], true);
-  } else {
+  } else
+  {
     $answer = promptUser('Do we create it ?(y or n)');
 
     while ($answer !== 'y' && $answer !== 'n')
@@ -38,10 +39,10 @@ if (file_exists($modulePath) === false)
     }
 
     if ($answer === 'n')
-      exit(0);
+      throw new \otra\OtraException('', 0, '', NULL, [], true);
   }
 
-  if (defined('BUNDLE_BASE_PATH') === false)
+  if (!defined('BUNDLE_BASE_PATH'))
     define('BUNDLE_BASE_PATH', BASE_PATH . 'bundles/' . $bundleName . '/');
 
   createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);

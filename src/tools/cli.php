@@ -9,10 +9,8 @@ declare(strict_types=1);
 use JetBrains\PhpStorm\ArrayShape;
 
 // If we come from the deploy task, those functions may already have been defined.
-if (!function_exists('cli'))
+if (!function_exists('cliCommand'))
 {
-  define('OTRA_CLI_RETURN', 0);
-  define('OTRA_CLI_OUTPUT', 1);
   /**
    * Execute a CLI command.
    *
@@ -27,7 +25,7 @@ if (!function_exists('cli'))
     'int',
     'string'
   ])]
-  function cli(string $cmd, string $errorMessage = null, bool $handleError = true) : array
+  function cliCommand(string $cmd, string $errorMessage = null, bool $handleError = true) : array
   {
     // We don't use 2>&1 (to show errors along the output) after $cmd because there is a bug otherwise ...
     // "The handle could not be duplicated when redirecting handle 1"

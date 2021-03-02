@@ -22,20 +22,17 @@ define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 define('BUILD_DEV_MASK_SCSS', 1);
 const BUILD_DEV_MASK_TS = 2;
 
-define('DEPLOY_MASK_ONLY_RSYNC', 0);
 define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
 define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
 define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
 define('DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC', 8);
 
 define('GEN_ASSETS_MASK_TEMPLATE', 1);
-define('GEN_ASSETS_MASK_MANIFEST', 8);
 define('GEN_ASSETS_MASK_SVG', 16);
 
 define('OTRA_CLI_CONTROL_MODE', "\033[");
 
 define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
-define('OTRA_CLI_COMMAND_MKDIR', 'mkdir');
 define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
 
 // **** Checking the deployment config parameters ****
@@ -103,7 +100,7 @@ if ($buildDevMode > 0)
   echo END_COLOR, 'Assets transcompilation...';
 
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  [, $output] = cli(
+  [, $output] = cliCommand(
     'php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
     CLI_RED . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
   );
@@ -126,7 +123,7 @@ if ($genAssetsMode > 0)
 {
   echo 'Assets minification and compression...';
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
-  [, $output] = cli(
+  [, $output] = cliCommand(
     'php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION,
     CLI_RED . 'There was a problem during the assets minification and compression.'
   );
@@ -181,7 +178,7 @@ $handleTransfer = function (
   else
   {
     echo $waitingMessage, PHP_EOL;
-    cli(
+    cliCommand(
       $command,
       CLI_RED . $synchronousErrorMessage . END_COLOR . PHP_EOL
     );

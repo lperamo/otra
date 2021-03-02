@@ -14,12 +14,10 @@ abstract class TasksManager
     PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
-    TASK_CLASS_MAP_TASK_STATUS = 1,
     TASK_DESCRIPTION = 0,
     TASK_PARAMETERS = 1,
     TASK_STATUS = 2,
     TASK_CATEGORY = 3,
-    TASK_PATH = 4,
     REQUIRED_PARAMETER = 'required',
     OPTIONAL_PARAMETER = 'optional';
 
@@ -28,7 +26,7 @@ abstract class TasksManager
    *
    * @param string $message The message to display before showing the commands
    */
-  public static function showCommands(string $message)
+  public static function showCommands(string $message) : void
   {
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
@@ -41,9 +39,13 @@ abstract class TasksManager
 
     $category = '';
 
+    /**
+     * @var string $method
+     * @var array $paramsDesc
+     */
     foreach ($methods as $method => $paramsDesc)
     {
-      if (isset($paramsDesc[self::TASK_CATEGORY]) === true)
+      if (isset($paramsDesc[self::TASK_CATEGORY]))
       {
         if ($category !== $paramsDesc[self::TASK_CATEGORY])
         {
@@ -67,6 +69,8 @@ abstract class TasksManager
    * @param array  $tasksClassMap
    * @param string $task
    * @param array  $argv
+   *
+   * @throws OtraException
    */
   public static function execute(array $tasksClassMap, string $task, array $argv)
   {
@@ -85,7 +89,7 @@ abstract class TasksManager
 
       // If the task was genClassMap...then we have nothing left to do !
       if ($task === 'genClassMap')
-        exit(0);
+        throw new \otra\OtraException('', 0, '', NULL, [], true);
     }
 
     set_error_handler([OtraException::class, 'errorHandler']);

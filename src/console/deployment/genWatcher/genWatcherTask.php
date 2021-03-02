@@ -57,12 +57,12 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
+define('GEN_WATCHER_VERBOSE', isset($argv[GEN_WATCHER_ARG_VERBOSE]) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
 
 // Defines if we want to use Google Closure Compiler or not
 define(
   'GEN_WATCHER_GCC',
-  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true'
+  isset($argv[GEN_WATCHER_ARG_GCC]) && $argv[GEN_WATCHER_ARG_GCC] === 'true'
 );
 
 if (GEN_WATCHER_VERBOSE > 1 )
@@ -110,24 +110,21 @@ if (GEN_WATCHER_VERBOSE > 1 )
 }
 
 /**
- * @param array  $paths
- * @param string $realPath
+ * @param string[] $filePaths
+ * @param string   $realPath
  *
  * @return bool
  */
-#[Pure] function isNotInThePath(array $paths, string $realPath) : bool
+#[Pure] function isNotInThePath(array $filePaths, string $realPath) : bool
 {
-  $continue = true;
-
-  foreach ($paths as $path)
+  foreach ($filePaths as $filePath)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false){
-      $continue = false;
-    }
+    if (mb_strpos($realPath, $filePath) !== false)
+      return false;
   }
 
-  return $continue;
+  return true;
 }
 
 /**
@@ -135,20 +132,20 @@ if (GEN_WATCHER_VERBOSE > 1 )
  * otherwise returns resource name as is.
  *
  * @param string      $resource Most of the time the name of a folder
- * @param string|null $name     Most of the time the name of a file
+ * @param string|null $fileName Most of the time the name of a file
  * @param bool|null   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */
-#[Pure] function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
+#[Pure] function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
 {
-  // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
-  if ($name !== '')
-    $name = '/' . $name;
+  // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
+  if ($fileName !== '')
+    $fileName = '/' . $fileName;
 
   return (mb_strpos($resource, BASE_PATH) !== false
-    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $name . END_COLOR
-    : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
+    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $fileName . END_COLOR
+    : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR)
     . ($endColor ? END_COLOR : '');
 }
 
@@ -158,7 +155,7 @@ if (GEN_WATCHER_VERBOSE > 1 )
  *
  * @return string
  */
-#[Pure] function debugHeader(string $header, int $padding)
+#[Pure] function debugHeader(string $header, int $padding) : string
 {
   return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
 }
@@ -168,15 +165,15 @@ if (GEN_WATCHER_VERBOSE > 1 )
  * @param int    $cookie
  * @param string $name     Folder or file name
  * @param string $resource Folder of file watched
- * @param bool   $headers  Do we have to show the headers
+ * @param bool   $mustShowHeaders  Do we have to show the headers
  *
  * @return string The debug output
  */
-#[Pure] function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $headers = false) : string
+#[Pure] function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $mustShowHeaders = false) : string
 {
   $debugToPrint = '';
 
-  if ($headers === true)
+  if ($mustShowHeaders)
     // Headers
     $debugToPrint .= debugHeader('Event',HEADER_EVENT_PADDING)
        . debugHeader('Cookie',HEADER_COOKIE_PADDING)
@@ -190,11 +187,12 @@ if (GEN_WATCHER_VERBOSE > 1 )
     . str_pad('│ ' . $name, DATA_NAME_PADDING)
     . END_COLOR;
 
-  return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) . PHP_EOL;
+  return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) .
+    PHP_EOL;
 }
 
 /**
- * @param array $argv       Command line arguments
+ * @param array $argv           Command line arguments
  * @param bool  $maskExists
  * @param int   $genWatcherMask
  *
@@ -203,19 +201,19 @@ if (GEN_WATCHER_VERBOSE > 1 )
 $isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
 {
   return (
-      $maskExists === true
+      $maskExists
       && ($argv[GEN_WATCHER_ARG_MASK] & $genWatcherMask) === $genWatcherMask
     )
-    || $maskExists === false;
+    || !$maskExists;
 };
 
 $maskExists = array_key_exists(GEN_WATCHER_ARG_MASK, $argv);
 
 // Check if the binary mask is numeric
-if ($maskExists === true && is_numeric($argv[GEN_WATCHER_ARG_MASK]) === false)
+if ($maskExists && !is_numeric($argv[GEN_WATCHER_ARG_MASK]))
 {
   echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  exit(1);
+  throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 
 define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_SCSS));
@@ -227,10 +225,10 @@ unset($isWatched);
 define(
   'WATCH_FOR_ROUTES',
   (
-    $maskExists === true
+    $maskExists
     && ($argv[GEN_WATCHER_ARG_MASK] & GEN_WATCHER_MASK_ROUTES) === GEN_WATCHER_MASK_ROUTES
   )
-  || $maskExists === false
+  || !$maskExists
 );
 
 unset($maskExists);
@@ -257,10 +255,10 @@ $sassMainResources = [];
 /** @var \SplFileInfo $entry */
 foreach($iterator as $entry)
 {
-  $folder = $entry->isDir();
+  $isFolder = $entry->isDir();
   $extension = $entry->getExtension();
 
-  if (in_array($extension, EXTENSIONS_TO_WATCH) === false && $folder === false)
+  if (!in_array($extension, EXTENSIONS_TO_WATCH) && !$isFolder)
     continue;
 
   $realPath = $entry->getRealPath();
@@ -270,17 +268,17 @@ foreach($iterator as $entry)
     continue;
 
   // Adding watches for PHP files if needed
-  if (WATCH_FOR_PHP_FILES === true)
+  if (WATCH_FOR_PHP_FILES)
   {
     // Does the PHP path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_PHP, $realPath) === true)
+    if (isNotInThePath(PATHS_TO_HAVE_PHP, $realPath))
       continue;
 
-    if ($extension === 'php' || $folder === true)
+    if ($extension === 'php' || $isFolder)
     {
       $phpEntriesToWatch[] = $realPath;
 
-      if ($folder === true)
+      if ($isFolder)
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
           $realPath,
@@ -293,27 +291,28 @@ foreach($iterator as $entry)
   }
 
   // Adding watches for resources files if needed
-  if ($haveBeenWatched === false && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
+  if (!$haveBeenWatched && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
   {
     // Does the resources path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath) === true)
+    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath))
       continue;
 
-    if (in_array($extension, RESOURCES_TO_WATCH) === true|| $folder === true)
+    if (in_array($extension, RESOURCES_TO_WATCH) || $isFolder)
     {
       $resourcesEntriesToWatch[] = $realPath;
 
-      if ($folder === true)
+      if ($isFolder)
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
           $realPath,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $realPath;
-      else {
+      else
+      {
         $mainResourceFilename = $entry->getFilename();
 
         if (substr($mainResourceFilename, 0,1) !== '_')
-          $sassMainResources[$mainResourceFilename]= $realPath;
+          $sassMainResources[$mainResourceFilename] = $realPath;
       }
     }
   }
@@ -340,6 +339,7 @@ while (true)
     $eventsDebug = '';
 
     // Loop though the events which occurred
+    /** @var array $eventDetails */
     foreach ($events as $eventDetails)
     {
       /**
@@ -370,7 +370,8 @@ while (true)
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($folderPath) . '. We now watching it.' . PHP_EOL;
+          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($folderPath) . '. We now watching it.' .
+            PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
@@ -384,7 +385,8 @@ while (true)
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($folderPath) . '. We do not watch it anymore.' . PHP_EOL;
+          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($folderPath) .
+            '. We do not watch it anymore.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
@@ -396,14 +398,15 @@ while (true)
         continue;
       } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($mask & IN_DELETE) === IN_DELETE
-        && (in_array($name, $phpEntriesToWatch) === true
-          || in_array($name, $resourcesEntriesToWatch) === true
+        && (in_array($name, $phpEntriesToWatch)
+          || in_array($name, $resourcesEntriesToWatch)
         )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) . 'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
+          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) .
+            'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
@@ -413,8 +416,8 @@ while (true)
             ($mask & IN_ATTRIB) === IN_ATTRIB
             || ($mask & IN_MODIFY) === IN_MODIFY
           )
-          && (in_array($resourceName, $phpEntriesToWatch) === true
-            || in_array($resourceName, $resourcesEntriesToWatch) === true
+          && (in_array($resourceName, $phpEntriesToWatch)
+            || in_array($resourceName, $resourcesEntriesToWatch)
           )
       )
       {
@@ -427,7 +430,7 @@ while (true)
             $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
         }
 
-        if (in_array($resourceName, $phpEntriesToWatch) === true)
+        if (in_array($resourceName, $phpEntriesToWatch))
         {
           // We generate the class mapping...
           require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -435,7 +438,7 @@ while (true)
           // We updates routes configuration if the php file is a routes configuration file
           if ($name === 'Routes.php')
             require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
-        } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
+        } elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
           $fileInformations = explode('.', $name);
           $resourceFolder = dirname($foldersWatchedIds[$wd]);
@@ -451,12 +454,12 @@ while (true)
             $cssFolder = $resourceFolder . '/css';
 
             // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-            if (file_exists($cssFolder) === false)
+            if (!file_exists($cssFolder))
               mkdir($cssFolder);
 
             $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-            [, $return] = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
+            [, $return] = cliCommand('sass --error-css ' . $resourceName . ':' . $cssPath);
 
             echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
               returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
@@ -464,16 +467,23 @@ while (true)
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else {
+          } else
+          {
             $stringToTest = substr($fileInformations[0], 1);
 
-            foreach($sassMainResources as $key => $mainResource)
+            foreach($sassMainResources as $mainResource)
             {
                 $fileContent = file_get_contents($mainResource);
-                preg_match('@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
+                preg_match(
+                  '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
+                  '\'@',
+                  $fileContent,
+                  $matches
+                );
 
-                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources files.
-                if (empty($matches) === true)
+                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
+                // files.
+                if (empty($matches))
                   continue;
 
                 $slashPosition = strrpos($mainResource, '/');
@@ -489,15 +499,15 @@ while (true)
                 $mainResourceCssFolder = $mainResourceFolder . '/css';
 
                 // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-                if (file_exists($mainResourceCssFolder) === false)
+                if (!file_exists($mainResourceCssFolder))
                   mkdir($mainResourceCssFolder);
 
                 $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
 
-                [, $return] = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
+                [, $return] = cliCommand('sass --error-css ' . $mainResource . ':' . $cssPath);
 
                 echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
-                  returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
+                  returnLegiblePath($cssPath), ' and ', returnLegiblePath($cssPath . '.map'), '.',
                   PHP_EOL . PHP_EOL;
 
                 if (GEN_WATCHER_VERBOSE > 0)
@@ -512,7 +522,7 @@ while (true)
     }
 
     if (GEN_WATCHER_VERBOSE > 0 && $eventsDebug !== '')
-      echo $eventsDebug . PHP_EOL;
+      echo $eventsDebug, PHP_EOL;
   }
 
   // Avoid watching too much to avoid performance issues

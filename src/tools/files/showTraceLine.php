@@ -9,7 +9,7 @@ declare(strict_types=1);
 /**
  * @param array $contextItem
  */
-function showTraceLine(array $contextItem)
+function showTraceLine(array $contextItem) : void
 {
   $hasFile = isset($contextItem['file']);
   ?>

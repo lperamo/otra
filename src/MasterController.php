@@ -26,7 +26,6 @@ abstract class MasterController
   public static string $cacheUsed = 'Unused';
 
   public string $route,
-    $url,
     $bundle = '',
     $module = '',
     $viewPath = '/'; // index/index/ for indexController and indexAction
@@ -178,7 +177,6 @@ abstract class MasterController
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
-    $this->url = $_SERVER['REQUEST_URI'];
   }
 
   /**

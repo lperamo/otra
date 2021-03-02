@@ -19,14 +19,14 @@ if (!function_exists('writeConfigFile'))
    * @param string $configFile
    * @param string $content
    */
-  function writeConfigFile(string $configFile, string $content)
+  function writeConfigFile(string $configFile, string $content) : void
   {
-    if (true === empty($content))
+    if (empty($content))
     {
       echo CLI_YELLOW, 'Nothing to put into ', CLI_LIGHT_CYAN, $configFile, CLI_YELLOW,
         ' so we\'ll delete the main file if it exists.', END_COLOR, PHP_EOL;
 
-      if (true === file_exists($configFile))
+      if (file_exists($configFile))
         unlink($configFile);
 
       return;
@@ -48,24 +48,34 @@ if (!function_exists('writeConfigFile'))
    *
    * @param string $content
    * @param array  $array
-   * @param bool   $routeConfigFile
+   * @param bool   $isARouteConfigFile
    * @param string $actualRouteKey
    */
-  function loopForEach(string &$content, array &$array, bool $routeConfigFile = false, string $actualRouteKey = '')
+  function loopForEach(
+    string &$content,
+    array &$array,
+    bool $isARouteConfigFile = false,
+    string $actualRouteKey = ''
+  ) : void
   {
-    foreach ($array as $key => &$arrayChunk)
+    /**
+     * @var int|string $key
+     * @var mixed      $arrayChunk
+     */
+    foreach ($array as $arrayKey => &$arrayChunk)
     {
-      $key = (is_numeric($key)) ? '' : '\'' . $key . '\'' . '=>';
+      $arrayKey = (is_numeric($arrayKey)) ? '' : '\'' . $arrayKey . '\'' . '=>';
 
       if (!is_array($arrayChunk))
       {
         if (is_numeric($arrayChunk))
-          $content .= $key . $arrayChunk . ',';
-        elseif (false === $routeConfigFile)
+          $content .= $arrayKey . $arrayChunk . ',';
+        elseif (!$isARouteConfigFile)
           $content .= '\'' . addslashes($arrayChunk) . '\',';
         else
         {
-          $arrayChunk = (is_bool($arrayChunk))
+          $isBoolArrayChunk = is_bool($arrayChunk);
+          $arrayChunk = ($isBoolArrayChunk)
             ? (true === $arrayChunk) ? 'true' : 'false'
             : addslashes($arrayChunk);
 
@@ -77,14 +87,16 @@ if (!function_exists('writeConfigFile'))
           if ('\'chunks\'=>' === $actualRouteKey && str_contains($arrayChunk, '{'))
           {
             $bracketPosition = strpos($arrayChunk, '{');
-            $mainPattern     = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);
-            $content         = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' . $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
+            $mainPattern = (false === $bracketPosition)
+              ? $arrayChunk
+              : substr($arrayChunk, 0, $bracketPosition);
+            $content = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' .
+              $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
           } else
           {
-            $separator  = ('true' === $arrayChunk || 'false' === $arrayChunk) ? ' ' : '\'';
+            $separator  = $isBoolArrayChunk ? ' ' : '\'';
             $arrayChunk = $separator . $arrayChunk . $separator . ',';
-
-            $content .= $key . $arrayChunk;
+            $content .= $arrayKey . $arrayChunk;
           }
         }
 
@@ -95,9 +107,9 @@ if (!function_exists('writeConfigFile'))
       if ([] === $arrayChunk)
         continue;
 
-      $content .= $key . '[';
+      $content .= $arrayKey . '[';
 
-      loopForEach($content, $arrayChunk, $routeConfigFile, $key);
+      loopForEach($content, $arrayChunk, $isARouteConfigFile, $arrayKey);
       $content = substr($content, 0, -1);
       $content .= '],';
     }
@@ -109,16 +121,16 @@ if (!defined('BUNDLES_PATH'))
   define('BUNDLES_PATH', BASE_PATH . 'bundles/');
 
 $folderHandler = opendir(BUNDLES_PATH);
-$securities = $configs = $routes = $schemas = [];
+$securities = $configs = $routes = [];
 
 // we scan the bundles directory to retrieve all the bundles name ...
-while (false !== ($file = readdir($folderHandler)))
+while (false !== ($filename = readdir($folderHandler)))
 {
   // 'config' and 'views' are not bundles ... just a configuration folder
-  if (in_array($file, ['.', '..', 'config', 'views']))
+  if (in_array($filename, ['.', '..', 'config', 'views']))
     continue;
 
-  $bundleDir = BUNDLES_PATH . $file;
+  $bundleDir = BUNDLES_PATH . $filename;
 
   // We don't need the files either
   if (!is_dir($bundleDir))
@@ -128,12 +140,10 @@ while (false !== ($file = readdir($folderHandler)))
   $bundleConfigDir = $bundleDir . '/config/';
   $bundleConfigs = glob($bundleConfigDir . '*Config.php');
   $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
-  $bundleSchemas = glob($bundleConfigDir . 'data/yml/*Schema.yml');
-
-  if (UPDATE_CONF_ROUTE_NAME === null)
-    $bundleSecurities = glob($bundleConfigDir . 'security/*', GLOB_ONLYDIR);
-  else
-    $bundleSecurities = glob($bundleConfigDir . 'security/' . UPDATE_CONF_ROUTE_NAME . '/', GLOB_ONLYDIR);
+  $bundleSecurities = glob(
+    $bundleConfigDir . 'security/' . (UPDATE_CONF_ROUTE_NAME === null ? '*' : UPDATE_CONF_ROUTE_NAME . '/'),
+    GLOB_ONLYDIR
+  );
 
   if (!empty($bundleConfigs))
     $configs = array_merge($configs, $bundleConfigs);
@@ -183,9 +193,9 @@ foreach($routes as &$route)
 if (!function_exists('sortRoutes'))
 {
   if (!defined('ROUTE_PATH'))
-    define ('ROUTE_PATH', 0);
+    define('ROUTE_PATH', 0);
 
-  $sortRoutes = function (string $routeA, string $routeB) use ($routesArray)
+  $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
     /** @var array $routesArray */
     return (strlen($routesArray[$routeA]['chunks'][ROUTE_PATH]) <= strlen($routesArray[$routeB]['chunks'][ROUTE_PATH]))
@@ -206,7 +216,7 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent);
 /** SECURITIES MANAGEMENT */
 $securitiesArray = [];
 
-if(!defined('OTRA_DEVELOPMENT_ENVIRONMENT'))
+if (!defined('OTRA_DEVELOPMENT_ENVIRONMENT'))
 {
   define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
   define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
@@ -255,21 +265,25 @@ if (!function_exists('arrayExport'))
   {
     $content = '';
 
-    foreach($configurationArray as $key => $value)
+    /**
+     * @var string $arrayKey
+     * @var array|string $value
+     */
+    foreach($configurationArray as $arrayKey => $value)
     {
-      $content .= "'" . $key . '\'=>';
+      $content .= "'" . $arrayKey . '\'=>';
 
       if (is_array($value))
       {
         $content .= '[' . arrayExport($value) . ']';
 
-        if (array_key_last($configurationArray) !== $key)
+        if (array_key_last($configurationArray) !== $arrayKey)
           $content .= ',';
       } else
       {
         $content .= '"' . $value . '"';
 
-        if (array_key_last($configurationArray) !== $key)
+        if (array_key_last($configurationArray) !== $arrayKey)
           $content .= ',';
       }
     }

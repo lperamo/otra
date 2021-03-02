@@ -41,13 +41,13 @@ function tailCustom(string $filepath, int $lines = 1) : string
   while (ftell($fileDescriptor) > 0 && $lines >= 0)
   {
     // Figure out how far back we should jump
-    $seek = min(ftell($fileDescriptor), $buffer);
+    $seekOffset = min(ftell($fileDescriptor), $buffer);
 
     // Do the jump (backwards, relative to where we are)
-    fseek($fileDescriptor, -$seek, SEEK_CUR);
+    fseek($fileDescriptor, -$seekOffset, SEEK_CUR);
 
     // Read a chunk and prepend it to our output
-    $output = ($chunk = fread($fileDescriptor, $seek)) . $output;
+    $output = ($chunk = fread($fileDescriptor, $seekOffset)) . $output;
 
     // Jump back to where we started reading
     fseek($fileDescriptor, -mb_strlen($chunk, '8bit'), SEEK_CUR);

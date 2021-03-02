@@ -37,13 +37,13 @@ if (function_exists('createModule') === false)
    *
    * @throws \otra\OtraException
    */
-  function moduleHandling(bool $interactive, string $bundleName, string $moduleName)
+  function moduleHandling(bool $interactive, string $bundleName, string $moduleName) : void
   {
     // This constant is already defined if we have created a bundle on the process via CheckModuleExistence.php
-    if (defined('BUNDLE_BASE_PATH') === false)
+    if (!defined('BUNDLE_BASE_PATH'))
       define('BUNDLE_BASE_PATH', BASE_PATH . 'bundles/' . $bundleName . '/');
 
-    if ($interactive === true)
+    if ($interactive)
     {
       while ($moduleName !== 'n')
       {

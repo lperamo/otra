@@ -18,15 +18,14 @@ $consoleForce = false;
 require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 
 // Checking argument : bundle name
-if (false === isset($argv[ARG_BUNDLE_NAME]))
+if (!isset($argv[ARG_BUNDLE_NAME]))
 {
   $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
 
   // We clean the screen
   echo ERASE_SEQUENCE;
-} else {
+} else
   $bundleName = $argv[ARG_BUNDLE_NAME];
-}
 
 bundleHandling($interactive,
   $bundleName,

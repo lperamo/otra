@@ -103,7 +103,7 @@ class WorkerManager
     foreach ($dataRead as $stream)
     {
       // Which stream do we have to check STDOUT or STDERR ?
-      /** @var int $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
+      /** @var false|int|string $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
       $foundKey = array_search($stream, $this->stdoutStreams, true);
 
       if (false === $foundKey)
@@ -128,8 +128,6 @@ class WorkerManager
         $finalMessage = $worker->fail($stdout, $stderr, $exitCode);
       else // is this really possible ?
         throw new RuntimeException();
-
-      unset($status);
 
       if ($verbose > 0)
       {
