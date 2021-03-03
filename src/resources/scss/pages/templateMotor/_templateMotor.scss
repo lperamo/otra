@@ -6,6 +6,10 @@
   color               : colors.$secondary;
   text-align          : center;
   text-shadow         : 0 0 2px colors.$tertiary, 1px 1px 1px colors.$tertiary, 2px 2px 2px colors.$tertiary;
+
+  // put to avoid CSS conflicts with the user project
+  font-size   : 32px;
+  font-weight : 700;
 }
 
 .otra-block--base,
@@ -14,6 +18,13 @@
   border-radius    : .5rem;
   box-sizing       : border-box;
   display          : inline-block;
+
+  // put to avoid CSS conflicts with the user project
+  p,
+  a,
+  details {
+    font-size : 16px;
+  }
 }
 
 .otra-block--base,
@@ -44,6 +55,9 @@
       position : absolute;
       top      : .5rem; // to see the padding of each tag
       left     : 0;
+
+      // put to avoid CSS conflicts with the user project
+      font-size : 16px;
 
       @at-root {
         .otra--block-tags--key,
@@ -90,18 +104,21 @@
 
     .otra--code {
       color       : colors.$septenary;
+      font-family : 'Courier New', monospace;
       margin      : 0;
       word-break  : break-all;
       white-space : pre-wrap;
+
+      // put to avoid CSS conflicts with the user project.
+      background-color : inherit;
+      font-size        : 13px !important; // !important is needed to increase massively specificity
 
       @at-root .otra--code--container {
         outline : 1px solid colors.$another-shade;
 
         @at-root .otra--code--container-highlight {
           background-color : colors.$octonary;
-          //background-color : transparent;
           color            : inherit;
-          //outline : 1px solid colors.$tertiary;
           position         : relative;
         }
       }
