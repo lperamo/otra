@@ -9,6 +9,8 @@ declare(strict_types=1);
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
 
+require CONSOLE_PATH . 'tools.php';
+
 define('PATTERN', '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
@@ -58,13 +60,13 @@ function phpOrHTMLIntoEval(string &$contentToAdd) : void
  */
 function hasSyntaxErrors(string $file) : bool
 {
-  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
+  // Syntax verification, 2>&1 redirects stderr to stdout
+  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output);
   $output = implode(PHP_EOL, $output);
 
   if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
     echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
-    require CONSOLE_PATH . 'tools.php';
     showContextByError($file, $output, 10);
 
     return true;
@@ -100,14 +102,17 @@ function compressPHPFile(string $fileToCompress, string $outputFile) : void
  */
 function contentToFile(string $content, string $outputFile) : void
 {
-  echo PHP_EOL, PHP_EOL, CLI_CYAN, 'FINAL CHECKINGS => ';
+  if (VERBOSE > 0)
+    echo PHP_EOL;
+
+  echo PHP_EOL, CLI_CYAN, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
 
   // Test each part of the process in order to precisely detect where there is an error.
-  if (hasSyntaxErrors($tempFile))
+  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]',
       END_COLOR, PHP_EOL;
@@ -120,7 +125,7 @@ function contentToFile(string $content, string $outputFile) : void
 
   file_put_contents($outputFile, $content);
 
-  if (hasSyntaxErrors($outputFile))
+  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($outputFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
@@ -155,19 +160,23 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   // dealing with / at the beginning of the use
   if (!isset(CLASSMAP[$class]))
   {
-    if ('/' === substr($class, 1))
-      $class = substr($class, 1);
+    $revisedClass = substr($class, 1);
+
+    if ('/' === $revisedClass)
+      $class = $revisedClass;
     else
     {
       // It can be a SwiftMailer class for example.
       /**
-       * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation style like
-       * use test/
-       * {
-       *  class/test,
-       *  class/test2
-       * } */
-      echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
+       * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation
+       *  style like
+       *  use test/
+       *  {
+       *   class/test,
+       *   class/test2
+       *  } */
+      if (VERBOSE > 0)
+        echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
       return ;
     }
   }
@@ -179,7 +188,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   {
     $filesToConcat['php']['use'][] = $tempFile;
     $parsedFiles[] = $tempFile;
-  } elseif (1 < VERBOSE)
+  } elseif (VERBOSE > 1)
     showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 }
 
@@ -196,6 +205,13 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  */
 function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles) : array
 {
+//  preg_match_all(
+//    '@^\\s{0,}namespace\\s{1,}([^;]{0,});\\s{0,}@',
+//    $contentToAdd,
+//    $namespaceMatches,
+//    PREG_OFFSET_CAPTURE
+//  );
+//var_dump($namespaceMatches);die;
   preg_match_all(
     '@^\\s{0,}use\\s{1,}([^;]{0,});\\s{0,}@mx',
     $contentToAdd,
@@ -344,9 +360,10 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
  */
 function showFile(int $level, string $file, string $otherText = ' first file') : void
 {
-  if (0 < VERBOSE)
+  if (VERBOSE > 0)
     echo str_pad(
-      str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH),
+      str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') .
+        substr($file, BASE_PATH_LENGTH),
       ANNOTATION_DEBUG_PAD,
       '.'
     ), CLI_YELLOW, $otherText, END_COLOR, PHP_EOL;
@@ -534,9 +551,10 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 
   if (!isset(CLASSMAP[$newClass]))
   {
-    echo CLI_YELLOW, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_YELLOW,
-      ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.',
-      END_COLOR, PHP_EOL;
+    if (VERBOSE > 0)
+      echo CLI_YELLOW, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_YELLOW,
+        ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.',
+        END_COLOR, PHP_EOL;
 
     return false;
   }
@@ -607,7 +625,7 @@ function getFileInfoFromRequiresAndExtends(
           continue;
 
         // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
-        // inclusion of the dev/prod controller in the file src/Controller.php
+        //  inclusion of the dev/prod controller in the file src/Controller.php
         if ($tempFile === 'CORE_PATH . \'prod\' . \'/\' . ucfirst(\'prod\') . \'ControllerTrait.php')
           $tempFile .= "'";
 
@@ -654,7 +672,7 @@ function getFileInfoFromRequiresAndExtends(
 
       if (in_array($tempFile, $parsedFiles))
       {
-        if (1 < VERBOSE)
+        if (VERBOSE > 1)
           showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 
         continue;
@@ -726,7 +744,7 @@ function getFileInfoFromRequiresAndExtends(
  */
 function assembleFiles(int &$increment, int &$level, string $file, string $contentToAdd, array &$parsedFiles) : string
 {
-  if (0 === $level)
+  if (0 === $level && VERBOSE > 1)
     showFile($level, $file);
 
   ++$level;
@@ -864,7 +882,8 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
               $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;
             }
 
-            showFile($level, $tempFile, $method);
+            if (VERBOSE > 1)
+              showFile($level, $tempFile, $method);
 
             // If we have a "return type" PHP file then the file have already been included before,
             // in the 'processReturn' function
@@ -879,8 +898,9 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
         /** @var string $templateEntry */
         foreach ($entries as $templateEntry)
         {
-          //var_dump($templateEntries);die;
-          showFile($level, $templateEntry, ' via renderView');
+          if (VERBOSE > 1)
+            showFile($level, $templateEntry, ' via renderView');
+
           $nextContentToAdd = file_get_contents($templateEntry) . PHP_END_TAG_STRING;
           ++$increment;
           assembleFiles($increment, $level, $templateEntry, $nextContentToAdd, $parsedFiles);
@@ -987,10 +1007,8 @@ function processStaticCalls(
     {
       $parsedFiles[] = $newFile;
       $filesToConcat['php'][OTRA_KEY_STATIC][] = $newFile;
-    } elseif (1 < VERBOSE)
-    {
+    } elseif (VERBOSE > 1)
       showFile($level, $newFile, OTRA_ALREADY_PARSED_LABEL);
-    }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
     $length = strlen($classPath . $classAndFunction);
@@ -1022,7 +1040,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   if (!defined('VERBOSE'))
     define('VERBOSE', $verbose);
 
-  if (0 < VERBOSE)
+  if (VERBOSE > 0)
     define('BASE_PATH_LENGTH', strlen(BASE_PATH));
 
   // we create these variables only for the reference pass
@@ -1050,7 +1068,10 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
     }
   }
 
-  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.'),
+  if (VERBOSE > 0)
+    echo PHP_EOL;
+
+  echo str_pad('Files to include ', LOADED_DEBUG_PAD, '.'),
     CLI_GREEN, ' [LOADED]', END_COLOR;
 
   /** We remove all the declare strict types declarations */

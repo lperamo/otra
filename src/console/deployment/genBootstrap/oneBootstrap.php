@@ -10,12 +10,14 @@ use config\{AllConfig,Routes};
 use otra\Router;
 
 define('ONE_BOOTSTRAP_ARG_VERBOSE', 1);
-define('ONE_BOOTSTRAP_ARG_ROUTE', 2);
+define('ONE_BOOTSTRAP_ARG_LINT', 2);
+define('ONE_BOOTSTRAP_ARG_ROUTE', 3);
 
 define('OTRA_KEY_BOOTSTRAP', 'bootstrap');
 define('OTRA_KEY_DRIVER', 'driver');
+define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
 
-$verbose = (int) $argv[ONE_BOOTSTRAP_ARG_VERBOSE];
+$verbose = intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]);
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
@@ -158,7 +160,7 @@ try
   return;
 }
 
-if (hasSyntaxErrors($temporaryPhpRouteFile))
+if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($temporaryPhpRouteFile))
   return;
 
 compressPHPFile($temporaryPhpRouteFile, $phpRouteFile);
