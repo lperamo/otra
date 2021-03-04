@@ -341,11 +341,10 @@ while (true)
 
           if ($extension === 'ts')
           {
-            var_dump('test3');die;
             generateJavaScript(
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
-              $resourceFolder,
+              $resourcesMainFolder,
               $baseName,
               $resourceName
             );

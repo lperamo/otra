@@ -71,7 +71,6 @@ foreach($iterator as $entry)
       continue;
 
     $filesProcessed = true;
-    $extension = $entry->getExtension();
     $resourceName = $entry->getPathname();
     [$baseName, $resourcesMainFolder, $resourcesFolderEndPath] = getPathInformations($resourceName);
 
