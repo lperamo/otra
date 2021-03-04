@@ -5,34 +5,18 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-
 namespace otra\console;
-
-require BASE_PATH . 'config/Routes.php';
-require CORE_PATH . 'tools/cli.php';
 
 use JetBrains\PhpStorm\Pure;
 use otra\console\Tasks;
 use RecursiveIteratorIterator;
-
-// TODO Add parameter(s)? to add folder(s) to exclude from watching
-// TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
-// TODO We need to allow classic JavaScript files if the developers do not want to use TypeScript for their project.
-// TODO Handle the "rename" event
-// TODO Generate a new root css fileRoot.css when a sass dependency like _fileName.scss has been modified.
-// TODO Allow to not optimize via Google Closure Compiler (slow)
+use function otra\tools\files\returnLegiblePath;
 
 // Initialization
+require CORE_PATH . 'console/deployment/taskFileInit.php';
+
 const GEN_WATCHER_ARG_VERBOSE = 2,
- GEN_WATCHER_ARG_MASK = 3,
- GEN_WATCHER_ARG_GCC = 4,
- GEN_WATCHER_MASK_SCSS = 1,
- GEN_WATCHER_MASK_TS = 2,
- GEN_WATCHER_MASK_ROUTES = 4,
- GEN_WATCHER_MASK_PHP = 8,
- GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
  EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
- RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
 
   PATHS_TO_HAVE_PHP =
   [
@@ -41,15 +25,6 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
     CORE_PATH
   ],
 
-  PATHS_TO_HAVE_RESOURCES =
-  [
-    BASE_PATH . 'bundles',
-    BASE_PATH . 'web',
-    CORE_PATH
-  ],
-
-  PATH_TO_AVOID = BASE_PATH . 'bundles/config',
-
   // Those variables have the same name for folders so we rename those for more clarity (PHP 7.3 at time of writing)
   IN_CLOSE_NOWRITE_DIR = 1073741840,
   IN_OPEN_DIR = 1073741856,
@@ -57,13 +32,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', isset($argv[GEN_WATCHER_ARG_VERBOSE]) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
-
-// Defines if we want to use Google Closure Compiler or not
-define(
-  'GEN_WATCHER_GCC',
-  isset($argv[GEN_WATCHER_ARG_GCC]) && $argv[GEN_WATCHER_ARG_GCC] === 'true'
-);
+define('GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
 
 if (GEN_WATCHER_VERBOSE > 1 )
 {
@@ -110,46 +79,6 @@ if (GEN_WATCHER_VERBOSE > 1 )
 }
 
 /**
- * @param string[] $filePaths
- * @param string   $realPath
- *
- * @return bool
- */
-#[Pure] function isNotInThePath(array $filePaths, string $realPath) : bool
-{
-  foreach ($filePaths as $filePath)
-  {
-    // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $filePath) !== false)
-      return false;
-  }
-
-  return true;
-}
-
-/**
- * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
- * otherwise returns resource name as is.
- *
- * @param string      $resource Most of the time the name of a folder
- * @param string|null $fileName Most of the time the name of a file
- * @param bool|null   $endColor Do we have to reset color at the end ?
- *
- * @return string
- */
-#[Pure] function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
-{
-  // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
-  if ($fileName !== '')
-    $fileName = '/' . $fileName;
-
-  return (mb_strpos($resource, BASE_PATH) !== false
-    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $fileName . END_COLOR
-    : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR)
-    . ($endColor ? END_COLOR : '');
-}
-
-/**
  * @param string $header
  * @param int    $padding
  *
@@ -169,7 +98,13 @@ if (GEN_WATCHER_VERBOSE > 1 )
  *
  * @return string The debug output
  */
-#[Pure] function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $mustShowHeaders = false) : string
+#[Pure] function debugEvent(
+  int $mask,
+  int $cookie,
+  string $name,
+  string $resource,
+  bool $mustShowHeaders = false
+) : string
 {
   $debugToPrint = '';
 
@@ -190,48 +125,6 @@ if (GEN_WATCHER_VERBOSE > 1 )
   return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) .
     PHP_EOL;
 }
-
-/**
- * @param array $argv           Command line arguments
- * @param bool  $maskExists
- * @param int   $genWatcherMask
- *
- * @return bool
- */
-$isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
-{
-  return (
-      $maskExists
-      && ($argv[GEN_WATCHER_ARG_MASK] & $genWatcherMask) === $genWatcherMask
-    )
-    || !$maskExists;
-};
-
-$maskExists = array_key_exists(GEN_WATCHER_ARG_MASK, $argv);
-
-// Check if the binary mask is numeric
-if ($maskExists && !is_numeric($argv[GEN_WATCHER_ARG_MASK]))
-{
-  echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
-}
-
-define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_SCSS));
-define('WATCH_FOR_TS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_TS));
-define('WATCH_FOR_PHP_FILES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_PHP));
-
-unset($isWatched);
-
-define(
-  'WATCH_FOR_ROUTES',
-  (
-    $maskExists
-    && ($argv[GEN_WATCHER_ARG_MASK] & GEN_WATCHER_MASK_ROUTES) === GEN_WATCHER_MASK_ROUTES
-  )
-  || !$maskExists
-);
-
-unset($maskExists);
 
 // Configuring inotify
 $inotifyInstance = inotify_init();
@@ -350,8 +243,7 @@ while (true)
        */
       extract($eventDetails);
 
-      // IN_OPEN || IN_MOVED_FROM
-      if ($mask === 96)
+      if ($mask & IN_OPEN || $mask & IN_MOVED_FROM)
         continue;
 
       $resourceName = $foldersWatchedIds[$wd] . '/' . $name;
@@ -440,75 +332,64 @@ while (true)
             require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
         } elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
-          $fileInformations = explode('.', $name);
-          $resourceFolder = dirname($foldersWatchedIds[$wd]);
+          [
+            $baseName,
+            $resourcesMainFolder,
+            $resourcesFolderEndPath,
+            $extension
+          ] = getPathInformations($resourceName);
 
-          if ($fileInformations[1] === 'ts')
+          if ($extension === 'ts')
           {
-            generateJavaScript(GEN_WATCHER_VERBOSE, GEN_WATCHER_GCC, $resourceFolder, $fileInformations[0], $resourceName);
-          } elseif (substr($name, 0, 1) !== '_')
+            generateJavaScript(
+              GEN_WATCHER_VERBOSE,
+              FILE_TASK_GCC,
+              $resourcesMainFolder,
+              $baseName,
+              $resourceName
+            );
+          } elseif (substr($baseName, 0, 1) !== '_') // like resource.scss
           {
-            $generatedCssFile = $fileInformations[0] . '.css';
-
-            // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            $cssFolder = $resourceFolder . '/css';
-
-            // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-            if (!file_exists($cssFolder))
-              mkdir($cssFolder);
-
-            $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
-
-            [, $return] = cliCommand('sass --error-css ' . $resourceName . ':' . $cssPath);
-
-            echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
-              returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-            PHP_EOL . PHP_EOL;
+            $return = generateStylesheetsFiles(
+              $baseName,
+              $resourcesMainFolder,
+              $resourcesFolderEndPath,
+              $resourceName,
+              $extension,
+              GEN_WATCHER_VERBOSE > 0
+            );
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else
+          } else // like _resource.scss
           {
-            $stringToTest = substr($fileInformations[0], 1);
+            $stringToTest = substr($baseName, 1);
 
             foreach($sassMainResources as $mainResource)
             {
-                $fileContent = file_get_contents($mainResource);
-                preg_match(
-                  '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
-                  '\'@',
-                  $fileContent,
-                  $matches
-                );
+              $fileContent = file_get_contents($mainResource);
+              preg_match(
+                '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
+                '\'@',
+                $fileContent,
+                $matches
+              );
 
-                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
-                // files.
-                if (empty($matches))
-                  continue;
+              // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
+              // files.
+              if (empty($matches))
+                continue;
 
-                $slashPosition = strrpos($mainResource, '/');
-                $mainResourceFolder = realpath(substr($mainResource, 0, $slashPosition) . '/..');
-                $mainResourceWithoutExtension = substr(
-                  $mainResource,
-                  $slashPosition + 1,
-                  strrpos($mainResource, '.') - $slashPosition - 1
-                );
-                $generatedCssFile = $mainResourceWithoutExtension . '.css';
+              [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] = getPathInformations($mainResource);
 
-                // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-                $mainResourceCssFolder = $mainResourceFolder . '/css';
-
-                // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-                if (!file_exists($mainResourceCssFolder))
-                  mkdir($mainResourceCssFolder);
-
-                $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
-
-                [, $return] = cliCommand('sass --error-css ' . $mainResource . ':' . $cssPath);
-
-                echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
-                  returnLegiblePath($cssPath), ' and ', returnLegiblePath($cssPath . '.map'), '.',
-                  PHP_EOL . PHP_EOL;
+              $return = generateStylesheetsFiles(
+                $baseName,
+                $resourcesMainFolder,
+                $resourcesFolderEndPath,
+                $resourceName,
+                $extension,
+                GEN_WATCHER_VERBOSE > 0
+              );
 
                 if (GEN_WATCHER_VERBOSE > 0)
                   $eventsDebug .= $return;
