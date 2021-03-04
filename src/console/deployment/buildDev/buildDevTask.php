@@ -10,7 +10,6 @@ namespace otra\console;
 use RecursiveIteratorIterator;
 
 require CORE_PATH . 'console/deployment/taskFileInit.php';
-
 const BUILD_DEV_ARG_VERBOSE = 2,
 BUILD_DEV_ARG_SCOPE = 5;
 
@@ -72,15 +71,9 @@ foreach($iterator as $entry)
       continue;
 
     $filesProcessed = true;
-
     $extension = $entry->getExtension();
-    $baseName = substr($entry->getFilename(), 0, -strlen($extension) - 1);
     $resourceName = $entry->getPathname();
-    [
-      $baseName,
-      $resourcesMainFolder,
-      $resourcesFolderEndPath
-    ] = getPathInformations($baseName, $resourceName);
+    [$baseName, $resourcesMainFolder, $resourcesFolderEndPath] = getPathInformations($resourceName);
 
     if ($extension === 'ts')
     {
@@ -96,7 +89,14 @@ foreach($iterator as $entry)
           $resourceName
         );
     } elseif (substr($baseName, 0, 1) !== '_' && WATCH_FOR_CSS_RESOURCES)
-      generateStylesheetsFiles($baseName, $resourcesMainFolder, $resourcesFolderEndPath, $resourceName, $extension);
+      generateStylesheetsFiles(
+        $baseName,
+        $resourcesMainFolder,
+        $resourcesFolderEndPath,
+        $resourceName,
+        $extension,
+        BUILD_DEV_VERBOSE > 0
+      );
   }
 }
 

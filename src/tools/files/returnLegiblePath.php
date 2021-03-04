@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-use JetBrains\PhpStorm\Pure;
+namespace otra\tools\files;
 
 /**
  * @author Lionel Péramo
@@ -18,14 +17,14 @@ use JetBrains\PhpStorm\Pure;
  *
  * @return string
  */
-#[Pure] function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
+function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
   if ($fileName !== '')
     $fileName = '/' . $fileName;
 
   return (str_contains($resource, BASE_PATH)
-      ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $fileName . END_COLOR
-      : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR)
-    . ($endColor ? END_COLOR : '');
+      ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $fileName .
+        END_COLOR
+      : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR) . ($endColor ? END_COLOR : '');
 }

@@ -7,8 +7,10 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
+namespace otra\console;
 
 use config\AllConfig;
+use function otra\tools\files\returnLegiblePath;
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
@@ -67,11 +69,13 @@ define(
 unset($maskExists);
 
 /**
- * @param string $baseName
- * @param string $resourcesMainFolder
- * @param string $resourcesFolderEndPath
- * @param string $resourceName
- * @param string $extension
+ * @param string $baseName               File name without extension nor path
+ * @param string $resourcesMainFolder    Full path until the parent folder
+ * @param string $resourcesFolderEndPath Full path until 'resources' or 'web' folder
+ *                                       Eg : /var/www/html/myProject/bundles/mybundle/myModule/resources/
+ * @param string $resourceName           Full path including base file name and extension
+ * @param string $extension              File extension
+ * @param bool   $verbose
  *
  * @throws \otra\OtraException
  * @return string
@@ -81,7 +85,8 @@ function generateStylesheetsFiles(
   string $resourcesMainFolder,
   string $resourcesFolderEndPath,
   string $resourceName,
-  string $extension
+  string $extension,
+  bool $verbose
 ) : string
 {
   $generatedCssFile = $baseName . '.css';
@@ -101,7 +106,7 @@ function generateStylesheetsFiles(
 
   $sourceMapPath = $cssPath . '.map';
 
-  if (BUILD_DEV_VERBOSE > 0)
+  if ($verbose)
     echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
       returnLegiblePath($cssPath) .
       (TASK_FILE_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
@@ -114,7 +119,6 @@ function generateStylesheetsFiles(
 }
 
 /**
- * @param string $fileName Only the basename without extension nor path
  * @param string $fullName The absolute path to the file
  *
  * @return array
@@ -125,41 +129,39 @@ function generateStylesheetsFiles(
   'string',
   'string'
 ])]
-function getPathInformations(string $fileName, string $fullName) : array
+function getPathInformations(string $fullName) : array
 {
-  [$baseName, $extension] = explode('.', $fileName);
+  [$baseName, $extension] = explode('.', basename($fullName));
   $resourceFolder = dirname($fullName);
   $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'resources');
-  $resourcesMainFolder =
-    $resourcesMainFolderPosition !== false
-      ? substr(
-        $resourceFolder,
-        0,
-        $resourcesMainFolderPosition
-      ) . 'resources/'
-      : substr(
-        $resourceFolder,
-        0,
-        mb_strrpos($resourceFolder, 'web')
-      ) . 'web/';
+
+  // Retrieve the main folder of the resource type whether it is in a 'module/resources' folder or a 'web/' folder
+  $folderType = 'resources/';
+
+  if ($resourcesMainFolderPosition === false)
+  {
+    $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'web');
+
+    if ($resourcesMainFolderPosition === false)
+    {
+      echo CLI_RED, 'The resource ', CLI_LIGHT_CYAN, $fullName, CLI_RED, ' was not in a ', CLI_LIGHT_CYAN,
+        'resources', CLI_RED, ' or ', CLI_LIGHT_CYAN, 'web', CLI_RED, ' folder!', END_COLOR, PHP_EOL;
+      debug_print_backtrace();
+      throw new \otra\OtraException('', 1, '', NULL, [], true);
+
+    }
+
+    $folderType = 'web/';
+  }
+
+  $resourcesMainFolder = mb_substr($resourceFolder, 0, $resourcesMainFolderPosition) . $folderType;
   $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder)) . '/';
 
   return [
     $baseName,
-    $resourceFolder,
-    // Retrieve the main folder of the resource type whether it is in a 'module/resources' folder or a 'web/' folder
-    $resourcesMainFolderPosition !== false
-      ? mb_substr(
-        $resourceFolder,
-        0,
-        $resourcesMainFolderPosition
-      ) . 'resources/'
-      : mb_substr(
-        $resourceFolder,
-        0,
-        mb_strrpos($resourceFolder, 'web')
-      ) . 'web/',
-    $resourcesFolderEndPath
+    $resourcesMainFolder,
+    $resourcesFolderEndPath,
+    $extension
   ];
 }
 

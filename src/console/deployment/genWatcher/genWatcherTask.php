@@ -10,6 +10,7 @@ namespace otra\console;
 use JetBrains\PhpStorm\Pure;
 use otra\console\Tasks;
 use RecursiveIteratorIterator;
+use function otra\tools\files\returnLegiblePath;
 
 // Initialization
 require CORE_PATH . 'console/deployment/taskFileInit.php';
@@ -333,13 +334,14 @@ while (true)
         {
           [
             $baseName,
-            $resourceFolder,
             $resourcesMainFolder,
-            $resourcesFolderEndPath
-          ] = getPathInformations($name, $foldersWatchedIds[$wd]);
+            $resourcesFolderEndPath,
+            $extension
+          ] = getPathInformations($resourceName);
 
           if ($extension === 'ts')
           {
+            var_dump('test3');die;
             generateJavaScript(
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
@@ -347,60 +349,48 @@ while (true)
               $baseName,
               $resourceName
             );
-          } elseif (substr($baseName, 0, 1) !== '_')
+          } elseif (substr($baseName, 0, 1) !== '_') // like resource.scss
           {
             $return = generateStylesheetsFiles(
               $baseName,
               $resourcesMainFolder,
               $resourcesFolderEndPath,
               $resourceName,
-              $extension
+              $extension,
+              GEN_WATCHER_VERBOSE > 0
             );
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else
+          } else // like _resource.scss
           {
             $stringToTest = substr($baseName, 1);
 
             foreach($sassMainResources as $mainResource)
             {
-                $fileContent = file_get_contents($mainResource);
-                preg_match(
-                  '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
-                  '\'@',
-                  $fileContent,
-                  $matches
-                );
+              $fileContent = file_get_contents($mainResource);
+              preg_match(
+                '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
+                '\'@',
+                $fileContent,
+                $matches
+              );
 
-                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
-                // files.
-                if (empty($matches))
-                  continue;
+              // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
+              // files.
+              if (empty($matches))
+                continue;
 
-                $slashPosition = strrpos($mainResource, '/');
-                $mainResourceFolder = realpath(substr($mainResource, 0, $slashPosition) . '/..');
-                $mainResourceWithoutExtension = substr(
-                  $mainResource,
-                  $slashPosition + 1,
-                  strrpos($mainResource, '.') - $slashPosition - 1
-                );
-                $generatedCssFile = $mainResourceWithoutExtension . '.css';
+              [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] = getPathInformations($mainResource);
 
-                // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-                $mainResourceCssFolder = $mainResourceFolder . '/css';
-
-                // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-                if (!file_exists($mainResourceCssFolder))
-                  mkdir($mainResourceCssFolder);
-
-                $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
-
-                [, $return] = cliCommand('sass --error-css ' . $mainResource . ':' . $cssPath);
-
-                echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
-                  returnLegiblePath($cssPath), ' and ', returnLegiblePath($cssPath . '.map'), '.',
-                  PHP_EOL . PHP_EOL;
+              $return = generateStylesheetsFiles(
+                $baseName,
+                $resourcesMainFolder,
+                $resourcesFolderEndPath,
+                $resourceName,
+                $extension,
+                GEN_WATCHER_VERBOSE > 0
+              );
 
                 if (GEN_WATCHER_VERBOSE > 0)
                   $eventsDebug .= $return;
