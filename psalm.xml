@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<psalm
+    findUnusedCode="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="config" />
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="src/ideConfiguration"/>
+            <directory name="src/init"/>
+            <directory name="src/resources"/>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+    <fileExtensions>
+        <extension name=".php" />
+        <extension name=".phtml" />
+    </fileExtensions>
+</psalm>
