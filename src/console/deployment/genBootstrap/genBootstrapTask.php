@@ -16,7 +16,14 @@ if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
   define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 }
 
-define('GEN_BOOTSTRAP_ARG_ROUTE', 4);
+define('GEN_BOOTSTRAP_ARG_LINT', 4);
+define('GEN_BOOTSTRAP_ARG_ROUTE', 5);
+define('GEN_BOOTSTRAP_LINT',
+  isset($argv[GEN_BOOTSTRAP_ARG_LINT])
+    ? $argv[GEN_BOOTSTRAP_ARG_LINT] === '1'
+    : false
+);
+
 define('OTRA_KEY_DRIVER', 'driver');
 
 $verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
@@ -31,7 +38,8 @@ if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTR
   require CORE_PATH . 'tools/cli.php';
 
   [$status, $return] = cliCommand(
-    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
+    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . intval(GEN_BOOTSTRAP_LINT) .
+    ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
   );
   echo $return;
 
@@ -103,7 +111,8 @@ foreach(array_keys($routes) as $routeKey => $route)
     echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
-    passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' . $route);
+    passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' .
+      intval(GEN_BOOTSTRAP_LINT) . ' ' . $route);
 }
 
 // Final specific management for routes files
@@ -142,7 +151,7 @@ contentToFile(
   $routesManagementFile
 );
 
-if (hasSyntaxErrors($routesManagementFile))
+if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($routesManagementFile))
   return;
 
 compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
