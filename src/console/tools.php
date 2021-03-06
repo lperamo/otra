@@ -174,5 +174,28 @@ if (!function_exists('promptUser'))
         $code
       );
   }
+
+  /**
+   * PHP7'izes the content and changes \\\\ by \\.
+   * We take care of the spaces contained into folders and files names.
+   * Beware, this function do not cover all the possibles cases. It only works for some usages.
+   * This tool is not used by OTRA but is meant to be used in user projects.
+   *
+   * @param string $code
+   *
+   * @return string
+   */
+  function convertArrayFromVarExportToShorterVersion(string $code) : string
+  {
+    return preg_replace(
+      '@,(\s*)]@',
+      '$1]',
+      str_replace(
+        ['\\\\', 'array (', ',]', ',)', ')'],
+        ['\\'  , '['      , ']', ']', ']'],
+        $code
+      )
+    );
+  }
 }
 
