@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use otra\console\TasksManager;
+use otra\OtraException;
 
 define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
@@ -77,11 +78,18 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
   TasksManager::execute($tasksClassMap, $arguments[1], $arguments);
 }
 
+ini_set('display_errors', '1');
+error_reporting(E_ALL & ~E_DEPRECATED);
+require CORE_PATH . 'OtraException.php';
+set_error_handler([OtraException::class, 'errorHandler']);
+set_exception_handler([OtraException::class, 'exceptionHandler']);
+spl_autoload_register(function(string $className) : void { require CLASSMAP[$className]; });
+
 // If we didn't specify any command, list the available commands
 if ($argc < 2)
 {
   TasksManager::showCommands('No specified commands ! We then show the available commands ... ');
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
@@ -95,13 +103,13 @@ else // otherwise we'll try to guess if it looks like an existing one
 
   require CONSOLE_PATH . 'tools.php';
   $method = $argv[TasksManager::TASK_PARAMETERS];
-  list($newTask) = guessWords($method, $methods);
+  [$newTask] = guessWords($method, $methods);
 
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
     echo CLI_RED, 'There is no task named ', CLI_YELLOW, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   // Otherwise, we suggest the closest name that we have found.

@@ -74,13 +74,7 @@ abstract class TasksManager
    */
   public static function execute(array $tasksClassMap, string $task, array $argv)
   {
-    ini_set('display_errors', '1');
-    error_reporting(E_ALL & ~E_DEPRECATED);
-    // 'require_once' needed instead of 'require', if we execute this function multiple times as in tests or some
-    // scripts
-    require_once CORE_PATH . 'OtraException.php';
-
-    if (false === file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
+    if (!file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {
       echo CLI_YELLOW,
         'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
@@ -92,11 +86,7 @@ abstract class TasksManager
         throw new \otra\OtraException('', 0, '', NULL, [], true);
     }
 
-    set_error_handler([OtraException::class, 'errorHandler']);
-    set_exception_handler([OtraException::class, 'exceptionHandler']);
-
     require_once BASE_PATH . 'cache/php/ClassMap.php';
-    spl_autoload_register(function(string $className) { require CLASSMAP[$className]; });
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
   }
 }
