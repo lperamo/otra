@@ -29,8 +29,12 @@ const FILE_TASK_ARG_MASK = 3,
     BASE_PATH . 'web',
     CORE_PATH
   ],
-  PATH_TO_AVOID = BASE_PATH . 'bundles/config',
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
+
+define(
+  'PATHS_TO_AVOID',
+  array_merge([BASE_PATH . 'bundles/config'], AllConfig::$pathsToAvoidForBuild ?? [])
+);
 
 // Defines if we want to use Google Closure Compiler or not
 define(

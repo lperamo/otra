@@ -157,8 +157,11 @@ foreach($iterator as $entry)
   $realPath = $entry->getRealPath();
   $haveBeenWatched = false;
 
-  if (mb_strpos($realPath, PATH_TO_AVOID) !== false)
-    continue;
+  foreach (PATHS_TO_AVOID as $pathToAvoid)
+  {
+    if (mb_strpos($realPath, $pathToAvoid) !== false)
+      continue 2;
+  }
 
   // Adding watches for PHP files if needed
   if (WATCH_FOR_PHP_FILES)
