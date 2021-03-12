@@ -15,6 +15,7 @@
 @include ripple.create(
   (
     'padding' : 10px 20px,
+    'suffix' : '-otra',
     'themes' : $themes
   )
 );
