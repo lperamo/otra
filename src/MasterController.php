@@ -263,20 +263,28 @@ abstract class MasterController
     ob_start();
     require $templateFilename;
 
+    // If the template motor is not loaded then we quit
+    if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
+      return '';
+
     // Puts the motor template visualization system into session if we are in a development environment
     if ($_SERVER[APP_ENV] === 'dev')
     {
-      ob_start();
-      require CORE_PATH . 'templating/visualRendering.php';
-      ob_clean();
-      showBlocksVisually(false);
-      $_SESSION['templateVisualization'] = ob_get_clean();
+      if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
+        return '';
+      else
+      {
+        ob_start();
+
+        require CORE_PATH . 'templating/visualRendering.php';
+        ob_clean();
+        showBlocksVisually(false);
+        $_SESSION['templateVisualization'] = ob_get_clean();
+      }
     }
 
     // If the template motor is loaded then we use it
-    return in_array(CORE_PATH . 'templating/blocks.php', get_included_files())
-      ? BlocksSystem::getTemplate()
-      : '';
+    return BlocksSystem::getTemplate();
   }
 
   /**
