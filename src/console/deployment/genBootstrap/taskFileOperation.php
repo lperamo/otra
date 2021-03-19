@@ -581,7 +581,8 @@ function getFileInfoFromRequiresAndExtends(
   string $file,
   array &$filesToConcat,
   array &$parsedFiles,
-  array $classesFromFile)
+  array $classesFromFile
+) : void
 {
   preg_match_all(PATTERN, $contentToAdd, $matches, PREG_OFFSET_CAPTURE);
 

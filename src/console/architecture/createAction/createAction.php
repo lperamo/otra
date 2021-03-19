@@ -29,7 +29,7 @@ if (!defined('BUNDLES_PATH'))
  * @throws \otra\OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
-                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce)
+                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce) : void
 {
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';

@@ -310,7 +310,7 @@ abstract class MasterController
    * @param string $cssResource The css resources to link to the template
    * @param string $jsResource  The js resources to link to the template
    */
-  protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource)
+  protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
     // the 'preg_replace' suppress useless spaces
     $content = preg_replace('/>\s+</', '><',
@@ -337,7 +337,7 @@ abstract class MasterController
     array $variables,
     bool $ajax,
     string $route,
-    array $viewResourcePath)
+    array $viewResourcePath) : void
   {
     // Is the cache activated?
     $cacheActivated = property_exists(AllConfig::class, 'cache') && AllConfig::$cache;

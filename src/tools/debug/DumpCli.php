@@ -128,7 +128,7 @@ class DumpCli extends DumpMaster
     object $param,
     ReflectionProperty $property,
     int $depth
-  )
+  ) : void
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
@@ -284,7 +284,7 @@ class DumpCli extends DumpMaster
    * @param int    $sourceLine
    * @param string $content
    */
-  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content)
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     echo CLI_BLUE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;
     echo getSourceFromFileCli($sourceFile, $sourceLine), PHP_EOL;
@@ -296,7 +296,7 @@ class DumpCli extends DumpMaster
    *
    * @param mixed $params
    */
-  public static function dump(... $params)
+  public static function dump(... $params) : void
   {
     parent::dump(... $params);
   }

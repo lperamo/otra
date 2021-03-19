@@ -18,7 +18,7 @@ define('OTRA_BUNDLES_MAIN_FOLDER_NAME', 'bundles/');
  *
  * @throws \otra\OtraException
  */
-function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false)
+function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false) : void
 {
   $bundleName = ucfirst($bundleName);
   define('BUNDLE_ROOT_PATH', BASE_PATH . OTRA_BUNDLES_MAIN_FOLDER_NAME);

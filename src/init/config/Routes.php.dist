@@ -50,7 +50,7 @@ abstract class Routes
     ]
   ];
 
-  public static function init()
+  public static function init() : void
   {
     self::$allRoutes = array_merge(
       self::$allRoutes,

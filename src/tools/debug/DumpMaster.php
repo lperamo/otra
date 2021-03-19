@@ -120,7 +120,7 @@ abstract class DumpMaster {
   /**
    * @param mixed ...$params
    */
-  public static function dump(... $params)
+  public static function dump(... $params) : void
   {
     $debugBacktrace = debug_backtrace();
 

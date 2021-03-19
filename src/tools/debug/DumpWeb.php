@@ -124,7 +124,7 @@ abstract class DumpWeb extends DumpMaster {
     object $param,
     ReflectionProperty $property,
     int $depth
-  )
+  ) : void
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
@@ -291,7 +291,7 @@ abstract class DumpWeb extends DumpMaster {
    * @param int    $sourceLine
    * @param string $content
    */
-  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content)
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     ?>
     <link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>
