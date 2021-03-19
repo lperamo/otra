@@ -59,7 +59,6 @@ $params = Routes::$allRoutes[$route];
 // Init require section
 require CORE_PATH . 'Session.php';
 require CORE_PATH . 'bdd/Sql.php';
-$defaultRoute = Routes::$default['bundle'];
 
 // in order to pass some conditions
 $_SERVER['REMOTE_ADDR'] = 'console';
