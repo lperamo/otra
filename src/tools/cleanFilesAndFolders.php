@@ -21,7 +21,7 @@ if (!function_exists('cleanFileAndFolders'))
   {
     foreach ($fileOrFolders as $folder)
     {
-      if (true === file_exists($folder))
+      if (file_exists($folder))
       {
         $files = new RecursiveIteratorIterator(
           new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),

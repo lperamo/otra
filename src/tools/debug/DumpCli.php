@@ -159,7 +159,7 @@ class DumpCli extends DumpMaster
         echo $propertyType, ' => ', $propertyValue ? ' true' : ' false',  $property->getDocComment();
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
         break;
       case DumpMaster::OTRA_DUMP_TYPE_STRING :
@@ -242,7 +242,7 @@ class DumpCli extends DumpMaster
         echo $param ? ' true' : ' false', PHP_EOL;
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $param, PHP_EOL;
         break;
       case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;

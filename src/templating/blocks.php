@@ -21,8 +21,28 @@ namespace cache\php
       OTRA_BLOCK_NAME_ROOT = 'root';
 
     public static array
+      /**
+       * @var array{
+       *   content:string,
+       *   endingBlock?:bool,
+       *   index:int,
+       *   name:string,
+       *   parent?:array,
+       *   replacedBy?:int
+       * }[] $blocksStack
+       */
       $blocksStack = [],
+      /** @var array<string, int> $blockNames */
       $blockNames = [],
+      /** @var array{
+       *   content:string,
+       *   endingBlock?:bool,
+       *   index:int,
+       *   name:string,
+       *   parent?:array,
+       *   replacedBy?:int
+       * } $currentBlock
+       */
       $currentBlock = [
         'content' => '',
         'index' => 0,
@@ -43,12 +63,20 @@ namespace cache\php
       $content = '';
       self::$currentBlock[self::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
       array_push(self::$blocksStack, self::$currentBlock);
+      /** @var int[] $indexesToUnset */
       $indexesToUnset = [];
 
       // Loops through the block stack to compile the final content that have to be shown
       /**
-       * @var int|string $blockKey
-       * @var array      $block
+       * @var int $blockKey
+       * @var array{
+       *   content:string,
+       *   endingBlock?:bool,
+       *   index:int,
+       *   name:string,
+       *   parent?:array,
+       *   replacedBy?:int
+       * } $block
        */
       foreach(self::$blocksStack as $blockKey => $block)
       {
@@ -67,6 +95,7 @@ namespace cache\php
         do
         {
           // We add the key to an array of indexes that will not be showed again
+          /** @var int $tmpKey */
           if (!in_array($tmpKey, $indexesToUnset))
             $indexesToUnset[]= $tmpKey;
 
@@ -132,6 +161,7 @@ namespace {
     function block(string $name, ?string $inline = null) : void
     {
       // Storing previous content before doing anything else
+      /** @var array{content:string, index:int, name:string, parent?:array} $currentBlock */
       $currentBlock = &BlocksSystem::$currentBlock;
       $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
       array_push(BlocksSystem::$blocksStack, $currentBlock);
@@ -151,10 +181,19 @@ namespace {
       if (isset(BlocksSystem::$blockNames[$name]))
       {
         // We retrieve it
+        /** @var int $firstPreviousSameKindBlockKey Only put here for Psalm */
         $firstPreviousSameKindBlockKey = BlocksSystem::$blockNames[$name];
 
         for ($stackKey = $firstPreviousSameKindBlockKey; $stackKey < $actualKey; ++$stackKey)
         {
+          /** @var array{
+           *   content:string,
+           *   endingBlock?:bool,
+           *   index:int,
+           *   name:string,
+           *   parent?:array,
+           *   replacedBy?:int
+           * } $previousSameKindBlock For Psalm*/
           $previousSameKindBlock = &BlocksSystem::$blocksStack[$stackKey];
 
           if ($currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] === BlocksSystem::OTRA_BLOCK_NAME_ROOT
@@ -203,9 +242,18 @@ namespace {
     function endblock() : void
     {
       // Storing previous content before doing anything else
+      /** @var array{
+       *   content:string,
+       *   endingBlock?:bool,
+       *   index:int,
+       *   name:string,
+       *   parent?:array,
+       *   replacedBy?:int
+       * } $currentBlock For Psalm
+       */
       $currentBlock = &BlocksSystem::$currentBlock;
       $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_ENDING_BLOCK] = true; // needed for processing parent function
-      $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
+      $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .=  ob_get_clean();
 
       // Updates the list of block types with their position in the stack
       // if the block name is different from "root" and "''"
@@ -243,11 +291,19 @@ namespace {
       );
 
       // We put the first block of the same type
+      /** @var array{
+       *   content:string,
+       *   endingBlock?:bool,
+       *   index:int,
+       *   name:string,
+       *   parent?:array,
+       *   replacedBy?:int
+       * } $parentBlock For Psalm */
       $parentBlock = BlocksSystem::$blocksStack[$parentKey];
 
       // If this block has been replaced, we jump to replacing block if it is not our current block
-      while (array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY, $parentBlock)
-        && array_key_exists($parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY], BlocksSystem::$blocksStack))
+      while (isset($parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY])
+        && isset(BlocksSystem::$blocksStack[$parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]]))
       {
         $parentKey = $parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY];
         $parentBlock = BlocksSystem::$blocksStack[$parentKey];
@@ -256,7 +312,7 @@ namespace {
       $content = $parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT];
 
       // Gets the content from all the blocks contained by the parent block
-      if (!array_key_exists(BlocksSystem::OTRA_BLOCKS_KEY_ENDING_BLOCK, $parentBlock))
+      if (!isset($parentBlock[BlocksSystem::OTRA_BLOCKS_KEY_ENDING_BLOCK]))
       {
         // We gather all the content of the last same type block before this one
         do

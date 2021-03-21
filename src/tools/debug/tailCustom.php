@@ -35,7 +35,7 @@ function tailCustom(string $filepath, int $lines = 1) : string
     --$lines;
 
   // Start reading
-  $output = $chunk = '';
+  $output = '';
 
   // While we would like more
   while (ftell($fileDescriptor) > 0 && $lines >= 0)

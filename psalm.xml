@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
+<!--  findUnusedCode="true"-->
 <psalm
+  errorLevel="1"
   allowPhpStormGenerics="true"
   findUnusedVariablesAndParams="true"
-  findUnusedCode="true"
   strictBinaryOperands="true"
+  allowStringToStandInForClass="true"
   totallyTyped="true"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="https://getpsalm.org/schema/config"
   xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
   <globals>
-    <var name="_SERVER" type="array{APP_ENV:string,REQUEST_URI:string}"/>
+    <var name="_SERVER"
+         type="array{APP_ENV: string,REQUEST_URI: string, HTTPS: string, HTTP_HOST: string, HTTP_ACCEPT_LANGUAGE: string}"/>
     <!-- Workaround because Psalm does not find those! -->
     <var name="BASE_PATH" type="string"/>
     <var name="CLASSMAP" type="array"/>
@@ -18,8 +21,8 @@
 
   <!-- Workaround because Psalm does not find those classes! -->
   <stubs>
-    <file name="cache/php/RouteManagement.php" preloadClasses="true"/>
     <file name="cache/php/ClassMap.php" preloadClasses="true"/>
+    <file name="cache/php/RouteManagement.php" preloadClasses="true"/>
   </stubs>
  
   <projectFiles>
@@ -36,6 +39,7 @@
       <directory name="src/ideConfiguration"/>
       <directory name="src/init"/>
       <directory name="src/resources"/>
+      <file name="config/prodConstants.php"/>
 
       <!-- Psalm does not succeed to parse the Controller instanciation in the method 'errorMessage:93' of
       src/OtraException.php file! To test this file, it must be tested separately for now -->

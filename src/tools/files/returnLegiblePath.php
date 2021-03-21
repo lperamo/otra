@@ -20,7 +20,7 @@ namespace otra\tools\files;
 function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endColor = true) : string
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
-  if ($fileName !== '')
+  if (!empty($fileName))
     $fileName = '/' . $fileName;
 
   return (str_contains($resource, BASE_PATH)

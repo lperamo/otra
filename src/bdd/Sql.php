@@ -90,19 +90,15 @@ class Sql
       $currentConnection = $connection;
     }
 
-    extract(AllConfig::$dbConnections[$connection]);
-
-    /**
-     * Extractions give those variables
-     *
-     * @type string $driver
-     * @type string $host
-     * @type int    $port
-     * @type string $db
-     * @type string $login
-     * @type string $password
-     */
-
+    [
+      'db' => $database,
+      'driver' => $driver,
+      'port' => $port,
+      'host' => $host,
+      'login' => $login,
+      'password' => $password
+    ] = AllConfig::$dbConnections[$connection];
+//    ['driver' => $driver] = AllConfig::$dbConnections[$connection];
     $driver = ucfirst(strtolower($driver));
 
     // Is this driver available ?
@@ -115,26 +111,23 @@ class Sql
         require CORE_PATH . 'bdd/' . $driver . '.php';
       }
 
-      extract(AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn]);
-      /**
-       *  Extractions give those variables
-       *
-       * @type string $db
-       * @type int    $port
-       * @type string $host
-       * @type string $login
-       * @type string $password
-       */
+      [
+        'db' => $database,
+        'port' => $port,
+        'host' => $host,
+        'login' => $login,
+        'password' => $password
+      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn];
 
       $activeConn = &self::$_activeConn[$currentConnection];
-      $activeConn['db'] = $db;
+      $activeConn['db'] = $database;
       self::$instance = $activeConn['instance'];
 
       try
       {
         $activeConn['conn'] = $activeConn['instance']->connect(
           strtolower(substr($driver, 3))
-            . ($haveDatabase  ? ':dbname=' . $db . ';' : ':')
+            . ($haveDatabase  ? ':dbname=' . $database . ';' : ':')
             . 'host=' . ('' == $port ? $host : $host . ':' . $port),
           $login,
           $password
@@ -251,7 +244,7 @@ class Sql
    */
   public function getColumnMeta(...$params) : ?array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::getColumnMeta', $params);
@@ -262,11 +255,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return array The next result
+   * @return ?object The next result
    */
-  public function fetchObject(...$params)
+  public function fetchObject(...$params) : ?object
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::fetchObject', $params);
@@ -277,11 +270,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return array The next result
+   * @return ?array The next result
    */
-  public static function fetchRow(...$params)
+  public static function fetchRow(...$params) : ?array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::fetchRow', $params);
@@ -292,11 +285,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return bool|array The results. Returns false if there are no results.
+   * @return null|bool|array The results. Returns false if there are no results.
    */
-  public function values(...$params)
+  public function values(...$params) : null|bool|array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::values', $params);
@@ -307,11 +300,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return bool|array The results. Returns false if there are no results.
+   * @return null|bool|array The results. Returns false if there are no results.
    */
-  public function valuesOneCol(...$params)
+  public function valuesOneCol(...$params) : null|bool|array
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::valuesOneCol', $params);
@@ -322,10 +315,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return bool|mixed The result. Returns false if there are no result.
+   * @return mixed The result. Returns false if there are no result.
    */
-  public function single(...$params){
-    if (true === isset($_SESSION['bootstrap']))
+  public function single(...$params) : mixed
+  {
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::single', $params);
@@ -340,7 +334,7 @@ class Sql
    */
   private static function close($instanceToClose = true) : bool
   {
-    if (isset(self::$instance) === true)
+    if (isset(self::$instance))
       return call_user_func_array(self::$currentDBMS . '::close', [&$instanceToClose]);
 
     return false;
@@ -351,11 +345,11 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return bool Returns true on success or false on failure.
+   * @return ?bool Returns true on success or false on failure.
    */
-  public function freeResult(...$params)
+  public function freeResult(...$params) : ?bool
   {
-    if (true === isset($_SESSION['bootstrap']))
+    if (isset($_SESSION['bootstrap']))
       return null;
 
     return call_user_func_array(self::$currentDBMS . '::freeResult', $params);

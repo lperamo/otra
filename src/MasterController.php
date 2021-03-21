@@ -44,6 +44,7 @@ abstract class MasterController
   protected static array
     $stylesheets = [],
     $javaScript = [],
+    /** @var array<string,string> */
     $rendered = [];
 
   protected static bool

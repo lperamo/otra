@@ -93,18 +93,18 @@ abstract class DumpMaster {
   }
 
   /**
-   * @param $param
+   * @param object $param
    *
    * @throws \ReflectionException
    * @return array
    */
-  protected static function getClassDescription($param) : array
+  protected static function getClassDescription(object $param) : array
   {
     $className = get_class($param);
     $reflectedClass = new ReflectionClass($className);
     $classInterfaces = $reflectedClass->getInterfaceNames();
     $parentClass = $reflectedClass->getParentClass();
-    $description = 'object (' . count((array) $param) . ') ' .
+    $description = 'object (' . (string)count((array) $param) . ') ' .
       ($reflectedClass->isAbstract() ? 'abstract ': '') .
       ($reflectedClass->isFinal() ? 'final ': '') . $className;
 

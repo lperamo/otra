@@ -12,10 +12,17 @@ use cache\php\BlocksSystem;
 if (!function_exists('showBlocksVisually'))
 {
   /**
-   * @param int   $key
-   * @param array $block
+   * @param int|string $key
+   * @param array{
+   *   content:string,
+   *   endingBlock:bool,
+   *   index:int,
+   *   name:string,
+   *   parent?:array,
+   *   replacedBy?:int
+   * } $block
    */
-  function showBlockTags(int $key, array $block) : void
+  function showBlockTags(int|string $key, array $block) : void
   {
     ?>
     <div class="otra--block-tags">

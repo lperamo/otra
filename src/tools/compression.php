@@ -21,7 +21,7 @@ function gzCompressFile(string $source, string $destination = null, int $level =
 {
   $destination = $destination === null ? $source . '.gz' : $destination;
 
-  $fp_out = gzopen($destination, 'wb' . $level);
+  $fp_out = gzopen($destination, 'wb' . (string)$level);
 
   if ($fp_out === false)
     return false;
@@ -34,14 +34,14 @@ function gzCompressFile(string $source, string $destination = null, int $level =
     return false;
   }
 
-  while (feof($fp_in) === false)
+  while (!feof($fp_in))
     gzwrite($fp_out, fread($fp_in, 524288));  // 1024 * 512
 
   fclose($fp_in);
   gzclose($fp_out);
 
   // Avoids to keep a file without .gz extension and one with .gz extension for example.
-  if ($keep === false && $source !== $destination)
+  if (!$keep && $source !== $destination)
     unlink($source);
 
   return true;

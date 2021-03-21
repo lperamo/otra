@@ -178,8 +178,8 @@ class DatabaseTest extends TestCase
   public function testGetDirs() : void
   {
     require self::TEST_CONFIG_GOOD_PATH;
-    $dirs = Database::getDirs();
-    self::assertIsArray($dirs);
+    $folders = Database::getDirs();
+    self::assertIsArray($folders);
   }
 
   /**

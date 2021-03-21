@@ -250,13 +250,16 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
 /* **************** SECURITY FILES **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
 {
-  array_map(
-    'unlink',
-    array_merge(
-      glob(PHP_CACHE_PATH . 'security/dev/*.php'),
-      glob(PHP_CACHE_PATH . '/security/prod/*.php')
-    )
+  $arrayToUnlink = array_merge(
+    glob(PHP_CACHE_PATH . 'security/dev/*.php'),
+    glob(PHP_CACHE_PATH . '/security/prod/*.php')
   );
+
+  array_walk(
+    $arrayToUnlink,
+    'unlink'
+  );
+  unset($arrayToUnlink);
 
   echo 'Security files cleared', OTRA_SUCCESS;
 }

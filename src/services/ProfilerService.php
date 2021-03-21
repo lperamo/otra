@@ -37,6 +37,7 @@ class ProfilerService
     if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
       return t('No stored queries in ') . $file . '.';
 
+    /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
       str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
       true

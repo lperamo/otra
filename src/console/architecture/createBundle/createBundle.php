@@ -49,8 +49,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
   // Checking argument : folder mask
   if (null === $bundleMask
     || $bundleMask < 0
-    || $bundleMask > pow(2, count(BUNDLE_FOLDERS)) - 1
-    || !is_numeric($bundleMask))
+    || $bundleMask > pow(2, count(BUNDLE_FOLDERS)) - 1)
   {
     if ($bundleTask)
     {

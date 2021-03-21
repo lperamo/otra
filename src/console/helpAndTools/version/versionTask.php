@@ -28,7 +28,8 @@ $byPeramoLionel = explode('*', "B*y* *P*é*r*a*m*o* *L*i*o*n*e*l*.");
 foreach($byPeramoLionel as $index => $character)
 {
   $keyTwice = $index << 2;
-  echo "\e[38;2;" . (76 + $keyTwice) . ";" . (136 + $keyTwice) . ";" . (191 + $keyTwice) . "m" . $character;
+  echo "\e[38;2;" . (string)(76 + $keyTwice) . ";" . (string)(136 + $keyTwice) . ";" . (string)(191 + $keyTwice) . "m" .
+    $character;
 }
 
 echo str_repeat(' ', 20), PHP_EOL,

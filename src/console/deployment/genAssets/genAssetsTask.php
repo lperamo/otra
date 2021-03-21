@@ -231,7 +231,7 @@ if (
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .
-          'bundles\\' . Routes::$default['bundle'] . '\\Init::Init"'
+          'bundles\\' . Routes::$allRoutes[$routeName]['chunks'][1] . '\\Init::Init"'
         );
 
         if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))

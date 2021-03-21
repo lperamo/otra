@@ -92,7 +92,7 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
   {
     // We try to find a route which the name is similar
     require CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(Routes::$allRoutes));
+    [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
@@ -112,6 +112,10 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
 } else
   $routes = Routes::$allRoutes;
 
+/**
+ * @var string  $route
+ * @var array   $details
+ */
 foreach($routes as $route => $details)
 {
   if ('otra_exception' === $route )
@@ -120,7 +124,7 @@ foreach($routes as $route => $details)
   // Routes and paths management
   $chunks = $details['chunks'];
   $altColor = ($indexLines % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
-  echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
+  echo $altColor, sprintf('%-' . (string)WIDTH_LEFT . 's', $route),
     str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
 
   echo str_pad(' ', WIDTH_LEFT),

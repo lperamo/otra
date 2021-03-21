@@ -29,23 +29,19 @@ abstract class Router
    *
    * @return string|Controller Controller's path
    */
-  public static function get(string $route = 'index', array|string $params = [], bool $launch = true)
+  public static function get(string $route = 'index', array|string $params = [], bool $launch = true) : string|Controller
   {
     // We ensure that our input array really contains 5 parameters in order to make array_combine works
-    /**
-     * We extract potentially those variables from $baseParams
-     *
-     * @var string     $action
-     * @var string     $bundle
-     * @var Controller $controller
-     * @var string     $module
-     * @var string     $pattern
-     * @var array      $baseParams
-     */
-    extract($baseParams = array_combine(
+    [
+      'action' => $action,
+      'bundle' => $bundle,
+      'controller' => $controller,
+      'module' => $module
+    ] =
+      $baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
       array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
-    ));
+    );
 
     $finalAction = '';
 
@@ -118,7 +114,11 @@ abstract class Router
    */
   public static function getByPattern(string $pattern) : array
   {
+    if (empty(Routes::$allRoutes))
+      throw new OtraException('There are currently no routes.');
+
     $patternFound = false;
+
     /**
      * @var string $mainPattern
      * @var string $routeName

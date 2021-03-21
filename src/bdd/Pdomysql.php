@@ -157,9 +157,9 @@ abstract class Pdomysql
 
     $sqlRow = $statement->fetch(PDO::FETCH_ASSOC);
     $results = [];
-    $results[] = $sqlRow[($key = key($sqlRow))];
+    $results[] = $sqlRow[($rowKey = key($sqlRow))];
 
-    while ($sqlRow = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $sqlRow[$key]; }
+    while ($sqlRow = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $sqlRow[$rowKey]; }
 
     return $results;
   }
@@ -215,11 +215,11 @@ abstract class Pdomysql
   /**
    * Closes connection.
    *
-   * @param bool|SQL $instanceToClose
+   * @param bool|Sql $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
-  public static function close(&$instanceToClose = true) : bool
+  public static function close(bool|Sql &$instanceToClose = true) : bool
   {
     if ($instanceToClose === true)
       Sql::$currentConn = null;

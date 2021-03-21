@@ -14,7 +14,7 @@ class WorkerManager
     STDOUT = 1,
     STDERR = 2,
     NON_BLOCKING = false,
-    //BLOCKING = true,
+    //BLOCKING = true,?
     DESCRIPTOR_SPEC = [
       ['pipe', 'r'],
       ['pipe', 'w'],
@@ -25,11 +25,15 @@ class WorkerManager
   public const
     ERASE_TO_END_OF_LINE = "\033[K";
 
+  /** @var Worker[] $workers */
   public static array $workers = [],
     $allMessages = [];
 
+  /** @var resource[] */
+  private array $processes = [];
+
   private array
-    $processes = [],
+    /** @var resource[]  */
     $stdinStreams = [],
     $stdoutStreams = [],
     $stderrStreams = [];
@@ -65,11 +69,12 @@ class WorkerManager
    */
   public function listen(int $timeout = 200000, int $verbose = 1) : void
   {
+    /** @var resource[] $dataRead */
     $dataRead = [];
     
     foreach (self::$workers as $workerKey => &$worker)
     {
-      /** @var Worker $worker */
+      /** @var resource */
       $dataRead[] = $this->stdoutStreams[$workerKey];
       $dataRead[] = $this->stderrStreams[$workerKey];
 
@@ -136,8 +141,15 @@ class WorkerManager
 
         if (self::$hasPrinted)
         {
-          foreach (self::$allMessages as $message)
+          $messagesCount = count(self::$allMessages);
+
+          for ($index = 0; $index < $messagesCount; ++$index)
+          {
             echo "\033[1A" . self::ERASE_TO_END_OF_LINE;
+          }
+
+          unset($messagesCount);
+
         }
 
         self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;

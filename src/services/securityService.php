@@ -98,6 +98,7 @@ if (!function_exists('getRandomNonceForCSP'))
     if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
       // Retrieve security instructions from the routes configuration file
+      /** @var array<string,array<string,string>> $policiesFromUserConfig */
       $policiesFromUserConfig = require $routeSecurityFilePath;
 
       // Forces the policies to be an empty array for the rest of the algorithm
@@ -191,7 +192,20 @@ if (!function_exists('getRandomNonceForCSP'))
    *
    * @param string $directive
    * @param string $policy
-   * @param array  $cspDirectives
+   * @param array{
+   *    'base-uri'?:string,
+   *    'form-action'?:string,
+   *    'frame-ancestors'?:string,
+   *    'default-src'?:string,
+   *    'font-src'?:string,
+   *    'img-src'?:string,
+   *    'object-src'?:string,
+   *    'connect-src'?:string,
+   *    'child-src'?:string,
+   *    'manifest-src'?:string,
+   *    'style-src'?:string,
+   *    'script-src'?:string
+   *  } $cspDirectives
    * @param string $route
    */
   function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
