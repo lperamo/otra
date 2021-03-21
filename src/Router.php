@@ -35,12 +35,12 @@ abstract class Router
     /**
      * We extract potentially those variables from $baseParams
      *
-     * @var string $action
-     * @var string $bundle
+     * @var string     $action
+     * @var string     $bundle
      * @var Controller $controller
-     * @var string $module
-     * @var string $pattern
-     * @var array $baseParams
+     * @var string     $module
+     * @var string     $pattern
+     * @var array      $baseParams
      */
     extract($baseParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
@@ -110,9 +110,9 @@ abstract class Router
   /**
    * Check if the pattern is present among the routes. TODO fix the named parameters system
    *
-   * @param string $pattern The pattern to check
+   * @param string $pattern          The pattern to check
    *
-   * @return array The route and the parameters if they exist, false otherwise
+   * @return array{0:string,1:array} The route and the parameters if they exist, false otherwise
    *
    * @throws OtraException
    */
@@ -142,7 +142,7 @@ abstract class Router
     {
       header('HTTP/1.0 404 Not Found');
 
-      return in_array('404', array_keys(Routes::$allRoutes)) === true ? ['404', []] : ['otra_404', []];
+      return in_array('404', array_keys(Routes::$allRoutes)) ? ['404', []] : ['otra_404', []];
     }
 
     $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
