@@ -173,7 +173,8 @@ function getPathInformations(string $fullName) : array
 /**
  * @param array  $paths
  * @param string $realPath
- * @param bool   $checkScope
+ * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
+ *                           True, if the file belongs to the scope we want to watch. Defaults to true.
  *
  * @return bool
  */

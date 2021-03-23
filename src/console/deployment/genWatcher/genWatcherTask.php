@@ -242,28 +242,30 @@ while (true)
         'mask' => $binaryMask,
         'cookie' => $cookie,
         'name' => $filename
-        ] = $eventDetails;
+      ] = $eventDetails;
 
       if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
       $resourceName = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
 
+      // If it is a temporary file, we skip it
+      if (str_contains(substr($resourceName, -2), '~'))
+        continue;
+
       // User is adding a folder
       if (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
       {
-        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
-
         // Adding a watch on the new folder
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
-          $folderPath,
+          $resourceName,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-        )] = $folderPath;
+        )] = $resourceName;
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($folderPath) . '. We now watching it.' .
+          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($resourceName) . '. We now watching it.' .
             PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
@@ -274,11 +276,9 @@ while (true)
       } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
         // User is deleting a folder
-        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
-
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($folderPath) .
+          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($resourceName) .
             '. We do not watch it anymore.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
@@ -289,6 +289,37 @@ while (true)
         unset($foldersWatchedIds[$watchDescriptor]);
 
         continue;
+      } elseif ( // If it is an event IN_CREATE and is a file to watch
+        ($binaryMask & IN_CREATE) === IN_CREATE
+        && (
+          !isNotInThePath(PATHS_TO_HAVE_PHP, $resourceName)
+        || !isNotInThePath(PATHS_TO_HAVE_RESOURCES, $resourceName)
+        )
+      )
+      {
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $resourceName,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $resourceName;
+
+
+        if (str_contains($filename, '.scss'))
+        {
+          $resourcesEntriesToWatch[] = $resourceName;
+          $sassMainResources[$filename] = $resourceName;
+        } elseif (str_contains($filename, '.ts'))
+         $resourcesEntriesToWatch[] = $resourceName;
+        elseif (str_contains($filename, '.php'))
+          $phpEntriesToWatch[] = $resourceName;
+
+        if (GEN_WATCHER_VERBOSE > 0)
+        {
+          $eventsDebug .= PHP_EOL . 'We are now watching the file ' . returnLegiblePath($filename) . '.' . PHP_EOL;
+
+          if (GEN_WATCHER_VERBOSE > 1)
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
+        }
       } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($binaryMask & IN_DELETE) === IN_DELETE
         && (in_array($filename, $phpEntriesToWatch)
