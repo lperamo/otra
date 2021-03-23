@@ -12,16 +12,7 @@ namespace config;
  */
 abstract class Routes
 {
-  public static array $default = [
-    'pattern' => '/frontend/index',
-    'bundle' => 'App',
-    'module' => 'frontend',
-    'controller' => 'index',
-    'action' => 'indexAction',
-    'route' => 'homePage'
-  ],
-
-  $allRoutes = [
+  public static array $allRoutes = [
     'otra_exception' => [
       'chunks' => ['exception'],
       'core' => true,
@@ -50,7 +41,7 @@ abstract class Routes
     ]
   ];
 
-  public static function init()
+  public static function init() : void
   {
     self::$allRoutes = array_merge(
       self::$allRoutes,

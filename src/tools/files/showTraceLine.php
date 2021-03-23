@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 
 /**
- * @param array $contextItem
+ * @param array{class: string, file: string, function:string, type:string, line: int} $contextItem
  */
 function showTraceLine(array $contextItem) : void
 {
@@ -26,14 +26,14 @@ function showTraceLine(array $contextItem) : void
         if (str_contains($traceFile, BASE_PATH))
         {
           ?><span class="exception-main--color--file-and-line" title="' . $traceFile . '">
-          <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . $traceLine ?>
+          <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . (string)$traceLine ?>
           </span>
           <?php
         } else {
           echo $traceFile;
         }
       } else
-        echo '-' . $traceLine;
+        echo '-' . (string)$traceLine;
       ?>
     </summary>
     <div class="accordion--block">

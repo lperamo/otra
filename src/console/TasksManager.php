@@ -72,7 +72,7 @@ abstract class TasksManager
    *
    * @throws OtraException
    */
-  public static function execute(array $tasksClassMap, string $task, array $argv)
+  public static function execute(array $tasksClassMap, string $task, array $argv) : void
   {
     if (!file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
     {

@@ -28,9 +28,9 @@ require CACHE_PATH . 'php/ClassMap.php';
 /** MAIN CONFIGURATION */
 require BASE_PATH . 'config/AllConfig.php';
 
-spl_autoload_register(function(string $className)
+spl_autoload_register(function(string $className) : void
 {
-  if (false === isset(CLASSMAP[$className]))
+  if (!isset(CLASSMAP[$className]))
     echo 'Path not found for the class name : ', $className, '<br>';
   else
     require CLASSMAP[$className];

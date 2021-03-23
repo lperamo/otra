@@ -124,7 +124,7 @@ abstract class DumpWeb extends DumpMaster {
     object $param,
     ReflectionProperty $property,
     int $depth
-  )
+  ) : void
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
@@ -158,7 +158,7 @@ abstract class DumpWeb extends DumpMaster {
         echo $propertyType, ' => ', $propertyValue ? 'true' : 'false', $property->getDocComment();
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
         break;
       case DumpMaster::OTRA_DUMP_TYPE_STRING :
@@ -247,7 +247,7 @@ abstract class DumpWeb extends DumpMaster {
         echo $paramType, $param ? ' true' : ' false', self::OTRA_DUMP_END_TEXT_BLOCK;
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $param, '</span>', self::OTRA_DUMP_END_TEXT_BLOCK, '<br>';
         break;
       case 'NULL' : echo '<b>null</b><br>'; break;
@@ -291,7 +291,7 @@ abstract class DumpWeb extends DumpMaster {
    * @param int    $sourceLine
    * @param string $content
    */
-  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content)
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     ?>
     <link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>

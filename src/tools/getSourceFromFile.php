@@ -33,7 +33,7 @@ if (!function_exists('getSourceFromFile'))
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . '<i>';
-      $sourceContentMiddle = $index . ' ' . '</i>' . htmlentities($fileHandler->current());
+      $sourceContentMiddle = (string)$index . ' ' . '</i>' . htmlentities($fileHandler->current());
 
       $sourceContent .= ($index === $sourceLine)
         ? '<b>' . $sourceContentMiddle . '</b>'
@@ -60,14 +60,14 @@ if (!function_exists('getSourceFromFile'))
     $padding = str_repeat(' ', $padding);
     $sourceContent = '';
 
-    for ($index = $sourceLine - $range;$index < $maxLine; ++$index)
+    for ($index = $sourceLine - $range; $index < $maxLine; ++$index)
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . ADD_BOLD . CLI_BOLD_LIGHT_BLUE;
 
       $sourceContent .= ($index === $sourceLine)
-        ? CLI_BOLD_BLUE . $index . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
-        : $index . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
+        ? CLI_BOLD_BLUE . (string)$index . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
+        : (string)$index . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
     }
 
     return $sourceContent;

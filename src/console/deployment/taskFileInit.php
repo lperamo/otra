@@ -125,6 +125,7 @@ function generateStylesheetsFiles(
 /**
  * @param string $fullName The absolute path to the file
  *
+ * @throws \otra\OtraException
  * @return array
  */
 #[\JetBrains\PhpStorm\ArrayShape([

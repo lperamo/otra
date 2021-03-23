@@ -1,30 +1,54 @@
 <?xml version="1.0"?>
+<!--  findUnusedCode="true"-->
 <psalm
-    findUnusedCode="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+  errorLevel="1"
+  allowPhpStormGenerics="true"
+  findUnusedVariablesAndParams="true"
+  strictBinaryOperands="true"
+  allowStringToStandInForClass="true"
+  totallyTyped="true"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://getpsalm.org/schema/config"
+  xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
-    <projectFiles>
-        <directory name="config" />
-        <directory name="src" />
-        <!-- Those three files can reproduce the problem with Psalm. -->
-<!--        <file name="src/OtraException.php"/>-->
-<!--        <file name="src/Controller.php"/>-->
-<!--        <file name="src/MasterController.php"/>-->
-        <ignoreFiles>
-            <directory name="src/ideConfiguration"/>
-            <directory name="src/init"/>
-            <directory name="src/resources"/>
+  <globals>
+    <var name="_SERVER"
+         type="array{APP_ENV: string,REQUEST_URI: string, HTTPS: string, HTTP_HOST: string, HTTP_ACCEPT_LANGUAGE: string}"/>
+    <!-- Workaround because Psalm does not find those! -->
+    <var name="BASE_PATH" type="string"/>
+    <var name="CLASSMAP" type="array"/>
+  </globals>
 
-            <!-- Psalm does not succeed to parse the Controller instanciation in the method 'errorMessage:93' of
-            src/OtraException.php file! To test this file, it must be tested separately for now -->
-            <file name="src/OtraException.php"/>
-            <directory name="vendor" />
-        </ignoreFiles>
-    </projectFiles>
-    <fileExtensions>
-        <extension name=".php" />
-        <extension name=".phtml" />
-    </fileExtensions>
+  <!-- Workaround because Psalm does not find those classes! -->
+  <stubs>
+    <file name="cache/php/ClassMap.php" preloadClasses="true"/>
+    <file name="cache/php/RouteManagement.php" preloadClasses="true"/>
+  </stubs>
+ 
+  <projectFiles>
+    <directory name="config" />
+    <directory name="src" />
+<!--    <file name="config/constants.php"/>-->
+    <file name="cache/php/RouteManagement.php"/>
+    <directory name="web"/>
+    <!-- Those three files can reproduce the problem with Psalm. -->
+    <!--        <file name="src/OtraException.php"/>-->
+    <!--        <file name="src/Controller.php"/>-->
+    <!--        <file name="src/MasterController.php"/>-->
+    <ignoreFiles>
+      <directory name="src/ideConfiguration"/>
+      <directory name="src/init"/>
+      <directory name="src/resources"/>
+      <file name="config/prodConstants.php"/>
+
+      <!-- Psalm does not succeed to parse the Controller instanciation in the method 'errorMessage:93' of
+      src/OtraException.php file! To test this file, it must be tested separately for now -->
+      <file name="src/OtraException.php"/>
+      <directory name="vendor"/>
+    </ignoreFiles>
+  </projectFiles>
+  <fileExtensions>
+    <extension name=".php"/>
+    <extension name=".phtml"/>
+  </fileExtensions>
 </psalm>

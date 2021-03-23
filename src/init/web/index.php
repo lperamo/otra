@@ -30,6 +30,27 @@ try
   header('Content-Type: text/html; charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
+  /** @var array<string,array{
+   *   0:string,
+   *   1:array{
+   *     chunks:array{0:string,1:string,2:string,3:string,4:string},
+   *     core?:bool,
+   *     resources:array{
+   *       template?:bool,
+   *       _css?:string[],
+   *       _js?:string[],
+   *       bundle_css?:string,
+   *       bundle_js?:string,
+   *       core_css?:string,
+   *       core_js?:string
+   *     },
+   *     bootstrap?:array,
+   *     post?:array,
+   *     get?:array,
+   *     session?:array
+   *   }
+   * }> \cache\php\Routes::$allRoutes
+   */
   // Is it a static page
   if ('cli' !== PHP_SAPI &&
     isset(
@@ -42,7 +63,7 @@ try
   /** CLASS MAPPING */
   require CACHE_PATH . 'php/ProdClassMap.php';
 
-  spl_autoload_register(function ($className)
+  spl_autoload_register(function (string $className) : void
   {
     if (!isset(CLASSMAP[$className]))
     {
@@ -69,7 +90,7 @@ try
     'logs/' . $_SERVER[APP_ENV] . ($error ? '/unknownFatalErrors.txt' : '/unknownExceptions.txt')
   );
   define('ISSUE_LOG_PATH', BASE_PATH . ISSUE_RELATIVE_LOG_PATH);
-  define('ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . $issue->getLine());
+  define('ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . (string)$issue->getLine());
 
   if (!is_writable(ISSUE_LOG_PATH))
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color:blue">' .

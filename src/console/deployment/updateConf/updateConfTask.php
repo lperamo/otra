@@ -252,8 +252,6 @@ if (!file_exists(OTRA_SECURITY_DEV_FOLDER))
 if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
   mkdir(OTRA_SECURITY_PROD_FOLDER, 0777, true);
 
-$securityContent = '<?php declare(strict_types=1);return ';
-
 if (!function_exists('arrayExport'))
 {
   /**

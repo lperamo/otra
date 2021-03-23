@@ -21,7 +21,7 @@ echo CLI_GREEN, 'Launching a PHP web internal server on localhost:', OTRA_APP_PO
   ' mode.', END_COLOR, PHP_EOL;
 
 $command = 'OTRA_LIVE_APP_ENV=' . OTRA_LIVE_APP_ENV . ' OTRA_LIVE_HTTPS=' . OTRA_LIVE_HTTPS .
-  ' php -d variables_order=EGPCS -S localhost:' . OTRA_APP_PORT . ' -t ' . BASE_PATH . 'web web/index';
+  ' php -d variables_order=EGPCS -S localhost:' . (string)OTRA_APP_PORT . ' -t ' . BASE_PATH . 'web web/index';
 
 if (OTRA_LIVE_APP_ENV === 'dev')
   $command .= 'Dev';

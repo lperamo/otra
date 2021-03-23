@@ -4,7 +4,7 @@ Previous section : [Generating all you needed](codeGeneration.md)
 
 ### Your own console tasks
 ## Configuration
-First of all, configure where you will put your OTRA tasks in the file `config/dev/AllConfig.php`. Example :
+First, configure where you will put your OTRA tasks in the file `config/dev/AllConfig.php`. Example :
 
 ```php
 public static array $taskFolders = [

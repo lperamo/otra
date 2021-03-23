@@ -33,16 +33,16 @@ if (!function_exists('cliCommand'))
     // We don't use 2>&1 (to show errors along the output) after $cmd because there is a bug otherwise ...
     // "The handle could not be duplicated when redirecting handle 1"
     // Moreover the developer could have already used those redirections or similar things
-    $result = exec($cmd, $output, $return);
-    $output = ($output !== null) ? implode(PHP_EOL, $output) : '';
+    $result = exec($cmd, $output, $returnCode);
+    $output = implode(PHP_EOL, $output);
 
-    if (($result === false || $return !== 0) && $handleError)
+    if (($result === false || $returnCode !== 0) && $handleError)
       throw new otra\OtraException(
         ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_LIGHT_YELLOW . $cmd . END_COLOR) .
-        PHP_EOL . 'Shell error code ' . $return . '. ' . $output
+        PHP_EOL . 'Shell error code ' . (string)$returnCode . '. ' . $output
       );
 
-    return [$return, $output];
+    return [$returnCode, $output];
   }
 }
 

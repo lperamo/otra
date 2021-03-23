@@ -130,8 +130,8 @@ if (!function_exists('promptUser'))
       if (-1 !== $errorLine)
       {
         echo ($currentLine === $errorLine
-          ? CLI_RED . ($currentLine + 1)
-          : CLI_GREEN . ($currentLine + 1) . CLI_LIGHT_GRAY
+          ? CLI_RED . (string)($currentLine + 1)
+          : CLI_GREEN . (string)($currentLine + 1) . CLI_LIGHT_GRAY
         ), ' ', $lines[$currentLine];
       }
     }

@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @var string $errorCode
  * @var string $fileName
  * @var int    $fileLine
- * @var array  $context
+ * @var array<string,array{class: string, file: string, function:string, type:string, line: int}> $context
  * @var array  $backtraces
  */
 if (!defined('BASE_PATH_LENGTH'))
@@ -26,7 +26,7 @@ require CORE_PATH . 'tools/files/showTraceLine.php';
       <?= $fileName ?><!--
     --></span><!--
     -->:<!--
-    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $fileLine ?>"><!--
+    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . (string)$fileLine ?>"><!--
       --><?= $fileLine ?>
     </span>
   </p>

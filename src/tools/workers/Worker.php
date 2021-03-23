@@ -15,12 +15,12 @@ class Worker
   /**
    * Worker constructor.
    *
-   * @param string $command
-   * @param string $successMessage
-   * @param string $waitingMessage
-   * @param int    $verbose
-   * @param int    $timeout
-   * @param array  $subworkers
+   * @param string   $command
+   * @param string   $successMessage
+   * @param string   $waitingMessage
+   * @param int      $verbose
+   * @param int      $timeout
+   * @param Worker[] $subworkers
    */
   public function __construct(
     public string $command,
@@ -55,6 +55,6 @@ class Worker
     return CLI_RED . 'Fail! The command was : "' . $this->command . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . $stdout . PHP_EOL .
       'STDERR : ' . $stderr . PHP_EOL .
-      'Exit code : ' . $exitCode;
+      'Exit code : ' . (string)$exitCode;
   }
 }

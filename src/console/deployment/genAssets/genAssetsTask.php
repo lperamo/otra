@@ -231,7 +231,7 @@ if (
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .
-          'bundles\\' . Routes::$default['bundle'] . '\\Init::Init"'
+          'bundles\\' . Routes::$allRoutes[$routeName]['chunks'][1] . '\\Init::Init"'
         );
 
         if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
@@ -376,7 +376,7 @@ function loadAndSaveResources(
  * @param string      $bundlePath
  * @param string|bool $resourcePath
  */
-function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $resourcePath = true)
+function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $resourcePath = true) : void
 {
   // If this kind of resource does not exist, we leave
   if (!isset($resources[$key]))

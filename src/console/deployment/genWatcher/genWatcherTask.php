@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace otra\console;
 
 use JetBrains\PhpStorm\Pure;
-use otra\console\Tasks;
 use RecursiveIteratorIterator;
 use function otra\tools\files\returnLegiblePath;
 
@@ -90,18 +89,18 @@ if (GEN_WATCHER_VERBOSE > 1 )
 }
 
 /**
- * @param int    $mask
+ * @param int    $binaryMask
  * @param int    $cookie
- * @param string $name     Folder or file name
+ * @param string $filename     Folder or file name
  * @param string $resource Folder of file watched
  * @param bool   $mustShowHeaders  Do we have to show the headers
  *
  * @return string The debug output
  */
 #[Pure] function debugEvent(
-  int $mask,
+  int $binaryMask,
   int $cookie,
-  string $name,
+  string $filename,
   string $resource,
   bool $mustShowHeaders = false
 ) : string
@@ -117,9 +116,9 @@ if (GEN_WATCHER_VERBOSE > 1 )
        . END_COLOR . PHP_EOL;
 
   // Data
-  $debugToPrint .= CLI_LIGHT_GRAY . str_pad('│ ' . WD_CONSTANTS[$mask], DATA_EVENT_PADDING)
+  $debugToPrint .= CLI_LIGHT_GRAY . str_pad('│ ' . WD_CONSTANTS[$binaryMask], DATA_EVENT_PADDING)
     . str_pad('│ ' . $cookie, DATA_COOKIE_PADDING)
-    . str_pad('│ ' . $name, DATA_NAME_PADDING)
+    . str_pad('│ ' . $filename, DATA_NAME_PADDING)
     . END_COLOR;
 
   return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) .
@@ -235,26 +234,25 @@ while (true)
     $eventsDebug = '';
 
     // Loop though the events which occurred
-    /** @var array $eventDetails */
+    /** @var array{wd:int,mask:int,cookie:int,name:string} $eventDetails */
     foreach ($events as $eventDetails)
     {
-      /**
-       * @var int    $wd
-       * @var int    $mask
-       * @var int    $cookie
-       * @var string $name
-       */
-      extract($eventDetails);
+      [
+        'wd' => $watchDescriptor,
+        'mask' => $binaryMask,
+        'cookie' => $cookie,
+        'name' => $filename
+        ] = $eventDetails;
 
-      if ($mask & IN_OPEN || $mask & IN_MOVED_FROM)
+      if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
-      $resourceName = $foldersWatchedIds[$wd] . '/' . $name;
+      $resourceName = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
 
       // User is adding a folder
-      if (($mask & IN_CREATE_DIR) === IN_CREATE_DIR)
+      if (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
       {
-        $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
+        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
 
         // Adding a watch on the new folder
         $foldersWatchedIds[inotify_add_watch(
@@ -269,14 +267,14 @@ while (true)
             PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
 
         continue;
-      } elseif (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
+      } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
         // User is deleting a folder
-        $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
+        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
@@ -284,32 +282,32 @@ while (true)
             '. We do not watch it anymore.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
 
         // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
-        unset($foldersWatchedIds[$wd]);
+        unset($foldersWatchedIds[$watchDescriptor]);
 
         continue;
       } elseif ( // If it is an event IN_DELETE and is a file to watch
-        ($mask & IN_DELETE) === IN_DELETE
-        && (in_array($name, $phpEntriesToWatch)
-          || in_array($name, $resourcesEntriesToWatch)
+        ($binaryMask & IN_DELETE) === IN_DELETE
+        && (in_array($filename, $phpEntriesToWatch)
+          || in_array($filename, $resourcesEntriesToWatch)
         )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) .
+          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor], $filename) .
             'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
       } elseif ( // A save operation has been done
           (
-            ($mask & IN_ATTRIB) === IN_ATTRIB
-            || ($mask & IN_MODIFY) === IN_MODIFY
+            ($binaryMask & IN_ATTRIB) === IN_ATTRIB
+            || ($binaryMask & IN_MODIFY) === IN_MODIFY
           )
           && (in_array($resourceName, $phpEntriesToWatch)
             || in_array($resourceName, $resourcesEntriesToWatch)
@@ -318,11 +316,11 @@ while (true)
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name)
+          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor], $filename)
             . ' modified! We launch the appropriate tasks.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
 
         if (in_array($resourceName, $phpEntriesToWatch))
@@ -331,7 +329,7 @@ while (true)
           require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
           // We updates routes configuration if the php file is a routes configuration file
-          if ($name === 'Routes.php')
+          if ($filename === 'Routes.php')
             require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
         } elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
@@ -383,7 +381,8 @@ while (true)
               if (empty($matches))
                 continue;
 
-              [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] = getPathInformations($mainResource);
+              [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
+                getPathInformations($mainResource);
 
               $return = generateStylesheetsFiles(
                 $baseName,
@@ -400,7 +399,7 @@ while (true)
           }
         }
       } elseif (GEN_WATCHER_VERBOSE > 1)
-        $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+        $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
 
       $headers = false;
     }

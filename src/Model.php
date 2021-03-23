@@ -20,7 +20,7 @@ abstract class Model
    *
    * @return mixed
    */
-  public function get(string $property) { return $this->$property; }
+  public function get(string $property) : mixed { return $this->$property; }
 
   /**
    * @param string $property
@@ -42,7 +42,7 @@ abstract class Model
     $reflectedObject = new \ReflectionObject($this);
     $reflectedProperties = $reflectedObject->getProperties();
     $computedProperties = [];
-    $update = false;
+    $isUpdate = false;
 
     foreach($reflectedProperties as $reflectedProperty)
     {
@@ -54,12 +54,12 @@ abstract class Model
         $identifier = $propertyName;
 
         if (!empty($computedProperties[$propertyName]))
-          $update  = true;
+          $isUpdate  = true;
       }
     }
     unset($computedProperties['table'], $reflectedProperties, $propertyName, $reflectedProperty, $reflectedObject);
 
-    if ($update === true)
+    if ($isUpdate)
     { // It's an update of the model
       $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
       $idValue = $computedProperties[$identifier];

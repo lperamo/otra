@@ -23,66 +23,69 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
   define('REQ_PHP_VERSION', 1);
   define('REQ_PHP_LIB', 2);
 
-  $requirements = [
+  define(
+    'OTRA_REQUIREMENTS',
     [
-      'java',
-      'JAVA',
-      'Software platform => https://www.java.com. Only needed for optimizations with Google Closure Compiler.',
-      REQ_PACKAGE
-    ],
-    [
-      'tsc',
-      'Typescript',
-      'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => http://www.typescriptlang.org/',
-      REQ_PACKAGE
-    ],
-    [
-      'sass',
-      'SASS/SCSS',
-      'Only needed to contribute. It is a stylesheet language that\'s compiled to CSS => https://sass-lang.com/',
-      REQ_PACKAGE
-    ],
-    [
-      'fileinfo',
-      'PHP extension \'fileinfo\'',
-      'Needed for analyzing MIME types',
-      REQ_PHP_LIB
-    ],
-    [
-      'json',
-      'PHP extension \'json\'',
-      'Needed for encoding/decoding JSON format. (needed by the developer toolbar)',
-      REQ_PHP_LIB
-    ],
-    [
-      'mbstring',
-      'PHP extension \'mbstring\'',
-      'Needed for string multibyte functions',
-      REQ_PHP_LIB
-    ],
-    [
-      'inotify',
-      'PHP extension \'inotify\'',
-      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed for OTRA watcher on unix like systems.',
-      REQ_PHP_LIB
-    ],
-    [
-      'Zend OPcache',
-      'PHP extension \'zend-opcache\'',
-      CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed to use the preloading feature available since PHP 7.4',
-      REQ_PHP_LIB
-    ],
-    [
-      'PHP Version => 8.0',
-      'PHP version 8.0.x+',
-      'PHP version must be at least 8.0.x.',
-      REQ_PHP_VERSION
+      [
+        'java',
+        'JAVA',
+        'Software platform => https://www.java.com. Only needed for optimizations with Google Closure Compiler.',
+        REQ_PACKAGE
+      ],
+      [
+        'tsc',
+        'Typescript',
+        'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => http://www.typescriptlang.org/',
+        REQ_PACKAGE
+      ],
+      [
+        'sass',
+        'SASS/SCSS',
+        'Only needed to contribute. It is a stylesheet language that\'s compiled to CSS => https://sass-lang.com/',
+        REQ_PACKAGE
+      ],
+      [
+        'fileinfo',
+        'PHP extension \'fileinfo\'',
+        'Needed for analyzing MIME types',
+        REQ_PHP_LIB
+      ],
+      [
+        'json',
+        'PHP extension \'json\'',
+        'Needed for encoding/decoding JSON format. (needed by the developer toolbar)',
+        REQ_PHP_LIB
+      ],
+      [
+        'mbstring',
+        'PHP extension \'mbstring\'',
+        'Needed for string multibyte functions',
+        REQ_PHP_LIB
+      ],
+      [
+        'inotify',
+        'PHP extension \'inotify\'',
+        CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed for OTRA watcher on unix like systems.',
+        REQ_PHP_LIB
+      ],
+      [
+        'Zend OPcache',
+        'PHP extension \'zend-opcache\'',
+        CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed to use the preloading feature available since PHP 7.4',
+        REQ_PHP_LIB
+      ],
+      [
+        'PHP Version => 8.0',
+        'PHP version 8.0.x+',
+        'PHP version must be at least 8.0.x.',
+        REQ_PHP_VERSION
+      ]
     ]
-  ];
+  );
 
   echo CLI_LIGHT_BLUE;
 
-  foreach ($requirements as $requirement)
+  foreach (OTRA_REQUIREMENTS as $requirement)
   {
     echo ADD_BOLD;
 

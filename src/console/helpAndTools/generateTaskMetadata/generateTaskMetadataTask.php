@@ -134,7 +134,7 @@ foreach($tasks as $consoleTask)
   $shellCompletionsContent .= SPACE_INDENT . '\'' . $consoleTask . '\'' . PHP_EOL;
   $taskCategory = ucfirst($helpFileContent[$consoleTask][TasksManager::TASK_CATEGORY]);
 
-  /** @var $taskCategoryLong */
+  /** @var string $taskCategoryLong */
   if (!in_array($taskCategory, $taskCategories))
   {
     $taskCategories[] = $taskCategory;

@@ -171,7 +171,7 @@ $handleTransfer = function (
   bool $async = true,
   string $synchronousErrorMessage = '',
   array $workers = []
-) use(&$verbose, &$workerManager)
+) use(&$verbose, &$workerManager) : void
 {
   if ($async)
     $workerManager->attach(new Worker($command, $successMessage, $waitingMessage, $verbose, 60, $workers));

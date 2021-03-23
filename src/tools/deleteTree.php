@@ -19,7 +19,7 @@ $delTree = function (string $folder) use (&$delTree) : bool
 
   foreach ($files as $fileName)
   {
-    (is_dir("$folder/$fileName") === true)
+    (is_dir("$folder/$fileName"))
       ? $delTree("$folder/$fileName")
       : unlink("$folder/$fileName");
   }

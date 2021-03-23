@@ -10,7 +10,7 @@ block('body');
     echo $siteHost . $_SERVER['REQUEST_URI']; ?>
     <br><br>
     <?php
-    /** @var string $suggestedRoute */
+    /** @var ?string $suggestedRoute */
     if ($suggestedRoute !== null) {
       ?>You can try to go to <a href="<?= $suggestedRoute ?>"><?= $suggestedRoute ?></a> instead.<?php
     } else {

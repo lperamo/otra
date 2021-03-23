@@ -69,8 +69,8 @@ function sqlReplacements(
 /**
  * TODO Not tested yet !
  *
- * @param string $rawSql            Raw sql to pretty print
- * @param bool   $raw               Do we want the raw sql or the styled sql ?
+ * @param string $rawSql Raw sql to pretty print
+ * @param bool   $raw    Do we want the raw sql or the styled sql ?
  *
  * @return string
  */
@@ -82,7 +82,9 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   if (!$raw)
   {
     $output = '<pre class="sql--logs--request">';
-    $leftStyleClauseCode = $_SERVER[APP_ENV] === 'dev' ? '<span class="sql--logs--clause">' : LEFT_STYLE_CLAUSE_CODE;
+    $leftStyleClauseCode = $_SERVER[APP_ENV] === 'dev'
+      ? '<span class="sql--logs--clause">'
+      : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
