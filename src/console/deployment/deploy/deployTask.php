@@ -283,7 +283,7 @@ use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destina
 
     $folderFilename = $bundleFolder->getFilename();
 
-    if (in_array($folderFilename, ['config',  'resources', 'controllers', 'services']))
+    if (in_array($folderFilename, ['config',  'resources', 'controllers', 'services', 'tasks']))
       continue;
 
     $folderRealPath = $bundleFolder->getRealPath();
