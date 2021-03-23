@@ -312,6 +312,8 @@ while (true)
          $resourcesEntriesToWatch[] = $resourceName;
         elseif (str_contains($filename, '.php'))
           $phpEntriesToWatch[] = $resourceName;
+        else
+          continue; // Otherwise, this is not a file that we want to watch, so we skip it.
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
