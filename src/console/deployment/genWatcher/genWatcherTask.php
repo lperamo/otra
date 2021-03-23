@@ -247,7 +247,9 @@ while (true)
       if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
-      $resourceName = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
+      $resourceName = is_dir($foldersWatchedIds[$watchDescriptor])
+        ? $foldersWatchedIds[$watchDescriptor] . '/' . $filename
+        : $foldersWatchedIds[$watchDescriptor];
 
       // If it is a temporary file, we skip it
       if (str_contains(substr($resourceName, -2), '~'))
@@ -324,16 +326,32 @@ while (true)
         }
       } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($binaryMask & IN_DELETE) === IN_DELETE
-        && (in_array($filename, $phpEntriesToWatch)
-          || in_array($filename, $resourcesEntriesToWatch)
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
         )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor], $filename) .
-            'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
+          $eventsDebug .= PHP_EOL . 'The file ' .
+            returnLegiblePath($foldersWatchedIds[$watchDescriptor], $resourceName) .
+            ' has been deleted. We remove related generated files.' . PHP_EOL . PHP_EOL;
+        }
 
+        // // We make sure not to watch this file again and we clean up related generated files
+        if (str_contains($filename, '.scss'))
+        {
+          unset(
+            $resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)],
+            $sassMainResources[array_search($resourceName, $sassMainResources)]
+          );
+        } elseif (str_contains($filename, '.ts'))
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+        elseif (str_contains($filename, '.php'))
+          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+
+        if (GEN_WATCHER_VERBOSE > 0)
+        {
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
