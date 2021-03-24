@@ -126,7 +126,11 @@ function generateStylesheetsFiles(
  * @param string $fullName The absolute path to the file
  *
  * @throws \otra\OtraException
- * @return array
+ * @return array{string, string,string,string}
+ *  $Basename               : the filename without extension,
+ *  $resourcesMainFolder    : full path until 'src/resources', 'module/resources' folder or a 'web/' folder,
+ *  $resourcesFolderEndPath : last folders in the path after the $resourcesMainFolder
+ *  $extension              : ...the file extension
  */
 #[\JetBrains\PhpStorm\ArrayShape([
   'string',

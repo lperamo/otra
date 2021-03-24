@@ -125,6 +125,21 @@ if (GEN_WATCHER_VERBOSE > 1 )
     PHP_EOL;
 }
 
+/**
+ * Generates class mapping and updates all the configuration files.
+ *
+ * @param string $filename
+ */
+function updatePHP(string $filename) : void
+{
+  // We generate the class mapping...
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+
+  // We updates routes configuration if the php file is a routes configuration file
+  if ($filename === 'Routes.php')
+    require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+}
+
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
@@ -305,7 +320,6 @@ while (true)
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $resourceName;
 
-
         if (str_contains($filename, '.scss'))
         {
           $resourcesEntriesToWatch[] = $resourceName;
@@ -336,25 +350,43 @@ while (true)
           $eventsDebug .= PHP_EOL . 'The file ' .
             returnLegiblePath($foldersWatchedIds[$watchDescriptor], $resourceName) .
             ' has been deleted. We remove related generated files.' . PHP_EOL . PHP_EOL;
+
+          if (GEN_WATCHER_VERBOSE > 1)
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
 
         // // We make sure not to watch this file again and we clean up related generated files
         if (str_contains($filename, '.scss'))
         {
-          unset(
-            $resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)],
-            $sassMainResources[array_search($resourceName, $sassMainResources)]
-          );
-        } elseif (str_contains($filename, '.ts'))
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-        elseif (str_contains($filename, '.php'))
-          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
 
-        if (GEN_WATCHER_VERBOSE > 0)
+          if (substr($filename, 0,1) !== '_')
+          {
+            unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
+            [
+              $baseName,
+              $resourcesMainFolder,
+              $resourcesFolderEndPath
+            ] = getPathInformations($resourceName);
+
+            $cssPath = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5) . $baseName . '.css';
+            unlink($cssPath);
+            $cssMap = $cssPath . '.map';
+
+            if (file_exists($cssMap))
+              unlink($cssMap);
+          }
+        } elseif (str_contains($filename, '.ts'))
         {
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+          // TODO unlink JS files
         }
+        elseif (str_contains($filename, '.php'))
+        {
+          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+          updatePHP($resourceName);
+        }
+
       } elseif ( // A save operation has been done
           (
             ($binaryMask & IN_ATTRIB) === IN_ATTRIB
@@ -375,14 +407,8 @@ while (true)
         }
 
         if (in_array($resourceName, $phpEntriesToWatch))
-        {
-          // We generate the class mapping...
-          require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
-
-          // We updates routes configuration if the php file is a routes configuration file
-          if ($filename === 'Routes.php')
-            require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
-        } elseif (in_array($resourceName, $resourcesEntriesToWatch))
+          updatePHP($resourceName);
+        elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
           [
             $baseName,
@@ -462,5 +488,3 @@ while (true)
   // Avoid watching too much to avoid performance issues
   usleep(100);
 }
-
-
