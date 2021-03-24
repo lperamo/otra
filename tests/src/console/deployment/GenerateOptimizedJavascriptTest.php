@@ -31,7 +31,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
     define('TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
     define('TEST_JS_BASE_NAME', 'test');
     define('TEST_JS_RESOURCE_FOLDER', TEST_RESOURCES_PATH . 'js/');
-    define('TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'ts/' . TEST_JS_BASE_NAME . '.ts');
+    define('TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
     define('TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
     define('TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
     define('TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
