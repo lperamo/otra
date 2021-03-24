@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\deploy;
+namespace src\console\deployment;
 
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;

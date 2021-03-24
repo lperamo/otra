@@ -34,10 +34,13 @@
       <file>./src/console/DatabaseTest.php</file>
     </testsuite>
     <testsuite name="Database console tasks">
-      <directory suffix="Test.php">./src/console/database</directory>
+      <directory>./src/console/database</directory>
+    </testsuite>
+    <testsuite name="Deployment console tasks">
+      <directory>./src/console/deployment</directory>
     </testsuite>
     <testsuite name="Help and tools console tasks">
-      <directory suffix="Test.php">./src/console/helpAndTools</directory>
+      <directory>./src/console/helpAndTools</directory>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>
@@ -53,10 +56,10 @@
       <directory>./src/console/architecture</directory>
     </testsuite>
     <testsuite name="Services">
-      <directory suffix="Test.php">./src/services</directory>
+      <directory>./src/services</directory>
     </testsuite>
     <testsuite name="Worker tools">
-      <directory suffix="Test.php">./src/tools/workers</directory>
+      <directory>./src/tools/workers</directory>
     </testsuite>
   </testsuites>
   <logging>
