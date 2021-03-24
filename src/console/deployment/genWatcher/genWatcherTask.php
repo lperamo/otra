@@ -379,7 +379,18 @@ while (true)
         } elseif (str_contains($filename, '.ts'))
         {
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-          // TODO unlink JS files
+          [
+            $baseName,
+            $resourcesMainFolder,
+            $resourcesFolderEndPath
+          ] = getPathInformations($resourceName);
+
+          $jsPath = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 5) . $baseName . '.js';
+          unlink($jsPath);
+          $jsMap = $jsPath . '.map';
+
+          if (file_exists($jsMap))
+            unlink($jsMap);
         }
         elseif (str_contains($filename, '.php'))
         {
@@ -388,13 +399,13 @@ while (true)
         }
 
       } elseif ( // A save operation has been done
-          (
-            ($binaryMask & IN_ATTRIB) === IN_ATTRIB
-            || ($binaryMask & IN_MODIFY) === IN_MODIFY
-          )
-          && (in_array($resourceName, $phpEntriesToWatch)
-            || in_array($resourceName, $resourcesEntriesToWatch)
-          )
+        (
+          ($binaryMask & IN_ATTRIB) === IN_ATTRIB
+          || ($binaryMask & IN_MODIFY) === IN_MODIFY
+        )
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
+        )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
@@ -419,6 +430,9 @@ while (true)
 
           if ($extension === 'ts')
           {
+            // 6 = length of devJs/
+            $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
+
             generateJavaScript(
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
