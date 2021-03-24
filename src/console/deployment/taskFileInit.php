@@ -126,7 +126,11 @@ function generateStylesheetsFiles(
  * @param string $fullName The absolute path to the file
  *
  * @throws \otra\OtraException
- * @return array
+ * @return array{string, string,string,string}
+ *  $Basename               : the filename without extension,
+ *  $resourcesMainFolder    : full path until 'src/resources', 'module/resources' folder or a 'web/' folder,
+ *  $resourcesFolderEndPath : last folders in the path after the $resourcesMainFolder
+ *  $extension              : ...the file extension
  */
 #[\JetBrains\PhpStorm\ArrayShape([
   'string',
@@ -173,7 +177,8 @@ function getPathInformations(string $fullName) : array
 /**
  * @param array  $paths
  * @param string $realPath
- * @param bool   $checkScope
+ * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
+ *                           True, if the file belongs to the scope we want to watch. Defaults to true.
  *
  * @return bool
  */

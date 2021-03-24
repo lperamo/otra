@@ -79,7 +79,7 @@ function generateJavaScript(
       throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
-    if (BUILD_DEV_VERBOSE > 0)
+    if ($verbose > 0)
     {
       echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '', false), CLI_GREEN,
         ' have generated the temporary file';

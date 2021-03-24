@@ -125,6 +125,21 @@ if (GEN_WATCHER_VERBOSE > 1 )
     PHP_EOL;
 }
 
+/**
+ * Generates class mapping and updates all the configuration files.
+ *
+ * @param string $filename
+ */
+function updatePHP(string $filename) : void
+{
+  // We generate the class mapping...
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+
+  // We updates routes configuration if the php file is a routes configuration file
+  if ($filename === 'Routes.php')
+    require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+}
+
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
@@ -242,28 +257,32 @@ while (true)
         'mask' => $binaryMask,
         'cookie' => $cookie,
         'name' => $filename
-        ] = $eventDetails;
+      ] = $eventDetails;
 
       if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
-      $resourceName = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
+      $resourceName = is_dir($foldersWatchedIds[$watchDescriptor])
+        ? $foldersWatchedIds[$watchDescriptor] . '/' . $filename
+        : $foldersWatchedIds[$watchDescriptor];
+
+      // If it is a temporary file, we skip it
+      if (str_contains(substr($resourceName, -2), '~'))
+        continue;
 
       // User is adding a folder
       if (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
       {
-        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
-
         // Adding a watch on the new folder
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
-          $folderPath,
+          $resourceName,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-        )] = $folderPath;
+        )] = $resourceName;
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($folderPath) . '. We now watching it.' .
+          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($resourceName) . '. We now watching it.' .
             PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
@@ -274,11 +293,9 @@ while (true)
       } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
         // User is deleting a folder
-        $folderPath = $foldersWatchedIds[$watchDescriptor] . '/' . $filename;
-
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($folderPath) .
+          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($resourceName) .
             '. We do not watch it anymore.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
@@ -289,29 +306,110 @@ while (true)
         unset($foldersWatchedIds[$watchDescriptor]);
 
         continue;
+      } elseif ( // If it is an event IN_CREATE and is a file to watch
+        ($binaryMask & IN_CREATE) === IN_CREATE
+        && (
+          !isNotInThePath(PATHS_TO_HAVE_PHP, $resourceName)
+        || !isNotInThePath(PATHS_TO_HAVE_RESOURCES, $resourceName)
+        )
+      )
+      {
+        $extension = substr($filename, strrpos($filename, '.') + 1);
+
+        // If this is not a file that we want to watch, we skip it.
+        if (!in_array($extension, EXTENSIONS_TO_WATCH))
+         continue;
+
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $resourceName,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $resourceName;
+
+        if ($extension === '.scss' || $extension === '.sass')
+        {
+          $resourcesEntriesToWatch[] = $resourceName;
+          $sassMainResources[$filename] = $resourceName;
+        } elseif ($extension ===  'ts')
+          $resourcesEntriesToWatch[] = $resourceName;
+        elseif ($extension === 'php')
+          $phpEntriesToWatch[] = $resourceName;
+
+        if (GEN_WATCHER_VERBOSE > 0)
+        {
+          $eventsDebug .= PHP_EOL . 'We are now watching the file ' . returnLegiblePath($filename) . '.' . PHP_EOL;
+
+          if (GEN_WATCHER_VERBOSE > 1)
+            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
+        }
       } elseif ( // If it is an event IN_DELETE and is a file to watch
         ($binaryMask & IN_DELETE) === IN_DELETE
-        && (in_array($filename, $phpEntriesToWatch)
-          || in_array($filename, $resourcesEntriesToWatch)
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
         )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor], $filename) .
-            'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
+          $eventsDebug .= PHP_EOL . 'The file ' .
+            returnLegiblePath($foldersWatchedIds[$watchDescriptor], $resourceName) .
+            ' has been deleted. We remove related generated files.' . PHP_EOL . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
             $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
         }
+
+        // // We make sure not to watch this file again and we clean up related generated files
+        if (str_contains($filename, '.scss'))
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+
+          if (substr($filename, 0,1) !== '_')
+          {
+            unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
+            [
+              $baseName,
+              $resourcesMainFolder,
+              $resourcesFolderEndPath
+            ] = getPathInformations($resourceName);
+
+            $cssPath = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5) . $baseName . '.css';
+            unlink($cssPath);
+            $cssMap = $cssPath . '.map';
+
+            if (file_exists($cssMap))
+              unlink($cssMap);
+          }
+        } elseif (str_contains($filename, '.ts'))
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+          [
+            $baseName,
+            $resourcesMainFolder,
+            $resourcesFolderEndPath
+          ] = getPathInformations($resourceName);
+
+          $jsPath = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 5) . $baseName . '.js';
+          unlink($jsPath);
+          $jsMap = $jsPath . '.map';
+
+          if (file_exists($jsMap))
+            unlink($jsMap);
+        }
+        elseif (str_contains($filename, '.php'))
+        {
+          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+          updatePHP($resourceName);
+        }
+
       } elseif ( // A save operation has been done
-          (
-            ($binaryMask & IN_ATTRIB) === IN_ATTRIB
-            || ($binaryMask & IN_MODIFY) === IN_MODIFY
-          )
-          && (in_array($resourceName, $phpEntriesToWatch)
-            || in_array($resourceName, $resourcesEntriesToWatch)
-          )
+        (
+          ($binaryMask & IN_ATTRIB) === IN_ATTRIB
+          || ($binaryMask & IN_MODIFY) === IN_MODIFY
+        )
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
+        )
       )
       {
         if (GEN_WATCHER_VERBOSE > 0)
@@ -324,14 +422,8 @@ while (true)
         }
 
         if (in_array($resourceName, $phpEntriesToWatch))
-        {
-          // We generate the class mapping...
-          require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
-
-          // We updates routes configuration if the php file is a routes configuration file
-          if ($filename === 'Routes.php')
-            require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
-        } elseif (in_array($resourceName, $resourcesEntriesToWatch))
+          updatePHP($resourceName);
+        elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
           [
             $baseName,
@@ -342,6 +434,9 @@ while (true)
 
           if ($extension === 'ts')
           {
+            // 6 = length of devJs/
+            $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
+
             generateJavaScript(
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
@@ -411,5 +506,3 @@ while (true)
   // Avoid watching too much to avoid performance issues
   usleep(100);
 }
-
-
