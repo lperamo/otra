@@ -314,22 +314,26 @@ while (true)
         )
       )
       {
+        $extension = substr($filename, strrpos($filename, '.') + 1);
+
+        // If this is not a file that we want to watch, we skip it.
+        if (!in_array($extension, EXTENSIONS_TO_WATCH))
+         continue;
+
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
           $resourceName,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $resourceName;
 
-        if (str_contains($filename, '.scss'))
+        if ($extension === '.scss' || $extension === '.sass')
         {
           $resourcesEntriesToWatch[] = $resourceName;
           $sassMainResources[$filename] = $resourceName;
-        } elseif (str_contains($filename, '.ts'))
-         $resourcesEntriesToWatch[] = $resourceName;
-        elseif (str_contains($filename, '.php'))
+        } elseif ($extension ===  'ts')
+          $resourcesEntriesToWatch[] = $resourceName;
+        elseif ($extension === 'php')
           $phpEntriesToWatch[] = $resourceName;
-        else
-          continue; // Otherwise, this is not a file that we want to watch, so we skip it.
 
         if (GEN_WATCHER_VERBOSE > 0)
         {
