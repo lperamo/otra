@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 use config\AllConfig;
 
-$vendorPosition = mb_strrpos(__DIR__, 'vendor');
+define('_DIR_', str_replace('\\', '/', __DIR__));
+$vendorPosition = mb_strrpos(_DIR_, 'vendor');
 $otraProject = $vendorPosition !== false;
 $basePath = $otraProject
-  ? substr(__DIR__, 0, $vendorPosition)
-  : substr(__DIR__, 0, mb_strrpos(__DIR__, 'src'));
+  ? substr(_DIR_, 0, $vendorPosition)
+  : substr(_DIR_, 0, mb_strrpos(_DIR_, 'src'));
 $otraProjectSuffix = $otraProject ? 'vendor/otra/otra/src/' : 'src/';
 $corePath = $basePath . $otraProjectSuffix;
 $consolePath = $corePath . 'console/';

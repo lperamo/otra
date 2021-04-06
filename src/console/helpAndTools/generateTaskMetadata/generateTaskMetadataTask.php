@@ -73,6 +73,7 @@ foreach($foldersToCheckForTasks as $foldersToCheckForTask)
     if (mb_strpos($pathname, 'Help.') === false)
       continue;
 
+    $pathname = str_replace('\\', '/', $pathname);
     $consoleTask = mb_substr($pathname, mb_strrpos($pathname, '/') + 1);
     $consoleTask = mb_substr($consoleTask, 0, mb_strrpos($consoleTask, 'Help'));
     $helpFileContent[$consoleTask] = require $pathname;
