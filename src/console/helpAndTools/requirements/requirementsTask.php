@@ -85,6 +85,9 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
 
   echo CLI_LIGHT_BLUE;
 
+  // For Windows, it returns WINNT
+  define('OTRA_SEARCHING_COMMAND', (PHP_OS === 'Linux') ? 'which ' : 'where ');
+
   foreach (OTRA_REQUIREMENTS as $requirement)
   {
     echo ADD_BOLD;
@@ -92,7 +95,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     /** @var string $error */
     // different check whether it's a PHP src or a program
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
-      [$error,] = cliCommand('which ' . $requirement[REQ_PKG_NAME], null, false);
+      [$error,] = cliCommand(OTRA_SEARCHING_COMMAND . $requirement[REQ_PKG_NAME], null, false);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
       [$error,] = cliCommand('php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"', null, false);
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
