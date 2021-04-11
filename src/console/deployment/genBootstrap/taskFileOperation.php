@@ -884,7 +884,9 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
 
             if (str_contains($file, 'config/AllConfig'))
             {
-              $finalContentParts[]= $contentToAdd;
+              if (!in_array($file, $parsedFiles, true))
+                $finalContentParts[]= $contentToAdd;
+
               $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;
             }
 
