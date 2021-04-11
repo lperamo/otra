@@ -22,7 +22,6 @@ const FILE_TASK_ARG_MASK = 3,
   TASK_FILE_MASK_TS = 2,
   TASK_FILE_MASK_ROUTES = 4,
   TASK_FILE_MASK_PHP = 8,
-  GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
   PATHS_TO_HAVE_RESOURCES =
   [
     BASE_PATH . 'bundles',
@@ -31,6 +30,7 @@ const FILE_TASK_ARG_MASK = 3,
   ],
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
 
+define('GOOGLE_CLOSURE_COMPILER_VERBOSITY', ['QUIET', 'DEFAULT', 'VERBOSE']);
 define(
   'PATHS_TO_AVOID',
   array_merge([BASE_PATH . 'bundles/config'], AllConfig::$pathsToAvoidForBuild ?? [])
