@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\services;
 
+use config\AllConfig;
 use Exception;
 use otra\{MasterController, OtraException};
 use phpunit\framework\TestCase;
@@ -399,6 +400,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
+    AllConfig::$debug =  true;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
     $nonce = getRandomNonceForCSP();

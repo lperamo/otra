@@ -22,6 +22,7 @@ class GenClassMapTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws \otra\OtraException
    */
   public function testGenClassMapTask() : void
   {
@@ -31,7 +32,7 @@ class GenClassMapTest extends TestCase
 
     // testing
     $content = '';
-    define('OTRA_MAX_FOLDERS', 121);
+    define('OTRA_MAX_FOLDERS', 148);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
@@ -45,36 +46,20 @@ class GenClassMapTest extends TestCase
 
     require TEST_PATH . 'examples/genClassMap/ClassMap2.php';
 
-    foreach(CLASSMAP2 as $class => &$file)
+    foreach(CLASSMAP2 as $class => &$classFile)
     {
       $content .= CLI_LIGHT_BLUE . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_GREEN . ' => ';
-      $content .= (strpos($file, BASE_PATH) !== false
+      $content .= (str_contains($classFile, BASE_PATH)
         // for classes inside the BASE_PATH
-        ? CLI_WHITE . '[BASE_PATH]' . CLI_LIGHT_BLUE . substr($file, strlen(BASE_PATH))
+        ? CLI_WHITE . '[BASE_PATH]' . CLI_LIGHT_BLUE . substr($classFile, strlen(BASE_PATH))
         // for classes outside the BASE_PATH
-        : CLI_LIGHT_BLUE . $file) .
+        : CLI_LIGHT_BLUE . $classFile) .
         // and we pass to the next line !
       PHP_EOL;
     }
 
-    $this->expectOutputString(
-      $content . END_COLOR
-    );
-
-    // development class map assertions
-    self::assertFileExists(self::CLASS_MAP_PATH);
-    self::assertFileEquals(
-      self::EXAMPLES_CLASS_MAP_PATH . self::CLASS_MAP_FILENAME,
-      self::CLASS_MAP_PATH
-    );
-
-    // production class map assertions
-    self::assertFileExists(self::PROD_CLASS_MAP_PATH);
-    self::assertFileEquals(
-      self::EXAMPLES_CLASS_MAP_PATH . self::PROD_CLASS_MAP_FILENAME,
-      self::PROD_CLASS_MAP_PATH
-    );
-
+    // testing
+    $this->expectOutputString($content . END_COLOR);
 
     // launching
     TasksManager::execute(
@@ -82,10 +67,30 @@ class GenClassMapTest extends TestCase
       self::OTRA_TASK_GEN_CLASS_MAP,
       ['otra.php', self::OTRA_TASK_GEN_CLASS_MAP, 1]
     );
+
+    // testing
+    // development class map assertions
+    self::assertFileExists(self::CLASS_MAP_PATH);
+    self::assertFileEquals(
+      self::EXAMPLES_CLASS_MAP_PATH . self::CLASS_MAP_FILENAME,
+      self::CLASS_MAP_PATH,
+      'Development class mapping test. Here we compare ' . self::EXAMPLES_CLASS_MAP_PATH .
+      self::CLASS_MAP_FILENAME . ' and ' . self::CLASS_MAP_PATH
+    );
+
+    // production class map assertions
+    self::assertFileExists(self::PROD_CLASS_MAP_PATH);
+    self::assertFileEquals(
+      self::EXAMPLES_CLASS_MAP_PATH . self::PROD_CLASS_MAP_FILENAME,
+      self::PROD_CLASS_MAP_PATH,
+      'Production class mapping test. Here we compare ' . self::EXAMPLES_CLASS_MAP_PATH .
+      self::PROD_CLASS_MAP_FILENAME . ' and ' . self::PROD_CLASS_MAP_PATH
+    );
   }
 
   /**
    * @author Lionel Péramo
+   * @throws \otra\OtraException
    */
   public function testGenClassMapHelp(): void
   {
