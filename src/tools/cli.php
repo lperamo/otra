@@ -19,7 +19,7 @@ if (!function_exists('cliCommand'))
    *
    * @param string      $cmd Command to pass
    * @param string|null $errorMessage
-   * @param bool        $handleError
+   * @param bool        $launchExceptionOnError
    *
    * @throws \otra\OtraException
    * @return array [int, string] Exit status code, content
@@ -28,7 +28,7 @@ if (!function_exists('cliCommand'))
     'int',
     'string'
   ])]
-  function cliCommand(string $cmd, string $errorMessage = null, bool $handleError = true) : array
+  function cliCommand(string $cmd, string $errorMessage = null, bool $launchExceptionOnError = true) : array
   {
     // We don't use 2>&1 (to show errors along the output) after $cmd because there is a bug otherwise ...
     // "The handle could not be duplicated when redirecting handle 1"
@@ -36,11 +36,17 @@ if (!function_exists('cliCommand'))
     $result = exec($cmd, $output, $returnCode);
     $output = implode(PHP_EOL, $output);
 
-    if (($result === false || $returnCode !== 0) && $handleError)
-      throw new otra\OtraException(
-        ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_LIGHT_YELLOW . $cmd . END_COLOR) .
-        PHP_EOL . 'Shell error code ' . (string)$returnCode . '. ' . $output
-      );
+    if (($result === false || $returnCode !== 0))
+    {
+      $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_LIGHT_YELLOW . $cmd .
+          END_COLOR) . PHP_EOL . 'Shell error code ' . (string)$returnCode . '. ' . $output;
+
+      if ($launchExceptionOnError)
+        throw new otra\OtraException($errorMessage);
+      else
+        echo $errorMessage . PHP_EOL;
+    }
+
 
     return [$returnCode, $output];
   }

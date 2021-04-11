@@ -101,12 +101,14 @@ function generateJavaScript(
 
       // TODO add those lines to handle class map and fix the resulting issue
       // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
+      // We do not launch an exception on error to avoid stopping the execution of the watcher
       [, $output] = cliCommand(
         'java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
         . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
         . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
         . $generatedJsFile,
-        CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL
+        CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL,
+        false
       );
 
       if ($verbose > 0)

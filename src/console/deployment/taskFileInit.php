@@ -106,7 +106,12 @@ function generateStylesheetsFiles(
 
   $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
 
-  [, $output] = cliCommand('sass ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath);
+  // We do not launch an exception on error to avoid stopping the execution of the watcher
+  [, $output] = cliCommand(
+    'sass ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath,
+    null,
+    false
+  );
 
   $sourceMapPath = $cssPath . '.map';
 
