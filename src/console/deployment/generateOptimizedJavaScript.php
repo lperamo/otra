@@ -102,7 +102,8 @@ function generateJavaScript(
     // should we launch Google Closure Compiler ?
     if ($mustLaunchGcc)
     {
-      echo 'Launching Google Closure Compiler...', PHP_EOL;
+      if ($verbose > 0)
+        echo 'Launching Google Closure Compiler...', PHP_EOL;
 
       // TODO add those lines to handle class map and fix the resulting issue
       // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
