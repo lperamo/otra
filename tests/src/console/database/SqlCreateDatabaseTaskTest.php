@@ -45,6 +45,23 @@ class SqlCreateDatabaseTaskTest extends TestCase
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    $helloWorldBundleFolderExists = $bundlesFolderExists = true;
+
+    if (!file_exists(BUNDLES_PATH))
+    {
+      $bundlesFolderExists = false;
+      mkdir(BUNDLES_PATH);
+
+      define('HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
+
+      if (!file_exists(HELLO_WORLD_PATH))
+      {
+        $helloWorldBundleFolderExists = false;
+        mkdir(HELLO_WORLD_PATH);
+      }
+    }
+
+    Database::init();
 
     setScopeProtectedFields(
       Database::class,
@@ -70,6 +87,13 @@ class SqlCreateDatabaseTaskTest extends TestCase
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
       self::CONFIG_FOLDER_SQL . $endPath
     );
+
+    // cleaning
+    if (!$helloWorldBundleFolderExists)
+      rmdir(HELLO_WORLD_PATH);
+
+    if (!$bundlesFolderExists)
+      rmdir(BUNDLES_PATH);
   }
 
   public function testSqlCreateDatabaseHelp()

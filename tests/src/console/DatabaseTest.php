@@ -695,7 +695,7 @@ class DatabaseTest extends TestCase
     // Creating the context
     $this->loadConfig();
 
-    Database::initBase();
+    Database::init();
     setScopeProtectedFields(
       Database::class,
       [
@@ -706,7 +706,8 @@ class DatabaseTest extends TestCase
 
     // launching the task
     $this->expectException(OtraException::class);
-    $this->expectExceptionMessage("The file '" . substr(self::SCHEMA_ABSOLUTE_PATH, strlen(BASE_PATH)) . "' does not exist. We can't generate the SQL schema without it.");
+    $this->expectExceptionMessage("The file '" . substr(self::SCHEMA_ABSOLUTE_PATH, strlen(BASE_PATH)) .
+      "' does not exist. We can't generate the SQL schema without it.");
     Database::generateSqlSchema(self::DATABASE_NAME);
   }
 

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace config;
+AllConfig::$debug = true;
 AllConfig::$defaultConn = 'test';
 AllConfig::$dbConnections = [ // mandatory
   'test' => [ // do not modify this key name

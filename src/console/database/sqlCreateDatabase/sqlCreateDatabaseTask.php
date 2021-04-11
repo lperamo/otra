@@ -6,7 +6,6 @@ declare(strict_types=1);
  * @package otra\console\database
  */
 
-
 use otra\console\Database;
 define('SQL_CREATE_DATABASE_ARG_DATABASE_NAME', 2);
 define('SQL_CREATE_DATABASE_ARG_FORCE', 3);

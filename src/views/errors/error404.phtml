@@ -6,7 +6,9 @@ block('body');
 ?>
   <h1>Damn where is that page already?</h1>
   <div id="error">
-    You're trying to access to : <?php $siteHost = ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+    You're trying to access to : <?php
+    // isset($_SERVER['HTTPS']) is necessary for an Apache setup
+    $siteHost = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
     echo $siteHost . $_SERVER['REQUEST_URI']; ?>
     <br><br>
     <?php
