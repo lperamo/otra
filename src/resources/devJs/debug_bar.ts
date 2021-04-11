@@ -1,6 +1,6 @@
 /// <reference path="./lightbox.ts" />
 
-const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
+const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 {
   'use strict';
   function hideProfiler() : void

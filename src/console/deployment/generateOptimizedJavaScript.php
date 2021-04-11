@@ -53,11 +53,16 @@ function generateJavaScript(
     $typescriptConfig['compilerOptions']['outFile'] = $generatedTemporaryJsFile;
     unset($typescriptConfig['compilerOptions']['watch']);
 
-    $temporaryTypescriptConfig = BASE_PATH . '/tsconfig_tmp.json';
+    $temporaryTypescriptConfig = BASE_PATH . 'tsconfig_tmp.json';
     $filePointer = fopen($temporaryTypescriptConfig, 'w');
-    // JSON_PRETTY_PRINT allows better debugging
+    // The flags for 'json_encode' allows better debugging
     // (otherwise tsc will say that the bug is on the first line ..and the first line represents ALL the json)
-    fwrite($filePointer, json_encode($typescriptConfig, JSON_PRETTY_PRINT));
+    fwrite(
+      $filePointer,
+      json_encode(
+        $typescriptConfig,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK)
+    );
     fclose($filePointer);
     unset($filePointer);
 

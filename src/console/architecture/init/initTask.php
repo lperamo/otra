@@ -18,12 +18,12 @@ copyFileAndFolders(
   [
     CORE_PATH . 'init/config',
     CORE_PATH . 'init/tsconfig.json.dist',
-    CORE_PATH . 'init/tslint.json.dist'
+    CORE_PATH . 'init/.eslintrc.json.dist'
   ],
   [
     OTRA_CONFIG_FOLDER,
     BASE_PATH . 'tsconfig.json.dist',
-    BASE_PATH . 'tslint.json.dist'
+    BASE_PATH . '.eslintrc.json.dist'
   ]
 );
 

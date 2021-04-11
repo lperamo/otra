@@ -17,7 +17,9 @@
 **/css/**/*.css*
 **/scss/.sass-cache/**
 **/js/**/*.js*
-/tslint*
 /tsconfig*
 /tmp/
 /.scannerwork/
+/node_modules/
+/.eslintrc.json
+/logs/**.txt
