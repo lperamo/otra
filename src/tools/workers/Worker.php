@@ -24,7 +24,7 @@ class Worker
    */
   public function __construct(
     public string $command,
-    private string $successMessage = '',
+    public string $successMessage = '',
     public string $waitingMessage = 'Waiting ...',
     public int $verbose = 1,
     public int $timeout = 60,
