@@ -177,18 +177,28 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
       $class = $revisedClass;
     else
     {
-      // It can be a SwiftMailer class for example.
-      /**
-       * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation
-       *  style like
-       *  use test/
-       *  {
-       *   class/test,
-       *   class/test2
-       *  } */
-      if (VERBOSE > 0)
-        echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
-      return ;
+      $cacheNamespace = 'cache\\php';
+//      echo CLI_LIGHT_GREEN, substr($class, 9), END_COLOR, PHP_EOL;
+      // Handles cache/php namespaces and otra namespaces
+      if (substr($class,0, 9) !== 'cache\\php')
+      {
+        if (in_array($class, ['DevControllerTrait', 'ProdControllerTrait']))
+          return;
+        // It can be a SwiftMailer class for example.
+        /**
+         * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation
+         *  style like
+         *  use test/
+         *  {
+         *   class/test,
+         *   class/test2
+         *  } */
+        if (VERBOSE > 0)
+          echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
+        return ;
+      } elseif ($class === $cacheNamespace . '\\BlocksSystem')
+        // The class cache\php\BlocksSystem is already loaded via the MasterController class
+        return;
     }
   }
 
@@ -344,7 +354,7 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
         echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
         '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
         $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
-        throw new \otra\OtraException('', 1, '', NULL, [], true);
+        throw new OtraException('', 1, '', NULL, [], true);
       }
 
       // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
@@ -652,7 +662,7 @@ function getFileInfoFromRequiresAndExtends(
         {
           echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' => ', CLI_YELLOW,
             $tempFile, CLI_RED, ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
-          throw new \otra\OtraException('', 1, '', NULL, [], true);
+          throw new OtraException('', 1, '', NULL, [], true);
         }
 
         if (in_array($tempFile, $parsedFiles, true))
@@ -722,7 +732,7 @@ function getFileInfoFromRequiresAndExtends(
                 CLI_YELLOW,
               $file,
               CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-              throw new \otra\OtraException('', 1, '', NULL, [], true);
+              throw new OtraException('', 1, '', NULL, [], true);
             }
           }
         }
