@@ -54,7 +54,13 @@ function showResourceState(
  */
 function showPHPState(string $basePath, string $route, string $altColor) : void
 {
-  echo (file_exists($basePath . 'php' . '/' . $route. '.php'))
+  $routePath = $basePath . 'php/';
+
+  if (str_contains($route, 'otra_'))
+    $routePath .= 'otraRoutes/';
+
+  $routePath .= $route . '.php';
+  echo (file_exists($routePath))
     ? CLI_LIGHT_GREEN
     : CLI_LIGHT_RED,
     '[PHP]', $altColor;

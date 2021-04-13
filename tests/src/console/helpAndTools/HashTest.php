@@ -26,7 +26,7 @@ class HashTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_HASH,
       ['otra.php', self::OTRA_TASK_HASH, 3]
     );
@@ -46,7 +46,7 @@ class HashTest extends TestCase
     );
 
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_HASH]
     );

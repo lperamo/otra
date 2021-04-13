@@ -13,7 +13,7 @@ class VersionTest extends TestCase
 {
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_VERSION = 'version',
     OTRA_TASK_HELP = 'help',
     BLUE_ON_LIGHT_BLACK = CLI_BLUE . CLI_BGD_LIGHT_BLACK,
@@ -56,7 +56,7 @@ class VersionTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::TASK_VERSION,
       ['otra.php', self::TASK_VERSION]
     );

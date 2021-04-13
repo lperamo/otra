@@ -35,7 +35,7 @@ $distFiles = [
   OTRA_CONFIG_FOLDER . '.htaccess.dist',
   OTRA_CONFIG_FOLDER . 'Routes.php.dist',
   BASE_PATH . 'tsconfig.json.dist',
-  BASE_PATH . 'tslint.json.dist'
+  BASE_PATH . '.eslintrc.json.dist'
 ];
 
 foreach ($distFiles as $distFile)
@@ -43,7 +43,7 @@ foreach ($distFiles as $distFile)
   $destinationFilePath = substr($distFile, 0, -5);
 
   // If the PHP version of the file already exists, we do not overwrite it.
-  if (false === file_exists($destinationFilePath))
+  if (!file_exists($destinationFilePath))
     copy($distFile, $destinationFilePath);
 }
 
@@ -53,7 +53,8 @@ define('OTRA_BUNDLES_CONFIG_PATH', BASE_PATH . 'bundles/config/');
 if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
   mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
 
-file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php', '<?php return [];');
+file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php',
+  '<?php declare(strict_types=1); return [];');
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
 

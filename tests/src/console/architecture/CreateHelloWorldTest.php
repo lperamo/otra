@@ -61,7 +61,7 @@ class CreateHelloWorldTest extends TestCase
   public function testCreateHelloWorld() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
 
     // testing
     $this->expectOutputString(
@@ -123,7 +123,7 @@ class CreateHelloWorldTest extends TestCase
   public function testCreateHelloWorld_BundleAlreadyExist() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
     mkdir(self::HELLO_WORLD_BUNDLE_PATH, 0777, true);
 
     // testing

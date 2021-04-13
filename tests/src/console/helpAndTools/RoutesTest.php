@@ -14,7 +14,7 @@ class RoutesTest extends TestCase
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     OTRA_CONSOLE_FILENAME = 'otra.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
@@ -82,7 +82,7 @@ class RoutesTest extends TestCase
     define('WIDTH_RIGHT', 70);
 
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/tasksClassMap.php';
+    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
     $_SERVER['APP_ENV'] = 'dev';
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';

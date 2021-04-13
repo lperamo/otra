@@ -13,7 +13,7 @@ class GenerateTaskMetadataTest extends TestCase
 {
   private const PHP_CACHE_PATH = CACHE_PATH . 'php/',
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
@@ -33,22 +33,31 @@ class GenerateTaskMetadataTest extends TestCase
     );
 
     // testing
-    self::assertFileExists(self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME);
+    $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_HELP_FILENAME;
+    $fileToTest = self::PHP_CACHE_PATH . 'init/' . self::TASKS_HELP_FILENAME;
+    self::assertFileExists(self::PHP_CACHE_PATH . 'init/' . self::TASKS_HELP_FILENAME);
     self::assertFileEquals(
-      self::METADATA_EXAMPLES_PATH . self::TASKS_HELP_FILENAME,
-      self::PHP_CACHE_PATH . self::TASKS_HELP_FILENAME
+      $expectedFile,
+      $fileToTest,
+      'Checking tasks help. ' . $expectedFile . ' vs ' . $fileToTest
     );
 
-    self::assertFileExists(self::PHP_CACHE_PATH  . self::TASKS_CLASSMAP_FILENAME);
+    $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME;
+    $fileToTest = self::PHP_CACHE_PATH . 'init/' . self::TASKS_CLASSMAP_FILENAME;
+    self::assertFileExists(self::PHP_CACHE_PATH . 'init/' . self::TASKS_CLASSMAP_FILENAME);
     self::assertFileEquals(
-      self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME,
-      self::PHP_CACHE_PATH . self::TASKS_CLASSMAP_FILENAME
+      $expectedFile,
+      $fileToTest,
+      'Checking task classmap. ' . $expectedFile . ' vs ' . $fileToTest
     );
 
+    $expectedFile = self::METADATA_EXAMPLES_PATH . self::SHELL_COMPLETIONS_FILENAME;
+    $fileToTest = CONSOLE_PATH . 'shellCompletions/' . self::SHELL_COMPLETIONS_FILENAME;
     self::assertFileExists(CONSOLE_PATH . 'shellCompletions/' . self::SHELL_COMPLETIONS_FILENAME);
     self::assertFileEquals(
-      self::METADATA_EXAMPLES_PATH . self::SHELL_COMPLETIONS_FILENAME,
-      CONSOLE_PATH . 'shellCompletions/' . self::SHELL_COMPLETIONS_FILENAME
+      $expectedFile,
+      $fileToTest,
+      'Checking shell completions. ' . $expectedFile . ' vs '. $fileToTest
     );
 
     self::expectOutputString(

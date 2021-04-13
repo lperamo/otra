@@ -28,7 +28,7 @@ class CryptTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_CRYPT,
       ['otra.php', self::OTRA_TASK_CRYPT, 'password', 20000]
     );
@@ -52,7 +52,7 @@ class CryptTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_CRYPT]
     );

@@ -84,8 +84,9 @@ if (isset($params['session']))
   }
 }
 
-// We fix the created problems, check syntax errors and then minifies it
-$phpRouteFile = BASE_PATH . 'cache/php/' . $route;
+$phpRouteFile = (!str_contains($route, 'otra_'))
+  ? BASE_PATH . 'cache/php/' . $route
+  : BASE_PATH . 'cache/php/otraRoutes/' . $route;
 $temporaryPhpRouteFile = $phpRouteFile . '_.php';
 
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';

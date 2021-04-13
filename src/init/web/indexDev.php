@@ -23,7 +23,7 @@ ini_set('html_errors', '1');
 error_reporting(-1 & ~E_DEPRECATED);
 
 /** CLASS MAPPING */
-require CACHE_PATH . 'php/ClassMap.php';
+require CACHE_PATH . 'php/init/ClassMap.php';
 
 /** MAIN CONFIGURATION */
 require BASE_PATH . 'config/AllConfig.php';

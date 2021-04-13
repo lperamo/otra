@@ -28,7 +28,7 @@ if (!defined('TEST_CONTROLLER_PATH'))
   define('TEST_CONTROLLER_PATH', TEST_MODULE_PATH . 'controllers/' . CreateControllerTaskTest::TEST_CONTROLLER . '/');
 
 if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
+  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
 
 /**
  * @runTestsInSeparateProcesses

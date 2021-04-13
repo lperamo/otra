@@ -13,7 +13,7 @@ class RequirementsTest extends TestCase
 {
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_REQUIREMENTS = 'requirements',
     OTRA_TASK_HELP = 'help',
     REQUIREMENTS_PADDING = 30;

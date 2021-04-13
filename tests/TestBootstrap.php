@@ -8,9 +8,9 @@ require __DIR__ . (OTRA_PROJECT
   ) . '/config/constants.php';
 define('BUNDLES_PATH', BASE_PATH . 'bundles/');
 
-if (file_exists(CACHE_PATH . 'php/ClassMap.php'))
+if (file_exists(CACHE_PATH . 'php/init/ClassMap.php'))
 {
-  require CACHE_PATH . 'php/ClassMap.php';
+  require CACHE_PATH . 'php/init/ClassMap.php';
 
   spl_autoload_register(function (string $className)
   {

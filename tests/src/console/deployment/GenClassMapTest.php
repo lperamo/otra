@@ -14,8 +14,8 @@ class GenClassMapTest extends TestCase
   private const
     CLASS_MAP_FILENAME = 'ClassMap.php',
     PROD_CLASS_MAP_FILENAME = 'ProdClassMap.php',
-    CLASS_MAP_PATH = CACHE_PATH . 'php/' . self::CLASS_MAP_FILENAME,
-    PROD_CLASS_MAP_PATH = CACHE_PATH . 'php/' . self::PROD_CLASS_MAP_FILENAME,
+    CLASS_MAP_PATH = CACHE_PATH . 'php/init/' . self::CLASS_MAP_FILENAME,
+    PROD_CLASS_MAP_PATH = CACHE_PATH . 'php/init/' . self::PROD_CLASS_MAP_FILENAME,
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/',
     OTRA_TASK_HELP = 'help';
@@ -63,7 +63,7 @@ class GenClassMapTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_GEN_CLASS_MAP,
       ['otra.php', self::OTRA_TASK_GEN_CLASS_MAP, 1]
     );
@@ -108,7 +108,7 @@ class GenClassMapTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_CLASS_MAP]
     );

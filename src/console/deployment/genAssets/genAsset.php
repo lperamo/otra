@@ -24,7 +24,7 @@ $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 require BASE_PATH . 'config/AllConfig.php';
 
 // Loads the production class mapping
-require CACHE_PATH . 'php/ClassMap.php';
+require CACHE_PATH . 'php/init/ClassMap.php';
 
 spl_autoload_register(function (string $className) : void
 {

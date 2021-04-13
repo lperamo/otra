@@ -191,20 +191,21 @@ foreach($classes as $classNamespace => $class)
 
 $classMap = var_export($classes, true);
 $prodClassMap = var_export($prodClasses, true);
-$classMapPath = BASE_PATH . 'cache/php/';
+define('CACHE_PHP_PATH', BASE_PATH . 'cache/php/');
+define('CACHE_PHP_INIT_PATH', CACHE_PHP_PATH . 'init/');
 
-if (!file_exists($classMapPath))
-  mkdir($classMapPath, 0755, true);
+if (!file_exists(CACHE_PHP_INIT_PATH))
+  mkdir(CACHE_PHP_INIT_PATH, 0755, true);
 
 // Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
 // Generating development class map
-$filePointer = fopen($classMapPath . 'ClassMap.php', 'w');
+$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ClassMap.php', 'w');
 $contentToWrite = convertClassMapToPHPFile($classMap) . PHP_EOL;
 fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
 fclose($filePointer);
 
 // Generating production class map
-$filePointer = fopen($classMapPath . 'ProdClassMap.php', 'w');
+$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ProdClassMap.php', 'w');
 $contentToWrite = convertClassMapToPHPFile($prodClassMap) . PHP_EOL;
 fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
 fclose($filePointer);

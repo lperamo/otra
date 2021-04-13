@@ -36,7 +36,7 @@ class HelpTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_HELP]
     );

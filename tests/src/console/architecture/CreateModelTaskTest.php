@@ -18,7 +18,7 @@ define('OTRA_LABEL_THE_MODEL', 'The model ');
 define('OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE', ' has been created in the bundle ');
 
 if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
+  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
 
 define(
   'OTRA_LABEL_YAML_SCHEMA_WARNING',

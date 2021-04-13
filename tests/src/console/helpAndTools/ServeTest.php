@@ -14,7 +14,7 @@ class ServeTest extends TestCase
 {
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/' . self::TASKS_CLASSMAP_FILENAME,
+    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_SERVE = 'serve',
     OTRA_TASK_HELP = 'help';
 
@@ -59,7 +59,7 @@ class ServeTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/tasksClassMap.php',
+      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
       self::TASK_SERVE,
       ['otra.php', self::TASK_SERVE, '-50']
     );

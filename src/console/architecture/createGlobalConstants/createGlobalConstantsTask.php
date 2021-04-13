@@ -26,7 +26,7 @@ $content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
   '\');define(\'CORE_PATH\',\'' . $corePath .
   '\');define(\'CACHE_PATH\',\'' . $cachePath .
   '\');define(\'CONSOLE_PATH\',\'' . $consolePath .
-  '\');define(\'CLASS_MAP_PATH\',\'' . $cachePath . 'php/ClassMap.php' .
+  '\');define(\'CLASS_MAP_PATH\',\'' . $cachePath . 'php/init/ClassMap.php' .
   '\');define(\'TEST_PATH\',\'' . ($otraProject === true
     ? $basePath . 'vendor/otra/otra/tests/'
     : $basePath . 'tests/') .

@@ -21,7 +21,7 @@ define('TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION) . 'Action.
 define('TEST_ACTION_PATH', TEST_CONTROLLER_PATH . TEST_ACTION_FULL);
 define('TEST_VIEWS_PATH', TEST_MODULE_PATH . 'views/');
 define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER . '/');
-define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
+define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
 
 /**
  * @runTestsInSeparateProcesses

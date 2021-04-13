@@ -56,9 +56,11 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
+define('BOOTSTRAP_PATH', BASE_PATH . 'cache/php');
+
 // Checks that the folder of micro bootstraps exists
-if (!file_exists($bootstrapPath = BASE_PATH . 'cache/php'))
-  mkdir($bootstrapPath);
+if (!file_exists(BOOTSTRAP_PATH))
+  mkdir(BOOTSTRAP_PATH);
 
 // Checks whether we want only one/many CORRECT route(s)
 if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
@@ -136,7 +138,7 @@ define(
   ]
 );
 
-$routesManagementFile = $bootstrapPath . '/RouteManagement_.php';
+define('ROUTE_MANAGEMENT_TEMPORARY_FILE', BOOTSTRAP_PATH . '/init/RouteManagement_.php');
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = CORE_PATH . 'Router.php';
 
@@ -148,12 +150,12 @@ contentToFile(
     $verbose,
     $fileToInclude
   ),
-  $routesManagementFile
+  ROUTE_MANAGEMENT_TEMPORARY_FILE
 );
 
-if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($routesManagementFile))
+if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
   return;
 
-compressPHPFile($routesManagementFile, $bootstrapPath . '/RouteManagement');
+compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, BOOTSTRAP_PATH . '/init/RouteManagement');
 
 echo PHP_EOL;

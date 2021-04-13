@@ -20,7 +20,7 @@ if (!defined('OTRA_LABEL_FALSE'))
   define('OTRA_LABEL_FALSE', 'false');
 
 if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/tasksClassMap.php');
+  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
 
 if (!defined('OTRA_BINARY_NAME'))
   define('OTRA_BINARY_NAME', 'otra.php');

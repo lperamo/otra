@@ -35,7 +35,7 @@ abstract class TasksManager
     CLI_LIGHT_GRAY;
     echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
 
-    $methods = require CACHE_PATH . 'php/tasksHelp.php';
+    $methods = require CACHE_PATH . 'php/init/tasksHelp.php';
 
     $category = '';
 
@@ -74,7 +74,7 @@ abstract class TasksManager
    */
   public static function execute(array $tasksClassMap, string $task, array $argv) : void
   {
-    if (!file_exists(BASE_PATH . 'cache/php/ClassMap.php'))
+    if (!file_exists(BASE_PATH . 'cache/php/init/ClassMap.php'))
     {
       echo CLI_YELLOW,
         'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
@@ -86,7 +86,7 @@ abstract class TasksManager
         throw new \otra\OtraException('', 0, '', NULL, [], true);
     }
 
-    require_once BASE_PATH . 'cache/php/ClassMap.php';
+    require_once BASE_PATH . 'cache/php/init/ClassMap.php';
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
   }
 }

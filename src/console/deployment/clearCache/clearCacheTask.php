@@ -204,8 +204,8 @@ if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 {
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
-    PHP_CACHE_PATH . $routeManagementFile,
-    RELATIVE_PHP_CACHE_PATH . $routeManagementFile
+    PHP_CACHE_PATH . 'init/' . $routeManagementFile,
+    RELATIVE_PHP_CACHE_PATH . 'init/' . $routeManagementFile
   );
 
   echo 'Route management file cleared', OTRA_SUCCESS;
@@ -216,14 +216,14 @@ if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . $classMapFile,
-    RELATIVE_PHP_CACHE_PATH . $classMapFile
+    PHP_CACHE_PATH . 'init/' . $classMapFile,
+    RELATIVE_PHP_CACHE_PATH . 'init/' . $classMapFile
   );
 
   $prodClassMapFile = 'ProdClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . $prodClassMapFile,
-    RELATIVE_PHP_CACHE_PATH . $prodClassMapFile
+    PHP_CACHE_PATH . 'init/' . $prodClassMapFile,
+    RELATIVE_PHP_CACHE_PATH . 'init/' . $prodClassMapFile
   );
 
   echo 'Class mapping files cleared', OTRA_SUCCESS;
@@ -234,14 +234,14 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . $taskClassMapFile,
-    RELATIVE_PHP_CACHE_PATH . $taskClassMapFile
+    PHP_CACHE_PATH . 'init/' . $taskClassMapFile,
+    RELATIVE_PHP_CACHE_PATH . 'init/' . $taskClassMapFile
   );
 
   $tasksHelpFile = 'tasksHelp.php';
   unlinkFile(
-    PHP_CACHE_PATH . $tasksHelpFile,
-    RELATIVE_PHP_CACHE_PATH . $tasksHelpFile
+    PHP_CACHE_PATH . 'init/' . $tasksHelpFile,
+    RELATIVE_PHP_CACHE_PATH . 'init/' . $tasksHelpFile
   );
 
   echo 'Metadata cleared', OTRA_SUCCESS;
