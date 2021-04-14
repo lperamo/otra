@@ -12,8 +12,6 @@ use phpunit\framework\TestCase;
 class RequirementsTest extends TestCase
 {
   private const
-    TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_REQUIREMENTS = 'requirements',
     OTRA_TASK_HELP = 'help',
     REQUIREMENTS_PADDING = 30;
@@ -82,7 +80,7 @@ class RequirementsTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::TASK_REQUIREMENTS,
       ['otra.php', self::TASK_REQUIREMENTS]
     );
@@ -102,7 +100,7 @@ class RequirementsTest extends TestCase
     );
 
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::TASK_REQUIREMENTS]
     );

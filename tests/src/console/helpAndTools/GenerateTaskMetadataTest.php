@@ -13,7 +13,6 @@ class GenerateTaskMetadataTest extends TestCase
 {
   private const PHP_CACHE_PATH = CACHE_PATH . 'php/',
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
@@ -27,7 +26,7 @@ class GenerateTaskMetadataTest extends TestCase
   {
     // launching
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::TASK_GENERATE_TASK_METADATA,
       ['otra.php', self::TASK_GENERATE_TASK_METADATA]
     );
@@ -43,12 +42,11 @@ class GenerateTaskMetadataTest extends TestCase
     );
 
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME;
-    $fileToTest = self::PHP_CACHE_PATH . 'init/' . self::TASKS_CLASSMAP_FILENAME;
-    self::assertFileExists(self::PHP_CACHE_PATH . 'init/' . self::TASKS_CLASSMAP_FILENAME);
+    self::assertFileExists(TASK_CLASS_MAP_PATH);
     self::assertFileEquals(
       $expectedFile,
-      $fileToTest,
-      'Checking task classmap. ' . $expectedFile . ' vs ' . $fileToTest
+      TASK_CLASS_MAP_PATH,
+      'Checking task classmap. ' . $expectedFile . ' vs ' . TASK_CLASS_MAP_PATH
     );
 
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::SHELL_COMPLETIONS_FILENAME;
@@ -77,7 +75,7 @@ class GenerateTaskMetadataTest extends TestCase
     );
 
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::TASK_GENERATE_TASK_METADATA]
     );

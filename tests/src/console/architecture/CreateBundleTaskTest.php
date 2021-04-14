@@ -42,7 +42,7 @@ class CreateBundleTaskTest extends TestCase
   public function testCreateBundleTask_BundleAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -70,7 +70,7 @@ class CreateBundleTaskTest extends TestCase
   public function testCreateBundleTask() : void
   {
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     // launching
     TasksManager::execute(

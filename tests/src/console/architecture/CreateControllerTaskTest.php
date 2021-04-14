@@ -27,9 +27,6 @@ if (!defined('TEST_MODULE_PATH'))
 if (!defined('TEST_CONTROLLER_PATH'))
   define('TEST_CONTROLLER_PATH', TEST_MODULE_PATH . 'controllers/' . CreateControllerTaskTest::TEST_CONTROLLER . '/');
 
-if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -63,7 +60,7 @@ class CreateControllerTaskTest extends TestCase
   public function testCreateControllerTask_BundleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     // assertions
     $this->expectException(OtraException::class);
@@ -91,7 +88,7 @@ class CreateControllerTaskTest extends TestCase
   public function testCreateControllerTask_ModuleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -120,7 +117,7 @@ class CreateControllerTaskTest extends TestCase
   public function testCreateControllerTask_ControllerAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_CONTROLLER_PATH, 0777, true);
 
     // assertions
@@ -149,7 +146,7 @@ class CreateControllerTaskTest extends TestCase
   public function testCreateControllerTask() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     if (!file_exists(TEST_MODULE_PATH))
       mkdir(TEST_MODULE_PATH, 0777, true);

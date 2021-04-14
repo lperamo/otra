@@ -7,10 +7,12 @@ require __DIR__ . (OTRA_PROJECT
   : '/..'
   ) . '/config/constants.php';
 define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+define('CACHE_PHP_INIT_PATH', CACHE_PATH . 'php/init/');
+define('TASK_CLASS_MAP_PATH', CACHE_PHP_INIT_PATH . 'tasksClassMap.php');
 
-if (file_exists(CACHE_PATH . 'php/init/ClassMap.php'))
+if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
 {
-  require CACHE_PATH . 'php/init/ClassMap.php';
+  require CACHE_PHP_INIT_PATH . 'ClassMap.php';
 
   spl_autoload_register(function (string $className)
   {

@@ -30,7 +30,6 @@ class ToolsTest extends TestCase
     );
 
     // launching
-
     showContextByError(TEST_PATH . '/examples/tools/toolsExample.php', 'error in line 5', 2);
   }
 

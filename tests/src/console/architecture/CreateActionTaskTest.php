@@ -21,7 +21,6 @@ define('TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION) . 'Action.
 define('TEST_ACTION_PATH', TEST_CONTROLLER_PATH . TEST_ACTION_FULL);
 define('TEST_VIEWS_PATH', TEST_MODULE_PATH . 'views/');
 define('TEST_VIEWS_SUBFOLDER_PATH', TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER . '/');
-define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
 
 /**
  * @runTestsInSeparateProcesses
@@ -77,7 +76,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_BundleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     // assertions
     $this->expectException(OtraException::class);
@@ -106,7 +105,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ModuleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     if (!file_exists(TEST_BUNDLE_PATH))
       mkdir(TEST_BUNDLE_PATH, 0777, true);
@@ -138,7 +137,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ControllerDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_MODULE_PATH, 0777, true);
 
     // testing
@@ -169,7 +168,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ActionAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_CONTROLLER_PATH, 0777, true);
     touch(TEST_ACTION_PATH);
 
@@ -201,7 +200,7 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_CONTROLLER_PATH, 0777, true);
 
     // launching

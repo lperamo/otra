@@ -12,8 +12,6 @@ use phpunit\framework\TestCase;
 class VersionTest extends TestCase
 {
   private const
-    TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_VERSION = 'version',
     OTRA_TASK_HELP = 'help',
     BLUE_ON_LIGHT_BLACK = CLI_BLUE . CLI_BGD_LIGHT_BLACK,
@@ -56,7 +54,7 @@ class VersionTest extends TestCase
 
     // launching
     TasksManager::execute(
-      require BASE_PATH . 'cache/php/init/tasksClassMap.php',
+      require TASK_CLASS_MAP_PATH,
       self::TASK_VERSION,
       ['otra.php', self::TASK_VERSION]
     );
@@ -76,7 +74,7 @@ class VersionTest extends TestCase
     );
 
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
       ['otra.php', self::OTRA_TASK_HELP, self::TASK_VERSION]
     );
