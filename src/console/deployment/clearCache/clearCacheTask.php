@@ -204,7 +204,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 {
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
-    PHP_CACHE_PATH . 'init/' . $routeManagementFile,
+    CACHE_PHP_INIT_PATH . $routeManagementFile,
     RELATIVE_PHP_CACHE_PATH . 'init/' . $routeManagementFile
   );
 
@@ -216,13 +216,13 @@ if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . 'init/' . $classMapFile,
+    CACHE_PHP_INIT_PATH . $classMapFile,
     RELATIVE_PHP_CACHE_PATH . 'init/' . $classMapFile
   );
 
   $prodClassMapFile = 'ProdClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . 'init/' . $prodClassMapFile,
+    CACHE_PHP_INIT_PATH . $prodClassMapFile,
     RELATIVE_PHP_CACHE_PATH . 'init/' . $prodClassMapFile
   );
 
@@ -234,13 +234,13 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
-    PHP_CACHE_PATH . 'init/' . $taskClassMapFile,
+    CACHE_PHP_INIT_PATH . $taskClassMapFile,
     RELATIVE_PHP_CACHE_PATH . 'init/' . $taskClassMapFile
   );
 
   $tasksHelpFile = 'tasksHelp.php';
   unlinkFile(
-    PHP_CACHE_PATH . 'init/' . $tasksHelpFile,
+    CACHE_PHP_INIT_PATH . $tasksHelpFile,
     RELATIVE_PHP_CACHE_PATH . 'init/' . $tasksHelpFile
   );
 

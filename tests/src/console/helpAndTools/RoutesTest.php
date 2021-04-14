@@ -12,9 +12,7 @@ use phpunit\framework\TestCase;
 class RoutesTest extends TestCase
 {
   private const
-    TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     OTRA_CONSOLE_FILENAME = 'otra.php',
-    TASKS_CLASS_MAP = BASE_PATH . 'cache/php/init/' . self::TASKS_CLASSMAP_FILENAME,
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
@@ -82,7 +80,7 @@ class RoutesTest extends TestCase
     define('WIDTH_RIGHT', 70);
 
     // context
-    $tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     $_SERVER['APP_ENV'] = 'dev';
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
@@ -183,7 +181,7 @@ class RoutesTest extends TestCase
     );
 
     TasksManager::execute(
-      require self::TASKS_CLASS_MAP,
+      require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
       [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_HELP, self::TASK_ROUTES]
     );

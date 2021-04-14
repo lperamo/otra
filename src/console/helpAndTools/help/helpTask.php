@@ -10,7 +10,7 @@ use otra\console\TasksManager;
 
 define('HELP_TASK', 2);
 $consoleTask = $argv[HELP_TASK];
-$tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
+$tasksClassMap = require TASK_CLASS_MAP_PATH;
 
 if (false === isset($tasksClassMap[$consoleTask]))
 {

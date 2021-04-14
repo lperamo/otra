@@ -22,7 +22,7 @@ $_SERVER[APP_ENV] = 'prod';
 
 try
 {
-  require CACHE_PATH . 'php/init/RouteManagement.php';
+  require CACHE_PHP_INIT_PATH . 'RouteManagement.php';
 
   $route = Router::getByPattern($requestUri);
   define('OTRA_ROUTE', $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME]);
@@ -61,7 +61,7 @@ try
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
   /** CLASS MAPPING */
-  require CACHE_PATH . 'php/init/ProdClassMap.php';
+  require CACHE_PHP_INIT_PATH . 'ProdClassMap.php';
 
   spl_autoload_register(function (string $className) : void
   {

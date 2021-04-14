@@ -17,9 +17,6 @@ define('OTRA_LABEL_A_MODEL_IN_THE_BUNDLE', 'A model in the bundle ');
 define('OTRA_LABEL_THE_MODEL', 'The model ');
 define('OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE', ' has been created in the bundle ');
 
-if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
-
 define(
   'OTRA_LABEL_YAML_SCHEMA_WARNING',
   CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
@@ -122,7 +119,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InBundle_FromNothing() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -156,7 +153,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_WithSchema_InBundle_FromNothing() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
@@ -188,7 +185,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InModule_FromNothing() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -222,7 +219,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_InModule_FromNothing_NoSqlTypes() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -257,7 +254,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_NoSchema_NoModelName() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
@@ -293,7 +290,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_Task_InBundle_OneModel() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
     require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
@@ -330,7 +327,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_Task_InModule_OneModel() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
     require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
@@ -368,7 +365,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_Task_InBundle_AllModels() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
     require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
@@ -405,7 +402,7 @@ class CreateModelTaskTest extends TestCase
   public function testCreateModel_NotInteractive_Task_InModule_AllModels() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::MODULE_PATH, 0777, true);
     require OTRA_LIBRARY_COPY_FILES_AND_FOLDERS;
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);

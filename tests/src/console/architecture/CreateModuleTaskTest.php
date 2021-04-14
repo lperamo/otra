@@ -19,9 +19,6 @@ if (!defined('TEST_MODULE_PATH'))
 if (!defined('OTRA_LABEL_FALSE'))
   define('OTRA_LABEL_FALSE', 'false');
 
-if (!defined('TEST_CLASS_MAP_PATH'))
-  define('TEST_CLASS_MAP_PATH', BASE_PATH . 'cache/php/init/tasksClassMap.php');
-
 if (!defined('OTRA_BINARY_NAME'))
   define('OTRA_BINARY_NAME', 'otra.php');
 
@@ -59,7 +56,7 @@ class CreateModuleTaskTest extends TestCase
   public function testCreateModuleTask_BundleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     // assertions
     $this->expectException(OtraException::class);
@@ -86,7 +83,7 @@ class CreateModuleTaskTest extends TestCase
   public function testCreateModuleTask_ModuleAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(TEST_MODULE_PATH, 0777, true);
 
     // assertions
@@ -114,7 +111,7 @@ class CreateModuleTaskTest extends TestCase
   public function testCreateModuleTask() : void
   {
     // context
-    $tasksClassMap = require TEST_CLASS_MAP_PATH;
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
     if (!file_exists(TEST_BUNDLE_PATH))
       mkdir(TEST_BUNDLE_PATH, 0777, true);
