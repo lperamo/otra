@@ -116,6 +116,12 @@ foreach (OTRA_LOG_FILES_PATH as $logFile)
 
 echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
+// Checking that the 'init' folder in the cache/php folder exists
+define('OTRA_ROUTES_PATH', CACHE_PATH . 'php/otraRoutes/');
+
+if (!file_exists(OTRA_ROUTES_PATH))
+  mkdir(OTRA_ROUTES_PATH, 0777, true);
+
 // ********** GENERATE TASK METADATA **********
 require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
 
