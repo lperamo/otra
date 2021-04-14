@@ -10,13 +10,14 @@ require __DIR__ . (OTRA_PROJECT
     ? '/../../../..' // long path from vendor
     : '/..'
   ) . '/config/constants.php';
+define('CACHE_PHP_INIT_PATH', CACHE_PATH . 'php/init/');
 $_SERVER[APP_ENV] = 'prod';
 require CONSOLE_PATH . 'TasksManager.php';
 require CONSOLE_PATH . 'colors.php';
 
 // We check if the help and task class map is present, if not ... generate it.
 // In fact, we also generate shell completions... for now.
-if (!file_exists(CACHE_PATH . 'php/init/tasksHelp.php'))
+if (!file_exists(CACHE_PHP_INIT_PATH . 'tasksHelp.php'))
 {
   echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
   require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
@@ -92,7 +93,7 @@ if ($argc < 2)
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-$tasksClassMap = require BASE_PATH . 'cache/php/init/tasksClassMap.php';
+$tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
 // if the command exists, runs it
 if (isset($tasksClassMap[$argv[TasksManager::TASK_PARAMETERS]]))

@@ -138,7 +138,7 @@ define(
   ]
 );
 
-define('ROUTE_MANAGEMENT_TEMPORARY_FILE', BOOTSTRAP_PATH . '/init/RouteManagement_.php');
+define('ROUTE_MANAGEMENT_TEMPORARY_FILE', CACHE_PHP_INIT_PATH . 'RouteManagement_.php');
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = CORE_PATH . 'Router.php';
 
@@ -156,6 +156,6 @@ contentToFile(
 if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
   return;
 
-compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, BOOTSTRAP_PATH . '/init/RouteManagement');
+compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement');
 
 echo PHP_EOL;

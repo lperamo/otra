@@ -192,7 +192,6 @@ foreach($classes as $classNamespace => $class)
 $classMap = var_export($classes, true);
 $prodClassMap = var_export($prodClasses, true);
 define('CACHE_PHP_PATH', BASE_PATH . 'cache/php/');
-define('CACHE_PHP_INIT_PATH', CACHE_PHP_PATH . 'init/');
 
 if (!file_exists(CACHE_PHP_INIT_PATH))
   mkdir(CACHE_PHP_INIT_PATH, 0755, true);

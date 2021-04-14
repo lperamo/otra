@@ -48,9 +48,6 @@ spl_autoload_register(function(string $className) : void { require CLASSMAP[$cla
 if (!defined('PHP_CACHE_FOLDER'))
   define ('PHP_CACHE_FOLDER', CACHE_PATH . 'php/');
 
-if (!defined('PHP_CACHE_INIT_FOLDER'))
-  define ('PHP_CACHE_INIT_FOLDER', PHP_CACHE_FOLDER . 'init/');
-
 /**************************************
  * HELP AND TASK CLASS MAP GENERATION *
  **************************************/
@@ -97,14 +94,14 @@ require CONSOLE_PATH . 'tools.php';
 $helpFileFinalContent = '<?php declare(strict_types=1);return ' . var_export($helpFileContent, true);
 $helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';' . PHP_EOL;
 
-file_put_contents(PHP_CACHE_INIT_FOLDER . 'tasksHelp.php', $helpFileFinalContent);
+file_put_contents(CACHE_PHP_INIT_PATH . 'tasksHelp.php', $helpFileFinalContent);
 
 // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
 $taskClassMap = '<?php declare(strict_types=1);return ' . var_export($taskClassMap, true) . ';';
 $taskClassMap = convertArrayFromVarExportToShortVersion($taskClassMap);
 
 file_put_contents(
-  PHP_CACHE_INIT_FOLDER . 'tasksClassMap.php',
+  CACHE_PHP_INIT_PATH . 'tasksClassMap.php',
     str_replace("'" . BASE_PATH,
       'BASE_PATH.\'',
       str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)

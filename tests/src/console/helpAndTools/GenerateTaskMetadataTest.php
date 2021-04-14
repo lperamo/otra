@@ -33,8 +33,8 @@ class GenerateTaskMetadataTest extends TestCase
 
     // testing
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_HELP_FILENAME;
-    $fileToTest = self::PHP_CACHE_PATH . 'init/' . self::TASKS_HELP_FILENAME;
-    self::assertFileExists(self::PHP_CACHE_PATH . 'init/' . self::TASKS_HELP_FILENAME);
+    $fileToTest = CACHE_PHP_INIT_PATH . self::TASKS_HELP_FILENAME;
+    self::assertFileExists(CACHE_PHP_INIT_PATH . self::TASKS_HELP_FILENAME);
     self::assertFileEquals(
       $expectedFile,
       $fileToTest,
