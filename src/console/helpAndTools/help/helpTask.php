@@ -10,9 +10,9 @@ use otra\console\TasksManager;
 
 define('HELP_TASK', 2);
 $consoleTask = $argv[HELP_TASK];
-$tasksClassMap = require TASK_CLASS_MAP_PATH;
+$tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
-if (false === isset($tasksClassMap[$consoleTask]))
+if (!isset($tasksClassMap[$consoleTask]))
 {
   require CONSOLE_PATH . 'tools.php';
   list($newTask) = guessWords($consoleTask, array_keys($tasksClassMap));
