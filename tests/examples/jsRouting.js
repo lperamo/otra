@@ -1,0 +1,1 @@
+const JS_ROUTING = {"HelloWorld":{"chunks":["/helloworld","HelloWorld","frontend","index","HomeAction"],"resources":{"template":true}}}

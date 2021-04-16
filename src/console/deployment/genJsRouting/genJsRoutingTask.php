@@ -22,8 +22,12 @@ unset(
 
 define('MAIN_RESOURCES_PATH', BASE_PATH . 'bundles/resources/');
 define('MAIN_JS_ROUTING' , MAIN_RESOURCES_PATH . 'jsRouting.js');
-define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
+
+if (!defined('ERASE_SEQUENCE'))
+  define('ERASE_SEQUENCE', "\033[1A\r\033[K");
+
+if (!defined('OTRA_SUCCESS'))
+  define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
 
 if (!file_exists(MAIN_RESOURCES_PATH))
   mkdir(MAIN_RESOURCES_PATH);
