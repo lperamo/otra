@@ -134,6 +134,8 @@ copyFileAndFolders(
   ]
 );
 
+echo ERASE_SEQUENCE, 'Stylesheets added', OTRA_SUCCESS;
+
 echo 'Adding favicons...', PHP_EOL;
 define('HELLO_WORLD_IMAGES_PATH', CORE_PATH . 'resources/img/HelloWorld/');
 
@@ -147,6 +149,7 @@ copyFileAndFolders(
     BASE_PATH . 'web/favicon.png'
   ]
 );
+echo ERASE_SEQUENCE, 'Favicons added', OTRA_SUCCESS;
 
 // We update the routes configuration as we just add one route.
 require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
