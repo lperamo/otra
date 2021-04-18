@@ -76,10 +76,24 @@ trait ProdControllerTrait
   private static function addCss(string $route) : string
   {
     // If we have CSS files to load, then we load them
-    return self::$hasCssToLoad ? '<link rel="stylesheet" nonce="' . getRandomNonceForCSP('style-src') .
-      '" href="' . parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" />' : '';
-//    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
-//      return '<style>' . $allCss . '</style>';
+    if (self::$hasCssToLoad)
+    {
+      $startLink = '<link rel="stylesheet" nonce="';
+      $midLink = '" href="';
+      $content = $startLink . getRandomNonceForCSP('style-src') . $midLink .
+        parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" media="screen" />';
+      $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.gz');
+
+      if (file_exists(substr(BASE_PATH, 0, -1) . $printCssPath))
+        $content .= $startLink . getRandomNonceForCSP('style-src') . $midLink . $printCssPath .
+          '" media="print" />';
+
+      return $content;
+    } else
+      return '';
+
+    //    if(strlen($allCss) < RESOURCE_FILE_MIN_SIZE)
+    //      return '<style>' . $allCss . '</style>';
   }
 
   /** Returns the pre-generated js and the additional concatenated js

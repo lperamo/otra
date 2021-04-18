@@ -154,7 +154,17 @@ foreach($routes as $route => $details)
       showPHPState($basePath, $route, $altColor);
 
     if (isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
-      showResourceState('css', 'CSS', $basePath, $shaName, $altColor);
+    {
+      showResourceState('css', 'SCREEN CSS', $basePath, $shaName, $altColor);
+
+      showResourceState(
+        'css',
+        'PRINT CSS',
+        $basePath,
+        'print_' . $shaName,
+        $altColor
+      );
+    }
 
     if (isset($resources['_js'])
       || isset($resources['bundle_js'])

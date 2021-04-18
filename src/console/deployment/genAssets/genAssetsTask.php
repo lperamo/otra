@@ -171,11 +171,32 @@ if (
         if ($pathAndFile !== null)
         {
           gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
-          echo status('CSS');
+          echo status('SCREEN CSS');
         } else
-          echo status('NO CSS', OTRA_CLI_CYAN_STRING);
+          echo status('NO SCREEN CSS', OTRA_CLI_CYAN_STRING);
+
+        ob_start();
+        loadResource($resources, $chunks, 'print_css', $bundlePath);
+        $printCss = ob_get_clean();
+
+        if ($printCss === '')
+          echo status('NO PRINT CSS', OTRA_CLI_CYAN_STRING);
+        else
+        {
+          $resourceFolderPath = CACHE_PATH . 'css/';
+          $pathAndFile = $resourceFolderPath . 'print_' . $shaName;
+
+          if (!file_exists($resourceFolderPath))
+            mkdir($resourceFolderPath, 0755, true);
+
+          file_put_contents($pathAndFile, $printCss);
+          gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
+          echo status('PRINT CSS');
+        }
       } else
         echo status('NO CSS', OTRA_CLI_CYAN_STRING);
+
+
     }
 
     /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -346,7 +367,6 @@ function loadAndSaveResources(
   ob_start();
   loadResource($resources, $routeChunks, 'first_' . $type, $bundlePath);
   loadResource($resources, $routeChunks, 'bundle_' . $type, $bundlePath, '');
-  //loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath, $routeChunks[2] . '/');
   loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath . $routeChunks[2] . '/');
   loadResource($resources, $routeChunks, '_' . $type, $bundlePath);
 

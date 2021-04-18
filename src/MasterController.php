@@ -228,14 +228,15 @@ abstract class MasterController
    * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
    *
    * @param array|string $stylesheets The css file to add (Array of string)
+   * @param bool         $print       Does the stylesheet must be only used for a print usage ?
    */
-  protected static function css(array|string $stylesheets = []) : void
+  protected static function css(array|string $stylesheets = [], bool $print = false) : void
   {
-    array_splice(
+//    $stylesheets = is_array($stylesheets) ? $stylesheets : [[$stylesheets, $print]];
+
+    array_push(
       self::$stylesheets,
-      count(self::$stylesheets),
-      0,
-      is_array($stylesheets) ? $stylesheets : [$stylesheets]
+      ...$stylesheets
     );
   }
 

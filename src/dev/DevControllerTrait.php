@@ -17,6 +17,8 @@ define('OTRA_FILENAME_TRACE', 'trace');
  */
 trait DevControllerTrait
 {
+  private static int $STYLESHEET_FILE = 0;
+  private static int $STYLESHEET_PRINT = 1;
   private static bool $debugBarHasBeenAdded = false;
 
   /**
@@ -182,10 +184,11 @@ trait DevControllerTrait
       'bundle_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
       'module_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
       '_' . $assetType => $debLink . $viewResourcePath[$assetType],
+      'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
     ];
 
-    // For each kind of JS file, we will looks for them in their respective folders
+    // For each kind of asset file, we will looks for them in their respective folders
     foreach ($resourcesType as $resourceType => $resourceTypeInfo)
     {
       if (isset($resources[$resourceType]))
@@ -200,7 +203,8 @@ trait DevControllerTrait
                 ? OTRA_KEY_STYLE_SRC_DIRECTIVE
                 : OTRA_KEY_SCRIPT_SRC_DIRECTIVE
             ),
-            $resourceTypeInfo);
+            $resourceTypeInfo
+          );
 
           // Fills $orderedArray and/or $unorderedArray
           self::updateScriptsArray(
@@ -208,7 +212,8 @@ trait DevControllerTrait
             $orderedArray,
             $naturalPriorityIndex,
             $forcedPriorityIndex,
-            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile . $endLink
+            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile .
+              ($resourceType !== 'print_css' ? $endLink : '.css" media="print" />')
           );
         }
       }
@@ -251,7 +256,11 @@ trait DevControllerTrait
     foreach(self::$stylesheets as $stylesheet)
     {
       $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
-        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet . '.css" />';
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$STYLESHEET_FILE] .
+        '.css" media="' . (!(isset($stylesheet[self::$STYLESHEET_PRINT]) && $stylesheet[self::$STYLESHEET_PRINT])
+        ? 'screen'
+        : 'print')
+        . '"/>';
     }
 
     return $cssContent;

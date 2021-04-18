@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
 require CORE_VIEWS_PATH . 'debugBar/macros.phtml';
-$this::css(CORE_CSS_PATH . 'partials/devMode/devMode');
+$this::css([
+  [CORE_CSS_PATH . 'partials/devMode/devMode'],
+  [CORE_CSS_PATH . 'partials/devMode/devModePrint', true]
+]);
 generateArrows();
 ?>
 <div id="dbg-bar" class="dbg-bar">
