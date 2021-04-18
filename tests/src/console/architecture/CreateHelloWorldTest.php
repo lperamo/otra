@@ -86,6 +86,7 @@ class CreateHelloWorldTest extends TestCase
         END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
       'Starter template ' . CLI_BLUE . OTRA_LABEL_BASE_PATH_PLUS . CLI_LIGHT_CYAN .
         'bundles/HelloWorld/frontend/views/index/home.phtml' . END_COLOR . OTRA_LABEL_CREATED . OTRA_SUCCESS .
+      'Adding stylesheets...' . PHP_EOL .
       'Adding favicons...' . PHP_EOL .
       CLI_YELLOW . 'Nothing to put into ' . CLI_LIGHT_CYAN . '/var/www/html/perso/otra/bundles/config/Config.php' .
         CLI_YELLOW . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .

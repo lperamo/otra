@@ -14,8 +14,9 @@ class RoutesTest extends TestCase
   private const
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
-    OTRA_TASK_HELP = 'help',
+    OTRA_TASK_BUILD_DEV = 'buildDev',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
+    OTRA_TASK_HELP = 'help',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BASE_PATH . 'bundles/config/Routes.php',
     PHP_STATUS = '[PHP]';
@@ -97,7 +98,16 @@ class RoutesTest extends TestCase
       self::OTRA_TASK_CREATE_HELLO_WORLD,
       [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_CREATE_HELLO_WORLD]
     );
-
+    TasksManager::execute(
+      $tasksClassMap,
+      self::OTRA_TASK_BUILD_DEV,
+      [
+        self::OTRA_CONSOLE_FILENAME,
+        self::OTRA_TASK_BUILD_DEV,
+        0, // not verbose
+        1 // only SCSS
+      ]
+    );
     TasksManager::execute(
       $tasksClassMap,
       self::OTRA_TASK_GEN_ASSETS,
@@ -148,7 +158,8 @@ class RoutesTest extends TestCase
         'HelloWorld',
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',
-        '[TEMPLATE]',
+        '[SCREEN CSS]' . CLI_LIGHT_CYAN . CLI_LIGHT_GREEN . '[PRINT CSS]' . CLI_LIGHT_CYAN . CLI_LIGHT_GREEN .
+          '[TEMPLATE]',
         '[ee81412660816b84c10bda5ec4679b72b0d8f132]',
         false
       ) . END_COLOR

@@ -180,7 +180,7 @@ if (
         $printCss = ob_get_clean();
 
         if ($printCss === '')
-          echo status('NO PRINT CSS', OTRA_CLI_CYAN_STRING);
+          echo status('NO PRINT CSS', 'CLI_RED');
         else
         {
           $resourceFolderPath = CACHE_PATH . 'css/';
@@ -390,13 +390,14 @@ function loadAndSaveResources(
 /**
  * Loads css or js resources
  *
- * @param array       $resources
- * @param array       $chunks
- * @param string      $key        first_js, module_css kind of ...
- * @param string      $bundlePath
- * @param string|bool $resourcePath
+ * @param array  $resources
+ * @param array  $chunks
+ * @param string $key first_js, module_css kind of ...
+ * @param string $bundlePath
+ * @param ?bool  $resourcePath
  */
-function loadResource(array $resources, array $chunks, string $key, string $bundlePath, $resourcePath = true) : void
+function loadResource(array $resources, array $chunks, string $key, string $bundlePath, ?string $resourcePath = null)
+: void
 {
   // If this kind of resource does not exist, we leave
   if (!isset($resources[$key]))
@@ -404,7 +405,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 
   $resourceType = substr(strrchr($key, '_'), 1);
   $resourcePath = $bundlePath .
-    (true === $resourcePath ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
+    (null === $resourcePath ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
     'resources/' . $resourceType . '/';
 
   foreach ($resources[$key] as $resource)
@@ -412,7 +413,16 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     ob_start();
 
     if (!str_contains($resource, 'http'))
-      echo file_get_contents($resourcePath . $resource . '.' . $resourceType);
+    {
+      $finalPath = $resourcePath . $resource . '.' . $resourceType;
+      if (file_exists($finalPath))
+        echo file_get_contents($finalPath);
+      else
+      {
+        ob_end_clean();
+        return;
+      }
+    }
     else
     {
       $curlHandle = curl_init();
@@ -434,7 +444,8 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     }
 
     echo $content;
-    /** Workaround for google closure compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line feed after source map declaration like
+    /** Workaround for google closure compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
+     *  feed after source map declaration like
      *  //# sourceMappingURL=modules.js.map
      *  So the last letter is 'p' and not a line feed.
      *  Then we have to put ourselves the line feed !

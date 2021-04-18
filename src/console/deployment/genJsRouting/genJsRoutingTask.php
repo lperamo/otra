@@ -35,7 +35,7 @@ if (!file_exists(MAIN_RESOURCES_PATH))
 file_put_contents(
   MAIN_JS_ROUTING,
   'const JS_ROUTING = ' .
-  json_encode($routes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK)
+  json_encode($routes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) . PHP_EOL
 );
 
 echo ERASE_SEQUENCE, 'JavaScript routing generated in ', CLI_LIGHT_CYAN, MAIN_JS_ROUTING, END_COLOR, OTRA_SUCCESS,

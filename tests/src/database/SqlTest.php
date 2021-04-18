@@ -184,12 +184,12 @@ class SqlTest extends TestCase
 
     $devLogFolder = self::LOG_PATH . 'dev/';
 
-    if (file_exists($devLogFolder) === false)
+    if (!file_exists($devLogFolder))
       mkdir($devLogFolder, 0777, true);
 
     $sqlLogPath = $devLogFolder . 'sql.txt';
 
-    if (file_exists($sqlLogPath) === false)
+    if (!file_exists($sqlLogPath))
       touch($sqlLogPath);
 
     // launching task
@@ -202,10 +202,13 @@ class SqlTest extends TestCase
       file_get_contents($sqlLogPath)
     );
 
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
     {
       unlink($sqlLogPath);
-      rmdir($devLogFolder);
+
+      // only remove the log folder if it is really empty
+      if (empty(array_diff(scandir($devLogFolder), ['..', '.'])))
+        rmdir($devLogFolder);
     }
   }
 

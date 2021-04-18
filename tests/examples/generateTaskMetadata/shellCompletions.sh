@@ -24,6 +24,7 @@ typeset -a OTRA_COMMANDS=(
   'genAssets'
   'genBootstrap'
   'genClassMap'
+  'genJsRouting'
   'genServerConfig'
   'genSitemap'
   'genWatcher'
@@ -64,6 +65,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DEPLOYMENT} genAssets                   : ${CYA}Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Gzips the SVGs.${ECO}"
   "${CAT_DEPLOYMENT} genBootstrap                : ${CYA}Launch the genClassMap command and generates a file that contains all the necessary php files.${ECO}"
   "${CAT_DEPLOYMENT} genClassMap                 : ${CYA}Generates a class mapping file that will be used to replace the autoloading method.${ECO}"
+  "${CAT_DEPLOYMENT} genJsRouting                : ${CYA}Generates a route mapping that can be used by JavaScript files.${ECO}"
   "${CAT_DEPLOYMENT} genServerConfig             : ${CYA}Generates a server configuration adapted to OTRA.${ECO}"
   "${CAT_DEPLOYMENT} genSitemap                  : ${CYA}Generates a sitemap based on routes configuration.${ECO}"
   "${CAT_DEPLOYMENT} genWatcher                  : ${CYA}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${ECO}"

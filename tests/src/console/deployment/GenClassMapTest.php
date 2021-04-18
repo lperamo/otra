@@ -32,7 +32,7 @@ class GenClassMapTest extends TestCase
 
     // testing
     $content = '';
-    define('OTRA_MAX_FOLDERS', 148);
+    define('OTRA_MAX_FOLDERS', 150);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
