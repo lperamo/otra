@@ -75,6 +75,11 @@ foreach($iterator as $entry)
 
     $filesProcessed = true;
     $resourceName = $entry->getPathname();
+
+    // starters are only meant to be copied, not used
+    if (str_contains($resourceName, 'starters'))
+      continue;
+
     [$baseName, $resourcesMainFolder, $resourcesFolderEndPath] = getPathInformations($resourceName);
 
     if ($extension === 'ts')

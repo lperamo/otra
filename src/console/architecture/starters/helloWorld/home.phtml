@@ -3,7 +3,9 @@ declare(strict_types=1);
 require BASE_PATH . 'bundles/HelloWorld/views/layout.phtml';
 
 block('title', 'Hello world starter template');
-block('body');
-parent(); ?><br/>
-It's the basic template.
+block('body');?>
+  <div class="hello-world--box">
+    <?php parent(); ?><br/>
+    It's the basic template.
+  </div>
 <?php endblock();
