@@ -13,7 +13,7 @@ define(
   CLI_INFO_HIGHLIGHT . MODULE_NAME . END_COLOR . ' ...' . PHP_EOL
 );
 // This variable is used for code creation
-define('START_ACCOLADE', PHP_EOL . SPACE_INDENT . '{' . PHP_EOL);
+const START_ACCOLADE = PHP_EOL . SPACE_INDENT . '{' . PHP_EOL;
 /**
  * @param int    $modelLocation
  * @param string $modelName

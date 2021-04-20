@@ -9,12 +9,12 @@ declare(strict_types=1);
 use config\{AllConfig,Routes};
 use otra\Router;
 
-define('ONE_BOOTSTRAP_ARG_VERBOSE', 1);
-define('ONE_BOOTSTRAP_ARG_LINT', 2);
-define('ONE_BOOTSTRAP_ARG_ROUTE', 3);
+const ONE_BOOTSTRAP_ARG_VERBOSE = 1;
+const ONE_BOOTSTRAP_ARG_LINT = 2;
+const ONE_BOOTSTRAP_ARG_ROUTE = 3;
 
-define('OTRA_KEY_BOOTSTRAP', 'bootstrap');
-define('OTRA_KEY_DRIVER', 'driver');
+const OTRA_KEY_BOOTSTRAP = 'bootstrap';
+const OTRA_KEY_DRIVER = 'driver';
 define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
 
 $verbose = intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]);

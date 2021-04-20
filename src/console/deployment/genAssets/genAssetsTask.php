@@ -15,7 +15,7 @@ require_once BASE_PATH . 'config/AllConfig.php';
 require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/compression.php';
 
-define('GEN_ASSETS_ARG_ASSETS_MASK', 2);
+const GEN_ASSETS_ARG_ASSETS_MASK = 2;
 define(
   'JS_LEVEL_COMPILATION',
   [
@@ -23,21 +23,21 @@ define(
     'SIMPLE_OPTIMIZATIONS',
     'ADVANCED_OPTIMIZATIONS'
   ][isset($argv[3]) ? intval($argv[3]) : 1]);
-define('GEN_ASSETS_ARG_ROUTE', 4);
-define('GZIP_COMPRESSION_LEVEL', 9);
+const GEN_ASSETS_ARG_ROUTE = 4;
+const GZIP_COMPRESSION_LEVEL = 9;
 
-define('GEN_ASSETS_MASK_TEMPLATE', 1);
-define('GEN_ASSETS_MASK_CSS', 2);
-define('GEN_ASSETS_MASK_JS', 4);
-define('GEN_ASSETS_MASK_MANIFEST', 8);
-define('GEN_ASSETS_MASK_SVG', 16);
-define('GEN_ASSETS_MASK_TOTAL', 31);
+const GEN_ASSETS_MASK_TEMPLATE = 1;
+const GEN_ASSETS_MASK_CSS = 2;
+const GEN_ASSETS_MASK_JS = 4;
+const GEN_ASSETS_MASK_MANIFEST = 8;
+const GEN_ASSETS_MASK_SVG = 16;
+const GEN_ASSETS_MASK_TOTAL = 31;
 
-define('ROUTES_CHUNKS_BUNDLE', 1);
-define('ROUTES_CHUNKS_MODULE', 2);
+const ROUTES_CHUNKS_BUNDLE = 1;
+const ROUTES_CHUNKS_MODULE = 2;
 
-define('OTRA_UNLINK_CALLBACK', 'unlink');
-define('OTRA_CLI_INFO_STRING', 'CLI_INFO');
+const OTRA_UNLINK_CALLBACK = 'unlink';
+const OTRA_CLI_INFO_STRING = 'CLI_INFO';
 
 $routes = Routes::$allRoutes;
 
@@ -65,11 +65,11 @@ define(
   (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
 ); // 31 = default to all assets
 
-define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
-define('GEN_ASSETS_CSS', (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1);
-define('GEN_ASSETS_JS', (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2);
-define('GEN_ASSETS_MANIFEST', (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3);
-define('GEN_ASSETS_SVG', (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4);
+const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE;
+const GEN_ASSETS_CSS = (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1;
+const GEN_ASSETS_JS = (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2;
+const GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3;
+const GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
 
 // If we only need the manifest or the SVGs, skips the assets generation loop
 if (
@@ -215,13 +215,13 @@ if (
             /** TODO Find a way to store the logs (and then remove -W QUIET) */
             exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH . 'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
               $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
-            gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
           } else
           {
             // JAMVM CASE
             exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
-            gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
           }
+
+          gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
         } elseif (empty(exec('where java'))) // WINDOWS AND JAMVM CASE
         {
           exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');

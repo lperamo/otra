@@ -95,7 +95,6 @@ namespace cache\php
         do
         {
           // We add the key to an array of indexes that will not be showed again
-          /** @var int $tmpKey */
           if (!in_array($tmpKey, $indexesToUnset))
             $indexesToUnset[]= $tmpKey;
 

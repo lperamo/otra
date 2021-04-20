@@ -13,9 +13,10 @@ use otra\OtraException;
 /**
  * @param string $constantName
  * @param string $message
- * @param mixed   $defaultValue
+ * @param mixed  $defaultValue
  * @param bool   $exit
  *
+ * @throws OtraException
  * @return mixed
  */
 $checkParameter = function (

@@ -25,25 +25,22 @@ else
 }
 
 $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion);
-list($modelFullName, $modelExists) = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
+[$modelFullName, $modelExists] = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
 echo DOUBLE_ERASE_SEQUENCE;
 
 while (file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName))
 {
   $modelName = promptUser($modelExists, $modelExists);
   // We update the informations right now in order to deliver precise error messages
-  list($modelFullName, $modelExists) = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
+  [$modelFullName, $modelExists] = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
   echo DOUBLE_ERASE_SEQUENCE;
 }
 
 echo MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE;
 $propertiesTxt = $functions = $propertiesCode = '';
 
-define(
-  'PROPERTY_TEXT',
-  'Which property do you want to add ? (lowercase, type \'no!more\' if you don\'t want any other property)'
-);
-define('PROPERTY_ERROR_TEXT', 'You did not type anything. ' . PROPERTY_TEXT);
+const PROPERTY_TEXT = 'Which property do you want to add ? (lowercase, type \'no!more\' if you don\'t want any other property)';
+const PROPERTY_ERROR_TEXT = 'You did not type anything. ' . PROPERTY_TEXT;
 $property = promptUser(PROPERTY_TEXT, PROPERTY_ERROR_TEXT);
 
 // Ask until we don't want any other properties.

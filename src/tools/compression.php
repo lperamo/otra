@@ -21,7 +21,7 @@ function gzCompressFile(string $source, string $destination = null, int $level =
 {
   $destination = $destination === null ? $source . '.gz' : $destination;
 
-  $fp_out = gzopen($destination, 'wb' . (string)$level);
+  $fp_out = gzopen($destination, 'wb' . $level);
 
   if ($fp_out === false)
     return false;

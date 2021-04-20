@@ -33,7 +33,7 @@ if (!function_exists('getSourceFromFile'))
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . '<i>';
-      $sourceContentMiddle = (string)$index . ' ' . '</i>' . htmlentities($fileHandler->current());
+      $sourceContentMiddle = $index . ' ' . '</i>' . htmlentities($fileHandler->current());
 
       $sourceContent .= ($index === $sourceLine)
         ? '<b>' . $sourceContentMiddle . '</b>'

@@ -6,9 +6,11 @@ declare(strict_types=1);
  * @package otra\console\architecture
  */
 
+use otra\OtraException;
+
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 
-define('OTRA_BUNDLES_MAIN_FOLDER_NAME', 'bundles/');
+const OTRA_BUNDLES_MAIN_FOLDER_NAME = 'bundles/';
 
 /**
  * @param bool     $interactive
@@ -16,7 +18,7 @@ define('OTRA_BUNDLES_MAIN_FOLDER_NAME', 'bundles/');
  * @param int|null $bundleMask
  * @param bool     $bundleTask
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false) : void
 {
@@ -29,7 +31,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     echo $errorMessage, END_COLOR, PHP_EOL;
 
     /** @var bool $consoleForce */
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   while (file_exists(BUNDLE_ROOT_PATH . $bundleName))
@@ -38,7 +40,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     $bundleName = promptUser($errorMessage . ' Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
-      throw new \otra\OtraException('', 0, '', NULL, [], true);
+      throw new OtraException('', 0, '', NULL, [], true);
 
     $bundleName = ucfirst($bundleName);
 

@@ -56,9 +56,9 @@ namespace otra\console
      * @param string|null $dbConnKey Database connection key from the general configuration
      *
      * @throws OtraException If there are no database or database engine configured.
-     * @return bool | void
+     * @return void
      */
-    public static function init(string $dbConnKey = null)
+    public static function init(string $dbConnKey = null) : void
     {
       $dbConn = AllConfig::$dbConnections;
       $dbConnKey = null === $dbConnKey ? key($dbConn) : $dbConnKey;
@@ -258,7 +258,7 @@ namespace otra\console
      *
      * @return string $attribute Concerned attribute in uppercase
      */
-    #[Pure] public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
+    public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
       if (isset(self::$attributeInfos[$attribute]))
       {
@@ -386,10 +386,12 @@ namespace otra\console
       /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but more a temporary id that
        * represents the position of the line in the database ! */
 
-      foreach (array_keys($fixturesData) as &$fixtureName)
+      foreach (array_keys($fixturesData) as $fixtureName)
       {
         $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $databaseId++ . PHP_EOL;
       }
+
+      unset($fixtureName);
 
       $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
 
@@ -971,11 +973,9 @@ namespace otra\console
               );
 
             // No problems. We can add the relations to the SQL.
-            $tableSql[$table] .= ',' . PHP_EOL . '  CONSTRAINT ' .
-              (isset($relation['constraint_name'])
-                ? $relation['constraint_name']
-                : $relation['local'] . '_to_' . $relation['foreign']
-              ) . ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $tableKey . '(' .
+            $tableSql[$table] .= ',' . PHP_EOL .
+              '  CONSTRAINT ' . ($relation['constraint_name'] ?? $relation['local'] . '_to_' . $relation['foreign']) .
+              ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $tableKey . '(' .
               $relation['foreign'] . ')';
           }
         }
@@ -991,7 +991,7 @@ namespace otra\console
          * from the tables that have relations with other tables (that need to be sorted)
          */
         if ($hasRelations)
-          $tablesWithRelations[$table] = $schema[$table];
+          $tablesWithRelations[$table] = $properties;
         else
           $sortedTables[] = $table;
       }
@@ -1234,10 +1234,7 @@ namespace otra\console
           {
             if (!isset($constraint['REFERENCED_TABLE_NAME']))
               echo 'There is no REFERENCED_TABLE_NAME on ' .
-                (isset($constraint['CONSTRAINT_NAME'])
-                  ? $constraint['CONSTRAINT_NAME']
-                  : '/NO CONSTRAINT NAME/') .
-                '.' . PHP_EOL;
+                ($constraint['CONSTRAINT_NAME'] ?? '/NO CONSTRAINT NAME/') . '.' . PHP_EOL;
 
             $content .= '    ' . $constraint['REFERENCED_TABLE_NAME'] . ':' . PHP_EOL;
             $content .= '      local: ' . $constraint['COLUMN_NAME'] . PHP_EOL;

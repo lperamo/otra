@@ -5,7 +5,8 @@ declare(strict_types=1);
  *
  * @author Lionel Péramo */
 
-use cache\php\{Logger,Router};
+use cache\php\
+{Logger, Router, Routes};
 
 require __DIR__ . '/../config/constants.php';
 
@@ -54,8 +55,8 @@ try
   // Is it a static page
   if ('cli' !== PHP_SAPI &&
     isset(
-      \cache\php\Routes::$allRoutes[OTRA_ROUTE]['resources']['template']
-    ) && \cache\php\Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
+      Routes::$allRoutes[OTRA_ROUTE]['resources']['template']
+    ) && Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
@@ -90,7 +91,7 @@ try
     'logs/' . $_SERVER[APP_ENV] . ($error ? '/unknownFatalErrors.txt' : '/unknownExceptions.txt')
   );
   define('ISSUE_LOG_PATH', BASE_PATH . ISSUE_RELATIVE_LOG_PATH);
-  define('ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . (string)$issue->getLine());
+  define('ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . $issue->getLine());
 
   if (!is_writable(ISSUE_LOG_PATH))
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color:blue">' .

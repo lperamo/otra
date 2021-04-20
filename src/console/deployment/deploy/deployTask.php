@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace otra\console;
 
 use config\AllConfig;
-use \otra\OtraException;
+use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
 
 define('DEPLOY_ARG_MASK', 2);
@@ -157,12 +157,11 @@ $startCommandRelativeRsync = 'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateS
 $workerManager = new WorkerManager();
 
 /**
- * @param string   $waitingMessage
- * @param string   $successMessage
- * @param string   $command
+ * @param Worker[] $workers
  * @param bool     $async
  * @param string   $synchronousErrorMessage
- * @param Worker[] $workers
+ *
+ * @throws OtraException
  */
 $handleTransfer = function (
   array $workers = [],

@@ -14,5 +14,5 @@ function getCaller() : string
   /** @var array{function:string, line:int, file:string, class:string, object:object, type: string, args:array} $secondTrace */
   $secondTrace = debug_backtrace()[1];
 
-  return $secondTrace['file'] . ':' . (string)$secondTrace['line'];
+  return $secondTrace['file'] . ':' . $secondTrace['line'];
 }

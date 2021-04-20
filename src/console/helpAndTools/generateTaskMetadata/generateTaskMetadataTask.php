@@ -70,7 +70,7 @@ foreach($foldersToCheckForTasks as $foldersToCheckForTask)
   {
     $pathname = $entry->getPathname();
 
-    if (mb_strpos($pathname, 'Help.') === false)
+    if (!str_contains($pathname, 'Help.'))
       continue;
 
     $pathname = str_replace('\\', '/', $pathname);

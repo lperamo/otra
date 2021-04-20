@@ -10,7 +10,7 @@ $routes = require BASE_PATH . 'bundles/config/Routes.php';
 $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
   '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
+const SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT;
 
 foreach ($routes as $route)
 {

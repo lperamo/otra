@@ -135,7 +135,7 @@ function writeModelFile(
   // If we use DateTime type then we add a use statement to handle this type.
   $useDateTime = '';
 
-  if (mb_strpos($functions, 'DateTime') !== false)
+  if (str_contains($functions, 'DateTime'))
     $useDateTime = PHP_EOL . 'use \DateTime;' . PHP_EOL;
 
   fwrite($filePointer, '<?php' . PHP_EOL .

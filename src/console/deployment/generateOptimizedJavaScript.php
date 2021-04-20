@@ -9,7 +9,7 @@ declare(strict_types=1);
 use otra\OtraException;
 use function otra\tools\files\returnLegiblePath;
 
-define('OTRA_LABEL_TSCONFIG_JSON', 'tsconfig.json');
+const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 
 /**
  * @param int    $verbose

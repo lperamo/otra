@@ -20,8 +20,8 @@ unset(
   $routes['otra_refreshSQLLogs']
 );
 
-define('MAIN_RESOURCES_PATH', BASE_PATH . 'bundles/resources/');
-define('MAIN_JS_ROUTING' , MAIN_RESOURCES_PATH . 'jsRouting.js');
+const MAIN_RESOURCES_PATH = BASE_PATH . 'bundles/resources/';
+const MAIN_JS_ROUTING = MAIN_RESOURCES_PATH . 'jsRouting.js';
 
 if (!defined('ERASE_SEQUENCE'))
   define('ERASE_SEQUENCE', "\033[1A\r\033[K");

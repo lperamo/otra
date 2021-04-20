@@ -10,7 +10,7 @@ require __DIR__ . (OTRA_PROJECT
     ? '/../../../..' // long path from vendor
     : '/..'
   ) . '/config/constants.php';
-define('CACHE_PHP_INIT_PATH', CACHE_PATH . 'php/init/');
+const CACHE_PHP_INIT_PATH = CACHE_PATH . 'php/init/';
 $_SERVER[APP_ENV] = 'prod';
 require CONSOLE_PATH . 'TasksManager.php';
 require CONSOLE_PATH . 'colors.php';
@@ -37,7 +37,7 @@ if (exec('whoami') === 'root')
  * @param array $arguments
  * @param int   $argumentsCount
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount) : void
 {
@@ -56,7 +56,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
       $required = $result['required'];
 
     // Retrieves the number of required parameters and then the final total of parameters
-    $total = $required + (isset($result['optional']) ? $result['optional'] : 0);
+    $total = $required + ($result['optional'] ?? 0);
   }
 
   if ($argumentsCount > $total + 2)
@@ -64,7 +64,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
     echo CLI_ERROR . 'There are too much parameters ! The total number of existing parameters is : ' . $total
       . END_COLOR . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap,'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   if ($argumentsCount < $required + 2)
@@ -72,7 +72,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
     echo CLI_ERROR . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
       . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   // And we runs the task if all is correct

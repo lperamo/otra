@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @package otra\services
  */
 
+use config\AllConfig;
 use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
@@ -222,7 +223,7 @@ if (!function_exists('getRandomNonceForCSP'))
     if (!str_contains($policy, OTRA_LABEL_SECURITY_STRICT_DYNAMIC)
       && !empty(MasterController::$nonces[$directive]) // if it has nonces
       && (
-        (isset(\config\AllConfig::$debug) && \config\AllConfig::$debug) // is debug mode active ?
+        (isset(AllConfig::$debug) && AllConfig::$debug) // is debug mode active ?
         || $route === 'otra_exception'
       )
     )

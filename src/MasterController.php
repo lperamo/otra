@@ -295,7 +295,7 @@ abstract class MasterController
    *
    * @return array [$templateFile, $otraRoute]
    */
-  #[Pure] protected function getTemplateFile(string $file, bool $viewPath) : array
+  protected function getTemplateFile(string $file, bool $viewPath) : array
   {
     $otraRoute = str_contains($this->route, 'otra_');
 

@@ -56,7 +56,7 @@ foreach($iterator as $entry)
 
   foreach (PATHS_TO_AVOID as $pathToAvoid)
   {
-    if (mb_strpos($realPath, $pathToAvoid) !== false)
+    if (str_contains($realPath, $pathToAvoid))
       continue 2;
   }
 
@@ -67,8 +67,8 @@ foreach($iterator as $entry)
     if (isNotInThePath(
       PATHS_TO_HAVE_RESOURCES,
       $realPath,
-      (BUILD_DEV_SCOPE === 0 && mb_strpos($realPath, CORE_PATH) === false
-      || BUILD_DEV_SCOPE === 1 && mb_strpos($realPath, CORE_PATH) !== false
+      (BUILD_DEV_SCOPE === 0 && !str_contains($realPath, CORE_PATH)
+      || BUILD_DEV_SCOPE === 1 && str_contains($realPath, CORE_PATH)
       || BUILD_DEV_SCOPE === 2)
     ))
       continue;

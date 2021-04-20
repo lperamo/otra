@@ -6,6 +6,8 @@ declare(strict_types=1);
  * @package otra\console\architecture
  */
 
+use otra\OtraException;
+
 if (!function_exists('createFolder'))
 {
   /**
@@ -14,7 +16,7 @@ if (!function_exists('createFolder'))
    * @param string $folderType         Is it a 'controller' folder, 'module' folder ?
    * @param bool   $interactive        Do we have to ask for another folder ?
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   function createFolder(
     string &$absoluteFolderPath,
@@ -30,13 +32,13 @@ if (!function_exists('createFolder'))
       if (!$interactive)
       {
         echo $sentence, END_COLOR, PHP_EOL;
-        throw new \otra\OtraException('', 1, '', NULL, [], true);
+        throw new OtraException('', 1, '', NULL, [], true);
       }
 
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 
       if ($folderName === 'n')
-        throw new \otra\OtraException('', 0, '', NULL, [], true);
+        throw new OtraException('', 0, '', NULL, [], true);
 
       $absoluteFolderPath = $relativeFolderPath . $folderName;
 

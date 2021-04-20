@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-define('OTRA_KEY_REQUEST_URI', 'REQUEST_URI');
+const OTRA_KEY_REQUEST_URI = 'REQUEST_URI';
 $_SERVER[APP_ENV] = $_ENV['OTRA_LIVE_APP_ENV'];
 $_SERVER['HTTPS'] = $_ENV['OTRA_LIVE_HTTPS'] === 'true';
 

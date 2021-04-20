@@ -104,7 +104,7 @@ abstract class DumpMaster {
     $reflectedClass = new ReflectionClass($className);
     $classInterfaces = $reflectedClass->getInterfaceNames();
     $parentClass = $reflectedClass->getParentClass();
-    $description = 'object (' . (string)count((array) $param) . ') ' .
+    $description = 'object (' . count((array) $param) . ') ' .
       ($reflectedClass->isAbstract() ? 'abstract ': '') .
       ($reflectedClass->isFinal() ? 'final ': '') . $className;
 

@@ -6,10 +6,10 @@ declare(strict_types=1);
  * @package otra\tools
  */
 
-define('OTRA_LABEL_SELECT', 'SELECT ');
+const OTRA_LABEL_SELECT = 'SELECT ';
 // TODO Not fully tested !
 
-define('SQL_CLAUSES', [
+const SQL_CLAUSES = [
   '(SELECT ',
   OTRA_LABEL_SELECT,
   'FROM ',
@@ -27,10 +27,10 @@ define('SQL_CLAUSES', [
   'ORDER BY ',
   'LIMIT ',
   'OFFSET '
-]);
+];
 
-define('LEFT_STYLE_CLAUSE_CODE', '<span style="color:#E44">');
-define('RIGHT_STYLE_CLAUSE_CODE', '</span>');
+const LEFT_STYLE_CLAUSE_CODE = '<span style="color:#E44">';
+const RIGHT_STYLE_CLAUSE_CODE = '</span>';
 
 /**
  * Returns the pretty printed versions of sql clauses
@@ -97,7 +97,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
       '<span class="sql--logs--field">$0</span>',
       preg_replace(
         '/:[^ )]{1,}/',
-        '<span style="color:#4B4">$0</span>',
+        '<span style="color: #4b4;">$0</span>',
         $output
       )
     );
@@ -127,7 +127,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   if (!$raw)
   {
     $output = '<pre>';
-    $leftStyleClauseCode = '<span style="color:#E44">';
+    $leftStyleClauseCode = '<span style="color: #e44;">';
     $rightStyleClauseCode = '</span>';
   }
 
@@ -150,10 +150,10 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   {
     $output = preg_replace(
       '/(:?\.)[^ (]{1,}/',
-      '<span style="color:#44F">$0</span>',
+      '<span style="color: #44f;">$0</span>',
       preg_replace(
         '/:[^ )]{1,}/',
-        '<span style="color:#4B4">$0</span>',
+        '<span style="color: #4b4;">$0</span>',
         $output
       )
     );

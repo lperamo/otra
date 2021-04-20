@@ -7,21 +7,22 @@ declare(strict_types=1);
  */
 
 use otra\console\TasksManager;
+use otra\OtraException;
 
-define('HELP_TASK', 2);
+const HELP_TASK = 2;
 $consoleTask = $argv[HELP_TASK];
 $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
 if (!isset($tasksClassMap[$consoleTask]))
 {
   require CONSOLE_PATH . 'tools.php';
-  list($newTask) = guessWords($consoleTask, array_keys($tasksClassMap));
+  [$newTask] = guessWords($consoleTask, array_keys($tasksClassMap));
 
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
     echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $consoleTask, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   // Otherwise, we suggest the closest name that we have found.
@@ -33,7 +34,7 @@ if (!isset($tasksClassMap[$consoleTask]))
   else
   {
     echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 }
 

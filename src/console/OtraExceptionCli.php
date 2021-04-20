@@ -111,11 +111,11 @@ class OtraExceptionCli extends \Exception
       {
         $actualTraceFile = str_replace('\\', '/', $actualTraceFile);
 
-        if (false !== mb_strpos($actualTraceFile, CONSOLE_PATH))
+        if (str_contains($actualTraceFile, CONSOLE_PATH))
           $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
-        elseif (false !== mb_strpos($actualTraceFile, CORE_PATH))
+        elseif (str_contains($actualTraceFile, CORE_PATH))
           $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
-        elseif (false !== mb_strpos($actualTraceFile, BASE_PATH))
+        elseif (str_contains($actualTraceFile, BASE_PATH))
           $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
         else
           $compositeColoredPath = false;

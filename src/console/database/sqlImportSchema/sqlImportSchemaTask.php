@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 use otra\console\Database;
 
-define('SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME', 2);
-define('SQL_IMPORT_SCHEMA_ARG_CONFIGURATION', 3);
+const SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME = 2;
+const SQL_IMPORT_SCHEMA_ARG_CONFIGURATION = 3;
 
 if (isset($argv[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]))
 {

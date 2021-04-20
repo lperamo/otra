@@ -11,29 +11,29 @@ use otra\OtraException;
 
 require CONSOLE_PATH . 'tools.php';
 
-define('PATTERN', '@\s{0,}
+const PATTERN = '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
         (?:->renderView\s{0,}\([^\),]{1,})
-        @mx');
+        @mx';
 // a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
-define('ANNOTATION_DEBUG_PAD', 80);
-define('LOADED_DEBUG_PAD', 80);
-define('PHP_OPEN_TAG_STRING', '<?php');
-define('PHP_OPEN_TAG_LENGTH', 5);
-define('PHP_END_TAG_STRING', '?>');
-define('PHP_END_TAG_LENGTH', 2);
-define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
+const ANNOTATION_DEBUG_PAD = 80;
+const LOADED_DEBUG_PAD = 80;
+const PHP_OPEN_TAG_STRING = '<?php';
+const PHP_OPEN_TAG_LENGTH = 5;
+const PHP_END_TAG_STRING = '?>';
+const PHP_END_TAG_LENGTH = 2;
+const RETURN_AND_STRICT_TYPE_DECLARATION = 31;
 
-define('OTRA_ALREADY_PARSED_LABEL', ' ALREADY PARSED');
-define('OTRA_KEY_REQUIRE', 'require');
-define('OTRA_KEY_EXTENDS', 'extends');
-define('OTRA_KEY_STATIC', 'static');
-define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
+const OTRA_ALREADY_PARSED_LABEL = ' ALREADY PARSED';
+const OTRA_KEY_REQUIRE = 'require';
+const OTRA_KEY_EXTENDS = 'extends';
+const OTRA_KEY_STATIC = 'static';
+const OTRA_KEY_FINAL_CONTENT_PARTS = 'finalContentParts';
 
-define('OTRA_LABEL_REQUIRE', 'require');
-define('ADJUST_SPACES_AROUND_REQUIRE_STATEMENT', '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@');
+const OTRA_LABEL_REQUIRE = 'require';
+const ADJUST_SPACES_AROUND_REQUIRE_STATEMENT = '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@';
 define('BASE_PATH_LENGTH', strlen(BASE_PATH));
 
 /**
@@ -259,9 +259,6 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
         // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
         if (substr($classToReplace, -1) === '}')
           $classToReplace = substr($classToReplace, 0,-1);
-
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
-        analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
       } else
       {
         /** if we have a right parenthesis we strip it and put the content before the beginning of the use statement,
@@ -292,10 +289,10 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
           // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
           $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
         }
-
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
-        analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
       }
+
+      // We analyze the use statement in order to retrieve the name of each class which is included in it.
+      analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
 
       // The classes will be useful when we will analyze the extends statements
       $classesFromFile[] = $classToReplace;
@@ -943,7 +940,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
   {
     unset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]);
     $contentToAdd = '';
-    echo CLI_BOLD_RED, $contentToAdd, END_COLOR, PHP_EOL;
+    echo ADD_BOLD, CLI_ERROR, $contentToAdd, END_COLOR, PHP_EOL;
   }
 
   // contentToAdd is "purged" we can add it to the finalContent

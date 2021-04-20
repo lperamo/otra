@@ -6,8 +6,8 @@ declare(strict_types=1);
  * @package otra\console\helpAndTools
  */
 
-define('CRYPT_ARG_PASSWORD', 2);
-define('CRYPT_ARG_ITERATIONS', 3);
+const CRYPT_ARG_PASSWORD = 2;
+const CRYPT_ARG_ITERATIONS = 3;
 
 if (!is_numeric($argv[CRYPT_ARG_ITERATIONS]))
 {

@@ -26,14 +26,14 @@ function showTraceLine(array $contextItem) : void
         if (str_contains($traceFile, BASE_PATH))
         {
           ?><span class="exception-main--color--file-and-line" title="' . $traceFile . '">
-          <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . (string)$traceLine ?>
+          <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . $traceLine ?>
           </span>
           <?php
         } else {
           echo $traceFile;
         }
       } else
-        echo '-' . (string)$traceLine;
+        echo '-' . $traceLine;
       ?>
     </summary>
     <div class="accordion--block">

@@ -10,26 +10,26 @@ use config\AllConfig;
 use otra\OtraException;
 
 // arguments
-define('CLEAR_CACHE_ARG_MASK', 2);
-define('CLEAR_CACHE_ARG_ROUTE', 3);
+const CLEAR_CACHE_ARG_MASK = 2;
+const CLEAR_CACHE_ARG_ROUTE = 3;
 
 // masks
-define('CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE', 1);
-define('CLEAR_CACHE_MASK_PHP_BOOTSTRAPS', 2);
-define('CLEAR_CACHE_MASK_CSS', 4);
-define('CLEAR_CACHE_MASK_JS', 8);
-define('CLEAR_CACHE_MASK_TEMPLATES', 16);
-define('CLEAR_CACHE_MASK_ROUTE_MANAGEMENT', 32);
-define('CLEAR_CACHE_MASK_CLASS_MAPPING', 64);
-define('CLEAR_CACHE_MASK_METADATA', 128);
-define('CLEAR_CACHE_MASK_SECURITY', 256);
+const CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE = 1;
+const CLEAR_CACHE_MASK_PHP_BOOTSTRAPS = 2;
+const CLEAR_CACHE_MASK_CSS = 4;
+const CLEAR_CACHE_MASK_JS = 8;
+const CLEAR_CACHE_MASK_TEMPLATES = 16;
+const CLEAR_CACHE_MASK_ROUTE_MANAGEMENT = 32;
+const CLEAR_CACHE_MASK_CLASS_MAPPING = 64;
+const CLEAR_CACHE_MASK_METADATA = 128;
+const CLEAR_CACHE_MASK_SECURITY = 256;
 
 // formatting
-define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL);
+const OTRA_SUCCESS = CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL;
 
 // paths
-define('PHP_CACHE_PATH', CACHE_PATH . 'php/');
-define('RELATIVE_PHP_CACHE_PATH', 'cache/php');
+const PHP_CACHE_PATH = CACHE_PATH . 'php/';
+const RELATIVE_PHP_CACHE_PATH = 'cache/php/';
 
 $binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
@@ -46,6 +46,8 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
    * @param string $cachePath
    * @param string $cacheRelativePath
    * @param string $extension
+   *
+   * @throws OtraException
    */
   $removeCachedFiles = function (
     string $cachePath,
@@ -56,24 +58,25 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
     checkFolder($cachePath, $cacheRelativePath);
 
     if (isset($route))
-      unlinkFile($cachePath . $route . $extension, $cacheRelativePath . $route . $extension);
-    else
     {
-      foreach(array_keys($routes) as $routeToSuppress)
-      {
-        if ($routeToSuppress === 'otra_exception')
-          continue;
+      unlinkFile($cachePath . $route . $extension, $cacheRelativePath . $route . $extension);
+      return;
+    }
 
-        $routeFileName = $routeToSuppress . $extension;
+    foreach(array_keys($routes) as $routeToSuppress)
+    {
+      if ($routeToSuppress === 'otra_exception')
+        continue;
 
-        if ($extension !== '.php')
-          $routeFileName = sha1('ca' . $routeToSuppress . VERSION . 'che') . $extension;
+      $routeFileName = $routeToSuppress . $extension;
 
-        unlinkFile(
-          $cachePath . $routeFileName,
-          $cacheRelativePath . $routeFileName
-        );
-      }
+      if ($extension !== '.php')
+        $routeFileName = sha1('ca' . $routeToSuppress . VERSION . 'che') . $extension;
+
+      unlinkFile(
+        $cachePath . $routeFileName,
+        $cacheRelativePath . $routeFileName
+      );
     }
   };
 
@@ -81,7 +84,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
   if (isset($route) && !isset($routes[$route]))
   {
     require CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys($routes));
+    [$newRoute] = guessWords($route, array_keys($routes));
 
     if ($newRoute === null)
     {
@@ -175,6 +178,7 @@ if ((
 if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 {
   $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
+  $removeCachedFiles(PHP_CACHE_PATH . 'otraRoutes/', RELATIVE_PHP_CACHE_PATH . 'otraRoutes/', '.php');
   echo 'PHP bootstrap(s) cleared', OTRA_SUCCESS;
 }
 

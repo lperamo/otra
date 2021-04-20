@@ -33,7 +33,7 @@ $bundleMask = 9;
 // load console tools in order to ask questions (the following includes need those functions)
 require CONSOLE_PATH . 'tools.php';
 
-define('ARCHITECTURE_FOLDER', CONSOLE_PATH . 'architecture/');
+const ARCHITECTURE_FOLDER = CONSOLE_PATH . 'architecture/';
 define('ACTION_NAME', $argv[ARG_ACTION_NAME]);
 
 if (!defined('OTRA_SUCCESS'))
@@ -82,7 +82,7 @@ function copyAndShow(string $source, string $destination, string $message) : voi
 define('BUNDLE_FOLDER', BASE_PATH . 'bundles/' . $bundleName . '/');
 define('MODULE_FOLDER', BUNDLE_FOLDER . $moduleName . '/');
 $starterAction = MODULE_FOLDER . 'controllers/' . $argv[ARG_CONTROLLER_NAME] . '/' . ucfirst(ACTION_NAME) . 'Action.php';
-define('HELLO_WORLD_STARTER_FOLDER', ARCHITECTURE_FOLDER . 'starters/helloWorld/');
+const HELLO_WORLD_STARTER_FOLDER = ARCHITECTURE_FOLDER . 'starters/helloWorld/';
 copyFileAndFolders([HELLO_WORLD_STARTER_FOLDER . 'HomeAction.php'], [$starterAction]);
 echo 'Action filled', OTRA_SUCCESS;
 
@@ -137,7 +137,7 @@ copyFileAndFolders(
 echo ERASE_SEQUENCE, 'Stylesheets added', OTRA_SUCCESS;
 
 echo 'Adding favicons...', PHP_EOL;
-define('HELLO_WORLD_IMAGES_PATH', CORE_PATH . 'resources/img/HelloWorld/');
+const HELLO_WORLD_IMAGES_PATH = CORE_PATH . 'resources/img/HelloWorld/';
 
 copyFileAndFolders(
   [

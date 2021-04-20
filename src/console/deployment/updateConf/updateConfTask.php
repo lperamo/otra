@@ -184,8 +184,10 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Config.php', $configsContent);
 /** ROUTES MANAGEMENT */
 $routesArray = [];
 
-foreach($routes as &$route)
+foreach($routes as $route)
   $routesArray = array_merge($routesArray, require $route);
+
+unset($route);
 
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
@@ -269,21 +271,12 @@ if (!function_exists('arrayExport'))
      */
     foreach($configurationArray as $arrayKey => $value)
     {
-      $content .= "'" . $arrayKey . '\'=>';
+      $content .= "'" . $arrayKey . '\'=>' . (is_array($value)
+        ? '[' . arrayExport($value) . ']'
+        : '"' . $value . '"');
 
-      if (is_array($value))
-      {
-        $content .= '[' . arrayExport($value) . ']';
-
-        if (array_key_last($configurationArray) !== $arrayKey)
-          $content .= ',';
-      } else
-      {
-        $content .= '"' . $value . '"';
-
-        if (array_key_last($configurationArray) !== $arrayKey)
-          $content .= ',';
-      }
+      if (array_key_last($configurationArray) !== $arrayKey)
+        $content .= ',';
     }
 
     return $content;

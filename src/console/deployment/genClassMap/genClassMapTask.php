@@ -133,12 +133,12 @@ if (!empty($folders) && !function_exists('iterateCM'))
   {
     // if the class map is empty, then we just return an empty array.
     if ($classMap === 'array (' . PHP_EOL . ')')
-      return '<?php define(\'CLASSMAP\', []);';
+      return '<?php declare(strict_types=1);define(\'CLASSMAP\', []);';
 
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-    return '<?php define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
+    return '<?php declare(strict_types=1);define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
   }
 }
 
@@ -174,16 +174,16 @@ $prodClasses = [];
 foreach($classes as $classNamespace => $class)
 {
   // We only let external libraries
-  if (mb_strpos($class, BASE_PATH) !== false)
+  if (str_contains($class, BASE_PATH))
   {
     $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
     $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
     if (
-      (in_array($firstFolderAfterBasePath, ['src', 'web']) && mb_strpos($tmpClass, 'src') === false)
+      (in_array($firstFolderAfterBasePath, ['src', 'web']) && !str_contains($tmpClass, 'src'))
       // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
       // dynamically loaded
-      || (mb_strpos($tmpClass, 'DumpMaster') !== false))
+      || (str_contains($tmpClass, 'DumpMaster')))
       $prodClasses[$classNamespace] = $class;
   } else
     $prodClasses[$classNamespace]= $class;
@@ -191,7 +191,7 @@ foreach($classes as $classNamespace => $class)
 
 $classMap = var_export($classes, true);
 $prodClassMap = var_export($prodClasses, true);
-define('CACHE_PHP_PATH', BASE_PATH . 'cache/php/');
+const CACHE_PHP_PATH = BASE_PATH . 'cache/php/';
 
 if (!file_exists(CACHE_PHP_INIT_PATH))
   mkdir(CACHE_PHP_INIT_PATH, 0755, true);

@@ -9,7 +9,7 @@ echo 'Initializing the project...', PHP_EOL;
 
 // ********** CONFIGURATION FILES **********
 echo 'Copying configuration files...', PHP_EOL;
-define('OTRA_CONFIG_FOLDER', BASE_PATH . 'config/');
+const OTRA_CONFIG_FOLDER = BASE_PATH . 'config/';
 
 require CORE_PATH . 'tools/copyFilesAndFolders.php';
 
@@ -47,7 +47,7 @@ foreach ($distFiles as $distFile)
 }
 
 // We need a routes configuration file even empty.
-define('OTRA_BUNDLES_CONFIG_PATH', BASE_PATH . 'bundles/config/');
+const OTRA_BUNDLES_CONFIG_PATH = BASE_PATH . 'bundles/config/';
 
 if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
   mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
@@ -88,9 +88,9 @@ echo ERASE_SEQUENCE, CLI_BASE, 'Files added to the web folder ', CLI_SUCCESS, ' 
 echo 'Adding the base architecture for the logs...', PHP_EOL;
 
 // Creating log folders
-define('OTRA_LOGS_PATH', BASE_PATH . 'logs/');
-define('OTRA_LOGS_DEV_PATH', OTRA_LOGS_PATH . 'dev/');
-define('OTRA_LOGS_PROD_PATH', OTRA_LOGS_PATH . 'prod/');
+const OTRA_LOGS_PATH = BASE_PATH . 'logs/';
+const OTRA_LOGS_DEV_PATH = OTRA_LOGS_PATH . 'dev/';
+const OTRA_LOGS_PROD_PATH = OTRA_LOGS_PATH . 'prod/';
 
 if (!file_exists(OTRA_LOGS_DEV_PATH))
   mkdir(OTRA_LOGS_DEV_PATH, 0777, true);
@@ -99,13 +99,13 @@ if (!file_exists(OTRA_LOGS_PROD_PATH))
   mkdir(OTRA_LOGS_PROD_PATH);
 
 // Creating log files
-define('OTRA_LOG_FILES_PATH', [
+const OTRA_LOG_FILES_PATH = [
   OTRA_LOGS_DEV_PATH . 'sql.txt',
   OTRA_LOGS_DEV_PATH . 'trace.txt',
   OTRA_LOGS_PROD_PATH . 'classNotFound.txt',
   OTRA_LOGS_PROD_PATH . 'unknownExceptions.txt',
   OTRA_LOGS_PROD_PATH . 'unknownFatalErrors.txt'
-]);
+];
 
 foreach (OTRA_LOG_FILES_PATH as $logFile)
 {
@@ -119,7 +119,7 @@ foreach (OTRA_LOG_FILES_PATH as $logFile)
 echo ERASE_SEQUENCE, 'Base architecture for the logs added', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // Checking that the 'init' folder in the cache/php folder exists
-define('OTRA_ROUTES_PATH', CACHE_PATH . 'php/otraRoutes/');
+const OTRA_ROUTES_PATH = CACHE_PATH . 'php/otraRoutes/';
 
 if (!file_exists(OTRA_ROUTES_PATH))
   mkdir(OTRA_ROUTES_PATH, 0777, true);

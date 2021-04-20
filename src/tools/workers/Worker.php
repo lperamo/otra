@@ -55,6 +55,6 @@ class Worker
     return CLI_ERROR . 'Fail! The command was : "' . $this->command . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . $stdout . PHP_EOL .
       'STDERR : ' . $stderr . PHP_EOL .
-      'Exit code : ' . (string)$exitCode;
+      'Exit code : ' . $exitCode;
   }
 }

@@ -173,7 +173,7 @@ foreach($iterator as $entry)
 
   foreach (PATHS_TO_AVOID as $pathToAvoid)
   {
-    if (mb_strpos($realPath, $pathToAvoid) !== false)
+    if (str_contains($realPath, $pathToAvoid))
       continue 2;
   }
 

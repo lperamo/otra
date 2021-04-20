@@ -14,7 +14,7 @@ abstract class Session
 {
   private static string $identifier;
 
-  public static function init() : void { self::$identifier = \sha1((string)\time()); }
+  public static function init() : void { self::$identifier = sha1((string)time()); }
 
   /** Puts a value associated with a key into the session
    *

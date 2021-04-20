@@ -18,25 +18,9 @@ if (!file_exists($bundlePath))
   if (!$consoleForce)
     echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
 
+  require CONSOLE_PATH . 'architecture/doWeCreateIt.php';
   /** @var bool $interactive */
-  if (!$interactive)
-  {
-    if (!$consoleForce)
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
-  } else {
-    $answer = promptUser('Do we create it ?(y or n)');
-
-    while ($answer !== 'y' && $answer !== 'n')
-    {
-      $answer = promptUser('Bad answer. Do we create it ?(y or n)');
-
-      // We clean the screen
-      echo ERASE_SEQUENCE;
-    }
-
-    if ($answer === 'n')
-      throw new \otra\OtraException('', 0, '', NULL, [], true);
-  }
+  doWeCreateIt($interactive, $consoleForce);
 
   require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
   /** @var int $bundleMask */

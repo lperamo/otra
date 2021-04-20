@@ -6,6 +6,8 @@ declare(strict_types=1);
  * @package otra\console\architecture
  */
 
+use otra\OtraException;
+
 if (!defined('SPACE_INDENT_2'))
   define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
 
@@ -26,7 +28,7 @@ if (!defined('BUNDLES_PATH'))
  * @param bool   $interactive
  * @param bool   $consoleForce
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
                       string $controllerPath, string $actionName, bool $interactive, bool $consoleForce) : void
@@ -43,13 +45,13 @@ function createAction(string $bundleName, string $moduleName, string $controller
     if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
 
     if ($actionName === 'n')
-      throw new \otra\OtraException('', 0, '', NULL, [], true);
+      throw new OtraException('', 0, '', NULL, [], true);
 
     $upperActionName = ucfirst($actionName);
     $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -205,7 +207,7 @@ class ' . $upperActionName . 'Action extends Controller
  * @param string $actionName
  * @param bool   $consoleForce
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
                         string $controllerPath, string $actionName, bool $consoleForce = false) : void

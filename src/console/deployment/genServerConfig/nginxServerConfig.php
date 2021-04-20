@@ -11,9 +11,9 @@ use JetBrains\PhpStorm\Pure;
 
 /** @var string $fileName */
 
-define('OTRA_LABEL_RETURN_403', 'return 403;');
-define('OTRA_LABEL_TYPES', 'types');
-define('OTRA_LABEL_ROOT_PATH', 'root $rootPath;');
+const OTRA_LABEL_RETURN_403 = 'return 403;';
+const OTRA_LABEL_TYPES = 'types';
+const OTRA_LABEL_ROOT_PATH = 'root $rootPath;';
 
 /**
  * @return string
@@ -148,7 +148,7 @@ function checkHttpReferer() : string
  *
  * @return string
  */
-function handleGzippedAsset(string $assetType = 'css'): string
+#[Pure] function handleGzippedAsset(string $assetType = 'css'): string
 {
   $mimeType = [
     'css' => 'text/css',

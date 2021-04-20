@@ -120,7 +120,6 @@ class WorkerManager
       }
 
       // Getting information from workers
-      /** @var Worker $worker */
       $worker = self::$workers[$foundKey];
       $stdout = stream_get_contents($this->stdoutStreams[$foundKey]);
       $stderr = stream_get_contents($this->stderrStreams[$foundKey]);

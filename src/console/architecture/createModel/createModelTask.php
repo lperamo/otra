@@ -9,35 +9,35 @@ declare(strict_types=1);
 use otra\OtraException;
 
 // Testing interactive argument
-define('ARG_INTERACTIVE', 4);
+const ARG_INTERACTIVE = 4;
 /** @var bool $interactive */
 require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
 
 // Other task arguments
-define('ARG_BUNDLE_NAME', 2);
-define('ARG_METHOD', 3);
-define('ARG_MODEL_LOCATION', 5);
-define('ARG_MODULE_NAME', 6);
-define('ARG_MODEL_NAME', 7);
-define('ARG_MODEL_PROPERTIES', 8);
-define('ARG_MODEL_PROPERTIES_TYPE', 9);
+const ARG_BUNDLE_NAME = 2;
+const ARG_METHOD = 3;
+const ARG_MODEL_LOCATION = 5;
+const ARG_MODULE_NAME = 6;
+const ARG_MODEL_NAME = 7;
+const ARG_MODEL_PROPERTIES = 8;
+const ARG_MODEL_PROPERTIES_TYPE = 9;
 
 // Creation modes
-define('CREATION_MODE_FROM_NOTHING', 1);
-define('CREATION_MODE_ONE_MODEL', 2);
-define('CREATION_MODE_ALL_MODELS', 3);
+const CREATION_MODE_FROM_NOTHING = 1;
+const CREATION_MODE_ONE_MODEL = 2;
+const CREATION_MODE_ALL_MODELS = 3;
 
 // Model locations
-define('MODEL_LOCATION_BUNDLE', 0);
-define('MODEL_LOCATION_MODULE', 1);
+const MODEL_LOCATION_BUNDLE = 0;
+const MODEL_LOCATION_MODULE = 1;
 
 // Paths
-define('DEFAULT_BDD_SCHEMA_NAME', 'schema.yml');
-define('MODEL_DIRECTORY', 'models/');
-define('CREATE_MODEL_FOLDER', CONSOLE_PATH . 'architecture/createModel/');
+const DEFAULT_BDD_SCHEMA_NAME = 'schema.yml';
+const MODEL_DIRECTORY = 'models/';
+const CREATE_MODEL_FOLDER = CONSOLE_PATH . 'architecture/createModel/';
 
 // String in file name
-define('OTRA_NTERACTIVE', 'nteractive.php');
+const OTRA_NTERACTIVE = 'nteractive.php';
 
 // Loading common functions
 require CONSOLE_PATH . 'tools.php';
@@ -57,7 +57,7 @@ require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive ? 'i' : 'notI')
 echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
 
 // Code creation...
-define('FUNCTION_START', SPACE_INDENT . 'public function ');
+const FUNCTION_START = SPACE_INDENT . 'public function ';
 
 if (CREATION_MODE_FROM_NOTHING === $creationMode)
   require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . (!$interactive ? 'notI' : 'i') . OTRA_NTERACTIVE;

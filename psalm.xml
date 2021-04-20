@@ -21,15 +21,15 @@
 
   <!-- Workaround because Psalm does not find those classes! -->
   <stubs>
-    <file name="cache/php/ClassMap.php" preloadClasses="true"/>
-    <file name="cache/php/RouteManagement.php" preloadClasses="true"/>
+    <file name="cache/php/init/ClassMap.php" preloadClasses="true"/>
+    <file name="cache/php/init/RouteManagement.php" preloadClasses="true"/>
   </stubs>
  
   <projectFiles>
     <directory name="config" />
     <directory name="src" />
 <!--    <file name="config/constants.php"/>-->
-    <file name="cache/php/RouteManagement.php"/>
+    <file name="cache/php/init/RouteManagement.php"/>
     <directory name="web"/>
     <!-- Those three files can reproduce the problem with Psalm. -->
     <!--        <file name="src/OtraException.php"/>-->

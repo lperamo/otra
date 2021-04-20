@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 namespace otra\console;
 
+use otra\OtraException;
 use config\{Routes, AllConfig};
 
 // If we come from the deploy task, those two constants are already defined
@@ -18,11 +19,7 @@ if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
 
 define('GEN_BOOTSTRAP_ARG_LINT', 4);
 define('GEN_BOOTSTRAP_ARG_ROUTE', 5);
-define('GEN_BOOTSTRAP_LINT',
-  isset($argv[GEN_BOOTSTRAP_ARG_LINT])
-    ? $argv[GEN_BOOTSTRAP_ARG_LINT] === '1'
-    : false
-);
+define('GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
 
 define('OTRA_KEY_DRIVER', 'driver');
 
@@ -50,7 +47,7 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
 {
   echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
   ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 require BASE_PATH . 'config/Routes.php';
@@ -72,7 +69,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     // We try to find a route which the name is similar
     // (require_once 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
     require_once CONSOLE_PATH . 'tools.php';
-    list($newRoute) = guessWords($route, array_keys(Routes::$allRoutes));
+    [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
     $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
@@ -82,7 +79,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     if ('n' === $choice)
     {
       echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     $route = $newRoute;

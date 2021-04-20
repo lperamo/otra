@@ -51,19 +51,16 @@ function createController(string $controllersFolder, string $controllerName, boo
  */
 function controllerHandling(bool $interactive, string $controllersFolder, string &$controllerName) : void
 {
+  createControllersFolder($controllersFolder);
+
   if ($interactive)
   {
-    createControllersFolder($controllersFolder);
-
     while($controllerName !== 'n')
     {
       createController($controllersFolder, $controllerName, $interactive);
       $controllerName = promptUser('What is the name of the next controller ? (type n to stop)');
     }
   } else
-  {
-    createControllersFolder($controllersFolder);
     createController($controllersFolder, $controllerName, $interactive);
-  }
 }
 

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace otra\console;
 
 use config\AllConfig;
+use otra\OtraException;
 use function otra\tools\files\returnLegiblePath;
 
 require BASE_PATH . 'config/Routes.php';
@@ -53,7 +54,7 @@ $maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argv);
 if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
 {
   echo CLI_ERROR, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 define('FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
@@ -81,7 +82,7 @@ unset($maskExists);
  * @param string $extension              File extension
  * @param bool   $verbose
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  * @return string
  */
 function generateStylesheetsFiles(
@@ -130,7 +131,7 @@ function generateStylesheetsFiles(
 /**
  * @param string $fullName The absolute path to the file
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  * @return array{string, string,string,string}
  *  $Basename               : the filename without extension,
  *  $resourcesMainFolder    : full path until 'src/resources', 'module/resources' folder or a 'web/' folder,
@@ -161,7 +162,7 @@ function getPathInformations(string $fullName) : array
       echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
         'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
       debug_print_backtrace();
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
 
     }
 
@@ -195,7 +196,7 @@ function getPathInformations(string $fullName) : array
   foreach ($paths as $filePath)
   {
     // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $filePath) !== false && $checkScope)
+    if (str_contains($realPath, $filePath) && $checkScope)
       $continue = false;
   }
 

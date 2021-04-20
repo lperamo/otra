@@ -39,7 +39,7 @@ if (!function_exists('cliCommand'))
     if (($result === false || $returnCode !== 0))
     {
       $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_WARNING . $cmd .
-          END_COLOR) . PHP_EOL . 'Shell error code ' . (string)$returnCode . '. ' . $output;
+          END_COLOR) . PHP_EOL . 'Shell error code ' . $returnCode . '. ' . $output;
 
       if ($launchExceptionOnError)
         throw new otra\OtraException($errorMessage);
