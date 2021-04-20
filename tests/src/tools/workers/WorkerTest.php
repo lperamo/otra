@@ -97,7 +97,7 @@ class WorkerTest extends TestCase
     // testing
     self::assertIsString($string);
     self::assertEquals(
-      CLI_RED . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
+      CLI_ERROR . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
       'Exit code : ' . TEST_STATUS,

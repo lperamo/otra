@@ -136,7 +136,7 @@ class DumpTest extends TestCase
   {
     // testing
     $this->expectOutputString(
-      CLI_BLUE . 'OTRA DUMP - ' . __FILE__ . ':' . (__LINE__ + 5) . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_TABLE . 'OTRA DUMP - ' . __FILE__ . ':' . (__LINE__ + 5) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 4) . PHP_EOL
     );
 
@@ -151,7 +151,7 @@ class DumpTest extends TestCase
   {
     // We test our function
     $this->expectOutputString(
-      CLI_BLUE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_TABLE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 7) . PHP_EOL .
       '0 => array (6) ' . PHP_EOL . END_COLOR .
       '0 => string (11) \'\'' . ADD_BOLD . '(cut)' . REMOVE_BOLD_INTENSITY . PHP_EOL .
@@ -169,7 +169,7 @@ class DumpTest extends TestCase
   {
     // We test our function
     $this->expectOutputString(
-      CLI_BLUE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_TABLE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 7) . PHP_EOL .
       '0 => array (6) ' . PHP_EOL . END_COLOR .
       '0 => string (11) \'00000000000\'' . PHP_EOL .
@@ -184,7 +184,7 @@ class DumpTest extends TestCase
   {
     // We test our function
     $this->expectOutputString(
-      CLI_BLUE . self::DUMP_STRING . (__LINE__ + 13) . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_TABLE . self::DUMP_STRING . (__LINE__ + 13) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 12) . PHP_EOL .
       '0 => array (6) ' . PHP_EOL .
       END_COLOR . '0 => string (11) \'00000000000\'' . PHP_EOL .
@@ -204,14 +204,14 @@ class DumpTest extends TestCase
   {
     // We test our function
     $this->expectOutputString(
-      CLI_BLUE . self::DUMP_STRING . (__LINE__ + 16) . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_TABLE . self::DUMP_STRING . (__LINE__ + 16) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 15) . PHP_EOL .
       '0 => array (6) ' . PHP_EOL .
       END_COLOR . '0 => string (11) \'00000000000\'' . PHP_EOL .
       END_COLOR . '1 => array (1) ' . PHP_EOL .
-      ADD_BOLD . CLI_LIGHT_BLUE . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .
-      ADD_BOLD . CLI_LIGHT_BLUE . '│ ' . CLI_BOLD_LIGHT_RED . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .
-      ADD_BOLD . CLI_LIGHT_BLUE . '│ ' . CLI_BOLD_LIGHT_RED . '│ ' . CLI_LIGHT_GREEN . '│ ' .  END_COLOR .
+      ADD_BOLD . CLI_INFO . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .
+      ADD_BOLD . CLI_INFO . '│ ' . ADD_BOLD . CLI_ERROR . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .
+      ADD_BOLD . CLI_INFO . '│ ' . ADD_BOLD . CLI_ERROR . '│ ' . CLI_SUCCESS . '│ ' .  END_COLOR .
       '0 => string (0) \'\'' . PHP_EOL .
       END_COLOR . '2 => 0' . PHP_EOL .
       END_COLOR . '3 => 0' . PHP_EOL .

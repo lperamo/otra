@@ -25,7 +25,7 @@ define('CLEAR_CACHE_MASK_METADATA', 128);
 define('CLEAR_CACHE_MASK_SECURITY', 256);
 
 // formatting
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL);
+define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL);
 
 // paths
 define('PHP_CACHE_PATH', CACHE_PATH . 'php/');
@@ -85,18 +85,18 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
 
     if ($newRoute === null)
     {
-      echo CLI_RED, 'The route ', CLI_YELLOW, $route, CLI_RED, ' does not exist.', END_COLOR;
+      echo CLI_ERROR, 'The route ', CLI_WARNING, $route, CLI_ERROR, ' does not exist.', END_COLOR;
 
       return null;
     }
 
     // Otherwise, we suggest the closest name that we have found.
-    $choice = promptUser('There is no route named ' . CLI_WHITE . $route . CLI_YELLOW. ' ! Do you mean ' .
-      CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
+    $choice = promptUser('There is no route named ' . CLI_BASE . $route . CLI_WARNING. ' ! Do you mean ' .
+      CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
 
     if ('n' === $choice)
     {
-      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
+      echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
       return null;
     }
 
@@ -119,7 +119,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
 
   if (!unlink($file))
   {
-    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $fileShownInTheError, CLI_RED,
+    echo CLI_ERROR, 'There has been an error during removal of the file ', CLI_INFO, $fileShownInTheError, CLI_ERROR,
       '. Task aborted.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
@@ -135,7 +135,7 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
 {
   if (!file_exists($folder))
   {
-    echo CLI_YELLOW, 'The folder ', CLI_CYAN, $folderShownInTheError, CLI_YELLOW, ' does not exist. Task aborted.',
+    echo CLI_WARNING, 'The folder ', CLI_INFO, $folderShownInTheError, CLI_WARNING, ' does not exist. Task aborted.',
       END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
@@ -255,12 +255,14 @@ if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
     glob(PHP_CACHE_PATH . '/security/prod/*.php')
   );
 
-  array_walk(
-    $arrayToUnlink,
-    'unlink'
-  );
-  unset($arrayToUnlink);
+  $arraysToUnlink = array_values($arrayToUnlink);
 
+  foreach($arraysToUnlink as $arrayToUnlink)
+  {
+    unlink($arrayToUnlink);
+  }
+
+  unset($arrayToUnlink);
   echo 'Security files cleared', OTRA_SUCCESS;
 }
 

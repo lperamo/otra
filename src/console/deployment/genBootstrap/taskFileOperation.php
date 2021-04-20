@@ -68,7 +68,7 @@ function hasSyntaxErrors(string $file) : bool
 
   if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
   {
-    echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
+    echo PHP_EOL, CLI_ERROR, $output, PHP_EOL, PHP_EOL;
     showContextByError($file, $output, 10);
 
     return true;
@@ -116,7 +116,7 @@ function contentToFile(string $content, string $outputFile) : void
   if (VERBOSE > 0)
     echo PHP_EOL;
 
-  echo PHP_EOL, CLI_CYAN, 'FINAL CHECKINGS => ';
+  echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
@@ -125,28 +125,28 @@ function contentToFile(string $content, string $outputFile) : void
   // Test each part of the process in order to precisely detect where there is an error.
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
-    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, BASE_PATH_LENGTH) . '!]',
+    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, BASE_PATH_LENGTH) . '!]',
       END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
   $smallOutputFile = substr($outputFile, BASE_PATH_LENGTH);
 
-  echo CLI_LIGHT_GREEN, '[CLASSIC SYNTAX]';
+  echo CLI_SUCCESS, '[CLASSIC SYNTAX]';
 
   file_put_contents($outputFile, $content);
 
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($outputFile))
   {
-    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
+    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo CLI_LIGHT_GREEN, '[NAMESPACES]', END_COLOR, PHP_EOL;
+  echo CLI_SUCCESS, '[NAMESPACES]', END_COLOR, PHP_EOL;
 
   if (!unlink($tempFile))
   {
-    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $tempFile, CLI_RED,
+    echo CLI_ERROR, 'There has been an error during removal of the file ', CLI_INFO, $tempFile, CLI_ERROR,
     '. Task aborted.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
@@ -178,7 +178,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
     else
     {
       $cacheNamespace = 'cache\\php';
-//      echo CLI_LIGHT_GREEN, substr($class, 9), END_COLOR, PHP_EOL;
+
       // Handles cache/php namespaces and otra namespaces
       if (substr($class,0, 9) !== 'cache\\php')
       {
@@ -194,7 +194,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
          *   class/test2
          *  } */
         if (VERBOSE > 0)
-          echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
+          echo CLI_WARNING, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
         return ;
       } elseif ($class === $cacheNamespace . '\\BlocksSystem')
         // The class cache\php\BlocksSystem is already loaded via the MasterController class
@@ -351,9 +351,9 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
         && 'require $renderController->viewPath . \'renderedWithoutController.phtml\';' !== $trimmedMatch
       )
       {
-        echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
-        '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
-        $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
+        echo CLI_ERROR, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_WARNING,
+        '$', $pathVariable[0], CLI_ERROR, ' in ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' in the file ', CLI_WARNING,
+        $file, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       }
 
@@ -380,7 +380,7 @@ function showFile(int $level, string $file, string $otherText = ' first file') :
         substr($file, BASE_PATH_LENGTH),
       ANNOTATION_DEBUG_PAD,
       '.'
-    ), CLI_YELLOW, $otherText, END_COLOR, PHP_EOL;
+    ), CLI_WARNING, $otherText, END_COLOR, PHP_EOL;
 }
 
 /**
@@ -562,7 +562,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
   if (!isset(CLASSMAP[$newClass]))
   {
     if (VERBOSE > 0)
-      echo CLI_YELLOW, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_YELLOW,
+      echo CLI_WARNING, 'Notice : Please check if you use a class ', CLI_INFO, $class, CLI_WARNING,
         ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.',
         END_COLOR, PHP_EOL;
 
@@ -654,14 +654,14 @@ function getFileInfoFromRequiresAndExtends(
           continue;
 
         if (VERBOSE > 0 && !str_contains($tempFile, BASE_PATH))
-          echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
+          echo PHP_EOL, CLI_WARNING, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
           '\' in ', $file, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
            outside of the project folder.', END_COLOR, PHP_EOL;
 
         if (!file_exists($tempFile))
         {
-          echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' => ', CLI_YELLOW,
-            $tempFile, CLI_RED, ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
+          echo PHP_EOL, CLI_ERROR, 'There is a problem with ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' => ', CLI_WARNING,
+            $tempFile, CLI_ERROR, ' in ', CLI_WARNING, $file, CLI_ERROR, ' !', END_COLOR, PHP_EOL, PHP_EOL;
           throw new OtraException('', 1, '', NULL, [], true);
         }
 
@@ -728,10 +728,10 @@ function getFileInfoFromRequiresAndExtends(
             // no ? so where is that file ?
             elseif (!str_contains($trimmedMatch, 'html'))
             {
-              echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
-                CLI_YELLOW,
+              echo CLI_ERROR, '/!\\ We cannot find the file ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' seen in ' .
+                CLI_WARNING,
               $file,
-              CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
+              CLI_ERROR, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
               throw new OtraException('', 1, '', NULL, [], true);
             }
           }
@@ -842,7 +842,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
             if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
             {
               // It can be a SwiftMailer class for example
-              echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL;
+              echo CLI_WARNING, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -851,7 +851,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
             if ($file !== CORE_PATH . 'Router.php'
               && ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php'))
             {
-              echo CLI_YELLOW, 'This file will be already loaded by default for each route : ' .
+              echo CLI_WARNING, 'This file will be already loaded by default for each route : ' .
                 substr($tempFile, BASE_PATH_LENGTH), END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
@@ -1091,7 +1091,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   if (VERBOSE > 0)
     echo PHP_EOL;
 
-  echo str_pad('Files to include ', LOADED_DEBUG_PAD, '.'), CLI_GREEN, ' [LOADED]', END_COLOR;
+  echo str_pad('Files to include ', LOADED_DEBUG_PAD, '.'), CLI_SUCCESS, ' [LOADED]', END_COLOR;
 
   /** We remove all the declare strict types declarations */
   $finalContent = str_replace(

@@ -31,7 +31,7 @@ if (true === $modelExists || false === $tableExists)
   $errorLabel = '';
   preparingErrorMessage($modelExists, $tableExists, $bundleName, $errorLabel);
 
-  echo CLI_RED, $errorLabel, END_COLOR, PHP_EOL;
+  echo CLI_ERROR, $errorLabel, END_COLOR, PHP_EOL;
   throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 

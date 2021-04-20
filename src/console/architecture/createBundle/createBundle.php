@@ -22,7 +22,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
 {
   $bundleName = ucfirst($bundleName);
   define('BUNDLE_ROOT_PATH', BASE_PATH . OTRA_BUNDLES_MAIN_FOLDER_NAME);
-  $errorMessage = CLI_YELLOW . 'The bundle ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_YELLOW . ' already exists.';
+  $errorMessage = CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_WARNING . ' already exists.';
 
   if (!$interactive && file_exists(BUNDLE_ROOT_PATH . $bundleName))
   {
@@ -53,7 +53,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
   {
     if ($bundleTask)
     {
-      echo CLI_YELLOW,
+      echo CLI_WARNING,
         (null === $bundleMask)
           ? 'You don\'t have specified which directories you want to create.'
           : 'The mask is incorrect.',
@@ -65,8 +65,8 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
 
   define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
   mkdir(BUNDLE_BASE_PATH, 0755, true);
-  echo ERASE_SEQUENCE, CLI_GREEN, 'Bundle ', CLI_LIGHT_CYAN, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_GREEN,
-    ' created.', END_COLOR, PHP_EOL;
+  echo ERASE_SEQUENCE, CLI_BASE, 'Bundle ', CLI_INFO_HIGHLIGHT, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_BASE,
+    ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
   define('BUNDLE_FOLDERS_MASK', $bundleMask);
 
@@ -76,7 +76,8 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     if (BUNDLE_FOLDERS_MASK & pow(2, $numericKey))
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);
-      echo CLI_GREEN, 'Folder ', CLI_LIGHT_CYAN, $bundleName, '/', $folder, CLI_GREEN, ' created.', END_COLOR, PHP_EOL;
+      echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, $bundleName, '/', $folder, CLI_BASE, ' created',  CLI_SUCCESS, ' ✔',
+        END_COLOR, PHP_EOL;
     }
   }
 }

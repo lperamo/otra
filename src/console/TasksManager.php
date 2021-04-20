@@ -29,14 +29,12 @@ abstract class TasksManager
   public static function showCommands(string $message) : void
   {
     define('HELP_BETWEEN_TASK_AND_COLON', 28);
-    echo PHP_EOL, CLI_YELLOW, $message, CLI_WHITE, PHP_EOL, PHP_EOL;
-    echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_WHITE,
+    echo PHP_EOL, CLI_WARNING, $message, CLI_BASE, PHP_EOL, PHP_EOL;
+    echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_BASE,
       str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
-    CLI_LIGHT_GRAY;
-    echo ': ', CLI_CYAN, 'Shows the available commands.', PHP_EOL;
-
+    CLI_GRAY;
+    echo ': ', CLI_INFO, 'Shows the available commands.', PHP_EOL;
     $methods = require CACHE_PHP_INIT_PATH . 'tasksHelp.php';
-
     $category = '';
 
     /**
@@ -50,16 +48,16 @@ abstract class TasksManager
         if ($category !== $paramsDesc[self::TASK_CATEGORY])
         {
           $category = $paramsDesc[self::TASK_CATEGORY];
-          echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
+          echo CLI_INFO_HIGHLIGHT, PHP_EOL, '*** ', $category, ' ***', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
         }
       } else
       {
         $category = 'Other';
-        echo CLI_BOLD_LIGHT_CYAN, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
+        echo CLI_INFO_HIGHLIGHT, PHP_EOL, '*** ', $category, ' ***', PHP_EOL, PHP_EOL;
       }
 
-      echo CLI_LIGHT_GRAY, '  - ', CLI_WHITE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON), CLI_LIGHT_GRAY, ': ',
-        CLI_CYAN, $paramsDesc[self::TASK_DESCRIPTION], PHP_EOL;
+      echo CLI_GRAY, '  - ', CLI_BASE, str_pad($method, HELP_BETWEEN_TASK_AND_COLON), CLI_GRAY, ': ',
+        CLI_INFO, $paramsDesc[self::TASK_DESCRIPTION], PHP_EOL;
     }
 
     echo END_COLOR;
@@ -76,7 +74,7 @@ abstract class TasksManager
   {
     if (!file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
     {
-      echo CLI_YELLOW,
+      echo CLI_WARNING,
         'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
         END_COLOR, PHP_EOL;
       require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/genClassMapTask.php';

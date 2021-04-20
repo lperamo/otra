@@ -34,8 +34,8 @@ function createAction(string $bundleName, string $moduleName, string $controller
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
 
-  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN .
-    substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.' . END_COLOR;
+  $actionAlreadyExistsSentence = CLI_ERROR . 'The action ' . CLI_INFO_HIGHLIGHT .
+    substr($actionPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.' . END_COLOR;
 
   while (file_exists($actionPath))
   {
@@ -85,8 +85,8 @@ class ' . $upperActionName . 'Action extends Controller
   }
 }' . PHP_EOL);
 
-  echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
-    strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
+  echo CLI_BASE, 'Action ', CLI_INFO_HIGHLIGHT, substr($actionPath,
+    strlen(BASE_PATH)), CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
   $viewFolder = BUNDLES_PATH . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
 
@@ -94,14 +94,14 @@ class ' . $upperActionName . 'Action extends Controller
   if (!file_exists($viewFolder))
     mkdir($viewFolder, 0777, true);
   else
-    echo CLI_YELLOW, 'For your information, the folder ', CLI_LIGHT_CYAN, $viewFolder, CLI_YELLOW, ' already existed.',
+    echo CLI_WARNING, 'For your information, the folder ', CLI_INFO_HIGHLIGHT, $viewFolder, CLI_WARNING, ' already existed.',
       END_COLOR, PHP_EOL;
 
   $template = $viewFolder . '/' . $actionName . '.phtml';
 
   // If the template file already exists
   if (file_exists($template))
-    echo CLI_YELLOW, 'For your information, the template file ', CLI_LIGHT_CYAN, $template, CLI_YELLOW,
+    echo CLI_WARNING, 'For your information, the template file ', CLI_INFO_HIGHLIGHT, $template, CLI_WARNING,
       ' already existed.', END_COLOR, PHP_EOL;
 
   // We just create an empty template file
@@ -183,8 +183,8 @@ class ' . $upperActionName . 'Action extends Controller
     );
   }
 
-  echo 'Route configuration file ', CLI_LIGHT_CYAN, $routeConfigurationFile, CLI_GREEN, ' created.',
-    PHP_EOL;
+  echo 'Route configuration file ', CLI_INFO_HIGHLIGHT, $routeConfigurationFile, CLI_BASE, ' created', CLI_SUCCESS,
+    ' ✔', PHP_EOL;
 
   // We update the routes configuration as we just add one route.
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';

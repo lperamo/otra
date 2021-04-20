@@ -63,11 +63,11 @@ if (!function_exists('getSourceFromFile'))
     for ($index = $sourceLine - $range; $index < $maxLine; ++$index)
     {
       $fileHandler->seek($index - 1);
-      $sourceContent .= $padding . ADD_BOLD . CLI_BOLD_LIGHT_BLUE;
+      $sourceContent .= $padding . ADD_BOLD . CLI_DUMP_LINE_HIGHLIGHT;
 
       $sourceContent .= ($index === $sourceLine)
-        ? CLI_BOLD_BLUE . (string)$index . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
-        : (string)$index . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
+        ? ADD_BOLD . CLI_LINE_DUMP . $index . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
+        : $index . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
     }
 
     return $sourceContent;

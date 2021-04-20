@@ -30,9 +30,9 @@ class RoutesTest extends TestCase
    */
   private static function taskParameter(string $parameter, string $description, string $requiredOrOptional) : string
   {
-    return CLI_LIGHT_CYAN . '   + ' .
-      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_LIGHT_GRAY . ': ' .
-      CLI_LIGHT_CYAN . '(' . $requiredOrOptional . ') ' . CLI_CYAN . $description . PHP_EOL;
+    return CLI_INFO_HIGHLIGHT . '   + ' .
+      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_GRAY . ': ' .
+      CLI_INFO_HIGHLIGHT . '(' . $requiredOrOptional . ') ' . CLI_INFO . $description . PHP_EOL;
   }
 
   /**
@@ -64,7 +64,7 @@ class RoutesTest extends TestCase
       str_pad('Path', WIDTH_MIDDLE, ' ') . ': ' . $path .
       PHP_EOL .
       str_pad(' ', WIDTH_LEFT, ' ') .
-      str_pad('Resources', WIDTH_MIDDLE, ' ') . ': ' . CLI_LIGHT_GREEN . $status . $color .
+      str_pad('Resources', WIDTH_MIDDLE, ' ') . ': ' . CLI_SUCCESS . $status . $color .
       $resources . PHP_EOL .
       ($endingLine ? END_COLOR . str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT) . PHP_EOL : '');
   }
@@ -118,7 +118,7 @@ class RoutesTest extends TestCase
     // testing
     $this->expectOutputString(
       self::showRouteInformations(
-        CLI_LIGHT_CYAN,
+        CLI_INFO_HIGHLIGHT,
         'otra_refreshSQLLogs',
         '/dbg/refreshSQLLogs',
         '/otra/profilerController/refreshSQLLogsAction',
@@ -127,7 +127,7 @@ class RoutesTest extends TestCase
         true
       ) .
       self::showRouteInformations(
-        CLI_CYAN,
+        CLI_INFO,
         'otra_clearSQLLogs',
         '/dbg/clearSQLLogs',
         '/otra/profilerController/clearSQLLogsAction',
@@ -136,7 +136,7 @@ class RoutesTest extends TestCase
         true
       ) .
       self::showRouteInformations(
-        CLI_LIGHT_CYAN,
+        CLI_INFO_HIGHLIGHT,
         'otra_profiler',
         '/dbg',
         '/otra/profilerController/indexAction',
@@ -145,7 +145,7 @@ class RoutesTest extends TestCase
         true
       ) .
       self::showRouteInformations(
-        CLI_CYAN,
+        CLI_INFO,
         'otra_404',
         '/404',
         '/otra/errorsController/error404Action',
@@ -154,11 +154,11 @@ class RoutesTest extends TestCase
         true
       ) .
       self::showRouteInformations(
-        CLI_LIGHT_CYAN,
+        CLI_INFO_HIGHLIGHT,
         'HelloWorld',
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',
-        '[SCREEN CSS]' . CLI_LIGHT_CYAN . CLI_LIGHT_GREEN . '[PRINT CSS]' . CLI_LIGHT_CYAN . CLI_LIGHT_GREEN .
+        '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS .
           '[TEMPLATE]',
         '[ee81412660816b84c10bda5ec4679b72b0d8f132]',
         false
@@ -179,9 +179,9 @@ class RoutesTest extends TestCase
   public function testRoutesHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::TASK_ROUTES, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)' .
       PHP_EOL .
       self::taskParameter(

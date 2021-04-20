@@ -17,7 +17,7 @@ BUILD_DEV_ARG_SCOPE = 5;
 define('BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
 define('BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
 
-echo CLI_YELLOW, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
+echo CLI_WARNING, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
 
 $filesProcessed = false;
 
@@ -112,6 +112,6 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 if ($filesProcessed)
 {
   if (BUILD_DEV_VERBOSE === 0)
-    echo CLI_GREEN, 'Files have been generated.', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Files have been generated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 } else
-  echo CLI_YELLOW, 'No files to process.', END_COLOR, PHP_EOL;
+  echo CLI_WARNING, 'No files to process.', END_COLOR, PHP_EOL;

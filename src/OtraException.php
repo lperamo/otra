@@ -36,6 +36,7 @@ class OtraException extends Exception
 
   // String version of error code
   public string $scode;
+  public array $backtraces;
 
   /**
    * OtraException constructor.
@@ -103,8 +104,8 @@ class OtraException extends Exception
     {
       if (PHP_SAPI === 'cli')
       {
-        echo CLI_RED . 'Error in ' . CLI_LIGHT_CYAN . $this->file . CLI_RED . ':' . CLI_LIGHT_CYAN . $this->line .
-          CLI_RED . ' : ' . $this->message . END_COLOR . PHP_EOL;
+        echo CLI_ERROR . 'Error in ' . CLI_INFO_HIGHLIGHT . $this->file . CLI_ERROR . ':' . CLI_INFO_HIGHLIGHT . $this->line .
+          CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       } else
         return '<span style="color:#E00">Error in </span><span style="color:#0AA">' . $this->file .

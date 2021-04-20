@@ -38,7 +38,7 @@ define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
 // **** Checking the deployment config parameters ****
 if (!isset(AllConfig::$deployment))
 {
-  echo CLI_RED . 'You have not defined deployment configuration.', END_COLOR, PHP_EOL;
+  echo CLI_ERROR . 'You have not defined deployment configuration.', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -48,7 +48,7 @@ foreach($deploymentParameters as $deploymentParameter)
 {
   if (!isset(AllConfig::$deployment[$deploymentParameter]))
   {
-    echo CLI_RED . 'You have not defined the ' . $deploymentParameter . ' in deployment configuration.', END_COLOR, PHP_EOL;
+    echo CLI_ERROR . 'You have not defined the ' . $deploymentParameter . ' in deployment configuration.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -59,11 +59,11 @@ $mainBundlesFolder = BASE_PATH . 'bundles';
 
 if (!file_exists($mainBundlesFolder))
 {
-  echo CLI_RED . 'You do not have any bundles yet to deploy!', END_COLOR, PHP_EOL;
+  echo CLI_ERROR . 'You do not have any bundles yet to deploy!', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
+define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR);
 $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
 $verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
 define(
@@ -102,7 +102,7 @@ if ($buildDevMode > 0)
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   [, $output] = cliCommand(
     'php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
-    CLI_RED . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
+    CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
   );
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
@@ -125,7 +125,7 @@ if ($genAssetsMode > 0)
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   [, $output] = cliCommand(
     'php bin/otra.php genAssets ' . $genAssetsMode . ' ' . DEPLOY_GCC_LEVEL_COMPILATION,
-    CLI_RED . 'There was a problem during the assets minification and compression.'
+    CLI_ERROR . 'There was a problem during the assets minification and compression.'
   );
 
   echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
@@ -139,8 +139,8 @@ if ($genAssetsMode > 0)
   'privateSshKey' => $privateSshKey
 ] = AllConfig::$deployment;
 
-echo PHP_EOL, 'Deploys the files on the server ', CLI_LIGHT_BLUE, $server, ':', $destinationPort, END_COLOR, ' in ',
-CLI_LIGHT_BLUE, $folder . ' ...', END_COLOR, PHP_EOL;
+echo PHP_EOL, 'Deploys the files on the server ', CLI_INFO, $server, ':', $destinationPort, END_COLOR, ' in ',
+CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
 
 /* --delete allows to delete things that are no present anymore on the source to keep a really synchronized folder
  * -P It combines the flags –progress and –partial.
@@ -180,7 +180,7 @@ $handleTransfer = function (
     echo $headWorker->waitingMessage, PHP_EOL;
     cliCommand(
       $headWorker->command,
-      CLI_RED . $synchronousErrorMessage . END_COLOR . PHP_EOL
+      CLI_ERROR . $synchronousErrorMessage . END_COLOR . PHP_EOL
     );
 
     echo "\033[1A" . WorkerManager::ERASE_TO_END_OF_LINE, $headWorker->successMessage, PHP_EOL;

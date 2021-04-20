@@ -303,7 +303,7 @@ class WorkerManagerTest extends TestCase
     // Testing
     $this->expectOutputString(
       self::WAITING_MESSAGE_2 . PHP_EOL .
-      CLI_RED . 'The process that launched ' . CLI_LIGHT_CYAN . self::COMMAND_SLEEP_2 . CLI_RED .
+      CLI_ERROR . 'The process that launched ' . CLI_INFO_HIGHLIGHT . self::COMMAND_SLEEP_2 . CLI_ERROR .
       ' was hanging during ' . self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
     );
 

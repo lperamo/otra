@@ -18,8 +18,8 @@ function createControllersFolder(string $controllersFolder) : void
   if (!file_exists($controllersFolder))
   {
     mkdir($controllersFolder, 0755);
-    echo CLI_LIGHT_GREEN, 'Folder ', CLI_LIGHT_CYAN, substr($controllersFolder, 0, -1), CLI_LIGHT_GREEN,
-      ' created.', PHP_EOL;
+    echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, substr($controllersFolder, 0, -1), CLI_BASE,
+      ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 }
 
@@ -38,8 +38,8 @@ function createController(string $controllersFolder, string $controllerName, boo
 
   // If the folder does not exist and we are not in interactive mode, we exit the program.
   createFolder($controllerPath, $controllersFolder, 'controller', $interactive);
-  echo CLI_LIGHT_GREEN, 'Folder ', CLI_LIGHT_CYAN, substr($controllerPath, strlen(BASE_PATH)), CLI_LIGHT_GREEN,
-    ' created.', END_COLOR, PHP_EOL;
+  echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, substr($controllerPath, strlen(BASE_PATH)), CLI_BASE,
+    ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 }
 
 /**

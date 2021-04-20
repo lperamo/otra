@@ -99,18 +99,18 @@ class SqlCreateDatabaseTaskTest extends TestCase
   public function testSqlCreateDatabaseHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::OTRA_TASK_SQL_CREATE_DATABASE, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Database creation, tables creation.(sql_generate_basic)' .
-      PHP_EOL . CLI_LIGHT_CYAN .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_LIGHT_CYAN . '(' . TasksManager::REQUIRED_PARAMETER .
-      ') ' . CLI_CYAN . 'The database name !' .
-      PHP_EOL . CLI_LIGHT_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
+      ') ' . CLI_INFO . 'The database name !' .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('force', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_LIGHT_CYAN . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_CYAN . 'If true, we erase the database !' . PHP_EOL . END_COLOR
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'If true, we erase the database !' . PHP_EOL . END_COLOR
     );
 
     TasksManager::execute(

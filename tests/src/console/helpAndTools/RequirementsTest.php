@@ -24,8 +24,8 @@ class RequirementsTest extends TestCase
    */
   private function showRequirement(string $requirement, string $description) : string
   {
-    return preg_quote(ADD_BOLD) . '(' . preg_quote(CLI_GREEN) . '|' . preg_quote(CLI_RED) . ')\s\s✔|⨯\s\s' .
-      preg_quote(REMOVE_BOLD_INTENSITY . CLI_LIGHT_BLUE) .
+    return preg_quote(ADD_BOLD) . '(' . preg_quote(CLI_SUCCESS) . '|' . preg_quote(CLI_ERROR) . ')\s\s✔|⨯\s\s' .
+      preg_quote(REMOVE_BOLD_INTENSITY . CLI_INFO) .
       str_pad($requirement . ' ', self::REQUIREMENTS_PADDING, '.') . '\s' . $description
       . '\s';
   }
@@ -36,9 +36,9 @@ class RequirementsTest extends TestCase
   public function testRequirements() : void
   {
     self::expectOutputRegex('@' .
-      preg_quote(ADD_BOLD . CLI_BOLD_LIGHT_CYAN) . '  Requirements\s' .
+      preg_quote(ADD_BOLD . CLI_INFO_HIGHLIGHT) . '  Requirements\s' .
       '\s\s-{12}' . preg_quote(REMOVE_BOLD_INTENSITY) . '\s\s' .
-      preg_quote(CLI_LIGHT_BLUE) .
+      preg_quote(CLI_INFO) .
       $this->showRequirement(
         'JAVA',
         'Software platform => https://www.java.com. Only needed for optimizations with Google Closure Compiler.'
@@ -65,11 +65,11 @@ class RequirementsTest extends TestCase
       ) .
       $this->showRequirement(
         'PHP extension \'inotify\'',
-        preg_quote(CLI_LIGHT_CYAN) . '\[Optional\]' . preg_quote(CLI_LIGHT_BLUE) .' Needed for OTRA watcher on unix like systems.'
+        preg_quote(CLI_INFO_HIGHLIGHT) . '\[Optional\]' . preg_quote(CLI_INFO) .' Needed for OTRA watcher on unix like systems.'
       ) .
       $this->showRequirement(
         'PHP extension \'zend-opcache\'',
-        preg_quote(CLI_LIGHT_CYAN) . '[Optional]' . preg_quote(CLI_LIGHT_BLUE) .' Needeed to use the preloading feature available since PHP 7.4'
+        preg_quote(CLI_INFO_HIGHLIGHT) . '[Optional]' . preg_quote(CLI_INFO) .' Needeed to use the preloading feature available since PHP 7.4'
       ) .
       $this->showRequirement(
         'PHP version 7.4.x+',
@@ -92,9 +92,9 @@ class RequirementsTest extends TestCase
   public function testRequirementsHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::TASK_REQUIREMENTS, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Shows the requirements to use OTRA at its maximum capabilities.' .
       PHP_EOL . END_COLOR
     );

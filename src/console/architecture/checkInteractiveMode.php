@@ -14,9 +14,9 @@ if (isset($argv[ARG_INTERACTIVE]))
 
   if ($interactive !== 'true' && $interactive !== 'false')
   {
-    echo CLI_RED, 'The parameter ', CLI_LIGHT_CYAN, 'noQuestion ', CLI_RED, 'is not correct. You typed ',
-      CLI_LIGHT_CYAN, $interactive, CLI_RED, '. Type ', CLI_LIGHT_CYAN, 'true', CLI_RED, ' or ', CLI_LIGHT_CYAN,
-      'false', CLI_RED, ' instead.', END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The parameter ', CLI_INFO_HIGHLIGHT, 'noQuestion ', CLI_ERROR, 'is not correct. You typed ',
+      CLI_INFO_HIGHLIGHT, $interactive, CLI_ERROR, '. Type ', CLI_INFO_HIGHLIGHT, 'true', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT,
+      'false', CLI_ERROR, ' instead.', END_COLOR, PHP_EOL;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 }

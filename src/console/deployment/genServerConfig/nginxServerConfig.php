@@ -304,5 +304,5 @@ $content = handlesHTTPSRedirection() .
 file_put_contents($fileName, $content);
 
 echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'development' : 'production') .
-  ' server configuration generated in ' . CLI_LIGHT_CYAN . $fileName . END_COLOR . '.' . PHP_EOL;
+  ' server configuration generated in ' . CLI_INFO_HIGHLIGHT . $fileName . END_COLOR . '.' . PHP_EOL;
 return 0;

@@ -46,8 +46,8 @@ class CreateBundleTaskTest extends TestCase
     mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
-    $this->expectOutputString(CLI_YELLOW . 'The bundle ' . CLI_LIGHT_CYAN . 'bundles/' .
-      TEST_BUNDLE_UPPER . CLI_YELLOW . ' already exists.' . END_COLOR . PHP_EOL);
+    $this->expectOutputString(CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . 'bundles/' .
+      TEST_BUNDLE_UPPER . CLI_WARNING . ' already exists.' . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
     // launching

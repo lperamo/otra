@@ -78,24 +78,24 @@ function generateJavaScript(
 
     if (!$jsFileExists)
     {
-      echo CLI_YELLOW,
+      echo CLI_WARNING,
         'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
-        CLI_LIGHT_CYAN, OTRA_LABEL_TSCONFIG_JSON, CLI_YELLOW, ' file.', END_COLOR, PHP_EOL, $output;
+        CLI_INFO_HIGHLIGHT, OTRA_LABEL_TSCONFIG_JSON, CLI_WARNING, ' file.', END_COLOR, PHP_EOL, $output;
       throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
     if ($verbose > 0)
     {
-      echo CLI_GREEN, 'TypeScript file ', returnLegiblePath($resourceName, '', false), CLI_GREEN,
+      echo CLI_BASE, 'TypeScript file ', returnLegiblePath($resourceName, '', false), CLI_BASE,
         ' have generated the temporary file';
 
       if (file_exists($temporarySourceMap))
-        echo 's ', $legibleCreatedTemporaryJsFile, CLI_GREEN, ' and ',
+        echo 's ', $legibleCreatedTemporaryJsFile, CLI_BASE, ' and ',
           returnLegiblePath($generatedTemporaryJsFile . '.map', '', false);
       else
         echo ' ', $legibleCreatedTemporaryJsFile;
 
-      echo CLI_GREEN, '.', END_COLOR, PHP_EOL, PHP_EOL;
+      echo CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
     }
 
     // We launch Google Closure Compiler only if a file has been generated with success but...
@@ -113,12 +113,13 @@ function generateJavaScript(
         . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
         . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
         . $generatedJsFile,
-        CLI_RED . 'A problem occurred.' . END_COLOR . $output . PHP_EOL,
+        CLI_ERROR . 'A problem occurred.' . END_COLOR . $output . PHP_EOL,
         false
       );
 
       if ($verbose > 0)
-        echo $output, CLI_GREEN, 'Javascript ', returnLegiblePath($generatedJsFile), ' has been optimized.', PHP_EOL;
+        echo $output, CLI_BASE, 'Javascript ', returnLegiblePath($generatedJsFile), ' has been optimized', CLI_SUCCESS,
+          ' ✔', PHP_EOL;
 
       // Cleaning temporary files ...(js and the mapping)
       unlink($generatedTemporaryJsFile);
@@ -159,7 +160,7 @@ function generateJavaScript(
 
       if (!rename($generatedJsFile, $serviceWorkerPath))
       {
-        echo CLI_RED, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
+        echo CLI_ERROR, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       }
 
@@ -168,15 +169,15 @@ function generateJavaScript(
 
       if (file_exists($generatedJsMapFile) && !rename($generatedJsMapFile, $newJsMapPath))
       {
-        echo CLI_RED, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
+        echo CLI_ERROR, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       }
 
-      echo 'Service worker files moved to ', CLI_LIGHT_CYAN, returnLegiblePath($serviceWorkerPath), END_COLOR,
-        ' and ', CLI_LIGHT_CYAN, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
+      echo 'Service worker files moved to ', CLI_INFO_HIGHLIGHT, returnLegiblePath($serviceWorkerPath), END_COLOR,
+        ' and ', CLI_INFO_HIGHLIGHT, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
     }
   } else
     echo 'There is an error with your ', returnLegiblePath(OTRA_LABEL_TSCONFIG_JSON), ' file. : '
-      , CLI_RED, json_last_error_msg(), PHP_EOL;
+      , CLI_ERROR, json_last_error_msg(), PHP_EOL;
 }
 

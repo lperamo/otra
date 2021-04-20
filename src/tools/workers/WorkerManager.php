@@ -210,7 +210,7 @@ class WorkerManager
       // If the process is too long, kills it.
       if ($elapsedTime > $worker->timeout * 10)
       {
-        echo CLI_RED, 'The process that launched ', CLI_LIGHT_CYAN, $worker->command, CLI_RED, ' was hanging during ',
+        echo CLI_ERROR, 'The process that launched ', CLI_INFO_HIGHLIGHT, $worker->command, CLI_ERROR, ' was hanging during ',
           $worker->timeout, ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR,
           PHP_EOL;
         proc_terminate($this->processes[$foundKey]);

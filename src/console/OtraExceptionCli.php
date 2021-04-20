@@ -32,8 +32,8 @@ class OtraExceptionCli extends \Exception
     $exception->backtraces = $exception->getTrace();
 
     // Is the error code a native error code ?
-    $exception->scode = isset(OtraException::$codes[$exception->code]) ? OtraException::$codes[$exception->code] : 'UNKNOWN';
-    $exception->message = preg_replace('/\<br\s*\/?\>/i', '', $exception->message);
+    $exception->scode = OtraException::$codes[$exception->code] ?? 'UNKNOWN';
+    $exception->message = preg_replace('/<br\s*\/?>/i', '', $exception->message);
 
     self::showMessage($exception);
   }
@@ -46,9 +46,9 @@ class OtraExceptionCli extends \Exception
    *
    * @return string
    */
-  #[Pure] private static function returnShortenFilePath(string $pathType, string $file) : string
+  private static function returnShortenFilePath(string $pathType, string $file) : string
   {
-    return CLI_BLUE . $pathType . '_PATH' . CLI_LIGHT_BLUE . ' + ' .
+    return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR . ' + ' .
       mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
   }
 
@@ -59,7 +59,7 @@ class OtraExceptionCli extends \Exception
    */
   public static function showMessage(OtraException $exception) : void
   {
-    echo CLI_RED, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
+    echo CLI_ERROR, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
     if (isset($exception->scode))
     {
@@ -72,22 +72,22 @@ class OtraExceptionCli extends \Exception
       elseif (str_contains($exceptionFile, BASE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
-      echo 'Error type ', CLI_CYAN, $exception->scode, END_COLOR, ' in ', CLI_CYAN, $exceptionFile, END_COLOR,
-        ' at line ', CLI_CYAN, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
+      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile, END_COLOR,
+        ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
 
     /******************************
      * Write HEADERS of the table *
      ******************************/
     echo PHP_EOL,
-      CLI_LIGHT_BLUE, '┌' . str_repeat('─', self::TYPE_WIDTH)
+      CLI_TABLE, '┌' . str_repeat('─', self::TYPE_WIDTH)
       . '┬' . str_repeat('─', self::FUNCTION_WIDTH)
       . '┬' . str_repeat('─', self::LINE_WIDTH)
       . '┬' . str_repeat('─', self::FILE_WIDTH)
       . '┬' . str_repeat('─', self::ARGUMENTS_WIDTH), END_COLOR, PHP_EOL,
-      self::consoleHeaders(['Type', 'Function', 'Line', 'File', 'Arguments']),
+      self::consoleHeaders(),
       PHP_EOL,
-      CLI_LIGHT_BLUE, '├' . str_repeat('─', self::TYPE_WIDTH) .
+      CLI_TABLE, '├' . str_repeat('─', self::TYPE_WIDTH) .
       '┼' . str_repeat('─', self::FUNCTION_WIDTH) .
       '┼' . str_repeat('─', self::LINE_WIDTH) .
       '┼' . str_repeat('─',self::FILE_WIDTH) .
@@ -122,7 +122,7 @@ class OtraExceptionCli extends \Exception
       } else
         $compositeColoredPath = false;
 
-      echo CLI_LIGHT_BLUE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? (string) $exception->scode : '', self::TYPE_WIDTH - 1),
+      echo CLI_TABLE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? $exception->scode : '', self::TYPE_WIDTH - 1),
       self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
       self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
@@ -130,11 +130,11 @@ class OtraExceptionCli extends \Exception
         $actualTrace,
         'file',
         // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-        $compositeColoredPath ? self::FILE_WIDTH + 37 : self::FILE_WIDTH,
+        $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
         $actualTraceFile
       ),
         /** ARGUMENTS */
-      CLI_LIGHT_BLUE, '|', END_COLOR,
+      CLI_TABLE, '|', END_COLOR,
       ' NOT IMPLEMENTED YET',
 
       PHP_EOL;
@@ -142,7 +142,7 @@ class OtraExceptionCli extends \Exception
       // echo $now['args']; after args has been converted
     }
 
-    echo CLI_LIGHT_BLUE, '└' . str_repeat('─', self::TYPE_WIDTH)
+    echo CLI_TABLE, '└' . str_repeat('─', self::TYPE_WIDTH)
       . '┴' . str_repeat('─', self::FUNCTION_WIDTH)
       . '┴' . str_repeat('─', self::LINE_WIDTH)
       . '┴' . str_repeat('─', self::FILE_WIDTH)
@@ -153,18 +153,16 @@ class OtraExceptionCli extends \Exception
   /**
    * Returns the text that shows the headers for a unicode table (command line style)
    *
-   * @param array $headers
    *
    * @return string
    */
-  #[Pure] private static function consoleHeaders(array $headers) : string
+  private static function consoleHeaders() : string
   {
     $output = '';
 
-    /** @var string $value */
-    foreach($headers as $value)
+    foreach(['Type', 'Function', 'Line', 'File', 'Arguments'] as $value)
     {
-      $output .= CLI_LIGHT_BLUE . '│' . CLI_YELLOW .
+      $output .= CLI_TABLE . '│' . CLI_TABLE_HEADER .
         str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) . '_WIDTH'));
     }
 
@@ -188,7 +186,7 @@ class OtraExceptionCli extends \Exception
     string $alternateContent = ''
   ) : string
   {
-    return CLI_LIGHT_BLUE . '│' . END_COLOR .
+    return CLI_TABLE . '│' . END_COLOR .
       str_pad(isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
         : ' -',

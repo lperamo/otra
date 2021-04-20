@@ -129,7 +129,7 @@ namespace otra\console
 
       if (!file_exists($folder))
       {
-        echo CLI_RED, 'The folder ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, self::$folder, CLI_RED,
+        echo CLI_ERROR, 'The folder ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, self::$folder, CLI_ERROR,
           ' does not exist.', END_COLOR, PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       }
@@ -206,7 +206,7 @@ namespace otra\console
       if ($extensive && file_exists(self::$tablesOrderFile))
         unlink(self::$tablesOrderFile);
 
-      echo CLI_LIGHT_GREEN, ($extensive) ? 'Full cleaning done.' : 'Cleaning done.', END_COLOR, PHP_EOL;
+      echo CLI_BASE, ($extensive) ? 'Full cleaning' : 'Cleaning', ' done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -243,8 +243,8 @@ namespace otra\console
       }
 
       /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
-      echo CLI_LIGHT_GREEN, 'Database ', CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' created.', END_COLOR,
-      PHP_EOL;
+      echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
+        PHP_EOL;
     }
 
     /**
@@ -409,7 +409,7 @@ namespace otra\console
 
       file_put_contents($fixtureFolder . $databaseName . '_' . $table . '.yml', $ymlIdentifiers);
 
-      echo 'Data  ', CLI_LIGHT_GREEN, '[YML IDENTIFIERS] ', END_COLOR;
+      echo 'Data  ', CLI_SUCCESS, '[YML IDENTIFIERS] ', END_COLOR;
 
       /**
        * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
@@ -427,7 +427,7 @@ namespace otra\console
             );
           } catch(ParseException $parseException)
           {
-            echo CLI_RED, $parseException->getMessage(), END_COLOR, PHP_EOL;
+            echo CLI_ERROR, $parseException->getMessage(), END_COLOR, PHP_EOL;
             exit(1);
           }
 
@@ -540,7 +540,7 @@ namespace otra\console
 
       file_put_contents($createdFile, $tableSql);
 
-      echo CLI_LIGHT_GREEN, '[SQL CREATION] ', END_COLOR;
+      echo CLI_SUCCESS, '[SQL CREATION] ', END_COLOR;
     }
 
     /**
@@ -603,7 +603,7 @@ namespace otra\console
         $schema = Yaml::parse(file_get_contents(self::$schemaFile));
       } catch(ParseException $exception)
       {
-        echo CLI_RED, $exception->getMessage(), END_COLOR, PHP_EOL;
+        echo CLI_ERROR, $exception->getMessage(), END_COLOR, PHP_EOL;
         exit(1);
       }
 
@@ -614,7 +614,7 @@ namespace otra\console
       if (2 === $mask)
       {
         array_map('unlink', glob($fixtureFileNameBeginning . '*.sql'));
-        echo CLI_LIGHT_GREEN, 'Fixtures sql files cleaned.', END_COLOR, PHP_EOL;
+        echo CLI_BASE, 'Fixtures sql files cleaned', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
       }
 
       $tablesToCreate = [];
@@ -655,7 +655,7 @@ namespace otra\console
 
       foreach ($tablesOrder as $table)
       {
-        echo PHP_EOL, $color % 2 ? CLI_CYAN : CLI_LIGHT_CYAN;
+        echo PHP_EOL, $color % 2 ? CLI_INFO : CLI_INFO_HIGHLIGHT;
 
         // We truncate the tables
         if (true === $weNeedToTruncate)
@@ -669,7 +669,7 @@ namespace otra\console
             $createdFile = $fixtureFileNameBeginning . $table . '.sql';
 
             if (file_exists($createdFile))
-              echo 'Fixture file creation aborted : the file ', CLI_YELLOW, $databaseName . '_' . $table . '.sql',
+              echo 'Fixture file creation aborted : the file ', CLI_WARNING, $databaseName . '_' . $table . '.sql',
                 END_COLOR, 'already exists.', PHP_EOL;
 
             // Gets the fixture data
@@ -677,7 +677,7 @@ namespace otra\console
 
             if (!isset($fixturesData[$table]))
             {
-              echo CLI_YELLOW, 'No fixtures available for this table \'', $table, '\'.', END_COLOR, PHP_EOL;
+              echo CLI_WARNING, 'No fixtures available for this table \'', $table, '\'.', END_COLOR, PHP_EOL;
 
               break;
             }
@@ -759,7 +759,7 @@ namespace otra\console
     private static function _executeFixture(string $databaseName, string $table) : void
     {
       self::executeFile(self::$pathSqlFixtures . $databaseName . '_' . $table . '.sql', $databaseName);
-      echo CLI_LIGHT_GREEN, '[SQL EXECUTION]', END_COLOR, PHP_EOL;
+      echo CLI_SUCCESS, '[SQL EXECUTION]', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -788,8 +788,8 @@ namespace otra\console
 
       Sql::$instance->commit();
 
-      echo CLI_LIGHT_GREEN, 'Database ', END_COLOR, CLI_LIGHT_CYAN, $databaseName, CLI_LIGHT_GREEN, ' dropped.',
-        END_COLOR, PHP_EOL;
+      echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' dropped', CLI_SUCCESS, ' ✔', END_COLOR,
+        PHP_EOL;
 
       return $sqlInstance;
     }
@@ -815,7 +815,7 @@ namespace otra\console
       // We keep only the end of the path for a cleaner display
       $dbFileLong = substr($dbFile, strlen(BASE_PATH));
 
-      $msgBeginning = 'The \'SQL schema\' file ' . CLI_YELLOW . $dbFileLong . END_COLOR;
+      $msgBeginning = 'The \'SQL schema\' file ' . CLI_WARNING . $dbFileLong . END_COLOR;
 
       if (file_exists($dbFile))
       {
@@ -917,7 +917,7 @@ namespace otra\console
             }
           } elseif ('indexes' === $property)
           {
-            echo CLI_YELLOW, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
+            echo CLI_WARNING, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
             /** @TODO Manage the indexes part */
           } elseif ('default_character_set' === $property)
             $defaultCharacterSet = $attributes;
@@ -1033,14 +1033,14 @@ namespace otra\console
       if ($storeSortedTables)
       {
         file_put_contents(self::$tablesOrderFile, $tablesOrder);
-        echo CLI_LIGHT_GREEN, '\'Tables order\' sql file created : ', CLI_YELLOW,
-          basename(self::$tablesOrderFile), END_COLOR, PHP_EOL;
+        echo CLI_BASE, '\'Tables order\' sql file created : ', CLI_INFO_HIGHLIGHT,
+          basename(self::$tablesOrderFile), CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
       }
 
       // We create the SQL schema file with the generated content.
       file_put_contents($dbFile, $databaseCreationSql . PHP_EOL);
 
-      echo CLI_LIGHT_GREEN, 'SQL schema file created.', END_COLOR, PHP_EOL;
+      echo CLI_BASE, 'SQL schema file created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
       return $dbFile;
     }
@@ -1067,7 +1067,7 @@ namespace otra\console
       $sqlFile = $databaseName . '_' . $tableName . '.sql';
       $pathAndFile = $truncatePath . $sqlFile;
 
-      echo CLI_LIGHT_CYAN, $databaseName, '.', $tableName, END_COLOR, PHP_EOL, 'Table ';
+      echo CLI_INFO_HIGHLIGHT, $databaseName, '.', $tableName, END_COLOR, PHP_EOL, 'Table ';
 
       // If the file that truncates the table doesn't exist yet...creates it.
       if (!file_exists($pathAndFile))
@@ -1077,13 +1077,13 @@ namespace otra\console
           'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
           'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
           'SET FOREIGN_KEY_CHECKS = 1;');
-        echo CLI_GREEN, '[SQL CREATION] ', END_COLOR;
+        echo CLI_SUCCESS, '[SQL CREATION] ', END_COLOR;
       }
 
       // And truncates the table
       self::executeFile($truncatePath . $sqlFile);
 
-      echo CLI_GREEN, '[TRUNCATED]', END_COLOR, PHP_EOL;
+      echo CLI_SUCCESS, '[TRUNCATED]', END_COLOR, PHP_EOL;
     }
 
     /**
@@ -1101,7 +1101,7 @@ namespace otra\console
         $fixturesData = Yaml::parse(file_get_contents($file));
       } catch(ParseException $parseException)
       {
-        echo CLI_RED, $parseException->getMessage(), END_COLOR, PHP_EOL;
+        echo CLI_ERROR, $parseException->getMessage(), END_COLOR, PHP_EOL;
         exit(1);
       }
 
@@ -1293,7 +1293,7 @@ namespace otra\console
 
       if (!file_exists(self::$tablesOrderFile))
       {
-        echo CLI_YELLOW, 'You must create the tables order file (', self::$tablesOrderFile,
+        echo CLI_WARNING, 'You must create the tables order file (', self::$tablesOrderFile,
           ') before using this task !', END_COLOR;
         exit(1);
       }
@@ -1441,7 +1441,8 @@ namespace otra\console
         // We can now create the fixture file...
         file_put_contents(self::$pathYmlFixtures . $table . '.yml', $content);
 
-        echo CLI_GREEN, 'File ', CLI_CYAN, $table . '.yml', CLI_GREEN, ' created', END_COLOR, PHP_EOL;
+        echo CLI_BASE, 'File ', CLI_INFO_HIGHLIGHT, $table . '.yml', CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
+          PHP_EOL;
       }
     }
   }

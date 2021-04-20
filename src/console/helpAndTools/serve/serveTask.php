@@ -14,7 +14,7 @@ define('OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
 define('OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? 'dev');
 define('OTRA_LIVE_HTTPS', 'false');
 
-echo CLI_GREEN, 'Launching a PHP web internal server on localhost:', OTRA_APP_PORT, ' in ',
+echo CLI_INFO, 'Launching a PHP web internal server on localhost:', OTRA_APP_PORT, ' in ',
   OTRA_LIVE_APP_ENV === 'dev'
     ? 'development'
     : 'production',

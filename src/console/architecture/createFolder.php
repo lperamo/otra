@@ -24,8 +24,8 @@ if (!function_exists('createFolder'))
   {
     while (file_exists($absoluteFolderPath))
     {
-      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN .
-        substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
+      $sentence = CLI_ERROR . 'The ' . $folderType . ' ' . CLI_INFO_HIGHLIGHT .
+        substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.';
 
       if (!$interactive)
       {

@@ -116,7 +116,7 @@ if (!empty($folders) && !function_exists('iterateCM'))
 
     closedir($folderHandler);
 
-    echo CLI_RED, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
+    echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
     throw new \otra\OtraException('', 1, '', NULL, [], true);
   }
 
@@ -159,7 +159,7 @@ foreach ($folders as $folder)
 }
 
 if (VERBOSE === 1)
-  echo "\x0d\033[K", 'Processed directories : ', $processedDir, '.';
+  echo "\x0d\033[K", 'Processed directories : ', $processedDir, '. ';
 
 $classes = array_merge($classes, $additionalClassesFiles);
 
@@ -209,7 +209,7 @@ $contentToWrite = convertClassMapToPHPFile($prodClassMap) . PHP_EOL;
 fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
 fclose($filePointer);
 
-echo CLI_LIGHT_GREEN, ' Class mapping finished.', END_COLOR, PHP_EOL, PHP_EOL;
+echo 'Class mapping finished', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // If we want verbose output, then we display the files found related to the classes
 if (VERBOSE !== 1)
@@ -219,17 +219,17 @@ if (VERBOSE !== 1)
 if (!defined('FIRST_CLASS_PADDING'))
   define('FIRST_CLASS_PADDING', 80);
 
-echo CLI_YELLOW, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
-echo CLI_LIGHT_BLUE, 'Class path', CLI_GREEN, ' => ', CLI_LIGHT_BLUE, 'Related file path', PHP_EOL, PHP_EOL;
+echo CLI_WARNING, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
+echo CLI_INFO, 'Class path', CLI_INFO_HIGHLIGHT, ' => ', CLI_INFO, 'Related file path', PHP_EOL, PHP_EOL;
 
 foreach($classes as $startClassName => $finalClassName)
 {
-  echo CLI_LIGHT_BLUE, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_GREEN, ' => ';
+  echo CLI_INFO, str_pad($startClassName, FIRST_CLASS_PADDING, '.'), CLI_INFO_HIGHLIGHT, ' => ';
   echo (str_contains($finalClassName, BASE_PATH)
     // for classes inside the BASE_PATH
-    ? CLI_WHITE . '[BASE_PATH]' . CLI_LIGHT_BLUE . substr($finalClassName, strlen(BASE_PATH))
+    ? CLI_BASE . '[BASE_PATH]' . CLI_INFO . substr($finalClassName, strlen(BASE_PATH))
     // for classes outside the BASE_PATH
-    : CLI_LIGHT_BLUE . $finalClassName),
+    : CLI_INFO . $finalClassName),
     // and we pass to the next line !
     PHP_EOL;
 }
@@ -249,8 +249,8 @@ if (!empty($classesThatMayHaveToBeAdded))
    */
   foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)
   {
-    echo str_pad('Class ' . CLI_YELLOW . $namespace . END_COLOR, FIRST_CLASS_PADDING,
-      '.'), '=> possibly related file ', CLI_YELLOW, $classFile, END_COLOR, PHP_EOL;
+    echo str_pad('Class ' . CLI_WARNING . $namespace . END_COLOR, FIRST_CLASS_PADDING,
+      '.'), '=> possibly related file ', CLI_WARNING, $classFile, END_COLOR, PHP_EOL;
   }
 }
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @package otra\console\helpAndTools
  */
 
-echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
+echo ADD_BOLD, CLI_INFO_HIGHLIGHT, '  Requirements', PHP_EOL,
     '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 
   require CORE_PATH . 'tools/cli.php';
@@ -65,13 +65,13 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
       [
         'inotify',
         'PHP extension \'inotify\'',
-        CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed for OTRA watcher on unix like systems.',
+        CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO .' Needed for OTRA watcher on unix like systems.',
         REQ_PHP_LIB
       ],
       [
         'Zend OPcache',
         'PHP extension \'zend-opcache\'',
-        CLI_LIGHT_CYAN . '[Optional]' . CLI_LIGHT_BLUE .' Needed to use the preloading feature available since PHP 7.4',
+        CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO .' Needed to use the preloading feature available since PHP 7.4',
         REQ_PHP_LIB
       ],
       [
@@ -83,7 +83,7 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
     ]
   );
 
-  echo CLI_LIGHT_BLUE;
+  echo CLI_INFO;
 
   // For Windows, it returns WINNT
   define('OTRA_SEARCHING_COMMAND', (PHP_OS === 'Linux') ? 'which ' : 'where ');
@@ -102,8 +102,8 @@ echo ADD_BOLD, CLI_BOLD_LIGHT_CYAN, '  Requirements', PHP_EOL,
       [$error,] = cliCommand('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"', null, false);
 
     echo $error !== 1
-      ? CLI_GREEN . '  ✔  '
-      : CLI_RED . '  ⨯  ', REMOVE_BOLD_INTENSITY, CLI_LIGHT_BLUE,
+      ? CLI_SUCCESS . '  ✔  '
+      : CLI_ERROR . '  ⨯  ', REMOVE_BOLD_INTENSITY, CLI_INFO,
     str_pad($requirement[REQ_NAME] . ' ', REQUIREMENTS_PADDING, '.'), ' ',
     $requirement[REQ_DESC], PHP_EOL;
   }

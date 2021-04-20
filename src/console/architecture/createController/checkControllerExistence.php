@@ -23,7 +23,7 @@ if (!file_exists($controllerPath))
 {
   /** @var bool $consoleForce */
   if (!$consoleForce)
-    echo CLI_RED, 'The controller ', CLI_LIGHT_CYAN, $moduleRelativePath . '/controllers/' . $controllerName, CLI_RED,
+    echo CLI_ERROR, 'The controller ', CLI_INFO_HIGHLIGHT, $moduleRelativePath . '/controllers/' . $controllerName, CLI_ERROR,
     ' does not exist.' , END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */

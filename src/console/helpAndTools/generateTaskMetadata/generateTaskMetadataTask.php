@@ -109,7 +109,7 @@ file_put_contents(
 );
 
 if (PHP_SAPI === 'cli')
-  echo CLI_GREEN, 'Generation of help and task class map done.', END_COLOR, PHP_EOL;
+  echo CLI_BASE, 'Generation of help and task class map done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
 /********************************
  * SHELL COMPLETIONS GENERATION *
@@ -120,9 +120,9 @@ if (!defined('COMPLETIONS_SPACES_STR_PAD'))
   define('COMPLETIONS_SPACES_STR_PAD', 28);
 
 $shellCompletionsContent = '#!/usr/bin/env bash' . PHP_EOL
-. 'typeset BLC="\033[1;96m"' . PHP_EOL // CLI_BOLD_LIGHT_CYAN
-. 'typeset WHI="\033[0;38m"'. PHP_EOL // CLI_WHITE
-. 'typeset CYA="\033[0;36m"'. PHP_EOL //CLI_CYAN
+. 'typeset BLC="\033[1;96m"' . PHP_EOL // CLI_INFO_HIGHLIGHT
+. 'typeset WHI="\033[0;38m"'. PHP_EOL // CLI_BASE
+. 'typeset CYA="\033[0;36m"'. PHP_EOL //CLI_INFO
 . 'typeset ECO="\033[0m"'. PHP_EOL // END_COLOR
 . 'typeset -a OTRA_COMMANDS=(' . PHP_EOL;
 
@@ -166,4 +166,4 @@ $shellCompletionsContent .= PHP_EOL . 'typeset -a OTRA_COMMANDS_DESCRIPTIONS=(' 
 file_put_contents(CONSOLE_PATH . 'shellCompletions/shellCompletions.sh', $shellCompletionsContent);
 
 if (PHP_SAPI === 'cli')
-  echo CLI_GREEN, 'Generation of shell completions script done.', END_COLOR, PHP_EOL;
+  echo CLI_BASE, 'Generation of shell completions script done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;

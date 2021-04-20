@@ -52,7 +52,7 @@ $maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argv);
 // Check if the binary mask is numeric
 if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
 {
-  echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
+  echo CLI_ERROR, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
   throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
 
@@ -158,8 +158,8 @@ function getPathInformations(string $fullName) : array
 
     if ($resourcesMainFolderPosition === false)
     {
-      echo CLI_RED, 'The resource ', CLI_LIGHT_CYAN, $fullName, CLI_RED, ' was not in a ', CLI_LIGHT_CYAN,
-        'resources', CLI_RED, ' or ', CLI_LIGHT_CYAN, 'web', CLI_RED, ' folder!', END_COLOR, PHP_EOL;
+      echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
+        'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
       debug_print_backtrace();
       throw new \otra\OtraException('', 1, '', NULL, [], true);
 

@@ -27,7 +27,7 @@ if (!defined('ERASE_SEQUENCE'))
   define('ERASE_SEQUENCE', "\033[1A\r\033[K");
 
 if (!defined('OTRA_SUCCESS'))
-  define('OTRA_SUCCESS', CLI_GREEN . '  ✔  ' . END_COLOR);
+  define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR);
 
 if (!file_exists(MAIN_RESOURCES_PATH))
   mkdir(MAIN_RESOURCES_PATH);
@@ -38,6 +38,6 @@ file_put_contents(
   json_encode($routes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) . PHP_EOL
 );
 
-echo ERASE_SEQUENCE, 'JavaScript routing generated in ', CLI_LIGHT_CYAN, MAIN_JS_ROUTING, END_COLOR, OTRA_SUCCESS,
+echo ERASE_SEQUENCE, 'JavaScript routing generated in ', CLI_INFO_HIGHLIGHT, MAIN_JS_ROUTING, END_COLOR, OTRA_SUCCESS,
   PHP_EOL;
 

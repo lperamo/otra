@@ -56,7 +56,7 @@ if (!function_exists('promptUser'))
    */
   function askQuestion(string $question) : string
   {
-    echo CLI_YELLOW, $question, END_COLOR, PHP_EOL;
+    echo CLI_WARNING, $question, END_COLOR, PHP_EOL;
 
     return trim(fgets(fopen('php://stdin', 'r')));
   }
@@ -130,8 +130,8 @@ if (!function_exists('promptUser'))
       if (-1 !== $errorLine)
       {
         echo ($currentLine === $errorLine
-          ? CLI_RED . (string)($currentLine + 1)
-          : CLI_GREEN . (string)($currentLine + 1) . CLI_LIGHT_GRAY
+          ? CLI_ERROR . (string)($currentLine + 1)
+          : CLI_SUCCESS . (string)($currentLine + 1) . CLI_GRAY
         ), ' ', $lines[$currentLine];
       }
     }

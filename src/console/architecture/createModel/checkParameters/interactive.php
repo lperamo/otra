@@ -38,12 +38,12 @@ $possibleChoices = [CREATION_MODE_FROM_NOTHING, CREATION_MODE_ONE_MODEL, CREATIO
 
 if (!isset($argv[ARG_METHOD]) || !in_array($argv[ARG_METHOD], $possibleChoices))
 {
-  echo CLI_YELLOW,
+  echo CLI_WARNING,
   'You did not specified how do you want to create it or this creation mode does not exist. How do you want to create it ?',
   PHP_EOL, PHP_EOL,
     CREATION_MODE_FROM_NOTHING . ' => only one model from nothing', PHP_EOL,
-    CREATION_MODE_ONE_MODEL . ' => one specific model from the ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_YELLOW, PHP_EOL,
-    CREATION_MODE_ALL_MODELS . ' => all from the ', CLI_CYAN, DEFAULT_BDD_SCHEMA_NAME, CLI_YELLOW, PHP_EOL, PHP_EOL;
+    CREATION_MODE_ONE_MODEL . ' => one specific model from the ', CLI_INFO, DEFAULT_BDD_SCHEMA_NAME, CLI_WARNING, PHP_EOL,
+    CREATION_MODE_ALL_MODELS . ' => all from the ', CLI_INFO, DEFAULT_BDD_SCHEMA_NAME, CLI_WARNING, PHP_EOL, PHP_EOL;
 
   $creationMode = (int)promptUser('Your choice ?');
   $wrongMode = 'This creation mode does not exist ! Try once again :';

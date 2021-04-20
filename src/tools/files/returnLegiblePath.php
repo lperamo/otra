@@ -24,7 +24,7 @@ function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endC
     $fileName = '/' . $fileName;
 
   return (str_contains($resource, BASE_PATH)
-      ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . substr($resource, strlen(BASE_PATH)) . $fileName .
+      ? CLI_INFO . 'BASE_PATH ' . CLI_INFO_HIGHLIGHT . substr($resource, strlen(BASE_PATH)) . $fileName .
         END_COLOR
-      : CLI_LIGHT_CYAN . $resource . $fileName . END_COLOR) . ($endColor ? END_COLOR : '');
+      : CLI_INFO_HIGHLIGHT . $resource . $fileName . END_COLOR) . ($endColor ? END_COLOR : '');
 }

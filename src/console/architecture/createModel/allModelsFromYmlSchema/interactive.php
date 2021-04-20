@@ -29,14 +29,14 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
   /** MODULE */
   define('MODULE_NAME', getModuleName($bundlePath));
 
-  echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_YELLOW, $bundleName, END_COLOR, ' for the module ',
-    CLI_YELLOW, $moduleName, END_COLOR, ' ...', PHP_EOL;
+  echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_WARNING, $bundleName, END_COLOR, ' for the module ',
+    CLI_WARNING, $moduleName, END_COLOR, ' ...', PHP_EOL;
 
   define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
 
   // We cleans the module name question
-  echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_YELLOW, $bundleName, END_COLOR, ' in the module ',
-    CLI_YELLOW, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
+  echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_WARNING, $bundleName, END_COLOR, ' in the module ',
+    CLI_WARNING, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
 modelsCreation($modelLocation, $bundleName, $modelName . '.php');

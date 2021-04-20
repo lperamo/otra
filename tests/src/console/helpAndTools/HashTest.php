@@ -35,14 +35,14 @@ class HashTest extends TestCase
   public function testHashHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::OTRA_TASK_HASH, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Returns a random hash.' .
-      PHP_EOL . CLI_LIGHT_CYAN .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('rounds', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_LIGHT_CYAN . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_CYAN . 'The numbers of round for the blowfish salt. Default: 7.' . PHP_EOL . END_COLOR
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'The numbers of round for the blowfish salt. Default: 7.' . PHP_EOL . END_COLOR
     );
 
     TasksManager::execute(

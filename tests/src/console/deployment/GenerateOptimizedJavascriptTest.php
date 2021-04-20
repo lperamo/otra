@@ -38,10 +38,10 @@ class GenerateOptimizedJavascriptTest extends TestCase
 
     // testing
     self::expectOutputString(
-      CLI_GREEN . 'TypeScript file ' .
-      returnLegiblePath(TEST_TS_RESOURCE_NAME, '', false) . CLI_GREEN .
-  ' have generated the temporary files ' . returnLegiblePath(TEST_TEMPORARY_JS_FILE) . CLI_GREEN . ' and ' .
-          returnLegiblePath(TEST_TEMPORARY_JS_FILE . '.map', '', false) . CLI_GREEN . '.' .
+      CLI_BASE . 'TypeScript file ' .
+      returnLegiblePath(TEST_TS_RESOURCE_NAME, '', false) . CLI_BASE .
+  ' have generated the temporary files ' . returnLegiblePath(TEST_TEMPORARY_JS_FILE) . CLI_BASE . ' and ' .
+          returnLegiblePath(TEST_TEMPORARY_JS_FILE . '.map', '', false) . CLI_SUCCESS . ' ✔' .
       END_COLOR . PHP_EOL . PHP_EOL
     );
 

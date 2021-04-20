@@ -11,7 +11,7 @@ use otra\OtraException;
 
 if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
 {
-  echo CLI_YELLOW, 'No custom routes are defined.', END_COLOR, PHP_EOL;
+  echo CLI_WARNING, 'No custom routes are defined.', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 /** Task that show all or one of the routes available for the application.
@@ -40,8 +40,8 @@ function showResourceState(
 ) : void
 {
   echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz'))
-    ? CLI_LIGHT_GREEN
-    : CLI_LIGHT_RED,
+    ? CLI_SUCCESS
+    : CLI_ERROR,
     '[', $resourceType, ']', $altColor;
 }
 
@@ -61,8 +61,8 @@ function showPHPState(string $basePath, string $route, string $altColor) : void
 
   $routePath .= $route . '.php';
   echo (file_exists($routePath))
-    ? CLI_LIGHT_GREEN
-    : CLI_LIGHT_RED,
+    ? CLI_SUCCESS
+    : CLI_ERROR,
     '[PHP]', $altColor;
 }
 
@@ -101,13 +101,13 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
     [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
-      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
+      . ' ! Do you mean ' . CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)
     {
-      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
+      echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
       throw new OtraException('', 1, '', NULL, [], true);
     }
 
@@ -129,7 +129,7 @@ foreach($routes as $route => $details)
 
   // Routes and paths management
   $chunks = $details['chunks'];
-  $altColor = ($indexLines % 2) ? CLI_CYAN : CLI_LIGHT_CYAN;
+  $altColor = ($indexLines % 2) ? CLI_INFO : CLI_INFO_HIGHLIGHT;
   echo $altColor, sprintf('%-' . (string)WIDTH_LEFT . 's', $route),
     str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
 

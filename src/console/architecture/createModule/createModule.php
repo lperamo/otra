@@ -26,8 +26,8 @@ if (function_exists('createModule') === false)
 
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);
-    echo CLI_GREEN, 'Basic folder architecture created for ', CLI_LIGHT_CYAN, substr($modulePath,
-      strlen(BASE_PATH)), CLI_GREEN, '.', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Basic folder architecture created for ', CLI_INFO_HIGHLIGHT, substr($modulePath,
+      strlen(BASE_PATH)), CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 
   /**

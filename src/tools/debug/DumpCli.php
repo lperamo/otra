@@ -17,11 +17,11 @@ if (!defined('OTRA_DUMP_INDENT_COLORS'))
   define(
     'OTRA_DUMP_INDENT_COLORS',
     [
-      'CLI_BOLD_LIGHT_BLUE',
-      'CLI_BOLD_LIGHT_RED',
-      'CLI_LIGHT_GREEN',
-      'CLI_BOLD_LIGHT_CYAN',
-      'CLI_BOLD_VIOLET'
+      'CLI_INDENT_COLOR_FIRST',
+      'CLI_INDENT_COLOR_SECOND',
+      'CLI_SUCCESS',
+      'CLI_INDENT_COLOR_FOURTH',
+      'CLI_INDENT_COLOR_FIFTH'
     ]
   );
   define('OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
@@ -45,7 +45,8 @@ class DumpCli extends DumpMaster
 
     for ($index = 0; $index < $depth; ++$index)
     {
-      $content .= constant(OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT]) . self::OTRA_DUMP_INDENT_STRING;
+      $content .= constant(OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT]) .
+        self::OTRA_DUMP_INDENT_STRING;
     }
 
     return $content . END_COLOR;
@@ -286,7 +287,7 @@ class DumpCli extends DumpMaster
    */
   protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
-    echo CLI_BLUE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;
+    echo CLI_TABLE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;
     echo getSourceFromFileCli($sourceFile, $sourceLine), PHP_EOL;
     echo $content;
   }

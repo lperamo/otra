@@ -26,7 +26,7 @@ if (!file_exists(CACHE_PHP_INIT_PATH . 'tasksHelp.php'))
 
 if (exec('whoami') === 'root')
 {
-  echo CLI_RED, 'You should not be root to execute this ! It will probably change the rights of your files and folders.',
+  echo CLI_ERROR, 'You should not be root to execute this ! It will probably change the rights of your files and folders.',
     END_COLOR, PHP_EOL;
 }
 
@@ -61,7 +61,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
 
   if ($argumentsCount > $total + 2)
   {
-    echo CLI_LIGHT_RED . 'There are too much parameters ! The total number of existing parameters is : ' . $total
+    echo CLI_ERROR . 'There are too much parameters ! The total number of existing parameters is : ' . $total
       . END_COLOR . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap,'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
     throw new \otra\OtraException('', 1, '', NULL, [], true);
@@ -69,7 +69,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount)
 
   if ($argumentsCount < $required + 2)
   {
-    echo CLI_LIGHT_RED . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
+    echo CLI_ERROR . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
       . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
     throw new \otra\OtraException('', 1, '', NULL, [], true);
@@ -109,13 +109,13 @@ else // otherwise we'll try to guess if it looks like an existing one
   // If there are no existing task with a close name ...
   if (null === $newTask)
   {
-    echo CLI_RED, 'There is no task named ', CLI_YELLOW, $method, CLI_RED, ' !', END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $method, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
   // Otherwise, we suggest the closest name that we have found.
-  $choice = promptUser('> There is no task named '. CLI_WHITE . $method . CLI_YELLOW .
-    ' ! Do you mean ' . CLI_WHITE . $newTask . CLI_YELLOW . ' ? (y/n)');
+  $choice = promptUser('> There is no task named '. CLI_BASE . $method . CLI_WARNING .
+    ' ! Do you mean ' . CLI_BASE . $newTask . CLI_WARNING . ' ? (y/n)');
 
   if ('y' === $choice)
   {

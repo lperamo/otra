@@ -5,11 +5,10 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
-
 echo 'Initializing the project...', PHP_EOL;
 
 // ********** CONFIGURATION FILES **********
-echo 'Copying configuration files...';
+echo 'Copying configuration files...', PHP_EOL;
 define('OTRA_CONFIG_FOLDER', BASE_PATH . 'config/');
 
 require CORE_PATH . 'tools/copyFilesAndFolders.php';
@@ -56,10 +55,13 @@ if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
 file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php',
   '<?php declare(strict_types=1); return [];');
 
-echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
+if (!defined('ERASE_SEQUENCE'))
+  define('ERASE_SEQUENCE', "\033[1A\r\033[K");
+
+echo ERASE_SEQUENCE, 'Configuration files copied ', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
 // ********** WEB FOLDER FILES **********
-echo 'Adding the files for the web folder...';
+echo 'Adding the files for the web folder...', PHP_EOL;
 
 $webFolder = BASE_PATH . 'web/';
 const OTRA_INDEX_FILENAME  = 'index.php';
@@ -80,10 +82,10 @@ copyFileAndFolders(
   ]
 );
 
-echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL;
+echo ERASE_SEQUENCE, CLI_BASE, 'Files added to the web folder ', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
 // ********** LOGS FOLDER FILES **********
-echo 'Adding the base architecture for the logs...';
+echo 'Adding the base architecture for the logs...', PHP_EOL;
 
 // Creating log folders
 define('OTRA_LOGS_PATH', BASE_PATH . 'logs/');
@@ -114,7 +116,7 @@ foreach (OTRA_LOG_FILES_PATH as $logFile)
   chmod($logFile, 0666);
 }
 
-echo CLI_BOLD_LIGHT_GREEN, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
+echo ERASE_SEQUENCE, 'Base architecture for the logs added', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
 // Checking that the 'init' folder in the cache/php folder exists
 define('OTRA_ROUTES_PATH', CACHE_PATH . 'php/otraRoutes/');
@@ -128,7 +130,7 @@ require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTa
 echo PHP_EOL,
   'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',
   PHP_EOL;
-echo CLI_LIGHT_CYAN, 'alias otra="php bin/otra.php"', END_COLOR, PHP_EOL, PHP_EOL;
+echo CLI_INFO_HIGHLIGHT, 'alias otra="php bin/otra.php"', END_COLOR, PHP_EOL, PHP_EOL;
 
-echo 'If you want to see an example application, type ', CLI_LIGHT_CYAN, 'otra createHelloWorld'. END_COLOR, '.',
+echo 'If you want to see an example application, type ', CLI_INFO_HIGHLIGHT, 'otra createHelloWorld'. END_COLOR, '.',
   PHP_EOL;

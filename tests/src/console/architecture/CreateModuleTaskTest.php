@@ -60,7 +60,7 @@ class CreateModuleTaskTest extends TestCase
 
     // assertions
     $this->expectException(OtraException::class);
-    $this->expectOutputString(CLI_RED . 'The bundle ' . CLI_LIGHT_CYAN . TEST_BUNDLE_UPPER . CLI_RED .
+    $this->expectOutputString(CLI_ERROR . 'The bundle ' . CLI_INFO_HIGHLIGHT . TEST_BUNDLE_UPPER . CLI_ERROR .
       ' does not exist.' . END_COLOR . PHP_EOL);
 
     // launching
@@ -87,8 +87,8 @@ class CreateModuleTaskTest extends TestCase
     mkdir(TEST_MODULE_PATH, 0777, true);
 
     // assertions
-    $this->expectOutputString(CLI_RED . 'The module ' . CLI_LIGHT_CYAN . 'bundles/' . TEST_BUNDLE_UPPER .
-      '/' . self::TEST_MODULE . CLI_RED . ' already exists.' . END_COLOR . PHP_EOL);
+    $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT . 'bundles/' . TEST_BUNDLE_UPPER .
+      '/' . self::TEST_MODULE . CLI_ERROR . ' already exists.' . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
     // launching

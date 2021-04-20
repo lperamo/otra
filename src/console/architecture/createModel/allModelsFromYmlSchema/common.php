@@ -11,11 +11,11 @@ require CREATE_MODEL_FOLDER . 'common.php';
 
 define(
   'CREATE_ALL_MODELS_FROM_YAML_SCHEMA',
-  'We will create all the models from ' . CLI_LIGHT_CYAN . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
+  'We will create all the models from ' . CLI_INFO_HIGHLIGHT . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
 );
 define(
   'CREATING_ALL_MODELS_FOR_BUNDLE',
-  'Creating all the models for the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' ...' . PHP_EOL
+  'Creating all the models for the bundle ' . CLI_INFO_HIGHLIGHT . $bundleName . END_COLOR . ' ...' . PHP_EOL
 );
 
 /**

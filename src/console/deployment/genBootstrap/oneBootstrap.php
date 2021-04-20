@@ -26,7 +26,7 @@ require __DIR__ . (OTRA_PROJECT
   ) . '/config/constants.php';
 require CONSOLE_PATH . 'colors.php';
 
-echo CLI_WHITE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
+echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
 $_SERVER[APP_ENV] = 'prod';
 
 require CLASS_MAP_PATH;
@@ -43,7 +43,7 @@ spl_autoload_register(function(string $className) : void
   {
     require CLASSMAP[$className];
   } else {
-    echo CLI_RED, 'CLASSMAP PROBLEM !!', PHP_EOL;
+    echo CLI_ERROR, 'CLASSMAP PROBLEM !!', PHP_EOL;
     debug_print_backtrace();
     echo PHP_EOL;
     require CORE_PATH . 'tools/debug/dump.php';

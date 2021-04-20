@@ -20,7 +20,7 @@ if (!file_exists($modulePath))
 {
   /** @var bool $consoleForce */
   if (!$consoleForce)
-    echo CLI_RED, 'The module ', CLI_LIGHT_CYAN, $moduleRelativePath, CLI_RED, ' does not exist.' , END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The module ', CLI_INFO_HIGHLIGHT, $moduleRelativePath, CLI_ERROR, ' does not exist.' , END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */
   if (!$interactive)

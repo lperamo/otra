@@ -35,9 +35,9 @@ class ServeTest extends TestCase
     */
   private static function taskParameter(string $parameter, string $description, string $requiredOrOptional) : string
   {
-    return CLI_LIGHT_CYAN . '   + ' .
-      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_LIGHT_GRAY . ': ' .
-      CLI_LIGHT_CYAN . '(' . $requiredOrOptional . ') ' . CLI_CYAN . $description . PHP_EOL;
+    return CLI_INFO_HIGHLIGHT . '   + ' .
+      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_GRAY . ': ' .
+      CLI_INFO_HIGHLIGHT . '(' . $requiredOrOptional . ') ' . CLI_INFO . $description . PHP_EOL;
   }
 
   /**
@@ -51,7 +51,7 @@ class ServeTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage(
       'Problem when loading the command :' . PHP_EOL .
-      CLI_LIGHT_YELLOW . 'OTRA_LIVE_APP_ENV=dev OTRA_LIVE_HTTPS=false php -d variables_order=EGPCS -S localhost:-50 -t /var/www/html/perso/otra/web web/indexDev.php 2>&1' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'OTRA_LIVE_APP_ENV=dev OTRA_LIVE_HTTPS=false php -d variables_order=EGPCS -S localhost:-50 -t /var/www/html/perso/otra/web web/indexDev.php 2>&1' . END_COLOR . PHP_EOL .
       'Shell error code 1. Invalid address: localhost:-50'
     );
 
@@ -69,9 +69,9 @@ class ServeTest extends TestCase
   public function testServeHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::TASK_SERVE, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Creates a PHP web internal server.' .
       PHP_EOL .
       self::taskParameter(

@@ -61,7 +61,7 @@ class SqlCleanTaskTest extends TestCase
     $sqlPath = removeFieldScopeProtection(Database::class, 'pathSql')->getValue();
     self::assertEquals([], glob($sqlPath . '/*.sql'));
     self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
-    self::expectOutputString(CLI_LIGHT_GREEN . 'Cleaning done.' . END_COLOR . PHP_EOL);
+    self::expectOutputString(CLI_BASE . 'Cleaning done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);
 
     // cleaning
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
@@ -80,14 +80,14 @@ class SqlCleanTaskTest extends TestCase
   public function testSqlCleanHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::OTRA_TASK_SQL_CLEAN, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Removes sql and yml files in the case where there are problems that had corrupted files.' .
-      PHP_EOL . CLI_LIGHT_CYAN .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('cleaningLevel', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_LIGHT_CYAN . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_CYAN . 'Type 1 in order to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'Type 1 in order to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
     );
 
     TasksManager::execute(

@@ -49,9 +49,9 @@ if (!file_exists($configFolderPath))
   mkdir($configFolderPath);
 
 if (file_put_contents($basePath . 'config/constants.php', $content) === false)
-  echo CLI_RED . 'There was a problem while writing the OTRA global constants.', END_COLOR, PHP_EOL;
+  echo CLI_ERROR . 'There was a problem while writing the OTRA global constants.', END_COLOR, PHP_EOL;
 else
-  echo 'OTRA global constants generated.', CLI_GREEN, ' ✔', END_COLOR, PHP_EOL;
+  echo 'OTRA global constants generated.', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
 // On the online side
 if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
@@ -59,7 +59,7 @@ if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
   $prodContent = str_replace($basePath, AllConfig::$deployment['folder'], $content, $count);
 
   if (file_put_contents($basePath . 'config/prodConstants.php', $prodContent) === false)
-    echo CLI_RED . 'There was a problem while writing the OTRA global constants for the online side.', END_COLOR, PHP_EOL;
+    echo CLI_ERROR . 'There was a problem while writing the OTRA global constants for the online side.', END_COLOR, PHP_EOL;
   else
-    echo 'OTRA global constants for the online side generated.', CLI_GREEN, ' ✔', END_COLOR, PHP_EOL;
+    echo 'OTRA global constants for the online side generated.', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 }

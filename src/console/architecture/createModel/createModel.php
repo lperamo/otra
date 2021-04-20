@@ -9,7 +9,7 @@ declare(strict_types=1);
 use otra\OtraException;
 
 if (!defined('OTRA_SUCCESS'))
-  define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
+  define('OTRA_SUCCESS', CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);
 
 $bundlesPath = BASE_PATH . 'bundles/';
 
@@ -27,8 +27,8 @@ function checkDataType(string $modelName, string $columnName, ?string $type) : v
 {
   if (!isset($type))
   {
-    echo CLI_RED, 'SCHEMA.YML => Model ', CLI_YELLOW, $modelName, CLI_RED, ' : There are no type for the property ',
-      CLI_YELLOW, $columnName, CLI_RED, '.', END_COLOR;
+    echo CLI_ERROR, 'SCHEMA.YML => Model ', CLI_WARNING, $modelName, CLI_ERROR, ' : There are no type for the property ',
+      CLI_WARNING, $columnName, CLI_ERROR, '.', END_COLOR;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -61,8 +61,8 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
     return 'DateTime';
 
   // If we don't know this type !
-  echo CLI_RED, 'We don\'t know the type ', CLI_YELLOW, $type, CLI_RED, ' in ', CLI_YELLOW, $modelName, CLI_RED,
-    ' for the property ', CLI_YELLOW, $columnName, CLI_RED, ' !', END_COLOR;
+  echo CLI_ERROR, 'We don\'t know the type ', CLI_WARNING, $type, CLI_ERROR, ' in ', CLI_WARNING, $modelName, CLI_ERROR,
+    ' for the property ', CLI_WARNING, $columnName, CLI_ERROR, ' !', END_COLOR;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -94,7 +94,7 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
  */
 function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null) : void
 {
-  echo 'The model ', CLI_LIGHT_CYAN, $modelName, END_COLOR, ' has been created in the bundle ', CLI_LIGHT_CYAN,
+  echo 'The model ', CLI_INFO_HIGHLIGHT, $modelName, END_COLOR, ' has been created in the bundle ', CLI_INFO_HIGHLIGHT,
     $bundleName, END_COLOR;
 
   if (null !== $propertiesTxt)

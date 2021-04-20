@@ -59,17 +59,17 @@ class GenerateTaskMetadataTest extends TestCase
     );
 
     self::expectOutputString(
-      CLI_GREEN . 'Generation of help and task class map done.' . END_COLOR . PHP_EOL .
-      CLI_GREEN . 'Generation of shell completions script done.' . END_COLOR . PHP_EOL
+      CLI_BASE . 'Generation of help and task class map done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL .
+      CLI_BASE . 'Generation of shell completions script done' . CLI_SUCCESS .' ✔' . END_COLOR . PHP_EOL
     );
   }
 
   public function testGenerateTaskMetadataHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::TASK_GENERATE_TASK_METADATA, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Generates files that are used to show the help, finds quickly all the tasks and gives shell completions.' .
       PHP_EOL . END_COLOR
     );

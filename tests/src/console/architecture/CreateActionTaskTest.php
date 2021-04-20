@@ -80,7 +80,7 @@ class CreateActionTaskTest extends TestCase
 
     // assertions
     $this->expectException(OtraException::class);
-    $this->expectOutputString(CLI_RED . 'The bundle ' . CLI_LIGHT_CYAN . TEST_BUNDLE_UPPER . CLI_RED .
+    $this->expectOutputString(CLI_ERROR . 'The bundle ' . CLI_INFO_HIGHLIGHT . TEST_BUNDLE_UPPER . CLI_ERROR .
       OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
 
     // launching
@@ -111,8 +111,8 @@ class CreateActionTaskTest extends TestCase
       mkdir(TEST_BUNDLE_PATH, 0777, true);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The module ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
-      '/' . self::TEST_MODULE . CLI_RED . OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
+    $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
+      '/' . self::TEST_MODULE . CLI_ERROR . OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
     // launching
@@ -141,8 +141,8 @@ class CreateActionTaskTest extends TestCase
     mkdir(TEST_MODULE_PATH, 0777, true);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The controller ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME .
-      TEST_BUNDLE_UPPER . '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . CLI_RED .
+    $this->expectOutputString(CLI_ERROR . 'The controller ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_FOLDER_NAME .
+      TEST_BUNDLE_UPPER . '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . CLI_ERROR .
       OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 
@@ -173,8 +173,8 @@ class CreateActionTaskTest extends TestCase
     touch(TEST_ACTION_PATH);
 
     // testing
-    $this->expectOutputString(CLI_RED . 'The action ' . CLI_LIGHT_CYAN . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
-      '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . '/' . TEST_ACTION_FULL . CLI_RED .
+    $this->expectOutputString(CLI_ERROR . 'The action ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
+      '/' . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . '/' . TEST_ACTION_FULL . CLI_ERROR .
       ' already exists.' . END_COLOR . PHP_EOL);
     $this->expectException(\otra\OtraException::class);
 

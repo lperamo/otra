@@ -48,7 +48,7 @@ if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTR
 
 if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName']))
 {
-  echo CLI_RED, 'You must define the ', CLI_LIGHT_CYAN, 'domainName', CLI_RED,
+  echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
   ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
   throw new \otra\OtraException('', 1, '', NULL, [], true);
 }
@@ -75,13 +75,13 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     list($newRoute) = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . CLI_WHITE . $route . CLI_YELLOW
-      . ' ! Do you mean ' . CLI_WHITE . $newRoute . CLI_YELLOW . ' ? (y/n)');
+    $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
+      . ' ! Do you mean ' . CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
 
     // If our guess is wrong, we apologise and exit !
     if ('n' === $choice)
     {
-      echo CLI_RED, 'Sorry then !', END_COLOR, PHP_EOL;
+      echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
       throw new \otra\OtraException('', 1, '', NULL, [], true);
     }
 
@@ -110,8 +110,8 @@ foreach(array_keys($routes) as $routeKey => $route)
     echo PHP_EOL;
 
   if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
-    echo CLI_WHITE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_CYAN
-        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_WHITE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
+    echo CLI_BASE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_INFO
+        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
     passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' .
       intval(GEN_BOOTSTRAP_LINT) . ' ' . $route);

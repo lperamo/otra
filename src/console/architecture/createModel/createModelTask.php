@@ -54,7 +54,7 @@ $missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
 /** @var string $bundlePath */
 require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE;
 
-echo 'We use the ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
+echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
 
 // Code creation...
 define('FUNCTION_START', SPACE_INDENT . 'public function ');
@@ -71,8 +71,8 @@ else
 
   if (!YML_SCHEMA_REAL_PATH)
   {
-    echo CLI_RED, 'The YAML schema ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, 'bundles/', ucfirst($bundleName),
-      '/' . YML_SCHEMA_PATH, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The YAML schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
+      '/' . YML_SCHEMA_PATH, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
@@ -84,8 +84,8 @@ else
 
   if (SCHEMA_DATA === null)
   {
-    echo CLI_RED, 'The schema ', CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, 'bundles/', ucfirst($bundleName),
-      YML_SCHEMA_PATH, CLI_RED, ' is empty !', END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
+      YML_SCHEMA_PATH, CLI_ERROR, ' is empty !', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 

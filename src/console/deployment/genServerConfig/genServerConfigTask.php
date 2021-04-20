@@ -33,7 +33,7 @@ define(
 
 if (!isset(AllConfig::$deployment))
 {
-  echo CLI_RED . 'There is no deployment configuration so we cannot know which server name to use.' . PHP_EOL;
+  echo CLI_ERROR . 'There is no deployment configuration so we cannot know which server name to use.' . PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -41,7 +41,7 @@ define('GEN_SERVER_CONFIG_DOMAIN_NAME_KEY', 'domainName');
 
 if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
 {
-  echo CLI_LIGHT_CYAN . GEN_SERVER_CONFIG_DOMAIN_NAME_KEY . CLI_RED .
+  echo CLI_INFO_HIGHLIGHT . GEN_SERVER_CONFIG_DOMAIN_NAME_KEY . CLI_ERROR .
     ' is not defined in the deployment configuration so we cannot know which server name to use.' . PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
@@ -50,7 +50,7 @@ define('GEN_SERVER_CONFIG_FOLDER_KEY', 'folder');
 
 if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY]))
 {
-  echo CLI_LIGHT_CYAN . GEN_SERVER_CONFIG_FOLDER_KEY . CLI_RED .
+  echo CLI_INFO_HIGHLIGHT . GEN_SERVER_CONFIG_FOLDER_KEY . CLI_ERROR .
     ' is not defined in the deployment configuration so we cannot know which server name to use.' . PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }

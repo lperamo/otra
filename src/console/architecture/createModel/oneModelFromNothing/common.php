@@ -11,7 +11,7 @@ require CREATE_MODEL_FOLDER . 'common.php';
 define('MODEL_CREATED_FROM_NOTHING_MESSAGE', 'We will create one model from nothing.' . PHP_EOL);
 define(
   'MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
-  'The model ' . CLI_LIGHT_CYAN . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
+  'The model ' . CLI_INFO_HIGHLIGHT . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
 );
 
 /**
@@ -20,7 +20,7 @@ define(
  */
 function bundleModelPreparation(string $bundleName, string $bundlePath) : void
 {
-  echo 'A model for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' ...', PHP_EOL;
+  echo 'A model for the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' ...', PHP_EOL;
   define('MODEL_PATH', $bundlePath);
 }
 

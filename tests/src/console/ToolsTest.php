@@ -24,9 +24,9 @@ class ToolsTest extends TestCase
   {
     // testing
     $this->expectOutputString(
-      CLI_GREEN . 4 . CLI_LIGHT_GRAY . ' // variables declaration' . PHP_EOL .
-      CLI_RED . 5 . ' $blabla = "blabla";' . PHP_EOL .
-      CLI_GREEN . 6 . CLI_LIGHT_GRAY . ' $superCool = \'superCool\';' . PHP_EOL
+      CLI_SUCCESS . 4 . CLI_GRAY . ' // variables declaration' . PHP_EOL .
+      CLI_ERROR . 5 . ' $blabla = "blabla";' . PHP_EOL .
+      CLI_SUCCESS . 6 . CLI_GRAY . ' $superCool = \'superCool\';' . PHP_EOL
     );
 
     // launching
@@ -40,11 +40,11 @@ class ToolsTest extends TestCase
   {
     // testing
     $this->expectOutputString(
-      CLI_GREEN . 3 . CLI_LIGHT_GRAY .  ' '. PHP_EOL .
-      CLI_GREEN . 4 . CLI_LIGHT_GRAY . ' // variables declaration' . PHP_EOL .
-      CLI_RED . 5 . ' $blabla = "blabla";' . PHP_EOL .
-      CLI_GREEN . 6 . CLI_LIGHT_GRAY . ' $superCool = \'superCool\';' . PHP_EOL .
-      CLI_GREEN . 7 . CLI_LIGHT_GRAY . ' ' . PHP_EOL
+      CLI_SUCCESS . 3 . CLI_GRAY .  ' '. PHP_EOL .
+      CLI_SUCCESS . 4 . CLI_GRAY . ' // variables declaration' . PHP_EOL .
+      CLI_ERROR . 5 . ' $blabla = "blabla";' . PHP_EOL .
+      CLI_SUCCESS . 6 . CLI_GRAY . ' $superCool = \'superCool\';' . PHP_EOL .
+      CLI_SUCCESS . 7 . CLI_GRAY . ' ' . PHP_EOL
     );
 
     // launching

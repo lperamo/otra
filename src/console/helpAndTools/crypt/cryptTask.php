@@ -17,8 +17,8 @@ if (!is_numeric($argv[CRYPT_ARG_ITERATIONS]))
 
 $securitySalt = openssl_random_pseudo_bytes(16);
 
-echo CLI_LIGHT_CYAN, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($securitySalt), PHP_EOL,
-  CLI_LIGHT_CYAN, 'password                   : ', END_COLOR,  hash_pbkdf2(
+echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($securitySalt), PHP_EOL,
+  CLI_INFO_HIGHLIGHT, 'password                   : ', END_COLOR,  hash_pbkdf2(
     'sha256',
     $argv[CRYPT_ARG_PASSWORD],
     $securitySalt,

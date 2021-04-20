@@ -38,7 +38,7 @@ if (!function_exists('cliCommand'))
 
     if (($result === false || $returnCode !== 0))
     {
-      $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_LIGHT_YELLOW . $cmd .
+      $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_WARNING . $cmd .
           END_COLOR) . PHP_EOL . 'Shell error code ' . (string)$returnCode . '. ' . $output;
 
       if ($launchExceptionOnError)

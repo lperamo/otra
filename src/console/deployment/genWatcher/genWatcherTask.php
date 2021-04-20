@@ -116,7 +116,7 @@ if (GEN_WATCHER_VERBOSE > 1 )
        . END_COLOR . PHP_EOL;
 
   // Data
-  $debugToPrint .= CLI_LIGHT_GRAY . str_pad('│ ' . WD_CONSTANTS[$binaryMask], DATA_EVENT_PADDING)
+  $debugToPrint .= CLI_GRAY . str_pad('│ ' . WD_CONSTANTS[$binaryMask], DATA_EVENT_PADDING)
     . str_pad('│ ' . $cookie, DATA_COOKIE_PADDING)
     . str_pad('│ ' . $filename, DATA_NAME_PADDING)
     . END_COLOR;
@@ -231,8 +231,8 @@ unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
 // ******************** INTRODUCTION TEXT ********************
 
-  echo CLI_LIGHT_BLUE, (GEN_WATCHER_VERBOSE > 0
-    ? 'BASE_PATH' . ' is equal to ' . CLI_LIGHT_CYAN . BASE_PATH . END_COLOR . PHP_EOL
+  echo CLI_INFO, (GEN_WATCHER_VERBOSE > 0
+    ? 'BASE_PATH' . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
     : 'Watcher started.' . END_COLOR)
     , PHP_EOL;
 

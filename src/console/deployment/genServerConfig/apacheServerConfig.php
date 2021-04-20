@@ -6,6 +6,6 @@ declare(strict_types=1);
  * @package otra\console\deployment
  */
 
-echo CLI_YELLOW . 'Apache is not handle yet.' . PHP_EOL;
+echo CLI_WARNING . 'Apache is not handle yet.' . PHP_EOL;
 return 0;
 

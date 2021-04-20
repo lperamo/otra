@@ -28,7 +28,7 @@ $checkParameter = function (
   if (isset($argv[constant($constantName)]))
     return $argv[constant($constantName)];
 
-  echo $exit ? CLI_RED : CLI_YELLOW, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
+  echo $exit ? CLI_ERROR : CLI_WARNING, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 
   if ($exit)
     throw new OtraException('', 1, '', NULL, [], true);
@@ -43,7 +43,7 @@ $bundleName = $checkParameter(
 
 $modelLocation = (int) $checkParameter(
   'ARG_MODEL_LOCATION',
-  'location of the bundle : ' . CLI_LIGHT_CYAN . 'bundle' . CLI_YELLOW . ' location chosen.',
+  'location of the bundle : ' . CLI_INFO_HIGHLIGHT . 'bundle' . CLI_WARNING . ' location chosen.',
   'bundle',
   false
 );
@@ -52,7 +52,7 @@ define('MODULE_NAME', $checkParameter('ARG_MODULE_NAME', 'module name.'));
 
 if (!file_exists($bundlesPath . ucfirst($bundleName)))
 {
-  echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist !', END_COLOR, PHP_EOL;
+  echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist !', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -78,7 +78,7 @@ else
 
   if (!YML_SCHEMA_REAL_PATH)
   {
-    echo CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.',
+    echo CLI_WARNING . 'The YAML schema does not exist so we will create a model from the console parameters.',
       END_COLOR, PHP_EOL;
     $creationMode = CREATION_MODE_FROM_NOTHING;
   } else

@@ -37,7 +37,7 @@ define('ROUTES_CHUNKS_BUNDLE', 1);
 define('ROUTES_CHUNKS_MODULE', 2);
 
 define('OTRA_UNLINK_CALLBACK', 'unlink');
-define('OTRA_CLI_CYAN_STRING', 'CLI_CYAN');
+define('OTRA_CLI_INFO_STRING', 'CLI_INFO');
 
 $routes = Routes::$allRoutes;
 
@@ -55,7 +55,7 @@ function unlinkResourceFile(string $folder, string $shaName) : void
 
 if (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argv[GEN_ASSETS_ARG_ASSETS_MASK]))
 {
-  echo CLI_RED, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
+  echo CLI_ERROR, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
     '.', END_COLOR;
   throw new OtraException('', 1, '', NULL, [], true);
 }
@@ -86,7 +86,7 @@ if (
 
     if (!isset($routes[$theRoute]))
     {
-      echo PHP_EOL, CLI_YELLOW, 'This route does not exist !', END_COLOR, PHP_EOL;
+      echo PHP_EOL, CLI_WARNING, 'This route does not exist !', END_COLOR, PHP_EOL;
       throw new OtraException('', 1, '', NULL, [], true);
     }
 
@@ -120,7 +120,7 @@ if (
       array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
   }
 
-  echo CLI_LIGHT_GREEN, ' OK', END_COLOR, PHP_EOL;
+  echo CLI_SUCCESS, ' OK', END_COLOR, PHP_EOL;
 
   /*************** PROCESSING THE ROUTES ************/
 
@@ -136,14 +136,14 @@ if (
   foreach($routes as $routeName => $route)
   {
     // Showing the route name
-    echo CLI_LIGHT_CYAN, str_pad($routeName, 25), CLI_LIGHT_GRAY;
+    echo CLI_INFO_HIGHLIGHT, str_pad($routeName, 25), CLI_GRAY;
 
     $shaName = sha1('ca' . $routeName . VERSION . 'che');
 
     if (!isset($route['resources']))
     {
-      echo status('Nothing to do', OTRA_CLI_CYAN_STRING), ' =>', CLI_LIGHT_GREEN, ' OK', END_COLOR, '[',
-      CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+      echo status('Nothing to do', OTRA_CLI_INFO_STRING), ' =>', CLI_SUCCESS, ' OK', END_COLOR, '[',
+      CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
@@ -154,7 +154,7 @@ if (
     if (!isset($chunks[ROUTES_CHUNKS_BUNDLE]))
     {
       echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',
-      CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+      CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
@@ -173,14 +173,14 @@ if (
           gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
           echo status('SCREEN CSS');
         } else
-          echo status('NO SCREEN CSS', OTRA_CLI_CYAN_STRING);
+          echo status('NO SCREEN CSS', OTRA_CLI_INFO_STRING);
 
         ob_start();
         loadResource($resources, $chunks, 'print_css', $bundlePath);
         $printCss = ob_get_clean();
 
         if ($printCss === '')
-          echo status('NO PRINT CSS', 'CLI_RED');
+          echo status('NO PRINT CSS', 'CLI_ERROR');
         else
         {
           $resourceFolderPath = CACHE_PATH . 'css/';
@@ -194,7 +194,7 @@ if (
           echo status('PRINT CSS');
         }
       } else
-        echo status('NO CSS', OTRA_CLI_CYAN_STRING);
+        echo status('NO CSS', OTRA_CLI_INFO_STRING);
 
 
     }
@@ -237,14 +237,14 @@ if (
 
         echo status('JS');
       } else
-        echo status('NO JS', OTRA_CLI_CYAN_STRING);
+        echo status('NO JS', OTRA_CLI_INFO_STRING);
     }
 
     /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
     if (GEN_ASSETS_TEMPLATE)
     {
       if (!isset($resources['template']))
-        echo status('NO TEMPLATE', OTRA_CLI_CYAN_STRING);
+        echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING);
       else
       {
         // Generates the gzipped template files
@@ -259,14 +259,14 @@ if (
           echo status('TEMPLATE');
         else
         {
-          echo status('TEMPLATE', 'CLI_RED');
+          echo status('TEMPLATE', 'CLI_ERROR');
           $noErrors = false;
         }
       }
     }
 
-    echo ' => ', $noErrors ? CLI_LIGHT_GREEN . 'OK' . END_COLOR : CLI_RED . 'ERROR' . END_COLOR, '[',
-    CLI_CYAN, $shaName, END_COLOR, ']', PHP_EOL;
+    echo ' => ', $noErrors ? CLI_SUCCESS . 'OK' . END_COLOR : CLI_ERROR . 'ERROR' . END_COLOR, '[',
+    CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
   }
 }
 
@@ -275,7 +275,7 @@ if (GEN_ASSETS_MANIFEST)
   $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
   if (!file_exists($jsonManifestPath))
-    echo CLI_RED, 'The JSON manifest file ', CLI_YELLOW, $jsonManifestPath, CLI_RED , ' to optimize does not exist.',
+    echo CLI_ERROR, 'The JSON manifest file ', CLI_WARNING, $jsonManifestPath, CLI_ERROR , ' to optimize does not exist.',
       END_COLOR, PHP_EOL;
   else
   {
@@ -291,14 +291,14 @@ if (GEN_ASSETS_MANIFEST)
 
     file_put_contents($generatedJsonManifestPath, $contents);
     gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
-    echo "\033[1A\033[" . strlen($message) . "C", CLI_GREEN . '  ✔  ' . END_COLOR . PHP_EOL;
+    echo "\033[1A\033[" . strlen($message) . "C", CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL;
   }
 }
 
 if (GEN_ASSETS_SVG)
 {
   define('FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
-  echo 'Checking for uncompressed SVGs in the folder ', CLI_LIGHT_CYAN, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
+  echo 'Checking for uncompressed SVGs in the folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
     PHP_EOL;
 
   // Searches in the 'web/images' folder for SVGs
@@ -320,18 +320,18 @@ if (GEN_ASSETS_SVG)
 
       if (!gzCompressFile($realPath, $realPath . '.gz', GZIP_COMPRESSION_LEVEL))
       {
-        echo CLI_RED, 'There was an error during the gzip compression of the file ', CLI_LIGHT_CYAN,
+        echo CLI_ERROR, 'There was an error during the gzip compression of the file ', CLI_INFO_HIGHLIGHT,
         mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
       } else
       {
-        echo 'The file ', CLI_LIGHT_CYAN, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
+        echo 'The file ', CLI_INFO_HIGHLIGHT, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
         ' has been compressed successfully.', END_COLOR, PHP_EOL;
       }
     }
 
     echo 'All SVGs are compressed.', PHP_EOL;
   } else
-    echo CLI_YELLOW, 'There is no folder ', CLI_LIGHT_CYAN, FOLDER_TO_CHECK_FOR_SVGS, CLI_YELLOW, '.', END_COLOR,
+    echo CLI_WARNING, 'There is no folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, CLI_WARNING, '.', END_COLOR,
       PHP_EOL;
 }
 
@@ -342,9 +342,9 @@ if (GEN_ASSETS_SVG)
  *
  * @return string
  */
-#[Pure] function status(string $status, string $color = 'CLI_LIGHT_GREEN') : string
+#[Pure] function status(string $status, string $color = 'CLI_SUCCESS') : string
 {
-  return ' [' . constant($color) . $status . CLI_LIGHT_GRAY. ']';
+  return ' [' . constant($color) . $status . CLI_GRAY. ']';
 }
 
 /**

@@ -19,14 +19,14 @@ define('OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE', ' has been created in the bu
 
 define(
   'OTRA_LABEL_YAML_SCHEMA_WARNING',
-  CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.' .
+  CLI_WARNING . 'The YAML schema does not exist so we will create a model from the console parameters.' .
   END_COLOR . PHP_EOL
 );
 define(
   'OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE',
-  CLI_YELLOW . 'You did not specified the name of the model. We will import all the models.' .
+  CLI_WARNING . 'You did not specified the name of the model. We will import all the models.' .
   END_COLOR . PHP_EOL .
-  OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . CreateModelTaskTest::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE. PHP_EOL
+  OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . CreateModelTaskTest::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE. PHP_EOL
 );
 define('OTRA_LIBRARY_COPY_FILES_AND_FOLDERS', CORE_PATH . 'tools/copyFilesAndFolders.php');
 
@@ -63,7 +63,7 @@ class CreateModelTaskTest extends TestCase
     MODULE_PATH = TEST_BUNDLE_PATH . CreateModelTaskTest::MODULE_NAME . '/',
     YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH = 'config/data/yml/' . self::SCHEMA_YML_FILE,
     YAML_SCHEMA = TEST_BUNDLE_PATH . self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH,
-    OTRA_SUCCESS = CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL;
+    OTRA_SUCCESS = CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL;
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -90,16 +90,16 @@ class CreateModelTaskTest extends TestCase
    */
   protected static function returnModelCreationFromNothingOutput(int $modelLocation = self::MODEL_LOCATION_BUNDLE) : string
   {
-    return OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE . PHP_EOL .
+    return OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE . PHP_EOL .
       'We will create one model from nothing.' . PHP_EOL .
       ($modelLocation === self::MODEL_LOCATION_BUNDLE
-        ? 'A model for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' ...'
-        : OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE .
-        CLI_LIGHT_CYAN . self::MODULE_NAME . END_COLOR . ' ...')
+        ? 'A model for the bundle ' . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . ' ...'
+        : OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE .
+        CLI_INFO_HIGHLIGHT . self::MODULE_NAME . END_COLOR . ' ...')
       . PHP_EOL .
-      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . ' will be created from nothing...' . PHP_EOL .
-      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
-      CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS;
+      OTRA_LABEL_THE_MODEL . CLI_INFO_HIGHLIGHT . self::MODEL_NAME . END_COLOR . ' will be created from nothing...' . PHP_EOL .
+      OTRA_LABEL_THE_MODEL . CLI_INFO_HIGHLIGHT . self::MODEL_NAME . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
+      CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS;
   }
 
   /**
@@ -109,7 +109,7 @@ class CreateModelTaskTest extends TestCase
    */
   protected static function modelHasBeenCreatedOutput(string $model) : string
   {
-    return OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . $model . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE . CLI_LIGHT_CYAN .
+    return OTRA_LABEL_THE_MODEL . CLI_INFO_HIGHLIGHT . $model . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE . CLI_INFO_HIGHLIGHT .
       self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS;
   }
 
@@ -224,7 +224,7 @@ class CreateModelTaskTest extends TestCase
 
     // assertions
     $this->expectOutputString(
-      OTRA_LABEL_YAML_SCHEMA_WARNING . CLI_RED . 'You did not specified the model properties types.' .
+      OTRA_LABEL_YAML_SCHEMA_WARNING . CLI_ERROR . 'You did not specified the model properties types.' .
       END_COLOR . PHP_EOL
     );
 
@@ -260,8 +260,8 @@ class CreateModelTaskTest extends TestCase
     // assertions
     $this->expectOutputString(
       OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
-      CLI_RED . 'The YAML schema ' . CLI_BLUE . 'BASE_PATH + ' . CLI_LIGHT_CYAN . self::BUNDLE_RELATIVE_PATH .
-      self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH . CLI_RED .
+      CLI_ERROR . 'The YAML schema ' . CLI_TABLE . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT . self::BUNDLE_RELATIVE_PATH .
+      self::YAML_SCHEMA_RELATIVE_PATH_FROM_BUNDLE_PATH . CLI_ERROR .
       ' does not exist.' . END_COLOR . PHP_EOL
     );
 
@@ -296,11 +296,11 @@ class CreateModelTaskTest extends TestCase
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
-    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
+    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
       PHP_EOL .
-      'We will create one model from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
-      CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
+      'We will create one model from ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
+      OTRA_LABEL_THE_MODEL . CLI_INFO_HIGHLIGHT . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
+      CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
     );
 
     // launching
@@ -333,13 +333,13 @@ class CreateModelTaskTest extends TestCase
     copyFileAndFolders([self::BACKUP_YAML_SCHEMA], [self::YAML_SCHEMA]);
 
     // assertions
-    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
+    $this->expectOutputString(OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_BUNDLE .
       PHP_EOL .
-      'We will create one model from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_LIGHT_CYAN .
+      'We will create one model from ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
+      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_INFO_HIGHLIGHT .
       self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
-      OTRA_LABEL_THE_MODEL . CLI_LIGHT_CYAN . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
-      CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
+      OTRA_LABEL_THE_MODEL . CLI_INFO_HIGHLIGHT . self::MODEL_NAME_2 . END_COLOR . OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE .
+      CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . '.' . self::OTRA_SUCCESS
     );
 
     // launching
@@ -373,8 +373,8 @@ class CreateModelTaskTest extends TestCase
     // assertions
     $this->expectOutputString(
       OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
-      'We will create all the models from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      'Creating all the models for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' ...' . PHP_EOL .
+      'We will create all the models from ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
+      'Creating all the models for the bundle ' . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . ' ...' . PHP_EOL .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_2) .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_3) .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_4)
@@ -410,11 +410,11 @@ class CreateModelTaskTest extends TestCase
     // assertions
     $this->expectOutputString(
       OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE .
-      'We will create all the models from ' . CLI_LIGHT_CYAN . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
-      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_LIGHT_CYAN .
+      'We will create all the models from ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_YML_FILE . END_COLOR . '.' . PHP_EOL .
+      OTRA_LABEL_A_MODEL_IN_THE_BUNDLE . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . OTRA_LABEL_FOR_THE_MODULE . CLI_INFO_HIGHLIGHT .
       self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
-      'Creating all the models for the bundle ' . CLI_LIGHT_CYAN . self::BUNDLE_NAME . END_COLOR . ' in the module ' .
-      CLI_LIGHT_CYAN . self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
+      'Creating all the models for the bundle ' . CLI_INFO_HIGHLIGHT . self::BUNDLE_NAME . END_COLOR . ' in the module ' .
+      CLI_INFO_HIGHLIGHT . self::MODULE_NAME . END_COLOR . ' ...' . PHP_EOL .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_2) .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_3) .
       self::modelHasBeenCreatedOutput(self::MODEL_NAME_4)

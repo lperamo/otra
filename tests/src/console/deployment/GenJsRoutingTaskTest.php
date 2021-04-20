@@ -43,7 +43,7 @@ class GenJsRoutingTaskTest extends TestCase
     // launching
     $this->expectOutputString(
       'Generating JavaScript routing...' . PHP_EOL . ERASE_SEQUENCE . 'JavaScript routing generated in ' .
-      CLI_LIGHT_CYAN . self::MAIN_JS_ROUTING . END_COLOR . OTRA_SUCCESS . PHP_EOL
+      CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . END_COLOR . OTRA_SUCCESS . PHP_EOL
     );
 
     TasksManager::execute(
@@ -78,9 +78,9 @@ class GenJsRoutingTaskTest extends TestCase
   public function testSqlCleanHelp()
   {
     $this->expectOutputString(
-      CLI_WHITE .
+      CLI_BASE .
       str_pad(self::OTRA_TASK_GEN_JS_ROUTING, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_LIGHT_GRAY . ': ' . CLI_CYAN .
+      CLI_GRAY . ': ' . CLI_INFO .
       'Generates a route mapping that can be used by JavaScript files.' .
       PHP_EOL . END_COLOR
     );

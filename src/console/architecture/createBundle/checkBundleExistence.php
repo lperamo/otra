@@ -16,7 +16,7 @@ if (!file_exists($bundlePath))
 {
   /** @var bool $consoleForce */
   if (!$consoleForce)
-    echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist.', END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
 
   /** @var bool $interactive */
   if (!$interactive)

@@ -9,8 +9,8 @@ declare(strict_types=1);
 /** @var string $bundleName */
 define(
   'MODULE_BUNDLE_MESSAGE',
-  'A model in the bundle ' . CLI_LIGHT_CYAN . $bundleName . END_COLOR . ' for the module ' .
-  CLI_LIGHT_CYAN . MODULE_NAME . END_COLOR . ' ...' . PHP_EOL
+  'A model in the bundle ' . CLI_INFO_HIGHLIGHT . $bundleName . END_COLOR . ' for the module ' .
+  CLI_INFO_HIGHLIGHT . MODULE_NAME . END_COLOR . ' ...' . PHP_EOL
 );
 // This variable is used for code creation
 define('START_ACCOLADE', PHP_EOL . SPACE_INDENT . '{' . PHP_EOL);

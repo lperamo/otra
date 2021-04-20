@@ -9,7 +9,7 @@ declare(strict_types=1);
 use otra\console\TasksManager;
 
 return [
-  'Deploy the site. ' . CLI_YELLOW . '[Currently only works for unix systems !]' . END_COLOR,
+  'Deploy the site. ' . CLI_WARNING . '[Currently only works for unix systems !]' . END_COLOR,
   [
     'mask' => '0 => Nothing to do (default)' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '1 => Generates PHP production files.' . PHP_EOL .

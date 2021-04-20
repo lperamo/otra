@@ -23,7 +23,7 @@ if (!function_exists('writeConfigFile'))
   {
     if (empty($content))
     {
-      echo CLI_YELLOW, 'Nothing to put into ', CLI_LIGHT_CYAN, $configFile, CLI_YELLOW,
+      echo CLI_WARNING, 'Nothing to put into ', CLI_INFO_HIGHLIGHT, $configFile, CLI_WARNING,
         ' so we\'ll delete the main file if it exists.', END_COLOR, PHP_EOL;
 
       if (file_exists($configFile))
@@ -39,8 +39,8 @@ if (!function_exists('writeConfigFile'))
       $configFile,
       rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($configFile))) . PHP_EOL
     );
-    echo CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, substr($configFile, strlen(BASE_PATH)), CLI_GREEN, ' updated.',
-      END_COLOR, PHP_EOL;
+    echo CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, substr($configFile, strlen(BASE_PATH)), CLI_BASE,
+      ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 
   /**

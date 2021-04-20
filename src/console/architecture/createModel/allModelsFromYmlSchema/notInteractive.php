@@ -21,13 +21,13 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 } else
 {
   /** MODULE */
-  echo 'A model in the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' for the module ', CLI_LIGHT_CYAN,
+  echo 'A model in the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' for the module ', CLI_INFO_HIGHLIGHT,
     MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
   define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
 
   // We cleans the last sentence
-  echo 'Creating all the models for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' in the module ',
-    CLI_LIGHT_CYAN, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
+  echo 'Creating all the models for the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' in the module ',
+    CLI_INFO_HIGHLIGHT, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
 modelsCreation($modelLocation, $bundleName, $modelName . '.php');

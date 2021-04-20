@@ -11,7 +11,7 @@ declare(strict_types=1);
 require CREATE_MODEL_FOLDER . 'common.php';
 define(
   'MODEL_CREATED_FROM_YAML_SCHEMA',
-  'We will create one model from ' . CLI_LIGHT_CYAN . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
+  'We will create one model from ' . CLI_INFO_HIGHLIGHT . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
 );
 
 /**
