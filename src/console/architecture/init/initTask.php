@@ -102,6 +102,7 @@ if (!file_exists(OTRA_LOGS_PROD_PATH))
 const OTRA_LOG_FILES_PATH = [
   OTRA_LOGS_DEV_PATH . 'sql.txt',
   OTRA_LOGS_DEV_PATH . 'trace.txt',
+  OTRA_LOGS_PROD_PATH . 'log.txt',
   OTRA_LOGS_PROD_PATH . 'classNotFound.txt',
   OTRA_LOGS_PROD_PATH . 'unknownExceptions.txt',
   OTRA_LOGS_PROD_PATH . 'unknownFatalErrors.txt'

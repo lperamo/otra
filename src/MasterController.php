@@ -270,7 +270,7 @@ abstract class MasterController
       return '';
 
     // Puts the motor template visualization system into session if we are in a development environment
-    if ($_SERVER[APP_ENV] === 'dev')
+    if ($_SERVER[APP_ENV] === DEV)
     {
       if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
         return '';
@@ -419,5 +419,5 @@ abstract class MasterController
 // We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
 // allowing the block.php file of the template engine system to work in production mode,
 // by creating a class alias. Disabled when passing via the command line tasks.
-if ($_SERVER[APP_ENV] === 'prod' && PHP_SAPI !== 'cli')
+if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
   class_alias('\cache\php\MasterController', '\otra\MasterController');

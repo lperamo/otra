@@ -82,7 +82,7 @@ class RoutesTest extends TestCase
 
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
-    $_SERVER['APP_ENV'] = 'dev';
+    $_SERVER['APP_ENV'] = DEV;
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
 

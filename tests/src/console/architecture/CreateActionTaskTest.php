@@ -45,7 +45,7 @@ class CreateActionTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
   }
 
   protected function tearDown(): void

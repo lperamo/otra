@@ -82,7 +82,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   if (!$raw)
   {
     $output = '<pre class="sql--logs--request">';
-    $leftStyleClauseCode = $_SERVER[APP_ENV] === 'dev'
+    $leftStyleClauseCode = $_SERVER[APP_ENV] === DEV
       ? '<span class="sql--logs--clause">'
       : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;

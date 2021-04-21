@@ -35,7 +35,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
   public function testSqlCreateDatabaseTask() : void
   {
     // context
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     copyFileAndFolders(
       [self::SCHEMA_FILE_BACKUP],

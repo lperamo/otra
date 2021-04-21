@@ -11,7 +11,7 @@ require __DIR__ . (OTRA_PROJECT
     : '/..'
   ) . '/config/constants.php';
 const CACHE_PHP_INIT_PATH = CACHE_PATH . 'php/init/';
-$_SERVER[APP_ENV] = 'prod';
+$_SERVER[APP_ENV] = PROD;
 require CONSOLE_PATH . 'TasksManager.php';
 require CONSOLE_PATH . 'colors.php';
 

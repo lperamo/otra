@@ -20,7 +20,7 @@ class HelpTest extends TestCase
   public function testHelpHelp() : void
   {
     // context
-    $_SERVER['APP_ENV'] = 'prod';
+    $_SERVER['APP_ENV'] = PROD;
 
     // testing
     $this->expectOutputString(

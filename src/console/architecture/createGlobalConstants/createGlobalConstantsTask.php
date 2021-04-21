@@ -19,25 +19,24 @@ $corePath = $basePath . $otraProjectSuffix;
 $consolePath = $corePath . 'console/';
 $coreResourcesPath = '/' . $otraProjectSuffix . 'resources/';
 $cachePath = $basePath . 'cache/';
-$testPath = $otraProject === true
-  ? $basePath . 'vendor/otra/otra/tests/'
-  : $basePath . 'tests/';
-$content = '<?php declare(strict_types=1);define(\'BASE_PATH\',\'' . $basePath .
-  '\');define(\'CORE_PATH\',\'' . $corePath .
-  '\');define(\'CACHE_PATH\',\'' . $cachePath .
-  '\');define(\'CONSOLE_PATH\',\'' . $consolePath .
-  '\');define(\'CLASS_MAP_PATH\',\'' . $cachePath . 'php/init/ClassMap.php' .
-  '\');define(\'TEST_PATH\',\'' . ($otraProject === true
+$content = '<?php declare(strict_types=1);' .
+  'const DEV=\'dev' .
+  '\',PROD=\'prod' .
+  '\',BASE_PATH=\'' . $basePath .
+  '\',CORE_PATH=\'' . $corePath .
+  '\',CACHE_PATH=\'' . $cachePath .
+  '\',CONSOLE_PATH=\'' . $consolePath .
+  '\',CLASS_MAP_PATH=\'' . $cachePath . 'php/init/ClassMap.php\',TEST_PATH=\'' .
+  ($otraProject
     ? $basePath . 'vendor/otra/otra/tests/'
     : $basePath . 'tests/') .
-  '\');define(\'CORE_VIEWS_PATH\',\'' . $corePath . 'views/' .
-  '\');define(\'CORE_RESOURCES_PATH\',\'' . $coreResourcesPath .
-  '\');define(\'CORE_CSS_PATH\',\'' . $coreResourcesPath . 'css/' .
-  '\');define(\'CORE_JS_PATH\',\'' . $coreResourcesPath . 'js/' .
-  '\');define(\'SPACE_INDENT\',\'  ' .
-  '\');define(\'APP_ENV\',\'APP_ENV' .
-  '\');define(\'OTRA_VERSION\',\'1.0.0-alpha.2.4.0' .
-  '\');if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');';
+  '\',CORE_VIEWS_PATH=\'' . $corePath . 'views/' .
+  '\',CORE_CSS_PATH=\'' . $coreResourcesPath . 'css/' .
+  '\',CORE_JS_PATH=\'' . $coreResourcesPath . 'js/' .
+  '\',SPACE_INDENT=\'  ' .
+  '\',APP_ENV=\'APP_ENV' .
+  '\',OTRA_VERSION=\'1.0.0-alpha.2.4.0' .
+  '\';if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)
 require_once $consolePath . 'colors.php';

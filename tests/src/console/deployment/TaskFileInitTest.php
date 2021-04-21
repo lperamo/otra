@@ -20,7 +20,7 @@ class TaskFileInitTest extends TestCase
   public function testGetPathInformations() : void
   {
     // context
-    $_SERVER['APP_ENV'] = 'dev';
+    $_SERVER['APP_ENV'] = DEV;
     $argv = [];
     define('TEST_ROUTES_PATH', BASE_PATH . 'bundles/config/');
     mkdir(TEST_ROUTES_PATH, 0777,true);

@@ -27,7 +27,7 @@ class DebugToolsTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
     self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
 
     // @TODO we should be able to do a simple require and not require_once

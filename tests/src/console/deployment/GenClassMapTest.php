@@ -27,7 +27,7 @@ class GenClassMapTest extends TestCase
   public function testGenClassMapTask() : void
   {
     // context
-    $_SERVER['APP_ENV'] = 'dev';
+    $_SERVER['APP_ENV'] = DEV;
     define('FIRST_CLASS_PADDING', 80);
 
     // testing

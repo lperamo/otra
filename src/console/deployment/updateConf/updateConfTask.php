@@ -220,8 +220,8 @@ $securitiesArray = [];
 
 if (!defined('OTRA_DEVELOPMENT_ENVIRONMENT'))
 {
-  define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
-  define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
+  define('OTRA_DEVELOPMENT_ENVIRONMENT', DEV);
+  define('OTRA_PRODUCTION_ENVIRONMENT', PROD);
   define('OTRA_PHP_DOT_EXTENSION', '.php');
 }
 

@@ -36,7 +36,7 @@ abstract class Pdomysql
     {
       throw new OtraException(
         'Database connection failed: ' . $exception->getMessage() .
-        ($_SERVER['APP_ENV'] === 'prod'
+        ($_SERVER['APP_ENV'] === PROD
           ? ''
           : ' - Context : ' . $dsn . ' ' . $username . ' ' . $password
         )

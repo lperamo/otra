@@ -72,7 +72,7 @@ class OtraException extends Exception
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
-    elseif ($_SERVER['APP_ENV'] !== 'prod')
+    elseif ($_SERVER['APP_ENV'] !== PROD)
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
 
@@ -126,7 +126,7 @@ class OtraException extends Exception
     // This test avoid trying to render an exception that cannot be rendered by classic ways...
     if (isset($traces[1], $traces[1]['function']) && $traces[1]['function'] === 'renderView')
     {
-      if ($_SERVER[APP_ENV] === 'dev')
+      if ($_SERVER[APP_ENV] === DEV)
       {
         [$message, $errorCode, $fileName, $fileLine, $context, $backtraces] = [
           $this->message,

@@ -34,7 +34,7 @@ class SqlCleanTaskTest extends TestCase
   public function testSqlClean() : void
   {
     // context
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
     removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
     removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
 

@@ -20,7 +20,7 @@ class ProfilerService
    */
   public static function securityCheck() : void
   {
-    if ('dev' !== $_SERVER[APP_ENV])
+    if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
       throw new \otra\OtraException('', 1, '', NULL, [], true);

@@ -12,7 +12,7 @@ return [
   'Generates a server configuration adapted to OTRA.',
   [
     'file name' => 'Name of the file to put the generated configuration',
-    'environment' => CLI_INFO_HIGHLIGHT . 'dev' . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . 'prod',
+    'environment' => CLI_INFO_HIGHLIGHT . DEV . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . PROD,
     'serverTechnology' => CLI_INFO_HIGHLIGHT . 'nginx' . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . 'apache' . CLI_WARNING .
       ' (but works only for Nginx for now)'
   ],

@@ -19,7 +19,7 @@ session_start([
 ]);
 
 // Otherwise for dynamic pages...
-$_SERVER[APP_ENV] = 'prod';
+$_SERVER[APP_ENV] = PROD;
 
 try
 {

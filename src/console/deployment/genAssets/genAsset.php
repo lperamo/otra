@@ -17,7 +17,7 @@ require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'
   ) . '/config/constants.php';
-$_SERVER[APP_ENV] = 'prod';
+$_SERVER[APP_ENV] = PROD;
 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 
 // Loads the main configuration

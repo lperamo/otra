@@ -44,7 +44,7 @@ function handleBasicConfiguration() : string
   return SPACE_INDENT . 'listen 443 ssl http2;' . PHP_EOL .
     SPACE_INDENT . 'listen [::]:443 ssl http2;' . PHP_EOL .
     SPACE_INDENT . 'set $rootPath ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] . ';' . PHP_EOL .
-    SPACE_INDENT . 'index ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'indexDev.php;' : 'index.php;') . PHP_EOL .
+    SPACE_INDENT . 'index ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'indexDev.php;' : 'index.php;') . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
     SPACE_INDENT . 'server_name ' . GEN_SERVER_CONFIG_SERVER_NAME . ';' . PHP_EOL .
@@ -228,7 +228,7 @@ function handleRewriting() : string
   return SPACE_INDENT . '# Handles rewriting' . PHP_EOL .
     SPACE_INDENT . 'location /' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'Dev' : '') . '.php last;' . PHP_EOL .
+    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? DEV : '') . '.php last;' . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
@@ -257,7 +257,7 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   handleManifest() .
 
-  (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev'
+  (GEN_SERVER_CONFIG_ENVIRONMENT === DEV
   ? PHP_EOL .
     SPACE_INDENT . '# Handling CSS and JS (project and vendor)' . PHP_EOL .
     SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
@@ -303,6 +303,6 @@ $content = handlesHTTPSRedirection() .
 
 file_put_contents($fileName, $content);
 
-echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === 'dev' ? 'development' : 'production') .
+echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'development' : 'production') .
   ' server configuration generated in ' . CLI_INFO_HIGHLIGHT . $fileName . END_COLOR . '.' . PHP_EOL;
 return 0;

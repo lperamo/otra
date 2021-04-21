@@ -27,7 +27,7 @@ if (!defined('BASE_PATH'))
     require CONSTANTS_PATH;
   else
   {
-    $_SERVER['APP_ENV'] = 'dev';
+    $_SERVER['APP_ENV'] = DEV;
     require __DIR__ . '/../../../..' . CONSTANTS_ENDING_PATH;
   }
 
@@ -53,9 +53,9 @@ if (!defined('PHP_CACHE_FOLDER'))
  **************************************/
 
 // temporarily forces to look into the development configuration
-$_SERVER[APP_ENV] = 'dev';
+$_SERVER[APP_ENV] = DEV;
 $foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...\config\AllConfig::$taskFolders ?? []]);
-$_SERVER[APP_ENV] = 'prod';
+$_SERVER[APP_ENV] = PROD;
 
 $helpFileContent = [];
 $taskClassMap = [];

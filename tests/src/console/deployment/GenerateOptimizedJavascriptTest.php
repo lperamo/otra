@@ -20,7 +20,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
   public function testGenerateOptimizedJavascript() : void
   {
     // context
-    $_SERVER['APP_ENV'] = 'dev';
+    $_SERVER['APP_ENV'] = DEV;
 
     // loading files...
     require CORE_PATH . 'tools/cli.php';

@@ -21,7 +21,7 @@ define(
   'GEN_SERVER_CONFIG_ENVIRONMENT',
   (isset($argv[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]))
   ? $argv[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]
-  : 'dev'
+  : DEV
 );
 
 define(

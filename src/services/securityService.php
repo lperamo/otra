@@ -39,11 +39,11 @@ if (!function_exists('getRandomNonceForCSP'))
     OTRA_KEY_SCRIPT_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF
   ]);
   define('CONTENT_SECURITY_POLICY', [
-    'dev' => CSP_ARRAY,
-    'prod' => CSP_ARRAY
+    DEV => CSP_ARRAY,
+    PROD => CSP_ARRAY
   ]);
   define('FEATURE_POLICY', [
-    'dev' =>
+    DEV =>
       [
         'layout-animations' => OTRA_LABEL_SECURITY_SELF,
         'legacy-image-formats' => OTRA_LABEL_SECURITY_NONE,
@@ -53,7 +53,7 @@ if (!function_exists('getRandomNonceForCSP'))
         'unoptimized-images' => OTRA_LABEL_SECURITY_NONE,
         'unsized-media' => OTRA_LABEL_SECURITY_NONE
       ],
-    'prod' => []
+    PROD => []
   ]);
 
   /**

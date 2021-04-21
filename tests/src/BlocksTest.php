@@ -19,7 +19,7 @@ class BlocksTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
     define('VERSION', 'v1');
     $_SERVER['REQUEST_URI'] = '';
     self::$controller = new Controller(

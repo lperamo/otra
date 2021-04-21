@@ -45,7 +45,7 @@ abstract class Router
 
     $finalAction = '';
 
-    if ('prod' === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
+    if (PROD === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
       $finalAction = 'cache\\php\\' . $action; //'cache\\php\\' . $controller . 'Controller'
     else
     {
