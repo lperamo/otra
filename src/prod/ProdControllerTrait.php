@@ -46,7 +46,7 @@ trait ProdControllerTrait
     parent::handleCache($templateFile, $variables, $ajax, $this->route, $this->viewResourcePath);
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
-    addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
+    addPermissionsPoliciesHeader($this->route, $this->routeSecurityFilePath);
 
     return parent::$template;
   }

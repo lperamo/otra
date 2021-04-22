@@ -85,7 +85,7 @@ trait DevControllerTrait
     }
 
     addCspHeader($this->route, $this->routeSecurityFilePath);
-    addFeaturePoliciesHeader($this->route, $this->routeSecurityFilePath);
+    addPermissionsPoliciesHeader($this->route, $this->routeSecurityFilePath);
 
     return parent::$template;
   }

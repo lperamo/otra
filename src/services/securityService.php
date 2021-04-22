@@ -11,7 +11,7 @@ use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
 {
-  define('OTRA_KEY_FEATURE_POLICY', 'featurePolicy');
+  define('OTRA_KEY_PERMISSIONS_POLICY', 'permissionsPolicy');
   define('OTRA_KEY_CONTENT_SECURITY_POLICY', 'csp');
   define('OTRA_KEY_SCRIPT_SRC_DIRECTIVE', 'script-src');
   define('OTRA_KEY_STYLE_SRC_DIRECTIVE', 'style-src');
@@ -20,7 +20,7 @@ if (!function_exists('getRandomNonceForCSP'))
   define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
   define('OTRA_POLICY', 0);
   define('OTRA_POLICIES', [
-    OTRA_KEY_FEATURE_POLICY => 'Feature-Policy: ',
+    OTRA_KEY_PERMISSIONS_POLICY => 'Permissions-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ]);
   define('OTRA_STRLEN_SCRIPT_SRC', 10);
@@ -42,16 +42,14 @@ if (!function_exists('getRandomNonceForCSP'))
     DEV => CSP_ARRAY,
     PROD => CSP_ARRAY
   ]);
-  define('FEATURE_POLICY', [
+
+  // experimental with bad support
+  // ('layout-animations', 'legacy-image-formats', 'oversized-images', 'unoptimized-images', 'unsized-media')
+  define('PERMISSIONS_POLICY', [
     DEV =>
       [
-        'layout-animations' => OTRA_LABEL_SECURITY_SELF,
-        'legacy-image-formats' => OTRA_LABEL_SECURITY_NONE,
-        'oversized-images' => OTRA_LABEL_SECURITY_NONE,
-        'sync-script' => OTRA_LABEL_SECURITY_NONE,
-        'sync-xhr' => OTRA_LABEL_SECURITY_NONE,
-        'unoptimized-images' => OTRA_LABEL_SECURITY_NONE,
-        'unsized-media' => OTRA_LABEL_SECURITY_NONE
+        'interest-cohort' => '', // To avoid tracking from Google Floc
+        'sync-xhr' => ''
       ],
     PROD => []
   ]);
@@ -74,10 +72,10 @@ if (!function_exists('getRandomNonceForCSP'))
    * Generates the security policy that will be added to the HTTP header.
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
-   * @param string      $policy                  Can be 'csp' or 'featurePolicy'
+   * @param string      $policy                  Can be 'csp' or 'permissionsPolicy'
    * @param string      $route
    * @param string|null $routeSecurityFilePath
-   * @param array       $defaultPolicyDirectives The default policy directives (csp or feature policy) from
+   * @param array       $defaultPolicyDirectives The default policy directives (csp or permissions policy) from
    *                                             MasterController
    *
    * @return array
@@ -95,7 +93,7 @@ if (!function_exists('getRandomNonceForCSP'))
   {
     $finalProcessedPolicies = $defaultPolicyDirectives;
 
-    // OTRA routes are not secure with CSP and feature policies for the moment
+    // OTRA routes are not secure with CSP and permissions policies for the moment
     if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
       // Retrieve security instructions from the routes configuration file
@@ -132,6 +130,8 @@ if (!function_exists('getRandomNonceForCSP'))
 
     $finalPolicy = OTRA_POLICIES[$policy];
 
+    $policySeparator = ($policy === OTRA_KEY_CONTENT_SECURITY_POLICY) ? ' ' : '=(';
+
     /**
      * @var string $directive
      * @var string $value
@@ -142,7 +142,28 @@ if (!function_exists('getRandomNonceForCSP'))
       if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE || $directive === OTRA_KEY_STYLE_SRC_DIRECTIVE)
         continue;
 
-      $finalPolicy .= $directive . ' ' . $value . '; ';
+      $finalPolicy .= $directive . $policySeparator . $value;
+
+      if ($policy === OTRA_KEY_PERMISSIONS_POLICY)
+        $finalPolicy .= '),';
+      else
+        $finalPolicy .= '; ';
+    }
+
+    if($policy === OTRA_KEY_PERMISSIONS_POLICY)
+    {
+      $finalPolicy = str_replace(
+        [
+          OTRA_LABEL_SECURITY_SELF,
+          '(self)'
+        ],
+        [
+          'self',
+          'self'
+        ],
+        $finalPolicy
+      );
+      $finalPolicy = substr($finalPolicy, 0, -1);
     }
 
     return [$finalPolicy, $finalProcessedPolicies];
@@ -177,14 +198,14 @@ if (!function_exists('getRandomNonceForCSP'))
    * @param string      $route
    * @param string|null $routeSecurityFilePath
    */
-  function addFeaturePoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
+  function addPermissionsPoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
   {
     if (!headers_sent())
       header(createPolicy(
-        OTRA_KEY_FEATURE_POLICY,
+        OTRA_KEY_PERMISSIONS_POLICY,
         $route,
         $routeSecurityFilePath,
-        FEATURE_POLICY[$_SERVER[APP_ENV]]
+        PERMISSIONS_POLICY[$_SERVER[APP_ENV]]
       )[OTRA_POLICY]);
   }
 

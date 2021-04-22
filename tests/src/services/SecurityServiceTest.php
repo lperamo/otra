@@ -162,7 +162,7 @@ class SecurityServiceTest extends TestCase
     );
   }
 
-  public function testCreatePolicy_Dev_FeaturePolicy() : void
+  public function testCreatePolicy_Dev_PermissionsPolicy() : void
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
@@ -170,28 +170,28 @@ class SecurityServiceTest extends TestCase
 
     // launching ['csp']
     $returnArray = createPolicy(
-      OTRA_KEY_FEATURE_POLICY,
+      OTRA_KEY_PERMISSIONS_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_FILE_PATH,
-      FEATURE_POLICY[self::ENV_DEV]
+      PERMISSIONS_POLICY[self::ENV_DEV]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Feature-Policy: layout-animations 'self'; legacy-image-formats 'none'; oversized-images 'none'; sync-script 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; accelerometer 'self'; ",
+      "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
       array_merge(
-        FEATURE_POLICY[self::ENV_DEV],
-        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
+        PERMISSIONS_POLICY[self::ENV_DEV],
+        (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
     );
   }
 
-  public function testCreatePolicy_Prod_FeaturePolicy() : void
+  public function testCreatePolicy_Prod_PermissionsPolicy() : void
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_PROD;
@@ -199,22 +199,22 @@ class SecurityServiceTest extends TestCase
 
     // launching
     $returnArray = createPolicy(
-      OTRA_KEY_FEATURE_POLICY,
+      OTRA_KEY_PERMISSIONS_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_PROD_FILE_PATH,
-      FEATURE_POLICY[self::ENV_PROD]
+      PERMISSIONS_POLICY[self::ENV_PROD]
     );
 
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Feature-Policy: accelerometer 'none'; ambient-light-sensor 'none'; ",
-      $returnArray[OTRA_POLICY]
+      "Permissions-Policy: accelerometer=(),ambient-light-sensor=()",
+      $returnArray[OTRA_POLICY],
     );
     self::assertEquals(
       array_merge(
-        FEATURE_POLICY[self::ENV_PROD],
-        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_FEATURE_POLICY]
+        PERMISSIONS_POLICY[self::ENV_PROD],
+        (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
     );
@@ -270,44 +270,44 @@ class SecurityServiceTest extends TestCase
   }
 
   /**
-   * @depends testCreatePolicy_Dev_FeaturePolicy
+   * @depends testCreatePolicy_Dev_PermissionsPolicy
    */
-  public function testAddFeaturePoliciesHeader_Dev() : void
+  public function testAddPermissionPoliciesHeader_Dev() : void
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_DEV;
     require self::SECURITY_SERVICE;
 
     // launching
-    addFeaturePoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_DEV_FILE_PATH);
+    addPermissionsPoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_DEV_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
     self::assertEquals(
-      "Feature-Policy: layout-animations 'self'; legacy-image-formats 'none'; oversized-images 'none'; sync-script 'none'; sync-xhr 'none'; unoptimized-images 'none'; unsized-media 'none'; accelerometer 'self';",
+      "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self",
       $headers[0]
     );
   }
 
   /**
-   * @depends testCreatePolicy_Prod_FeaturePolicy
+   * @depends testCreatePolicy_Prod_PermissionsPolicy
    */
-  public function testAddFeaturePoliciesHeader_Prod() : void
+  public function testAddPermissionsPoliciesHeader_Prod() : void
   {
     // context
     $_SERVER[APP_ENV] = self::ENV_PROD;
     require self::SECURITY_SERVICE;
 
     // launching
-    addFeaturePoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_PROD_FILE_PATH);
+    addPermissionsPoliciesHeader(self::ROUTE, self::ROUTE_SECURITY_PROD_FILE_PATH);
 
     // testing
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
-    self::assertEquals("Feature-Policy: accelerometer 'none'; ambient-light-sensor 'none';", $headers[0]);
+    self::assertEquals("Permissions-Policy: accelerometer=(),ambient-light-sensor=()", $headers[0]);
   }
 
   /**

@@ -13,7 +13,7 @@ define('SECURITY_ROUTE_PATH', CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] .
 header('Content-Encoding: gzip');
 
 addCspHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);
-addFeaturePoliciesHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);
+addPermissionsPoliciesHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);
 
 echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . OTRA_ROUTE . VERSION . 'che') . '.gz');
 exit;
