@@ -154,6 +154,15 @@ echo ERASE_SEQUENCE, 'Favicons added', OTRA_SUCCESS;
 // We update the routes configuration as we just add one route.
 require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
+echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
+require CORE_PATH . 'tools/cli.php';
+[,$output] = cliCommand(
+  'php ' . BASE_PATH . 'bin/otra.php buildDev 0 1',
+  CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
+);
+
+echo $output, PHP_EOL, CLI_BASE, 'CSS assets builded', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+
 /* We update the class mapping since we have one action more.
  * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the
  * class map generation task.

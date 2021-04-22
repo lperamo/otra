@@ -11,9 +11,6 @@ define('OTRA_LABEL_UPDATED', ' updated');
 define('OTRA_LABEL_FOLDER', 'Folder ');
 define('OTRA_LABEL_BASE_PATH_PLUS', 'BASE_PATH + ');
 define('OTRA_TASK_CREATE_HELLO_WORLD', 'createHelloWorld');
-//
-//if (!defined('OTRA_SUCCESS'))
-//  define('OTRA_SUCCESS', CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);
 
 /**
  * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase !
@@ -97,8 +94,11 @@ class CreateHelloWorldTest extends TestCase
       OTRA_LABEL_UPDATED . self::OTRA_SUCCESS .
       CLI_TABLE . OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'cache/php/security/prod/HelloWorld.php' . CLI_BASE .
       OTRA_LABEL_UPDATED . self::OTRA_SUCCESS .
-      'Class mapping finished' . self::OTRA_SUCCESS .
-      PHP_EOL .
+      CLI_BASE . 'Building the CSS assets...' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'The production configuration is used for this task.' . END_COLOR . PHP_EOL .
+      CLI_BASE . 'Files have been generated' . self::OTRA_SUCCESS .
+      CLI_BASE . 'CSS assets builded' . self::OTRA_SUCCESS .
+      'Class mapping finished' . self::OTRA_SUCCESS . PHP_EOL .
       'You can launch this example via the url ' . CLI_INFO_HIGHLIGHT . '/helloworld' . END_COLOR .
       '.' . PHP_EOL . 'You can launch a PHP internal web server by typing ' . CLI_INFO_HIGHLIGHT . 'otra serve' .
         END_COLOR . '.' .
