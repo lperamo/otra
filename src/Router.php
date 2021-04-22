@@ -169,11 +169,7 @@ abstract class Router
       return [$routeName, []];
 
     // We have found parameters so let's get them!
-//    $params = explode('/', substr(trim($pattern), strlen($routeUrl) + 1)); // +1 to remove the first /
-//var_dump($routeRegexp, $foundParameters, preg_match('@\{[^}]\}{0,}@', $pattern));
     array_shift($foundParameters);
-
-//    var_dump($routeData, $paramsFinal, $params, $derParam);die;
     $params = [];
 
     // get the parameters names
@@ -185,6 +181,7 @@ abstract class Router
     // flatten the parameters array
     $routeParameters = $routeParameters[0];
 
+    // finalizing the parameters array
     foreach($foundParameters as $foundParameterKey => $foundParameter)
     {
       $params[$routeParameters[$foundParameterKey]]= $foundParameter[0];
