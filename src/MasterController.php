@@ -39,7 +39,7 @@ abstract class MasterController
       'css' => '/', // CSS path for this module
       'js' => '/'  // JS path for this module
     ],
-    $getParams = [];
+    $params = [];
 
   protected static array
     $stylesheets = [],
@@ -126,22 +126,22 @@ abstract class MasterController
   protected const LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
-   * @param array $baseParams [
+   * @param array $otraParams [
    *  'bundle' => $bundle,
    *  'controller' => $controller,
    *  'action' => $action]
    *
-   * @param array $getParams The params passed by GET method
+   * @param array $params The params passed by GET method
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
     // If a controller is specified (in the other case, the calling controller is the Bootstrap class)
-    if (!isset($baseParams['controller']))
+    if (!isset($otraParams['controller']))
     {
-      if (isset($baseParams['route']) && $baseParams['route'] === 'otra_exception')
+      if (isset($otraParams['route']) && $otraParams['route'] === 'otra_exception')
       {
         // Stores the bundle, module, controller and action for later use
-        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($baseParams);
+        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($otraParams);
 
         require CORE_PATH . 'services/securityService.php';
         $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
@@ -159,7 +159,7 @@ abstract class MasterController
       ,
       $this->route,
       self::$hasJsToLoad,
-      self::$hasCssToLoad] = array_values($baseParams);
+      self::$hasCssToLoad] = array_values($otraParams);
 
     require CORE_PATH . 'services/securityService.php';
     $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . '/' . $this->route . '.php';
@@ -167,8 +167,8 @@ abstract class MasterController
     if (!file_exists($this->routeSecurityFilePath))
       $this->routeSecurityFilePath = null;
 
-    $this->action = substr($baseParams['action'], 0, -6);
-    $this->getParams = $getParams;
+    $this->action = substr($otraParams['action'], 0, -6);
+    $this->params = $params;
     $mainPath = 'bundles/' . $this->bundle . '/' . $this->module . '/';
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';

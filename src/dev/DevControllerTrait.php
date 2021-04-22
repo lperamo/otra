@@ -22,12 +22,12 @@ trait DevControllerTrait
   private static bool $debugBarHasBeenAdded = false;
 
   /**
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
 
     if (!isset(AllConfig::$debugConfig['autoLaunch']) || AllConfig::$debugConfig['autoLaunch'])
       require CORE_PATH . 'tools/debug/dump.php';

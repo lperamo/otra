@@ -78,12 +78,12 @@ class ' . $upperActionName . 'Action extends Controller
   /**
    * ' . $upperActionName . 'Action constructor.
    *
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
   }
 }' . PHP_EOL);
 

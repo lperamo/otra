@@ -11,14 +11,14 @@ use otra\{Controller, services\ProfilerService};
 class RefreshSQLLogsAction extends Controller
 {
   /**
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    *
    * @throws \otra\OtraException
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
     require CORE_PATH . 'tools/translate.php';
     echo ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt');

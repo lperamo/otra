@@ -14,7 +14,8 @@ use config\Routes;
 abstract class Router
 {
   private const OTRA_ROUTE_CHUNKS_KEY = 'chunks',
-    OTRA_ROUTE_RESOURCES_KEY = 'resources';
+    OTRA_ROUTE_RESOURCES_KEY = 'resources',
+    OTRA_ROUTE_URL_KEY = 0;
 
   public const
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
@@ -119,25 +120,43 @@ abstract class Router
 
     $patternFound = false;
 
-    /**
-     * @var string $mainPattern
-     * @var string $routeName
-     * @var string $routeUrl
-     */
-
+    /** @var string $routeName */
     foreach (Routes::$allRoutes as $routeName => $routeData)
     {
-      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][0];
-      $mainPattern = $routeData['mainPattern'] ?? $routeUrl;
+      /** @var string $routeUrl */
+      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];
+      $firstBracketPosition = mb_strpos($routeUrl, '{');
 
-      // This is the route we are looking for !
-      if (str_contains($pattern, $mainPattern))
+      // If the route does not contain parameters
+      if ($firstBracketPosition === false)
       {
-        $patternFound = true;
-        break;
+        // Is it the route we are looking for?
+        if (str_contains($pattern, $routeUrl))
+        {
+          $patternFound = true;
+          break;
+        } else
+          continue;
+      }
+
+      $firstPartUntilParameters = substr($routeUrl, 0, $firstBracketPosition);
+
+      // This is maybe the route (with parameters) we are looking for!
+      if (str_contains($pattern, $firstPartUntilParameters))
+      {
+        $routeRegexp = '@^' . preg_replace('@\{[^}]{0,}\}@', '([^/?]{0,})', $routeUrl) .
+          '\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,}$@';
+
+        // The beginning of the route is ok, is the parameters section ok too?
+        if (preg_match($routeRegexp, $pattern, $foundParameters, PREG_OFFSET_CAPTURE))
+        {
+          $patternFound = true;
+          break;
+        }
       }
     }
 
+    // We do not have been able to find a matching route
     if (!$patternFound)
     {
       header('HTTP/1.0 404 Not Found');
@@ -145,44 +164,31 @@ abstract class Router
       return in_array('404', array_keys(Routes::$allRoutes)) ? ['404', []] : ['otra_404', []];
     }
 
-    $params = explode('/', trim(substr($pattern, strlen($mainPattern)), '/'));
-
-    // Zero parameters => we have all we need.
-    if ('' === $params[0])
+    // The route is found, do we have parameters to get?
+    if ($firstBracketPosition === false)
       return [$routeName, []];
 
-    // We destroy the parameters after '?' because we only want rewritten parameters
-    $derParam = count($params) - 1;
-    $paramsFinal = explode('?', $params[$derParam]);
-    $params[$derParam] = $paramsFinal[0];
+    // We have found parameters so let's get them!
+//    $params = explode('/', substr(trim($pattern), strlen($routeUrl) + 1)); // +1 to remove the first /
+//var_dump($routeRegexp, $foundParameters, preg_match('@\{[^}]\}{0,}@', $pattern));
+    array_shift($foundParameters);
 
-    // Zero parameters once we remove the parameters after '?' ? => we have all we need.
-    if ('' === $params[0])
-      return [$routeName, []];
+//    var_dump($routeData, $paramsFinal, $params, $derParam);die;
+    $params = [];
 
-    // If there are named parameters in the route configuration
-    if (isset($routeData['mainPattern']))
+    // get the parameters names
+    preg_match_all('@\{([^}]{1,})\}@', $routeUrl, $routeParameters);
+
+    // remove the global result
+    array_shift($routeParameters);
+
+    // flatten the parameters array
+    $routeParameters = $routeParameters[0];
+
+    foreach($foundParameters as $foundParameterKey => $foundParameter)
     {
-      $parametersName = explode('/', substr($routeUrl, strlen($mainPattern)));
-
-      // We check the number of parameters ...
-      if (count($parametersName) !== count($params))
-      {
-        echo 'The number of parameters does not match !';
-        throw new OtraException('', 1, '', NULL, [], true);
-      }
-
-      // ...and we name the passed parameters accordingly to the route configuration
-      $newParams = [];
-
-      foreach ($params as $key => $param)
-      {
-        $newParams[substr($parametersName[$key], 1, strlen($parametersName[$key]) - 2)] = $param;
-      }
-    } else
-      $newParams = $params;
-
-    /** TODO why the $newParams variable is not used ??? */
+      $params[$routeParameters[$foundParameterKey]]= $foundParameter[0];
+    }
 
     return [$routeName, $params];
   }
