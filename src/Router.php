@@ -105,7 +105,7 @@ abstract class Router
   }
 
   /**
-   * Check if the pattern is present among the routes. TODO fix the named parameters system
+   * Check if the pattern is present among the routes.
    *
    * @param string $pattern          The pattern to check
    *
