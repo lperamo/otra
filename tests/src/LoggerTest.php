@@ -20,9 +20,7 @@ class LoggerTest extends TestCase
   {
     $_SERVER[APP_ENV] = PROD;
     self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
-    // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
-    require_once CORE_PATH . 'tools/debug/dump.php';
-    require_once CORE_PATH . 'tools/debug/tailCustom.php';
+    require CORE_PATH . 'tools/debug/tailCustom.php';
 
     if (!file_exists(self::$logsProdPath))
       mkdir(self::$logsProdPath, 0777, true);
@@ -32,11 +30,18 @@ class LoggerTest extends TestCase
   {
     if (!OTRA_PROJECT)
     {
-      if (file_exists(self::$logsProdPath))
-        rmdir(self::$logsProdPath);
+      require CORE_PATH . 'tools/deleteTree.php';
 
       if (file_exists(self::LOG_PATH))
-        rmdir(self::LOG_PATH);
+      {
+        /** @var callable $delTree */
+        $delTree(self::LOG_PATH);
+      }
+
+//      if (file_exists(self::LOG_PATH))
+//      {
+//        rmdir(self::LOG_PATH);
+//      }
     }
   }
 
@@ -71,8 +76,6 @@ class LoggerTest extends TestCase
   public function testLogToPath() : void
   {
     // context
-    // @TODO duplication of code to require dump.php. Why putting this code in setUpBeforeClass creates a fatal
-    // error "Cannot redeclare lg()" etc. ? This method should be executed only once ...
     $testLogsPath = 'logs/otraTests/';
     $logCustomFolder = '../' . $testLogsPath;
     define('LOG_FILENAME', 'log.txt');
