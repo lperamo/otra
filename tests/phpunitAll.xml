@@ -30,6 +30,9 @@
     <testsuite name="Block templating system">
       <file>./src/BlocksTest.php</file>
     </testsuite>
+    <testsuite name="Router">
+      <file>./src/RouterTest.php</file>
+    </testsuite>
     <testsuite name="Database console tasks functions">
       <file>./src/console/DatabaseTest.php</file>
     </testsuite>

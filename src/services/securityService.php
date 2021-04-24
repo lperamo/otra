@@ -15,9 +15,15 @@ if (!function_exists('getRandomNonceForCSP'))
   define('OTRA_KEY_CONTENT_SECURITY_POLICY', 'csp');
   define('OTRA_KEY_SCRIPT_SRC_DIRECTIVE', 'script-src');
   define('OTRA_KEY_STYLE_SRC_DIRECTIVE', 'style-src');
-  define('OTRA_LABEL_SECURITY_NONE', "'none'");
-  define('OTRA_LABEL_SECURITY_SELF', "'self'");
-  define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
+
+  // condition because of the definitions in updateConfTask.php (tests will fail otherwise)
+  if (!defined('OTRA_LABEL_SECURITY_NONE'))
+  {
+    define('OTRA_LABEL_SECURITY_NONE', "'none'");
+    define('OTRA_LABEL_SECURITY_SELF', "'self'");
+    define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
+  }
+
   define('OTRA_POLICY', 0);
   define('OTRA_POLICIES', [
     OTRA_KEY_PERMISSIONS_POLICY => 'Permissions-Policy: ',

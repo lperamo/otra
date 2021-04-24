@@ -30,7 +30,8 @@ abstract class Router
    *
    * @return string|Controller Controller's path
    */
-  public static function get(string $route = 'index', array|string $params = [], bool $launch = true) : string|Controller
+  public static function get(string $route = 'index', array|string $params = [], bool $launch = true)
+  : string|Controller
   {
     // We ensure that our input array really contains 5 parameters in order to make array_combine works
     [
@@ -107,18 +108,23 @@ abstract class Router
   /**
    * Check if the pattern is present among the routes.
    *
-   * @param string $pattern          The pattern to check
+   * @param string $userUrl          The pattern to check
    *
    * @return array{0:string,1:array} The route and the parameters if they exist, false otherwise
    *
    * @throws OtraException
    */
-  public static function getByPattern(string $pattern) : array
+  public static function getByPattern(string $userUrl) : array
   {
     if (empty(Routes::$allRoutes))
       throw new OtraException('There are currently no routes.');
 
     $patternFound = false;
+    $interrogationMarkPosition = mb_strpos($userUrl, '?');
+    $userUrlhasGetParameters = $interrogationMarkPosition !== false;
+
+    if ($userUrlhasGetParameters)
+      $userUrlWithoutGetParameters = substr($userUrl, 0, $interrogationMarkPosition);
 
     /** @var string $routeName */
     foreach (Routes::$allRoutes as $routeName => $routeData)
@@ -127,11 +133,18 @@ abstract class Router
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];
       $firstBracketPosition = mb_strpos($routeUrl, '{');
 
-      // If the route does not contain parameters
+      // If the route from the configuration does not contain parameters
       if ($firstBracketPosition === false)
       {
-        // Is it the route we are looking for?
-        if (str_contains($pattern, $routeUrl))
+        // Is it the route we are looking for? It is the case if:
+        // 1. The route from the configuration is included in the user url AND
+        // 2. the user url does not have GET parameters and is equal to the route OR
+        //    the user url does have GET parameters and the portion without GET parameters is equal to the route
+        // AND does this user url NOT contain parameters like the route
+        if (str_contains($userUrl, $routeUrl)
+          && (!$userUrlhasGetParameters && $routeUrl === $userUrl
+            || $userUrlhasGetParameters && $userUrlWithoutGetParameters === $routeUrl)
+        )
         {
           $patternFound = true;
           break;
@@ -140,15 +153,14 @@ abstract class Router
       }
 
       $firstPartUntilParameters = substr($routeUrl, 0, $firstBracketPosition);
-
       // This is maybe the route (with parameters) we are looking for!
-      if (str_contains($pattern, $firstPartUntilParameters))
+      if (str_contains($userUrl, $firstPartUntilParameters))
       {
         $routeRegexp = '@^' . preg_replace('@\{[^}]{0,}\}@', '([^/?]{0,})', $routeUrl) .
           '\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,}$@';
 
         // The beginning of the route is ok, is the parameters section ok too?
-        if (preg_match($routeRegexp, $pattern, $foundParameters, PREG_OFFSET_CAPTURE))
+        if (preg_match($routeRegexp, $userUrl, $foundParameters, PREG_OFFSET_CAPTURE))
         {
           $patternFound = true;
           break;
@@ -169,11 +181,7 @@ abstract class Router
       return [$routeName, []];
 
     // We have found parameters so let's get them!
-//    $params = explode('/', substr(trim($pattern), strlen($routeUrl) + 1)); // +1 to remove the first /
-//var_dump($routeRegexp, $foundParameters, preg_match('@\{[^}]\}{0,}@', $pattern));
     array_shift($foundParameters);
-
-//    var_dump($routeData, $paramsFinal, $params, $derParam);die;
     $params = [];
 
     // get the parameters names
@@ -185,6 +193,7 @@ abstract class Router
     // flatten the parameters array
     $routeParameters = $routeParameters[0];
 
+    // finalizing the parameters array
     foreach($foundParameters as $foundParameterKey => $foundParameter)
     {
       $params[$routeParameters[$foundParameterKey]]= $foundParameter[0];
@@ -199,8 +208,8 @@ abstract class Router
    *
    * @return string
    */
-  public static function getRouteUrl(string $route, array $params = []) : string {
-
+  public static function getRouteUrl(string $route, array $params = []) : string
+  {
     $paramsString = '';
 
     foreach($params as $value)
