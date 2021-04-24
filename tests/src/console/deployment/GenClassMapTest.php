@@ -20,6 +20,9 @@ class GenClassMapTest extends TestCase
     EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/',
     OTRA_TASK_HELP = 'help';
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @author Lionel Péramo
    * @throws \otra\OtraException

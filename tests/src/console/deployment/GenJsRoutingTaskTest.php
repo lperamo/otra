@@ -21,6 +21,9 @@ class GenJsRoutingTaskTest extends TestCase
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
     BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME;
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @author Lionel Péramo
    */

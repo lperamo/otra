@@ -23,7 +23,10 @@ class TaskFileInitTest extends TestCase
     $_SERVER['APP_ENV'] = DEV;
     $argv = [];
     define('TEST_ROUTES_PATH', BASE_PATH . 'bundles/config/');
-    mkdir(TEST_ROUTES_PATH, 0777,true);
+
+    if (!file_exists(TEST_ROUTES_PATH))
+      mkdir(TEST_ROUTES_PATH, 0777,true);
+
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     copyFileAndFolders([TEST_PATH . 'config/Routes.php'], [TEST_ROUTES_PATH . 'Routes.php']);
 

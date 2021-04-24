@@ -21,6 +21,9 @@ class RoutesTest extends TestCase
     OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BASE_PATH . 'bundles/config/Routes.php',
     PHP_STATUS = '[PHP]';
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @param string $parameter
    * @param string $description
