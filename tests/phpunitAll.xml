@@ -49,11 +49,14 @@
       <directory>./src/database</directory>
     </testsuite>
     <testsuite name="Debug and log tools">
-      <file>./src/tools/debug/DumpTest.php</file>
+      <file>./config/AllConfigTest.php</file>
       <file>./src/LoggerTest.php</file>
       <file>./src/OtraExceptionTest.php</file>
       <file>./src/console/OtraExceptionCliTest.php</file>
-      <file>./config/AllConfigTest.php</file>
+      <file>./src/tools/ReformatSourceTest.php</file>
+      <file>./src/tools/debug/DumpTest.php</file>
+      <file>./src/tools/debug/GetCallerTest.php</file>
+      <file>./src/tools/debug/TailCustomTest.php</file>
     </testsuite>
     <testsuite name="Console architecture tasks">
       <directory>./src/console/architecture</directory>
