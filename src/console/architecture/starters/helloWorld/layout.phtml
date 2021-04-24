@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-require CORE_PATH . 'templating/blocks.php' ?>
+if (!class_exists('cache\php\BlocksSystem'))
+  require CORE_PATH . 'templating/blocks.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,3 +43,4 @@ require CORE_PATH . 'templating/blocks.php' ?>
 Hello!
 <?php endblock(); ?>
 </body>
+</html>
