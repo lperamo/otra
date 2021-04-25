@@ -29,9 +29,8 @@ function showTraceLine(array $contextItem) : void
           <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . $traceLine ?>
           </span>
           <?php
-        } else {
+        } else
           echo $traceFile;
-        }
       } else
         echo '-' . $traceLine;
       ?>
@@ -45,9 +44,7 @@ function showTraceLine(array $contextItem) : void
         ?></pre>
         <?php
         if (!empty($contextItem['variables']))
-        {
-          dump([], $contextItem['variables']);
-        }
+          dump($contextItem['variables']);
       }
       ?>
     </div>
