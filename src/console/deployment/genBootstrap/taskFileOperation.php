@@ -15,25 +15,25 @@ const PATTERN = '@\s{0,}
         (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
         (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
         (?:->renderView\s{0,}\([^\),]{1,})
-        @mx';
+        @mx',
 // a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
-const ANNOTATION_DEBUG_PAD = 80;
-const LOADED_DEBUG_PAD = 80;
-const PHP_OPEN_TAG_STRING = '<?php';
-const PHP_OPEN_TAG_LENGTH = 5;
-const PHP_END_TAG_STRING = '?>';
-const PHP_END_TAG_LENGTH = 2;
-const RETURN_AND_STRICT_TYPE_DECLARATION = 31;
+  ANNOTATION_DEBUG_PAD = 80,
+  LOADED_DEBUG_PAD = 80,
+  PHP_OPEN_TAG_STRING = '<?php',
+  PHP_OPEN_TAG_LENGTH = 5,
+  PHP_END_TAG_STRING = '?>',
+  PHP_END_TAG_LENGTH = 2,
+  RETURN_AND_STRICT_TYPE_DECLARATION = 31,
 
-const OTRA_ALREADY_PARSED_LABEL = ' ALREADY PARSED';
-const OTRA_KEY_REQUIRE = 'require';
-const OTRA_KEY_EXTENDS = 'extends';
-const OTRA_KEY_STATIC = 'static';
-const OTRA_KEY_FINAL_CONTENT_PARTS = 'finalContentParts';
+  OTRA_ALREADY_PARSED_LABEL = ' ALREADY PARSED',
+  OTRA_KEY_REQUIRE = 'require',
+  OTRA_KEY_EXTENDS = 'extends',
+  OTRA_KEY_STATIC = 'static',
+  OTRA_KEY_FINAL_CONTENT_PARTS = 'finalContentParts',
 
-const OTRA_LABEL_REQUIRE = 'require';
-const ADJUST_SPACES_AROUND_REQUIRE_STATEMENT = '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@';
+  OTRA_LABEL_REQUIRE = 'require',
+  ADJUST_SPACES_AROUND_REQUIRE_STATEMENT = '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@';
 define('BASE_PATH_LENGTH', strlen(BASE_PATH));
 
 /**
@@ -617,10 +617,14 @@ function getFileInfoFromRequiresAndExtends(
         // If we find __DIR__ in the include/require statement then we replace it with the good folder and not the actual folder (...console ^^)
         $posDir = strpos($tempFile, '__DIR__ .');
 
-        // TODO replace the value 9 by a constant or at least put an explanation !
         if ($posDir !== false)
-          $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' .
-            basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
+        {
+          $tempFile = substr_replace('__DIR__ . ',
+            '\'' . dirname($file) . '/' .
+            basename(substr($tempFile, $posDir, -1)) . '\'',
+            $posDir,
+            9); // 9 is the length of the string '__DIR__ .'
+        }
 
         // we must not change these inclusions from
         // - CORE_PATH . Router.php
