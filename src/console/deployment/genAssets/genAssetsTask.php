@@ -150,7 +150,7 @@ if (
     $resources = $route['resources'];
     $chunks = $route['chunks'];
 
-    // TODO suppress this block and do the appropriate fixes
+    // the bundle is generally not used in the OTRA exception route
     if (!isset($chunks[ROUTES_CHUNKS_BUNDLE]))
     {
       echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',

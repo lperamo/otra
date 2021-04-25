@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace src\tools\debug;
 
-use config\AllConfig;
 use phpunit\framework\TestCase;
 
 /**
@@ -31,9 +30,7 @@ class DumpTest extends TestCase
 
     require TEST_PATH . 'config/AllConfigGood.php';
     require CORE_PATH . 'tools/getSourceFromFile.php';
-
-    // @TODO we should be able to do a simple require and not require_once
-    require_once CORE_PATH . 'tools/debug/dump.php';
+    require CORE_PATH . 'tools/debug/dump.php';
 
     if (file_exists(self::$LOGS_PROD_PATH) === false)
       mkdir(self::$LOGS_PROD_PATH, 0777, true);
