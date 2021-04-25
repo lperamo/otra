@@ -156,7 +156,7 @@ function checkHttpReferer() : string
     'tpl' => 'text/html'
   ][$assetType];
 
-  return SPACE_INDENT . '# Handling ' . strtoupper($assetType) . PHP_EOL .
+  $content = SPACE_INDENT . '# Handling ' . strtoupper($assetType) . PHP_EOL .
     SPACE_INDENT . 'location ~ /cache/' . $assetType . '/.*\.gz$' . PHP_EOL .
     SPACE_INDENT . '{' . PHP_EOL .
     checkHttpReferer() . PHP_EOL .
@@ -164,9 +164,13 @@ function checkHttpReferer() : string
     SPACE_INDENT_2 . '{' . PHP_EOL .
     SPACE_INDENT_3 . $mimeType . ' gz;' . PHP_EOL .
     SPACE_INDENT_2 . '}' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL .
-    SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
+    PHP_EOL;
+
+  // gzip_types has the text/html set by default so no need to add it again
+  if ($assetType !== 'tpl')
+    $content .= SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL;
+
+  return $content . SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
