@@ -4,9 +4,7 @@ declare(strict_types=1);
 /**
  * @author Lionel Péramo
  * @package otra\tools
- */
-
-/**
+ *
  * Deletes a tree recursively.
  *
  * @param string $folder
@@ -19,9 +17,11 @@ $delTree = function (string $folder) use (&$delTree) : bool
 
   foreach ($files as $fileName)
   {
-    (is_dir("$folder/$fileName"))
-      ? $delTree("$folder/$fileName")
-      : unlink("$folder/$fileName");
+    $filenamePath = "$folder/$fileName";
+
+    is_dir($filenamePath)
+      ? $delTree($filenamePath)
+      : unlink($filenamePath);
   }
 
   return rmdir($folder);
