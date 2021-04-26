@@ -13,17 +13,16 @@ namespace otra\console
   use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
   use config\AllConfig;
   use otra\{bdd\Sql, Session, OtraException};
-  use JetBrains\PhpStorm\Pure;
-
-  define ('OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT', 0);
-  define ('OTRA_DB_PROPERTY_MODE_TYPE', 1);
-  define ('OTRA_DB_PROPERTY_MODE_DEFAULT', 2);
 
   /**
    * @package otra\console
    */
   abstract class Database
   {
+    private const OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT = 0,
+      OTRA_DB_PROPERTY_MODE_TYPE = 1,
+      OTRA_DB_PROPERTY_MODE_DEFAULT = 2;
+
     // Database connection
     private static string
       $databaseFile = 'database_schema',
@@ -119,7 +118,7 @@ namespace otra\console
     }
 
     /**
-     * @return array
+     * @return string[]
      *
      * @throws OtraException
      */
@@ -151,7 +150,7 @@ namespace otra\console
         $bundleDir = $folder . $actualFile;
 
         // We don't need the files either
-        if (true !== is_dir($bundleDir))
+        if (!is_dir($bundleDir))
           continue;
 
         $folders[] = $bundleDir . '/';
@@ -258,7 +257,7 @@ namespace otra\console
      *
      * @return string $attribute Concerned attribute in uppercase
      */
-    public static function getAttr(string $attribute, int $mode = OTRA_DB_PROPERTY_MODE_TYPE) : string
+    public static function getAttr(string $attribute, int $mode = self::OTRA_DB_PROPERTY_MODE_TYPE) : string
     {
       if (isset(self::$attributeInfos[$attribute]))
       {
@@ -269,11 +268,11 @@ namespace otra\console
         elseif ('type' === $attribute && str_contains($value, 'string'))
           return 'VARCHAR' . substr($value, 6);
 
-        if ($mode === OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+        if ($mode === self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
           return ' ' . strtoupper($attribute);
-        elseif ($mode === OTRA_DB_PROPERTY_MODE_TYPE)
+        elseif ($mode === self::OTRA_DB_PROPERTY_MODE_TYPE)
           return strtoupper($value);
-        else // OTRA_DB_PROPERTY_MODE_DEFAULT
+        else // self::OTRA_DB_PROPERTY_MODE_DEFAULT
           return ' ' . strtoupper($attribute) . ' ' . (is_string($value) ? '\'' . $value . '\'' : $value);
       } elseif ($attribute === 'default'
         && isset(self::$attributeInfos['type'])
@@ -888,9 +887,9 @@ namespace otra\console
 
               $tableSql[$table] .= '  `' . $attribute . '` '
                 . self::getAttr('type')
-                . self::getAttr('default', OTRA_DB_PROPERTY_MODE_DEFAULT)
-                . self::getAttr('notnull', OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
-                . self::getAttr('auto_increment', OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+                . self::getAttr('default', self::OTRA_DB_PROPERTY_MODE_DEFAULT)
+                . self::getAttr('notnull', self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+                . self::getAttr('auto_increment', self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
                 . ',' . PHP_EOL;
 
               // If the column is a primary key, we add it to the primary keys array

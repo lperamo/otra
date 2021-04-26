@@ -26,6 +26,28 @@ function removeFieldScopeProtection(string $class, string $field) : ReflectionPr
 }
 
 /**
+ * @param string $class
+ * @param array  $fields
+ *
+ * @throws ReflectionException
+ * @return ReflectionProperty[]
+ */
+function removeFieldsScopeProtection(string $class, array $fields) : array
+{
+  $class = new ReflectionClass($class);
+  $unprotectedFields = [];
+
+  foreach ($fields as $field)
+  {
+    $alteredField = $class->getProperty($field);
+    $alteredField->setAccessible(true);
+    $unprotectedFields[]= $alteredField;
+  }
+
+  return $unprotectedFields;
+}
+
+/**
  * Removes protection from a field in order to test it easily and returns it.
  *
  * @param class-string $class
