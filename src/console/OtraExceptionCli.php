@@ -53,52 +53,39 @@ class OtraExceptionCli extends \Exception
   }
 
   /**
-   * Shows an exception 'colorful' display for command line commands.
+   * @param array  $backtraces
+   * @param string $errorCode
    *
-   * @param OtraException $exception
+   * @return string
    */
-  public static function showMessage(OtraException $exception) : void
+  private static function getBacktracesOutput(array $backtraces, string $errorCode = '') : string
   {
-    echo CLI_ERROR, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
-
-    if (isset($exception->scode))
-    {
-      $exceptionFile = $exception->file;
-
-      if (str_contains($exceptionFile, CONSOLE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
-      elseif (str_contains($exceptionFile, CORE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
-      elseif (str_contains($exceptionFile, BASE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
-
-      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile, END_COLOR,
-        ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
-    }
+    $backtracesOutput = '';
 
     /******************************
      * Write HEADERS of the table *
      ******************************/
-    echo PHP_EOL,
-      CLI_TABLE, '┌' . str_repeat('─', self::TYPE_WIDTH)
-      . '┬' . str_repeat('─', self::FUNCTION_WIDTH)
-      . '┬' . str_repeat('─', self::LINE_WIDTH)
-      . '┬' . str_repeat('─', self::FILE_WIDTH)
-      . '┬' . str_repeat('─', self::ARGUMENTS_WIDTH), END_COLOR, PHP_EOL,
-      self::consoleHeaders(),
-      PHP_EOL,
-      CLI_TABLE, '├' . str_repeat('─', self::TYPE_WIDTH) .
-      '┼' . str_repeat('─', self::FUNCTION_WIDTH) .
-      '┼' . str_repeat('─', self::LINE_WIDTH) .
-      '┼' . str_repeat('─',self::FILE_WIDTH) .
-      '┼' . str_repeat('─',self::ARGUMENTS_WIDTH), END_COLOR, END_COLOR, PHP_EOL;
+    $backtracesOutput .=
+      CLI_TABLE . '┌' . str_repeat('─',self::TYPE_WIDTH)
+      . '┬' . str_repeat('─',self::FUNCTION_WIDTH)
+      . '┬' . str_repeat('─',self::LINE_WIDTH)
+      . '┬' . str_repeat('─',self::FILE_WIDTH)
+      . '┬' . str_repeat('─',self::ARGUMENTS_WIDTH) . END_COLOR . PHP_EOL .
+      self::consoleHeaders() .
+      PHP_EOL .
+      CLI_TABLE . '├' . str_repeat('─',self::TYPE_WIDTH) .
+        '┼' . str_repeat('─',self::FUNCTION_WIDTH) .
+        '┼' . str_repeat('─',self::LINE_WIDTH) .
+        '┼' . str_repeat('─',self::FILE_WIDTH) .
+        '┼' . str_repeat('─',self::ARGUMENTS_WIDTH) . END_COLOR . END_COLOR . PHP_EOL;
 
     /*******************************
      * Write the BODY of the table *
      *******************************/
-    for($actualTraceIndex = 0, $trace = $exception->backtraces, $maxTraceIndex = count($trace);
+
+    for($actualTraceIndex = 0, $trace = $backtraces, $maxTraceIndex = count($trace);
         $actualTraceIndex < $maxTraceIndex;
-        $actualTraceIndex += 1)
+        $actualTraceIndex++)
     {
       $actualTrace = $trace[$actualTraceIndex];
       $actualTraceFile = $actualTrace['file'] ?? '';
@@ -122,32 +109,61 @@ class OtraExceptionCli extends \Exception
       } else
         $compositeColoredPath = false;
 
-      echo CLI_TABLE, '| ', END_COLOR, str_pad(0 === $actualTraceIndex ? $exception->scode : '', self::TYPE_WIDTH - 1),
-      self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH),
-      self::consoleLine($actualTrace, 'line', self::LINE_WIDTH),
-        /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
-      self::consoleLine(
-        $actualTrace,
-        'file',
-        // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-        $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
-        $actualTraceFile
-      ),
-        /** ARGUMENTS */
-      CLI_TABLE, '|', END_COLOR,
-      ' NOT IMPLEMENTED YET',
-
-      PHP_EOL;
+      $backtracesOutput .= CLI_TABLE . '| ' . END_COLOR .
+        str_pad(0 === $actualTraceIndex ? $errorCode : '', self::TYPE_WIDTH - 1) .
+        self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH) .
+        self::consoleLine($actualTrace, 'line', self::LINE_WIDTH) .
+          /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
+        self::consoleLine(
+          $actualTrace,
+          'file',
+          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
+          $actualTraceFile
+        ) .
+          /** ARGUMENTS */
+        CLI_TABLE . '|' . END_COLOR .
+        ' NOT IMPLEMENTED YET' .
+        PHP_EOL;
 
       // echo $now['args']; after args has been converted
     }
 
-    echo CLI_TABLE, '└' . str_repeat('─', self::TYPE_WIDTH)
+    // End of the table
+    return $backtracesOutput . CLI_TABLE . '└' . str_repeat('─', self::TYPE_WIDTH)
       . '┴' . str_repeat('─', self::FUNCTION_WIDTH)
       . '┴' . str_repeat('─', self::LINE_WIDTH)
       . '┴' . str_repeat('─', self::FILE_WIDTH)
-      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH), END_COLOR, PHP_EOL;
-    // echo $this->context ...too big for console output !
+      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH) . END_COLOR . PHP_EOL;
+  }
+
+  /**
+   * Shows an exception 'colorful' display for command line commands.
+   *
+   * @param OtraException $exception
+   */
+  public static function showMessage(OtraException $exception) : void
+  {
+    echo CLI_ERROR, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
+
+    if (isset($exception->scode))
+    {
+      $exceptionFile = $exception->file;
+
+      if (str_contains($exceptionFile, CONSOLE_PATH))
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
+      elseif (str_contains($exceptionFile, CORE_PATH))
+        $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
+      elseif (str_contains($exceptionFile, BASE_PATH))
+        $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
+
+      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile, END_COLOR,
+        ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
+    }
+
+    echo self::getBacktracesOutput($exception->backtraces, $exception->scode);
+    echo 'And the context...', PHP_EOL;
+    echo self::getBacktracesOutput($exception->context);
   }
 
   /**
