@@ -7,7 +7,9 @@ declare(strict_types=1);
  */
 
 /** @var string $bundlesPath */
-/** @var string $missingBundleErrorMessage */
+
+$missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
+
 if (!isset($argv[ARG_BUNDLE_NAME]))
 {
   $bundleName = promptUser('You did not specified the name of the bundle. What is it ?');
@@ -59,5 +61,5 @@ if (!isset($argv[ARG_METHOD]) || !in_array($argv[ARG_METHOD], $possibleChoices))
 
   // We clean the screen (8 lines to erase !)
   echo DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE, DOUBLE_ERASE_SEQUENCE;
-}
-
+} else
+  $creationMode = $argv[ARG_METHOD];

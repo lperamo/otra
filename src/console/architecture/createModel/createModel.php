@@ -203,11 +203,11 @@ function getModuleName(string $bundlePath) : string
 }
 
 /**
- * @param array       $columns
- * @param string      $modelName
- * @param string      $functionsCode
- * @param string      $propertiesCode
- * @param string|null $propertiesTxt
+ * @param array<string, array> $columns
+ * @param string               $modelName
+ * @param string               $functionsCode
+ * @param string               $propertiesCode
+ * @param string|null          $propertiesTxt
  *
  * @throws OtraException
  */
@@ -219,10 +219,6 @@ function retrieveFunctionsAndProperties(
   ?string &$propertiesTxt = null
 ) : void
 {
-  /**
-   * @var string $column
-   * @var array $columnData
-   */
   foreach ($columns as $column => $columnData)
   {
     $functionsCode .= PHP_EOL;

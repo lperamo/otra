@@ -5,7 +5,6 @@ declare(strict_types=1);
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
-
 use otra\OtraException;
 
 // Testing interactive argument
@@ -44,15 +43,17 @@ require CONSOLE_PATH . 'tools.php';
 require CREATE_MODEL_FOLDER . 'createModel.php';
 
 /**
- * @var int $creationMode
  * @var string $modelLocation
  * @var string $modelName
  */
 // Checking parameters...
-$missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
-/** @var string $bundleName */
-/** @var string $bundlePath */
-require CREATE_MODEL_FOLDER . 'checkParameters/' . ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE;
+/**
+ * @var string $bundleName
+ * @var string $bundlePath
+ * @var int    $creationMode
+ */
+define('INTERACTIVE_FILE_NAME', ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE);
+require CREATE_MODEL_FOLDER . 'checkParameters/' . INTERACTIVE_FILE_NAME;
 
 echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
 
@@ -60,7 +61,7 @@ echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_
 const FUNCTION_START = SPACE_INDENT . 'public function ';
 
 if (CREATION_MODE_FROM_NOTHING === $creationMode)
-  require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . (!$interactive ? 'notI' : 'i') . OTRA_NTERACTIVE;
+  require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . INTERACTIVE_FILE_NAME;
 else
 {
   if (!defined('YML_SCHEMA_PATH'))
@@ -93,6 +94,6 @@ else
     (CREATION_MODE_ONE_MODEL === $creationMode
       ? 'oneModelFromYmlSchema/'
       : 'allModelsFromYmlSchema/'
-    ) . (!$interactive ? 'notI' : 'i') . OTRA_NTERACTIVE;
+    ) . INTERACTIVE_FILE_NAME;
 }
 

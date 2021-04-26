@@ -6,8 +6,13 @@ declare(strict_types=1);
  * @package otra\console\architecture
  */
 
-/** @var string $bundleName */
 /** @var string $bundlePath */
+define('MODULE_NAME', getModuleName($bundlePath));
+
+/**
+ * @var string $bundleName
+ * @var callable bundleModelPreparation
+ */
 require CREATE_MODEL_FOLDER . 'oneModelFromNothing/common.php';
 echo MODEL_CREATED_FROM_NOTHING_MESSAGE;
 $modelLocation = getModelLocation();

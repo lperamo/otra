@@ -32,15 +32,12 @@ abstract class TasksManager
     echo PHP_EOL, CLI_WARNING, $message, CLI_BASE, PHP_EOL, PHP_EOL;
     echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_BASE,
       str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
-    CLI_GRAY;
+      CLI_GRAY;
     echo ': ', CLI_INFO, 'Shows the available commands.', PHP_EOL;
+    /** @var array<string, array<int,array>> $methods */
     $methods = require CACHE_PHP_INIT_PATH . 'tasksHelp.php';
     $category = '';
 
-    /**
-     * @var string $method
-     * @var array $paramsDesc
-     */
     foreach ($methods as $method => $paramsDesc)
     {
       if (isset($paramsDesc[self::TASK_CATEGORY]))
