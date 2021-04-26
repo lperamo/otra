@@ -136,7 +136,7 @@ namespace otra\console
       $folderHandler = opendir($folder);
       $folders = [];
 
-      /** @var array $schemas Database schemas */
+      /** @var string[] $schemas Database schemas */
       if (self::$boolSchema)
         $schemas = [];
 
@@ -157,7 +157,7 @@ namespace otra\console
 
         if (self::$boolSchema)
         {
-          $bundleSchemas = glob($bundleDir . '/config/data/yml/*Schema.yml');
+          $bundleSchemas = glob($bundleDir . '/config/data/yml/*schema.yml');
 
           if (!empty($bundleSchemas))
             $schemas = array_merge($schemas, $bundleSchemas);
@@ -170,7 +170,6 @@ namespace otra\console
       {
         $content = '';
 
-        /** @var string $schema */
         foreach ($schemas as $schema)
         {
           $content .= file_get_contents($schema);
