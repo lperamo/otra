@@ -72,7 +72,14 @@ if (!function_exists('showBlocksVisually'))
 
     /**
      * @var int|string $blockKey
-     * @var array      $block
+     * @var array{
+     *   content:string,
+     *   endingBlock:bool,
+     *   index:int,
+     *   name:string,
+     *   parent?:array,
+     *   replacedBy?:int
+     * }      $block
      */
     foreach (BlocksSystem::$blocksStack as $blockKey => $block)
     {

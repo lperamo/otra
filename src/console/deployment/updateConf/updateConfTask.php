@@ -199,7 +199,7 @@ if (!function_exists('sortRoutes'))
 
   $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
-    /** @var array $routesArray */
+    /** @var array<string,array<string, array<int|string,string|array>>> $routesArray */
     return (strlen($routesArray[$routeA]['chunks'][ROUTE_PATH]) <= strlen($routesArray[$routeB]['chunks'][ROUTE_PATH]))
       ? 1
       : -1;

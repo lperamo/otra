@@ -798,15 +798,11 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
       {
         /**
          * @var string $inclusionMethod
-         * @var array  $phpEntries
+         * @var array<int|string,string|array{match:string, posMatch:int}> $phpEntries
          */
         foreach($entries as $inclusionMethod => $phpEntries)
         {
-          /**
-           * @var string                                   $keyOrFile
-           * @var string|array{match:string, posMatch:int} $nextFileOrInfo Is an array only if we are in a
-           *                                                               require/include statement
-           */
+          // $nextFileOrInfo is an array only if we are in a require/include statement
           foreach($phpEntries as $keyOrFile => $nextFileOrInfo)
           {
             // We increase the process step (DEBUG)

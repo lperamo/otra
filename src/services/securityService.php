@@ -185,7 +185,20 @@ if (!function_exists('getRandomNonceForCSP'))
     {
       /**
        * @var string $policy
-       * @var array $cspDirectives
+       * @var array{
+       *    'base-uri'?:string,
+       *    'form-action'?:string,
+       *    'frame-ancestors'?:string,
+       *    'default-src'?:string,
+       *    'font-src'?:string,
+       *    'img-src'?:string,
+       *    'object-src'?:string,
+       *    'connect-src'?:string,
+       *    'child-src'?:string,
+       *    'manifest-src'?:string,
+       *    'style-src'?:string,
+       *    'script-src'?:string
+       *  } $cspDirectives
        */
       [$policy, $cspDirectives] = createPolicy(
         OTRA_KEY_CONTENT_SECURITY_POLICY,
@@ -193,7 +206,6 @@ if (!function_exists('getRandomNonceForCSP'))
         $routeSecurityFilePath,
         CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]]
       );
-
       handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
       handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
       header($policy);

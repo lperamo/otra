@@ -118,10 +118,7 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
 } else
   $routes = Routes::$allRoutes;
 
-/**
- * @var string  $route
- * @var array   $details
- */
+/** @var array<string,array<string, array<int|string,string|array>>> $routes */
 foreach($routes as $route => $details)
 {
   if ('otra_exception' === $route )
