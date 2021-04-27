@@ -285,9 +285,9 @@ namespace otra\console
     /**
      * Sort the tables that have relations with other tables using the foreign keys
      *
-     * @param array $tablesWithRelations Remaining tables to sort
-     * @param array $sortedTables        Final sorted tables array
-     * @param int   $oldCountArrayToSort
+     * @param array<string,array> $tablesWithRelations Remaining tables to sort
+     * @param string[]            $sortedTables        Final sorted tables array
+     * @param int                 $oldCountArrayToSort
      */
     private static function _sortTableByForeignKeys(
       array $tablesWithRelations,
@@ -300,10 +300,6 @@ namespace otra\console
 
       $nextArrayToSort = $tablesWithRelations;
 
-      /**
-       * @var string $tableName
-       * @var array  $properties
-       */
       foreach ($tablesWithRelations as $tableName => $properties)
       {
         $mustAddTableToSortedTables = ['valid' => true];
@@ -345,13 +341,13 @@ namespace otra\console
     /**
      * Create the sql content of the wanted fixture. We only allow one table per file for simplicity and performance.
      *
-     * @param string $databaseName   The database name to use
-     * @param string $table          The table name relating to the fixture to create
-     * @param array  $fixturesData   The table fixtures
-     * @param array  $tableData      The table data form the database schema in order to have the properties type
-     * @param array  $sortedTables   Final sorted tables array
-     * @param array  $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
-     * @param string $createdFile    Name of the fixture file that will be created.
+     * @param string              $databaseName   The database name to use
+     * @param string              $table          The table name relating to the fixture to create
+     * @param array<string,array> $fixturesData   The table fixtures
+     * @param array<string,array> $tableData      The table data form the database schema in order to have the properties type
+     * @param string[]            $sortedTables   Final sorted tables array
+     * @param array               $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
+     * @param string              $createdFile    Name of the fixture file that will be created.
      *
      * @throws OtraException If a database relation is missing or if we can't create the fixtures folder
      */
