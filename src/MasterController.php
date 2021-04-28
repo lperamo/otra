@@ -293,7 +293,7 @@ abstract class MasterController
    * @param string $file     The file to render
    * @param bool   $viewPath If true, we adds the usual view path before the $file variable.
    *
-   * @return array [$templateFile, $otraRoute]
+   * @return array{0:string,1:string} [$templateFile, $otraRoute]
    */
   protected function getTemplateFile(string $file, bool $viewPath) : array
   {

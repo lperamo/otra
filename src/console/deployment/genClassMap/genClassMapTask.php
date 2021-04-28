@@ -33,17 +33,17 @@ require CONSOLE_PATH . 'tools.php';
 if (!empty($folders) && !function_exists('iterateCM'))
 {
   /**
-   * @param string[] $classes
-   * @param string   $dir
-   * @param array    $additionalClassesFilesKeys
-   * @param int      $processedDir
-   * @param array    $classesThatMayHaveToBeAdded
+   * @param string[]              $classes
+   * @param string                $dir
+   * @param array                 $additionalClassesFilesKeys
+   * @param int                   $processedDir
+   * @param array<string, string> $classesThatMayHaveToBeAdded
    *
    * @throws \otra\OtraException
-   * @return array
+   * @return array{0: string[], 1: int, 2: array<string, string>}
    */
   #[\JetBrains\PhpStorm\ArrayShape([
-    'array',
+    'string[]',
     'int',
     'array'
   ])]

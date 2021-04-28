@@ -32,8 +32,20 @@ function generateJavaScript(
          * It is either the entire project with the json configuration file
          * or a list of files without json configuration ... but not a list with json configuration ...
          * so we create one temporary json that list only the file we want */
-
-  /** @var array|null $typescriptConfig */
+  /** @var ?array{
+   *   compilerOptions?: array{
+   *     target?: string,
+   *     module?: string,
+   *     sourceMap?: bool,
+   *     lib?: string[],
+   *     noResolve?: bool,
+   *     pretty?: bool,
+   *     removeComments?: bool,
+   *     noImplicitUseStrict?: bool,
+   *     watch?: bool
+   *   }
+   * } $typescriptConfig
+   */
   $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
 
   if ($typescriptConfig !== null)

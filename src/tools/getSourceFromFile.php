@@ -33,7 +33,9 @@ if (!function_exists('getSourceFromFile'))
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . '<i>';
-      $sourceContentMiddle = $index . ' ' . '</i>' . htmlentities($fileHandler->current());
+      $lineContent = nl2br(htmlentities($fileHandler->current()));
+      $sourceContentMiddle = ((string) $index) . ' ' . '</i><span>' . ($lineContent !== '' ? $lineContent : '<br/>') .
+        '</span>';
 
       $sourceContent .= ($index === $sourceLine)
         ? '<b>' . $sourceContentMiddle . '</b>'

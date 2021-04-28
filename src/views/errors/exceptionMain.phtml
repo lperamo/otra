@@ -2,18 +2,24 @@
 declare(strict_types=1);
 
 /**
- * @var string $message
+ * @var array  $backtraces
+ * @var array<string,array{
+ *   class: string,
+ *   file: string,
+ *   function: string,
+ *   type: string,
+ *   line: int
+ * }> $context
  * @var string $errorCode
  * @var string $fileName
  * @var int    $fileLine
- * @var array<string,array{class: string, file: string, function:string, type:string, line: int}> $context
- * @var array  $backtraces
+ * @var string $message
  */
 if (!defined('BASE_PATH_LENGTH'))
 {
-define('BASE_PATH_LENGTH', strlen(BASE_PATH));
-require CORE_PATH . 'tools/getSourceFromFile.php';
-require CORE_PATH . 'tools/files/showTraceLine.php';
+  define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+  require CORE_PATH . 'tools/getSourceFromFile.php';
+  require CORE_PATH . 'tools/files/showTraceLine.php';
 }
 ?>
 <h1 class="exception-title">Exception</h1>
@@ -37,6 +43,7 @@ require CORE_PATH . 'tools/files/showTraceLine.php';
   <?php
   require CORE_PATH . 'tools/debug/dump.php';
 
+  // showing first line only of backtraces
   showTraceLine([
     'class' => $backtraces[0]['class'] ?? null,
     'file' => BASE_PATH . $fileName,
@@ -46,7 +53,7 @@ require CORE_PATH . 'tools/files/showTraceLine.php';
     'args' => $backtraces[0]['variables'] ?? null
   ]);
 
-  // We begin to 1 as we do not care about the exception handler
+  // Showing the error context
   foreach($context as $contextItem)
   {
     showTraceLine($contextItem);

@@ -58,7 +58,13 @@ abstract class DumpMaster {
    *
    * @param array|null $options
    *
-   * @return array Returns the actual dump configuration.
+   * @return array{
+   *   maxChildren ?: int,
+   *   maxData ?:int,
+   *   maxDepth ?: int,
+   *   autoLaunch ?: bool,
+   *   barPosition ?: string
+   * } Returns the actual dump configuration.
    */
   public static function setDumpConfig(array $options = null) : array
   {
@@ -96,7 +102,7 @@ abstract class DumpMaster {
    * @param object $param
    *
    * @throws \ReflectionException
-   * @return array
+   * @return string[]
    */
   protected static function getClassDescription(object $param) : array
   {

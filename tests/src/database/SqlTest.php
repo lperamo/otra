@@ -611,6 +611,9 @@ class SqlTest extends TestCase
    */
   public function testGetDB_NoDefaultConnection() : void
   {
+    // context
+    require TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
+
     // assertions
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');

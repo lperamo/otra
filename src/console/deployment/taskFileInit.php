@@ -132,7 +132,7 @@ function generateStylesheetsFiles(
  * @param string $fullName The absolute path to the file
  *
  * @throws OtraException
- * @return array{string, string,string,string}
+ * @return array{0:string, 1:string, 2:string, 3:string}
  *  $Basename               : the filename without extension,
  *  $resourcesMainFolder    : full path until 'src/resources', 'module/resources' folder or a 'web/' folder,
  *  $resourcesFolderEndPath : last folders in the path after the $resourcesMainFolder

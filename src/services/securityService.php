@@ -78,13 +78,13 @@ if (!function_exists('getRandomNonceForCSP'))
    * Generates the security policy that will be added to the HTTP header.
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
-   * @param string      $policy                  Can be 'csp' or 'permissionsPolicy'
-   * @param string      $route
-   * @param string|null $routeSecurityFilePath
-   * @param array       $defaultPolicyDirectives The default policy directives (csp or permissions policy) from
-   *                                             MasterController
+   * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
+   * @param string                $route
+   * @param string|null           $routeSecurityFilePath
+   * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
+   *                                                        from MasterController
    *
-   * @return array
+   * @return array{0: string, 1: array<string, string>}
    */
   #[\JetBrains\PhpStorm\ArrayShape([
     'string',
@@ -121,10 +121,6 @@ if (!function_exists('getRandomNonceForCSP'))
 
         if (!empty($common))
         {
-          /**
-           * @var string $finalProcessedPolicyName
-           * @var string $finalProcessedPolicy
-           */
           foreach ($finalProcessedPolicies as $finalProcessedPolicyName => $finalProcessedPolicy)
           {
             if ($finalProcessedPolicy === '')
@@ -138,10 +134,6 @@ if (!function_exists('getRandomNonceForCSP'))
 
     $policySeparator = ($policy === OTRA_KEY_CONTENT_SECURITY_POLICY) ? ' ' : '=(';
 
-    /**
-     * @var string $directive
-     * @var string $value
-     */
     foreach ($finalProcessedPolicies as $directive => $value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
@@ -183,17 +175,12 @@ if (!function_exists('getRandomNonceForCSP'))
   {
     if (!headers_sent())
     {
-      /**
-       * @var string $policy
-       * @var array $cspDirectives
-       */
       [$policy, $cspDirectives] = createPolicy(
         OTRA_KEY_CONTENT_SECURITY_POLICY,
         $route,
         $routeSecurityFilePath,
         CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]]
       );
-
       handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
       handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
       header($policy);

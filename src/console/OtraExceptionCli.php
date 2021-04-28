@@ -162,8 +162,12 @@ class OtraExceptionCli extends \Exception
     }
 
     echo self::getBacktracesOutput($exception->backtraces, $exception->scode);
-    echo 'And the context...', PHP_EOL;
-    echo self::getBacktracesOutput($exception->context);
+
+    if ($exception->context !== [])
+    {
+      echo 'And the context...', PHP_EOL;
+      echo self::getBacktracesOutput($exception->context);
+    }
   }
 
   /**

@@ -69,7 +69,7 @@ if (!function_exists('writeConfigFile'))
       if (!is_array($arrayChunk))
       {
         if (is_numeric($arrayChunk))
-          $content .= $arrayKey . $arrayChunk . ',';
+          $content .= $arrayKey . ((string) $arrayChunk) . ',';
         elseif (!$isARouteConfigFile)
           $content .= '\'' . addslashes($arrayChunk) . '\',';
         else
@@ -199,7 +199,7 @@ if (!function_exists('sortRoutes'))
 
   $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
-    /** @var array $routesArray */
+    /** @var array<string,array<string, array<int|string,string|array>>> $routesArray */
     return (strlen($routesArray[$routeA]['chunks'][ROUTE_PATH]) <= strlen($routesArray[$routeB]['chunks'][ROUTE_PATH]))
       ? 1
       : -1;
@@ -257,7 +257,10 @@ if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
 if (!function_exists('arrayExport'))
 {
   /**
-   * @param array $configurationArray
+   * @param array{
+   *   csp?: array<string,string>,
+   *   permissionsPolicy?: array<string,string>
+   * }|array<string,string> $configurationArray
    *
    * @return string
    */
@@ -265,17 +268,13 @@ if (!function_exists('arrayExport'))
   {
     $content = '';
 
-    /**
-     * @var string $arrayKey
-     * @var array|string $value
-     */
-    foreach($configurationArray as $arrayKey => $value)
+    foreach($configurationArray as $policyType => $value)
     {
-      $content .= "'" . $arrayKey . '\'=>' . (is_array($value)
+      $content .= "'" . $policyType . '\'=>' . (is_array($value)
         ? '[' . arrayExport($value) . ']'
         : '"' . $value . '"');
 
-      if (array_key_last($configurationArray) !== $arrayKey)
+      if (array_key_last($configurationArray) !== $policyType)
         $content .= ',';
     }
 

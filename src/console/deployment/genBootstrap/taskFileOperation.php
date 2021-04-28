@@ -222,7 +222,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  * @param array  $filesToConcat Files to parse after have parsed this one
  * @param array  $parsedFiles   Remaining files to concatenate
  *
- * @return array $classesFromFile
+ * @return string[] $classesFromFile
  */
 function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles) : array
 {
@@ -314,7 +314,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
  * @param string $trimmedMatch
  *
  * @throws OtraException
- * @return array $isTemplate
+ * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
  */
 #[ArrayShape([
   'string',
@@ -416,7 +416,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd) : void
  * @param string $file
  *
  * @throws OtraException
- * @return array [$file, $isTemplate]
+ * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
  */
 #[ArrayShape([
   'string',
@@ -674,8 +674,9 @@ function getFileInfoFromRequiresAndExtends(
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } elseif(str_contains($trimmedMatch, 'extends')) /** EXTENDS */
-    {
+    } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))
+    { // Extends block is only tested if the class has not been loaded via an use statement before
+
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
 
@@ -790,7 +791,15 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
   {
     /**
      * @var string $fileType
-     * @var array  $entries
+     * @var array{
+     *   use ?: array,
+     *   require ?: array<string,array{
+     *    match: string,
+     *    posMatch: int
+     *   }>,
+     *   extends ?: string[],
+     *   static ?: string[]
+     * } $entries
      */
     foreach ($filesToConcat as $fileType => $entries)
     {
@@ -798,15 +807,11 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
       {
         /**
          * @var string $inclusionMethod
-         * @var array  $phpEntries
+         * @var array<int|string,string|array{match:string, posMatch:int}> $phpEntries
          */
         foreach($entries as $inclusionMethod => $phpEntries)
         {
-          /**
-           * @var string                                   $keyOrFile
-           * @var string|array{match:string, posMatch:int} $nextFileOrInfo Is an array only if we are in a
-           *                                                               require/include statement
-           */
+          // $nextFileOrInfo is an array only if we are in a require/include statement
           foreach($phpEntries as $keyOrFile => $nextFileOrInfo)
           {
             // We increase the process step (DEBUG)

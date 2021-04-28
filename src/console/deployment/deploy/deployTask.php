@@ -294,7 +294,7 @@ define('STRLEN_BASEPATH', strlen(BASE_PATH));
  *
  * @param string $folderToAnalyze
  *
- * @return array
+ * @return Worker[]
  */
 $seekingToSendFiles = function (string $folderToAnalyze)
 use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server, $verbose)

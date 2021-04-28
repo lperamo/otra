@@ -1026,7 +1026,6 @@ class DatabaseTest extends TestCase
 
     // Initialize OTRA session
     Session::init();
-
     Database::init(self::DATABASE_CONNECTION);
 
     setScopeProtectedFields(

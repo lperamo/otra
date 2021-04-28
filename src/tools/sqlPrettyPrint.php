@@ -38,7 +38,7 @@ const RIGHT_STYLE_CLAUSE_CODE = '</span>';
  * @param string $leftStyleClauseCode
  * @param string $rightStyleClauseCode
  *
- * @return array
+ * @return string[]
  */
 function sqlReplacements(
   string $leftStyleClauseCode = LEFT_STYLE_CLAUSE_CODE,

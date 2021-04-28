@@ -53,17 +53,17 @@ class OtraException extends Exception
 
   public function __construct(
     string $message = 'Error !',
-    mixed $code = NULL,
+    int|string|null $code = NULL,
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
-    private bool $otraCliWarning = false)
+    private bool $isOtraCliWarning = false)
   {
     parent::__construct();
     $this->code = (null !== $code) ? $code : $this->getCode();
 
     // When $otraCliWarning is true then we only need the error code that will be used as exit code
-    if ($otraCliWarning === true)
+    if ($isOtraCliWarning)
       return;
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
@@ -108,8 +108,8 @@ class OtraException extends Exception
           CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       } else
-        return '<span style="color:#E00">Error in </span><span style="color:#0AA">' . $this->file .
-          '</span>:<span style="color:#0AA">' . $this->line . '</span><span style="color:#E00"> : ' . $this->message .
+        return '<span style="color: #e00;">Error in </span><span style="color: #0aa;">' . $this->file .
+          '</span>:<span style="color: #0aa;">' . $this->line . '</span><span style="color: #e00;"> : ' . $this->message .
           '</span>';
     }
 
@@ -117,7 +117,7 @@ class OtraException extends Exception
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
     // Is the error code a native error code ?
-    $errorCode = true === isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $errorCode = isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
     http_response_code(MasterController::HTTP_CODES['HTTP_INTERNAL_SERVER_ERROR']);
 
     $traces = $this->getTrace();
@@ -146,12 +146,12 @@ class OtraException extends Exception
     return $renderController->renderView(
       '/errors/exception.phtml',
       [
-        'message' => $this->message,
-        'errorCode' => $errorCode,
-        'fileName' => $simplifiedFilePath,
-        'fileLine' => $this->line,
+        'backtraces' => $traces,
         'context' => (array)$this->context,
-        'backtraces' => $traces
+        'errorCode' => $errorCode,
+        'fileLine' => $this->line,
+        'fileName' => $simplifiedFilePath,
+        'message' => $this->message
       ],
       false,
       false
@@ -212,7 +212,7 @@ class OtraException extends Exception
           $exception->getFile(),
           $exception->getLine(),
           $exception->getTrace(),
-          $exception->otraCliWarning ?? false
+          $exception->isOtraCliWarning ?? false
         );}
 
     exit($exception->getCode());

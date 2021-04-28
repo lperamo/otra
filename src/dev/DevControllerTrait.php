@@ -95,7 +95,7 @@ trait DevControllerTrait
    * @param array  $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
-   * @return array
+   * @return string[]
    */
   public static function getTemplateResources(string $route, array $viewResourcePath = []) : array
   {
@@ -288,10 +288,10 @@ trait DevControllerTrait
   /**
    * Uses calculations in order to put scripts in correct order that has been specified in the routes configuration file
    *
-   * @param array $unorderedArray Unordered array of files
-   * @param array $orderedArray   Ordered array of files
+   * @param array<int, string> $unorderedArray Unordered array of files
+   * @param array<int, string> $orderedArray   Ordered array of files
    *
-   * @return array $scripts Final array
+   * @return array<int, string> $scripts Final array
    */
   private static function calculateArray(array $unorderedArray, array $orderedArray) : array
   {
@@ -317,11 +317,11 @@ trait DevControllerTrait
    * If we put things like '_js' => ['_5'=>'users']
    * then the $key will be 5 and not the key that follows natural order.
    *
-   * @param array      &$unorderedArray
-   * @param array      &$orderedArray
-   * @param int        &$naturalPriorityIndex Used if $forcedPriorityIndex is not a string
-   * @param int|string  $forcedPriorityIndex  Used only if it is a string
-   * @param string      $code
+   * @param array<int, string> &$unorderedArray
+   * @param array<int, string> &$orderedArray
+   * @param int        &        $naturalPriorityIndex Used if $forcedPriorityIndex is not a string
+   * @param int|string          $forcedPriorityIndex  Used only if it is a string
+   * @param string              $code
    */
   private static function updateScriptsArray(
     array &$unorderedArray,
