@@ -368,10 +368,8 @@ namespace otra\console
       $ymlIdentifiers = $table . ': ' . PHP_EOL;
       $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
         'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
-      /**
-       * @var array $localMemory This variable stores the identifiers found in this table that are not available in
-       * sorted tables ?
-       */
+//    $localMemory This variable stores the identifiers found in this table that are not available in
+//    sorted tables ?
       $localMemory = $values = $properties = [];
       $theProperties = '';
 
@@ -379,7 +377,6 @@ namespace otra\console
 
       /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but more a temporary id that
        * represents the position of the line in the database ! */
-
       foreach (array_keys($fixturesData) as $fixtureName)
       {
         $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $databaseId++ . PHP_EOL;
@@ -390,12 +387,13 @@ namespace otra\console
       $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
 
       // if the fixtures folder doesn't exist, we create it.
-      if (false === file_exists($fixtureFolder))
+      if (!file_exists($fixtureFolder))
       {
         $exceptionMessage = 'Cannot remove the folder \'' . $fixtureFolder . '\'.';
+
         try
         {
-          if (false === mkdir($fixtureFolder, 0777, true))
+          if (!mkdir($fixtureFolder, 0777, true))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
         } catch(Exception $exception)
         {
@@ -417,14 +415,14 @@ namespace otra\console
         {
           try
           {
-            /** @var array $fixturesRows */
+            /** @var array<string, array<string, int>> $fixturesRows */
             $fixturesRows = Yaml::parse(
-              file_get_contents($fixtureFolder . $databaseName . '_' . $relation . '.yml')
+              file_get_contents($fixtureFolder . $databaseName . '_' . ((string) $relation) . '.yml')
             );
           } catch(ParseException $parseException)
           {
             echo CLI_ERROR, $parseException->getMessage(), END_COLOR, PHP_EOL;
-            exit(1);
+            throw new OtraException('', 1, '', NULL, [], true);
           }
 
           foreach ($fixturesRows as $otherTable => $otherTableData)
@@ -839,6 +837,12 @@ namespace otra\console
       if (!file_exists(self::$pathSql))
         mkdir(self::$pathSql, 0777, true);
 
+      /** @var array<string, array{
+       *    columns: array<string, array<string, mixed>>,
+       *    relations: array<string, array<string,string>>,
+       *    indexes: array<string, array<string,string>>
+       * }> $schema
+       */
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
 
       // $tableSql contains all the SQL for each table, indexed by table name
@@ -846,10 +850,6 @@ namespace otra\console
       $constraints = '';
 
       // For each table
-      /**
-       * @var string $table
-       * @var array  $properties
-       */
       foreach ($schema as $table => &$properties)
       {
         $primaryKeys = [];
@@ -858,24 +858,15 @@ namespace otra\console
         /** @TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
         $tableSql[$table] = 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
 
-        /**********************
-         * COLUMNS MANAGEMENT *
-         **********************/
-
+        //**********************
+//        * COLUMNS MANAGEMENT *
+//        **********************
         // For each kind of data (columns, indexes, etc.)
-        /**
-         * @var string $property
-         * @var array  $attributes
-         */
         foreach ($properties as $property => &$attributes)
         {
           if ('columns' === $property)
           {
             // For each column
-            /**
-             * @var string $attribute
-             * @var array  $informations
-             */
             foreach ($attributes as $attribute => $informations)
             {
               self::$attributeInfos = $informations;
@@ -893,10 +884,6 @@ namespace otra\console
             }
           } elseif ('relations' === $property)
           {
-            /**
-             * @var string $otherTable
-             * @var array  $attribute
-             */
             foreach ($attributes as $otherTable => &$attribute)
             {
               // Management of 'ON DELETE XXXX'
@@ -905,7 +892,7 @@ namespace otra\console
               if (isset($attribute['onDelete']))
                 $onDelete = '  ON DELETE ' . strtoupper($attribute['onDelete']);
 
-              $constraints .= /** @lang text */
+              $constraints .=
                 'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
                 . ' FOREIGN KEY(`' . $attribute['local'] . '`)' . PHP_EOL;
               $constraints .= '  REFERENCES ' . $otherTable . '(`' . $attribute['foreign'] . '`)' . PHP_EOL
@@ -948,10 +935,6 @@ namespace otra\console
 
         if ($hasRelations = isset($properties['relations']))
         {
-          /**
-           * @var string $tableKey
-           * @var array  $relation
-           */
           foreach ($properties['relations'] as $tableKey => $relation)
           {
             if (!isset($relation['local']))
@@ -1159,18 +1142,15 @@ namespace otra\console
 
       $database = self::_initImports($databaseName, $confToUse);
       $content = '';
+      /** @var string[] $tables */
       $tables = $database->valuesOneCol($database->query(
         'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $databaseName . '\''
       ));
 
-      /**
-       * @var string|int $arrayIndex
-       * @var string $table
-       */
       foreach ($tables as $arrayIndex => $table)
       {
         $content .= $table . ':' . PHP_EOL;
-        /** @var array $columns */
+        /** @var array<int, array<string, ?string>> $columns */
         $columns = $database->values($database->query('
           SELECT `COLUMN_NAME`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
             `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
@@ -1183,9 +1163,6 @@ namespace otra\console
           $content .= '  columns:' . PHP_EOL;
 
         // For each column in this table, we set the different properties
-        /**
-         * @var array $column
-         */
         foreach ($columns as $column)
         {
           $content .= '    ' . $column['COLUMN_NAME'] . ':' . PHP_EOL;
@@ -1209,6 +1186,7 @@ namespace otra\console
             $content .= '      primary: true' . PHP_EOL;
         }
 
+        /** @var array<int, array<string, string>> $constraints */
         $constraints = $database->values($database->query(
           ' SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
             FROM information_schema.KEY_COLUMN_USAGE
@@ -1223,7 +1201,6 @@ namespace otra\console
           $content .= '  relations:' . PHP_EOL;
 
           // For each constraint of this table
-          /** @var array $constraint */
           foreach ($constraints as $constraint)
           {
             if (!isset($constraint['REFERENCED_TABLE_NAME']))
@@ -1319,7 +1296,7 @@ namespace otra\console
       foreach ($tablesOrder as $table)
       {
         $content = $table . ':' . PHP_EOL;
-        /** @var array $columns */
+        /** @var array<int,array<string, string>> $columns */
         $columns = $database->values($database->query(
           'SELECT COLUMN_KEY, COLUMN_NAME, DATA_TYPE
           FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $databaseName .
@@ -1332,14 +1309,13 @@ namespace otra\console
         {
           $importFixturesSql = 'SELECT ';
 
-          /** @var array $column */
           foreach ($columns as $column)
           {
             $importFixturesSql .= '`' . $column['COLUMN_NAME'] . '`, ';
           }
 
           // the substr removes the last comma
-          /** @var array $tableRows */
+          /** @var array<int, array<string, string>> $tableRows */
           $tableRows = $database->values(
             $database->query(substr($importFixturesSql, 0, -2) . ' FROM ' . $databaseName . '.' . $table)
           );
@@ -1351,7 +1327,7 @@ namespace otra\console
           {
             $foreignKeysMemory[$table] = [];
 
-            /** @var array $constraints */
+            /** @var array<int, array<string, string>> $constraints */
             $constraints = $database->values($database->query(
               'SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
               FROM information_schema.KEY_COLUMN_USAGE
@@ -1362,19 +1338,11 @@ namespace otra\console
 
             $foreignConstraintsCount = count($constraints);
 
-            /**
-             * @var string $keyRow
-             * @var array $tableRow
-             */
             foreach ($tableRows as $keyRow => $tableRow)
             {
               $fixtureId = $table . '_' . $keyRow;
               $content .= '  ' . $fixtureId . ':' . PHP_EOL;
 
-              /**
-               * @var string      $keyCol
-               * @var ?int|string $colOfRow
-               */
               foreach ($tableRow as $keyCol => $colOfRow)
               {
                 $content .= '    ';

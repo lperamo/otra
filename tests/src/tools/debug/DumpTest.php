@@ -69,7 +69,7 @@ class DumpTest extends TestCase
   /**
    * Force test values and returns an array to test those values
    *
-   * @return array
+   * @return array<int, array>
    * @author Lionel Péramo
    */
   private static function getDumpTestArray() : array
