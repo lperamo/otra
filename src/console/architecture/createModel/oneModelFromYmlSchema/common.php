@@ -25,7 +25,7 @@ function defineModelPath(int $modelLocation, string $bundlePath, string $moduleN
 /**
  * @param string $modelName
  *
- * @return array
+ * @return array{0:string, 1:bool, 2:bool}
  */
 function preparingBidule(string $modelName) : array
 {
@@ -42,7 +42,7 @@ function preparingBidule(string $modelName) : array
  * @param string $modelFullName
  * @param string $modelName
  *
- * @return array $modelExists, $tableExists
+ * @return array{0:bool, 1:bool} $modelExists, $tableExists
  */
 #[\JetBrains\PhpStorm\ArrayShape([
   'bool',

@@ -172,7 +172,7 @@ class WorkerManager
    *
    * @param Worker $worker
    *
-   * @return array [bool running, int status 0 => Success, more => failure, else => abnormal]
+   * @return array{0: bool, 1: int} [bool running, int status 0 => Success, more => failure, else => abnormal]
    */
   public function detach(Worker $worker) : array
   {

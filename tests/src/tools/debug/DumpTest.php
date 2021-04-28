@@ -55,10 +55,8 @@ class DumpTest extends TestCase
    *
    * @param int   $depthIndex
    * @param array $array
-   *
-   * @return array
    */
-  private static function fillArrayDepth(int &$depthIndex, array &$array) : array
+  private static function fillArrayDepth(int &$depthIndex, array &$array)
   {
     while($depthIndex < self::OTRA_DEBUG_TEST_VALUE_MAX_DEPTH - 1)
     {
@@ -66,8 +64,6 @@ class DumpTest extends TestCase
       ++$depthIndex;
       self::fillArrayDepth($depthIndex, $array[0]);
     }
-
-    return $array;
   }
 
   /**

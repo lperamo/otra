@@ -55,7 +55,7 @@ trait ProdControllerTrait
    * @param string $route
    *
    * @throws Exception
-   * @return array
+   * @return string[]
    */
   protected static function getTemplateResources(string $route) : array
   {

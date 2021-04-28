@@ -22,7 +22,7 @@ if (!function_exists('cliCommand'))
    * @param bool        $launchExceptionOnError
    *
    * @throws \otra\OtraException
-   * @return array [int, string] Exit status code, content
+   * @return array{0: int, 1: string} Exit status code, content
    */
   #[ArrayShape([
     'int',

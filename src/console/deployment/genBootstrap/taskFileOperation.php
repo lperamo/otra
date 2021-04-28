@@ -222,7 +222,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  * @param array  $filesToConcat Files to parse after have parsed this one
  * @param array  $parsedFiles   Remaining files to concatenate
  *
- * @return array $classesFromFile
+ * @return string[] $classesFromFile
  */
 function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles) : array
 {
@@ -314,7 +314,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
  * @param string $trimmedMatch
  *
  * @throws OtraException
- * @return array $isTemplate
+ * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
  */
 #[ArrayShape([
   'string',
@@ -416,7 +416,7 @@ function escapeQuotesInPhpParts(string &$contentToAdd) : void
  * @param string $file
  *
  * @throws OtraException
- * @return array [$file, $isTemplate]
+ * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
  */
 #[ArrayShape([
   'string',

@@ -67,7 +67,7 @@ if (!function_exists('promptUser'))
    * @param string   $input
    * @param string[] $words
    *
-   * @return array [$closest, $shortest]
+   * @return array{0:?string,1:int} [$closest, $shortest]
    */
   #[\JetBrains\PhpStorm\ArrayShape([
     'null|string',

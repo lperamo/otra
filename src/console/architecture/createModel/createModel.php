@@ -151,7 +151,7 @@ function writeModelFile(
  * @param string $modelName
  * @param string $modelNameQuestion
  *
- * @return array [$modelFullName, $modelExists]
+ * @return array{0:string, 1:string} [$modelFullName, $modelExists]
  */
 function getModelFullNameAndModelExists(string $modelName, string $modelNameQuestion) : array
 {
