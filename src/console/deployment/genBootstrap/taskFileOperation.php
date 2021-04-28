@@ -44,13 +44,13 @@ define('BASE_PATH_LENGTH', strlen(BASE_PATH));
 function phpOrHTMLIntoEval(string &$contentToAdd) : void
 {
   // Beginning of content
-  $contentToAdd = PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
-    ? substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
+  $contentToAdd = PHP_OPEN_TAG_STRING === mb_substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+    ? mb_substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
     : PHP_END_TAG_STRING . $contentToAdd;
 
   // Ending of content
-  if (PHP_END_TAG_STRING === substr($contentToAdd, - PHP_END_TAG_LENGTH))
-    $contentToAdd = substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
+  if (PHP_END_TAG_STRING === mb_substr($contentToAdd, - PHP_END_TAG_LENGTH))
+    $contentToAdd = mb_substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
     $contentToAdd .= PHP_OPEN_TAG_STRING;
 }
@@ -66,15 +66,13 @@ function hasSyntaxErrors(string $file) : bool
   exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output);
   $output = implode(PHP_EOL, $output);
 
-  if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
-  {
-    echo PHP_EOL, CLI_ERROR, $output, PHP_EOL, PHP_EOL;
-    showContextByError($file, $output, 10);
+  if (mb_strlen($output) <= 6 || false === mb_strpos($output, 'pars', 7))
+    return false;
 
-    return true;
-  }
+  echo PHP_EOL, CLI_ERROR, $output, PHP_EOL, PHP_EOL;
+  showContextByError($file, $output, 10);
 
-  return false;
+  return true;
 }
 
 /**
@@ -125,12 +123,12 @@ function contentToFile(string $content, string $outputFile) : void
   // Test each part of the process in order to precisely detect where there is an error.
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
-    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, BASE_PATH_LENGTH) . '!]',
+    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . mb_substr($tempFile, BASE_PATH_LENGTH) . '!]',
       END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  $smallOutputFile = substr($outputFile, BASE_PATH_LENGTH);
+  $smallOutputFile = mb_substr($outputFile, BASE_PATH_LENGTH);
 
   echo CLI_SUCCESS, '[CLASSIC SYNTAX]';
 
@@ -171,7 +169,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   // dealing with / at the beginning of the use
   if (!isset(CLASSMAP[$class]))
   {
-    $revisedClass = substr($class, 1);
+    $revisedClass = mb_substr($class, 1);
 
     if ('/' === $revisedClass)
       $class = $revisedClass;
@@ -179,8 +177,8 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
     {
       $cacheNamespace = 'cache\\php';
 
-      // Handles cache/php namespaces and otra namespaces
-      if (substr($class,0, 9) !== 'cache\\php')
+      // Handles cache/php namespaces and otra namespaces (9 is length of $cacheNamespace)
+      if (mb_substr($class,0, 9) !== $cacheNamespace)
       {
         if (in_array($class, ['DevControllerTrait', 'ProdControllerTrait']))
           return;
@@ -195,6 +193,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
          *  } */
         if (VERBOSE > 0)
           echo CLI_WARNING, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
+
         return ;
       } elseif ($class === $cacheNamespace . '\\BlocksSystem')
         // The class cache\php\BlocksSystem is already loaded via the MasterController class
@@ -243,22 +242,22 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
     foreach ($chunks as &$chunk)
     {
       $chunk = trim($chunk);
-      $posLeftParenthesis = strpos($chunk, '{');
+      $posLeftParenthesis = mb_strpos($chunk, '{');
 
       // case use xxx\xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are, one or more xxx between the braces)
       // example otra\otra\bdd\{Sql, Pdomysql}
       if (false !== $posLeftParenthesis)
       {
-        $beginString = substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
-        $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
+        $beginString = mb_substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
+        $lastChunk = mb_substr($chunk, $posLeftParenthesis + 1); // like Sql
         $classToReplace = $beginString . str_replace(' ', '', $lastChunk);
 
         // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
         $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
 
         // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
-        if (substr($classToReplace, -1) === '}')
-          $classToReplace = substr($classToReplace, 0,-1);
+        if ($classToReplace[-1] === '}')
+          $classToReplace = mb_substr($classToReplace, 0,-1);
       } else
       {
         /** if we have a right parenthesis we strip it and put the content before the beginning of the use statement,
@@ -283,7 +282,7 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
           }
         } else
         { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
-          $lastChunk = substr($chunk, 0, -1);
+          $lastChunk = mb_substr($chunk, 0, -1);
           $classToReplace = $beginString . $lastChunk;
 
           // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
@@ -338,7 +337,11 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
     foreach($pathVariables as $pathVariable)
     {
       if (isset(PATH_CONSTANTS[$pathVariable[0]]))
-        $tempFile = str_replace('$' . $pathVariable[0], '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'', $tempFile);
+        $tempFile = str_replace(
+          '$' . $pathVariable[0],
+          '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'',
+          $tempFile
+        );
       /* we make an exception for this particular require statement because
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
       elseif ('templateFilename' === trim($pathVariable[0]))
@@ -374,7 +377,7 @@ function showFile(int $level, string $file, string $otherText = ' first file') :
   if (VERBOSE > 0)
     echo str_pad(
       str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') .
-        substr($file, BASE_PATH_LENGTH),
+      mb_substr($file, BASE_PATH_LENGTH),
       ANNOTATION_DEBUG_PAD,
       '.'
     ), CLI_WARNING, $otherText, END_COLOR, PHP_EOL;
@@ -430,8 +433,8 @@ function getFileInfoFromRequireMatch(string $trimmedMatch, string $file) : array
 
   /* We checks if the require/include statement is in a function call
      by counting the number of parenthesis between the require statement and the semicolon */
-  if (0 !== substr_count($trimmedMatch, ')') % 2 )
-    $tempFile = substr($tempFile, 0, -1);
+  if (0 !== mb_substr_count($trimmedMatch, ')') % 2 )
+    $tempFile = mb_substr($tempFile, 0, -1);
 
   return evalPathVariables($tempFile, $file, $trimmedMatch);
 }
@@ -468,22 +471,21 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string $m
     $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
-  } elseif(1 === $inEval)
-  {
-    phpOrHTMLIntoEval($contentToAdd);
-    $replacement = 'eval(\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\\'); ';
   } else
   {
     phpOrHTMLIntoEval($contentToAdd);
-    $replacement = 'eval(\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\'); ';
+    $replacement = 'eval(' . (1 === $inEval
+      ? '\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\'
+      : '\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP')
+      . '\'); ';
   }
 
   // Adds the code in the finalContent
   return substr_replace(
     $finalContent,
     $replacement,
-    strpos($finalContent, $newMatch),
-    strlen($newMatch)
+    mb_strpos($finalContent, $newMatch),
+    mb_strlen($newMatch)
   );
 }
 
@@ -497,24 +499,24 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string $m
  */
 function processReturn(string &$finalContent, string &$contentToAdd, string $match, int $posMatch) : void
 {
-  //-5 for the semicolon, the ending tag and the mandatory line break
+  // -5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(substr(
+  $contentToAdd = trim(mb_substr(
     $contentToAdd,
     PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
   if (str_contains($match, OTRA_LABEL_REQUIRE) &&
-    0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
-    ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
+    0 !== mb_substr_count($match, ')') % 2 && // if there is an odd number of parentheses
+    ';' === mb_substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
   {
     $contentToAdd = substr_replace($contentToAdd, '', -4);
-    $lengthToChange = strrpos($match, ')');
+    $lengthToChange = mb_strrpos($match, ')');
   } else
     // We change only the require but we keep the parenthesis and the semicolon
     // (cf. BASE_PATH . config/Routes.php init function)
-    $lengthToChange = strlen(substr($match, 0, strpos($match, ');')));
+    $lengthToChange = mb_strlen(mb_substr($match, 0, mb_strpos($match, ');')));
 
   // We remove the requires like statements before adding the content
   $finalContent = substr_replace($finalContent, $contentToAdd, $posMatch, $lengthToChange);
@@ -534,7 +536,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
   /** @var string $classFromFile */
   foreach($classesFromFile as $classFromFile)
   {
-    if (false !== strrpos($classFromFile, $class, (int) strrpos($classFromFile,',')))
+    if (false !== mb_strrpos($classFromFile, $class, (int) mb_strrpos($classFromFile,',')))
       return false;
   }
 
@@ -543,18 +545,18 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
   // we use a namespace so ...
 
   // we search the namespace in the content before the extends call
-  $namespacePosition = strrpos($contentToAdd, 'namespace', $match - strlen($contentToAdd));
+  $namespacePosition = mb_strrpos($contentToAdd, 'namespace', $match - mb_strlen($contentToAdd));
 
   // no namespace found, we return false
   if ($namespacePosition === false)
     return false;
 
   // then we find the section that interests us
-  $tempContent = substr($contentToAdd, $namespacePosition, $match - $namespacePosition);
+  $tempContent = mb_substr($contentToAdd, $namespacePosition, $match - $namespacePosition);
 
   // then we can easily extract the namespace (10 = strlen('namespace'))
   // and concatenates it with a '\' and the class to get our file name
-  $newClass = substr($tempContent, 10, strpos($tempContent, ';') - 10) . '\\' . $class;
+  $newClass = mb_substr($tempContent, 10, mb_strpos($tempContent, ';') - 10) . '\\' . $class;
 
   if (!isset(CLASSMAP[$newClass]))
   {
@@ -606,7 +608,6 @@ function getFileInfoFromRequiresAndExtends(
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
     if (str_contains($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
-      /** @var string $tempFile */
       [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $file);
 
       /* we make an exception for this particular require statement because
@@ -619,11 +620,12 @@ function getFileInfoFromRequiresAndExtends(
 
         if ($posDir !== false)
         {
-          $tempFile = substr_replace('__DIR__ . ',
-            '\'' . dirname($file) . '/' .
-            basename(substr($tempFile, $posDir, -1)) . '\'',
+          $tempFile = substr_replace(
+            '__DIR__ . ',
+            '\'' . dirname($file) . '/' . basename(mb_substr($tempFile, $posDir, -1)) . '\'',
             $posDir,
-            9); // 9 is the length of the string '__DIR__ .'
+            9 // 9 is the length of the string '__DIR__ .'
+          );
         }
 
         // we must not change these inclusions from
@@ -671,14 +673,14 @@ function getFileInfoFromRequiresAndExtends(
 
         $filesToConcat['php'][OTRA_KEY_REQUIRE][$tempFile] = [
           'match' => $match[0],
-          'posMatch' => strpos($contentToAdd, $match[0])
+          'posMatch' => mb_strpos($contentToAdd, $match[0])
         ];
       }
     } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))
     { // Extends block is only tested if the class has not been loaded via an use statement before
 
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
-      $class = substr($trimmedMatch, 8);
+      $class = mb_substr($trimmedMatch, 8);
 
       // if the class begin by \ then it is a standard class and then we do nothing
       if ('\\' === $class[0])
@@ -701,12 +703,12 @@ function getFileInfoFromRequiresAndExtends(
       $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
     } elseif(!str_contains($file, 'prod/Controller.php'))
     { /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
-      $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
+      $trimmedMatch = mb_substr($trimmedMatch, mb_strpos($trimmedMatch, '(') + 1);
 
       // If the template file parameter supplied for renderView method is just a string
       if ($trimmedMatch[0] === '\'')
       {
-        $trimmedMatch = substr($trimmedMatch, 1, -1);
+        $trimmedMatch = mb_substr($trimmedMatch, 1, -1);
       } else // More complicated...
       {
         /** TODO Maybe a case then with an expression, variable or something */
@@ -721,7 +723,7 @@ function getFileInfoFromRequiresAndExtends(
         if (!file_exists($tempDir . $trimmedMatch))
         {
           // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
-          $tempDir = realpath($tempDir . '/../../views' . substr($tempDir, strrpos($tempDir, '/'))) . '/';
+          $tempDir = realpath($tempDir . '/../../views' . mb_substr($tempDir, mb_strrpos($tempDir, '/'))) . '/';
 
           if (!file_exists($tempDir . $trimmedMatch))
           {
@@ -881,7 +883,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
               /* if the file has contents that begin by a return statement and strict type declaration then we apply a
                particular process*/
               && str_contains(
-                substr(
+                mb_substr(
                   $nextContentToAdd,
                   PHP_OPEN_TAG_LENGTH + 1,
                   PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION
@@ -912,8 +914,10 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
             // If we have a "return type" PHP file then the file have already been included before,
             // in the 'processReturn' function
             if (!$isReturn)
+            {
               $finalContentParts[] =
                 assembleFiles($increment, $level, $tempFile, $nextContentToAdd, $parsedFiles);
+            }
 
             unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
           }
@@ -1035,7 +1039,7 @@ function processStaticCalls(
       showFile($level, $newFile, OTRA_ALREADY_PARSED_LABEL);
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
-    $length = strlen($classPath . $classAndFunction);
+    $length = mb_strlen($classPath . $classAndFunction);
     $contentToAdd = substr_replace($contentToAdd,
       $classAndFunction,
       $offset - $lengthAdjustment,
@@ -1043,7 +1047,7 @@ function processStaticCalls(
     );
 
     // We calculate the new offset for the offset !
-    $lengthAdjustment += $length - strlen($classAndFunction);
+    $lengthAdjustment += $length - mb_strlen($classAndFunction);
   }
 }
 
@@ -1088,7 +1092,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
 
     foreach($useMatches[0] as $useMatch)
     {
-      $length = strlen($useMatch[0]);
+      $length = mb_strlen($useMatch[0]);
       $finalContent = substr_replace($finalContent, '', $useMatch[1] - $offset, $length);
       $offset += $length;
     }
@@ -1165,7 +1169,6 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
 
   $patternRemoveUse = '@^\buse\b@m';
 
-
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
   return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .
@@ -1174,8 +1177,8 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
       ? 'use \\Exception; use \\stdClass; '
       : ''
     ) . $vendorNamespaces .
-    (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
-      ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
+    (PHP_OPEN_TAG_STRING == mb_substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+      ? preg_replace($patternRemoveUse, '', mb_substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
     );
 }
