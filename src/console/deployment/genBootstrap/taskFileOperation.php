@@ -674,8 +674,9 @@ function getFileInfoFromRequiresAndExtends(
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } elseif(str_contains($trimmedMatch, 'extends')) /** EXTENDS */
-    {
+    } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))
+    { // Extends block is only tested if the class has not been loaded via an use statement before
+
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = substr($trimmedMatch, 8);
 
@@ -790,7 +791,15 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
   {
     /**
      * @var string $fileType
-     * @var array  $entries
+     * @var array{
+     *   use ?: array,
+     *   require ?: array<string,array{
+     *    match: string,
+     *    posMatch: int
+     *   }>,
+     *   extends ?: string[],
+     *   static ?: string[]
+     * } $entries
      */
     foreach ($filesToConcat as $fileType => $entries)
     {

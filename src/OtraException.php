@@ -146,12 +146,12 @@ class OtraException extends Exception
     return $renderController->renderView(
       '/errors/exception.phtml',
       [
-        'message' => $this->message,
-        'errorCode' => $errorCode,
-        'fileName' => $simplifiedFilePath,
-        'fileLine' => $this->line,
+        'backtraces' => $traces,
         'context' => (array)$this->context,
-        'backtraces' => $traces
+        'errorCode' => $errorCode,
+        'fileLine' => $this->line,
+        'fileName' => $simplifiedFilePath,
+        'message' => $this->message
       ],
       false,
       false
@@ -212,7 +212,7 @@ class OtraException extends Exception
           $exception->getFile(),
           $exception->getLine(),
           $exception->getTrace(),
-          $exception->isOtraCliWarning
+          $exception->isOtraCliWarning ?? false
         );}
 
     exit($exception->getCode());

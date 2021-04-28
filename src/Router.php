@@ -110,7 +110,7 @@ abstract class Router
    *
    * @param string $userUrl          The pattern to check
    *
-   * @return array{0:string,1:array} The route and the parameters if they exist, false otherwise
+   * @return array{0:string,1:string[]} The route and the parameters if they exist, false otherwise
    *
    * @throws OtraException
    */
@@ -153,11 +153,12 @@ abstract class Router
       }
 
       $firstPartUntilParameters = substr($routeUrl, 0, $firstBracketPosition);
+
       // This is maybe the route (with parameters) we are looking for!
       if (str_contains($userUrl, $firstPartUntilParameters))
       {
         $routeRegexp = '@^' . preg_replace('@\{[^}]{0,}\}@', '([^/?]{0,})', $routeUrl) .
-          '\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,}$@';
+          '(?:\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,})?$@';
 
         // The beginning of the route is ok, is the parameters section ok too?
         if (preg_match($routeRegexp, $userUrl, $foundParameters, PREG_OFFSET_CAPTURE))
