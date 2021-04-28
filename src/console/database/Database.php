@@ -456,7 +456,7 @@ namespace otra\console
       {
         $localMemory[$fixtureName] = $databaseId;
         $databaseId++;
-        /** @var string $theValues the current tuple */
+        // $theValues the current tuple
         $theValues = '';
 
         foreach ($properties as $property => $value)

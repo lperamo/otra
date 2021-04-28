@@ -16,6 +16,7 @@ use JetBrains\PhpStorm\NoReturn;
  */
 class OtraException extends Exception
 {
+  /** @var array<int, string> */
   public static array $codes = [
     E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
     E_COMPILE_WARNING   => 'E_COMPILE_WARNING',
@@ -42,18 +43,18 @@ class OtraException extends Exception
    * OtraException constructor.
    *
    * @param string     $message
-   * @param int|null   $code
+   * @param ?int       $code
    * @param string     $file
    * @param int|null   $line
    * @param array|null $context
-   * @param bool       $otraCliWarning True only if we came from a console task that wants to do an exit.
+   * @param bool       $isOtraCliWarning True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
    */
 
   public function __construct(
     string $message = 'Error !',
-    int|string|null $code = NULL,
+    ?int $code = NULL,
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
@@ -117,7 +118,7 @@ class OtraException extends Exception
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
     // Is the error code a native error code ?
-    $errorCode = isset(self::$codes[$this->code]) ? self::$codes[$this->code] : 'UNKNOWN';
+    $errorCode = self::$codes[$this->code] ?? 'UNKNOWN';
     http_response_code(MasterController::HTTP_CODES['HTTP_INTERNAL_SERVER_ERROR']);
 
     $traces = $this->getTrace();

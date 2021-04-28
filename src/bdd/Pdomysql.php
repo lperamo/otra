@@ -53,12 +53,12 @@ abstract class Pdomysql
    *                      The query string should not end with a semicolon. Data inside the query should be properly
    *                      escaped.
    *
-   * @return false|PDOStatement Returns a resource on success, otherwise an exception is raised
+   * @return PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
-  public static function query(string $query)
+  public static function query(string $query) : PDOStatement
   {
     $result = Sql::$currentConn->query($query);
     // TODO use PDOStatement::debugDumpParams() ?

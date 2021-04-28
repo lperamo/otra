@@ -390,11 +390,11 @@ function loadAndSaveResources(
 /**
  * Loads css or js resources
  *
- * @param array  $resources
- * @param array  $chunks
- * @param string $key first_js, module_css kind of ...
- * @param string $bundlePath
- * @param ?bool  $resourcePath
+ * @param array   $resources
+ * @param array   $chunks
+ * @param string  $key first_js, module_css kind of ...
+ * @param string  $bundlePath
+ * @param ?string $resourcePath
  */
 function loadResource(array $resources, array $chunks, string $key, string $bundlePath, ?string $resourcePath = null)
 : void

@@ -340,7 +340,7 @@ class Sql
     return false;
   }
 
-    /**
+  /**
    * Free result memory
    *
    * @param mixed $params See the driver for more info.

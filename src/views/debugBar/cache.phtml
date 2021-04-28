@@ -14,6 +14,7 @@ title="Controller">Cache</button>
   <p class="dbg-bar--block--container--element">Templates stored in memory :</p>
   <?php
   $basePathLength = strlen(BASE_PATH);
+
   foreach (array_keys(MasterController::$rendered) as $template)
   {
     ?><p class="dbg-bar--block--container--element"><?=
