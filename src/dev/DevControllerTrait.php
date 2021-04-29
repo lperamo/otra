@@ -5,8 +5,6 @@ namespace otra;
 use config\{AllConfig, Routes};
 use Exception;
 
-define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
-define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 define('OTRA_FILENAME_TRACE', 'trace');
 
 /**
@@ -163,8 +161,8 @@ trait DevControllerTrait
     $chunks = $route['chunks'];
 
     // Bundle and module informations do not exist on exceptions
-    if (!isset($chunks[ROUTE_CHUNKS_BUNDLE_PARAM]))
-      $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[ROUTE_CHUNKS_MODULE_PARAM] = '';
+    if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
+      $chunks[Routes::ROUTES_CHUNKS_BUNDLE] = $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
 
     $resources = $route['resources'];
     $debLink = PHP_EOL . ($assetType === 'js'
@@ -181,8 +179,8 @@ trait DevControllerTrait
     $debLink2 = $debLink . '/bundles/';
 
     $resourcesType = [
-      'bundle_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
-      'module_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
+      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . '/',
+      'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . '/',
       '_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'

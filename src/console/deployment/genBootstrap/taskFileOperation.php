@@ -154,9 +154,20 @@ function contentToFile(string $content, string $outputFile) : void
  * We analyze the use statement in order to retrieve the name of each class which is included in it.
  *
  * @param int      $level
- * @param array    $filesToConcat Files to parse after have parsed this one
+ * @param array{
+ *  php:array{
+ *    use ?: array,
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }               $filesToConcat Files to parse after have parsed this one
  * @param string   $class
- * @param array    $parsedFiles   Remaining files to concatenate
+ * @param string[] $parsedFiles   Remaining files to concatenate
  */
 function analyzeUseToken(int $level, array &$filesToConcat, string $class, array &$parsedFiles) : void
 {
@@ -218,7 +229,18 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  *
  * @param int    $level
  * @param string $contentToAdd  Content actually parsed
- * @param array  $filesToConcat Files to parse after have parsed this one
+ * @param array{
+ *  php:array{
+ *    use ?: array,
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }             $filesToConcat Files to parse after have parsed this one
  * @param array  $parsedFiles   Remaining files to concatenate
  *
  * @return string[] $classesFromFile
@@ -574,25 +596,46 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 /**
  * Retrieves informations about what kind of file inclusion we have, the related code and its position.
  *
- * @param int    $level           Only for debugging purposes.
- * @param string $contentToAdd    Content actually parsed
- * @param string $file            Name of the file actually parsed
- * @param array  $filesToConcat   Files to parse after have parsed this one
- * @param array  $parsedFiles     Remaining files to concatenate
- * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
- *                                (useful only for extends statements)
+ * @param array{
+ *   level: int,
+ *   contentToAdd: string,
+ *   filename: string,
+ *   filesToConcat: array{
+ *     php:array{
+ *       use ?: array,
+ *       require ?: array<string,array{
+ *         match: string,
+ *         posMatch: int
+ *       }>,
+ *       extends ?: string[],
+ *       static ?: string[]
+ *     },
+ *     template: array
+ *   },
+ *  parsedFiles: array,
+ *  classesFromFile: array
+ * } $parameters
+ * $level           Only for debugging purposes.
+ * $contentToAdd    Content actually parsed
+ * $filename        Name of the file actually parsed
+ * $filesToConcat   Files to parse after have parsed this one
+ * $parsedFiles     Remaining files to concatenate
+ * $classesFromFile Classes that we have retrieved from the previous analysis of use statements
+ *                  (useful only for extends statements)
  *
  * @throws OtraException
  */
-function getFileInfoFromRequiresAndExtends(
-  int $level,
-  string $contentToAdd,
-  string $file,
-  array &$filesToConcat,
-  array &$parsedFiles,
-  array $classesFromFile
-) : void
+function getFileInfoFromRequiresAndExtends(array $parameters) : void
 {
+  [
+    'level' => $level,
+    'contentToAdd' => $contentToAdd,
+    'filename' => $filename,
+    'filesToConcat' => $filesToConcat,
+    'parsedFiles' => $parsedFiles,
+    'classesFromFile' => $classesFromFile
+  ] = $parameters;
+
   preg_match_all(PATTERN, $contentToAdd, $matches, PREG_OFFSET_CAPTURE);
 
   // For all the inclusions
@@ -608,7 +651,7 @@ function getFileInfoFromRequiresAndExtends(
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
     if (str_contains($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
-      [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $file);
+      [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $filename);
 
       /* we make an exception for this particular require statement because
          it is a require made by the prod controller and then it is a template ...
@@ -622,7 +665,7 @@ function getFileInfoFromRequiresAndExtends(
         {
           $tempFile = substr_replace(
             '__DIR__ . ',
-            '\'' . dirname($file) . '/' . basename(mb_substr($tempFile, $posDir, -1)) . '\'',
+            '\'' . dirname($filename) . '/' . basename(mb_substr($tempFile, $posDir, -1)) . '\'',
             $posDir,
             9 // 9 is the length of the string '__DIR__ .'
           );
@@ -658,13 +701,13 @@ function getFileInfoFromRequiresAndExtends(
 
         if (VERBOSE > 0 && !str_contains($tempFile, BASE_PATH))
           echo PHP_EOL, CLI_WARNING, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
-          '\' in ', $file, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
+          '\' in ', $filename, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
            outside of the project folder.', END_COLOR, PHP_EOL;
 
         if (!file_exists($tempFile))
         {
           echo PHP_EOL, CLI_ERROR, 'There is a problem with ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' => ', CLI_WARNING,
-            $tempFile, CLI_ERROR, ' in ', CLI_WARNING, $file, CLI_ERROR, ' !', END_COLOR, PHP_EOL, PHP_EOL;
+            $tempFile, CLI_ERROR, ' in ', CLI_WARNING, $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL, PHP_EOL;
           throw new OtraException('', 1, '', NULL, [], true);
         }
 
@@ -701,52 +744,52 @@ function getFileInfoFromRequiresAndExtends(
       }
 
       $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
-    } elseif(!str_contains($file, 'prod/Controller.php'))
-    { /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
-      $trimmedMatch = mb_substr($trimmedMatch, mb_strpos($trimmedMatch, '(') + 1);
+    }// elseif(!str_contains($filename, 'prod/Controller.php'))
+    //{ /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+//      $trimmedMatch = mb_substr($trimmedMatch, mb_strpos($trimmedMatch, '(') + 1);
+//
+//      // If the template file parameter supplied for renderView method is just a string
+//      if ($trimmedMatch[0] === '\'')
+//      {
+//        $trimmedMatch = mb_substr($trimmedMatch, 1, -1);
+//      } else // More complicated...
+//      {
+//        /** TODO Maybe a case then with an expression, variable or something */
+//      }
 
-      // If the template file parameter supplied for renderView method is just a string
-      if ($trimmedMatch[0] === '\'')
-      {
-        $trimmedMatch = mb_substr($trimmedMatch, 1, -1);
-      } else // More complicated...
-      {
-        /** TODO Maybe a case then with an expression, variable or something */
-      }
+//      $tempDir = '';
 
-      $tempDir = '';
-
-      if (!file_exists($trimmedMatch))
-      {
-        $tempDir = str_replace('\\', '/', dirname($file));
-
-        if (!file_exists($tempDir . $trimmedMatch))
-        {
-          // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
-          $tempDir = realpath($tempDir . '/../../views' . mb_substr($tempDir, mb_strrpos($tempDir, '/'))) . '/';
-
-          if (!file_exists($tempDir . $trimmedMatch))
-          {
-            if ($trimmedMatch === '/exception.phtml')
-              $tempDir = CORE_PATH . 'views/' ;
-            // no ? so where is that file ?
-            elseif (!str_contains($trimmedMatch, 'html'))
-            {
-              echo CLI_ERROR, '/!\\ We cannot find the file ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' seen in ' .
-                CLI_WARNING,
-              $file,
-              CLI_ERROR, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-              throw new OtraException('', 1, '', NULL, [], true);
-            }
-          }
-        }
-      }
+//      if (!file_exists($trimmedMatch))
+//      {
+//        $tempDir = str_replace('\\', '/', dirname($filename));
+//
+//        if (!file_exists($tempDir . $trimmedMatch))
+//        {
+//          // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
+//          $tempDir = realpath($tempDir . '/../../views' . mb_substr($tempDir, mb_strrpos($tempDir, '/'))) . '/';
+//
+//          if (!file_exists($tempDir . $trimmedMatch))
+//          {
+//            if ($trimmedMatch === '/exception.phtml')
+//              $tempDir = CORE_PATH . 'views/' ;
+//            // no ? so where is that file ?
+//            elseif (!str_contains($trimmedMatch, 'html'))
+//            {
+//              echo CLI_ERROR, '/!\\ We cannot find the file ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' seen in ' .
+//                CLI_WARNING,
+//              $filename,
+//              CLI_ERROR, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
+//              throw new OtraException('', 1, '', NULL, [], true);
+//            }
+//          }
+//        }
+//      }
 
       //$templateFile = $tempDir . $trimmedMatch;
 
       //if (in_array($templateFile, $filesToConcat['template']) === false)
       //  $filesToConcat['template'][] = $templateFile;
-    }
+//    }
 
     // if we have to add a file that we don't have yet...
     if (isset($tempFile))
@@ -755,11 +798,11 @@ function getFileInfoFromRequiresAndExtends(
 }
 
 /**
- * @param int    $increment          Only for debugging purposes.
- * @param int    $level        Only for debugging purposes.
- * @param string $file
- * @param string $contentToAdd Actual content to be processed
- * @param array  $parsedFiles  Remaining files to concatenate
+ * @param int      $increment    Only for debugging purposes.
+ * @param int      $level        Only for debugging purposes.
+ * @param string   $file
+ * @param string   $contentToAdd Actual content to be processed
+ * @param string[] $parsedFiles  Remaining files to concatenate
  *
  * @throws OtraException
  * @return string $finalContent
@@ -785,7 +828,16 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
   $classesFromFile = getFileNamesFromUses($level, $contentToAdd, $filesToConcat, $parsedFiles);
 
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
-  getFileInfoFromRequiresAndExtends($level, $contentToAdd, $file, $filesToConcat, $parsedFiles, $classesFromFile);
+  getFileInfoFromRequiresAndExtends(
+    [
+      'level' => $level,
+      'contentToAdd' => $contentToAdd,
+      'filename' => $file,
+      'filesToConcat' => $filesToConcat,
+      'parsedFiles' => $parsedFiles,
+      'classesFromFile' => $classesFromFile
+    ]
+  );
   processStaticCalls($level, $contentToAdd, $filesToConcat, $parsedFiles, $classesFromFile);
   $finalContentParts = [];
 
@@ -973,7 +1025,18 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
  *
  * @param int    $level
  * @param string $contentToAdd    Content actually parsed
- * @param array  $filesToConcat   Files to parse after have parsed this one
+ * @param array{
+ *  php:array{
+ *    use ?: array,
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }             $filesToConcat   Files to parse after have parsed this one
  * @param array  $parsedFiles     Files already parsed
  * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
@@ -987,7 +1050,7 @@ function processStaticCalls(
 ) : void
 {
   preg_match_all(
-    '@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@',
+    '@(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,})@',
     $contentToAdd,
     $matches,
     PREG_SET_ORDER | PREG_OFFSET_CAPTURE
