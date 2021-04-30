@@ -13,7 +13,7 @@ if (!function_exists('cleanFileAndFolders'))
   /**
    * Removes all files and folders specified in the array.
    *
-   * @param array $fileOrFolders
+   * @param string[] $fileOrFolders
    *
    * @throws OtraException If we cannot remove a file or a folder
    */
@@ -28,6 +28,7 @@ if (!function_exists('cleanFileAndFolders'))
           RecursiveIteratorIterator::CHILD_FIRST
         );
 
+        /** @var SplFileInfo $fileObject */
         foreach ($files as $fileObject)
         {
           $realPath = $fileObject->getRealPath();

@@ -12,6 +12,13 @@ namespace config;
  */
 abstract class Routes
 {
+  public const
+    ROUTES_CHUNKS_URL = 0,
+    ROUTES_CHUNKS_BUNDLE = 1,
+    ROUTES_CHUNKS_MODULE = 2,
+    ROUTES_CHUNKS_CONTROLLER = 3,
+    ROUTES_CHUNKS_ACTION = 4;
+
   public static array $allRoutes = [
     'otra_exception' => [
       'chunks' => ['exception'],

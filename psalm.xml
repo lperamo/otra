@@ -28,7 +28,7 @@
   <projectFiles>
     <directory name="config" />
     <directory name="src" />
-<!--    <file name="config/constants.php"/>-->
+    <file name="config/constants.php"/>
     <file name="cache/php/init/RouteManagement.php"/>
     <directory name="web"/>
     <!-- Those three files can reproduce the problem with Psalm. -->
@@ -40,10 +40,6 @@
       <directory name="src/init"/>
       <directory name="src/resources"/>
       <file name="config/prodConstants.php"/>
-
-      <!-- Psalm does not succeed to parse the Controller instanciation in the method 'errorMessage:93' of
-      src/OtraException.php file! To test this file, it must be tested separately for now -->
-      <file name="src/OtraException.php"/>
       <directory name="vendor"/>
     </ignoreFiles>
   </projectFiles>

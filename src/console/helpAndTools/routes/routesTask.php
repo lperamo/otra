@@ -67,24 +67,17 @@ function showPHPState(string $basePath, string $route, string $altColor) : void
 }
 
 require BASE_PATH . 'config/AllConfig.php';
-const ROUTES_ARG_ROUTE = 2,
-  ROUTES_CHUNKS_URL = 0;
+const ROUTES_ARG_ROUTE = 2;
 
 // 'require_once' needed instead of 'require', if we execute TasksManager::execute multiple times as in tests or some
 // scripts
-if (!defined('ROUTES_CHUNKS_BUNDLE'))
+if (!defined('WIDTH_LEFT'))
 {
-  define('ROUTES_CHUNKS_BUNDLE', 1);
-  define('ROUTES_CHUNKS_MODULE', 2);
   define('WIDTH_LEFT', 25);
   define('WIDTH_MIDDLE', 10);
   // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
   define('WIDTH_RIGHT', 70);
 }
-
-const
-  ROUTES_CHUNKS_CONTROLLER = 3,
-  ROUTES_CHUNKS_ACTION = 4;
 
 $indexLines = 0;
 
@@ -128,12 +121,12 @@ foreach($routes as $route => $details)
   $chunks = $details['chunks'];
   $altColor = ($indexLines % 2) ? CLI_INFO : CLI_INFO_HIGHLIGHT;
   echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
-    str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[ROUTES_CHUNKS_URL], PHP_EOL;
+    str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[Routes::ROUTES_CHUNKS_URL], PHP_EOL;
 
   echo str_pad(' ', WIDTH_LEFT),
     str_pad('Path', WIDTH_MIDDLE),
-    ': ' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[ROUTES_CHUNKS_MODULE] . '/' .
-    $chunks[ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[ROUTES_CHUNKS_ACTION],
+    ': ' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/' .
+    $chunks[Routes::ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[Routes::ROUTES_CHUNKS_ACTION],
     PHP_EOL;
 
   // shaName is the encrypted key that match a particular route / version

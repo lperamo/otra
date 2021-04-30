@@ -10,11 +10,10 @@ declare(strict_types=1);
  * Removes protection from a field in order to test it easily and returns it.
  *
  * @param class-string $class
- * @param string $field
- *
- * @return ReflectionProperty
+ * @param string       $field
  *
  * @throws ReflectionException
+ * @return ReflectionProperty
  */
 function removeFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
@@ -26,8 +25,8 @@ function removeFieldScopeProtection(string $class, string $field) : ReflectionPr
 }
 
 /**
- * @param string $class
- * @param array  $fields
+ * @param class-string $class
+ * @param string[]     $fields
  *
  * @throws ReflectionException
  * @return ReflectionProperty[]
@@ -51,11 +50,10 @@ function removeFieldsScopeProtection(string $class, array $fields) : array
  * Removes protection from a field in order to test it easily and returns it.
  *
  * @param class-string $class
- * @param string $field
- *
- * @return ReflectionProperty
+ * @param string       $field
  *
  * @throws ReflectionException
+ * @return ReflectionProperty
  */
 function restoreFieldScopeProtection(string $class, string $field) : ReflectionProperty
 {
@@ -69,8 +67,8 @@ function restoreFieldScopeProtection(string $class, string $field) : ReflectionP
 /**
  * Removes temporarily the scope protection of fields to set values.
  *
- * @param class-string $class
- * @param array        $fieldsAndValues
+ * @param class-string         $class
+ * @param array<string, mixed> $fieldsAndValues
  *
  * @throws ReflectionException
  */

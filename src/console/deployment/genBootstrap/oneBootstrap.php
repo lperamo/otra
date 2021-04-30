@@ -16,10 +16,9 @@ const ONE_BOOTSTRAP_ARG_ROUTE = 3;
 const OTRA_KEY_BOOTSTRAP = 'bootstrap';
 const OTRA_KEY_DRIVER = 'driver';
 define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
-
-$verbose = intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]);
-$route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
+define('VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
 define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+$route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'
@@ -143,10 +142,10 @@ try
 {
   contentToFile(
     fixFiles(
-      $chunks[1],
+      $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
       $route,
       file_get_contents(CORE_PATH . 'OtraException.php') . '?>' . file_get_contents($fileToInclude),
-      $verbose,
+      VERBOSE,
       $fileToInclude
     ),
     $temporaryPhpRouteFile

@@ -5,8 +5,6 @@ namespace otra;
 use config\{AllConfig, Routes};
 use Exception;
 
-define('ROUTE_CHUNKS_BUNDLE_PARAM', 1);
-define('ROUTE_CHUNKS_MODULE_PARAM', 2);
 define('OTRA_FILENAME_TRACE', 'trace');
 
 /**
@@ -92,7 +90,7 @@ trait DevControllerTrait
 
   /**
    * @param string $route
-   * @param array  $viewResourcePath Paths to CSS and JS files
+   * @param array{css: string, js:string} $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
    * @return string[]
@@ -138,9 +136,9 @@ trait DevControllerTrait
   /**
    * Adds resources file to the template. Can be 'css' or 'js' resources.
    *
-   * @param string $assetType        'css' or 'js'
+   * @param string $assetType 'css' or 'js'
    * @param string $route
-   * @param array  $viewResourcePath
+   * @param array{css: string, js:string} $viewResourcePath
    *
    * @throws Exception
    * @return string
@@ -163,8 +161,8 @@ trait DevControllerTrait
     $chunks = $route['chunks'];
 
     // Bundle and module informations do not exist on exceptions
-    if (!isset($chunks[ROUTE_CHUNKS_BUNDLE_PARAM]))
-      $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] = $chunks[ROUTE_CHUNKS_MODULE_PARAM] = '';
+    if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
+      $chunks[Routes::ROUTES_CHUNKS_BUNDLE] = $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
 
     $resources = $route['resources'];
     $debLink = PHP_EOL . ($assetType === 'js'
@@ -181,8 +179,8 @@ trait DevControllerTrait
     $debLink2 = $debLink . '/bundles/';
 
     $resourcesType = [
-      'bundle_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_BUNDLE_PARAM] . '/resources/' . $assetType . '/',
-      'module_' . $assetType => $debLink2 . $chunks[ROUTE_CHUNKS_MODULE_PARAM] . '/resources/' . $assetType . '/',
+      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . '/',
+      'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . '/',
       '_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
@@ -288,10 +286,10 @@ trait DevControllerTrait
   /**
    * Uses calculations in order to put scripts in correct order that has been specified in the routes configuration file
    *
-   * @param array<int, string> $unorderedArray Unordered array of files
-   * @param array<int, string> $orderedArray   Ordered array of files
+   * @param string[] $unorderedArray Unordered array of files
+   * @param string[] $orderedArray   Ordered array of files
    *
-   * @return array<int, string> $scripts Final array
+   * @return string[] $scripts Final array
    */
   private static function calculateArray(array $unorderedArray, array $orderedArray) : array
   {
@@ -317,11 +315,11 @@ trait DevControllerTrait
    * If we put things like '_js' => ['_5'=>'users']
    * then the $key will be 5 and not the key that follows natural order.
    *
-   * @param array<int, string> &$unorderedArray
-   * @param array<int, string> &$orderedArray
-   * @param int        &        $naturalPriorityIndex Used if $forcedPriorityIndex is not a string
-   * @param int|string          $forcedPriorityIndex  Used only if it is a string
-   * @param string              $code
+   * @param string[]   &$unorderedArray
+   * @param string[]   &$orderedArray
+   * @param int        &$naturalPriorityIndex Used if $forcedPriorityIndex is not a string
+   * @param int|string $forcedPriorityIndex  Used only if it is a string
+   * @param string     $code
    */
   private static function updateScriptsArray(
     array &$unorderedArray,

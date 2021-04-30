@@ -68,8 +68,8 @@ if (!function_exists('getSourceFromFile'))
       $sourceContent .= $padding . ADD_BOLD . CLI_DUMP_LINE_HIGHLIGHT;
 
       $sourceContent .= ($index === $sourceLine)
-        ? ADD_BOLD . CLI_LINE_DUMP . $index . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
-        : $index . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
+        ? ADD_BOLD . CLI_LINE_DUMP . ((string) $index) . ' ' . $fileHandler->current() . REMOVE_BOLD_INTENSITY . END_COLOR
+        : ((string) $index) . ' ' . REMOVE_BOLD_INTENSITY . END_COLOR . $fileHandler->current();
     }
 
     return $sourceContent;

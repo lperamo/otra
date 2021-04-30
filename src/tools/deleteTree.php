@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 $delTree = function (string $folder) use (&$delTree) : bool
 {
+  /** @var string[] $files */
   $files = array_diff(scandir($folder), ['.','..']);
 
   foreach ($files as $fileName)

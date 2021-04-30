@@ -126,10 +126,16 @@ abstract class MasterController
   protected const LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
-   * @param array $otraParams [
-   *  'bundle' => $bundle,
-   *  'controller' => $controller,
-   *  'action' => $action]
+   * @param array{
+   *  pattern?: string,
+   *  bundle?: string,
+   *  module?: string,
+   *  controller?: string,
+   *  action?: string,
+   *  route?: string,
+   *  js: bool,
+   *  css: bool
+   * } $otraParams
    *
    * @param array $params The params passed by GET method
    */

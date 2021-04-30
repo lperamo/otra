@@ -154,8 +154,8 @@ namespace {
     /**
      * Begins a template block.
      *
-     * @param string      $name
-     * @param string|null $inline If we just want an inline block then we echo this string and close the block directly.
+     * @param string  $name
+     * @param ?string $inline If we just want an inline block then we echo this string and close the block directly.
      */
     function block(string $name, ?string $inline = null) : void
     {
@@ -291,12 +291,12 @@ namespace {
 
       // We put the first block of the same type
       /** @var array{
-       *   content:string,
-       *   endingBlock?:bool,
-       *   index:int,
-       *   name:string,
-       *   parent?:array,
-       *   replacedBy?:int
+       *   content: string,
+       *   endingBlock?: bool,
+       *   index: int,
+       *   name: string,
+       *   parent?: array,
+       *   replacedBy?: int
        * } $parentBlock For Psalm */
       $parentBlock = BlocksSystem::$blocksStack[$parentKey];
 

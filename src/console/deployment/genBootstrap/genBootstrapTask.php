@@ -17,13 +17,13 @@ if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
   define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
 }
 
-define('GEN_BOOTSTRAP_ARG_LINT', 4);
-define('GEN_BOOTSTRAP_ARG_ROUTE', 5);
+const
+  GEN_BOOTSTRAP_ARG_LINT = 4,
+  GEN_BOOTSTRAP_ARG_ROUTE = 5,
+  OTRA_KEY_DRIVER = 'driver';
+
 define('GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
-
-define('OTRA_KEY_DRIVER', 'driver');
-
-$verbose = isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0;
+define('VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
 
 // We generate the class mapping file if we need it.
 if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
@@ -35,7 +35,7 @@ if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTR
   require CORE_PATH . 'tools/cli.php';
 
   [$status, $return] = cliCommand(
-    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . $verbose . ' ' . intval(GEN_BOOTSTRAP_LINT) .
+    PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . VERBOSE . ' ' . intval(GEN_BOOTSTRAP_LINT) .
     ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
   );
   echo $return;
@@ -110,7 +110,7 @@ foreach(array_keys($routes) as $routeKey => $route)
     echo CLI_BASE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_INFO
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
   else
-    passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . $verbose . ' ' .
+    passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . VERBOSE . ' ' .
       intval(GEN_BOOTSTRAP_LINT) . ' ' . $route);
 }
 
@@ -134,8 +134,7 @@ define(
     'temporaryEnv' => PROD
   ]
 );
-
-define('ROUTE_MANAGEMENT_TEMPORARY_FILE', CACHE_PHP_INIT_PATH . 'RouteManagement_.php');
+const ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = CORE_PATH . 'Router.php';
 
@@ -144,7 +143,7 @@ contentToFile(
     $routes[$route]['chunks'][1],
     $route,
     file_get_contents($fileToInclude) . '?>',
-    $verbose,
+    VERBOSE,
     $fileToInclude
   ),
   ROUTE_MANAGEMENT_TEMPORARY_FILE

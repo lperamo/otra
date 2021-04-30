@@ -131,7 +131,9 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
     $rightStyleClauseCode = '</span>';
   }
 
-  $queryInformations = $statement->debugDumpParams();
+  ob_start();
+  $statement->debugDumpParams();
+  $queryInformations = ob_get_clean();
   $rawSql = substr($queryInformations, 0, strpos($queryInformations, 'Params'));
   $parameters = []; // TODO retrieve the SQL statement parameters in an array !
 

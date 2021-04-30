@@ -11,9 +11,9 @@ namespace otra\tools\files;
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
- * @param string      $resource Most of the time the name of a folder
- * @param string|null $fileName Most of the time the name of a file
- * @param bool|null   $endColor Do we have to reset color at the end ?
+ * @param string  $resource Most of the time the name of a folder
+ * @param ?string $fileName Most of the time the name of a file
+ * @param ?bool   $endColor Do we have to reset color at the end ?
  *
  * @return string
  */

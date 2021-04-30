@@ -18,7 +18,7 @@ title="Controller">Cache</button>
   foreach (array_keys(MasterController::$rendered) as $template)
   {
     ?><p class="dbg-bar--block--container--element"><?=
-  str_contains($template, BASE_PATH) ? 'BASE_PATH + ' . substr($template, $basePathLength) : $template
+  str_contains($template, BASE_PATH) ? 'BASE_PATH + ' . mb_substr($template, $basePathLength) : $template
     ?></p><?php
   }
   ?>

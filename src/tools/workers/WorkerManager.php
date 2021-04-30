@@ -64,8 +64,8 @@ class WorkerManager
   }
 
   /**
-   * @param int  $timeout
-   * @param int  $verbose
+   * @param int $timeout
+   * @param int $verbose
    */
   public function listen(int $timeout = 200000, int $verbose = 1) : void
   {

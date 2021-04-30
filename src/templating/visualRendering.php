@@ -14,12 +14,12 @@ if (!function_exists('showBlocksVisually'))
   /**
    * @param int|string $key
    * @param array{
-   *   content:string,
-   *   endingBlock:bool,
-   *   index:int,
-   *   name:string,
-   *   parent?:array,
-   *   replacedBy?:int
+   *   content: string,
+   *   endingBlock: bool,
+   *   index: int,
+   *   name: string,
+   *   parent?: array,
+   *   replacedBy?: int
    * } $block
    */
   function showBlockTags(int|string $key, array $block) : void
@@ -73,13 +73,13 @@ if (!function_exists('showBlocksVisually'))
     /**
      * @var int|string $blockKey
      * @var array{
-     *   content:string,
-     *   endingBlock:bool,
-     *   index:int,
-     *   name:string,
-     *   parent?:array,
-     *   replacedBy?:int
-     * }      $block
+     *   content: string,
+     *   endingBlock: bool,
+     *   index: int,
+     *   name: string,
+     *   parent?: array,
+     *   replacedBy?: int
+     * } $block
      */
     foreach (BlocksSystem::$blocksStack as $blockKey => $block)
     {

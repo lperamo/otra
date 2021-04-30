@@ -15,7 +15,6 @@ require_once BASE_PATH . 'config/AllConfig.php';
 require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/compression.php';
 
-const GEN_ASSETS_ARG_ASSETS_MASK = 2;
 define(
   'JS_LEVEL_COMPILATION',
   [
@@ -23,21 +22,19 @@ define(
     'SIMPLE_OPTIMIZATIONS',
     'ADVANCED_OPTIMIZATIONS'
   ][isset($argv[3]) ? intval($argv[3]) : 1]);
-const GEN_ASSETS_ARG_ROUTE = 4;
-const GZIP_COMPRESSION_LEVEL = 9;
+const GEN_ASSETS_ARG_ASSETS_MASK = 2,
+  GEN_ASSETS_ARG_ROUTE = 4,
+  GZIP_COMPRESSION_LEVEL = 9,
 
-const GEN_ASSETS_MASK_TEMPLATE = 1;
-const GEN_ASSETS_MASK_CSS = 2;
-const GEN_ASSETS_MASK_JS = 4;
-const GEN_ASSETS_MASK_MANIFEST = 8;
-const GEN_ASSETS_MASK_SVG = 16;
-const GEN_ASSETS_MASK_TOTAL = 31;
+  GEN_ASSETS_MASK_TEMPLATE = 1,
+  GEN_ASSETS_MASK_CSS = 2,
+  GEN_ASSETS_MASK_JS = 4,
+  GEN_ASSETS_MASK_MANIFEST = 8,
+  GEN_ASSETS_MASK_SVG = 16,
+  GEN_ASSETS_MASK_TOTAL = 31,
 
-const ROUTES_CHUNKS_BUNDLE = 1;
-const ROUTES_CHUNKS_MODULE = 2;
-
-const OTRA_UNLINK_CALLBACK = 'unlink';
-const OTRA_CLI_INFO_STRING = 'CLI_INFO';
+  OTRA_UNLINK_CALLBACK = 'unlink',
+  OTRA_CLI_INFO_STRING = 'CLI_INFO';
 
 $routes = Routes::$allRoutes;
 
@@ -151,14 +148,14 @@ if (
     $chunks = $route['chunks'];
 
     // the bundle is generally not used in the OTRA exception route
-    if (!isset($chunks[ROUTES_CHUNKS_BUNDLE]))
+    if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
     {
       echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',
       CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
       continue;
     }
 
-    $bundlePath = BASE_PATH . 'bundles/' . $chunks[ROUTES_CHUNKS_BUNDLE] . '/';
+    $bundlePath = BASE_PATH . 'bundles/' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/';
     $noErrors = true;
 
     /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -405,7 +402,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 
   $resourceType = substr(strrchr($key, '_'), 1);
   $resourcePath = $bundlePath .
-    (null === $resourcePath ? $chunks[ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
+    (null === $resourcePath ? $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
     'resources/' . $resourceType . '/';
 
   foreach ($resources[$key] as $resource)
