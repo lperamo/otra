@@ -15,7 +15,7 @@ if (!function_exists('generateArrows'))
    */
   function generateArrows(string $inputType = 'radio') : void
   {
-    $debugBarPosition = isset(AllConfig::$debugConfig) && isset(AllConfig::$debugConfig['barPosition'])
+    $debugBarPosition = isset(AllConfig::$debugConfig, AllConfig::$debugConfig['barPosition'])
       ? AllConfig::$debugConfig['barPosition']
       : 'top';
     $positions = [

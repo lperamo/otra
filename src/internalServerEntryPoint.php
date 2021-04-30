@@ -29,9 +29,10 @@ if (!empty($extension))
         ? BASE_PATH
         : 'web'
         ) . $_SERVER[OTRA_KEY_REQUEST_URI];
-      $finfo = finfo_open(FILEINFO_MIME_TYPE|FILEINFO_EXTENSION); // Retourne le type mime à l'extension mimetype
-      $mime_type = finfo_file($finfo, $filePath);
-      finfo_close($finfo);
+      // Returns the mime type
+      $fileInformations = finfo_open(FILEINFO_MIME_TYPE|FILEINFO_EXTENSION);
+      $mime_type = finfo_file($fileInformations, $filePath);
+      finfo_close($fileInformations);
       header('Content-Type:' . $mime_type);
   }
 

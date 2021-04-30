@@ -134,7 +134,7 @@ define(
     'temporaryEnv' => PROD
   ]
 );
-define('ROUTE_MANAGEMENT_TEMPORARY_FILE', CACHE_PHP_INIT_PATH . 'RouteManagement_.php');
+const ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
 $fileToInclude = CORE_PATH . 'Router.php';
 

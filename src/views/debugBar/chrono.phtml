@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-$elapsedTime = round(microtime(true) - BEFORE, 3) * 1000;
+$elapsedTime = (int) (round(microtime(true) - BEFORE, 3) * 1000.0);
 ?>
 <button type="button" class="otra--help-cursor dbg-bar--block" title="Elapsed time">
   🕑 <?= $elapsedTime ?> ms

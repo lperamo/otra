@@ -15,7 +15,7 @@ if (!function_exists('t'))
   }
 
   /**
-   * @param array $acceptedLanguages
+   * @param string[] $acceptedLanguages
    *
    * @return string
    */

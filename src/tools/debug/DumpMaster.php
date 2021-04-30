@@ -56,7 +56,7 @@ abstract class DumpMaster {
    * returns the configuration if it exists
    * otherwise returns the default configuration.
    *
-   * @param array|null $options
+   * @param ?int[] $options
    *
    * @return array{
    *   maxChildren ?: int,

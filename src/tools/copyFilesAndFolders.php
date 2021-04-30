@@ -13,8 +13,8 @@ if (!function_exists('copyFileAndFolders'))
   /**
    * Copy the file or an entire folder to the destination
    *
-   * @param array $filesOrFoldersSrc  Must be the absolute path
-   * @param array $filesOrFoldersDest Must be the absolute path
+   * @param string[] $filesOrFoldersSrc  Must be the absolute path
+   * @param string[] $filesOrFoldersDest Must be the absolute path
    *
    * @throws OtraException If we can't create a folder or copy a file.
    */
@@ -77,7 +77,7 @@ if (!function_exists('copyFileAndFolders'))
 
         if (!copy($filePath, $destinationFilePath))
           throw new OtraException(
-            'Cannot copy the file \'' . $splFileInfo . ' to ' . $destinationFilePath . '\'.'
+            'Cannot copy the file \'' . $filePath . ' to ' . $destinationFilePath . '\'.'
           );
       }
     }

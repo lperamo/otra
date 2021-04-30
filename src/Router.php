@@ -24,9 +24,9 @@ abstract class Router
   /**
    * Retrieve the controller's path that we want or launches the route !
    *
-   * @param string 			 $route  The wanted route
-   * @param array|string $params Additional params
-   * @param bool 				 $launch True if we have to launch the route or just retrieve the path (do we really need this ?)
+   * @param string 			    $route  The wanted route
+   * @param string[]|string $params Additional params
+   * @param bool 				    $launch True if we have to launch the route or just retrieve the path
    *
    * @return string|Controller Controller's path
    */
@@ -40,7 +40,7 @@ abstract class Router
       'controller' => $controller,
       'module' => $module
     ] =
-      $baseParams = array_combine(
+      $otraParams = array_combine(
       ['pattern', 'bundle', 'module', 'controller', 'action'],
       array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
     );
@@ -60,19 +60,19 @@ abstract class Router
     if (!$launch)
       return $finalAction;
 
-    $baseParams['route'] = $route;
-    $baseParams['css'] = $baseParams['js'] = false;
+    $otraParams['route'] = $route;
+    $otraParams['css'] = $otraParams['js'] = false;
 
     // Do we have some resources for this route...
     if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
       $resources = Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY];
-      $baseParams['js'] = (
+      $otraParams['js'] = (
         isset($resources['bundle_js'])
         || isset($resources['module_js'])
         || isset($resources['_js'])
       );
-      $baseParams['css'] = (
+      $otraParams['css'] = (
         isset($resources['bundle_css'])
         || isset($resources['module_css'])
         || isset($resources['_css'])
@@ -102,7 +102,7 @@ abstract class Router
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 
-    return new $finalAction($baseParams, $params);
+    return new $finalAction($otraParams, $params);
   }
 
   /**
@@ -218,7 +218,7 @@ abstract class Router
       $paramsString .= '/' . $value;
     }
 
-    return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][0] . $paramsString;
+    return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL] . $paramsString;
   }
 }
 

@@ -80,13 +80,13 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param      $param
-   * @param bool $notFirstDepth
-   * @param int  $depth
+   * @param mixed $param
+   * @param bool  $notFirstDepth
+   * @param int   $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
+  private static function dumpObject(mixed $param, bool $notFirstDepth, int $depth) : void
   {
     [$className, $description] = parent::getClassDescription($param);
     echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
@@ -111,10 +111,10 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param string $className
-   * @param object $param
+   * @param string             $className
+   * @param object             $param
    * @param ReflectionProperty $property
-   * @param int $depth
+   * @param int                $depth
    *
    * @throws ReflectionException
    */

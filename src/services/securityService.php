@@ -80,7 +80,7 @@ if (!function_exists('getRandomNonceForCSP'))
    *
    * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
    * @param string                $route
-   * @param string|null           $routeSecurityFilePath
+   * @param ?string               $routeSecurityFilePath
    * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
    *                                                        from MasterController
    *
@@ -168,8 +168,8 @@ if (!function_exists('getRandomNonceForCSP'))
   }
 
   /**
-   * @param string      $route
-   * @param string|null $routeSecurityFilePath
+   * @param string  $route
+   * @param ?string $routeSecurityFilePath
    */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
@@ -188,8 +188,8 @@ if (!function_exists('getRandomNonceForCSP'))
   }
 
   /**
-   * @param string      $route
-   * @param string|null $routeSecurityFilePath
+   * @param string  $route
+   * @param ?string $routeSecurityFilePath
    */
   function addPermissionsPoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
   {

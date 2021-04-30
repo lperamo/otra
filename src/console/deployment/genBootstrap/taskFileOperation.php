@@ -156,7 +156,7 @@ function contentToFile(string $content, string $outputFile) : void
  * @param int      $level
  * @param array{
  *  php:array{
- *    use ?: array,
+ *    use ?: string[],
  *    require ?: array<string,array{
  *      match: string,
  *      posMatch: int
@@ -227,11 +227,11 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  * We retrieve file names to include that are found via the use statements to $filesToConcat in php/use category.
  * We then clean the use keywords ...
  *
- * @param int    $level
- * @param string $contentToAdd  Content actually parsed
+ * @param int      $level
+ * @param string   $contentToAdd  Content actually parsed
  * @param array{
  *  php:array{
- *    use ?: array,
+ *    use ?: string[],
  *    require ?: array<string,array{
  *      match: string,
  *      posMatch: int
@@ -240,8 +240,8 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  *    static ?: string[]
  *  },
  *  template: array
- * }             $filesToConcat Files to parse after have parsed this one
- * @param array  $parsedFiles   Remaining files to concatenate
+ * }               $filesToConcat Files to parse after have parsed this one
+ * @param string[] $parsedFiles   Remaining files to concatenate
  *
  * @return string[] $classesFromFile
  */
@@ -602,7 +602,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
  *   filename: string,
  *   filesToConcat: array{
  *     php:array{
- *       use ?: array,
+ *       use ?: string[],
  *       require ?: array<string,array{
  *         match: string,
  *         posMatch: int
@@ -612,7 +612,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
  *     },
  *     template: array
  *   },
- *  parsedFiles: array,
+ *  parsedFiles: string[],
  *  classesFromFile: array
  * } $parameters
  * $level           Only for debugging purposes.
@@ -693,6 +693,7 @@ function getFileInfoFromRequiresAndExtends(array $parameters) : void
           $tempFile .= "'";
 
         // str_replace to ensure us that the same character '/' is used each time
+        /** @var string $tempFile */
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
 
         // we must not take care of the bundles/config/Config.php as it is an optional config file.
@@ -791,6 +792,7 @@ function getFileInfoFromRequiresAndExtends(array $parameters) : void
       //  $filesToConcat['template'][] = $templateFile;
 //    }
 
+    /** @var ?string $tempFile */
     // if we have to add a file that we don't have yet...
     if (isset($tempFile))
       $parsedFiles[] = $tempFile;
@@ -846,14 +848,14 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
     /**
      * @var string $fileType
      * @var array{
-     *   use ?: array,
+     *   use ?: string[],
      *   require ?: array<string,array{
      *    match: string,
      *    posMatch: int
      *   }>,
      *   extends ?: string[],
      *   static ?: string[]
-     * } $entries
+     * } | string[] $entries
      */
     foreach ($filesToConcat as $fileType => $entries)
     {
@@ -861,7 +863,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
       {
         /**
          * @var string $inclusionMethod
-         * @var array<int|string,string|array{match:string, posMatch:int}> $phpEntries
+         * @var string[]|array<string,array{match:string,posMatch:int}> $phpEntries
          */
         foreach($entries as $inclusionMethod => $phpEntries)
         {
@@ -924,7 +926,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
 
             $nextContentToAdd = file_get_contents($tempFile) . PHP_END_TAG_STRING;
 
-            // we remove comments to facilitate the search and replace operations that follow
+            // we remove comments like // and /* bla */ to facilitate the search and replace operations that follow
             /** TODO Find a way to use this regex without removing links because links can contain // as in
              *   https://example.com */
             //$nextContentToAdd = preg_replace('@(//.*)|(/\*(.|\s)*?\*/)@', '', $nextContentToAdd);
@@ -943,6 +945,7 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
                 'return'
               ))
             {
+              /** @var array{match:string,posMatch:int} $nextFileOrInfo $isReturn */
               $isReturn = true;
               processReturn(
                 $contentToAdd,
@@ -1023,11 +1026,11 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
 /**
  * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
  *
- * @param int    $level
- * @param string $contentToAdd    Content actually parsed
+ * @param int       $level
+ * @param string    $contentToAdd    Content actually parsed
  * @param array{
  *  php:array{
- *    use ?: array,
+ *    use ?: string[],
  *    require ?: array<string,array{
  *      match: string,
  *      posMatch: int
@@ -1036,9 +1039,9 @@ function assembleFiles(int &$increment, int &$level, string $file, string $conte
  *    static ?: string[]
  *  },
  *  template: array
- * }             $filesToConcat   Files to parse after have parsed this one
- * @param array  $parsedFiles     Files already parsed
- * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
+ * }                $filesToConcat   Files to parse after have parsed this one
+ * @param string[]  $parsedFiles     Files already parsed
+ * @param array     $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
 function processStaticCalls(
@@ -1192,9 +1195,9 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
     $finalContent
   );
 
-  /* We add the namespace cache\php at the beginning of the file
-    then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments like 'becaUSE'
-  */
+  // We add the namespace cache\php at the beginning of the file
+  // then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments
+  // like 'becaUSE'
 
   $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
   $vendorNamespaces = file_exists($vendorNamespaceConfigFile)
