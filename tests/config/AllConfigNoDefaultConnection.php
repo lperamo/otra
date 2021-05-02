@@ -1,16 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace config;
+namespace otra\config;
 
-if (!defined('CACHE_PATH'))
-  define('CACHE_PATH', BASE_PATH . 'cache/');
+use const otra\cache\php\CACHE_PATH;
 
-define('VERSION', 'v1');
-define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
+const
+  VERSION = '1.0.0-alpha.2.4.0',
+  RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
-define('CACHE_TIME', 300); // 5 minutes(5*60)
+define('otra\\config\\CACHE_TIME', 300); // 5 minutes(5*60)
 
+/**
+ * Class AllConfig
+ *
+ * @package config
+ */
 class AllConfig
 {
   public static int $verbose = 0;

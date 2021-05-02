@@ -22,7 +22,7 @@ $functions = $propertiesCode = '';
 echo MODEL_CREATED_FROM_YAML_SCHEMA;
 
 if (MODEL_LOCATION_BUNDLE === $modelLocation)
-  define('MODEL_PATH', $bundlePath);
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 else
 {
   /** MODULE */

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModel;
 
 use otra\OtraException;
+use const otra\cache\php\SPACE_INDENT;
 use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 /** @var string $bundleName */
 

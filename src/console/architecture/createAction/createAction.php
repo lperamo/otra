@@ -8,14 +8,14 @@ declare(strict_types=1);
 namespace otra\console\architecture;
 
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\promptUser;
-use const otra\console\
-{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 const
   SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT,
-  SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT,
-  BUNDLES_PATH = BASE_PATH . 'bundles/';
+  SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
 
 /**
  * Creates the folder of the specified controller.
@@ -60,7 +60,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  define('OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
+  define('otra\console\architecture\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
   file_put_contents(
     $actionPath,
     '<?php
@@ -90,7 +90,7 @@ class ' . $upperActionName . 'Action extends Controller
   echo CLI_BASE, 'Action ', CLI_INFO_HIGHLIGHT, substr($actionPath,
     strlen(BASE_PATH)), CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
-  $viewFolder = BUNDLES_PATH . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
+  $viewFolder = BUNDLES_PATH . $bundleName . DIR_SEPARATOR . $moduleName . '/views/' . $controllerName;
 
   // If the action folder does not exist
   if (!file_exists($viewFolder))
@@ -99,7 +99,7 @@ class ' . $upperActionName . 'Action extends Controller
     echo CLI_WARNING, 'For your information, the folder ', CLI_INFO_HIGHLIGHT, $viewFolder, CLI_WARNING, ' already existed.',
       END_COLOR, PHP_EOL;
 
-  $template = $viewFolder . '/' . $actionName . '.phtml';
+  $template = $viewFolder . DIR_SEPARATOR . $actionName . '.phtml';
 
   // If the template file already exists
   if (file_exists($template))
@@ -122,13 +122,15 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT_2 . "]" . PHP_EOL .
     SPACE_INDENT . "]";
 
+  define('otra\\console\\architecture\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
   if (file_exists($routesConfigFolder))
   {
     $routesArray = file_exists($routeConfigurationFile) ? require $routeConfigurationFile : [];
     $routesArray[$controllerName . $upperActionName] = [
       'chunks' => [
-        '/' . $controllerName . $upperActionName,
+        DIR_SEPARATOR . $controllerName . $upperActionName,
         $bundleName,
         $moduleName,
         $controllerName,
@@ -167,7 +169,7 @@ class ' . $upperActionName . 'Action extends Controller
 
     file_put_contents(
       $routeConfigurationFile,
-      '<?php' . PHP_EOL .
+      PHP_FILE_START .
       'return ' . $routesArray . ';' . PHP_EOL
     );
   } else
@@ -178,7 +180,7 @@ class ' . $upperActionName . 'Action extends Controller
     // Adds a routes config file
     file_put_contents(
       $routeConfigurationFile,
-      "<?php" . PHP_EOL .
+      PHP_FILE_START .
       "return [" . PHP_EOL .
       SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
       "];" . PHP_EOL
@@ -192,8 +194,8 @@ class ' . $upperActionName . 'Action extends Controller
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // We update the class mapping since we have one action more.
-  if (!defined('VERBOSE'))
-    define('VERBOSE', 0);
+  if (!defined('otra\console\architecture\VERBOSE'))
+    define('otra\console\architecture\VERBOSE', 0);
 
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 }

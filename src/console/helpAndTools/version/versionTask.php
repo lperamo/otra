@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace otra\console\helpAndTools\version;
 
+use const otra\cache\php\OTRA_VERSION;
 use const otra\console\END_COLOR;
 
 const

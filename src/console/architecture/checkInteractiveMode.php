@@ -8,7 +8,8 @@ declare(strict_types=1);
 namespace otra\console\architecture;
 
 use otra\OtraException;
-use const otra\console\{architecture\createBundle\ARG_INTERACTIVE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
+use const otra\console\architecture\constants\ARG_INTERACTIVE;
 
 $interactive = 'true';
 

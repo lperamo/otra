@@ -1,16 +1,19 @@
 <?php
 declare(strict_types=1);
-namespace otra\tests;
+
+namespace otra\bin;
+
+use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CORE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\tools\delTree;
 
-define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define('otra\bin\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
   ? '/../../../..' // long path from vendor
   : '/..'
   ) . '/config/constants.php';
 
 const
-  BUNDLES_PATH = BASE_PATH . 'bundles/',
   CACHE_PHP_INIT_PATH = CACHE_PATH . 'php/init/',
   TASK_CLASS_MAP_PATH = CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
@@ -20,7 +23,6 @@ if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
 
   spl_autoload_register(function (string $className)
   {
-    var_dump($className);
     if (!isset(CLASSMAP[$className]))
     {
       // Handle the particular test configuration
@@ -38,7 +40,9 @@ if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
   if (!OTRA_PROJECT)
   {
     if (file_exists(BUNDLES_PATH))
+    {
+      require CORE_PATH . 'tools/deleteTree.php';
       delTree(BUNDLES_PATH);
+    }
   }
 }
-

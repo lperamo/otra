@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace src\console\deployment;
 
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV,CORE_PATH,DEV,TEST_PATH};
+use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
+use function otra\console\deployment\generateJavaScript;
 use function otra\tools\files\returnLegiblePath;
 
 /**
@@ -15,12 +19,12 @@ class GenerateOptimizedJavascriptTest extends TestCase
    * Tests the JS generation without GCC
    *
    * @author Lionel Péramo
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function testGenerateOptimizedJavascript() : void
   {
     // context
-    $_SERVER['APP_ENV'] = DEV;
+    $_SERVER[APP_ENV] = DEV;
 
     // loading files...
     require CORE_PATH . 'tools/cli.php';
@@ -28,13 +32,13 @@ class GenerateOptimizedJavascriptTest extends TestCase
     require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
 
     // defining constants...
-    define('TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
-    define('TEST_JS_BASE_NAME', 'test');
-    define('TEST_JS_RESOURCE_FOLDER', TEST_RESOURCES_PATH . 'js/');
-    define('TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
-    define('TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
-    define('TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
-    define('TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
+    define('src\console\deployment\TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
+    define('src\console\deployment\TEST_JS_BASE_NAME', 'test');
+    define('src\console\deployment\TEST_JS_RESOURCE_FOLDER', TEST_RESOURCES_PATH . 'js/');
+    define('src\console\deployment\TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
+    define('src\console\deployment\TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
+    define('src\console\deployment\TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
+    define('src\console\deployment\TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
 
     // testing
     self::expectOutputString(

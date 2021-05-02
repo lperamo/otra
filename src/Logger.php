@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace otra;
+
+namespace otra\cache\php;
 
 /** Simple logger class
  *
@@ -85,7 +86,7 @@ abstract class Logger
   public static function logToRelativePath(string $message, string $path = '') : void
   {
     self::logging(
-      __DIR__ . '/' . $path . '.txt',
+      __DIR__ . DIR_SEPARATOR . $path . '.txt',
       self::logIpTest() . $message . PHP_EOL
     );
   }
@@ -99,7 +100,7 @@ abstract class Logger
   public static function logTo(string $message, string  $path = '') : void
   {
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt',
+      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt',
       self::logIpTest() . $message . PHP_EOL
     );
   }
@@ -114,7 +115,7 @@ abstract class Logger
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {
-    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . '/' . $path . '.txt';
+    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt';
 
     self::logging(
       $logPath,
@@ -136,7 +137,7 @@ abstract class Logger
   public static function logExceptionOrErrorTo(string $message, string $errorType): void
   {
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . '/' .
+      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
         ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
       self::logIpTest() . $errorType . ' : ' . $message . PHP_EOL . 'Stack trace : ' . PHP_EOL .
         print_r(debug_backtrace(), true) . PHP_EOL
@@ -152,4 +153,3 @@ abstract class Logger
     self::logTo($message, 'trace');
   }
 }
-

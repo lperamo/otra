@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace otra\services;
 
 use otra\OtraException;
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
 use function otra\tools\{rawSqlPrettyPrint,t};
 
 /**

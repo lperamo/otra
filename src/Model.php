@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace otra;
-use config\AllConfig;
+use otra\config\AllConfig;
 use otra\bdd\Sql;
 use ReflectionObject;
 

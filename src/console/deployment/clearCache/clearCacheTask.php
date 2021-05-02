@@ -7,18 +7,19 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\clearCache;
 
-use config\AllConfig;
-use otra\config\Routes;
+use otra\config\{AllConfig,Routes};
 use otra\OtraException;
 use function otra\console\{guessWords, promptUser};
 use const otra\bin\CACHE_PHP_INIT_PATH;
-use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\cache\php\{CACHE_PATH, CONSOLE_PATH};
+use const otra\config\VERSION;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_WARNING, END_COLOR, SUCCESS};
 
 // arguments
 const CLEAR_CACHE_ARG_MASK = 2,
   CLEAR_CACHE_ARG_ROUTE = 3,
 
-// masks
+  // masks
   CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE = 1,
   CLEAR_CACHE_MASK_PHP_BOOTSTRAPS = 2,
   CLEAR_CACHE_MASK_CSS = 4,
@@ -29,10 +30,7 @@ const CLEAR_CACHE_ARG_MASK = 2,
   CLEAR_CACHE_MASK_METADATA = 128,
   CLEAR_CACHE_MASK_SECURITY = 256,
 
-// formatting
-  OTRA_SUCCESS = CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL,
-
-// paths
+  // paths
   PHP_CACHE_PATH = CACHE_PATH . 'php/',
   RELATIVE_PHP_CACHE_PATH = 'cache/php/',
   RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
@@ -168,7 +166,7 @@ if ($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 
   // Otherwise we clear all the other routes.
   array_map('unlink', glob(AllConfig::$cachePath . '*.cache'));
-  echo 'PHP OTRA internal cache cleared', OTRA_SUCCESS;
+  echo 'PHP OTRA internal cache cleared', SUCCESS;
 }
 
 // If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
@@ -185,28 +183,28 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 {
   $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
   $removeCachedFiles(PHP_CACHE_PATH . 'otraRoutes/', RELATIVE_PHP_CACHE_PATH . 'otraRoutes/', '.php');
-  echo 'PHP bootstrap(s) cleared', OTRA_SUCCESS;
+  echo 'PHP bootstrap(s) cleared', SUCCESS;
 }
 
 /* **************** CSS **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2)
 {
   $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.gz');
-  echo 'CSS files cleared', OTRA_SUCCESS;
+  echo 'CSS files cleared', SUCCESS;
 }
 
 /* **************** JS **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3)
 {
   $removeCachedFiles(CACHE_PATH . 'js/', 'cache/js', '.gz');
-  echo 'JS files cleared', OTRA_SUCCESS;
+  echo 'JS files cleared', SUCCESS;
 }
 
 /* **************** TEMPLATES **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
 {
   $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
-  echo 'Templates cleared', OTRA_SUCCESS;
+  echo 'Templates cleared', SUCCESS;
 }
 
 /* **************** ROUTE MANAGEMENT **************** */
@@ -218,7 +216,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
     RELATIVE_PHP_INIT_CACHE_PATH . $routeManagementFile
   );
 
-  echo 'Route management file cleared', OTRA_SUCCESS;
+  echo 'Route management file cleared', SUCCESS;
 }
 
 /* **************** CLASS MAPPING **************** */
@@ -236,7 +234,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
     RELATIVE_PHP_INIT_CACHE_PATH . $prodClassMapFile
   );
 
-  echo 'Class mapping files cleared', OTRA_SUCCESS;
+  echo 'Class mapping files cleared', SUCCESS;
 }
 
 /* **************** CONSOLE TASKS METADATA **************** */
@@ -254,7 +252,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
     RELATIVE_PHP_INIT_CACHE_PATH . $tasksHelpFile
   );
 
-  echo 'Metadata cleared', OTRA_SUCCESS;
+  echo 'Metadata cleared', SUCCESS;
 }
 
 /* **************** SECURITY FILES **************** */
@@ -273,6 +271,6 @@ if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
   }
 
   unset($arrayToUnlink);
-  echo 'Security files cleared', OTRA_SUCCESS;
+  echo 'Security files cleared', SUCCESS;
 }
 

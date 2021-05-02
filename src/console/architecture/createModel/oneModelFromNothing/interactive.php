@@ -7,12 +7,15 @@ declare(strict_types=1);
 
 namespace otra\console\architecture\createModel\oneModelFromNothing;
 
+use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\architecture\createModel\
+{CREATE_MODEL_FOLDER, MODEL_DIRECTORY, MODEL_LOCATION_BUNDLE, MODEL_PATH};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\architecture\createModel\{getModelFullNameAndModelExists,getModelLocation,getModuleName};
 use function otra\console\promptUser;
-use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_DIRECTORY,MODEL_LOCATION_BUNDLE};
 
 /** @var string $bundlePath */
-define('MODULE_NAME', getModuleName($bundlePath));
+define('otra\console\architecture\createModel\MODULE_NAME', getModuleName($bundlePath));
 
 /**
  * @var string $bundleName
@@ -31,7 +34,7 @@ else
   /** MODULE */
   $moduleName = getModuleName($bundlePath);
   echo MODULE_BUNDLE_MESSAGE;
-  define('MODEL_PATH', $bundlePath . $moduleName . '/');
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . $moduleName . DIR_SEPARATOR);
 }
 
 $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion);

@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace otra\console\architecture\createModel\allModelsFromYmlSchema;
 
-use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
+use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\architecture\createModel\
+{CREATE_MODEL_FOLDER, MODEL_LOCATION_BUNDLE, MODULE_NAME};
 use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /** @var string $bundleName */
@@ -27,7 +29,7 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
   /** MODULE */
   echo 'A model in the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' for the module ', CLI_INFO_HIGHLIGHT,
     MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
-  define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . MODULE_NAME . DIR_SEPARATOR);
 
   // We cleans the last sentence
   echo 'Creating all the models for the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' in the module ',

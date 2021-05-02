@@ -6,6 +6,7 @@
 declare(strict_types=1);
 
 namespace otra\tools\files;
+use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
@@ -22,7 +23,7 @@ function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endC
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
   if (!empty($fileName))
-    $fileName = '/' . $fileName;
+    $fileName = DIR_SEPARATOR . $fileName;
 
   return (str_contains($resource, BASE_PATH)
       ? CLI_INFO . 'BASE_PATH ' . CLI_INFO_HIGHLIGHT . substr($resource, strlen(BASE_PATH)) . $fileName .

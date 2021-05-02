@@ -8,9 +8,10 @@ declare(strict_types=1);
 namespace otra\console\deployment;
 
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH,CONSOLE_PATH};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
-use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 

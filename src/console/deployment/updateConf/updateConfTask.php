@@ -8,18 +8,25 @@ declare(strict_types=1);
 namespace otra\console\deployment\updateConf;
 
 use otra\config\Routes;
-use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
+use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
+
+if (!file_exists(BUNDLES_PATH))
+{
+  echo CLI_ERROR, 'There is no bundles to update.', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
 
 const
   CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
   UPDATE_CONF_ARG_ROUTE_NAME = 2,
-  BUNDLES_PATH = BASE_PATH . 'bundles/',
   SINGLE_QUOTE = '\'';
 
-if (!defined('UPDATE_CONF_ROUTE_NAME'))
-  define('UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+if (!defined('otra\console\deployment\updateConf\UPDATE_CONF_ROUTE_NAME'))
+  define('otra\console\deployment\updateConf\UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
 
-if (!function_exists('writeConfigFile'))
+if (!function_exists('otra\console\deployment\updateConf\writeConfigFile'))
 {
   /**
    * @param string $configFile
@@ -144,7 +151,7 @@ while (false !== ($filename = readdir($folderHandler)))
   $bundleConfigs = glob($bundleConfigDir . '*Config.php');
   $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
   $bundleSecurities = glob(
-    $bundleConfigDir . 'security/' . (UPDATE_CONF_ROUTE_NAME === null ? '*' : UPDATE_CONF_ROUTE_NAME . '/'),
+    $bundleConfigDir . 'security/' . (UPDATE_CONF_ROUTE_NAME === null ? '*' : UPDATE_CONF_ROUTE_NAME . DIR_SEPARATOR),
     GLOB_ONLYDIR
   );
 
@@ -164,7 +171,6 @@ const
   BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
   SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
   OTRA_LABEL_SECURITY_NONE = "'none'",
-  OTRA_LABEL_SECURITY_SELF = "'self'",
   OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
   PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
 
@@ -190,7 +196,7 @@ unset($route);
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
 /** @var Closure $sortRoutes */
-if (!function_exists('sortRoutes'))
+if (!function_exists('otra\console\deployment\updateConf\sortRoutes'))
 {
   $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
@@ -215,14 +221,16 @@ $securitiesArray = [];
 
 const
   OTRA_PHP_DOT_EXTENSION = '.php',
-  OTRA_SECURITY_DEV_FOLDER = SECURITIES_FOLDER . DEV . DIRECTORY_SEPARATOR,
-  OTRA_SECURITY_PROD_FOLDER = SECURITIES_FOLDER . PROD . DIRECTORY_SEPARATOR,
+  OTRA_SECURITY_DEV_FOLDER = SECURITIES_FOLDER . DEV . DIR_SEPARATOR,
+  OTRA_SECURITY_PROD_FOLDER = SECURITIES_FOLDER . PROD . DIR_SEPARATOR,
   OTRA_END_FILE = '];';
+
+require CORE_PATH . 'services/securityService.php';
 
 foreach($securities as $securityFileConfigFolder)
 {
-  $devSecurityFile = $securityFileConfigFolder . DIRECTORY_SEPARATOR . DEV . OTRA_PHP_DOT_EXTENSION;
-  $prodSecurityFile = $securityFileConfigFolder . DIRECTORY_SEPARATOR . PROD . OTRA_PHP_DOT_EXTENSION;
+  $devSecurityFile = $securityFileConfigFolder . DIR_SEPARATOR . DEV . OTRA_PHP_DOT_EXTENSION;
+  $prodSecurityFile = $securityFileConfigFolder . DIR_SEPARATOR . PROD . OTRA_PHP_DOT_EXTENSION;
   $securityBaseFolderArray = basename($securityFileConfigFolder);
 
   if (file_exists($devSecurityFile))
@@ -239,7 +247,7 @@ if (!file_exists(OTRA_SECURITY_DEV_FOLDER))
 if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
   mkdir(OTRA_SECURITY_PROD_FOLDER, 0777, true);
 
-if (!function_exists('arrayExport'))
+if (!function_exists('otra\console\deployment\updateConf\arrayExport'))
 {
   /**
    * @param array{

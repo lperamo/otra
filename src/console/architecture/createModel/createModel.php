@@ -8,12 +8,10 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModel;
 
 use otra\OtraException;
+use const otra\cache\php\SPACE_INDENT;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, SUCCESS};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\promptUser;
-use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,END_COLOR};
-
-const OTRA_SUCCESS = CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL;
-
-$bundlesPath = BASE_PATH . 'bundles/';
 
 /**
  * If we do not have the information of the type of this property in schema.yml,
@@ -102,7 +100,7 @@ function modelCreationSuccess(string $bundleName, string $modelName, string $pro
   if (null !== $propertiesTxt)
     echo ' with those properties [', substr($propertiesTxt, 0, strlen($propertiesTxt) - 2), ']';
 
-  echo '.', OTRA_SUCCESS;
+  echo '.', SUCCESS;
 }
 
 /**
@@ -244,4 +242,3 @@ function retrieveFunctionsAndProperties(
     );
   }
 }
-

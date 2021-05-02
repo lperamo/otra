@@ -5,6 +5,7 @@ namespace otra\console;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 
 /**
  * Shows an exception 'colorful' display for command line commands.
@@ -50,7 +51,7 @@ class OtraExceptionCli extends Exception
   private static function returnShortenFilePath(string $pathType, string $file) : string
   {
     return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR . ' + ' .
-      mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
+      mb_substr($file, mb_strlen(constant('otra\\cache\\php\\' . $pathType . '_PATH')));
   }
 
   /**
@@ -97,7 +98,7 @@ class OtraExceptionCli extends Exception
 
       if ($actualTraceFile !== '')
       {
-        $actualTraceFile = str_replace('\\', '/', $actualTraceFile);
+        $actualTraceFile = str_replace('\\', DIR_SEPARATOR, $actualTraceFile);
 
         if (str_contains($actualTraceFile, CONSOLE_PATH))
           $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);

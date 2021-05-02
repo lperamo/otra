@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
+
 namespace otra\tools\debug;
-use config\AllConfig;
+
+use otra\config\AllConfig;
 use ReflectionClass;
 use ReflectionException;
+use const otra\cache\php\CORE_PATH;
 
 /**
  * Class that provides things for both web and CLI sides of the dump function.

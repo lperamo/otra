@@ -6,8 +6,9 @@
 declare(strict_types=1);
 
 use otra\OtraException;
-use function otra\console\{architecture\createFolder, promptUser};
+use const otra\cache\php\{BASE_PATH,CONSOLE_PATH};
 use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\console\{architecture\createFolder, promptUser};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 

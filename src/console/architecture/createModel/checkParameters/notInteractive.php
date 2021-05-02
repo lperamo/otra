@@ -8,9 +8,11 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModel;
 
 use otra\OtraException;
-use const otra\console\
-{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
-
+use Symfony\Component\Yaml\Yaml;
+use const otra\cache\php\{BUNDLES_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\console\architecture\constants\{ARG_BUNDLE_NAME, ARG_MODULE_NAME};
+use const otra\console\architecture\createModel\{ARG_MODEL_NAME};
 /** @var string $bundlesPath */
 
 /**
@@ -41,18 +43,21 @@ $checkParameter = function (
 };
 
 $bundleName = $checkParameter(
-  'ARG_BUNDLE_NAME',
+  'otra\console\architecture\constants\ARG_BUNDLE_NAME',
   'name of the bundle.'
 );
 
 $modelLocation = (int) $checkParameter(
-  'ARG_MODEL_LOCATION',
+  'otra\console\architecture\createModel\ARG_MODEL_LOCATION',
   'location of the bundle : ' . CLI_INFO_HIGHLIGHT . 'bundle' . CLI_WARNING . ' location chosen.',
   'bundle',
   false
 );
 
-define('MODULE_NAME', $checkParameter('ARG_MODULE_NAME', 'module name.'));
+define(
+  'otra\console\architecture\createModel\MODULE_NAME',
+  $checkParameter('otra\console\architecture\constants\ARG_MODULE_NAME', 'module name.')
+);
 
 if (!file_exists($bundlesPath . ucfirst($bundleName)))
 {
@@ -61,14 +66,14 @@ if (!file_exists($bundlesPath . ucfirst($bundleName)))
 }
 
 $modelName = $checkParameter(
-  'ARG_MODEL_NAME',
+  'otra\console\architecture\createModel\ARG_MODEL_NAME',
   'name of the model. We will import all the models.',
   null,
   false
 );
 
 // We add the chosen bundle name to the path
-$bundlePath = $bundlesPath . ucfirst($bundleName) . '/';
+$bundlePath = $bundlesPath . ucfirst($bundleName) . DIR_SEPARATOR;
 
 if (isset($modelName))
   $modelFullName = ucfirst($modelName) . '.php';
@@ -77,8 +82,8 @@ if (null === $modelName)
   $creationMode = CREATION_MODE_ALL_MODELS;
 else
 {
-  define('YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
-  define('YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+  define('otra\console\architecture\createModel\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
+  define('otra\console\architecture\createModel\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
 
   if (!YML_SCHEMA_REAL_PATH)
   {
@@ -87,10 +92,7 @@ else
     $creationMode = CREATION_MODE_FROM_NOTHING;
   } else
   {
-    define(
-      'SCHEMA_DATA',
-      Symfony\Component\Yaml\Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
-    );
+    define('otra\console\architecture\createModel\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
 
     $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
       ? CREATION_MODE_ONE_MODEL
@@ -101,13 +103,15 @@ else
 if ($creationMode === CREATION_MODE_FROM_NOTHING)
 {
   define(
-    'MODEL_PROPERTIES',
-    $checkParameter('ARG_MODEL_PROPERTIES', 'model properties.')
+    'otra\console\architecture\createModel\MODEL_PROPERTIES',
+    $checkParameter('otra\console\architecture\createModel\ARG_MODEL_PROPERTIES', 'model properties.')
   );
-
   define(
-    'MODEL_PROPERTIES_TYPES',
-    $checkParameter('ARG_MODEL_PROPERTIES_TYPE', 'model properties types.')
+    'otra\console\architecture\createModel\MODEL_PROPERTIES_TYPES',
+    $checkParameter(
+      'otra\console\architecture\createModel\ARG_MODEL_PROPERTIES_TYPE',
+      'model properties types.'
+    )
   );
 }
 

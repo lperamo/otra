@@ -1,14 +1,17 @@
 <?php
-declare(strict_types=1);
-namespace otra\tools\debug;
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\debug
  */
 
-use config\AllConfig;
+declare(strict_types=1);
 
-if (!function_exists('dump'))
+namespace otra\tools\debug;
+
+use otra\config\AllConfig;
+use const otra\cache\php\CORE_PATH;
+
+if (!function_exists('otra\tools\debug\dump'))
 {
   /**
    * A shortcut to the 'paramDump' function that will use the user configuration.
@@ -32,14 +35,14 @@ if (!function_exists('dump'))
    */
   function paramDump(?array $options = [], ... $params) : void
   {
-    if (!defined('OTRA_DUMP_FINAL_CLASS'))
+    if (!defined('otra\tools\debug\OTRA_DUMP_FINAL_CLASS'))
     {
-      define('OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
-      define('OTRA_NAMESPACED_FINAL_CLASS', 'otra\\' . OTRA_DUMP_FINAL_CLASS);
+      define('otra\\tools\\debug\\OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
+      define('otra\\tools\\debug\\OTRA_NAMESPACED_FINAL_CLASS', 'otra\\tools\\debug\\' . OTRA_DUMP_FINAL_CLASS);
     }
 
     require_once CORE_PATH . 'tools/debug/' . OTRA_DUMP_FINAL_CLASS . '.php';
-    $oldOtraDebugValues = call_user_func('\otra\DumpMaster::setDumpConfig', $options);
+    $oldOtraDebugValues = call_user_func('otra\\tools\\debug\\DumpMaster::setDumpConfig', $options);
     call_user_func(OTRA_NAMESPACED_FINAL_CLASS . '::dump', ...$params);
     AllConfig::$debugConfig = $oldOtraDebugValues;
   }

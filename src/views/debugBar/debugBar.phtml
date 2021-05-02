@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+
+use const otra\cache\php\{CORE_CSS_PATH, CORE_JS_PATH, CORE_VIEWS_PATH};
+use function otra\src\views\debugBar\generateArrows;
+
 require CORE_VIEWS_PATH . 'debugBar/macros.phtml';
 $this::css([
   [CORE_CSS_PATH . 'partials/devMode/devMode'],

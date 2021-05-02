@@ -8,10 +8,11 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
 
 use JetBrains\PhpStorm\ArrayShape;
-use const otra\console\architecture\createModel\
-{CREATE_MODEL_FOLDER, DEFAULT_BDD_SCHEMA_NAME, MODEL_DIRECTORY, MODEL_LOCATION_MODULE
-};
+use const otra\cache\php\DIR_SEPARATOR;
 use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\architecture\createModel\
+{CREATE_MODEL_FOLDER, DEFAULT_BDD_SCHEMA_NAME, MODEL_DIRECTORY, MODEL_LOCATION_MODULE, MODEL_PATH, SCHEMA_DATA};
+
 
 /** @var string $bundleName */
 /** @var string $modelName */
@@ -25,8 +26,8 @@ const MODEL_CREATED_FROM_YAML_SCHEMA = 'We will create one model from ' . CLI_IN
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
-  if (!defined('MODEL_PATH'))
-    define('MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . '/' : ''));
+  if (!defined('otra\console\architecture\createModel\MODEL_PATH'))
+    define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . DIR_SEPARATOR : ''));
 }
 
 /**
@@ -37,7 +38,7 @@ function defineModelPath(int $modelLocation, string $bundlePath, string $moduleN
 function preparingBidule(string $modelName) : array
 {
   $modelFullName = $modelName . '.php';
-  define('AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
+  define('otra\console\architecture\createModel\oneModelFromYmlSchema\AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
 
   return [
     $modelFullName,

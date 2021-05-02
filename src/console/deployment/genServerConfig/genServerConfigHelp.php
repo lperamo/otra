@@ -9,6 +9,7 @@ namespace otra\console\deployment\genServerConfig;
 
 use otra\console\TasksManager;
 use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING};
+use const otra\cache\php\{DEV,PROD};
 
 return [
   'Generates a server configuration adapted to OTRA.',

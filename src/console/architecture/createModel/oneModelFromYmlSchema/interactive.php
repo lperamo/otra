@@ -10,6 +10,8 @@ namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
 
 use function otra\console\architecture\createModel\{getModelLocation,getModuleName,modelCreation};
 use function otra\console\promptUser;
+use const otra\console\ERASE_SEQUENCE;
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
 
 /** @var string $bundleName */
@@ -25,7 +27,7 @@ echo DOUBLE_ERASE_SEQUENCE;
 $modelLocation = getModelLocation();
 
 if (MODEL_LOCATION_BUNDLE === $modelLocation)
-  define('MODEL_PATH', $bundlePath);
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 else
 {
   /** MODULE */

@@ -7,15 +7,17 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\genAssets;
 
-use otra\Logger;
+use otra\cache\php\Logger;
 use otra\Router;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\init\CLASSMAP;
 use function otra\tools\gzCompressFile;
 
-define('ARG_CACHE_PATH', $argv[1]);
-define('ARG_SITE_ROUTE', $argv[2]);
-define('ARG_SHA_NAME', $argv[3]);
+define('otra\\console\\deployment\\genAssets\\ARG_CACHE_PATH', $argv[1]);
+define('otra\\console\\deployment\\genAssets\\ARG_SITE_ROUTE', $argv[2]);
+define('otra\\console\\deployment\\genAssets\\ARG_SHA_NAME', $argv[3]);
 
-define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define('otra\\console\\deployment\\genAssets\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'

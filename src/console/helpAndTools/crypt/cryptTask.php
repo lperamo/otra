@@ -14,9 +14,11 @@ const
   CRYPT_ARG_PASSWORD = 2,
   CRYPT_ARG_ITERATIONS = 3;
 
-if (!is_numeric($argv[CRYPT_ARG_ITERATIONS]))
+define('otra\console\helpAndTools\crypt\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null);
+
+if (!is_numeric(CRYPT_ITERATIONS))
 {
-  echo 'Iterations parameter must be numeric!';
+  echo 'Iterations parameter must be numeric!', PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -27,6 +29,6 @@ echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($se
     'sha256',
     $argv[CRYPT_ARG_PASSWORD],
     $securitySalt,
-    $argv[CRYPT_ARG_ITERATIONS] ?? 20000,
+  CRYPT_ITERATIONS !== null ? ((int)CRYPT_ITERATIONS) : 20000,
     20
   ), PHP_EOL;

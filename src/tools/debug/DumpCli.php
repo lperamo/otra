@@ -7,22 +7,34 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 use function otra\tools\{getSourceFromFileCli,removeFieldScopeProtection,restoreFieldScopeProtection};
-use const otra\console\{ADD_BOLD, ADD_UNDERLINE, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY, REMOVE_UNDERLINE};
+use const otra\console\
+{
+  ADD_BOLD,
+  ADD_UNDERLINE,
+  CLI_INDENT_COLOR_FIRST,
+  CLI_INDENT_COLOR_SECOND,
+  CLI_INDENT_COLOR_FOURTH,
+  CLI_INDENT_COLOR_FIFTH,
+  CLI_TABLE,
+  END_COLOR,
+  REMOVE_BOLD_INTENSITY,
+  REMOVE_UNDERLINE
+};
 
 const OTRA_DUMP_INDENT_COLORS = [
-  'CLI_INDENT_COLOR_FIRST',
-  'CLI_INDENT_COLOR_SECOND',
-  'CLI_SUCCESS',
-  'CLI_INDENT_COLOR_FOURTH',
-  'CLI_INDENT_COLOR_FIFTH'
+  'otra\console\CLI_INDENT_COLOR_FIRST',
+  'otra\console\CLI_INDENT_COLOR_SECOND',
+  'otra\console\CLI_SUCCESS',
+  'otra\console\CLI_INDENT_COLOR_FOURTH',
+  'otra\console\CLI_INDENT_COLOR_FIFTH'
 ];
 
-if (!defined('OTRA_DUMP_INDENT_COLORS_COUNT'))
-  define('OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
+if (!defined('otra\tools\debug\OTRA_DUMP_INDENT_COLORS_COUNT'))
+  define('otra\tools\debug\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.

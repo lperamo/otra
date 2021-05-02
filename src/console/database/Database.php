@@ -11,10 +11,12 @@ namespace otra\console\database;
 
 use Exception;
 use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
-use config\AllConfig;
+use otra\config\AllConfig;
 use otra\{bdd\Sql, Session, OtraException};
 use PDO;
-use const otra\console\{CLI_BASE,CLI_ERROR,CLI_INFO,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_TABLE,CLI_WARNING,END_COLOR};
+use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
 
 /**
  * @package otra\console
@@ -88,8 +90,8 @@ abstract class Database
 
     self::initBase();
 
-    if (!defined('VERBOSE'))
-      define('VERBOSE', AllConfig::$verbose);
+    if (!defined('otra\console\database\VERBOSE'))
+      define('otra\console\database\VERBOSE', AllConfig::$verbose);
 
     self::$base = $infosDb['db'];
     self::$motor = $infosDb['motor'] ?? (Sql::$currentConn)::DEFAULT_MOTOR;
@@ -155,7 +157,7 @@ abstract class Database
       if (!is_dir($bundleDir))
         continue;
 
-      $folders[] = $bundleDir . '/';
+      $folders[] = $bundleDir . DIR_SEPARATOR;
 
       if (self::$boolSchema)
       {
@@ -386,7 +388,7 @@ abstract class Database
 
     unset($fixtureName);
 
-    $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . '/';
+    $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . DIR_SEPARATOR;
 
     // if the fixtures folder doesn't exist, we create it.
     if (!file_exists($fixtureFolder))

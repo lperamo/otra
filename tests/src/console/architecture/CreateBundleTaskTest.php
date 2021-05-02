@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace src\console\architecture;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
-use const \otra\tests\BUNDLES_PATH;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-if (!defined('TEST_BUNDLE_UPPER'))
-{
-  define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
-  define('TEST_BUNDLE_PATH', BUNDLES_PATH . TEST_BUNDLE_UPPER . '/');
-}
+if (!defined('src\console\architecture\TEST_BUNDLE_UPPER'))
+  define('src\console\architecture\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
 
 /**
  * @runTestsInSeparateProcesses
@@ -20,7 +20,9 @@ if (!defined('TEST_BUNDLE_UPPER'))
 class CreateBundleTaskTest extends TestCase
 {
   public const TEST_BUNDLE = 'test';
-  private const TEST_TASK = 'createBundle';
+  private const 
+    TEST_TASK = 'createBundle',
+    TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR;
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
@@ -28,9 +30,10 @@ class CreateBundleTaskTest extends TestCase
   {
     parent::tearDown();
     // cleaning
-    if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
+    if (!OTRA_PROJECT && file_exists(self::TEST_BUNDLE_PATH))
     {
-      delTree(TEST_BUNDLE_PATH);
+      require CORE_PATH . 'tools/deleteTree.php';
+      delTree(self::TEST_BUNDLE_PATH);
       rmdir(BASE_PATH . 'bundles');
     }
   }
@@ -42,12 +45,12 @@ class CreateBundleTaskTest extends TestCase
   {
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
-    mkdir(TEST_BUNDLE_PATH, 0777, true);
+    mkdir(self::TEST_BUNDLE_PATH, 0777, true);
 
     // assertions
     $this->expectOutputString(CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . 'bundles/' .
       TEST_BUNDLE_UPPER . CLI_WARNING . ' already exists.' . END_COLOR . PHP_EOL);
-    $this->expectException(\otra\OtraException::class);
+    $this->expectException(OtraException::class);
 
     // launching
     TasksManager::execute(
@@ -65,6 +68,7 @@ class CreateBundleTaskTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testCreateBundleTask() : void
   {
@@ -85,10 +89,10 @@ class CreateBundleTaskTest extends TestCase
     );
 
     // testing
-    self::assertFileExists(TEST_BUNDLE_PATH);
-    self::assertFileExists(TEST_BUNDLE_PATH . 'config/');
-    self::assertFileExists(TEST_BUNDLE_PATH . 'models/');
-    self::assertFileExists(TEST_BUNDLE_PATH . 'resources/');
-    self::assertFileExists(TEST_BUNDLE_PATH . 'views/');
+    self::assertFileExists(self::TEST_BUNDLE_PATH);
+    self::assertFileExists(self::TEST_BUNDLE_PATH . 'config/');
+    self::assertFileExists(self::TEST_BUNDLE_PATH . 'models/');
+    self::assertFileExists(self::TEST_BUNDLE_PATH . 'resources/');
+    self::assertFileExists(self::TEST_BUNDLE_PATH . 'views/');
   }
 }

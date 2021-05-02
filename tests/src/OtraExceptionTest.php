@@ -6,7 +6,8 @@ namespace src;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use ReflectionException;
-use const \otra\tests\BUNDLES_PATH;
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};
+use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -25,12 +26,12 @@ class OtraExceptionTest extends TestCase
     $_SERVER[APP_ENV] = PROD;
 
     // Adding test bundle routes config in "bundles/config" if nothing exists
-    if (file_exists(self::BUNDLES_CONFIG_FOLDER) === false)
+    if (!file_exists(self::BUNDLES_CONFIG_FOLDER))
     {
       mkdir(self::BUNDLES_CONFIG_FOLDER, 0777, true);
       file_put_contents(
         self::BUNDLES_CONFIG_ROUTES,
-        '<?php return [];'
+        '<?php declare(strict_types=1); return [];'
       );
     }
   }
@@ -39,7 +40,7 @@ class OtraExceptionTest extends TestCase
   {
     parent::tearDown();
     // If we are working on the framework itself
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
     {
       if (file_exists(self::BUNDLES_CONFIG_ROUTES))
         unlink(self::BUNDLES_CONFIG_ROUTES);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra\tests;
 
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV,PROD};
 
 /**
  * @runTestsInSeparateProcesses

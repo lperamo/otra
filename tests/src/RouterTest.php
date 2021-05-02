@@ -5,9 +5,11 @@ namespace src;
 
 use bundles\HelloWorld\frontend\controllers\index\HomeAction;
 use otra\console\TasksManager;
+use otra\OtraException;
 use otra\Router;
 use phpunit\framework\TestCase;
-
+use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * /!\ Beware the bundle HelloWorld will be erased in cleaning phase !
  *
@@ -22,6 +24,9 @@ class RouterTest extends TestCase
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
 
+  /**
+   * @throws OtraException
+   */
   public static function setUpBeforeClass(): void
   {
     $_SERVER[APP_ENV] = PROD;
@@ -34,10 +39,15 @@ class RouterTest extends TestCase
     ob_end_clean();
   }
 
+  /**
+   * we use "Depends" and not "depends" (note the uppercase letter) as it does not work with "depends"
+   * @Depends src\console\architecture\HelloWorldTest::testCreateHelloWorld
+   * @throws OtraException
+   */
   public function testGet_Launch() : void
   {
     // context
-    define('TEST_PARAMETERS_ARRAY', ['test' => 'coucou']);
+    define('src\TEST_PARAMETERS_ARRAY', ['test' => 'coucou']);
 
     // launching
     ob_start();
@@ -45,10 +55,10 @@ class RouterTest extends TestCase
     $output = ob_get_clean();
 
     // testing
-    // we are using substr to remove the end of line character
+    // we are using mb_substr to remove the end of line character
     self::assertMatchesRegularExpression(
       '@' .
-      substr(file_get_contents(TEST_PATH . 'examples/helloWorld.phtml'), 0, strlen(PHP_EOL)) . '@',
+      mb_substr(file_get_contents(TEST_PATH . 'examples/helloWorld.phtml'), 0, strlen(PHP_EOL)) . '@',
       $output,
       'Testing the output...'
     );
@@ -84,6 +94,9 @@ class RouterTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testGetByPattern() : void
   {
     // launching
@@ -102,6 +115,9 @@ class RouterTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testGetByPattern_NonExistentRoute_firstCase() : void
   {
     // launching
@@ -120,6 +136,9 @@ class RouterTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testGetByPattern_NonExistentRoute_secondCase() : void
   {
     // launching

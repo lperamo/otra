@@ -12,10 +12,10 @@ use otra\OtraException;
 use const otra\console\{CLI_WARNING,END_COLOR};
 
 // If we come from the deploy task, those functions may already have been defined.
-if (!function_exists('cliCommand'))
+if (!function_exists('otra\tools\cliCommand'))
 {
-  define('OTRA_CLI_RETURN', 0);
-  define('OTRA_CLI_OUTPUT', 1);
+  define('otra\tools\OTRA_CLI_RETURN', 0);
+  define('otra\tools\OTRA_CLI_OUTPUT', 1);
 
   /**
    * Execute a CLI command.

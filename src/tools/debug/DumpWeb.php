@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
+use const otra\cache\php\CORE_CSS_PATH;
 use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
 
 /**

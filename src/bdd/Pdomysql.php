@@ -9,6 +9,7 @@ namespace otra\bdd;
 use otra\OtraException;
 use PDO, PDOStatement;
 use PDOException;
+use const otra\cache\php\PROD;
 
 /**
  * @package otra\bdd

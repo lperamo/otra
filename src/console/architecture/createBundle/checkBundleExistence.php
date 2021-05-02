@@ -7,10 +7,11 @@ declare(strict_types=1);
 namespace otra\console\architecture\createBundle;
 
 use function otra\console\architecture\doWeCreateIt;
-use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
+use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\console\architecture\constants\ARG_BUNDLE_NAME;
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
-$bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';
+$bundlePath = BUNDLES_PATH . $bundleName . DIR_SEPARATOR;
 
 // BUNDLE STEP
 if (!file_exists($bundlePath))

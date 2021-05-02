@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -16,6 +19,7 @@ class CryptTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testCrypt() : void
   {
@@ -34,6 +38,9 @@ class CryptTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testCryptHelp() : void
   {
     // testing

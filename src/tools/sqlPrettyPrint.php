@@ -1,12 +1,14 @@
 <?php
-declare(strict_types=1);
-namespace otra\tools;
-use PDOStatement;
-
 /**
  * @author Lionel Péramo
  * @package otra\tools
  */
+declare(strict_types=1);
+
+namespace otra\tools;
+
+use PDOStatement;
+use const otra\cache\php\{APP_ENV, DEV};
 
 const OTRA_LABEL_SELECT = 'SELECT ';
 // TODO Not fully tested !

@@ -13,7 +13,7 @@ use otra\config\Routes;
 use Error;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
-use const otra\config\{BASE_PATH,PROD};
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
@@ -73,12 +73,12 @@ class OtraException extends Exception
       return;
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
-    $this->file = str_replace('\\', '/', (('' == $file) ? $this->getFile() : $file));
+    $this->file = str_replace('\\', DIR_SEPARATOR, (('' == $file) ? $this->getFile() : $file));
     $this->line = (null === $line) ? $this->getLine() : $line;
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
-    elseif ($_SERVER['APP_ENV'] !== PROD)
+    elseif ($_SERVER[APP_ENV] !== PROD)
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
 

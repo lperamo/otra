@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console;
 
 use phpunit\framework\TestCase;
+use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
+use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};
+use function otra\console\{convertArrayFromVarExportToShortVersion,showContext,showContextByError};
 
 /**
  * @runTestsInSeparateProcesses
@@ -65,7 +68,7 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    $this->assertEquals(
+    self::assertEquals(
       '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
       $reducedArray
     );

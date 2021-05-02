@@ -8,12 +8,13 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModule;
 
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\console\{architecture\createFolder,promptUser};
-use const otra\console\{CLI_BASE,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,END_COLOR};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
-if (!function_exists('createModule'))
+if (!function_exists('otra\console\architecture\createModule\createModule'))
 {
   /**
    * @param string $bundleBasePath The path where we put modules
@@ -45,8 +46,8 @@ if (!function_exists('createModule'))
   function moduleHandling(bool $interactive, string $bundleName, string $moduleName) : void
   {
     // This constant is already defined if we have created a bundle on the process via CheckModuleExistence.php
-    if (!defined('BUNDLE_BASE_PATH'))
-      define('BUNDLE_BASE_PATH', BASE_PATH . 'bundles/' . $bundleName . '/');
+    if (!defined('otra\console\architecture\createModule\BUNDLE_BASE_PATH'))
+      define('otra\console\architecture\createModule\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
     if ($interactive)
     {

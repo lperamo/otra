@@ -7,7 +7,8 @@ declare(strict_types=1);
 
 namespace otra\console\architecture\init;
 use function otra\tools\copyFileAndFolders;
-use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH};
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, ERASE_SEQUENCE, END_COLOR};
 
 echo 'Initializing the project...', PHP_EOL;
 
@@ -51,16 +52,13 @@ foreach ($distFiles as $distFile)
 }
 
 // We need a routes configuration file even empty.
-const OTRA_BUNDLES_CONFIG_PATH = BASE_PATH . 'bundles/config/';
+const OTRA_BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/';
 
 if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
   mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
 
 file_put_contents(OTRA_BUNDLES_CONFIG_PATH . 'Routes.php',
   '<?php declare(strict_types=1); return [];');
-
-if (!defined('ERASE_SEQUENCE'))
-  define('ERASE_SEQUENCE', "\033[1A\r\033[K");
 
 echo ERASE_SEQUENCE, 'Configuration files copied ', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 

@@ -6,8 +6,12 @@
 declare(strict_types=1);
 
 namespace otra\console\architecture\createModel;
-use function otra\console\promptUser;
+
+use const otra\cache\php\{BUNDLES_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_INFO, CLI_WARNING};
+use const otra\console\architecture\constants\ARG_BUNDLE_NAME;
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\promptUser;
 
 /** @var string $bundlesPath */
 
@@ -37,7 +41,7 @@ while (!file_exists($bundlesPath . ucfirst($bundleName)))
 }
 
 // We add the chosen bundle name to the path
-$bundlePath = $bundlesPath . ucfirst($bundleName) . '/';
+$bundlePath = $bundlesPath . ucfirst($bundleName) . DIR_SEPARATOR;
 
 $possibleChoices = [CREATION_MODE_FROM_NOTHING, CREATION_MODE_ONE_MODEL, CREATION_MODE_ALL_MODELS];
 

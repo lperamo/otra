@@ -3,11 +3,16 @@ declare(strict_types=1);
 
 namespace src\console\database;
 
-use config\AllConfig;
-use otra\console\Database;
+use otra\config\AllConfig;
+use otra\console\database\Database;
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
-use const \otra\tests\BUNDLES_PATH;
+use ReflectionException;
+use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH,PROD,TEST_PATH};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\{copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses
@@ -30,8 +35,8 @@ class SqlCreateDatabaseTaskTest extends TestCase
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . 'tables_order.yml';
 
   /**
-   * @throws \ReflectionException
-   * @throws \otra\OtraException
+   * @throws ReflectionException
+   * @throws OtraException
    */
   public function testSqlCreateDatabaseTask() : void
   {
@@ -53,7 +58,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
       $bundlesFolderExists = false;
       mkdir(BUNDLES_PATH);
 
-      define('HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
+      define('src\console\database\HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
 
       if (!file_exists(HELLO_WORLD_PATH))
       {
@@ -97,6 +102,9 @@ class SqlCreateDatabaseTaskTest extends TestCase
       rmdir(BUNDLES_PATH);
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testSqlCreateDatabaseHelp()
   {
     $this->expectOutputString(

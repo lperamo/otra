@@ -1,14 +1,17 @@
 <?php
-declare(strict_types=1);
-namespace otra\console\deployment\genSitemap;
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
 
-use config\AllConfig;
+namespace otra\console\deployment\genSitemap;
 
-$routes = require BASE_PATH . 'bundles/config/Routes.php';
+use otra\config\AllConfig;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, SPACE_INDENT};
+use const otra\console\{CLI_SUCCESS,END_COLOR};
+
+$routes = require BUNDLES_PATH . 'config/Routes.php';
 $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
   '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
@@ -26,3 +29,4 @@ foreach ($routes as $route)
 
 file_put_contents(BASE_PATH . 'web/sitemap.xml', /** @lang text */ $siteMapContent . PHP_EOL . '</urlset>');
 
+echo 'Site map created' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL;

@@ -11,6 +11,7 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use function otra\console\{guessWords,promptUser};
 use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\cache\php\{CONSOLE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 
 const HELP_TASK = 2;
@@ -43,7 +44,7 @@ if (!isset($tasksClassMap[$consoleTask]))
 }
 
 /** WE DISPLAY HERE THE COMMAND HELP */
-$paramsDesc = require $tasksClassMap[$consoleTask][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $consoleTask .
+$paramsDesc = require $tasksClassMap[$consoleTask][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $consoleTask .
   'Help.php';
 echo CLI_BASE, str_pad($consoleTask, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING),
   CLI_GRAY, ': ', CLI_INFO, $paramsDesc[TasksManager::TASK_DESCRIPTION], PHP_EOL;

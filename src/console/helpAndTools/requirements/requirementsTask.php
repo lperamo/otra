@@ -1,20 +1,21 @@
 <?php
-declare(strict_types=1);
-namespace otra\console\helpAndTools\requirements;
-use function otra\tools\cliCommand;
-use const otra\console\
-{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
 
-echo ADD_BOLD, CLI_INFO_HIGHLIGHT, '  Requirements', PHP_EOL,
-  '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
+namespace otra\console\helpAndTools\requirements;
+
+use function otra\tools\cliCommand;
+use const otra\cache\php\CORE_PATH;
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
+
+echo ADD_BOLD, CLI_INFO_HIGHLIGHT, '  Requirements', PHP_EOL, '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 
 require CORE_PATH . 'tools/cli.php';
-const REQUIREMENTS_PADDING = 30,
+const
+  REQUIREMENTS_PADDING = 30,
 
   // Requirement array
   REQ_PKG_NAME = 0,

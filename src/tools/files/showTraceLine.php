@@ -6,6 +6,7 @@
 declare(strict_types=1);
 
 namespace otra\tools\files;
+use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
 use function otra\tools\getSourceFromFile;
 
 /**
@@ -23,7 +24,7 @@ function showTraceLine(array $contextItem) : void
 
       if ($hasFile)
       {
-        $traceFile = str_replace('\\', '/', $contextItem['file']);
+        $traceFile = str_replace('\\', DIR_SEPARATOR, $contextItem['file']);
 
         if (str_contains($traceFile, BASE_PATH))
         {

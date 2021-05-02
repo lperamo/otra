@@ -7,10 +7,13 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\genBootstrap;
 
+use FilesystemIterator;
 use otra\OtraException;
-use config\{Routes, AllConfig};
+use otra\config\AllConfig;
+use otra\config\Routes;
 use function otra\console\{guessWords,promptUser};
 use function otra\tools\cliCommand;
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\CACHE_PHP_INIT_PATH;
 
@@ -22,8 +25,8 @@ const
   GEN_BOOTSTRAP_ARG_ROUTE = 5,
   OTRA_KEY_DRIVER = 'driver';
 
-define('GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
-define('VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
+define('otra\console\deployment\genBootstrap\GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
+define('otra\console\deployment\genBootstrap\VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
 
 // We generate the class mapping file if we need it.
 if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
@@ -53,7 +56,7 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
-define('BOOTSTRAP_PATH', BASE_PATH . 'cache/php');
+define('otra\console\deployment\genBootstrap\BOOTSTRAP_PATH', BASE_PATH . 'cache/php');
 
 // Checks that the folder of micro bootstraps exists
 if (!file_exists(BOOTSTRAP_PATH))
@@ -119,13 +122,10 @@ echo 'Create the specific routes management file... ', PHP_EOL;
 
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
 // configuration. We checks if we do not have already loaded the configuration before.
-if (!defined('CORE_VIEWS_PATH'))
-  require BASE_PATH . 'config/AllConfig.php';
-
 define(
   'PATH_CONSTANTS',
   [
-    'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+    'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
     OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
       && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)])
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]

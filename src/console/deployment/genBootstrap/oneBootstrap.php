@@ -7,11 +7,11 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\genBootstrap;
 
-use config\
-{AllConfig, Routes};
 use Exception;
-use otra\OtraException;
-use otra\Router;
+use otra\{OtraException, Router};
+use otra\config\{AllConfig, Routes};
+use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 
 const
@@ -21,9 +21,9 @@ const
 
   OTRA_KEY_BOOTSTRAP = 'bootstrap',
   OTRA_KEY_DRIVER = 'driver';
-define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
-define('VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
-define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define('otra\console\deployment\genBootstrap\GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
+define('otra\console\deployment\genBootstrap\VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
+define('otra\console\deployment\genBootstrap\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
@@ -125,7 +125,7 @@ if (isset($params['core']) && $params['core'])
 define(
   'PATH_CONSTANTS',
   [
-    'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+    'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
     OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
       && isset(AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER])
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]

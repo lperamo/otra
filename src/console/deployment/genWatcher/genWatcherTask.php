@@ -12,10 +12,20 @@ use JetBrains\PhpStorm\Pure;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\{ADD_BOLD, CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\console\deployment\
+{
+  FILE_TASK_GCC,
+  PATHS_TO_AVOID,
+  PATHS_TO_HAVE_RESOURCES,
+  RESOURCES_TO_WATCH,
+  WATCH_FOR_CSS_RESOURCES,
+  WATCH_FOR_PHP_FILES,
+  WATCH_FOR_TS_RESOURCES
+};
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
 use function otra\tools\files\returnLegiblePath;
-use const otra\console\{ADD_BOLD,CLI_BASE,CLI_GRAY,CLI_INFO,CLI_INFO_HIGHLIGHT,END_COLOR,REMOVE_BOLD_INTENSITY};
-use const otra\console\deployment\{PATHS_TO_HAVE_RESOURCES,RESOURCES_TO_WATCH};
 
 // Initialization
 require CORE_PATH . 'console/deployment/taskFileInit.php';
@@ -37,12 +47,12 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
+define('otra\\console\\deployment\\genWatcher\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
 
 if (GEN_WATCHER_VERBOSE > 1 )
 {
   // Those constants are used in the maximum verbose mode only when we show the main events triggered
-  define('WD_CONSTANTS', [
+  define('otra\\console\\deployment\\genWatcher\\WD_CONSTANTS', [
     IN_ACCESS => 'IN_ACCESS',
     IN_MODIFY => 'IN_MODIFY',
     IN_ATTRIB => 'IN_ATTRIB',
@@ -72,15 +82,15 @@ if (GEN_WATCHER_VERBOSE > 1 )
     IN_ONESHOT => 'IN_ONESHOT'
   ]);
 
-  define('HEADER_EVENT_PADDING', 18);
-  define('HEADER_COOKIE_PADDING', 7);
-  define('HEADER_NAME_PADDING', 30);
-  define('HEADER_WATCHED_RESOURCE_PADDING', 60);
+  define('otra\\console\\deployment\\genWatcher\\HEADER_EVENT_PADDING', 18);
+  define('otra\\console\\deployment\\genWatcher\\HEADER_COOKIE_PADDING', 7);
+  define('otra\\console\\deployment\\genWatcher\\HEADER_NAME_PADDING', 30);
+  define('otra\\console\\deployment\\genWatcher\\HEADER_WATCHED_RESOURCE_PADDING', 60);
 
-  define('DATA_EVENT_PADDING', 22);
-  define('DATA_COOKIE_PADDING', 11);
-  define('DATA_NAME_PADDING', 34);
-  define('DATA_WATCHED_RESOURCE_PADDING', 64);
+  define('otra\\console\\deployment\\genWatcher\\DATA_EVENT_PADDING', 22);
+  define('otra\\console\\deployment\\genWatcher\\DATA_COOKIE_PADDING', 11);
+  define('otra\\console\\deployment\\genWatcher\\DATA_NAME_PADDING', 34);
+  define('otra\\console\\deployment\\genWatcher\\DATA_WATCHED_RESOURCE_PADDING', 64);
 }
 
 /**
@@ -269,7 +279,7 @@ while (true)
         continue;
 
       $resourceName = is_dir($foldersWatchedIds[$watchDescriptor])
-        ? $foldersWatchedIds[$watchDescriptor] . '/' . $filename
+        ? $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename
         : $foldersWatchedIds[$watchDescriptor];
 
       // If it is a temporary file, we skip it

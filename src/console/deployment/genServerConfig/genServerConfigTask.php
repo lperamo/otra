@@ -8,8 +8,9 @@
 declare(strict_types=1);
 namespace otra\console\deployment\genServerConfig;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use otra\OtraException;
+use const otra\cache\php\{CONSOLE_PATH,DEV,SPACE_INDENT};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 const

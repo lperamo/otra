@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace src\console\deployment;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\tests\CACHE_PHP_INIT_PATH;
+use const otra\cache\php\{APP_ENV,BASE_PATH,DEV,TEST_PATH};
+use const otra\cache\php\init\CLASSMAP2;
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 
 /**
  * @runTestsInSeparateProcesses
@@ -26,31 +30,31 @@ class GenClassMapTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function testGenClassMapTask() : void
   {
     // context
-    $_SERVER['APP_ENV'] = DEV;
-    define('FIRST_CLASS_PADDING', 80);
+    $_SERVER[APP_ENV] = DEV;
+    define('src\console\deployment\FIRST_CLASS_PADDING', 80);
 
     // testing
     $content = '';
-    define('OTRA_MAX_FOLDERS', 150);
+    define('src\console\deployment\OTRA_MAX_FOLDERS', 150);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
       $content .= "\x0d\033[K" . 'Processed directories : ' . $currentFolder . '...';
     }
 
-    $content .= "\x0d\033[K" . 'Processed directories : ' . ($currentFolder - 1) . '.' .
-      ' Class mapping finished' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL . PHP_EOL .
+    $content .= "\x0d\033[K" . 'Processed directories : ' . ($currentFolder - 1) . '.' . PHP_EOL .
+      'Class mapping finished' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL .
       CLI_WARNING . 'BASE_PATH = ' . BASE_PATH . PHP_EOL .
       CLI_INFO . 'Class path' . CLI_INFO_HIGHLIGHT . ' => ' . CLI_INFO . 'Related file path' . PHP_EOL . PHP_EOL;
 
     require TEST_PATH . 'examples/genClassMap/ClassMap2.php';
 
-    foreach(CLASSMAP2 as $class => &$classFile)
+    foreach(CLASSMAP2 as $class => $classFile)
     {
       $content .= CLI_INFO . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_INFO_HIGHLIGHT . ' => ';
       $content .= (str_contains($classFile, BASE_PATH)
@@ -94,7 +98,7 @@ class GenClassMapTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function testGenClassMapHelp(): void
   {

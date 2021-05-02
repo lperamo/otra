@@ -6,7 +6,7 @@ namespace otra\tools;
  * @package otra\tools
  */
 
-if (!function_exists('t'))
+if (!function_exists('otra\tools\t'))
 {
   // Will be the future translation feature
   function t(string $text): string

@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace src\database;
 
+use Exception;
 use phpunit\framework\TestCase;
-use otra\{bdd\Sql, OtraException};
+use otra\{bdd\Pdomysql, bdd\Sql, OtraException};
+use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 
 /**
  * The majority of the code is already tested by SqlTest.php so we only test the remaining uncovered code.
@@ -13,11 +15,9 @@ use otra\{bdd\Sql, OtraException};
  */
 class PdomysqlTest extends TestCase
 {
-  private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
+  private const
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
-    TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
-    TEST_CONFIG_NO_DEFAULT_CONNECTION = TEST_PATH . 'config/AllConfigNoDefaultConnection.php',
-    LOG_PATH = BASE_PATH . 'logs/';
+    GENERIC_QUERY = 'SELECT 1 FROM OtraTestTable';
 
   private static string $databaseName = 'testDB';
 
@@ -39,7 +39,7 @@ class PdomysqlTest extends TestCase
     try
     {
       Sql::getDb()->__destruct();
-    } catch (\Exception $e)
+    } catch (Exception $e)
     {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
@@ -54,7 +54,9 @@ class PdomysqlTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
-    $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
+    $dbResult = Sql::$instance->query(
+      'CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';'
+    );
     Sql::$instance->freeResult($dbResult);
     Sql::$instance->commit();
   }
@@ -74,7 +76,7 @@ class PdomysqlTest extends TestCase
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
 
-    self::assertFalse(Sql::$instance->valuesOneCol(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
+    self::assertFalse(Sql::$instance->valuesOneCol(Sql::$instance->query(self::GENERIC_QUERY)));
   }
 
   /**
@@ -92,7 +94,7 @@ class PdomysqlTest extends TestCase
       Sql::$instance->query('CREATE TEMPORARY TABLE OtraTestTable (`a` VARCHAR(50));')
     );
 
-    self::assertFalse(Sql::$instance->single(Sql::$instance->query("SELECT 1 FROM OtraTestTable")));
+    self::assertFalse(Sql::$instance->single(Sql::$instance->query(self::GENERIC_QUERY)));
   }
 
   /**
@@ -107,7 +109,7 @@ class PdomysqlTest extends TestCase
     Sql::getDb();
 
     // testing
-    self::assertTrue(\otra\bdd\Pdomysql::close(Sql::$instance));
+    self::assertTrue(Pdomysql::close(Sql::$instance));
     self::assertNull(Sql::$instance);
   }
 }

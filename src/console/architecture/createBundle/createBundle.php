@@ -8,11 +8,12 @@ namespace otra\console\architecture\createBundle;
 
 use otra\OtraException;
 use function otra\console\promptUser;
-use const otra\console\{CLI_BASE,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,END_COLOR};
+use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_BASE,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,ERASE_SEQUENCE,END_COLOR};
 
-const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
-
-const OTRA_BUNDLES_MAIN_FOLDER_NAME = 'bundles/';
+const
+  BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'],
+  OTRA_BUNDLES_MAIN_FOLDER_NAME = 'bundles/';
 
 /**
  * @param bool     $interactive
@@ -25,7 +26,7 @@ const OTRA_BUNDLES_MAIN_FOLDER_NAME = 'bundles/';
 function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false) : void
 {
   $bundleName = ucfirst($bundleName);
-  define('BUNDLE_ROOT_PATH', BASE_PATH . OTRA_BUNDLES_MAIN_FOLDER_NAME);
+  define('otra\console\architecture\createBundle\BUNDLE_ROOT_PATH', BUNDLES_PATH);
   $errorMessage = CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_WARNING . ' already exists.';
 
   if (!$interactive && file_exists(BUNDLE_ROOT_PATH . $bundleName))
@@ -67,12 +68,12 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     require CONSOLE_PATH . 'architecture/createBundle/bundleMaskCreation.php';
   }
 
-  define('BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . '/');
+  define('otra\console\architecture\createBundle\BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . DIR_SEPARATOR);
   mkdir(BUNDLE_BASE_PATH, 0755, true);
   echo ERASE_SEQUENCE, CLI_BASE, 'Bundle ', CLI_INFO_HIGHLIGHT, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_BASE,
     ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
-  define('BUNDLE_FOLDERS_MASK', $bundleMask);
+  define('otra\console\architecture\createBundle\BUNDLE_FOLDERS_MASK', $bundleMask);
 
   foreach (BUNDLE_FOLDERS as $numericKey => $folder)
   {
@@ -80,7 +81,7 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     if (BUNDLE_FOLDERS_MASK & pow(2, $numericKey))
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);
-      echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, $bundleName, '/', $folder, CLI_BASE, ' created',  CLI_SUCCESS, ' ✔',
+      echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, $bundleName, DIR_SEPARATOR, $folder, CLI_BASE, ' created',  CLI_SUCCESS, ' ✔',
         END_COLOR, PHP_EOL;
     }
   }

@@ -8,12 +8,13 @@
 declare(strict_types=1);
 namespace otra\console\deployment\deploy;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
 use function otra\tools\cliCommand;
-use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR};
+use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
+use const otra\console\{CLI_ERROR, CLI_INFO, END_COLOR, SUCCESS};
 
 const DEPLOY_ARG_MASK = 2,
   DEPLOY_ARG_VERBOSE = 3,
@@ -66,11 +67,10 @@ if (!file_exists($mainBundlesFolder))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR);
 $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
 $verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
 define(
-  'DEPLOY_GCC_LEVEL_COMPILATION',
+  'otra\console\deployment\deploy\DEPLOY_GCC_LEVEL_COMPILATION',
   isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
 );
 
@@ -108,7 +108,7 @@ if ($buildDevMode > 0)
     CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
   );
 
-  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", SUCCESS, $output, PHP_EOL;
 }
 
 $genAssetsMode = 0;
@@ -131,7 +131,7 @@ if ($genAssetsMode > 0)
     CLI_ERROR . 'There was a problem during the assets minification and compression.'
   );
 
-  echo OTRA_CLI_CONTROL_MODE . 3 . "D", OTRA_SUCCESS, $output, PHP_EOL;
+  echo OTRA_CLI_CONTROL_MODE . 3 . "D", SUCCESS, $output, PHP_EOL;
 }
 
 // Deploy the files on the server...
@@ -193,7 +193,7 @@ $handleTransfer(
   [
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder,
-      'Site main folder' . OTRA_SUCCESS,
+      'Site main folder' . SUCCESS,
       'Creating the site main folder if needed ...',
       $verbose
     )
@@ -206,7 +206,7 @@ $handleTransfer(
   [
     new Worker(
       $startCommandRelativeRsync . '\' cache ' . $server . ':' . $folder,
-      'Cache' . OTRA_SUCCESS,
+      'Cache' . SUCCESS,
       'Sending cache ...',
       $verbose
     )
@@ -220,7 +220,7 @@ if (file_exists(BASE_PATH . $preloadFilename))
     [
       new Worker(
         $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename,
-        'Preload file' . OTRA_SUCCESS,
+        'Preload file' . SUCCESS,
         'Sending preload file ...',
         $verbose
       )
@@ -231,7 +231,7 @@ $handleTransfer(
   [
     new Worker(
       $startCommand . '\' web/ ' . $server . ':' . $folder . 'web/',
-      'Web folder' . OTRA_SUCCESS,
+      'Web folder' . SUCCESS,
       'Sending web folder ...',
       $verbose
     )
@@ -243,13 +243,13 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'config',
-      'Config folder' . OTRA_SUCCESS,
+      'Config folder' . SUCCESS,
       'Creating the config folder ...',
       $verbose
     ),
     new Worker(
       $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php',
-      'OTRA constants' . OTRA_SUCCESS,
+      'OTRA constants' . SUCCESS,
       'Adding the OTRA constants ...',
       $verbose
     )
@@ -261,7 +261,7 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'vendor',
-      'Vendor folder' . OTRA_SUCCESS,
+      'Vendor folder' . SUCCESS,
       'Creating the vendor folder ...',
       $verbose
     ),
@@ -272,7 +272,7 @@ $handleTransfer(
       ' --include=\'otra/otra/src/services/securityService.php\'' .
       ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
       '/vendor/',
-      'OTRA templating engine, the translate tool and the production controller' . OTRA_SUCCESS,
+      'OTRA templating engine, the translate tool and the production controller' . SUCCESS,
       'Sending the OTRA templating engine, the translate tool and the production controller ...'
     )
   ]
@@ -283,14 +283,14 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'bundles',
-      'Bundles folder' . OTRA_SUCCESS,
+      'Bundles folder' . SUCCESS,
       'Creating the bundles folder ...',
       $verbose
     )
   ]
 );
 
-define('STRLEN_BASEPATH', strlen(BASE_PATH));
+define('otra\console\deployment\deploy\STRLEN_BASEPATH', strlen(BASE_PATH));
 
 /**
  * See which files to send and which files to keep
@@ -322,7 +322,7 @@ use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destina
     $newWorkersToChain[] = new Worker(
       $startCommand .
       '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath,
-      $folderRelativePath . ' folder' . OTRA_SUCCESS,
+      $folderRelativePath . ' folder' . SUCCESS,
       'Sending ' . $folderRelativePath . ' folder ...',
       $verbose
     );
@@ -339,7 +339,7 @@ $handleTransfer(
   [
     new Worker(
       $startCommandRelativeRsync . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder,
-      'Log folder' . OTRA_SUCCESS,
+      'Log folder' . SUCCESS,
       'Checking log folder ...',
       $verbose
     )

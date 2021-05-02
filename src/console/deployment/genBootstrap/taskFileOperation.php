@@ -9,8 +9,11 @@ namespace otra\console\deployment\genBootstrap;
 
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
+use const otra\cache\php\init\CLASSMAP;
+// do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\console\showContextByError;
-use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 require CONSOLE_PATH . 'tools.php';
 
@@ -37,7 +40,7 @@ const PATTERN = '@\s{0,}
 
   OTRA_LABEL_REQUIRE = 'require',
   ADJUST_SPACES_AROUND_REQUIRE_STATEMENT = '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@';
-define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+define('otra\console\deployment\genBootstrap\BASE_PATH_LENGTH', strlen(BASE_PATH));
 
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not
@@ -185,7 +188,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   {
     $revisedClass = mb_substr($class, 1);
 
-    if ('/' === $revisedClass)
+    if (DIR_SEPARATOR === $revisedClass)
       $class = $revisedClass;
     else
     {
@@ -700,7 +703,7 @@ function getFileInfoFromRequiresAndExtends(array $parameters) : void
         $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
 
         // we must not take care of the bundles/config/Config.php as it is an optional config file.
-        if ($tempFile === BASE_PATH . 'bundles/config/Config.php')
+        if ($tempFile === BUNDLES_PATH . 'config/Config.php')
           continue;
 
         if (VERBOSE > 0 && !str_contains($tempFile, BASE_PATH))
@@ -1134,8 +1137,8 @@ function processStaticCalls(
  */
 function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '') : string
 {
-  if (!defined('VERBOSE'))
-    define('VERBOSE', $verbose);
+  if (!defined('otra\console\deployment\genBootstrap\VERBOSE'))
+    define('otra\console\deployment\genBootstrap\VERBOSE', $verbose);
 
   // we create these variables only for the reference pass
   $increment = 0; // process steps counter (more granular than $level variable)
@@ -1202,7 +1205,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   // then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments
   // like 'becaUSE'
 
-  $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
+  $vendorNamespaceConfigFile = BUNDLES_PATH . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
   $vendorNamespaces = file_exists($vendorNamespaceConfigFile)
     ? file_get_contents($vendorNamespaceConfigFile) . PHP_END_TAG_STRING
     : '';
@@ -1241,7 +1244,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
   return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .
-    'namespace cache\php;' .
+    'namespace otra\\cache\\php;' .
     ($fileToInclude !== '/var/www/html/perso/otra/src/Router.php'
       ? 'use \\Exception; use \\stdClass; '
       : ''

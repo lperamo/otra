@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace otra\console\architecture\createModel;
 
 use otra\console\TasksManager;
-use const otra\console\{CLI_INFO,CLI_INFO_HIGHLIGHT};
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, STRING_PAD_FOR_OPTION_FORMATTING};
 
 const
   OTRA_INTERACTIVE_MODE_NAME = 'interactive',

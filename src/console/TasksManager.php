@@ -4,6 +4,7 @@ namespace otra\console;
 
 use otra\OtraException;
 use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\cache\php\DIR_SEPARATOR;
 
 /**
  * @author Lionel Péramo
@@ -11,7 +12,8 @@ use const otra\bin\CACHE_PHP_INIT_PATH;
  */
 abstract class TasksManager
 {
-  public const STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
+  public const
+    STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
     PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
@@ -29,7 +31,7 @@ abstract class TasksManager
    */
   public static function showCommands(string $message) : void
   {
-    define('HELP_BETWEEN_TASK_AND_COLON', 28);
+    define('otra\console\HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_WARNING, $message, CLI_BASE, PHP_EOL, PHP_EOL;
     echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_BASE,
       str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
@@ -83,13 +85,13 @@ abstract class TasksManager
     }
 
     require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
-    require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/' . $task . 'Task.php';
+    require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
   }
 }
 
-if (!defined('STRING_PAD_FOR_OPTION_FORMATTING'))
+if (!defined('otra\console\STRING_PAD_FOR_OPTION_FORMATTING'))
   define(
-    'STRING_PAD_FOR_OPTION_FORMATTING',
+    'otra\console\STRING_PAD_FOR_OPTION_FORMATTING',
     str_repeat(' ', TasksManager::STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING)
   );
 

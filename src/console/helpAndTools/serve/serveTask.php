@@ -6,15 +6,17 @@
 declare(strict_types=1);
 
 namespace otra\console\helpAndTools\serve;
+
 use function otra\tools\cliCommand;
+use const otra\cache\php\{BASE_PATH,CORE_PATH,DEV};
 use const otra\console\{CLI_INFO, END_COLOR};
 
 require CORE_PATH . 'tools/cli.php';
 
 const PARAMETER_PORT = 2;
 const PARAMETER_ENV = 3;
-define('OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
-define('OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? DEV);
+define('otra\console\helpAndTools\serve\OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
+define('otra\console\helpAndTools\serve\OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? DEV);
 const OTRA_LIVE_HTTPS = 'false';
 
 echo CLI_INFO, 'Launching a PHP web internal server on localhost:', OTRA_APP_PORT, ' in ',

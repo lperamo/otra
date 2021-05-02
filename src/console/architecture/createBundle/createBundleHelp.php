@@ -1,12 +1,15 @@
 <?php
-declare(strict_types=1);
-namespace otra\console\architecture\createBundle;
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
 
+declare(strict_types=1);
+
+namespace otra\console\architecture\createBundle;
+
 use otra\console\TasksManager;
+use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
 $showMaskOption = static function (string $text) : string
 {

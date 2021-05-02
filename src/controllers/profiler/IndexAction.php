@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace otra\controllers\profiler;
 
-use otra\
-{Controller, OtraException, services\ProfilerService};
+use otra\{Controller, OtraException, services\ProfilerService};
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
 
 /**
  * @author Lionel Péramo

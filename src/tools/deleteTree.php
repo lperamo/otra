@@ -1,29 +1,34 @@
 <?php
 declare(strict_types=1);
 namespace otra\tools;
-/**
- * @author Lionel Péramo
- * @package otra\tools
- *
- * Deletes a tree recursively.
- *
- * @param string $folder
- *
- * @return bool
- */
-function delTree(string $folder) : bool
+
+if (!function_exists('otra\\tools\\delTree'))
 {
-  /** @var string[] $files */
-  $files = array_diff(scandir($folder), ['.','..']);
-
-  foreach ($files as $fileName)
+  /**
+   * @author Lionel Péramo
+   * @package otra\tools
+   *
+   * Deletes a tree recursively.
+   *
+   * @param string $folder
+   *
+   * @return bool
+   */
+  function delTree(string $folder) : bool
   {
-    $filenamePath = "$folder/$fileName";
+    /** @var string[] $files */
+    $files = array_diff(scandir($folder), ['.','..']);
 
-    is_dir($filenamePath)
-      ? delTree($filenamePath)
-      : unlink($filenamePath);
+    foreach ($files as $fileName)
+    {
+      $filenamePath = "$folder/$fileName";
+
+      is_dir($filenamePath)
+        ? delTree($filenamePath)
+        : unlink($filenamePath);
+    }
+
+    return rmdir($folder);
   }
-
-  return rmdir($folder);
 }
+

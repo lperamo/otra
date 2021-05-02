@@ -7,8 +7,9 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\genServerConfig;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
+use const otra\cache\php\{DEV,SPACE_INDENT};
 use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 
 /** @var string $fileName */
