@@ -1,10 +1,12 @@
 <?php
-declare(strict_types=1);
-namespace otra\tools\files;
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\files
  */
+declare(strict_types=1);
+
+namespace otra\tools\files;
+use function otra\tools\getSourceFromFile;
 
 /**
  * @param array{class: string, file: string, function:string, type:string, line: int} $contextItem

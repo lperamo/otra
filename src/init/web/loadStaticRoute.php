@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace otra;
 
+use function otra\services\{addCspHeader,addPermissionsPoliciesHeader};
+
 /**
  * @package otra
  */

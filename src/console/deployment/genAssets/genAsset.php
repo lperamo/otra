@@ -1,13 +1,15 @@
 <?php
-declare(strict_types=1);
-namespace otra\console\deployment\genAssets;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genAssets;
 
 use otra\Logger;
 use otra\Router;
+use function otra\tools\gzCompressFile;
 
 define('ARG_CACHE_PATH', $argv[1]);
 define('ARG_SITE_ROUTE', $argv[2]);

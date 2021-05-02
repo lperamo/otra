@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace otra;
 
 use Exception;
+use function otra\services\{addCspHeader,addPermissionsPoliciesHeader,getRandomNonceForCSP};
 
 /** A classic MVC production controller class
  *

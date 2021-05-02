@@ -1,16 +1,15 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Profiler service
  *
- * @author Lionel Péramo
- * @package otra\services
+ * @author  Lionel Péramo
  */
+declare(strict_types=1);
 
 namespace otra\services;
 
 use otra\OtraException;
+use function otra\tools\{rawSqlPrettyPrint,t};
 
 /**
  * @package otra\services

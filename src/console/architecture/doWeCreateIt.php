@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace otra\console\architecture;
+
 use otra\OtraException;
+use function otra\console\promptUser;
 
 if (!function_exists('doWeCreateIt'))
 {

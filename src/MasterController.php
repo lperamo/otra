@@ -1,15 +1,18 @@
 <?php
-declare(strict_types=1);
 /** MVC master controller class
  *
  * @author Lionel Péramo
  */
+declare(strict_types=1);
+
 namespace otra;
 
 use cache\php\BlocksSystem;
 use config\AllConfig;
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use function otra\services\getRandomNonceForCSP;
+use function otra\templating\showBlocksVisually;
 
 /**
  * @author Lionel Péramo
@@ -148,7 +151,13 @@ abstract class MasterController
       if (isset($otraParams['route']) && $otraParams['route'] === 'otra_exception')
       {
         // Stores the bundle, module, controller and action for later use
-        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($otraParams);
+        [
+          $this->bundle,
+          $this->module,
+          $this->route,
+          self::$hasCssToLoad,
+          self::$hasJsToLoad
+        ] = array_values($otraParams);
 
         require CORE_PATH . 'services/securityService.php';
         $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';

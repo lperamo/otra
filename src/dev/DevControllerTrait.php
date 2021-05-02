@@ -4,6 +4,7 @@ namespace otra;
 
 use otra\config\{AllConfig, Routes};
 use Exception;
+use function otra\services\{addCspHeader,addPermissionsPoliciesHeader,getRandomNonceForCSP};
 
 define('OTRA_FILENAME_TRACE', 'trace');
 
