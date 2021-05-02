@@ -1,15 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createHelloWorld;
+
+use otra\OtraException;
+use function otra\console\architecture\actionHandling;
+use function otra\tools\{cliCommand,copyFileAndFolders};
+use const otra\console\{CLI_BASE,CLI_ERROR,CLI_INFO,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_TABLE,CLI_WARNING,END_COLOR};
 
 if (file_exists(BASE_PATH . 'bundles/HelloWorld'))
 {
   echo CLI_WARNING, 'The bundle ', CLI_INFO, 'HelloWorld', CLI_WARNING, ' already exists.', END_COLOR, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 const ARG_BUNDLE_NAME = 2,
@@ -69,7 +75,7 @@ define('BASE_PATH_LENGTH', strlen(BASE_PATH));
  * @param string $destination
  * @param string $message
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function copyAndShow(string $source, string $destination, string $message) : void
 {

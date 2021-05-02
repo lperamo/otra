@@ -6,34 +6,37 @@
  * @package otra\console\deployment
  */
 declare(strict_types=1);
-namespace otra\console;
+namespace otra\console\deployment\deploy;
 
 use config\AllConfig;
+use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
+use function otra\tools\cliCommand;
+use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR};
 
-define('DEPLOY_ARG_MASK', 2);
-define('DEPLOY_ARG_VERBOSE', 3);
-define('DEPLOY_ARG_GCC_LEVEL_COMPILATION', 4);
+const DEPLOY_ARG_MASK = 2,
+  DEPLOY_ARG_VERBOSE = 3,
+  DEPLOY_ARG_GCC_LEVEL_COMPILATION = 4,
 
-define('GEN_BOOTSTRAP_ARG_CLASS_MAPPING', 2);
-define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
+  GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
+  GEN_BOOTSTRAP_ARG_VERBOSE = 3,
 
-define('BUILD_DEV_MASK_SCSS', 1);
-const BUILD_DEV_MASK_TS = 2;
+  BUILD_DEV_MASK_SCSS = 1,
+  BUILD_DEV_MASK_TS = 2,
 
-define('DEPLOY_MASK_PHP_BEFORE_RSYNC', 1);
-define('DEPLOY_MASK_JS_BEFORE_RSYNC', 2);
-define('DEPLOY_MASK_CSS_BEFORE_RSYNC', 4);
-define('DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC', 8);
+  DEPLOY_MASK_PHP_BEFORE_RSYNC = 1,
+  DEPLOY_MASK_JS_BEFORE_RSYNC = 2,
+  DEPLOY_MASK_CSS_BEFORE_RSYNC = 4,
+  DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC = 8,
 
-define('GEN_ASSETS_MASK_TEMPLATE', 1);
-define('GEN_ASSETS_MASK_SVG', 16);
+  GEN_ASSETS_MASK_TEMPLATE = 1,
+  GEN_ASSETS_MASK_SVG = 16,
 
-define('OTRA_CLI_CONTROL_MODE', "\033[");
+  OTRA_CLI_CONTROL_MODE = "\033[",
 
-define('OTRA_CLI_COMMAND_SSH_AND_PORT', 'ssh -p ');
-define('OTRA_CLI_COMMAND_RECURSIVE_MKDIR', ' mkdir -p ');
+  OTRA_CLI_COMMAND_SSH_AND_PORT = 'ssh -p ',
+  OTRA_CLI_COMMAND_RECURSIVE_MKDIR = ' mkdir -p ';
 
 // **** Checking the deployment config parameters ****
 if (!isset(AllConfig::$deployment))
@@ -300,7 +303,7 @@ $seekingToSendFiles = function (string $folderToAnalyze)
 use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server, $verbose)
 : array
 {
-  $bundleFolders = new \DirectoryIterator($folderToAnalyze);
+  $bundleFolders = new DirectoryIterator($folderToAnalyze);
   $newWorkersToChain = [];
 
   foreach ($bundleFolders as $bundleFolder)

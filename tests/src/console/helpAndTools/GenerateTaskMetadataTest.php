@@ -11,7 +11,7 @@ use phpunit\framework\TestCase;
  */
 class GenerateTaskMetadataTest extends TestCase
 {
-  private const PHP_CACHE_PATH = CACHE_PATH . 'php/',
+  private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',

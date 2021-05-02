@@ -1,12 +1,15 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\tools
  */
+declare(strict_types=1);
+namespace otra\tools;
 
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
 if (!function_exists('copyFileAndFolders'))
 {

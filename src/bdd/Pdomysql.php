@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\bdd;
 use otra\OtraException;
 use PDO, PDOStatement;
+use PDOException;
 
 /**
  * @package otra\bdd
@@ -27,12 +28,12 @@ abstract class Pdomysql
    * @return PDO Returns a MySQL link identifier on success, or false on error
    * @throws OtraException
    */
-  public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
+  public static function connect(string $dsn = '127.0.0.1:3306', string $username = 'root', string $password = '')
   {
     try
     {
       $conn = new PDO($dsn, $username, $password);
-    }catch(\PDOException $exception)
+    }catch(PDOException $exception)
     {
       throw new OtraException(
         'Database connection failed: ' . $exception->getMessage() .

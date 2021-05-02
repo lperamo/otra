@@ -1,10 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createGlobalConstants;
+
+use const otra\console\{CLI_INFO, CLI_WARNING};
 
 return [
   'Creates OTRA global constants. ' . CLI_WARNING .

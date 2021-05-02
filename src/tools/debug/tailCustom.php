@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\tools\debug;
 /**
  * @author Lionel Péramo
  * @package otra\tools\debug

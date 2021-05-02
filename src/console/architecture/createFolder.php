@@ -1,12 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
 
+declare(strict_types=1);
+
+namespace otra\console\architecture;
+
 use otra\OtraException;
+use function otra\console\promptUser;
+use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
 
 if (!function_exists('createFolder'))
 {

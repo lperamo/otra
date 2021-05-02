@@ -1,31 +1,28 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\tools\debug
  */
+declare(strict_types=1);
 
-namespace otra;
+namespace otra\tools\debug;
 
 use config\AllConfig;
 use JetBrains\PhpStorm\Pure;
 use ReflectionClass, ReflectionException, ReflectionProperty;
+use function otra\tools\{getSourceFromFileCli,removeFieldScopeProtection,restoreFieldScopeProtection};
+use const otra\console\{ADD_BOLD, ADD_UNDERLINE, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY, REMOVE_UNDERLINE};
 
-if (!defined('OTRA_DUMP_INDENT_COLORS'))
-{
-  define(
-    'OTRA_DUMP_INDENT_COLORS',
-    [
-      'CLI_INDENT_COLOR_FIRST',
-      'CLI_INDENT_COLOR_SECOND',
-      'CLI_SUCCESS',
-      'CLI_INDENT_COLOR_FOURTH',
-      'CLI_INDENT_COLOR_FIFTH'
-    ]
-  );
+const OTRA_DUMP_INDENT_COLORS = [
+  'CLI_INDENT_COLOR_FIRST',
+  'CLI_INDENT_COLOR_SECOND',
+  'CLI_SUCCESS',
+  'CLI_INDENT_COLOR_FOURTH',
+  'CLI_INDENT_COLOR_FIFTH'
+];
+
+if (!defined('OTRA_DUMP_INDENT_COLORS_COUNT'))
   define('OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
-}
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.

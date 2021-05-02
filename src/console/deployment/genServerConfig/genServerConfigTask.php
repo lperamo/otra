@@ -6,14 +6,16 @@
  * @package otra\console\deployment
  */
 declare(strict_types=1);
-namespace otra\console;
+namespace otra\console\deployment\genServerConfig;
 
 use config\AllConfig;
 use otra\OtraException;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
-define('GEN_SERVER_CONFIG_ARG_FILE', 2);
-define('GEN_SERVER_CONFIG_ARG_ENVIRONMENT', 3);
-define('GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY', 4);
+const
+  GEN_SERVER_CONFIG_ARG_FILE = 2,
+  GEN_SERVER_CONFIG_ARG_ENVIRONMENT = 3,
+  GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY = 4;
 
 $fileName = $argv[GEN_SERVER_CONFIG_ARG_FILE];
 
@@ -37,7 +39,7 @@ if (!isset(AllConfig::$deployment))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('GEN_SERVER_CONFIG_DOMAIN_NAME_KEY', 'domainName');
+const GEN_SERVER_CONFIG_DOMAIN_NAME_KEY = 'domainName';
 
 if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
 {
@@ -46,7 +48,7 @@ if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('GEN_SERVER_CONFIG_FOLDER_KEY', 'folder');
+const GEN_SERVER_CONFIG_FOLDER_KEY = 'folder';
 
 if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY]))
 {
@@ -55,9 +57,11 @@ if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY]))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('GEN_SERVER_CONFIG_STR_PAD', 12);
-define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
-define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
+const
+  GEN_SERVER_CONFIG_STR_PAD = 12,
+  SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT,
+  SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
+
 define(
   'GEN_SERVER_CONFIG_SERVER_NAME',
   GEN_SERVER_CONFIG_ENVIRONMENT . '.' . AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]

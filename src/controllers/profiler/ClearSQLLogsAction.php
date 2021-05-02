@@ -1,20 +1,22 @@
 <?php
-declare(strict_types=1);
-namespace otra\controllers\profiler;
-
-use otra\{Controller, services\ProfilerService};
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\controllers\profiler
  */
+declare(strict_types=1);
+
+namespace otra\controllers\profiler;
+
+use otra\{Controller, OtraException, services\ProfilerService};
+use function otra\tools\t;
+
 class ClearSQLLogsAction extends Controller
 {
   /**
    * @param array $otraParams
    * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

@@ -1,12 +1,12 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
-
-namespace otra\console;
+declare(strict_types=1);
+namespace otra\console\architecture\createModule;
+use function otra\console\architecture\doWeCreateIt;
+use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
 
 require CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
@@ -20,7 +20,8 @@ if (!file_exists($modulePath))
 {
   /** @var bool $consoleForce */
   if (!$consoleForce)
-    echo CLI_ERROR, 'The module ', CLI_INFO_HIGHLIGHT, $moduleRelativePath, CLI_ERROR, ' does not exist.' , END_COLOR, PHP_EOL;
+    echo CLI_ERROR, 'The module ', CLI_INFO_HIGHLIGHT, $moduleRelativePath, CLI_ERROR, ' does not exist.' , END_COLOR,
+      PHP_EOL;
 
   require CONSOLE_PATH . 'architecture/doWeCreateIt.php';
   /** @var bool $interactive */

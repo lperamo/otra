@@ -1,11 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
-const CLI_BGD_LIGHT_BLACK="\e[48;2;40;40;40m",
+declare(strict_types=1);
+
+namespace otra\console\helpAndTools\version;
+
+use const otra\console\END_COLOR;
+
+const
+  CLI_BGD_LIGHT_BLACK="\e[48;2;40;40;40m",
   CLI_INFO_GREEN="\e[38;2;185;215;255m",
   CLI_VERSION_COLOR="\e[38;2;220;220;220m",
   BLUE_ON_LIGHT_BLACK = "\e[38;2;140;170;255m" . CLI_BGD_LIGHT_BLACK,

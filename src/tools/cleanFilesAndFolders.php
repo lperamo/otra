@@ -1,12 +1,16 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\tools;
 /**
  * @author Lionel Péramo
  * @package otra\tools
  */
 
+use Exception;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
 if (!function_exists('cleanFileAndFolders'))
 {

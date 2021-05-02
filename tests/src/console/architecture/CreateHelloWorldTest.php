@@ -5,6 +5,7 @@ namespace src\console\architecture;
 
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use function otra\tools\delTree;
 
 define('OTRA_LABEL_CREATED', ' created');
 define('OTRA_LABEL_UPDATED', ' updated');
@@ -35,7 +36,7 @@ class CreateHelloWorldTest extends TestCase
     /** @var callable $delTree */
 
     if (file_exists(self::HELLO_WORLD_BUNDLE_PATH) === true)
-      $delTree(self::HELLO_WORLD_BUNDLE_PATH);
+      delTree(self::HELLO_WORLD_BUNDLE_PATH);
   }
 
   protected function tearDown(): void
@@ -48,7 +49,7 @@ class CreateHelloWorldTest extends TestCase
       require CORE_PATH . 'tools/deleteTree.php';
 
       /** @var callable $delTree */
-      $delTree(self::HELLO_WORLD_BUNDLE_PATH);
+      delTree(self::HELLO_WORLD_BUNDLE_PATH);
       rmdir(BASE_PATH  .'bundles');
     }
   }

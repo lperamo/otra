@@ -1,19 +1,19 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel;
 
 use otra\console\TasksManager;
+use const otra\console\{CLI_INFO,CLI_INFO_HIGHLIGHT};
 
-if (!defined('OTRA_INTERACTIVE_MODE_NAME'))
-{
-  define('OTRA_INTERACTIVE_MODE_NAME', 'interactive');
-  define('OTRA_INTERACTIVE_MODE_NAME_SECOND', ' mode.');
-  define('OTRA_ONLY_USEFUL_AND_REQUIRED', 'Only useful (and required) for the ');
-}
+const
+  OTRA_INTERACTIVE_MODE_NAME = 'interactive',
+  OTRA_INTERACTIVE_MODE_NAME_SECOND = ' mode.',
+  OTRA_ONLY_USEFUL_AND_REQUIRED = 'Only useful (and required) for the ';
 
 return [
   'Creates a model. ' . CLI_INFO_HIGHLIGHT . 'how' . CLI_INFO . ' parameter is ignored in interactive mode',

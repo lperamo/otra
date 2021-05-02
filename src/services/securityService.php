@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\services;
 /**
  * @author Lionel Péramo
  * @package otra\services
  */
 
 use config\AllConfig;
+use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use otra\MasterController;
 
 if (!function_exists('getRandomNonceForCSP'))
@@ -63,8 +65,8 @@ if (!function_exists('getRandomNonceForCSP'))
   /**
    * @param string $directive
    *
-   * @return string
    * @throws Exception
+   * @return string
    */
   function getRandomNonceForCSP(string $directive = OTRA_KEY_SCRIPT_SRC_DIRECTIVE) : string
   {
@@ -86,7 +88,7 @@ if (!function_exists('getRandomNonceForCSP'))
    *
    * @return array{0: string, 1: array<string, string>}
    */
-  #[\JetBrains\PhpStorm\ArrayShape([
+  #[ArrayShape([
     'string',
     'array'
   ])]

@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+namespace otra\tools;
+use PDOStatement;
 
 /**
  * @author Lionel Péramo

@@ -1,11 +1,12 @@
 <?php
-declare(strict_types=1);
-namespace otra\tools\files;
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\files
  */
+declare(strict_types=1);
+
+namespace otra\tools\files;
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH

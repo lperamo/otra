@@ -1,10 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+namespace otra\console\architecture\createModel\allModelsFromYmlSchema;
+
+use function otra\console\architecture\createModel\{getModelLocation,getModuleName};
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
+use const otra\console\{CLI_WARNING,END_COLOR};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */

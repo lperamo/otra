@@ -1,21 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture;
 
 use otra\OtraException;
+use function otra\console\promptUser;
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
-if (!defined('SPACE_INDENT_2'))
-  define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
-
-if (!defined('SPACE_INDENT_3'))
-  define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
-
-if (!defined('BUNDLES_PATH'))
-  define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+const
+  SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT,
+  SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT,
+  BUNDLES_PATH = BASE_PATH . 'bundles/';
 
 /**
  * Creates the folder of the specified controller.
@@ -222,4 +222,3 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   } else
     createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
 }
-

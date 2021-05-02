@@ -16,16 +16,6 @@ class ServeTest extends TestCase
     TASK_SERVE = 'serve',
     OTRA_TASK_HELP = 'help';
 
-  protected function setUp(): void
-  {
-    parent::setUp();
-  }
-
-  protected function tearDown(): void
-  {
-    parent::tearDown();
-  }
-
    /**
     * @param string $parameter
     * @param string $description

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\tools;
 /**
  * @author Lionel Péramo
  * @package otra\tools
@@ -17,7 +17,7 @@ declare(strict_types=1);
  *
  * @return bool Success or not
  */
-function gzCompressFile(string $source, string $destination = null, int $level = 9, $keep = false) : bool
+function gzCompressFile(string $source, string $destination = null, int $level = 9, bool $keep = false) : bool
 {
   $destination = $destination === null ? $source . '.gz' : $destination;
 

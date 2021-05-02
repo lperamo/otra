@@ -5,6 +5,7 @@ namespace src\console\deployment;
 
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use const otra\tests\CACHE_PHP_INIT_PATH;
 
 /**
  * @runTestsInSeparateProcesses

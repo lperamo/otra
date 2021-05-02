@@ -10,20 +10,22 @@ declare(strict_types=1);
 
 namespace otra\services;
 
+use otra\OtraException;
+
 /**
  * @package otra\services
  */
 class ProfilerService
 {
   /**
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public static function securityCheck() : void
   {
     if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
   }
 

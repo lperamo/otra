@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace otra\controllers\profiler;
 
-use otra\{Controller, services\ProfilerService};
+use otra\
+{Controller, OtraException, services\ProfilerService};
 
 /**
  * @author Lionel Péramo
@@ -14,7 +15,7 @@ class IndexAction extends Controller
    * @param array $otraParams
    * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

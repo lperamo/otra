@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace otra\console;
 
 /**
  * @author Lionel Péramo
@@ -10,6 +11,9 @@ declare(strict_types=1);
  * move the cursor at the very left,
  * clears all characters from the cursor position to the end of the line (including the character at the cursor position)
  */
+
+use JetBrains\PhpStorm\ArrayShape;
+
 if (!defined('ERASE_SEQUENCE'))
   define('ERASE_SEQUENCE', "\033[1A\r\033[K");
 
@@ -69,7 +73,7 @@ if (!function_exists('promptUser'))
    *
    * @return array{0:?string,1:int} [$closest, $shortest]
    */
-  #[\JetBrains\PhpStorm\ArrayShape([
+  #[ArrayShape([
     'null|string',
     'int'
   ])]

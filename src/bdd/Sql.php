@@ -9,6 +9,7 @@ namespace otra\bdd;
 use Exception;
 use otra\{ OtraException, Logger };
 use config\AllConfig;
+use PDO;
 
 /**
  * @package otra\bdd
@@ -23,7 +24,7 @@ class Sql
     $dbmsCollection = ['Pdomysql'],
     $_activeConn = [];
 
-  public static ?\PDO $currentConn = null;
+  public static ?PDO $currentConn = null;
   public static string
     $currentDBMS = '',
     $currentConnectionName;
@@ -332,7 +333,7 @@ class Sql
    *
    * @return bool Returns true on success or false on failure
    */
-  private static function close($instanceToClose = true) : bool
+  private static function close(bool $instanceToClose = true) : bool
   {
     if (isset(self::$instance))
       return call_user_func_array(self::$currentDBMS . '::close', [&$instanceToClose]);

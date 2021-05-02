@@ -1,13 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
 
-use config\Routes;
+namespace otra\console\helpAndTools\routes;
+
+use otra\config\Routes;
 use otra\OtraException;
+use function otra\console\{guessWords,promptUser};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
 {

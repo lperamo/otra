@@ -1,35 +1,41 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\clearCache;
 
 use config\AllConfig;
+use otra\config\Routes;
 use otra\OtraException;
+use function otra\console\{guessWords, promptUser};
+use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 // arguments
-const CLEAR_CACHE_ARG_MASK = 2;
-const CLEAR_CACHE_ARG_ROUTE = 3;
+const CLEAR_CACHE_ARG_MASK = 2,
+  CLEAR_CACHE_ARG_ROUTE = 3,
 
 // masks
-const CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE = 1;
-const CLEAR_CACHE_MASK_PHP_BOOTSTRAPS = 2;
-const CLEAR_CACHE_MASK_CSS = 4;
-const CLEAR_CACHE_MASK_JS = 8;
-const CLEAR_CACHE_MASK_TEMPLATES = 16;
-const CLEAR_CACHE_MASK_ROUTE_MANAGEMENT = 32;
-const CLEAR_CACHE_MASK_CLASS_MAPPING = 64;
-const CLEAR_CACHE_MASK_METADATA = 128;
-const CLEAR_CACHE_MASK_SECURITY = 256;
+  CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE = 1,
+  CLEAR_CACHE_MASK_PHP_BOOTSTRAPS = 2,
+  CLEAR_CACHE_MASK_CSS = 4,
+  CLEAR_CACHE_MASK_JS = 8,
+  CLEAR_CACHE_MASK_TEMPLATES = 16,
+  CLEAR_CACHE_MASK_ROUTE_MANAGEMENT = 32,
+  CLEAR_CACHE_MASK_CLASS_MAPPING = 64,
+  CLEAR_CACHE_MASK_METADATA = 128,
+  CLEAR_CACHE_MASK_SECURITY = 256,
 
 // formatting
-const OTRA_SUCCESS = CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL;
+  OTRA_SUCCESS = CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL,
 
 // paths
-const PHP_CACHE_PATH = CACHE_PATH . 'php/';
-const RELATIVE_PHP_CACHE_PATH = 'cache/php/';
+  PHP_CACHE_PATH = CACHE_PATH . 'php/',
+  RELATIVE_PHP_CACHE_PATH = 'cache/php/',
+  RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
 
 $binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
@@ -40,7 +46,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
   || ($binaryMask & CLEAR_CACHE_MASK_JS) >> 3
   || ($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
 {
-  $routes = \config\Routes::$allRoutes;
+  $routes = Routes::$allRoutes;
 
   /**
    * @param string $cachePath
@@ -209,7 +215,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
   $routeManagementFile = 'RouteManagement.php';
   unlinkFile(
     CACHE_PHP_INIT_PATH . $routeManagementFile,
-    RELATIVE_PHP_CACHE_PATH . 'init/' . $routeManagementFile
+    RELATIVE_PHP_INIT_CACHE_PATH . $routeManagementFile
   );
 
   echo 'Route management file cleared', OTRA_SUCCESS;
@@ -221,13 +227,13 @@ if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
   $classMapFile = 'ClassMap.php';
   unlinkFile(
     CACHE_PHP_INIT_PATH . $classMapFile,
-    RELATIVE_PHP_CACHE_PATH . 'init/' . $classMapFile
+    RELATIVE_PHP_INIT_CACHE_PATH . $classMapFile
   );
 
   $prodClassMapFile = 'ProdClassMap.php';
   unlinkFile(
     CACHE_PHP_INIT_PATH . $prodClassMapFile,
-    RELATIVE_PHP_CACHE_PATH . 'init/' . $prodClassMapFile
+    RELATIVE_PHP_INIT_CACHE_PATH . $prodClassMapFile
   );
 
   echo 'Class mapping files cleared', OTRA_SUCCESS;
@@ -239,13 +245,13 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
     CACHE_PHP_INIT_PATH . $taskClassMapFile,
-    RELATIVE_PHP_CACHE_PATH . 'init/' . $taskClassMapFile
+    RELATIVE_PHP_INIT_CACHE_PATH . $taskClassMapFile
   );
 
   $tasksHelpFile = 'tasksHelp.php';
   unlinkFile(
     CACHE_PHP_INIT_PATH . $tasksHelpFile,
-    RELATIVE_PHP_CACHE_PATH . 'init/' . $tasksHelpFile
+    RELATIVE_PHP_INIT_CACHE_PATH . $tasksHelpFile
   );
 
   echo 'Metadata cleared', OTRA_SUCCESS;

@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use otra\MasterController;
+
 $responseCode = strval(http_response_code());
 ?>
 <button type="button" class="otra--help-cursor dbg-bar--block" title="HTTP response code"><?= $responseCode ?></button>
@@ -8,6 +11,6 @@ $responseCode = strval(http_response_code());
     HTTP response code :
     <b><?= $responseCode ?></b>
     :
-    <b><?= array_search($responseCode, \otra\MasterController::HTTP_CODES) ?></b>
+    <b><?= array_search($responseCode, MasterController::HTTP_CODES) ?></b>
   </p>
 </div>

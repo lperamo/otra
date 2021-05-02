@@ -1,17 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
  * This file is used in 'genWatcher' and 'buildDev' tasks to initialize them.
  *
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-namespace otra\console;
+declare(strict_types=1);
+
+namespace otra\console\deployment;
 
 use config\AllConfig;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
@@ -31,7 +35,7 @@ const FILE_TASK_ARG_MASK = 3,
   ],
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
 
-define('GOOGLE_CLOSURE_COMPILER_VERBOSITY', ['QUIET', 'DEFAULT', 'VERBOSE']);
+const GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 define(
   'PATHS_TO_AVOID',
   array_merge([BASE_PATH . 'bundles/config'], AllConfig::$pathsToAvoidForBuild ?? [])
@@ -98,7 +102,7 @@ function generateStylesheetsFiles(
 
   // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
   // 5 length of scss/ or sass/
-  $cssFolder = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5);
+  $cssFolder = $resourcesMainFolder  . 'css/' . mb_substr($resourcesFolderEndPath, 5);
 
   // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
   // as well as its subfolders
@@ -138,7 +142,7 @@ function generateStylesheetsFiles(
  *  $resourcesFolderEndPath : last folders in the path after the $resourcesMainFolder
  *  $extension              : ...the file extension
  */
-#[\JetBrains\PhpStorm\ArrayShape([
+#[ArrayShape([
   'string',
   'string',
   'string',

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-
 namespace otra;
-
 use config\AllConfig;
+use otra\bdd\Sql;
+use ReflectionObject;
 
 /**
  * A classic MVC model class
@@ -36,10 +36,10 @@ abstract class Model
   public function save() : string
   {
     $dbName = Session::get('db');
-    /* @var \otra\bdd\Sql $dbConn */
+    /* @var Sql $dbConn */
     $dbConn = Session::get('dbConn');
 
-    $reflectedObject = new \ReflectionObject($this);
+    $reflectedObject = new ReflectionObject($this);
     $reflectedProperties = $reflectedObject->getProperties();
     $computedProperties = [];
     $isUpdate = false;

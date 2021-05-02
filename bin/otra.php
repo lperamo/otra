@@ -1,9 +1,13 @@
-#!/cygdrive/c/LPAMP/php-7.0.3/php -ddisplay_errors=E_ALL
+#!usr/bin/php -ddisplay_errors=E_ALL
 <?php
 declare(strict_types=1);
-
-use otra\console\TasksManager;
-use otra\OtraException;
+namespace otra\bin;
+use otra\{console\TasksManager,OtraException};
+use function otra\console\guessWords;
+use function otra\console\promptUser;
+use const otra\config\{APP_ENV,CACHE_PATH,CONSOLE_PATH,CORE_PATH,PROD};
+use const otra\cache\php\init\CLASSMAP;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
 
 define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
@@ -84,7 +88,9 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 require CORE_PATH . 'OtraException.php';
 set_error_handler([OtraException::class, 'errorHandler']);
 set_exception_handler([OtraException::class, 'exceptionHandler']);
-spl_autoload_register(function(string $className) : void { require CLASSMAP[$className]; });
+spl_autoload_register(function(string $className) : void {
+  require CLASSMAP[$className];
+});
 
 // If we didn't specify any command, list the available commands
 if ($argc < 2)

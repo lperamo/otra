@@ -1,10 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+use otra\OtraException;
+use function otra\console\{architecture\createFolder, promptUser};
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
@@ -30,7 +33,7 @@ function createControllersFolder(string $controllersFolder) : void
  * @param string $controllerName
  * @param bool   $interactive
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function createController(string $controllersFolder, string $controllerName, bool $interactive) : void
 {
@@ -47,7 +50,7 @@ function createController(string $controllersFolder, string $controllerName, boo
  * @param string $controllersFolder
  * @param string $controllerName
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function controllerHandling(bool $interactive, string $controllersFolder, string &$controllerName) : void
 {

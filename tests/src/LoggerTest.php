@@ -5,6 +5,7 @@ namespace src;
 
 use otra\Logger;
 use phpunit\framework\TestCase;
+use function otra\tools\delTree;
 
 /**
  * @runTestsInSeparateProcesses
@@ -30,18 +31,8 @@ class LoggerTest extends TestCase
   {
     if (!OTRA_PROJECT)
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-
       if (file_exists(self::LOG_PATH))
-      {
-        /** @var callable $delTree */
-        $delTree(self::LOG_PATH);
-      }
-
-//      if (file_exists(self::LOG_PATH))
-//      {
-//        rmdir(self::LOG_PATH);
-//      }
+        delTree(self::LOG_PATH);
     }
   }
 

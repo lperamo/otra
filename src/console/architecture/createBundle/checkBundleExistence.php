@@ -1,12 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+namespace otra\console\architecture\createBundle;
 
-namespace otra\console;
+use function otra\console\architecture\doWeCreateIt;
+use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
 
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
 $bundlePath = BASE_PATH . 'bundles/' . $bundleName . '/';

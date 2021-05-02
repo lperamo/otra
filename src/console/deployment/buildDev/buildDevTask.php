@@ -1,13 +1,19 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\deployment\buildDev;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-namespace otra\console;
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
+use function otra\console\deployment\
+{generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath};
+use const otra\console\{CLI_BASE,CLI_SUCCESS,CLI_WARNING,END_COLOR};
+use const otra\console\deployment\{PATHS_TO_HAVE_RESOURCES,RESOURCES_TO_WATCH};
 
 require CORE_PATH . 'console/deployment/taskFileInit.php';
 const BUILD_DEV_ARG_VERBOSE = 2,
@@ -39,12 +45,12 @@ if (WATCH_FOR_ROUTES)
 
 require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
-$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
-/** @var \SplFileInfo $entry */
+/** @var SplFileInfo $entry */
 foreach($iterator as $entry)
 {
   $extension = $entry->getExtension();

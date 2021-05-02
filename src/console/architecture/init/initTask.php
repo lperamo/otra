@@ -1,10 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\init;
+use function otra\tools\copyFileAndFolders;
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+
 echo 'Initializing the project...', PHP_EOL;
 
 // ********** CONFIGURATION FILES **********

@@ -1,13 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\database
  */
+declare(strict_types=1);
 
+namespace otra\console\database\sqlImportFixtures;
 
 use otra\console\TasksManager;
+use const otra\console\{CLI_INFO,CLI_WARNING};
 
 return [
   'Import the fixtures from database into ' . CLI_WARNING . 'config/data/yml/fixtures' . CLI_INFO . '.',

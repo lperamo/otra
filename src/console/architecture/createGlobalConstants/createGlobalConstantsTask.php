@@ -1,25 +1,27 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createGlobalConstants;
 
 use config\AllConfig;
+use const otra\console\{CLI_ERROR,CLI_SUCCESS,END_COLOR};
 
-define('_DIR_', str_replace('\\', '/', __DIR__));
-$vendorPosition = mb_strrpos(_DIR_, 'vendor');
+define('CURRENT_FOLDER', str_replace('\\', '/', __DIR__));
+$vendorPosition = mb_strrpos(CURRENT_FOLDER, 'vendor');
 $otraProject = $vendorPosition !== false;
 $basePath = $otraProject
-  ? substr(_DIR_, 0, $vendorPosition)
-  : substr(_DIR_, 0, mb_strrpos(_DIR_, 'src'));
+  ? substr(CURRENT_FOLDER, 0, $vendorPosition)
+  : substr(CURRENT_FOLDER, 0, mb_strrpos(CURRENT_FOLDER, 'src'));
 $otraProjectSuffix = $otraProject ? 'vendor/otra/otra/src/' : 'src/';
 $corePath = $basePath . $otraProjectSuffix;
 $consolePath = $corePath . 'console/';
 $coreResourcesPath = '/' . $otraProjectSuffix . 'resources/';
 $cachePath = $basePath . 'cache/';
-$content = '<?php declare(strict_types=1);' .
+$content = '<?php declare(strict_types=1);namespace otra\config;' .
   'const DEV=\'dev' .
   '\',PROD=\'prod' .
   '\',BASE_PATH=\'' . $basePath .

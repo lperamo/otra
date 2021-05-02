@@ -1,20 +1,26 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
 
-use config\{AllConfig,Routes};
+namespace otra\console\deployment\genBootstrap;
+
+use config\
+{AllConfig, Routes};
+use Exception;
+use otra\OtraException;
 use otra\Router;
+use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 
-const ONE_BOOTSTRAP_ARG_VERBOSE = 1;
-const ONE_BOOTSTRAP_ARG_LINT = 2;
-const ONE_BOOTSTRAP_ARG_ROUTE = 3;
+const
+  ONE_BOOTSTRAP_ARG_VERBOSE = 1,
+  ONE_BOOTSTRAP_ARG_LINT = 2,
+  ONE_BOOTSTRAP_ARG_ROUTE = 3,
 
-const OTRA_KEY_BOOTSTRAP = 'bootstrap';
-const OTRA_KEY_DRIVER = 'driver';
+  OTRA_KEY_BOOTSTRAP = 'bootstrap',
+  OTRA_KEY_DRIVER = 'driver';
 define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
 define('VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
 define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
@@ -25,7 +31,8 @@ require __DIR__ . (OTRA_PROJECT
   ) . '/config/constants.php';
 require CONSOLE_PATH . 'colors.php';
 
-echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
+echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL,
+  END_COLOR;
 $_SERVER[APP_ENV] = PROD;
 
 require CLASS_MAP_PATH;
@@ -130,7 +137,7 @@ define(
 
 set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) : void
 {
-  throw new \otra\OtraException($message, $errno, $file, $line, $context);
+  throw new OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];

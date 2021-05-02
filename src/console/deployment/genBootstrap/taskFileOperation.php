@@ -1,13 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genBootstrap;
 
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
+use function otra\console\showContextByError;
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 require CONSOLE_PATH . 'tools.php';
 
@@ -1124,12 +1127,12 @@ function processStaticCalls(
  * @param string  $route
  * @param string  $content       Content to fix
  * @param int     $verbose
- * @param string  $fileToInclude Files to merge
+ * @param string  $fileToInclude File to merge
  *
  * @throws OtraException
  * @return string
  */
-function fixFiles(string $bundle, string $route, string $content, int $verbose, $fileToInclude = '') : string
+function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '') : string
 {
   if (!defined('VERBOSE'))
     define('VERBOSE', $verbose);

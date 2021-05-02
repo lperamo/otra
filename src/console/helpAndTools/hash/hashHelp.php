@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\helpAndTools\hash;
 /**
  * @author Lionel Péramo
  * @package otra\console\helpAndTools

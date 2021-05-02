@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra\tools\workers;
 
 use RuntimeException;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * @package otra\tools

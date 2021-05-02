@@ -1,10 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
+
+namespace otra\console\helpAndTools\serve;
+use function otra\tools\cliCommand;
+use const otra\console\{CLI_INFO, END_COLOR};
 
 require CORE_PATH . 'tools/cli.php';
 

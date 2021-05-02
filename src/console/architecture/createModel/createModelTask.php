@@ -1,11 +1,15 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel;
+
 use otra\OtraException;
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, END_COLOR};
 
 // Testing interactive argument
 const ARG_INTERACTIVE = 4;

@@ -1,23 +1,23 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
-namespace otra\console;
+declare(strict_types=1);
+
+namespace otra\console\deployment\genBootstrap;
 
 use otra\OtraException;
 use config\{Routes, AllConfig};
+use function otra\console\{guessWords,promptUser};
+use function otra\tools\cliCommand;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\bin\CACHE_PHP_INIT_PATH;
 
 // If we come from the deploy task, those two constants are already defined
-if (!defined('GEN_BOOTSTRAP_ARG_CLASS_MAPPING'))
-{
-  define('GEN_BOOTSTRAP_ARG_CLASS_MAPPING', 2);
-  define('GEN_BOOTSTRAP_ARG_VERBOSE', 3);
-}
-
 const
+  GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
+  GEN_BOOTSTRAP_ARG_VERBOSE = 3,
   GEN_BOOTSTRAP_ARG_LINT = 4,
   GEN_BOOTSTRAP_ARG_ROUTE = 5,
   OTRA_KEY_DRIVER = 'driver';

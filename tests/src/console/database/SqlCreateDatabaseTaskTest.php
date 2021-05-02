@@ -7,6 +7,7 @@ use config\AllConfig;
 use otra\console\Database;
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use const \otra\tests\BUNDLES_PATH;
 
 /**
  * @runTestsInSeparateProcesses

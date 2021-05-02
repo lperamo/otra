@@ -1,10 +1,12 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+namespace otra\console\architecture\createModel\oneModelFromNothing;
+use function otra\console\architecture\createModel\retrieveFunctionsAndProperties;
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */

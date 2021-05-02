@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\templating;
 /**
  * @author Lionel Péramo
  * @package otra\templating
@@ -57,7 +57,7 @@ if (!function_exists('showBlocksVisually'))
    *
    * @param bool $page
    */
-  function showBlocksVisually($page = true) : void
+  function showBlocksVisually(bool $page = true) : void
   {
     if ($page)
     {

@@ -1,15 +1,17 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel;
 
 use otra\OtraException;
+use function otra\console\promptUser;
+use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,END_COLOR};
 
-if (!defined('OTRA_SUCCESS'))
-  define('OTRA_SUCCESS', CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);
+const OTRA_SUCCESS = CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL;
 
 $bundlesPath = BASE_PATH . 'bundles/';
 

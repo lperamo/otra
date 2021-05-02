@@ -6,6 +6,7 @@ namespace src;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use ReflectionException;
+use const \otra\tests\BUNDLES_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -30,7 +31,6 @@ class OtraExceptionTest extends TestCase
       file_put_contents(
         self::BUNDLES_CONFIG_ROUTES,
         '<?php return [];'
-        //return ['HelloWorld'=>['chunks'=>['/helloworld','HelloWorld','frontend','index','HomeAction'],'resources'=>['template'=> true ]]];
       );
     }
   }

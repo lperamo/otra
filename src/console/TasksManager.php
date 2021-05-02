@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace otra\console;
 
 use otra\OtraException;
+use const otra\bin\CACHE_PHP_INIT_PATH;
 
 /**
  * @author Lionel Péramo
@@ -78,7 +79,7 @@ abstract class TasksManager
 
       // If the task was genClassMap...then we have nothing left to do !
       if ($task === 'genClassMap')
-        throw new \otra\OtraException('', 0, '', NULL, [], true);
+        throw new OtraException('', 0, '', NULL, [], true);
     }
 
     require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';

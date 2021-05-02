@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+namespace otra\console\helpAndTools\requirements;
+use function otra\tools\cliCommand;
+use const otra\console\
+{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
 
 /**
  * @author Lionel Péramo
@@ -7,23 +11,23 @@ declare(strict_types=1);
  */
 
 echo ADD_BOLD, CLI_INFO_HIGHLIGHT, '  Requirements', PHP_EOL,
-    '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
+  '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;
 
-  require CORE_PATH . 'tools/cli.php';
-const REQUIREMENTS_PADDING = 30;
+require CORE_PATH . 'tools/cli.php';
+const REQUIREMENTS_PADDING = 30,
 
   // Requirement array
-const REQ_PKG_NAME = 0;
-const REQ_NAME = 1;
-const REQ_DESC = 2;
-const REQ_CHECK_TYPE = 3;
+  REQ_PKG_NAME = 0,
+  REQ_NAME = 1,
+  REQ_DESC = 2,
+  REQ_CHECK_TYPE = 3,
 
   // Checks types
-const REQ_PACKAGE = 0;
-const REQ_PHP_VERSION = 1;
-const REQ_PHP_LIB = 2;
+  REQ_PACKAGE = 0,
+  REQ_PHP_VERSION = 1,
+  REQ_PHP_LIB = 2,
 
-const OTRA_REQUIREMENTS = [
+  OTRA_REQUIREMENTS = [
   [
     'java',
     'JAVA',
@@ -80,7 +84,7 @@ const OTRA_REQUIREMENTS = [
   ]
 ];
 
-  echo CLI_INFO;
+echo CLI_INFO;
 
   // For Windows, it returns WINNT
 const OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';
@@ -92,11 +96,23 @@ const OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';
     /** @var string $error */
     // different check whether it's a PHP src or a program
     if ($requirement[REQ_CHECK_TYPE] === REQ_PKG_NAME)
-      [$error,] = cliCommand(OTRA_SEARCHING_COMMAND . $requirement[REQ_PKG_NAME], null, false);
+      [$error,] = cliCommand(
+        OTRA_SEARCHING_COMMAND . $requirement[REQ_PKG_NAME],
+        null,
+        false
+      );
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
-      [$error,] = cliCommand('php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"', null, false);
+      [$error,] = cliCommand(
+        'php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"',
+        null,
+        false
+      );
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_LIB)
-      [$error,] = cliCommand('php -m | grep "' . $requirement[REQ_PKG_NAME] . '"', null, false);
+      [$error,] = cliCommand(
+        'php -m | grep "' . $requirement[REQ_PKG_NAME] . '"',
+        null,
+        false
+      );
 
     echo $error !== 1
       ? CLI_SUCCESS . '  ✔  '

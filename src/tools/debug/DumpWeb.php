@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace otra;
+namespace otra\tools\debug;
 use config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 

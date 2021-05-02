@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
+use function otra\tools\delTree;
 
 /**
  * @runTestsInSeparateProcesses
@@ -42,11 +43,8 @@ class DumpTest extends TestCase
 
     if (OTRA_PROJECT === false)
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-
-      /** @var callable $delTree */
       if (file_exists(self::LOG_PATH))
-        $delTree(self::LOG_PATH);
+        delTree(self::LOG_PATH);
     }
   }
 

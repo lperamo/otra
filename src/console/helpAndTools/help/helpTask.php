@@ -1,13 +1,17 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
+
+namespace otra\console\helpAndTools\help;
 
 use otra\console\TasksManager;
 use otra\OtraException;
+use function otra\console\{guessWords,promptUser};
+use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 
 const HELP_TASK = 2;
 $consoleTask = $argv[HELP_TASK];

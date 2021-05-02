@@ -1,13 +1,20 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
+namespace otra\console\helpAndTools\generateTaskMetadata;
 
-// If we do not come from the 'otra' command...
+use config\AllConfig;
+use FilesystemIterator;
 use otra\console\TasksManager;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use function otra\console\convertArrayFromVarExportToShortVersion;
+use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\console\{CLI_BASE,CLI_SUCCESS,END_COLOR};
 
 if (!defined('BASE_PATH'))
 {
@@ -54,7 +61,7 @@ if (!defined('PHP_CACHE_FOLDER'))
 
 // temporarily forces to look into the development configuration
 $_SERVER[APP_ENV] = DEV;
-$foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...\config\AllConfig::$taskFolders ?? []]);
+$foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...AllConfig::$taskFolders ?? []]);
 $_SERVER[APP_ENV] = PROD;
 
 $helpFileContent = [];

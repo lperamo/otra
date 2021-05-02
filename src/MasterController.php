@@ -8,6 +8,7 @@ namespace otra;
 
 use cache\php\BlocksSystem;
 use config\AllConfig;
+use Exception;
 use JetBrains\PhpStorm\Pure;
 
 /**
@@ -210,7 +211,7 @@ abstract class MasterController
    *
    * @param string $cachedFile The cache file name version of the file
    *
-   * @throws \Exception
+   * @throws Exception
    * @return bool|string $content The cached (and cleaned) content if exists, false otherwise
    */
   protected static function getCachedFileContent(string $cachedFile) : bool|string
@@ -338,7 +339,7 @@ abstract class MasterController
    * @param string $route
    * @param array  $viewResourcePath Paths to CSS and JS files
    *
-   * @throws \Exception
+   * @throws Exception
    */
   protected static function handleCache(
     string $templateFile,

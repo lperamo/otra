@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace otra;
 
-use config\{AllConfig, Routes};
+use otra\config\{AllConfig, Routes};
 use Exception;
 
 define('OTRA_FILENAME_TRACE', 'trace');
@@ -15,8 +15,9 @@ define('OTRA_FILENAME_TRACE', 'trace');
  */
 trait DevControllerTrait
 {
-  private static int $STYLESHEET_FILE = 0;
-  private static int $STYLESHEET_PRINT = 1;
+  private static int
+    $STYLESHEET_FILE = 0,
+    $STYLESHEET_PRINT = 1;
   private static bool $debugBarHasBeenAdded = false;
 
   /**

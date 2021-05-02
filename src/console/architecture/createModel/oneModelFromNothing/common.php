@@ -1,10 +1,15 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel\oneModelFromNothing;
+
+use function otra\console\architecture\createModel\{modelCreationSuccess,writeModelFile};
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,FUNCTION_START};
+use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 
 /** @var string $modelName */
 require CREATE_MODEL_FOLDER . 'common.php';

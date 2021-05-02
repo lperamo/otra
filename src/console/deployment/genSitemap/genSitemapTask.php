@@ -1,10 +1,12 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\deployment\genSitemap;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
+
+use config\AllConfig;
 
 $routes = require BASE_PATH . 'bundles/config/Routes.php';
 $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
@@ -16,7 +18,7 @@ foreach ($routes as $route)
 {
   $siteMapContent .= /** @lang text */
     SPACE_INDENT . '<url>' . PHP_EOL .
-    SPACE_INDENT_2 . '<loc>https://' . \config\AllConfig::$deployment['domainName'] . $route['chunks']['0'] .
+    SPACE_INDENT_2 . '<loc>https://' . AllConfig::$deployment['domainName'] . $route['chunks']['0'] .
     '</loc>' . PHP_EOL .
     SPACE_INDENT_2 . '<lastmod>' . date('c') . '</lastmod>' . PHP_EOL .
     SPACE_INDENT . '</url>';

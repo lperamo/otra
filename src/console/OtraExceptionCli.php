@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace otra\console;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 
@@ -10,7 +11,7 @@ use otra\OtraException;
  *
  * @author Lionel Péramo
  */
-class OtraExceptionCli extends \Exception
+class OtraExceptionCli extends Exception
 {
   private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,

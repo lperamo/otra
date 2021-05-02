@@ -1,12 +1,20 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Class mapping generation task
  *
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genClassMap;
+
+use JetBrains\PhpStorm\ArrayShape;
+use otra\OtraException;
+use function otra\console\convertArrayFromVarExportToShortVersion;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\bin\CACHE_PHP_INIT_PATH;
+
 $folders = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',
@@ -39,10 +47,10 @@ if (!empty($folders) && !function_exists('iterateCM'))
    * @param int                   $processedDir
    * @param array<string, string> $classesThatMayHaveToBeAdded
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    * @return array{0: string[], 1: int, 2: array<string, string>}
    */
-  #[\JetBrains\PhpStorm\ArrayShape([
+  #[ArrayShape([
     'string[]',
     'int',
     'array'
@@ -117,7 +125,7 @@ if (!empty($folders) && !function_exists('iterateCM'))
     closedir($folderHandler);
 
     echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', NULL, [], true);
   }
 
   /**
@@ -133,12 +141,14 @@ if (!empty($folders) && !function_exists('iterateCM'))
   {
     // if the class map is empty, then we just return an empty array.
     if ($classMap === 'array (' . PHP_EOL . ')')
-      return '<?php declare(strict_types=1);define(\'CLASSMAP\', []);';
+      return '<?php declare(strict_types=1);namespace otra\cache\php\init;' .
+        'use const \otra\config\{BASE_PATH,CORE_PATH};const CLASSMAP=[];';
 
     $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
     $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
 
-    return '<?php declare(strict_types=1);define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
+    return '<?php declare(strict_types=1);namespace otra\cache\php\init;use const \otra\config\{BASE_PATH,CORE_PATH};'.
+      'const CLASSMAP=' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ';';
   }
 }
 
@@ -243,10 +253,6 @@ if (!empty($classesThatMayHaveToBeAdded))
   echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
   'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
-  /**
-   * @var string $namespace
-   * @var string $classFile
-   */
   foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)
   {
     echo str_pad('Class ' . CLI_WARNING . $namespace . END_COLOR, FIRST_CLASS_PADDING,

@@ -5,8 +5,7 @@
  * @author Lionel Péramo */
 declare(strict_types=1);
 namespace otra;
-
-use config\Routes;
+use otra\config\Routes;
 
 /**
  * @package otra

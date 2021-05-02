@@ -1,14 +1,20 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\deployment\genAssets;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
 
-use config\Routes;
+use FilesystemIterator;
+use otra\config\Routes;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use function otra\tools\gzCompressFile;
+use const otra\console\{CLI_ERROR,CLI_GRAY,CLI_INFO,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,END_COLOR};
 
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
@@ -62,11 +68,11 @@ define(
   (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
 ); // 31 = default to all assets
 
-const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE;
-const GEN_ASSETS_CSS = (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1;
-const GEN_ASSETS_JS = (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2;
-const GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3;
-const GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
+const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE,
+  GEN_ASSETS_CSS = (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1,
+  GEN_ASSETS_JS = (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2,
+  GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3,
+  GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
 
 // If we only need the manifest or the SVGs, skips the assets generation loop
 if (

@@ -1,12 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
 
-namespace otra\console;
+namespace otra\console\architecture\createController;
+
+use function otra\console\architecture\doWeCreateIt;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 require CONSOLE_PATH . 'architecture/createController/createController.php';
 

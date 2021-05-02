@@ -96,7 +96,7 @@ try
   if (!is_writable(ISSUE_LOG_PATH))
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color:blue">' .
       ISSUE_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
-  elseif (class_exists(\cache\php\Logger::class))
+  elseif (class_exists(Logger::class))
     Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception');
   else
     error_log(

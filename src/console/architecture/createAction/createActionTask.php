@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+namespace otra\console\architecture\createAction;
+use function otra\console\architecture\actionHandling;
 
 /**
  * @author Lionel Péramo

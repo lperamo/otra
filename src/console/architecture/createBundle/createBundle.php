@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\architecture\createBundle;
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
 
 use otra\OtraException;
+use function otra\console\promptUser;
+use const otra\console\{CLI_BASE,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,CLI_WARNING,END_COLOR};
 
 const BUNDLE_FOLDERS = ['config', 'models', 'resources', 'views'];
 

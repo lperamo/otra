@@ -1,15 +1,22 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
+
+use otra\OtraException;
+use function otra\console\architecture\createModel\modelCreation;
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
+use const otra\console\{CLI_ERROR, END_COLOR};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */
 /** @var int    $modelLocation */
 /** @var string $modelName */
+
 require CREATE_MODEL_FOLDER . 'oneModelFromYmlSchema/common.php';
 $functions = $propertiesCode = '';
 echo MODEL_CREATED_FROM_YAML_SCHEMA;
@@ -23,7 +30,7 @@ else
   defineModelPath($modelLocation, $bundlePath, $bundleName);
 }
 
-list($modelFullName, $modelExists, $tableExists) = preparingBidule($modelName);
+[$modelFullName, $modelExists, $tableExists] = preparingBidule($modelName);
 
 // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
 if (true === $modelExists || false === $tableExists)
@@ -32,7 +39,7 @@ if (true === $modelExists || false === $tableExists)
   preparingErrorMessage($modelExists, $tableExists, $bundleName, $errorLabel);
 
   echo CLI_ERROR, $errorLabel, END_COLOR, PHP_EOL;
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);

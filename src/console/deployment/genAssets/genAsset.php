@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\deployment\genAssets;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
 
+use otra\Logger;
 use otra\Router;
 
 define('ARG_CACHE_PATH', $argv[1]);
@@ -31,7 +32,7 @@ spl_autoload_register(function (string $className) : void
   if (!isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \otra\Logger::logTo(
+    Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),

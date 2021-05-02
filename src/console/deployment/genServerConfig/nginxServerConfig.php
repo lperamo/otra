@@ -1,19 +1,22 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genServerConfig;
 
 use config\AllConfig;
 use JetBrains\PhpStorm\Pure;
+use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 
 /** @var string $fileName */
 
-const OTRA_LABEL_RETURN_403 = 'return 403;';
-const OTRA_LABEL_TYPES = 'types';
-const OTRA_LABEL_ROOT_PATH = 'root $rootPath;';
+const
+  OTRA_LABEL_RETURN_403 = 'return 403;',
+  OTRA_LABEL_TYPES = 'types',
+  OTRA_LABEL_ROOT_PATH = 'root $rootPath;';
 
 /**
  * @return string

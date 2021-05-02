@@ -1,21 +1,26 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModule;
+
+use otra\OtraException;
+use function otra\console\{architecture\createFolder,promptUser};
+use const otra\console\{CLI_BASE,CLI_INFO_HIGHLIGHT,CLI_SUCCESS,END_COLOR};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
-if (function_exists('createModule') === false)
+if (!function_exists('createModule'))
 {
   /**
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
    * @param bool   $interactive
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   function createModule(string $bundleBasePath, string $moduleName, bool $interactive): void
   {
@@ -35,7 +40,7 @@ if (function_exists('createModule') === false)
    * @param string $bundleName
    * @param string $moduleName
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   function moduleHandling(bool $interactive, string $bundleName, string $moduleName) : void
   {

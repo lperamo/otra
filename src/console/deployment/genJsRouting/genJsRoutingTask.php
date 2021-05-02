@@ -1,16 +1,20 @@
 <?php
-declare(strict_types=1);
-
 /**
  * JavaScript route mapping task
  *
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genJsRouting;
+
+use otra\config\Routes;
+use const otra\console\{CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 
 echo 'Generating JavaScript routing...', PHP_EOL;
 
-$routes = \config\Routes::$allRoutes;
+$routes = Routes::$allRoutes;
 
 unset(
   $routes['otra_404'],
@@ -20,14 +24,11 @@ unset(
   $routes['otra_refreshSQLLogs']
 );
 
-const MAIN_RESOURCES_PATH = BASE_PATH . 'bundles/resources/';
-const MAIN_JS_ROUTING = MAIN_RESOURCES_PATH . 'jsRouting.js';
-
-if (!defined('ERASE_SEQUENCE'))
-  define('ERASE_SEQUENCE', "\033[1A\r\033[K");
-
-if (!defined('OTRA_SUCCESS'))
-  define('OTRA_SUCCESS', CLI_SUCCESS . '  ✔  ' . END_COLOR);
+const
+  MAIN_RESOURCES_PATH = BASE_PATH . 'bundles/resources/',
+  MAIN_JS_ROUTING = MAIN_RESOURCES_PATH . 'jsRouting.js',
+  ERASE_SEQUENCE = "\033[1A\r\033[K",
+  OTRA_SUCCESS = CLI_SUCCESS . '  ✔  ' . END_COLOR;
 
 if (!file_exists(MAIN_RESOURCES_PATH))
   mkdir(MAIN_RESOURCES_PATH);

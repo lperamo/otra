@@ -19,7 +19,8 @@ class GenJsRoutingTaskTest extends TestCase
     JS_ROUTING_FILENAME = 'jsRouting.js',
     MAIN_RESOURCES_PATH = BASE_PATH . 'bundles/resources/',
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
-    BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME;
+    BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
+    OTRA_BINARY = 'otra.php';
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -34,12 +35,12 @@ class GenJsRoutingTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_INIT,
-      ['otra.php', self::OTRA_TASK_INIT]
+      [self::OTRA_BINARY, self::OTRA_TASK_INIT]
     );
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+      [self::OTRA_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
     );
     ob_end_clean();
 
@@ -52,7 +53,7 @@ class GenJsRoutingTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_JS_ROUTING,
-      ['otra.php', self::OTRA_TASK_GEN_JS_ROUTING]
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_JS_ROUTING]
     );
 
     // testing
@@ -91,7 +92,7 @@ class GenJsRoutingTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_JS_ROUTING]
+      [self::OTRA_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_JS_ROUTING]
     );
   }
 }

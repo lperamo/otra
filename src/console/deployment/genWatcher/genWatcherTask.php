@@ -1,15 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
-namespace otra\console;
+declare(strict_types=1);
 
+namespace otra\console\deployment\genWatcher;
+
+use FilesystemIterator;
 use JetBrains\PhpStorm\Pure;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
+use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
 use function otra\tools\files\returnLegiblePath;
+use const otra\console\{ADD_BOLD,CLI_BASE,CLI_GRAY,CLI_INFO,CLI_INFO_HIGHLIGHT,END_COLOR,REMOVE_BOLD_INTENSITY};
+use const otra\console\deployment\{PATHS_TO_HAVE_RESOURCES,RESOURCES_TO_WATCH};
 
 // Initialization
 require CORE_PATH . 'console/deployment/taskFileInit.php';
@@ -85,7 +91,7 @@ if (GEN_WATCHER_VERBOSE > 1 )
  */
 #[Pure] function debugHeader(string $header, int $padding) : string
 {
-  return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
+  return '│ ' . ADD_BOLD . CLI_BASE . REMOVE_BOLD_INTENSITY . str_pad($header, $padding) .  END_COLOR;
 }
 
 /**
@@ -151,7 +157,7 @@ stream_set_blocking($inotifyInstance, false);
 
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
-$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
@@ -159,7 +165,7 @@ $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterat
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
 
-/** @var \SplFileInfo $entry */
+/** @var SplFileInfo $entry */
 foreach($iterator as $entry)
 {
   $isFolder = $entry->isDir();

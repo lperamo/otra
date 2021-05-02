@@ -5,8 +5,10 @@ namespace src\console\architecture;
 
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use const \otra\tests\BUNDLES_PATH;
+use function otra\tools\delTree;
 
-if (defined('TEST_BUNDLE_UPPER') === false)
+if (!defined('TEST_BUNDLE_UPPER'))
 {
   define('TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE));
   define('TEST_BUNDLE_PATH', BUNDLES_PATH . TEST_BUNDLE_UPPER . '/');
@@ -28,10 +30,7 @@ class CreateBundleTaskTest extends TestCase
     // cleaning
     if (OTRA_PROJECT === false && file_exists(TEST_BUNDLE_PATH))
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-
-      /** @var callable $delTree */
-      $delTree(TEST_BUNDLE_PATH);
+      delTree(TEST_BUNDLE_PATH);
       rmdir(BASE_PATH . 'bundles');
     }
   }

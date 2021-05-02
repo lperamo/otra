@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\tools;
 /**
  * @author Lionel Péramo
  * @package otra\tools
@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @return bool
  */
-$delTree = function (string $folder) use (&$delTree) : bool
+function delTree(string $folder) : bool
 {
   /** @var string[] $files */
   $files = array_diff(scandir($folder), ['.','..']);
@@ -21,9 +21,9 @@ $delTree = function (string $folder) use (&$delTree) : bool
     $filenamePath = "$folder/$fileName";
 
     is_dir($filenamePath)
-      ? $delTree($filenamePath)
+      ? delTree($filenamePath)
       : unlink($filenamePath);
   }
 
   return rmdir($folder);
-};
+}
