@@ -13,7 +13,6 @@ use const otra\cache\php\{BUNDLES_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\console\architecture\constants\{ARG_BUNDLE_NAME, ARG_MODULE_NAME};
 use const otra\console\architecture\createModel\{ARG_MODEL_NAME};
-/** @var string $bundlesPath */
 
 /**
  * @param string $constantName
@@ -59,7 +58,7 @@ define(
   $checkParameter('otra\console\architecture\constants\ARG_MODULE_NAME', 'module name.')
 );
 
-if (!file_exists($bundlesPath . ucfirst($bundleName)))
+if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
   echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist !', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
@@ -73,7 +72,7 @@ $modelName = $checkParameter(
 );
 
 // We add the chosen bundle name to the path
-$bundlePath = $bundlesPath . ucfirst($bundleName) . DIR_SEPARATOR;
+$bundlePath = BUNDLES_PATH . ucfirst($bundleName) . DIR_SEPARATOR;
 
 if (isset($modelName))
   $modelFullName = ucfirst($modelName) . '.php';

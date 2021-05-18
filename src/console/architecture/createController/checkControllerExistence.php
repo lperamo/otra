@@ -12,6 +12,8 @@ namespace otra\console\architecture\createController
   use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
   use const otra\console\architecture\constants\{ARG_CONTROLLER_NAME, ARG_BUNDLE_NAME, ARG_MODULE_NAME};
 
+  /** @var bool $consoleForce */
+  /** @var bool $interactive */
   require CONSOLE_PATH . 'architecture/createController/createController.php';
 
   // MODULE STEP
@@ -25,14 +27,8 @@ namespace otra\console\architecture\createController
 
   if (!file_exists($controllerPath))
   {
-    /** @var bool $consoleForce */
-    if (!$consoleForce)
-      echo CLI_ERROR, 'The controller ', CLI_INFO_HIGHLIGHT, $moduleRelativePath . '/controllers/' . $controllerName, CLI_ERROR,
-      ' does not exist.' , END_COLOR, PHP_EOL;
-
     require CONSOLE_PATH . 'architecture/doWeCreateIt.php';
-    /** @var bool $interactive */
-    doWeCreateIt($interactive, $consoleForce);
-    createController($controllersFolder, $controllerName, $interactive);
+    doWeCreateIt($interactive, $consoleForce, $controllerName, 'controller');
+    createController($controllersFolder, $controllerName, $interactive, $consoleForce);
   }
 }

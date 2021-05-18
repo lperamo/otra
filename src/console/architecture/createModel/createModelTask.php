@@ -17,12 +17,14 @@ namespace otra\console\architecture\createModel
 {
   use otra\OtraException;
   use Symfony\Component\Yaml\Yaml;
-  use const otra\config\{CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
-  use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, END_COLOR};
+  use const otra\cache\php\{CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
+  use const otra\console\
+  {architecture\constants\ARG_INTERACTIVE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, END_COLOR};
+  use function otra\console\architecture\checkBooleanArgument;
 
-// Testing interactive argument
-  /** @var bool $interactive */
-  require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
+  // Testing interactive argument
+  require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+  $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
 
   // Other task arguments
   const ARG_METHOD = 3,

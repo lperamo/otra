@@ -11,8 +11,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-define('src\console\architecture\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE));
-define('src\console\architecture\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION) . 'Action.php');
+define('src\console\architecture\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
+define('src\console\architecture\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');
 
 /**
  * @runTestsInSeparateProcesses
@@ -26,22 +26,23 @@ class CreateActionTaskTest extends TestCase
     TEST_BUNDLE_ROUTES_PATH = self::TEST_BUNDLE_CONFIG_PATH . 'Routes.php',
     OTRA_BUNDLES_FOLDER_NAME = 'bundles/',
     OTRA_LABEL_DOES_NOT_EXIST = ' does not exist.',
-    OTRA_LABEL_FALSE = 'false',
+    CREATE_ACTION_NO_INTERACTIVE_MODE = 'false',
+    CREATE_BUNDLE_FORCE = 'true',
     OTRA_BINARY_NAME = 'otra.php',
 
     TEST_BUNDLES_MAIN_FOLDER = BASE_PATH . self::OTRA_BUNDLES_FOLDER_NAME,
     TEST_BUNDLE_PATH = self::TEST_BUNDLES_MAIN_FOLDER . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
-    TEST_MODULE_PATH = self::TEST_BUNDLE_PATH . CreateActionTaskTest::TEST_MODULE . DIR_SEPARATOR,
-    TEST_CONTROLLER_PATH = self::TEST_MODULE_PATH . 'controllers/' . CreateActionTaskTest::TEST_CONTROLLER . DIR_SEPARATOR,
+    TEST_MODULE_PATH = self::TEST_BUNDLE_PATH . CreateActionTaskTest::TEST_MODULE_NAME . DIR_SEPARATOR,
+    TEST_CONTROLLER_PATH = self::TEST_MODULE_PATH . 'controllers/' . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
     TEST_ACTION_PATH = self::TEST_CONTROLLER_PATH . TEST_ACTION_FULL,
     TEST_VIEWS_PATH = self::TEST_MODULE_PATH . 'views/',
-    TEST_VIEWS_SUBFOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER . DIR_SEPARATOR;
+    TEST_VIEWS_SUBFOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR;
 
   public const
-    TEST_BUNDLE = 'test',
-    TEST_MODULE = 'test',
-    TEST_CONTROLLER = 'test',
-    TEST_ACTION = 'test';
+    TEST_BUNDLE_NAME = 'test',
+    TEST_MODULE_NAME = 'test',
+    TEST_CONTROLLER_NAME = 'test',
+    TEST_ACTION_NAME = 'test';
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -75,15 +76,13 @@ class CreateActionTaskTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testCreateActionTask_BundleDoNotExist() : void
+  public function testCreateActionTask_NoBundlesFolder() : void
   {
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
 
-    // assertions
-    $this->expectException(OtraException::class);
-    $this->expectOutputString(CLI_ERROR . 'The bundle ' . CLI_INFO_HIGHLIGHT . TEST_BUNDLE_UPPER . CLI_ERROR .
-      self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
+    // testing exceptions
+    self::expectException(OtraException::class);
 
     // launching
     TasksManager::execute(
@@ -92,13 +91,79 @@ class CreateActionTaskTest extends TestCase
       [
         self::OTRA_BINARY_NAME,
         self::TEST_TASK,
-        self::TEST_BUNDLE,
-        self::TEST_MODULE,
-        self::TEST_CONTROLLER,
-        self::TEST_ACTION,
-        self::OTRA_LABEL_FALSE
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
       ]
     );
+
+    // testing
+    self::expectOutputString(
+      CLI_ERROR . 'There is no ' . CLI_INFO_HIGHLIGHT . 'bundles' . CLI_ERROR .
+      ' folder to put bundles! Please create this folder or launch ' . CLI_INFO_HIGHLIGHT . 'otra init' . CLI_ERROR .
+      ' to solve it.' . END_COLOR . PHP_EOL
+    );
+  }
+
+  /**
+   * @author Lionel Péramo
+   */
+  public function testCreateControllerTask_BundleDoNotExist_noForce() : void
+  {
+    // context
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
+    mkdir(BUNDLES_PATH, 0777, true);
+
+    // assertions
+    $this->expectException(OtraException::class);
+    $this->expectOutputString(CLI_ERROR . 'The bundle ' . CLI_INFO_HIGHLIGHT . TEST_BUNDLE_UPPER .
+      CLI_ERROR . ' does not exist.' . END_COLOR . PHP_EOL);
+
+    // launching
+    TasksManager::execute(
+      $tasksClassMap,
+      self::TEST_TASK,
+      [
+        self::OTRA_BINARY_NAME,
+        self::TEST_TASK,
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE,
+      ]
+    );
+  }
+
+  /**
+   * @author Lionel Péramo
+   */
+  public function testCreateControllerTask_BundleDoNotExist_force() : void
+  {
+    // context
+    $tasksClassMap = require TASK_CLASS_MAP_PATH;
+    mkdir(BUNDLES_PATH, 0777, true);
+
+    // launching
+    TasksManager::execute(
+      $tasksClassMap,
+      self::TEST_TASK,
+      [
+        self::OTRA_BINARY_NAME,
+        self::TEST_TASK,
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE,
+        self::CREATE_BUNDLE_FORCE
+      ]
+    );
+
+    // testing
+    self::assertFileExists(self::TEST_CONTROLLER_PATH);
   }
 
   /**
@@ -112,9 +177,7 @@ class CreateActionTaskTest extends TestCase
     if (!file_exists(self::TEST_BUNDLE_PATH))
       mkdir(self::TEST_BUNDLE_PATH, 0777, true);
 
-    // testing
-    $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT . self::OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
-      DIR_SEPARATOR . self::TEST_MODULE . CLI_ERROR . self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
+    // testing exceptions
     $this->expectException(OtraException::class);
 
     // launching
@@ -124,13 +187,18 @@ class CreateActionTaskTest extends TestCase
       [
         self::OTRA_BINARY_NAME,
         self::TEST_TASK,
-        self::TEST_BUNDLE,
-        self::TEST_MODULE,
-        self::TEST_CONTROLLER,
-        self::TEST_ACTION,
-        self::OTRA_LABEL_FALSE
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
       ]
     );
+
+    // testing
+    $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT .
+      substr(self::TEST_BUNDLE_PATH, strlen(BASE_PATH)) . self::TEST_MODULE_NAME . CLI_ERROR .
+      ' does not exist.' . END_COLOR . PHP_EOL);
   }
 
   /**
@@ -142,10 +210,7 @@ class CreateActionTaskTest extends TestCase
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::TEST_MODULE_PATH, 0777, true);
 
-    // testing
-    $this->expectOutputString(CLI_ERROR . 'The controller ' . CLI_INFO_HIGHLIGHT . self::OTRA_BUNDLES_FOLDER_NAME .
-      TEST_BUNDLE_UPPER . DIR_SEPARATOR . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . CLI_ERROR .
-      self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
+    // testing exceptions
     $this->expectException(OtraException::class);
 
     // launching
@@ -155,13 +220,18 @@ class CreateActionTaskTest extends TestCase
       [
         self::OTRA_BINARY_NAME,
         self::TEST_TASK,
-        self::TEST_BUNDLE,
-        self::TEST_MODULE,
-        self::TEST_CONTROLLER,
-        self::TEST_ACTION,
-        self::OTRA_LABEL_FALSE
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
       ]
     );
+
+    // testing
+    $this->expectOutputString(CLI_ERROR . 'The controller ' . CLI_INFO_HIGHLIGHT . self::TEST_CONTROLLER_NAME .
+      TEST_BUNDLE_UPPER . DIR_SEPARATOR . self::TEST_MODULE_NAME . '/controllers/' . self::TEST_CONTROLLER_NAME . CLI_ERROR .
+      self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
   }
 
   /**
@@ -174,10 +244,7 @@ class CreateActionTaskTest extends TestCase
     mkdir(self::TEST_CONTROLLER_PATH, 0777, true);
     touch(self::TEST_ACTION_PATH);
 
-    // testing
-    $this->expectOutputString(CLI_ERROR . 'The action ' . CLI_INFO_HIGHLIGHT . self::OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
-      DIR_SEPARATOR . self::TEST_MODULE . '/controllers/' . self::TEST_CONTROLLER . DIR_SEPARATOR . TEST_ACTION_FULL . CLI_ERROR .
-      ' already exists.' . END_COLOR . PHP_EOL);
+    // testing exceptions
     $this->expectException(OtraException::class);
 
     // launching
@@ -187,12 +254,19 @@ class CreateActionTaskTest extends TestCase
       [
         self::OTRA_BINARY_NAME,
         self::TEST_TASK,
-        self::TEST_BUNDLE,
-        self::TEST_MODULE,
-        self::TEST_CONTROLLER,
-        self::TEST_ACTION,
-        self::OTRA_LABEL_FALSE
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
       ]
+    );
+
+    // testing
+    $this->expectOutputString(
+      CLI_ERROR . 'The action ' . CLI_INFO_HIGHLIGHT . self::OTRA_BUNDLES_FOLDER_NAME . TEST_BUNDLE_UPPER .
+      DIR_SEPARATOR . self::TEST_MODULE_NAME . '/controllers/' . self::TEST_CONTROLLER_NAME . DIR_SEPARATOR .
+      TEST_ACTION_FULL . CLI_ERROR . ' already exists.' . END_COLOR . PHP_EOL
     );
   }
 
@@ -213,11 +287,11 @@ class CreateActionTaskTest extends TestCase
       [
         self::OTRA_BINARY_NAME,
         self::TEST_TASK,
-        self::TEST_BUNDLE,
-        self::TEST_MODULE,
-        self::TEST_CONTROLLER,
-        self::TEST_ACTION,
-        self::OTRA_LABEL_FALSE
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
       ]
     );
 
@@ -230,7 +304,7 @@ class CreateActionTaskTest extends TestCase
     );
     self::assertFileExists(self::TEST_VIEWS_PATH);
     self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH);
-    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION . '.phtml');
+    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION_NAME . '.phtml');
 
     self::assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
 

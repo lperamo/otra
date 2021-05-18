@@ -10,22 +10,26 @@ namespace otra\console\architecture\constants
   const
     ARG_BUNDLE_NAME = 2,
     ARG_CONTROLLER_NAME = 4,
+    ARG_FORCE = 7,
     ARG_INTERACTIVE = 6,
     ARG_MODULE_NAME = 3;
 }
 
 namespace otra\console\architecture\createAction
 {
-  use const otra\config\CONSOLE_PATH;
-  use function otra\console\architecture\actionHandling;
+
+  use function otra\console\architecture\{actionHandling, checkBooleanArgument};
+  use const otra\cache\php\CONSOLE_PATH;
+  use const otra\console\architecture\constants\{ARG_FORCE, ARG_INTERACTIVE};
 
   const ARG_ACTION_NAME = 5;
 
   $consoleForce = false;
 
   require CONSOLE_PATH . 'tools.php';
-  /** @var bool $interactive */
-  require CONSOLE_PATH . 'architecture/checkInteractiveMode.php';
+  require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+  $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
+  $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
   /** @var string $bundleName */
   require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
   /** @var string $moduleName */

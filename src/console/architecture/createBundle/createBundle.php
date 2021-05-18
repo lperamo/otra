@@ -5,7 +5,6 @@ namespace otra\console\architecture\createBundle;
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
-
 use otra\OtraException;
 use function otra\console\promptUser;
 use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
@@ -16,34 +15,54 @@ const
   OTRA_BUNDLES_MAIN_FOLDER_NAME = 'bundles/';
 
 /**
- * @param bool     $interactive
+ * @param bool     $interactive  Do we allow questions to the user?
+ * @param bool     $consoleForce Determines whether we show an error when something is missing in non interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
  * @param string   $bundleName
  * @param int|null $bundleMask
  * @param bool     $bundleTask
  *
  * @throws OtraException
  */
-function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask, bool $bundleTask = false) : void
+function bundleHandling(
+  bool $interactive,
+  bool $consoleForce,
+  string $bundleName,
+  ?int $bundleMask,
+  bool $bundleTask = false
+): void
 {
   $bundleName = ucfirst($bundleName);
-  define('otra\console\architecture\createBundle\BUNDLE_ROOT_PATH', BUNDLES_PATH);
-  $errorMessage = CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_WARNING . ' already exists.';
+  $errorMessage = CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName .
+    CLI_WARNING . ' already exists.';
 
-  if (!$interactive && file_exists(BUNDLE_ROOT_PATH . $bundleName))
+  // && $bundleTask
+  if (!$interactive && !$consoleForce && file_exists(BUNDLES_PATH . $bundleName))
   {
-    echo $errorMessage, END_COLOR, PHP_EOL;
+    echo ($bundleTask
+      ? $errorMessage
+      : CLI_WARNING . 'The bundle ' . CLI_INFO_HIGHLIGHT . OTRA_BUNDLES_MAIN_FOLDER_NAME . $bundleName . CLI_WARNING .
+        ' does not exist.'),
+      END_COLOR, PHP_EOL;
 
-    /** @var bool $consoleForce */
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', null, [], true);
   }
 
-  while (file_exists(BUNDLE_ROOT_PATH . $bundleName))
+  while (file_exists(BUNDLES_PATH . $bundleName))
   {
+    // If the file does not exist and we are not in interactive mode, we exit the program.
+    if (!$interactive)
+    {
+      echo $errorMessage, PHP_EOL;
+      break;
+    }
+
     // Erases the previous question before we ask...
     $bundleName = promptUser($errorMessage . ' Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
-      throw new OtraException('', 0, '', NULL, [], true);
+      throw new OtraException('', 0, '', null, [], true);
 
     $bundleName = ucfirst($bundleName);
 
@@ -51,25 +70,32 @@ function bundleHandling(bool $interactive, string $bundleName, ?int $bundleMask,
     echo ERASE_SEQUENCE;
   }
 
-  // Checking argument : folder mask
-  if (null === $bundleMask
-    || $bundleMask < 0
-    || $bundleMask > pow(2, count(BUNDLE_FOLDERS)) - 1)
+  if ($interactive)
   {
-    if ($bundleTask)
+    // Checking argument : folder mask
+    if (null === $bundleMask
+      || $bundleMask < 0
+      || $bundleMask > (2 ** count(BUNDLE_FOLDERS)) - 1)
     {
-      echo CLI_WARNING,
+      if ($bundleTask)
+      {
+        echo CLI_WARNING,
         (null === $bundleMask)
           ? 'You don\'t have specified which directories you want to create.'
           : 'The mask is incorrect.',
         PHP_EOL;
+      }
+
+      require CONSOLE_PATH . 'architecture/createBundle/bundleMaskCreation.php';
     }
+  } else
+    $bundleMask = $bundleMask ?? 15;
 
-    require CONSOLE_PATH . 'architecture/createBundle/bundleMaskCreation.php';
-  }
+  define('otra\console\architecture\createBundle\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
-  define('otra\console\architecture\createBundle\BUNDLE_BASE_PATH', BUNDLE_ROOT_PATH . $bundleName . DIR_SEPARATOR);
-  mkdir(BUNDLE_BASE_PATH, 0755, true);
+  if (!file_exists(BUNDLE_BASE_PATH))
+    mkdir(BUNDLE_BASE_PATH, 0755, true);
+
   echo ERASE_SEQUENCE, CLI_BASE, 'Bundle ', CLI_INFO_HIGHLIGHT, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_BASE,
     ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 

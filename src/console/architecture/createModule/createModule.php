@@ -19,16 +19,19 @@ if (!function_exists('otra\console\architecture\createModule\createModule'))
   /**
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
-   * @param bool   $interactive
+   * @param bool   $interactive    Do we allow questions to the user?
+   * @param bool   $consoleForce   Determines whether we show an error when something is missing in non interactive
+   *                               mode or not. The false value by default will stop the execution if something does
+   *                               not exist and show an error.
    *
    * @throws OtraException
    */
-  function createModule(string $bundleBasePath, string $moduleName, bool $interactive): void
+  function createModule(string $bundleBasePath, string $moduleName, bool $interactive, bool $consoleForce): void
   {
     $modulePath = $bundleBasePath . $moduleName;
 
     // If the folder does not exist and we are not in interactive mode, we exit the program.
-    createFolder($modulePath, $bundleBasePath, 'module', $interactive);
+    createFolder($modulePath, $bundleBasePath, 'module', $interactive, $consoleForce);
 
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);
@@ -37,13 +40,16 @@ if (!function_exists('otra\console\architecture\createModule\createModule'))
   }
 
   /**
-   * @param bool   $interactive
+   * @param bool   $interactive  Do we allow questions to the user?
+   * @param bool   $consoleForce Determines whether we show an error when something is missing in non interactive
+   *                             mode or not. The false value by default will stop the execution if something does
+   *                             not exist and show an error.
    * @param string $bundleName
    * @param string $moduleName
    *
    * @throws OtraException
    */
-  function moduleHandling(bool $interactive, string $bundleName, string $moduleName) : void
+  function moduleHandling(bool $interactive, bool $consoleForce, string $bundleName, string $moduleName) : void
   {
     // This constant is already defined if we have created a bundle on the process via CheckModuleExistence.php
     if (!defined('otra\console\architecture\createModule\BUNDLE_BASE_PATH'))
@@ -53,11 +59,11 @@ if (!function_exists('otra\console\architecture\createModule\createModule'))
     {
       while ($moduleName !== 'n')
       {
-        createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
+        createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
         $moduleName = promptUser('What is the name of the next module ? (type n to stop)');
       }
     } else
-      createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
+      createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
   }
 }
 
