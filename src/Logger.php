@@ -11,7 +11,8 @@ namespace otra\cache\php;
 
 abstract class Logger
 {
-  private const APPEND_LOG = 3,
+  private const
+    APPEND_LOG = 3,
     LOGS_PATH = BASE_PATH . 'logs/',
     SESSION_DATE = '_date',
     HTTP_USER_AGENT = 'HTTP_USER_AGENT',
@@ -149,7 +150,6 @@ abstract class Logger
    */
   public static function lg(string $message) : void
   {
-    require_once CORE_PATH . 'Logger.php';
     self::logTo($message, 'trace');
   }
 }

@@ -6,6 +6,7 @@
 declare(strict_types=1);
 
 namespace otra\console\architecture\init;
+
 use function otra\tools\copyFileAndFolders;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, ERASE_SEQUENCE, END_COLOR};
@@ -66,10 +67,11 @@ echo ERASE_SEQUENCE, 'Configuration files copied ', CLI_SUCCESS, ' ✔', END_COL
 echo 'Adding the files for the web folder...', PHP_EOL;
 
 $webFolder = BASE_PATH . 'web/';
-const OTRA_INDEX_FILENAME  = 'index.php';
-const OTRA_INDEX_DEV_FILE_NAME = 'indexDev.php';
-const OTRA_LOAD_STATIC_ROUTE = 'loadStaticRoute.php';
-const CORE_PATH_INIT_WEB_FOLDER = CORE_PATH . 'init/web/';
+const
+  OTRA_INDEX_FILENAME  = 'index.php',
+  OTRA_INDEX_DEV_FILE_NAME = 'indexDev.php',
+  OTRA_LOAD_STATIC_ROUTE = 'loadStaticRoute.php',
+  CORE_PATH_INIT_WEB_FOLDER = CORE_PATH . 'init/web/';
 
 copyFileAndFolders(
   [
@@ -90,9 +92,10 @@ echo ERASE_SEQUENCE, CLI_BASE, 'Files added to the web folder ', CLI_SUCCESS, ' 
 echo 'Adding the base architecture for the logs...', PHP_EOL;
 
 // Creating log folders
-const OTRA_LOGS_PATH = BASE_PATH . 'logs/';
-const OTRA_LOGS_DEV_PATH = OTRA_LOGS_PATH . 'dev/';
-const OTRA_LOGS_PROD_PATH = OTRA_LOGS_PATH . 'prod/';
+const
+  OTRA_LOGS_PATH = BASE_PATH . 'logs/',
+  OTRA_LOGS_DEV_PATH = OTRA_LOGS_PATH . 'dev/',
+  OTRA_LOGS_PROD_PATH = OTRA_LOGS_PATH . 'prod/';
 
 if (!file_exists(OTRA_LOGS_DEV_PATH))
   mkdir(OTRA_LOGS_DEV_PATH, 0777, true);

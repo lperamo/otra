@@ -255,12 +255,15 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
       );
     }
 
-    foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
+    if (!empty(MasterController::$nonces))
     {
-      $policy .= '\'nonce-' . $nonce . '\'';
+      foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
+      {
+        $policy .= '\'nonce-' . $nonce . '\'';
 
-      if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
-        $policy .= ' ';
+        if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
+          $policy .= ' ';
+      }
     }
 
     $policy .= ';';

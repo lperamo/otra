@@ -62,12 +62,10 @@ class OtraExceptionCli extends Exception
    */
   private static function getBacktracesOutput(array $backtraces, string $errorCode = '') : string
   {
-    $backtracesOutput = '';
-
     /******************************
      * Write HEADERS of the table *
      ******************************/
-    $backtracesOutput .=
+    $backtracesOutput =
       CLI_TABLE . '┌' . str_repeat('─',self::TYPE_WIDTH)
       . '┬' . str_repeat('─',self::FUNCTION_WIDTH)
       . '┬' . str_repeat('─',self::LINE_WIDTH)
@@ -165,7 +163,7 @@ class OtraExceptionCli extends Exception
 
     echo self::getBacktracesOutput($exception->backtraces, $exception->scode);
 
-    if ($exception->context !== [])
+    if (!empty($exception->context))
     {
       echo 'And the context...', PHP_EOL;
       echo self::getBacktracesOutput($exception->context);

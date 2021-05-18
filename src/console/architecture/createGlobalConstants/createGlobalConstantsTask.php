@@ -33,8 +33,8 @@ if (!defined('otra\\cache\\php\\APP_ENV'))
 const BASE_PATH_STRING = 'BASE_PATH.\'';
 define('otra\console\architecture\createGlobalConstants\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
 define('otra\console\architecture\createGlobalConstants\CORE_RESOURCES_PATH', DIR_SEPARATOR . OTRA_PROJECT_SUFFIX . 'resources/');
-$content = '<?php declare(strict_types=1);namespace otra\config;' .
-  'const DEV=\'dev' .
+define('otra\console\architecture\createGlobalConstants\PHP_FILE_START', '<?php declare(strict_types=1);');
+$content = 'const DEV=\'dev' .
   '\',PROD=\'prod' .
   '\',BASE_PATH=\'' . BASE_PATH .
   '\',BUNDLES_PATH=' . BASE_PATH_STRING . 'bundles/' .
@@ -64,7 +64,10 @@ $configFolderPath = BASE_PATH . 'config/';
 if (!file_exists($configFolderPath))
   mkdir($configFolderPath);
 
-echo (file_put_contents(BASE_PATH . 'config/constants.php', $content) === false)
+echo (file_put_contents(
+  BASE_PATH . 'config/constants.php',
+  PHP_FILE_START . 'namespace otra\\cache\\php;' . $content
+  ) === false)
   ? CLI_ERROR . 'There was a problem while writing the OTRA global constants.'
   : 'OTRA global constants generated.', CLI_SUCCESS, ' ✔';
 
@@ -78,7 +81,10 @@ if (isset(AllConfig::$deployment['folder']))
 {
   echo (file_put_contents(
     BASE_PATH . 'config/prodConstants.php',
-    str_replace(BASE_PATH, AllConfig::$deployment['folder'], $content, $count)
+    str_replace(
+      BASE_PATH,
+      AllConfig::$deployment['folder'], PHP_FILE_START . 'namespace otra\\cache\\php;' . $content,
+      $count)
     ) === false)
     ? CLI_ERROR . 'There was a problem while writing the OTRA global constants for the online side.'
     : 'OTRA global constants for the online side generated.', CLI_SUCCESS, ' ✔';

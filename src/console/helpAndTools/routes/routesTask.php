@@ -71,7 +71,8 @@ function showPHPState(string $basePath, string $route, string $altColor) : void
     '[PHP]', $altColor;
 }
 
-require BASE_PATH . 'config/AllConfig.php';
+// beware require_once only needed for automated tests
+require_once BASE_PATH . 'config/AllConfig.php';
 const ROUTES_ARG_ROUTE = 2;
 
 // 'require_once' needed instead of 'require', if we execute TasksManager::execute multiple times as in tests or some

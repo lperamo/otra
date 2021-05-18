@@ -31,7 +31,8 @@ class RoutesTest extends TestCase
 
   public static function setUpBeforeClass() : void
   {
-    require CONSOLE_PATH . 'colors.php';
+    // To avoid "Constant otra\console\ADD_BOLD already defined" in this test file
+    require_once CONSOLE_PATH . 'colors.php';
   }
 
   /**

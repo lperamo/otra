@@ -31,5 +31,6 @@ $command = 'OTRA_LIVE_APP_ENV=' . OTRA_LIVE_APP_ENV . ' OTRA_LIVE_HTTPS=' . OTRA
 if (OTRA_LIVE_APP_ENV === DEV)
   $command .= 'Dev';
 
-// We use redirections to be able to use unit tests (stderr blocks PHPUnit execution)
+// @TODO We use redirections to be able to use unit tests (stderr blocks PHPUnit execution)
+//   But BEWARE /!\ those redirections hides precious debugging informations to the user!
 cliCommand($command . '.php 2>&1');

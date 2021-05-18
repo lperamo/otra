@@ -202,7 +202,10 @@ class SqlTest extends TestCase
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
     self::assertEquals(
       $sqlLogContent
-        . '[{"file":"phar:///var/www/html/lib/phpunit_php8.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
+        . ($sqlLogContent !== ''
+        ? ''
+        : '[')
+      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 

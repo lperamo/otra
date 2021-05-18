@@ -53,7 +53,7 @@ class GenJsRoutingTaskTest extends TestCase
     // launching
     $this->expectOutputString(
       'Generating JavaScript routing...' . PHP_EOL . ERASE_SEQUENCE . 'JavaScript routing generated in ' .
-      CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . END_COLOR . OTRA_SUCCESS . PHP_EOL
+      CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . END_COLOR . SUCCESS
     );
 
     TasksManager::execute(
@@ -88,7 +88,7 @@ class GenJsRoutingTaskTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testSqlCleanHelp()
+  public function testGenJsRoutingHelp()
   {
     $this->expectOutputString(
       CLI_BASE .

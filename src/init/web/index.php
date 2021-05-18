@@ -83,7 +83,7 @@ try
   });
 
   // Loads the found route
-  require BASE_PATH . 'cache/php/' . OTRA_ROUTE . '.php';
+  require BASE_PATH . 'cache/php/' . (str_contains(OTRA_ROUTE, 'otra_') ? 'otraRoutes/' : '') . OTRA_ROUTE . '.php';
 
   Router::get(OTRA_ROUTE, $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS]);
 } catch (Throwable $issue)
@@ -97,7 +97,7 @@ try
   define('otra\web\ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . $issue->getLine());
 
   if (!is_writable(ISSUE_LOG_PATH))
-    echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color:blue">' .
+    echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color: blue;">' .
       ISSUE_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
   elseif (class_exists(Logger::class))
     Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception');

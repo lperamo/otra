@@ -114,9 +114,10 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
 
   $tasks = array_keys($helpFileContent);
   $taskCategories = array_column($helpFileContent, TasksManager::TASK_CATEGORY);
-// sorts alphabetically the tasks and grouping them by category
+  // sorts alphabetically the tasks and grouping them by category
   array_multisort($taskCategories, SORT_ASC, $tasks, SORT_ASC, $helpFileContent);
-  require CONSOLE_PATH . 'tools.php';
+  // beware! require_once instead of require only needed for automated tests!
+  require_once CONSOLE_PATH . 'tools.php';
 
 // Generate the tasks descriptions in a cached file.
   const PHP_INIT_FILE_BEGINNING =
