@@ -17,6 +17,12 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_P
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\CACHE_PHP_INIT_PATH;
 
+if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
+{
+  echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
 // If we come from the deploy task, those two constants are already defined
 const
   GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
@@ -140,9 +146,9 @@ $fileToInclude = CORE_PATH . 'Router.php';
 
 contentToFile(
   fixFiles(
-    $routes[$route]['chunks'][1],
+    $routes[$route]['chunks'][Routes::ROUTES_CHUNKS_BUNDLE],
     $route,
-    file_get_contents($fileToInclude) . '?>',
+    file_get_contents($fileToInclude) . PHP_END_TAG_STRING,
     VERBOSE,
     $fileToInclude
   ),

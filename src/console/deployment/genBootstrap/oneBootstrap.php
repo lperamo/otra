@@ -151,7 +151,8 @@ try
     fixFiles(
       $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
       $route,
-      file_get_contents(CORE_PATH . 'OtraException.php') . '?>' . file_get_contents($fileToInclude),
+      file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
+      file_get_contents($fileToInclude),
       VERBOSE,
       $fileToInclude
     ),
