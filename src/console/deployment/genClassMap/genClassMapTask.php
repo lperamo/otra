@@ -131,7 +131,7 @@ if (!empty($folders) && !function_exists('otra\console\deployment\genClassMap\it
     closedir($folderHandler);
 
     echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', null, [], true);
   }
 
   /**
@@ -144,7 +144,7 @@ if (!empty($folders) && !function_exists('otra\console\deployment\genClassMap\it
    *
    * @return string
    */
-  function convertClassMapToPHPFile(string $classMap, string $environment = 'dev') : string
+  function convertClassMapToPHPFile(string $classMap, string $environment = DEV) : string
   {
     $start = '<?php declare(strict_types=1);namespace otra\\cache\\php\\init;use const otra\\cache\\php\\{';
 
@@ -225,18 +225,23 @@ $prodClassMap = var_export($prodClasses, true);
 if (!file_exists(CACHE_PHP_INIT_PATH))
   mkdir(CACHE_PHP_INIT_PATH, 0755, true);
 
-// Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
-// Generating development class map
-$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ClassMap.php', 'w');
-$contentToWrite = convertClassMapToPHPFile($classMap) . PHP_EOL;
-fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
-fclose($filePointer);
+/**
+ * @param string $classMap
+ * @param string $filename
+ * @param string $environment
+ */
+function generateClassMap(string $classMap, string $filename, string $environment = DEV) : void
+{
+  $filePointer = fopen(CACHE_PHP_INIT_PATH . $filename, 'w');
+  $contentToWrite = convertClassMapToPHPFile($classMap, $environment) . PHP_EOL;
+  fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+  fclose($filePointer);
+}
 
-// Generating production class map
-$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ProdClassMap.php', 'w');
-$contentToWrite = convertClassMapToPHPFile($prodClassMap, 'prod') . PHP_EOL;
-fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
-fclose($filePointer);
+// Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
+// Generating class maps
+generateClassMap($classMap, 'ClassMap.php');
+generateClassMap($prodClassMap, 'ProdClassMap.php', PROD);
 
 echo 'Class mapping finished', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
