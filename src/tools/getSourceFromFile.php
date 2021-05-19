@@ -1,12 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools
  */
+declare(strict_types=1);
 
-if (!function_exists('getSourceFromFile'))
+namespace otra\tools;
+
+use SplFileObject;
+use const otra\console\{ADD_BOLD, CLI_DUMP_LINE_HIGHLIGHT, CLI_LINE_DUMP, END_COLOR, REMOVE_BOLD_INTENSITY};
+
+if (!function_exists('otra\tools\getSourceFromFile'))
 {
   /**
    * Returns the portion of a file in a certain range around a specific line.

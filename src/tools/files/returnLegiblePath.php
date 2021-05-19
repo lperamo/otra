@@ -1,11 +1,13 @@
 <?php
-declare(strict_types=1);
-namespace otra\tools\files;
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\files
  */
+declare(strict_types=1);
+
+namespace otra\tools\files;
+use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
@@ -21,7 +23,7 @@ function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endC
 {
   // Avoid to finish with '/' if $resource is not a folder (and then $fileName = '')
   if (!empty($fileName))
-    $fileName = '/' . $fileName;
+    $fileName = DIR_SEPARATOR . $fileName;
 
   return (str_contains($resource, BASE_PATH)
       ? CLI_INFO . 'BASE_PATH ' . CLI_INFO_HIGHLIGHT . substr($resource, strlen(BASE_PATH)) . $fileName .

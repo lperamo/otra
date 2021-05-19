@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace otra\controllers\errors;
 
 use otra\Controller;
-use config\Routes;
+use otra\config\Routes;
+use otra\OtraException;
 
 /**
  * @author Lionel Péramo
@@ -15,7 +16,7 @@ class Error404Action extends Controller
    * @param array $otraParams
    * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace otra\tools\workers;
 
+use const otra\console\{CLI_ERROR,END_COLOR};
+
 /**
  * A worker is a process that can be launch in parallel with another workers, asynchronously.
  *

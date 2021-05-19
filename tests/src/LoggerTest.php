@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace src;
 
-use otra\Logger;
+use otra\cache\php\Logger;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, PROD};
+use function otra\tools\debug\tailCustom;
+use function otra\tools\delTree;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,7 +22,7 @@ class LoggerTest extends TestCase
   public static function setUpBeforeClass() : void
   {
     $_SERVER[APP_ENV] = PROD;
-    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
+    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
     require CORE_PATH . 'tools/debug/tailCustom.php';
 
     if (!file_exists(self::$logsProdPath))
@@ -30,18 +33,11 @@ class LoggerTest extends TestCase
   {
     if (!OTRA_PROJECT)
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-
       if (file_exists(self::LOG_PATH))
       {
-        /** @var callable $delTree */
-        $delTree(self::LOG_PATH);
+        require CORE_PATH . 'tools/deleteTree.php';
+        delTree(self::LOG_PATH);
       }
-
-//      if (file_exists(self::LOG_PATH))
-//      {
-//        rmdir(self::LOG_PATH);
-//      }
     }
   }
 
@@ -78,7 +74,7 @@ class LoggerTest extends TestCase
     // context
     $testLogsPath = 'logs/otraTests/';
     $logCustomFolder = '../' . $testLogsPath;
-    define('LOG_FILENAME', 'log.txt');
+    define('src\LOG_FILENAME', 'log.txt');
     $absolutePathToFolder = BASE_PATH . $testLogsPath;
     mkdir($absolutePathToFolder);
     $absolutePathToLogFilename = $absolutePathToFolder . LOG_FILENAME;
@@ -106,7 +102,7 @@ class LoggerTest extends TestCase
   public function testLg() : void
   {
     // context
-    define('TRACE_LOG_FILE', self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt');
+    define('src\TRACE_LOG_FILE', self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt');
 
     if (!file_exists('trace.txt'))
       touch(TRACE_LOG_FILE);

@@ -1,18 +1,25 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
 
-const CRYPT_ARG_PASSWORD = 2;
-const CRYPT_ARG_ITERATIONS = 3;
+namespace otra\console\helpAndTools\crypt;
 
-if (!is_numeric($argv[CRYPT_ARG_ITERATIONS]))
+use otra\OtraException;
+use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
+
+const
+  CRYPT_ARG_PASSWORD = 2,
+  CRYPT_ARG_ITERATIONS = 3;
+
+define('otra\console\helpAndTools\crypt\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null);
+
+if (!is_numeric(CRYPT_ITERATIONS))
 {
-  echo 'Iterations parameter must be numeric!';
-  throw new \otra\OtraException('', 1, '', NULL, [], true);
+  echo 'Iterations parameter must be numeric!', PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
 }
 
 $securitySalt = openssl_random_pseudo_bytes(16);
@@ -22,6 +29,6 @@ echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($se
     'sha256',
     $argv[CRYPT_ARG_PASSWORD],
     $securitySalt,
-    $argv[CRYPT_ARG_ITERATIONS] ?? 20000,
+  CRYPT_ITERATIONS !== null ? ((int)CRYPT_ITERATIONS) : 20000,
     20
   ), PHP_EOL;

@@ -2,11 +2,14 @@
 /**
  * THE framework router
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
 declare(strict_types=1);
+
 namespace otra;
 
-use config\Routes;
+use otra\config\Routes;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, DIR_SEPARATOR, PROD};
 
 /**
  * @package otra
@@ -48,7 +51,7 @@ abstract class Router
     $finalAction = '';
 
     if (PROD === $_SERVER[APP_ENV] && 'cli' !== PHP_SAPI)
-      $finalAction = 'cache\\php\\' . $action; //'cache\\php\\' . $controller . 'Controller'
+      $finalAction = 'otra\\cache\\php\\' . $action; //'otra\\cache\\php\\' . $controller . 'Controller'
     else
     {
       if (!isset(Routes::$allRoutes[$route]['core']))
@@ -86,7 +89,7 @@ abstract class Router
     if ('cli' !== PHP_SAPI
       && substr(str_replace(
         ['\\', BASE_PATH],
-        ['/', ''],
+        [DIR_SEPARATOR, ''],
         debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0]['file']
       ), 0, 9) !== 'web/index')
     {
@@ -215,7 +218,7 @@ abstract class Router
 
     foreach($params as $value)
     {
-      $paramsString .= '/' . $value;
+      $paramsString .= DIR_SEPARATOR . $value;
     }
 
     return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL] . $paramsString;

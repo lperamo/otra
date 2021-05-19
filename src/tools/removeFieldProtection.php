@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+namespace otra\tools;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * @author Lionel Péramo

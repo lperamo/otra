@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
+
 namespace otra\controllers\profiler;
 
-use otra\{Controller, services\ProfilerService};
+use otra\{Controller, OtraException, services\ProfilerService};
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
 
 /**
  * @author Lionel Péramo
@@ -14,7 +16,7 @@ class RefreshSQLLogsAction extends Controller
    * @param array $otraParams
    * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

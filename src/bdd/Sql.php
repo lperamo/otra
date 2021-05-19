@@ -1,14 +1,17 @@
 <?php
-declare(strict_types=1);
 /** Main sql management
  *
  * @author Lionel Péramo */
+declare(strict_types=1);
 
 namespace otra\bdd;
 
 use Exception;
-use otra\{ OtraException, Logger };
-use config\AllConfig;
+use otra\OtraException;
+use otra\cache\php\Logger;
+use otra\config\AllConfig;
+use PDO;
+use const otra\cache\php\{APP_ENV,CORE_PATH,DEV};
 
 /**
  * @package otra\bdd
@@ -23,7 +26,7 @@ class Sql
     $dbmsCollection = ['Pdomysql'],
     $_activeConn = [];
 
-  public static ?\PDO $currentConn = null;
+  public static ?PDO $currentConn = null;
   public static string
     $currentDBMS = '',
     $currentConnectionName;
@@ -328,11 +331,11 @@ class Sql
   /**
    * Close MySQL connection
    *
-   * @param bool $instanceToClose
+   * @param ?bool $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
-  private static function close($instanceToClose = true) : bool
+  private static function close(?bool $instanceToClose = true) : bool
   {
     if (isset(self::$instance))
       return call_user_func_array(self::$currentDBMS . '::close', [&$instanceToClose]);

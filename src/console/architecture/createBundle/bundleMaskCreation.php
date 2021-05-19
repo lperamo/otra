@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+namespace otra\console\architecture\createBundle;
+use function otra\console\promptUser;
+use const otra\console\{CLI_INFO_HIGHLIGHT,CLI_WARNING,ERASE_SEQUENCE,END_COLOR};
 
 /**
  * @author Lionel Péramo

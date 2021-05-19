@@ -1,18 +1,23 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
 
+namespace otra\console\deployment\genAssets;
+
+use otra\cache\php\Logger;
 use otra\Router;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\init\CLASSMAP;
+use function otra\tools\gzCompressFile;
 
-define('ARG_CACHE_PATH', $argv[1]);
-define('ARG_SITE_ROUTE', $argv[2]);
-define('ARG_SHA_NAME', $argv[3]);
+define('otra\\console\\deployment\\genAssets\\ARG_CACHE_PATH', $argv[1]);
+define('otra\\console\\deployment\\genAssets\\ARG_SITE_ROUTE', $argv[2]);
+define('otra\\console\\deployment\\genAssets\\ARG_SHA_NAME', $argv[3]);
 
-define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define('otra\\console\\deployment\\genAssets\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'
@@ -31,7 +36,7 @@ spl_autoload_register(function (string $className) : void
   if (!isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \otra\Logger::logTo(
+    Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),

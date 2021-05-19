@@ -1,12 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\deploy;
 
 use otra\console\TasksManager;
+use const otra\console\{CLI_WARNING, END_COLOR, STRING_PAD_FOR_OPTION_FORMATTING};
 
 return [
   'Deploy the site. ' . CLI_WARNING . '[Currently only works for unix systems !]' . END_COLOR,

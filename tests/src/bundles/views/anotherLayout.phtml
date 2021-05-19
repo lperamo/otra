@@ -1,8 +1,12 @@
 <?php
 declare(strict_types=1);
+
+use function otra\cache\php\{block, endblock, parent};
+use const otra\cache\php\CORE_PATH;
+
 require CORE_PATH . 'templating/blocks.php' ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title><?php
     $title = 'Starter template homepage';

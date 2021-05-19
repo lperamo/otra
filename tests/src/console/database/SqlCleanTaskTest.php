@@ -4,9 +4,15 @@ declare(strict_types=1);
 namespace src\console\database;
 
 use otra\bdd\Sql;
-use otra\console\Database;
+use otra\console\database\Database;
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionException;
+use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{APP_ENV,CORE_PATH,PROD,TEST_PATH};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, removeFieldScopeProtection};
 
 /**
  * @runTestsInSeparateProcesses
@@ -27,8 +33,8 @@ class SqlCleanTaskTest extends TestCase
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/';
 
   /**
-   * @throws \otra\OtraException
-   * @throws \ReflectionException
+   * @throws OtraException
+   * @throws ReflectionException
    * @author Lionel Péramo
    */
   public function testSqlClean() : void
@@ -77,6 +83,9 @@ class SqlCleanTaskTest extends TestCase
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::DATABASE_NAME . '`;');
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testSqlCleanHelp()
   {
     $this->expectOutputString(

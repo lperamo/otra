@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace bundles\HelloWorld\frontend\controllers\index;
 
 use otra\Controller;
+use otra\OtraException;
 
 /**
  * OTRA starter action
@@ -18,7 +19,7 @@ class HomeAction extends Controller
    * @param array $otraParams
    * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

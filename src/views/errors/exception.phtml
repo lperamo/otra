@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+
+use function otra\cache\php\{block, endblock};
+use const otra\cache\php\CORE_VIEWS_PATH;
+
 require CORE_VIEWS_PATH . 'layout.phtml';
 block('title', 'Exception !');
 block('body');

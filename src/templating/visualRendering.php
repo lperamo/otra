@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\templating;
 /**
  * @author Lionel Péramo
  * @package otra\templating
  */
 
 /* Light templating engine */
-use cache\php\BlocksSystem;
+use otra\cache\php\BlocksSystem;
+use const otra\cache\php\CORE_CSS_PATH;
 
-if (!function_exists('showBlocksVisually'))
+if (!function_exists('otra\templating\showBlocksVisually'))
 {
   /**
    * @param int|string $key
@@ -57,7 +58,7 @@ if (!function_exists('showBlocksVisually'))
    *
    * @param bool $page
    */
-  function showBlocksVisually($page = true) : void
+  function showBlocksVisually(bool $page = true) : void
   {
     if ($page)
     {

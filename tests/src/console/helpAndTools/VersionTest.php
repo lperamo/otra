@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\OTRA_VERSION;
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -24,6 +28,7 @@ class VersionTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testVersion() : void
   {
@@ -31,7 +36,7 @@ class VersionTest extends TestCase
     $byPeramoLionel = explode('*', "B*y* *P*é*r*a*m*o* *L*i*o*n*e*l*.");
     $content = '';
 
-    foreach($byPeramoLionel as $index => &$character)
+    foreach($byPeramoLionel as $index => $character)
     {
       $keyTwice = $index << 2;
       $content .= "\e[38;2;" . (76 + $keyTwice) . ";" . (136 + $keyTwice) . ";" . (191 + $keyTwice) . "m" . $character;
@@ -65,6 +70,7 @@ class VersionTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testVersionHelp()
   {

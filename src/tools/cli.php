@@ -1,18 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools
  */
+declare(strict_types=1);
+
+namespace otra\tools;
 
 use JetBrains\PhpStorm\ArrayShape;
+use otra\OtraException;
+use const otra\console\{CLI_WARNING,END_COLOR};
 
 // If we come from the deploy task, those functions may already have been defined.
-if (!function_exists('cliCommand'))
+if (!function_exists('otra\tools\cliCommand'))
 {
-  define('OTRA_CLI_RETURN', 0);
-  define('OTRA_CLI_OUTPUT', 1);
+  define('otra\tools\OTRA_CLI_RETURN', 0);
+  define('otra\tools\OTRA_CLI_OUTPUT', 1);
 
   /**
    * Execute a CLI command.
@@ -21,7 +24,7 @@ if (!function_exists('cliCommand'))
    * @param string|null $errorMessage
    * @param bool        $launchExceptionOnError
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    * @return array{0: int, 1: string} Exit status code, content
    */
   #[ArrayShape([
@@ -42,11 +45,10 @@ if (!function_exists('cliCommand'))
           END_COLOR) . PHP_EOL . 'Shell error code ' . $returnCode . '. ' . $output;
 
       if ($launchExceptionOnError)
-        throw new otra\OtraException($errorMessage);
+        throw new OtraException($errorMessage);
       else
         echo $errorMessage . PHP_EOL;
     }
-
 
     return [$returnCode, $output];
   }

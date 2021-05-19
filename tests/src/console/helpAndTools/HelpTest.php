@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV,PROD};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -16,11 +20,12 @@ class HelpTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testHelpHelp() : void
   {
     // context
-    $_SERVER['APP_ENV'] = PROD;
+    $_SERVER[APP_ENV] = PROD;
 
     // testing
     $this->expectOutputString(

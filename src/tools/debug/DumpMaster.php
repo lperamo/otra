@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace otra;
-use config\AllConfig;
+namespace otra\tools\debug;
+
+use otra\config\AllConfig;
 use ReflectionClass;
+use ReflectionException;
+use const otra\cache\php\CORE_PATH;
 
 /**
  * Class that provides things for both web and CLI sides of the dump function.
@@ -101,7 +104,7 @@ abstract class DumpMaster {
   /**
    * @param object $param
    *
-   * @throws \ReflectionException
+   * @throws ReflectionException
    * @return string[]
    */
   protected static function getClassDescription(object $param) : array

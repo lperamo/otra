@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace src\console\deployment;
 
+use otra\OtraException;
 use phpunit\framework\TestCase;
-use function otra\console\getPathInformations;
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, TEST_PATH};
+use function otra\console\deployment\getPathInformations;
+use function otra\tools\copyFileAndFolders;
 
 /**
  * @runTestsInSeparateProcesses
@@ -15,14 +18,14 @@ class TaskFileInitTest extends TestCase
    * Tests the JS generation without GCC
    *
    * @author Lionel Péramo
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function testGetPathInformations() : void
   {
     // context
-    $_SERVER['APP_ENV'] = DEV;
+    $_SERVER[APP_ENV] = DEV;
     $argv = [];
-    define('TEST_ROUTES_PATH', BASE_PATH . 'bundles/config/');
+    define('src\console\deployment\TEST_ROUTES_PATH', BUNDLES_PATH . 'config/');
 
     if (!file_exists(TEST_ROUTES_PATH))
       mkdir(TEST_ROUTES_PATH, 0777,true);
@@ -34,9 +37,9 @@ class TaskFileInitTest extends TestCase
     require CORE_PATH . 'console/deployment/taskFileInit.php';
 
     // defining constants...
-    define('TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
-    define('TEST_JS_BASE_NAME', 'test');
-    define('TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'ts/' . TEST_JS_BASE_NAME . '.ts');
+    define('src\console\deployment\TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
+    define('src\console\deployment\TEST_JS_BASE_NAME', 'test');
+    define('src\console\deployment\TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'ts/' . TEST_JS_BASE_NAME . '.ts');
 
     // launching
     $pathInformations = getPathInformations(TEST_TS_RESOURCE_NAME);

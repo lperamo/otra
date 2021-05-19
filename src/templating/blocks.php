@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace cache\php
+namespace otra\cache\php
 {
   /**
    * Light templating engine "interface".
@@ -138,14 +138,10 @@ namespace cache\php
       return $content;
     }
   }
-}
-
-namespace {
-  use cache\php\BlocksSystem;
 
   /* Light templating engine */
   // those functions can be redeclared if we have an exception later, exception that will also use the block system
-  if (!function_exists('block'))
+  if (!function_exists('cache\php\block'))
   {
     /* Little remainder
      * Key is the key of the block stacks array. It is the position of the block in the stack
@@ -157,7 +153,7 @@ namespace {
      * @param string  $name
      * @param ?string $inline If we just want an inline block then we echo this string and close the block directly.
      */
-    function block(string $name, ?string $inline = null) : void
+    function block(string $name, ?string $inline = null): void
     {
       // Storing previous content before doing anything else
       /** @var array{content:string, index:int, name:string, parent?:array} $currentBlock */
@@ -238,7 +234,7 @@ namespace {
     /**
      * Ends a template block.
      */
-    function endblock() : void
+    function endblock(): void
     {
       // Storing previous content before doing anything else
       /** @var array{
@@ -252,7 +248,7 @@ namespace {
        */
       $currentBlock = &BlocksSystem::$currentBlock;
       $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_ENDING_BLOCK] = true; // needed for processing parent function
-      $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .=  ob_get_clean();
+      $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
 
       // Updates the list of block types with their position in the stack
       // if the block name is different from "root" and "''"
@@ -261,7 +257,8 @@ namespace {
       if ($currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== BlocksSystem::OTRA_BLOCK_NAME_ROOT
         && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== ''
         && (isset(BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]])
-          && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX] > BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]])
+          && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX] >
+          BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]])
       )
         BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]] = count(BlocksSystem::$blocksStack);
 
@@ -270,9 +267,12 @@ namespace {
       // Preparing the next block
       BlocksSystem::$currentBlock = [
         BlocksSystem::OTRA_BLOCKS_KEY_CONTENT => '',
-        BlocksSystem::OTRA_BLOCKS_KEY_INDEX => $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_INDEX] ?? 0,
-        BlocksSystem::OTRA_BLOCKS_KEY_PARENT => $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_PARENT] ?? null,
-        BlocksSystem::OTRA_BLOCKS_KEY_NAME => $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_NAME] ?? ''
+        BlocksSystem::OTRA_BLOCKS_KEY_INDEX =>
+          $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_INDEX] ?? 0,
+        BlocksSystem::OTRA_BLOCKS_KEY_PARENT =>
+          $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_PARENT] ?? null,
+        BlocksSystem::OTRA_BLOCKS_KEY_NAME =>
+          $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_NAME] ?? ''
       ];
 
       // Start listening the remaining content
@@ -282,7 +282,7 @@ namespace {
     /**
      * Shows the content of the parent block of the same type.
      */
-    function parent() : void
+    function parent(): void
     {
       $parentKey = array_search(
         BlocksSystem::$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME],

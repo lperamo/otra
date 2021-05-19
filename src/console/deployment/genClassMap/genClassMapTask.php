@@ -1,12 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Class mapping generation task
  *
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\genClassMap;
+
+use JetBrains\PhpStorm\ArrayShape;
+use otra\OtraException;
+use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\convertArrayFromVarExportToShortVersion;
+
 $folders = [
   BASE_PATH . 'bundles',
   BASE_PATH . 'config',
@@ -16,21 +25,23 @@ $folders = [
 $classes = [];
 $processedDir = 0;
 
-if (!defined('VERBOSE'))
-  define('VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
+if (!defined('otra\console\deployment\genClassMap\VERBOSE'))
+  define('otra\console\deployment\genClassMap\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
 
-$additionalClassesFilesPath = BASE_PATH . 'config/AdditionalClassFiles.php';
+const ADDITIONAL_CLASSES_FILES_PATH = BASE_PATH . 'config/AdditionalClassFiles.php';
 $additionalClassesFiles = [];
 
-if (file_exists($additionalClassesFilesPath))
-  $additionalClassesFiles = require $additionalClassesFilesPath;
+if (file_exists(ADDITIONAL_CLASSES_FILES_PATH))
+  $additionalClassesFiles = require ADDITIONAL_CLASSES_FILES_PATH;
 
 $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
 $classesThatMayHaveToBeAdded = [];
 
-require CONSOLE_PATH . 'tools.php';
+// Condition mandatory if we not launch genClassMap directly
+if (!function_exists('otra\console\promptUser'))
+  require CONSOLE_PATH . 'tools.php';
 
-if (!empty($folders) && !function_exists('iterateCM'))
+if (!empty($folders) && !function_exists('otra\console\deployment\genClassMap\iterateCM'))
 {
   /**
    * @param string[]              $classes
@@ -39,10 +50,10 @@ if (!empty($folders) && !function_exists('iterateCM'))
    * @param int                   $processedDir
    * @param array<string, string> $classesThatMayHaveToBeAdded
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    * @return array{0: string[], 1: int, 2: array<string, string>}
    */
-  #[\JetBrains\PhpStorm\ArrayShape([
+  #[ArrayShape([
     'string[]',
     'int',
     'array'
@@ -62,7 +73,7 @@ if (!empty($folders) && !function_exists('iterateCM'))
         if ('.' === $entry || '..' === $entry)
           continue;
 
-        $entryAbsolutePath = $dir . '/' . $entry;
+        $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;
 
         // recursively...
         if (is_dir($entryAbsolutePath))
@@ -80,16 +91,19 @@ if (!empty($folders) && !function_exists('iterateCM'))
         if ($posDot === false || '.php' !== substr($entry, $posDot))
           continue;
 
-        // We only need files that match with the actual environment
-        // so, for example, we'll not include dev config if we are in prod mode !
-        if (str_contains($entryAbsolutePath, BASE_PATH . 'config/dev') && $_SERVER[APP_ENV] === PROD)
+        if (in_array(
+          $entryAbsolutePath,
+          [
+            BASE_PATH . 'config/dev/AllConfig.php',
+            BASE_PATH . 'config/prod/AllConfig.php'
+        ]))
           continue;
 
-        $content = file_get_contents(str_replace('\\', '/', realpath($entryAbsolutePath)));
+        $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
         preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
 
         // we calculate the shortest string of path with realpath and str_replace function
-        $revisedEntryAbsolutePath = str_replace('\\', '/', realpath($entryAbsolutePath));
+        $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));
         $className    = substr($entry, 0, $posDot);
 
         if (isset($matches[1][0]) && $matches[1][0] !== '')
@@ -117,7 +131,7 @@ if (!empty($folders) && !function_exists('iterateCM'))
     closedir($folderHandler);
 
     echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    throw new \otra\OtraException('', 1, '', NULL, [], true);
+    throw new OtraException('', 1, '', null, [], true);
   }
 
   /**
@@ -126,19 +140,35 @@ if (!empty($folders) && !function_exists('iterateCM'))
    * We also reduce paths using constants.
    *
    * @param string $classMap
+   * @param string $environment
    *
    * @return string
    */
-  function convertClassMapToPHPFile(string $classMap) : string
+  function convertClassMapToPHPFile(string $classMap, string $environment = DEV) : string
   {
+    $start = '<?php declare(strict_types=1);namespace otra\\cache\\php\\init;use const otra\\cache\\php\\{';
+
+    if ($environment === 'dev')
+      $start .= 'BASE_PATH,CONSOLE_PATH,';
+
     // if the class map is empty, then we just return an empty array.
-    if ($classMap === 'array (' . PHP_EOL . ')')
-      return '<?php declare(strict_types=1);define(\'CLASSMAP\', []);';
-
-    $withBasePathStripped = str_replace('\'' . CORE_PATH, 'CORE_PATH.\'', $classMap);
-    $withBasePathStripped = str_replace('\'' . BASE_PATH, 'BASE_PATH.\'', $withBasePathStripped);
-
-    return '<?php declare(strict_types=1);define(\'CLASSMAP\',' . convertArrayFromVarExportToShortVersion($withBasePathStripped) . ');';
+    return $start . 'CORE_PATH};const CLASSMAP=' .
+      (($classMap === 'array (' . PHP_EOL . ')')
+      ? '[];'
+      : convertArrayFromVarExportToShortVersion(str_replace(
+        [
+          '\'' . CONSOLE_PATH,
+          '\'' . CORE_PATH,
+          '\'' . BASE_PATH
+        ],
+        [
+          'CONSOLE_PATH.\'',
+          'CORE_PATH.\'',
+          'BASE_PATH.\''
+        ],
+        $classMap
+      ))
+      ) . ';';
   }
 }
 
@@ -159,7 +189,7 @@ foreach ($folders as $folder)
 }
 
 if (VERBOSE === 1)
-  echo "\x0d\033[K", 'Processed directories : ', $processedDir, '. ';
+  echo "\x0d\033[K", 'Processed directories : ', $processedDir, '.', PHP_EOL;
 
 $classes = array_merge($classes, $additionalClassesFiles);
 
@@ -191,33 +221,37 @@ foreach($classes as $classNamespace => $class)
 
 $classMap = var_export($classes, true);
 $prodClassMap = var_export($prodClasses, true);
-const CACHE_PHP_PATH = BASE_PATH . 'cache/php/';
 
 if (!file_exists(CACHE_PHP_INIT_PATH))
   mkdir(CACHE_PHP_INIT_PATH, 0755, true);
 
+/**
+ * @param string $classMap
+ * @param string $filename
+ * @param string $environment
+ */
+function generateClassMap(string $classMap, string $filename, string $environment = DEV) : void
+{
+  $filePointer = fopen(CACHE_PHP_INIT_PATH . $filename, 'w');
+  $contentToWrite = convertClassMapToPHPFile($classMap, $environment) . PHP_EOL;
+  fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+  fclose($filePointer);
+}
+
 // Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
-// Generating development class map
-$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ClassMap.php', 'w');
-$contentToWrite = convertClassMapToPHPFile($classMap) . PHP_EOL;
-fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
-fclose($filePointer);
+// Generating class maps
+generateClassMap($classMap, 'ClassMap.php');
+generateClassMap($prodClassMap, 'ProdClassMap.php', PROD);
 
-// Generating production class map
-$filePointer = fopen(CACHE_PHP_INIT_PATH . 'ProdClassMap.php', 'w');
-$contentToWrite = convertClassMapToPHPFile($prodClassMap) . PHP_EOL;
-fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
-fclose($filePointer);
-
-echo 'Class mapping finished', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
+echo 'Class mapping finished', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
 // If we want verbose output, then we display the files found related to the classes
 if (VERBOSE !== 1)
   return;
 
 // If we come from the deploy task, this constant may already have been defined.
-if (!defined('FIRST_CLASS_PADDING'))
-  define('FIRST_CLASS_PADDING', 80);
+if (!defined('otra\\console\\deployment\\genClassMap\\FIRST_CLASS_PADDING'))
+  define('otra\\console\\deployment\\genClassMap\\FIRST_CLASS_PADDING', 80);
 
 echo CLI_WARNING, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_INFO, 'Class path', CLI_INFO_HIGHLIGHT, ' => ', CLI_INFO, 'Related file path', PHP_EOL, PHP_EOL;
@@ -243,15 +277,9 @@ if (!empty($classesThatMayHaveToBeAdded))
   echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
   'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
-  /**
-   * @var string $namespace
-   * @var string $classFile
-   */
   foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)
   {
-    echo str_pad('Class ' . CLI_WARNING . $namespace . END_COLOR, FIRST_CLASS_PADDING,
-      '.'), '=> possibly related file ', CLI_WARNING, $classFile, END_COLOR, PHP_EOL;
+    echo str_pad('Class ' . CLI_WARNING . $namespace . END_COLOR . ' ', FIRST_CLASS_PADDING,
+      '.'), ' => possibly related file ', CLI_WARNING, $classFile, END_COLOR, PHP_EOL;
   }
 }
-
-return;

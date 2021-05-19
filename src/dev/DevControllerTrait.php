@@ -2,10 +2,14 @@
 declare(strict_types=1);
 namespace otra;
 
-use config\{AllConfig, Routes};
+use otra\config\{AllConfig, Routes};
 use Exception;
+use otra\cache\php\Logger;
+use const otra\cache\php\{CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
+use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
+use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
 
-define('OTRA_FILENAME_TRACE', 'trace');
+define('otra\\OTRA_FILENAME_TRACE', 'trace');
 
 /**
  * A classic MVC development controller class
@@ -15,8 +19,9 @@ define('OTRA_FILENAME_TRACE', 'trace');
  */
 trait DevControllerTrait
 {
-  private static int $STYLESHEET_FILE = 0;
-  private static int $STYLESHEET_PRINT = 1;
+  private static int
+    $STYLESHEET_FILE = 0,
+    $STYLESHEET_PRINT = 1;
   private static bool $debugBarHasBeenAdded = false;
 
   /**
@@ -179,11 +184,11 @@ trait DevControllerTrait
     $debLink2 = $debLink . '/bundles/';
 
     $resourcesType = [
-      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . '/',
-      'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . '/',
+      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . DIR_SEPARATOR,
+      'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . DIR_SEPARATOR,
       '_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
-      'core_' . $assetType => $debLink . '/src/resources/' . $assetType . '/'
+      'core_' . $assetType => $debLink . '/src/resources/' . $assetType . DIR_SEPARATOR
     ];
 
     // For each kind of asset file, we will looks for them in their respective folders

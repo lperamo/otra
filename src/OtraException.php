@@ -2,14 +2,19 @@
 /**
  * Customized exception class
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
 declare(strict_types=1);
+
 namespace otra;
 
-use otra\{Controller, console\OtraExceptionCli};
-use config\Routes;
+use otra\console\OtraExceptionCli;
+use otra\config\Routes;
+use Error;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * @package otra
@@ -68,12 +73,12 @@ class OtraException extends Exception
       return;
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
-    $this->file = str_replace('\\', '/', (('' == $file) ? $this->getFile() : $file));
+    $this->file = str_replace('\\', DIR_SEPARATOR, (('' == $file) ? $this->getFile() : $file));
     $this->line = (null === $line) ? $this->getLine() : $line;
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
-    elseif ($_SERVER['APP_ENV'] !== PROD)
+    elseif ($_SERVER[APP_ENV] !== PROD)
       echo $this->errorMessage(); // @codeCoverageIgnore
   }
 
@@ -105,8 +110,8 @@ class OtraException extends Exception
     {
       if (PHP_SAPI === 'cli')
       {
-        echo CLI_ERROR . 'Error in ' . CLI_INFO_HIGHLIGHT . $this->file . CLI_ERROR . ':' . CLI_INFO_HIGHLIGHT . $this->line .
-          CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
+        echo CLI_ERROR . 'Error in ' . CLI_INFO_HIGHLIGHT . $this->file . CLI_ERROR . ':' . CLI_INFO_HIGHLIGHT .
+          $this->line . CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
         throw new OtraException('', 1, '', NULL, [], true);
       } else
         return '<span style="color: #e00;">Error in </span><span style="color: #0aa;">' . $this->file .
@@ -141,7 +146,7 @@ class OtraException extends Exception
       } else
         echo 'A major problem has occurred. Sorry for the inconvenience. Please contact the site administrator.';
 
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     return $renderController->renderView(
@@ -178,9 +183,6 @@ class OtraException extends Exception
     ?array $context = null
   ) : void
   {
-    if (PHP_SAPI === 'cli')
-      exit($errno);
-
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
@@ -193,11 +195,11 @@ class OtraException extends Exception
   /**
    * To use with set_exception_handler().
    *
-   * @param Exception|\Error|OtraException $exception Can be TypeError, OtraException, maybe something else.
+   * @param Exception|Error|OtraException $exception Can be TypeError, OtraException, maybe something else.
    *
    * @throws OtraException
    */
-  #[NoReturn] public static function exceptionHandler(Exception|\Error|OtraException $exception) : void
+  #[NoReturn] public static function exceptionHandler(Exception|Error|OtraException $exception) : void
   {
     if (PHP_SAPI === 'cli' && $exception instanceof OtraException)
       exit($exception->getCode());

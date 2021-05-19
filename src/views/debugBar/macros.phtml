@@ -1,14 +1,15 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\views\debugBar
  */
+declare(strict_types=1);
 
-use config\AllConfig;
+namespace otra\src\views\debugBar;
 
-if (!function_exists('generateArrows'))
+use otra\config\AllConfig;
+
+if (!function_exists('otra\src\views\debugBar\generateArrows'))
 {
   /**
    * @param string $inputType

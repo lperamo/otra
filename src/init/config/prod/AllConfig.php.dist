@@ -4,9 +4,11 @@ declare(strict_types=1);
 /** THE framework production config
  *
  * @author Lionel Péramo */
-namespace config;
+namespace otra\config;
 
-define('CACHE_TIME', 300); // 5 minutes(5*60)
+use const otra\cache\php\CACHE_PATH;
+
+const CACHE_TIME = 300; // 5 minutes(5*60)
 
 /**
  * @package config

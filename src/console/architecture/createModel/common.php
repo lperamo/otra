@@ -1,12 +1,17 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
 
+namespace otra\console\architecture\createModel;
+
+use otra\OtraException;
+use const otra\cache\php\SPACE_INDENT;
+use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 /** @var string $bundleName */
+
 define(
   'MODULE_BUNDLE_MESSAGE',
   'A model in the bundle ' . CLI_INFO_HIGHLIGHT . $bundleName . END_COLOR . ' for the module ' .
@@ -20,7 +25,7 @@ const START_ACCOLADE = PHP_EOL . SPACE_INDENT . '{' . PHP_EOL;
  * @param string $modelFullName
  * @param string $bundleName
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function modelCreation(int $modelLocation, string $modelName,string &$modelFullName,string $bundleName): void
 {

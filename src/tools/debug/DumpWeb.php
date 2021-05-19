@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace otra;
-use config\AllConfig;
+namespace otra\tools\debug;
+
+use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
+use const otra\cache\php\CORE_CSS_PATH;
+use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.

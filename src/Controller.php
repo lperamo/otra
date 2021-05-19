@@ -4,11 +4,11 @@
  *
  * @author Lionel Péramo */
 declare(strict_types=1);
-
 namespace otra;
+use const otra\cache\php\{APP_ENV,CORE_PATH,DIR_SEPARATOR,PROD};
 
 $temporaryEnv = ('cli' === PHP_SAPI ? PROD : $_SERVER[APP_ENV]);
-require CORE_PATH . $temporaryEnv . '/' . ucfirst($temporaryEnv) . 'ControllerTrait.php';
+require CORE_PATH . $temporaryEnv . DIR_SEPARATOR . ucfirst($temporaryEnv) . 'ControllerTrait.php';
 
 if ($temporaryEnv === PROD)
 {

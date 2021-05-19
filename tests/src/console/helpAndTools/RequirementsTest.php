@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\console\
+  {ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -32,6 +36,7 @@ class RequirementsTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testRequirements() : void
   {
@@ -88,6 +93,7 @@ class RequirementsTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testRequirementsHelp()
   {

@@ -7,6 +7,10 @@ use Exception;
 use PDOStatement;
 use phpunit\framework\TestCase;
 use otra\{bdd\Sql,OtraException};
+use ReflectionException;
+use TypeError;
+use const otra\cache\php\{APP_ENV, BASE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
+use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -30,7 +34,7 @@ class SqlTest extends TestCase
   {
     parent::tearDown();
 
-    if (isset($_SESSION['bootstrap']) === true)
+    if (isset($_SESSION['bootstrap']))
       unset($_SESSION['bootstrap']);
 
     $_SERVER[APP_ENV] = PROD;
@@ -198,7 +202,10 @@ class SqlTest extends TestCase
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
     self::assertEquals(
       $sqlLogContent
-        . '[{"file":"phar:///var/www/html/lib/phpunit_php8.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
+        . ($sqlLogContent !== ''
+        ? ''
+        : '[')
+      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
@@ -412,7 +419,7 @@ class SqlTest extends TestCase
     require self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
 
-    $this->expectException(\TypeError::class);
+    $this->expectException(TypeError::class);
     $this->expectExceptionMessage(
       'call_user_func_array(): Argument #1 ($callback) must be a valid callback, class otra\bdd\Pdomysql does not have a method "selectDb"'
     );
@@ -721,7 +728,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws \ReflectionException
+   * @throws ReflectionException
    * @throws OtraException
    *
    * @author Lionel Péramo

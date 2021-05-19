@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace config;
+namespace otra\config;
 AllConfig::$defaultConn = 'test';
 AllConfig::$dbConnections = [ // mandatory
   'test' => [ // do not modify this key name

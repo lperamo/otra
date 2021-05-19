@@ -4,14 +4,18 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_SUCCESS, END_COLOR};
+use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 
 /**
  * @runTestsInSeparateProcesses
  */
 class GenerateTaskMetadataTest extends TestCase
 {
-  private const PHP_CACHE_PATH = CACHE_PATH . 'php/',
+  private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
@@ -21,6 +25,7 @@ class GenerateTaskMetadataTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testGenerateTaskMetadata() : void
   {
@@ -64,6 +69,9 @@ class GenerateTaskMetadataTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testGenerateTaskMetadataHelp()
   {
     $this->expectOutputString(

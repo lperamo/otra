@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+
+use const otra\cache\php\CORE_VIEWS_PATH;
+use function otra\cache\php\{block, endblock};
+
 require CORE_VIEWS_PATH . '/layout.phtml';
 block('title', '404 Not found !');
 block('body');

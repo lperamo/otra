@@ -1,64 +1,90 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
 
-use config\AllConfig;
+namespace otra\console\architecture\createGlobalConstants;
 
-define('_DIR_', str_replace('\\', '/', __DIR__));
-$vendorPosition = mb_strrpos(_DIR_, 'vendor');
+use otra\config\AllConfig;
+use const otra\cache\php\{APP_ENV, BASE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_ERROR,CLI_SUCCESS,END_COLOR};
+
+define('otra\console\architecture\createGlobalConstants\CURRENT_FOLDER', str_replace('\\', '/', __DIR__));
+$vendorPosition = mb_strrpos(CURRENT_FOLDER, 'vendor');
 $otraProject = $vendorPosition !== false;
-$basePath = $otraProject
-  ? substr(_DIR_, 0, $vendorPosition)
-  : substr(_DIR_, 0, mb_strrpos(_DIR_, 'src'));
-$otraProjectSuffix = $otraProject ? 'vendor/otra/otra/src/' : 'src/';
-$corePath = $basePath . $otraProjectSuffix;
-$consolePath = $corePath . 'console/';
-$coreResourcesPath = '/' . $otraProjectSuffix . 'resources/';
-$cachePath = $basePath . 'cache/';
-$content = '<?php declare(strict_types=1);' .
-  'const DEV=\'dev' .
+
+if (!defined('otra\\cache\\php\\BASE_PATH'))
+  define('otra\\cache\\php\\BASE_PATH',
+    $otraProject
+      ? mb_substr(CURRENT_FOLDER, 0, $vendorPosition)
+      : mb_substr(CURRENT_FOLDER, 0, mb_strrpos(CURRENT_FOLDER, 'src'))
+  );
+
+if (!defined('otra\\cache\\php\\APP_ENV'))
+{
+  define('otra\\cache\\php\\APP_ENV', 'APP_ENV');
+  $_SERVER[APP_ENV] = 'prod';
+  define('otra\\cache\\php\\CACHE_PATH', BASE_PATH . 'cache/');
+  define('otra\\cache\\php\\DIR_SEPARATOR', '/');
+}
+
+const BASE_PATH_STRING = 'BASE_PATH.\'';
+define('otra\console\architecture\createGlobalConstants\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
+define('otra\console\architecture\createGlobalConstants\CORE_RESOURCES_PATH', DIR_SEPARATOR . OTRA_PROJECT_SUFFIX . 'resources/');
+define('otra\console\architecture\createGlobalConstants\PHP_FILE_START', '<?php declare(strict_types=1);');
+$content = 'const DEV=\'dev' .
   '\',PROD=\'prod' .
-  '\',BASE_PATH=\'' . $basePath .
-  '\',CORE_PATH=\'' . $corePath .
-  '\',CACHE_PATH=\'' . $cachePath .
-  '\',CONSOLE_PATH=\'' . $consolePath .
-  '\',CLASS_MAP_PATH=\'' . $cachePath . 'php/init/ClassMap.php\',TEST_PATH=\'' .
+  '\',BASE_PATH=\'' . BASE_PATH .
+  '\',BUNDLES_PATH=' . BASE_PATH_STRING . 'bundles/' .
+  '\',CORE_PATH=' . BASE_PATH_STRING . OTRA_PROJECT_SUFFIX .
+  '\',CACHE_PATH=' . BASE_PATH_STRING . 'cache/' .
+  '\',CONSOLE_PATH=CORE_PATH.\'console/' .
+  '\',CLASS_MAP_PATH=CACHE_PATH.\'php/init/ClassMap.php\',TEST_PATH=' .
   ($otraProject
-    ? $basePath . 'vendor/otra/otra/tests/'
-    : $basePath . 'tests/') .
-  '\',CORE_VIEWS_PATH=\'' . $corePath . 'views/' .
-  '\',CORE_CSS_PATH=\'' . $coreResourcesPath . 'css/' .
-  '\',CORE_JS_PATH=\'' . $coreResourcesPath . 'js/' .
+    ? BASE_PATH_STRING . 'vendor/otra/otra/tests/'
+    : BASE_PATH_STRING . 'tests/') .
+  '\',CORE_VIEWS_PATH=CORE_PATH.\'views/' .
+  '\',CORE_CSS_PATH=\'' . CORE_RESOURCES_PATH . 'css/' .
+  '\',CORE_JS_PATH=\'' . CORE_RESOURCES_PATH . 'js/' .
   '\',SPACE_INDENT=\'  ' .
   '\',APP_ENV=\'APP_ENV' .
   '\',OTRA_VERSION=\'1.0.0-alpha.2.4.0' .
-  '\';if(!defined(\'OTRA_PROJECT\'))define(\'OTRA_PROJECT\',' . ($otraProject ? 'true' : 'false') . ');';
+  '\',DIR_SEPARATOR=\'/' .
+  '\';if(!defined(\'otra\\\\cache\\\\php\\\\OTRA_PROJECT\'))define(\'otra\cache\php\OTRA_PROJECT\',' .
+  ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)
-require_once $consolePath . 'colors.php';
+require_once BASE_PATH . 'src/console/colors.php';
 
 // Those lines are for when a developer installs OTRA via composer for the first time
-$configFolderPath = $basePath . 'config/';
+$configFolderPath = BASE_PATH . 'config/';
 
 if (!file_exists($configFolderPath))
   mkdir($configFolderPath);
 
-echo (file_put_contents($basePath . 'config/constants.php', $content) === false)
+echo (file_put_contents(
+  BASE_PATH . 'config/constants.php',
+  PHP_FILE_START . 'namespace otra\\cache\\php;' . $content
+  ) === false)
   ? CLI_ERROR . 'There was a problem while writing the OTRA global constants.'
   : 'OTRA global constants generated.', CLI_SUCCESS, ' ✔';
 
 echo END_COLOR, PHP_EOL;
 
 // On the online side
-if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
+if (!class_exists(AllConfig::class))
+  require BASE_PATH . 'config/AllConfig.php';
+
+if (isset(AllConfig::$deployment['folder']))
 {
   echo (file_put_contents(
-    $basePath . 'config/prodConstants.php',
-    str_replace($basePath, AllConfig::$deployment['folder'], $content, $count)
+    BASE_PATH . 'config/prodConstants.php',
+    str_replace(
+      BASE_PATH,
+      AllConfig::$deployment['folder'], PHP_FILE_START . 'namespace otra\\cache\\php;' . $content,
+      $count)
     ) === false)
     ? CLI_ERROR . 'There was a problem while writing the OTRA global constants for the online side.'
     : 'OTRA global constants for the online side generated.', CLI_SUCCESS, ' ✔';

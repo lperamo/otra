@@ -1,15 +1,20 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\helpAndTools
  */
+declare(strict_types=1);
 
-use config\Routes;
+namespace otra\console\helpAndTools\routes;
+
+use otra\config\Routes;
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\config\VERSION;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\{guessWords,promptUser};
 
-if (!file_exists(BASE_PATH . 'bundles/config/Routes.php'))
+if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 {
   echo CLI_WARNING, 'No custom routes are defined.', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
@@ -39,7 +44,7 @@ function showResourceState(
   string $altColor
 ) : void
 {
-  echo (file_exists($basePath . $resourceExtension . '/' . $shaName. '.gz'))
+  echo (file_exists($basePath . $resourceExtension . DIR_SEPARATOR . $shaName. '.gz'))
     ? CLI_SUCCESS
     : CLI_ERROR,
     '[', $resourceType, ']', $altColor;
@@ -66,17 +71,18 @@ function showPHPState(string $basePath, string $route, string $altColor) : void
     '[PHP]', $altColor;
 }
 
-require BASE_PATH . 'config/AllConfig.php';
+// beware require_once only needed for automated tests
+require_once BASE_PATH . 'config/AllConfig.php';
 const ROUTES_ARG_ROUTE = 2;
 
 // 'require_once' needed instead of 'require', if we execute TasksManager::execute multiple times as in tests or some
 // scripts
-if (!defined('WIDTH_LEFT'))
+if (!defined('otra\console\helpAndTools\routes\WIDTH_LEFT'))
 {
-  define('WIDTH_LEFT', 25);
-  define('WIDTH_MIDDLE', 10);
+  define('otra\console\helpAndTools\routes\WIDTH_LEFT', 25);
+  define('otra\console\helpAndTools\routes\WIDTH_MIDDLE', 10);
   // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
-  define('WIDTH_RIGHT', 70);
+  define('otra\console\helpAndTools\routes\WIDTH_RIGHT', 70);
 }
 
 $indexLines = 0;
@@ -125,7 +131,7 @@ foreach($routes as $route => $details)
 
   echo str_pad(' ', WIDTH_LEFT),
     str_pad('Path', WIDTH_MIDDLE),
-    ': ' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/' . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/' .
+    ': ' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . DIR_SEPARATOR . $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR .
     $chunks[Routes::ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[Routes::ROUTES_CHUNKS_ACTION],
     PHP_EOL;
 

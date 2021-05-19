@@ -1,10 +1,18 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+
+declare(strict_types=1);
+
+namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
+
+use function otra\console\architecture\createModel\{getModelLocation,getModuleName,modelCreation};
+use function otra\console\promptUser;
+use const otra\console\ERASE_SEQUENCE;
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */
@@ -19,7 +27,7 @@ echo DOUBLE_ERASE_SEQUENCE;
 $modelLocation = getModelLocation();
 
 if (MODEL_LOCATION_BUNDLE === $modelLocation)
-  define('MODEL_PATH', $bundlePath);
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 else
 {
   /** MODULE */
@@ -32,7 +40,7 @@ else
 }
 
 $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion);
-list($modelFullName, $modelExists, $tableExists) = preparingBidule($modelName);
+[$modelFullName, $modelExists, $tableExists] = preparingBidule($modelName);
 
 // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
 while (true === $modelExists || false === $tableExists)
@@ -43,7 +51,7 @@ while (true === $modelExists || false === $tableExists)
   $errorLabel .= $modelNameQuestion;
   $modelName = promptUser($errorLabel, $errorLabel);
   $modelFullName = $modelName . '.php';
-  list($modelExists, $tableExists) = checksModelAndTableExistence($modelFullName, $modelName);
+  [$modelExists, $tableExists] = checksModelAndTableExistence($modelFullName, $modelName);
 }
 
 // We cleans the last sentence

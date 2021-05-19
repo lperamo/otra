@@ -1,12 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\debug
  */
+declare(strict_types=1);
 
-if (!function_exists('tailCustom'))
+namespace otra\tools\debug;
+
+if (!function_exists('otra\tools\debug\tailCustom'))
 {
   /**
    * Slightly modified version of the original.

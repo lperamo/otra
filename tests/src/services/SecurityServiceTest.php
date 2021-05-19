@@ -3,10 +3,22 @@ declare(strict_types=1);
 
 namespace src\services;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use Exception;
-use otra\{MasterController, OtraException};
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, CORE_PATH, DEV, DIR_SEPARATOR, PROD, TEST_PATH};
+use const otra\services\
+{
+  CONTENT_SECURITY_POLICY,
+  OTRA_KEY_CONTENT_SECURITY_POLICY,
+  OTRA_KEY_PERMISSIONS_POLICY,
+  OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
+  OTRA_KEY_STYLE_SRC_DIRECTIVE,
+  OTRA_POLICY,
+  PERMISSIONS_POLICY
+};
+use function otra\services\
+  {addCspHeader,addPermissionsPoliciesHeader,createPolicy,getRandomNonceForCSP,handleStrictDynamic};
 
 /**
  * @runTestsInSeparateProcesses
@@ -17,12 +29,10 @@ class SecurityServiceTest extends TestCase
     CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';",
     DOT_PHP = '.php',
     DIRECTIVES = 1,
-    ENV_DEV = DEV,
-    ENV_PROD = PROD,
     ROUTE = 'route',
     TEST_SECURITY_PATH = TEST_PATH . 'security/',
-    TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . self::ENV_DEV . '/',
-    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . self::ENV_PROD . '/',
+    TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . DEV . DIR_SEPARATOR,
+    TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . PROD . DIR_SEPARATOR,
     ROUTE_SECURITY_DEV_BASE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE,
     ROUTE_SECURITY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'Empty' . self::DOT_PHP,
@@ -42,7 +52,7 @@ class SecurityServiceTest extends TestCase
    */
   public function testGetRandomNonceForCSP() : void
   {
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
     $nonce = getRandomNonceForCSP();
 
@@ -53,7 +63,7 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Dev_ContentSecurityPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -61,7 +71,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_FILE_PATH,
-      CONTENT_SECURITY_POLICY[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[DEV]
     );
 
     // testing
@@ -72,7 +82,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        CONTENT_SECURITY_POLICY[self::ENV_DEV],
+        CONTENT_SECURITY_POLICY[DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -82,7 +92,7 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Dev_NoContentSecurityPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -90,7 +100,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_BASE_PATH . 'MissingPolicy.php',
-      CONTENT_SECURITY_POLICY[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[DEV]
     );
 
     // testing
@@ -100,7 +110,7 @@ class SecurityServiceTest extends TestCase
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
-      CONTENT_SECURITY_POLICY[self::ENV_DEV],
+      CONTENT_SECURITY_POLICY[DEV],
       $returnArray[self::DIRECTIVES]
     );
   }
@@ -108,9 +118,9 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Dev_EmptyContentSecurityPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
-    $cspDevPolicyReworked = CONTENT_SECURITY_POLICY[self::ENV_DEV];
+    $cspDevPolicyReworked = CONTENT_SECURITY_POLICY[DEV];
     unset($cspDevPolicyReworked[OTRA_KEY_SCRIPT_SRC_DIRECTIVE]);
 
     // launching
@@ -118,7 +128,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH,
-      CONTENT_SECURITY_POLICY[self::ENV_DEV]
+      CONTENT_SECURITY_POLICY[DEV]
     );
 
     // testing
@@ -136,7 +146,7 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Prod_ContentSecurityPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -144,7 +154,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_CONTENT_SECURITY_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_PROD_FILE_PATH,
-      CONTENT_SECURITY_POLICY[self::ENV_PROD]
+      CONTENT_SECURITY_POLICY[PROD]
     );
 
     // testing
@@ -155,7 +165,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        CONTENT_SECURITY_POLICY[self::ENV_PROD],
+        CONTENT_SECURITY_POLICY[PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -165,7 +175,7 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Dev_PermissionsPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
 
     // launching ['csp']
@@ -173,7 +183,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_PERMISSIONS_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_DEV_FILE_PATH,
-      PERMISSIONS_POLICY[self::ENV_DEV]
+      PERMISSIONS_POLICY[DEV]
     );
 
     // testing
@@ -184,7 +194,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        PERMISSIONS_POLICY[self::ENV_DEV],
+        PERMISSIONS_POLICY[DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -194,7 +204,7 @@ class SecurityServiceTest extends TestCase
   public function testCreatePolicy_Prod_PermissionsPolicy() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -202,7 +212,7 @@ class SecurityServiceTest extends TestCase
       OTRA_KEY_PERMISSIONS_POLICY,
       self::ROUTE,
       self::ROUTE_SECURITY_PROD_FILE_PATH,
-      PERMISSIONS_POLICY[self::ENV_PROD]
+      PERMISSIONS_POLICY[PROD]
     );
 
     // testing
@@ -213,7 +223,7 @@ class SecurityServiceTest extends TestCase
     );
     self::assertEquals(
       array_merge(
-        PERMISSIONS_POLICY[self::ENV_PROD],
+        PERMISSIONS_POLICY[PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
       ),
       $returnArray[self::DIRECTIVES]
@@ -223,12 +233,11 @@ class SecurityServiceTest extends TestCase
   /**
    * @depends testHandleStrictDynamic_Dev_WithScriptSrc_NoStrictDynamic_NoNonces
    * @depends testCreatePolicy_Dev_ContentSecurityPolicy
-   * @throws OtraException
    */
   public function testAddCspHeader_Dev() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -248,12 +257,11 @@ class SecurityServiceTest extends TestCase
    * @depends testHandleStrictDynamic_Prod_WithScriptSrc_NoStrictDynamic_NoNonces
    * @depends testHandleStrictDynamic_Prod_WithStyleSrc_NoStrictDynamic_NoNonces
    * @depends testCreatePolicy_Prod_ContentSecurityPolicy
-   * @throws OtraException
    */
   public function testAddCspHeader_Prod() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -275,7 +283,7 @@ class SecurityServiceTest extends TestCase
   public function testAddPermissionPoliciesHeader_Dev() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -297,7 +305,7 @@ class SecurityServiceTest extends TestCase
   public function testAddPermissionsPoliciesHeader_Prod() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
 
     // launching
@@ -313,13 +321,11 @@ class SecurityServiceTest extends TestCase
   /**
    * If we do not have the related directive, then we put the default value from MasterController.
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Dev_WithoutScriptSrc() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
@@ -341,13 +347,11 @@ class SecurityServiceTest extends TestCase
   /**
    * If we do not have a defined policy, we put the default directives for this policy.
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Dev_WithScriptSrc_NoStrictDynamic_NoNonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
@@ -366,13 +370,11 @@ class SecurityServiceTest extends TestCase
   /**
    * If we have an empty policy, we simply remove that directive.
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_NoStrictDynamic_NoNonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
@@ -393,13 +395,12 @@ class SecurityServiceTest extends TestCase
    * Beware, here we only test 'script-src'.
    *
    * @depends testGetRandomNonceForCSP
-   * @throws OtraException
    * @throws Exception
    */
   public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_NoStrictDynamic_Nonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     AllConfig::$debug =  true;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
@@ -421,12 +422,12 @@ class SecurityServiceTest extends TestCase
    * If we have an empty policy, we simply remove that directive.
    * Beware, here we only test 'script-src'.
    *
-   * @throws OtraException
+   * @throws Exception
    */
   public function testHandleStrictDynamic_Dev_WithEmptyScriptSrc_StrictDynamic_Nonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_DEV;
+    $_SERVER[APP_ENV] = DEV;
     $cspPolicy = "Content-Security-Policy: frame-ancestors 'none';";
     require self::SECURITY_SERVICE;
     $nonce = getRandomNonceForCSP();
@@ -450,13 +451,11 @@ class SecurityServiceTest extends TestCase
   /**
    * If we do not have the related directive, then we put the default value from MasterController.
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Prod_WithoutScriptSrc() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
@@ -477,13 +476,11 @@ class SecurityServiceTest extends TestCase
 
   /**
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Prod_WithScriptSrc_NoStrictDynamic_NoNonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
@@ -501,13 +498,11 @@ class SecurityServiceTest extends TestCase
 
   /**
    * Beware, here we only test 'script-src'.
-   *
-   * @throws OtraException
    */
   public function testHandleStrictDynamic_Prod_WithStyleSrc_NoStrictDynamic_NoNonces() : void
   {
     // context
-    $_SERVER[APP_ENV] = self::ENV_PROD;
+    $_SERVER[APP_ENV] = PROD;
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 

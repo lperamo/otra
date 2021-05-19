@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
-use config\AllConfig;
+namespace otra\src\views\debugBar;
+
+use otra\config\AllConfig;
 use otra\MasterController;
+use const otra\cache\php\BASE_PATH;
 
 // Value used also in CORE_PATH . 'debugBar/templateMotor.phtml'
 $cacheEnabled = (!isset(AllConfig::$cache) || AllConfig::$cache);

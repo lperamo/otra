@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
+use const otra\cache\php\CORE_PATH;
+use function otra\tools\debug\getCaller;
 
 /**
  * @runTestsInSeparateProcesses

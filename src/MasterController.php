@@ -1,14 +1,20 @@
 <?php
-declare(strict_types=1);
 /** MVC master controller class
  *
  * @author Lionel Péramo
  */
+declare(strict_types=1);
+
 namespace otra;
 
-use cache\php\BlocksSystem;
-use config\AllConfig;
+use otra\cache\php\BlocksSystem;
+use otra\config\AllConfig;
+use Exception;
 use JetBrains\PhpStorm\Pure;
+use const otra\cache\php\
+{APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
+use function otra\services\getRandomNonceForCSP;
+use function otra\templating\showBlocksVisually;
 
 /**
  * @author Lionel Péramo
@@ -28,7 +34,7 @@ abstract class MasterController
   public string $route,
     $bundle = '',
     $module = '',
-    $viewPath = '/'; // index/index/ for indexController and indexAction
+    $viewPath = DIR_SEPARATOR; // index/index/ for indexController and indexAction
 
   protected string $controller = '',
     $action = '',
@@ -36,8 +42,8 @@ abstract class MasterController
 
   protected array
     $viewResourcePath = [
-      'css' => '/', // CSS path for this module
-      'js' => '/'  // JS path for this module
+      'css' => DIR_SEPARATOR, // CSS path for this module
+      'js' => DIR_SEPARATOR  // JS path for this module
     ],
     $params = [];
 
@@ -147,9 +153,16 @@ abstract class MasterController
       if (isset($otraParams['route']) && $otraParams['route'] === 'otra_exception')
       {
         // Stores the bundle, module, controller and action for later use
-        [$this->bundle, $this->module, $this->route, self::$hasCssToLoad, self::$hasJsToLoad] = array_values($otraParams);
+        [
+          $this->bundle,
+          $this->module,
+          $this->route,
+          self::$hasCssToLoad,
+          self::$hasJsToLoad
+        ] = array_values($otraParams);
 
-        require CORE_PATH . 'services/securityService.php';
+        // require_once needed, instead of require, because of the RouterTest::testGet_Launch test
+        require_once CORE_PATH . 'services/securityService.php';
         $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
       }
 
@@ -165,22 +178,26 @@ abstract class MasterController
       ,
       $this->route,
       self::$hasJsToLoad,
-      self::$hasCssToLoad] = array_values($otraParams);
+      self::$hasCssToLoad
+    ] = array_values($otraParams);
 
-    require CORE_PATH . 'services/securityService.php';
-    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . '/' . $this->route . '.php';
+    // require_once needed, instead of require, because of the RouterTest::testGet_Launch test
+    require_once CORE_PATH . 'services/securityService.php';
+
+    $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . DIR_SEPARATOR . $this->route .
+      '.php';
 
     if (!file_exists($this->routeSecurityFilePath))
       $this->routeSecurityFilePath = null;
 
     $this->action = substr($otraParams['action'], 0, -6);
     $this->params = $params;
-    $mainPath = 'bundles/' . $this->bundle . '/' . $this->module . '/';
+    $mainPath = 'bundles/' . $this->bundle . DIR_SEPARATOR . $this->module . DIR_SEPARATOR;
     // Stores the templates' path of the calling controller
-    $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . '/';
+    $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . DIR_SEPARATOR;
     $this->viewResourcePath = [
-      'css' => '/' . $mainPath .'resources/css/',
-      'js' => '/' . $mainPath . 'resources/js/'
+      'css' => DIR_SEPARATOR . $mainPath .'resources/css/',
+      'js' => DIR_SEPARATOR . $mainPath . 'resources/js/'
     ];
 
     self::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
@@ -210,7 +227,7 @@ abstract class MasterController
    *
    * @param string $cachedFile The cache file name version of the file
    *
-   * @throws \Exception
+   * @throws Exception
    * @return bool|string $content The cached (and cleaned) content if exists, false otherwise
    */
   protected static function getCachedFileContent(string $cachedFile) : bool|string
@@ -308,7 +325,7 @@ abstract class MasterController
     if (!$otraRoute)
       $templateFile = $viewPath ? $this->viewPath . $file : $file;
     else
-      $templateFile = CORE_VIEWS_PATH . $this->controller . '/' . $file;
+      $templateFile = CORE_VIEWS_PATH . $this->controller . DIR_SEPARATOR . $file;
 
     return [$templateFile, $otraRoute];
   }
@@ -338,7 +355,7 @@ abstract class MasterController
    * @param string $route
    * @param array  $viewResourcePath Paths to CSS and JS files
    *
-   * @throws \Exception
+   * @throws Exception
    */
   protected static function handleCache(
     string $templateFile,
@@ -426,4 +443,4 @@ abstract class MasterController
 // allowing the block.php file of the template engine system to work in production mode,
 // by creating a class alias. Disabled when passing via the command line tasks.
 if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
-  class_alias('\cache\php\MasterController', '\otra\MasterController');
+  class_alias('otra\cache\php\MasterController', '\otra\MasterController');

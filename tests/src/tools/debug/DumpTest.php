@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY};
+use function otra\tools\{delTree, getSourceFromFileCli};
+use function otra\tools\debug\{dump, paramDump};
 
 /**
  * @runTestsInSeparateProcesses
@@ -17,7 +21,7 @@ class DumpTest extends TestCase
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
     OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3;
 
-  private static string $LOGS_PROD_PATH;
+  private static string $logsProdPath;
   private static bool $outputFlag = true;
   // fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
   protected $preserveGlobalState = FALSE;
@@ -26,27 +30,27 @@ class DumpTest extends TestCase
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV];
+    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV];
 
     require TEST_PATH . 'config/AllConfigGood.php';
     require CORE_PATH . 'tools/getSourceFromFile.php';
     require CORE_PATH . 'tools/debug/dump.php';
 
-    if (file_exists(self::$LOGS_PROD_PATH) === false)
-      mkdir(self::$LOGS_PROD_PATH, 0777, true);
+    if (!file_exists(self::$logsProdPath))
+      mkdir(self::$logsProdPath, 0777, true);
   }
 
   public static function tearDownAfterClass(): void
   {
     parent::tearDownAfterClass();
 
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-
-      /** @var callable $delTree */
       if (file_exists(self::LOG_PATH))
-        $delTree(self::LOG_PATH);
+      {
+        require CORE_PATH . 'tools/deleteTree.php';
+        delTree(self::LOG_PATH);
+      }
     }
   }
 

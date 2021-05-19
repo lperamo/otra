@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\deployment\buildDev;
 /**
  * @author Lionel Péramo
  * @package otra\console\deployment

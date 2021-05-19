@@ -4,7 +4,6 @@ declare(strict_types=1);
  *
  * @author Lionel Péramo */
 namespace otra;
-
 use JetBrains\PhpStorm\Pure;
 
 /**

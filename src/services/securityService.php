@@ -1,36 +1,33 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\services
  */
+declare(strict_types=1);
 
-use config\AllConfig;
+namespace otra\services;
+
+use otra\config\AllConfig;
+use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use otra\MasterController;
+use const otra\cache\php\{APP_ENV,DEV,PROD};
 
-if (!function_exists('getRandomNonceForCSP'))
-{
-  define('OTRA_KEY_PERMISSIONS_POLICY', 'permissionsPolicy');
-  define('OTRA_KEY_CONTENT_SECURITY_POLICY', 'csp');
-  define('OTRA_KEY_SCRIPT_SRC_DIRECTIVE', 'script-src');
-  define('OTRA_KEY_STYLE_SRC_DIRECTIVE', 'style-src');
-
-  // condition because of the definitions in updateConfTask.php (tests will fail otherwise)
-  if (!defined('OTRA_LABEL_SECURITY_NONE'))
-  {
-    define('OTRA_LABEL_SECURITY_NONE', "'none'");
-    define('OTRA_LABEL_SECURITY_SELF', "'self'");
-    define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
-  }
-
-  define('OTRA_POLICY', 0);
-  define('OTRA_POLICIES', [
+const
+  OTRA_KEY_PERMISSIONS_POLICY = 'permissionsPolicy',
+  OTRA_KEY_CONTENT_SECURITY_POLICY = 'csp',
+  OTRA_KEY_SCRIPT_SRC_DIRECTIVE = 'script-src',
+  OTRA_KEY_STYLE_SRC_DIRECTIVE = 'style-src',
+  OTRA_LABEL_SECURITY_NONE = "'none'",
+  OTRA_LABEL_SECURITY_SELF = "'self'",
+  OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
+  OTRA_POLICY = 0,
+  OTRA_POLICIES = [
     OTRA_KEY_PERMISSIONS_POLICY => 'Permissions-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
-  ]);
-  define('OTRA_STRLEN_SCRIPT_SRC', 10);
-  define('CSP_ARRAY', [
+  ],
+  OTRA_STRLEN_SCRIPT_SRC = 10,
+  CSP_ARRAY = [
     'base-uri' => OTRA_LABEL_SECURITY_SELF,
     'form-action' => OTRA_LABEL_SECURITY_SELF,
     'frame-ancestors' => OTRA_LABEL_SECURITY_SELF,
@@ -43,28 +40,35 @@ if (!function_exists('getRandomNonceForCSP'))
     'manifest-src' => OTRA_LABEL_SECURITY_SELF,
     OTRA_KEY_STYLE_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF,
     OTRA_KEY_SCRIPT_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF
-  ]);
-  define('CONTENT_SECURITY_POLICY', [
+  ],
+  CONTENT_SECURITY_POLICY = [
     DEV => CSP_ARRAY,
     PROD => CSP_ARRAY
-  ]);
-
+  ],
   // experimental with bad support
   // ('layout-animations', 'legacy-image-formats', 'oversized-images', 'unoptimized-images', 'unsized-media')
-  define('PERMISSIONS_POLICY', [
+  PERMISSIONS_POLICY = [
     DEV =>
       [
         'interest-cohort' => '', // To avoid tracking from Google Floc
         'sync-xhr' => ''
       ],
     PROD => []
-  ]);
+  ];
+
+if (!function_exists('otra\services\getRandomNonceForCSP'))
+{
+  // We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
+  // allowing the block.php file of the template engine system to work in production mode,
+  // by creating a class alias. Disabled when passing via the command line tasks.
+  if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
+    class_alias('otra\cache\php\AllConfig', 'otra\config\AllConfig');
 
   /**
    * @param string $directive
    *
-   * @return string
    * @throws Exception
+   * @return string
    */
   function getRandomNonceForCSP(string $directive = OTRA_KEY_SCRIPT_SRC_DIRECTIVE) : string
   {
@@ -86,7 +90,7 @@ if (!function_exists('getRandomNonceForCSP'))
    *
    * @return array{0: string, 1: array<string, string>}
    */
-  #[\JetBrains\PhpStorm\ArrayShape([
+  #[ArrayShape([
     'string',
     'array'
   ])]
@@ -251,12 +255,15 @@ if (!function_exists('getRandomNonceForCSP'))
       );
     }
 
-    foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
+    if (!empty(MasterController::$nonces))
     {
-      $policy .= '\'nonce-' . $nonce . '\'';
+      foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
+      {
+        $policy .= '\'nonce-' . $nonce . '\'';
 
-      if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
-        $policy .= ' ';
+        if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
+          $policy .= ' ';
+      }
     }
 
     $policy .= ';';

@@ -4,7 +4,12 @@ declare(strict_types=1);
 namespace src\console\deployment;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_PATH};
 
 /**
  * @runTestsInSeparateProcesses
@@ -17,15 +22,17 @@ class GenJsRoutingTaskTest extends TestCase
     OTRA_TASK_GEN_JS_ROUTING = 'genJsRouting',
     OTRA_TASK_HELP = 'help',
     JS_ROUTING_FILENAME = 'jsRouting.js',
-    MAIN_RESOURCES_PATH = BASE_PATH . 'bundles/resources/',
+    MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/',
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
-    BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME;
+    BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
+    OTRA_BINARY = 'otra.php';
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testGenJsRouting() : void
   {
@@ -34,25 +41,25 @@ class GenJsRoutingTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_INIT,
-      ['otra.php', self::OTRA_TASK_INIT]
+      [self::OTRA_BINARY, self::OTRA_TASK_INIT]
     );
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+      [self::OTRA_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
     );
     ob_end_clean();
 
     // launching
     $this->expectOutputString(
       'Generating JavaScript routing...' . PHP_EOL . ERASE_SEQUENCE . 'JavaScript routing generated in ' .
-      CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . END_COLOR . OTRA_SUCCESS . PHP_EOL
+      CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . END_COLOR . SUCCESS
     );
 
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_JS_ROUTING,
-      ['otra.php', self::OTRA_TASK_GEN_JS_ROUTING]
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_JS_ROUTING]
     );
 
     // testing
@@ -78,7 +85,10 @@ class GenJsRoutingTaskTest extends TestCase
       rmdir(MAIN_RESOURCES_PATH);
   }
 
-  public function testSqlCleanHelp()
+  /**
+   * @throws OtraException
+   */
+  public function testGenJsRoutingHelp()
   {
     $this->expectOutputString(
       CLI_BASE .
@@ -91,7 +101,7 @@ class GenJsRoutingTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_JS_ROUTING]
+      [self::OTRA_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_JS_ROUTING]
     );
   }
 }

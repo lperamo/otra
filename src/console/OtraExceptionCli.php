@@ -2,15 +2,17 @@
 declare(strict_types=1);
 namespace otra\console;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 
 /**
  * Shows an exception 'colorful' display for command line commands.
  *
  * @author Lionel Péramo
  */
-class OtraExceptionCli extends \Exception
+class OtraExceptionCli extends Exception
 {
   private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
     FUNCTION_WIDTH = 49,
@@ -49,7 +51,7 @@ class OtraExceptionCli extends \Exception
   private static function returnShortenFilePath(string $pathType, string $file) : string
   {
     return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR . ' + ' .
-      mb_substr($file, mb_strlen(constant($pathType . '_PATH')));
+      mb_substr($file, mb_strlen(constant('otra\\cache\\php\\' . $pathType . '_PATH')));
   }
 
   /**
@@ -60,12 +62,10 @@ class OtraExceptionCli extends \Exception
    */
   private static function getBacktracesOutput(array $backtraces, string $errorCode = '') : string
   {
-    $backtracesOutput = '';
-
     /******************************
      * Write HEADERS of the table *
      ******************************/
-    $backtracesOutput .=
+    $backtracesOutput =
       CLI_TABLE . '┌' . str_repeat('─',self::TYPE_WIDTH)
       . '┬' . str_repeat('─',self::FUNCTION_WIDTH)
       . '┬' . str_repeat('─',self::LINE_WIDTH)
@@ -96,7 +96,7 @@ class OtraExceptionCli extends \Exception
 
       if ($actualTraceFile !== '')
       {
-        $actualTraceFile = str_replace('\\', '/', $actualTraceFile);
+        $actualTraceFile = str_replace('\\', DIR_SEPARATOR, $actualTraceFile);
 
         if (str_contains($actualTraceFile, CONSOLE_PATH))
           $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
@@ -163,7 +163,7 @@ class OtraExceptionCli extends \Exception
 
     echo self::getBacktracesOutput($exception->backtraces, $exception->scode);
 
-    if ($exception->context !== [])
+    if (!empty($exception->context))
     {
       echo 'And the context...', PHP_EOL;
       echo self::getBacktracesOutput($exception->context);

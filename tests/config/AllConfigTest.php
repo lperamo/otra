@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
 
+namespace otra\config;
+
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, OTRA_PROJECT, PROD};
 
 /**
  * @runTestsInSeparateProcesses
@@ -25,16 +28,16 @@ class AllConfigTest extends TestCase
   public function testAllConfig_ExternalConfig() : void
   {
     // context
-    $externalConfigFileFolder = BASE_PATH . 'bundles/config/';
+    $externalConfigFileFolder = BUNDLES_PATH . 'config/';
 
-    if (file_exists($externalConfigFileFolder) === false)
+    if (!file_exists($externalConfigFileFolder))
       mkdir($externalConfigFileFolder, 0777, true);
 
     $externalConfigFilePath = $externalConfigFileFolder . 'Config.php';
     $externalConfigFileCreated = false;
 
     // If there is not already an external file present then we create it temporarily
-    if (file_exists($externalConfigFilePath) === false)
+    if (!file_exists($externalConfigFilePath))
     {
       touch($externalConfigFilePath);
       $externalConfigFileCreated = true;
@@ -44,11 +47,11 @@ class AllConfigTest extends TestCase
     require_once BASE_PATH . 'config/AllConfig.php';
 
     // cleanup if needed
-    if ($externalConfigFileCreated === true)
+    if ($externalConfigFileCreated)
       unlink($externalConfigFilePath);
 
     // we clean the folders bundles and bundles/config only if we are working on the framework, not with.
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
     {
       rmdir($externalConfigFileFolder);
 

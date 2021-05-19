@@ -7,6 +7,8 @@
 declare(strict_types=1);
 namespace config;
 
+use const otra\cache\php\BASE_PATH;
+
 /**
  * @package config
  */

@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
+
+use function otra\cache\php\{block, endblock, parent};
+use const otra\cache\php\BASE_PATH;
+
 require BASE_PATH . 'bundles/HelloWorld/views/layout.phtml';
 
 block('title', 'Hello world starter template');

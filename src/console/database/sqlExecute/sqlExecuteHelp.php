@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\console\database\sqlExecute;
 /**
  * @author Lionel Péramo
  * @package otra\console\database

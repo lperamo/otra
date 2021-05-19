@@ -1,10 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
+namespace otra\console\architecture\createModel\allModelsFromYmlSchema;
+
+use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\{CLI_WARNING,END_COLOR};
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER, MODEL_LOCATION_BUNDLE, MODULE_NAME};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\architecture\createModel\{getModelLocation,getModuleName};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */
@@ -23,16 +29,16 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 {
   // we update the message
   echo CREATING_ALL_MODELS_FOR_BUNDLE;
-  define('MODEL_PATH', $bundlePath);
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 } else
 {
   /** MODULE */
-  define('MODULE_NAME', getModuleName($bundlePath));
+  define('otra\console\architecture\createModel\MODULE_NAME', getModuleName($bundlePath));
 
   echo DOUBLE_ERASE_SEQUENCE, 'A model in the bundle ', CLI_WARNING, $bundleName, END_COLOR, ' for the module ',
     CLI_WARNING, $moduleName, END_COLOR, ' ...', PHP_EOL;
 
-  define('MODEL_PATH', $bundlePath . MODULE_NAME . '/');
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . MODULE_NAME . DIR_SEPARATOR);
 
   // We cleans the module name question
   echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_WARNING, $bundleName, END_COLOR, ' in the module ',

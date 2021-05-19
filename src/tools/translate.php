@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
-
+namespace otra\tools;
 /**
  * @author Lionel Péramo
  * @package otra\tools
  */
 
-if (!function_exists('t'))
+if (!function_exists('otra\tools\t'))
 {
   // Will be the future translation feature
   function t(string $text): string

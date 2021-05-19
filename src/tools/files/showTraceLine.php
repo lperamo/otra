@@ -1,10 +1,13 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\tools\files
  */
+declare(strict_types=1);
+
+namespace otra\tools\files;
+use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
+use function otra\tools\getSourceFromFile;
 
 /**
  * @param array{class: string, file: string, function:string, type:string, line: int} $contextItem
@@ -21,7 +24,7 @@ function showTraceLine(array $contextItem) : void
 
       if ($hasFile)
       {
-        $traceFile = str_replace('\\', '/', $contextItem['file']);
+        $traceFile = str_replace('\\', DIR_SEPARATOR, $contextItem['file']);
 
         if (str_contains($traceFile, BASE_PATH))
         {

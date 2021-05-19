@@ -4,7 +4,12 @@ declare(strict_types=1);
 namespace src\console\helpAndTools;
 
 use otra\console\TasksManager;
+use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use const otra\bin\TASK_CLASS_MAP_PATH;
+use function otra\tools\copyFileAndFolders;
 
 /**
  * @runTestsInSeparateProcesses
@@ -18,11 +23,17 @@ class RoutesTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_HELP = 'help',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
-    OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BASE_PATH . 'bundles/config/Routes.php',
+    OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BUNDLES_PATH . 'config/Routes.php',
     PHP_STATUS = '[PHP]';
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
+
+  public static function setUpBeforeClass() : void
+  {
+    // To avoid "Constant otra\console\ADD_BOLD already defined" in this test file
+    require_once CONSOLE_PATH . 'colors.php';
+  }
 
   /**
    * @param string $parameter
@@ -73,19 +84,19 @@ class RoutesTest extends TestCase
   }
 
   /**
-   * @throws \otra\OtraException
+   * @throws OtraException
    *
    * @author Lionel Péramo
    */
   public function testRoutes() : void
   {
-    define('WIDTH_LEFT', 25);
-    define('WIDTH_MIDDLE', 10);
-    define('WIDTH_RIGHT', 70);
+    define('src\console\helpAndTools\WIDTH_LEFT', 25);
+    define('src\console\helpAndTools\WIDTH_MIDDLE', 10);
+    define('src\console\helpAndTools\WIDTH_RIGHT', 70);
 
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
-    $_SERVER['APP_ENV'] = DEV;
+    $_SERVER[APP_ENV] = DEV;
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
 
@@ -178,6 +189,7 @@ class RoutesTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testRoutesHelp()
   {

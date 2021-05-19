@@ -6,6 +6,9 @@ namespace src\tools\workers;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
 use phpunit\framework\TestCase;
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -50,8 +53,8 @@ class WorkerManagerTest extends TestCase
     );
     $workerManager->attach($worker);
 
-    define('TEST_DETACH_STATUS_SUCCESS', 0);
-    define('TEST_DETACH_STATUS_WAS_RUNNING', true);
+    define('src\tools\workers\TEST_DETACH_STATUS_SUCCESS', 0);
+    define('src\tools\workers\TEST_DETACH_STATUS_WAS_RUNNING', true);
 
     // launching
     $foundKey = array_search($worker, $workerManager::$workers, true);
@@ -165,7 +168,7 @@ class WorkerManagerTest extends TestCase
       self::WAITING_MESSAGE,
       self::VERBOSE
     );
-    define('TEST_STREAM_NON_BLOCKING_MODE', false);
+    define('src\tools\workers\TEST_STREAM_NON_BLOCKING_MODE', false);
 
     // launching
     $workerManager->attach($worker);

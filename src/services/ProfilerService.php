@@ -1,14 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /**
  * Profiler service
  *
- * @author Lionel Péramo
- * @package otra\services
+ * @author  Lionel Péramo
  */
+declare(strict_types=1);
 
 namespace otra\services;
+
+use otra\OtraException;
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
+use function otra\tools\{rawSqlPrettyPrint,t};
 
 /**
  * @package otra\services
@@ -16,14 +18,14 @@ namespace otra\services;
 class ProfilerService
 {
   /**
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public static function securityCheck() : void
   {
     if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
   }
 

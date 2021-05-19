@@ -1,16 +1,21 @@
 <?php
-declare(strict_types=1);
-
 /**
  * This file is used in 'genWatcher' and 'buildDev' tasks to initialize them.
  *
  * @author Lionel Péramo
  * @package otra\console\deployment
  */
-namespace otra\console;
+declare(strict_types=1);
 
-use config\AllConfig;
+namespace otra\console\deployment;
+
+use otra\config\AllConfig;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
 
 require BASE_PATH . 'config/Routes.php';
@@ -31,20 +36,20 @@ const FILE_TASK_ARG_MASK = 3,
   ],
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
 
-define('GOOGLE_CLOSURE_COMPILER_VERBOSITY', ['QUIET', 'DEFAULT', 'VERBOSE']);
+const GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 define(
-  'PATHS_TO_AVOID',
-  array_merge([BASE_PATH . 'bundles/config'], AllConfig::$pathsToAvoidForBuild ?? [])
+  'otra\console\deployment\PATHS_TO_AVOID',
+  array_merge([BUNDLES_PATH . 'config'], AllConfig::$pathsToAvoidForBuild ?? [])
 );
 
 // Defines if we want to use Google Closure Compiler or not
 define(
-  'FILE_TASK_GCC',
+  'otra\console\deployment\FILE_TASK_GCC',
   isset($argv[FILE_TASK_ARG_GCC]) && $argv[FILE_TASK_ARG_GCC] === 'true'
 );
 
 define(
-  'TASK_FILE_SOURCE_MAPS',
+  'otra\console\deployment\TASK_FILE_SOURCE_MAPS',
   isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
@@ -57,13 +62,13 @@ if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
+define('otra\console\deployment\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
 
-define('WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
-define('WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
-define('WATCH_FOR_PHP_FILES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_PHP));
+define('otra\console\deployment\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
+define('otra\console\deployment\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
+define('otra\console\deployment\WATCH_FOR_PHP_FILES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_PHP));
 define(
-  'WATCH_FOR_ROUTES',
+  'otra\console\deployment\WATCH_FOR_ROUTES',
   (
     $maskExists
     && ($argv[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES
@@ -98,14 +103,14 @@ function generateStylesheetsFiles(
 
   // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
   // 5 length of scss/ or sass/
-  $cssFolder = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5);
+  $cssFolder = $resourcesMainFolder  . 'css/' . mb_substr($resourcesFolderEndPath, 5);
 
   // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
   // as well as its subfolders
   if (!file_exists($cssFolder))
     mkdir($cssFolder, 0777,true);
 
-  $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
+  $cssPath = realpath($cssFolder) . DIR_SEPARATOR . $generatedCssFile;
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
   [, $output] = cliCommand(
@@ -138,7 +143,7 @@ function generateStylesheetsFiles(
  *  $resourcesFolderEndPath : last folders in the path after the $resourcesMainFolder
  *  $extension              : ...the file extension
  */
-#[\JetBrains\PhpStorm\ArrayShape([
+#[ArrayShape([
   'string',
   'string',
   'string',
@@ -170,7 +175,7 @@ function getPathInformations(string $fullName) : array
   }
 
   $resourcesMainFolder = mb_substr($resourceFolder, 0, $resourcesMainFolderPosition) . $folderType;
-  $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder)) . '/';
+  $resourcesFolderEndPath = mb_substr($resourceFolder, mb_strlen($resourcesMainFolder)) . DIR_SEPARATOR;
 
   return [
     $baseName,

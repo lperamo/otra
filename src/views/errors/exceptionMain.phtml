@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
+namespace otra\src\views\errors;
 
+use const otra\cache\php\{BASE_PATH, CORE_PATH};
 /**
  * @var array  $backtraces
  * @var array<string,array{
@@ -15,7 +17,10 @@ declare(strict_types=1);
  * @var int    $fileLine
  * @var string $message
  */
-if (!defined('BASE_PATH_LENGTH'))
+
+use function otra\tools\files\showTraceLine;
+
+if (!defined('otra\src\views\errors\BASE_PATH_LENGTH'))
 {
   define('BASE_PATH_LENGTH', strlen(BASE_PATH));
   require CORE_PATH . 'tools/getSourceFromFile.php';

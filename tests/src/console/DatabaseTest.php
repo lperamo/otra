@@ -3,10 +3,20 @@ declare(strict_types=1);
 
 namespace src\console;
 
-use config\AllConfig;
+use otra\config\AllConfig;
 use PHPUnit\Framework\TestCase;
-use otra\{OtraException, console\Database, bdd\Sql, Session};
+use otra\console\database\Database;
+use otra\{OtraException, bdd\Sql, Session};
 use ReflectionException;
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
+use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\
+{cleanFileAndFolders,
+  copyFileAndFolders,
+  removeFieldScopeProtection,
+  removeFieldsScopeProtection,
+  removeMethodScopeProtection,
+  setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses
@@ -162,10 +172,11 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws OtraException
-   * @depends testInitBase
-   *
    * @author                   Lionel Péramo
+   * @depends                  testInitBase
+   *
+   * @throws OtraException
+   * @throws ReflectionException
    */
   public function testInit() : void
   {
@@ -417,7 +428,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixtures_TruncateOnly() : void
   {
     // context
-    define('VERBOSE', 2);
+    define('src\console\VERBOSE', 2);
     copyFileAndFolders(
       [
         self::SCHEMA_FILE_BACKUP,
@@ -675,7 +686,7 @@ class DatabaseTest extends TestCase
 //      $schema[self::$databaseFirstTableName],
 //      self::TABLES_ORDER,
 //      $fixturesMemory,
-//      self::$configFolderSql . self::$fixturesFile . '/' . self::DATABASE_NAME . '_' . self::$databaseFirstTableName . '.sql'
+//      self::$configFolderSql . self::$fixturesFile . DIR_SEPARATOR . self::DATABASE_NAME . '_' . self::$databaseFirstTableName . '.sql'
 //    );
 
 //    removeMethodScopeProtection(Database::class, '_executeFixture')
@@ -697,7 +708,7 @@ class DatabaseTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
 
-    define('VERBOSE', 2);
+    define('src\console\VERBOSE', 2);
 
     $this->loadConfig();
 
@@ -1060,7 +1071,7 @@ class DatabaseTest extends TestCase
     // launching the task
     Database::importFixtures(self::DATABASE_NAME, self::DATABASE_CONNECTION);
 
-    foreach (self::TABLES_ORDER as &$table)
+    foreach (self::TABLES_ORDER as $table)
     {
       $ymlFile = self::CONFIG_FOLDER_YML_FIXTURES . $table . '.yml';
       self::assertFileExists(self::CONFIG_FOLDER_YML_FIXTURES . $table . '.yml');

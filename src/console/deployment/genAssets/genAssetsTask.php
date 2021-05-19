@@ -1,14 +1,30 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
 
-use config\Routes;
+namespace otra\console\deployment\genAssets;
+
+use FilesystemIterator;
+use otra\config\Routes;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use const otra\cache\php\
+{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\config\VERSION;
+use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\tools\gzCompressFile;
+
+if (!file_exists(BUNDLES_PATH))
+{
+  echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
 
 require_once BASE_PATH . 'config/AllConfig.php';
 // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
@@ -62,11 +78,11 @@ define(
   (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
 ); // 31 = default to all assets
 
-const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE;
-const GEN_ASSETS_CSS = (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1;
-const GEN_ASSETS_JS = (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2;
-const GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3;
-const GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
+const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE,
+  GEN_ASSETS_CSS = (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1,
+  GEN_ASSETS_JS = (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2,
+  GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3,
+  GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
 
 // If we only need the manifest or the SVGs, skips the assets generation loop
 if (
@@ -155,7 +171,7 @@ if (
       continue;
     }
 
-    $bundlePath = BASE_PATH . 'bundles/' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/';
+    $bundlePath = BASE_PATH . 'bundles/' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . DIR_SEPARATOR;
     $noErrors = true;
 
     /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
@@ -294,7 +310,7 @@ if (GEN_ASSETS_MANIFEST)
 
 if (GEN_ASSETS_SVG)
 {
-  define('FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
+  define('otra\console\deployment\genAssets\FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
   echo 'Checking for uncompressed SVGs in the folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
     PHP_EOL;
 
@@ -318,10 +334,10 @@ if (GEN_ASSETS_SVG)
       if (!gzCompressFile($realPath, $realPath . '.gz', GZIP_COMPRESSION_LEVEL))
       {
         echo CLI_ERROR, 'There was an error during the gzip compression of the file ', CLI_INFO_HIGHLIGHT,
-        mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
+        mb_substr($realPath, mb_strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
       } else
       {
-        echo 'The file ', CLI_INFO_HIGHLIGHT, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
+        echo 'The file ', CLI_INFO_HIGHLIGHT, mb_substr($realPath, mb_strlen(BASE_PATH)), END_COLOR,
         ' has been compressed successfully.', END_COLOR, PHP_EOL;
       }
     }
@@ -341,7 +357,7 @@ if (GEN_ASSETS_SVG)
  */
 #[Pure] function status(string $status, string $color = 'CLI_SUCCESS') : string
 {
-  return ' [' . constant($color) . $status . CLI_GRAY. ']';
+  return ' [' . constant('otra\\console\\' . $color) . $status . CLI_GRAY. ']';
 }
 
 /**
@@ -364,7 +380,7 @@ function loadAndSaveResources(
   ob_start();
   loadResource($resources, $routeChunks, 'first_' . $type, $bundlePath);
   loadResource($resources, $routeChunks, 'bundle_' . $type, $bundlePath, '');
-  loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath . $routeChunks[2] . '/');
+  loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath . $routeChunks[2] . DIR_SEPARATOR);
   loadResource($resources, $routeChunks, '_' . $type, $bundlePath);
 
   $allResources = ob_get_clean();
@@ -373,7 +389,7 @@ function loadAndSaveResources(
   if ('' === $allResources)
     return null;
 
-  $resourceFolderPath = CACHE_PATH . $type . '/';
+  $resourceFolderPath = CACHE_PATH . $type . DIR_SEPARATOR;
   $pathAndFile = $resourceFolderPath . $shaName;
 
   if (!file_exists($resourceFolderPath))
@@ -402,8 +418,8 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 
   $resourceType = substr(strrchr($key, '_'), 1);
   $resourcePath = $bundlePath .
-    (null === $resourcePath ? $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/' : $resourcePath) .
-    'resources/' . $resourceType . '/';
+    (null === $resourcePath ? $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR : $resourcePath) .
+    'resources/' . $resourceType . DIR_SEPARATOR;
 
   foreach ($resources[$key] as $resource)
   {

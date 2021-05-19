@@ -1,12 +1,14 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
+
+namespace otra\console\deployment\clearCache;
 
 use otra\console\TasksManager;
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, STRING_PAD_FOR_OPTION_FORMATTING};
 
 return [
   'Clears whatever cache you want to clear.',

@@ -1,12 +1,17 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\architecture
  */
+declare(strict_types=1);
 
-/** @var string $bundlesPath */
+namespace otra\console\architecture\createModel;
+
+use const otra\cache\php\{BUNDLES_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_INFO, CLI_WARNING};
+use const otra\console\architecture\constants\ARG_BUNDLE_NAME;
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\promptUser;
 
 $missingBundleErrorMessage = 'This bundle does not exist ! Try once again :';
 
@@ -17,7 +22,7 @@ if (!isset($argv[ARG_BUNDLE_NAME]))
 } else
   $bundleName = $argv[ARG_BUNDLE_NAME];
 
-if (!file_exists($bundlesPath . ucfirst($bundleName)))
+if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
   $bundleName = promptUser($missingBundleErrorMessage);
 
@@ -25,7 +30,7 @@ if (!file_exists($bundlesPath . ucfirst($bundleName)))
   echo DOUBLE_ERASE_SEQUENCE;
 }
 
-while (!file_exists($bundlesPath . ucfirst($bundleName)))
+while (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
   $bundleName = promptUser($missingBundleErrorMessage);
 
@@ -34,7 +39,7 @@ while (!file_exists($bundlesPath . ucfirst($bundleName)))
 }
 
 // We add the chosen bundle name to the path
-$bundlePath = $bundlesPath . ucfirst($bundleName) . '/';
+$bundlePath = BUNDLES_PATH . ucfirst($bundleName) . DIR_SEPARATOR;
 
 $possibleChoices = [CREATION_MODE_FROM_NOTHING, CREATION_MODE_ONE_MODEL, CREATION_MODE_ALL_MODELS];
 

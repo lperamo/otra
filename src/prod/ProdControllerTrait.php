@@ -1,8 +1,13 @@
 <?php
 declare(strict_types=1);
+
 namespace otra;
 
 use Exception;
+use otra\cache\php\Logger;
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, CORE_PATH};
+use const otra\config\{RESOURCE_FILE_MIN_SIZE, VERSION};
+use function otra\services\{addCspHeader,addPermissionsPoliciesHeader,getRandomNonceForCSP};
 
 /** A classic MVC production controller class
  *

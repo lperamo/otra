@@ -1,23 +1,29 @@
 <?php
-declare(strict_types=1);
-
 /**
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  * @package otra\console\deployment
  */
+declare(strict_types=1);
 
-use config\{AllConfig,Routes};
-use otra\Router;
+namespace otra\console\deployment\genBootstrap;
 
-const ONE_BOOTSTRAP_ARG_VERBOSE = 1;
-const ONE_BOOTSTRAP_ARG_LINT = 2;
-const ONE_BOOTSTRAP_ARG_ROUTE = 3;
+use Exception;
+use otra\{OtraException, Router};
+use otra\config\{AllConfig, Routes};
+use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
+use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 
-const OTRA_KEY_BOOTSTRAP = 'bootstrap';
-const OTRA_KEY_DRIVER = 'driver';
-define('GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
-define('VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
-define('OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+const
+  ONE_BOOTSTRAP_ARG_VERBOSE = 1,
+  ONE_BOOTSTRAP_ARG_LINT = 2,
+  ONE_BOOTSTRAP_ARG_ROUTE = 3,
+
+  OTRA_KEY_BOOTSTRAP = 'bootstrap',
+  OTRA_KEY_DRIVER = 'driver';
+define('otra\console\deployment\genBootstrap\GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
+define('otra\console\deployment\genBootstrap\VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
+define('otra\console\deployment\genBootstrap\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
@@ -25,7 +31,8 @@ require __DIR__ . (OTRA_PROJECT
   ) . '/config/constants.php';
 require CONSOLE_PATH . 'colors.php';
 
-echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL, END_COLOR;
+echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL,
+  END_COLOR;
 $_SERVER[APP_ENV] = PROD;
 
 require CLASS_MAP_PATH;
@@ -118,7 +125,7 @@ if (isset($params['core']) && $params['core'])
 define(
   'PATH_CONSTANTS',
   [
-    'externalConfigFile' => BASE_PATH . 'bundles/config/Config.php',
+    'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
     OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
       && isset(AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER])
       ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
@@ -130,7 +137,7 @@ define(
 
 set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) : void
 {
-  throw new \otra\OtraException($message, $errno, $file, $line, $context);
+  throw new OtraException($message, $errno, $file, $line, $context);
 });
 
 $chunks = $params['chunks'];
@@ -144,7 +151,8 @@ try
     fixFiles(
       $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
       $route,
-      file_get_contents(CORE_PATH . 'OtraException.php') . '?>' . file_get_contents($fileToInclude),
+      file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
+      file_get_contents($fileToInclude),
       VERBOSE,
       $fileToInclude
     ),
