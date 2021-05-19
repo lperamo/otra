@@ -5,7 +5,7 @@ namespace src\console\deployment\taskFileOperation;
 
 use phpunit\framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
-use const otra\console\{CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\{analyzeUseToken};
 
 /**
@@ -74,18 +74,11 @@ class AnalyzeUseTokenTest extends TestCase
 
     // testing
     $filename = CORE_PATH . 'dev/' . $class . self::PHP_EXTENSION;
-    static::expectOutputString('');
-    static::assertEquals(
-      [
-        'php' =>
-        [
-          'use' => [$filename]
-        ]
-      ],
-      $filesToConcat,
-      self::LABEL_TESTING_FILES_TO_CONCAT
+    static::expectOutputString(
+      CLI_INFO . 'We will not send the development controller in production.' . END_COLOR . PHP_EOL
     );
-    static::assertEquals([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertEquals([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
+    static::assertEquals([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testIsProdControllerTrait()
