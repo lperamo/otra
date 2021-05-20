@@ -117,6 +117,7 @@ class CreateControllerTaskTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testCreateControllerTask_BundleDoNotExist_force() : void
   {

@@ -61,12 +61,12 @@ class RoutesTest extends TestCase
   {
     return $color .
       sprintf('%-' . WIDTH_LEFT . 's', $route) .
-      str_pad('Url', WIDTH_MIDDLE, ' ') . ': ' . $url .  PHP_EOL .
-      str_pad(' ', WIDTH_LEFT, ' ') .
-      str_pad('Path', WIDTH_MIDDLE, ' ') . ': ' . $path .
+      str_pad('Url', WIDTH_MIDDLE) . ': ' . $url .  PHP_EOL .
+      str_pad(' ', WIDTH_LEFT) .
+      str_pad('Path', WIDTH_MIDDLE) . ': ' . $path .
       PHP_EOL .
-      str_pad(' ', WIDTH_LEFT, ' ') .
-      str_pad('Resources', WIDTH_MIDDLE, ' ') . ': ' . CLI_SUCCESS . $status . $color .
+      str_pad(' ', WIDTH_LEFT) .
+      str_pad('Resources', WIDTH_MIDDLE) . ': ' . CLI_SUCCESS . $status . $color .
       $resources . PHP_EOL .
       ($endingLine ? END_COLOR . str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT) . PHP_EOL : '');
   }

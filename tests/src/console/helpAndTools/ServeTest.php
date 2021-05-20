@@ -25,8 +25,6 @@ class ServeTest extends TestCase
    */
   public function testServe() : void
   {
-    // context
-
     // testing
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage(
