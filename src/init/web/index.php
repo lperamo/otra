@@ -63,10 +63,8 @@ try
     'cookie_httponly' => true,
     'cookie_samesite' => 'strict'
   ]);
-  var_dump(headers_list());die;
-//  header_remove('Cache-Control');
-//  header_remove('Expires');
-//  header_remove('Pragma');
+
+  header_remove('Expires');
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
