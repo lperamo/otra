@@ -14,12 +14,6 @@ use const otra\cache\php\init\CLASSMAP;
 require __DIR__ . '/../config/constants.php';
 
 $requestUri = $_SERVER['REQUEST_URI'];
-session_name('__Secure-LPSESSID');
-session_start([
-  'cookie_secure' => true,
-  'cookie_httponly' => true,
-  'cookie_samesite' => 'strict'
-]);
 
 // Otherwise for dynamic pages...
 $_SERVER[APP_ENV] = PROD;
@@ -61,6 +55,18 @@ try
       Routes::$allRoutes[OTRA_ROUTE]['resources']['template']
     ) && Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
+
+  ini_set('session.cache_limiter', 'private');
+  session_name('__Secure-LPSESSID');
+  session_start([
+    'cookie_secure' => true,
+    'cookie_httponly' => true,
+    'cookie_samesite' => 'strict'
+  ]);
+  var_dump(headers_list());die;
+//  header_remove('Cache-Control');
+//  header_remove('Expires');
+//  header_remove('Pragma');
 
   error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
