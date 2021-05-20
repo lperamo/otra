@@ -30,7 +30,7 @@ const
   CSP_ARRAY = [
     'base-uri' => OTRA_LABEL_SECURITY_SELF,
     'form-action' => OTRA_LABEL_SECURITY_SELF,
-    'frame-ancestors' => OTRA_LABEL_SECURITY_SELF,
+    'frame-ancestors' => OTRA_LABEL_SECURITY_NONE,
     'default-src' => OTRA_LABEL_SECURITY_NONE,
     'font-src' => OTRA_LABEL_SECURITY_SELF,
     'img-src' => OTRA_LABEL_SECURITY_SELF,
