@@ -10,8 +10,7 @@ namespace otra\console\architecture;
 
 use otra\OtraException;
 use const otra\cache\php\BASE_PATH;
-use const otra\console\
-{architecture\createBundle\OTRA_BUNDLES_MAIN_FOLDER_NAME, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\promptUser;
 

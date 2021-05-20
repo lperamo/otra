@@ -30,10 +30,12 @@ if (!defined('otra\\cache\\php\\APP_ENV'))
   define('otra\\cache\\php\\DIR_SEPARATOR', '/');
 }
 
-const BASE_PATH_STRING = 'BASE_PATH.\'';
 define('otra\console\architecture\createGlobalConstants\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
-define('otra\console\architecture\createGlobalConstants\CORE_RESOURCES_PATH', DIR_SEPARATOR . OTRA_PROJECT_SUFFIX . 'resources/');
-define('otra\console\architecture\createGlobalConstants\PHP_FILE_START', '<?php declare(strict_types=1);');
+const
+  BASE_PATH_STRING = 'BASE_PATH.\'',
+  CORE_RESOURCES_PATH = DIR_SEPARATOR . OTRA_PROJECT_SUFFIX . 'resources/',
+  PHP_FILE_START = '<?php declare(strict_types=1);';
+
 $content = 'const DEV=\'dev' .
   '\',PROD=\'prod' .
   '\',BASE_PATH=\'' . BASE_PATH .

@@ -7,9 +7,8 @@ use const otra\cache\php\CACHE_PATH;
 
 const
   VERSION = '1.0.0-alpha.2.4.0',
-  RESOURCE_FILE_MIN_SIZE = 21000; // n characters
-
-define('otra\\config\\CACHE_TIME', 300); // 5 minutes(5*60)
+  RESOURCE_FILE_MIN_SIZE = 21000, // n characters
+  CACHE_TIME = 300; // 5 minutes(5*60)
 
 /**
  * Class AllConfig

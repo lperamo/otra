@@ -62,7 +62,7 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
-define('otra\console\deployment\genBootstrap\BOOTSTRAP_PATH', BASE_PATH . 'cache/php');
+const BOOTSTRAP_PATH = BASE_PATH . 'cache/php';
 
 // Checks that the folder of micro bootstraps exists
 if (!file_exists(BOOTSTRAP_PATH))
