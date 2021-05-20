@@ -39,7 +39,7 @@ if (!function_exists('otra\tools\cliCommand'))
     $result = exec($cmd, $output, $returnCode);
     $output = implode(PHP_EOL, $output);
 
-    if (($result === false || $returnCode !== 0))
+    if ($result === false || $returnCode !== 0)
     {
       $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_WARNING . $cmd .
           END_COLOR) . PHP_EOL . 'Shell error code ' . $returnCode . '. ' . $output;

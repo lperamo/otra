@@ -255,8 +255,6 @@ abstract class MasterController
    */
   protected static function css(array|string $stylesheets = [], bool $print = false) : void
   {
-//    $stylesheets = is_array($stylesheets) ? $stylesheets : [[$stylesheets, $print]];
-
     array_push(
       self::$stylesheets,
       ...$stylesheets
