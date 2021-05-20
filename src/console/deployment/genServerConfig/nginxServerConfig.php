@@ -76,15 +76,13 @@ function handleSecurity(): string
     SPACE_INDENT . '#HSTS' . PHP_EOL .
     SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
     PHP_EOL .
-    SPACE_INDENT . '# Clickjacking protection' . PHP_EOL .
-    SPACE_INDENT . 'add_header X-Frame-Options "DENY";' . PHP_EOL .
-    PHP_EOL .
     SPACE_INDENT . '# XSS protections' . PHP_EOL .
     SPACE_INDENT . 'add_header X-Content-Type-Options "nosniff";' . PHP_EOL .
     SPACE_INDENT . 'add_header X-XSS-Protection "1; mode=block";' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . '# Avoid showing server version ...' . PHP_EOL .
     SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
+    SPACE_INDENT . 'more_set_headers \'Server: Welcome on my site!\';' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
     SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
@@ -144,7 +142,23 @@ function checkHttpReferer() : string
     PHP_EOL .
     SPACE_INDENT_2 . 'gzip_types application/manifest+json;' . PHP_EOL .
     SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL;
+    addingSecurityAdjustments() .
+  SPACE_INDENT . '}' . PHP_EOL;
+}
+
+/**
+ * Removes XSS useless protection for this kind of resources.
+ * Enforces a right Referrer-Policy, HSTS, sniff protection and server information hiding.
+ *
+ * @return string
+ */
+function addingSecurityAdjustments() : string
+{
+  return SPACE_INDENT_2 . 'add_header X-XSS-Protection "";' . PHP_EOL .
+    SPACE_INDENT_2 . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
+    SPACE_INDENT_2 . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
+    SPACE_INDENT_2 . 'add_header X-Content-Type-Options "nosniff";' . PHP_EOL .
+    SPACE_INDENT_2 . 'server_tokens off;' . PHP_EOL;
 }
 
 /**
@@ -175,6 +189,7 @@ function checkHttpReferer() : string
     $content .= SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL;
 
   return $content . SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
+    addingSecurityAdjustments() .
     PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
     SPACE_INDENT . '}' . PHP_EOL;
