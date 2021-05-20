@@ -193,7 +193,7 @@ function getPathInformations(string $fullName) : array
  *
  * @return bool
  */
-#[Pure] function isNotInThePath(array $paths, string $realPath, bool $checkScope = true) : bool
+function isNotInThePath(array $paths, string $realPath, bool $checkScope = true) : bool
 {
   $continue = true;
 

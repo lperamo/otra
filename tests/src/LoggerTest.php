@@ -19,8 +19,9 @@ class LoggerTest extends TestCase
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
-  public static function setUpBeforeClass() : void
+  public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
     self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
     require CORE_PATH . 'tools/debug/tailCustom.php';
@@ -31,6 +32,8 @@ class LoggerTest extends TestCase
 
   public static function tearDownAfterClass() : void
   {
+    parent::tearDownAfterClass();
+
     if (!OTRA_PROJECT)
     {
       if (file_exists(self::LOG_PATH))
@@ -58,7 +61,7 @@ class LoggerTest extends TestCase
     Logger::log('[OTRA_LOGGER_TEST]');
     self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
-      tailCustom($logFile, 1)
+      tailCustom($logFile)
     );
 
     // cleaning
@@ -85,7 +88,7 @@ class LoggerTest extends TestCase
     Logger::logToRelativePath('[OTRA_LOGGER_TEST]', $logCustomPath);
     self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
-      tailCustom($absolutePathToLogFilename, 1)
+      tailCustom($absolutePathToLogFilename)
     );
 
     // cleaning
@@ -113,7 +116,7 @@ class LoggerTest extends TestCase
     // testing
     self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
-      tailCustom(TRACE_LOG_FILE, 1)
+      tailCustom(TRACE_LOG_FILE)
     );
 
     // cleaning

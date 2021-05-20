@@ -23,6 +23,9 @@ class CompressTest extends TestCase
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();
@@ -34,9 +37,6 @@ class CompressTest extends TestCase
     );
   }
 
-  /**
-   * @throws OtraException
-   */
   protected function tearDown(): void
   {
     parent::tearDown();
@@ -47,7 +47,6 @@ class CompressTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testCompressPHPFile()
   {

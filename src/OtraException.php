@@ -208,15 +208,16 @@ class OtraException extends Exception
       // json sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';
     else
-      {
-        new OtraException(
-          $exception->getMessage(),
-          $exception->getCode(),
-          $exception->getFile(),
-          $exception->getLine(),
-          $exception->getTrace(),
-          $exception->isOtraCliWarning ?? false
-        );}
+    {
+      new OtraException(
+        $exception->getMessage(),
+        $exception->getCode(),
+        $exception->getFile(),
+        $exception->getLine(),
+        $exception->getTrace(),
+        $exception->isOtraCliWarning ?? false
+      );
+    }
 
     exit($exception->getCode());
   }

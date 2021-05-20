@@ -50,7 +50,7 @@ class RequirementsTest extends TestCase
       ) .
       $this->showRequirement(
         'Typescript',
-        'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => http://www.typescriptlang.org/'
+        'Only needed to contribute. TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. => https://www.typescriptlang.org/'
       ) .
       $this->showRequirement(
         'SASS/SCSS',

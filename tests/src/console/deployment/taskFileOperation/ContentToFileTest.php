@@ -42,7 +42,7 @@ namespace src\console\deployment\taskFileOperation
 
     /**
      * @author Lionel Péramo
-     * @throws \otra\OtraException
+     * @throws OtraException
      */
     public function testContentToFile_allGood()
     {
@@ -66,7 +66,7 @@ namespace src\console\deployment\taskFileOperation
 
     /**
      * @author Lionel Péramo
-     * @throws \otra\OtraException
+     * @throws OtraException
      */
     public function testContentToFile_hasSyntaxErrors()
     {

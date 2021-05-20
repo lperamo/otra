@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\console\deployment\taskFileOperation;
 
+use otra\OtraException;
 use phpunit\framework\TestCase;
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequireMatch;
 use const otra\cache\php\CONSOLE_PATH;
@@ -34,7 +35,7 @@ class GetFileInfoFromRequireMatchTest extends TestCase
    * @Depends EvalPathVariablesTest::testVariableReplacedNoTemplate()
    * @Depends EvalPathVariablesTest::testVariableCannotBeReplacedNoTemplate()
    * @Depends EvalPathVariablesTest::testIsTemplate()
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
   public function testGetFileInfoFromRequireMatch() : void
   {

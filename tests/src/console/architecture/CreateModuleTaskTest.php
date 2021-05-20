@@ -110,6 +110,7 @@ class CreateModuleTaskTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testCreateModuleTask_BundleDoNotExist_Force() : void
   {

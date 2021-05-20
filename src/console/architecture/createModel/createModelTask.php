@@ -18,8 +18,8 @@ namespace otra\console\architecture\createModel
   use otra\OtraException;
   use Symfony\Component\Yaml\Yaml;
   use const otra\cache\php\{CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
-  use const otra\console\
-  {architecture\constants\ARG_INTERACTIVE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, END_COLOR};
+  use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, END_COLOR};
+  use const otra\console\architecture\constants\ARG_INTERACTIVE;
   use function otra\console\architecture\checkBooleanArgument;
 
   // Testing interactive argument

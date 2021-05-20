@@ -25,7 +25,11 @@ abstract class Database
 {
   private const OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT = 0,
     OTRA_DB_PROPERTY_MODE_TYPE = 1,
-    OTRA_DB_PROPERTY_MODE_DEFAULT = 2;
+    OTRA_DB_PROPERTY_MODE_DEFAULT = 2,
+    ERROR_CLOSE_DIR_FORGOT_CALL = 'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ',
+    ERROR_CANNOT_CREATE_THE_FOLDER = 'Cannot create the folder ',
+    ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH = 'Cannot remove the folder \'',
+    LABEL_FIXTURES = 'fixtures/';
 
   // Database connection
   private static string
@@ -97,7 +101,7 @@ abstract class Database
     self::$motor = $infosDb['motor'] ?? (Sql::$currentConn)::DEFAULT_MOTOR;
     self::$password = $infosDb['password'];
     self::$user = $infosDb['login'];
-    self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
+    self::$pathYmlFixtures = self::$pathYml . self::LABEL_FIXTURES;
     self::$init = true;
   }
 
@@ -114,9 +118,9 @@ abstract class Database
   {
     self::$baseDirs = self::getDirs();
     self::$pathYml = self::$baseDirs[0] . 'config/data/yml/';
-    self::$pathYmlFixtures = self::$pathYml . 'fixtures/';
+    self::$pathYmlFixtures = self::$pathYml . self::LABEL_FIXTURES;
     self::$pathSql = self::$baseDirs[0] . 'config/data/sql/';
-    self::$pathSqlFixtures = self::$pathSql . 'fixtures/';
+    self::$pathSqlFixtures = self::$pathSql . self::LABEL_FIXTURES;
     self::$schemaFile = self::$pathYml . 'schema.yml';
     self::$tablesOrderFile = self::$pathYml . 'tables_order.yml';
   }
@@ -169,16 +173,6 @@ abstract class Database
     }
 
     closedir($folderHandler);
-
-    if (self::$boolSchema)
-    {
-      $content = '';
-
-      foreach ($schemas as $schema)
-      {
-        $content .= file_get_contents($schema);
-      }
-    }
 
     return $folders;
   }
@@ -393,7 +387,7 @@ abstract class Database
     // if the fixtures folder doesn't exist, we create it.
     if (!file_exists($fixtureFolder))
     {
-      $exceptionMessage = 'Cannot remove the folder \'' . $fixtureFolder . '\'.';
+      $exceptionMessage = self::ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH . $fixtureFolder . '\'.';
 
       try
       {
@@ -401,7 +395,7 @@ abstract class Database
           throw new OtraException($exceptionMessage, E_CORE_ERROR);
       } catch(Exception $exception)
       {
-        throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $exception->getCode());
+        throw new OtraException(self::ERROR_CLOSE_DIR_FORGOT_CALL . $exceptionMessage, $exception->getCode());
       }
     }
 
@@ -594,7 +588,7 @@ abstract class Database
     if (!file_exists(self::$pathSqlFixtures) && !mkdir(self::$pathSqlFixtures, 0777, true))
     {
       closedir($folder);
-      throw new OtraException('Cannot create the folder ' . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
+      throw new OtraException(self::ERROR_CANNOT_CREATE_THE_FOLDER . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
     }
 
     try {
@@ -645,11 +639,8 @@ abstract class Database
     $weNeedToTruncate = 0 < $mask;
     $truncatePath = self::$pathSql . 'truncate';
 
-    if ($weNeedToTruncate && !file_exists($truncatePath))
-    {
-      if (!mkdir($truncatePath))
-        throw new OtraException('Cannot create the folder ' . $truncatePath);
-    }
+    if ($weNeedToTruncate && !file_exists($truncatePath) && !mkdir($truncatePath))
+      throw new OtraException(self::ERROR_CANNOT_CREATE_THE_FOLDER . $truncatePath);
 
     foreach ($tablesOrder as $table)
     {
@@ -1043,7 +1034,7 @@ abstract class Database
     $truncatePath = self::$pathSql . 'truncate/';
 
     if (!file_exists($truncatePath) && !mkdir($truncatePath, 0777, true))
-      throw new OtraException('Cannot create the folder ' . $truncatePath);
+      throw new OtraException(self::ERROR_CANNOT_CREATE_THE_FOLDER . $truncatePath);
 
     $sqlFile = $databaseName . '_' . $tableName . '.sql';
     $pathAndFile = $truncatePath . $sqlFile;
@@ -1229,7 +1220,7 @@ abstract class Database
 
     if (!file_exists($saveFolder))
     {
-      $exceptionMessage = 'Cannot remove the folder \'' . $saveFolder . '\'.';
+      $exceptionMessage = self::ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH . $saveFolder . '\'.';
 
       try
       {
@@ -1238,7 +1229,7 @@ abstract class Database
       } catch(Exception $exception)
       {
         throw new OtraException(
-          'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' .
+          self::ERROR_CLOSE_DIR_FORGOT_CALL .
           $exceptionMessage,
           $exception->getCode()
         );
@@ -1276,7 +1267,7 @@ abstract class Database
     // We ensure us that the folder where we have to create the fixtures file exist
     if (!file_exists(self::$pathYmlFixtures))
     {
-      $exceptionMessage = 'Cannot remove the folder \'' . self::$pathYmlFixtures . '\'.';
+      $exceptionMessage = self::ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH . self::$pathYmlFixtures . '\'.';
 
       try
       {
@@ -1285,7 +1276,7 @@ abstract class Database
       } catch(Exception $exception)
       {
         throw new OtraException(
-          'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' .
+          self::ERROR_CLOSE_DIR_FORGOT_CALL .
           $exceptionMessage, $exception->getCode()
         );
       }

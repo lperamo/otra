@@ -9,7 +9,7 @@ use const otra\cache\php\{CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
 use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
 use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
 
-define('otra\\OTRA_FILENAME_TRACE', 'trace');
+const OTRA_FILENAME_TRACE = 'trace';
 
 /**
  * A classic MVC development controller class

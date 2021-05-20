@@ -33,7 +33,6 @@ class ShowFileTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testVerbose_LevelNotZero() : void
   {
@@ -56,7 +55,6 @@ class ShowFileTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testVerbose_LevelZero() : void
   {

@@ -106,7 +106,7 @@ class SecurityServiceTest extends TestCase
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'self'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
@@ -134,7 +134,7 @@ class SecurityServiceTest extends TestCase
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'self'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(

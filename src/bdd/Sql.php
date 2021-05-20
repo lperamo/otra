@@ -101,7 +101,7 @@ class Sql
       'login' => $login,
       'password' => $password
     ] = AllConfig::$dbConnections[$connection];
-//    ['driver' => $driver] = AllConfig::$dbConnections[$connection];
+
     $driver = ucfirst(strtolower($driver));
 
     // Is this driver available ?
