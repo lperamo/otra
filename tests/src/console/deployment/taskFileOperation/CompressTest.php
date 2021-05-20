@@ -37,9 +37,6 @@ class CompressTest extends TestCase
     );
   }
 
-  /**
-   * @throws OtraException
-   */
   protected function tearDown(): void
   {
     parent::tearDown();
@@ -50,7 +47,6 @@ class CompressTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testCompressPHPFile()
   {

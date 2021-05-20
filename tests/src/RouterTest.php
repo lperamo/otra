@@ -29,6 +29,7 @@ class RouterTest extends TestCase
    */
   public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
     ob_start();
     TasksManager::execute(

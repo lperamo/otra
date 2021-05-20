@@ -19,8 +19,9 @@ class LoggerTest extends TestCase
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
-  public static function setUpBeforeClass() : void
+  public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
     self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
     require CORE_PATH . 'tools/debug/tailCustom.php';
@@ -31,6 +32,8 @@ class LoggerTest extends TestCase
 
   public static function tearDownAfterClass() : void
   {
+    parent::tearDownAfterClass();
+
     if (!OTRA_PROJECT)
     {
       if (file_exists(self::LOG_PATH))

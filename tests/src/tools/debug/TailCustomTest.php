@@ -17,6 +17,7 @@ class TailCustomTest extends TestCase
 
   public static function setUpBeforeClass(): void
   {
+    parent::setUpBeforeClass();
     require CORE_PATH . 'tools/debug/tailCustom.php';
   }
 
