@@ -6,10 +6,12 @@ namespace src\console\helpAndTools;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
+use const otra\cache\php\
+{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\copyFileAndFolders;
+use function otra\tests\tools\taskParameter;
 
 /**
  * @runTestsInSeparateProcesses
@@ -33,20 +35,6 @@ class RoutesTest extends TestCase
   {
     // To avoid "Constant otra\console\ADD_BOLD already defined" in this test file
     require_once CONSOLE_PATH . 'colors.php';
-  }
-
-  /**
-   * @param string $parameter
-   * @param string $description
-   * @param string $requiredOrOptional 'required' or 'optional'
-   *
-   * @return string
-   */
-  private static function taskParameter(string $parameter, string $description, string $requiredOrOptional) : string
-  {
-    return CLI_INFO_HIGHLIGHT . '   + ' .
-      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_GRAY . ': ' .
-      CLI_INFO_HIGHLIGHT . '(' . $requiredOrOptional . ') ' . CLI_INFO . $description . PHP_EOL;
   }
 
   /**
@@ -193,19 +181,24 @@ class RoutesTest extends TestCase
    */
   public function testRoutesHelp()
   {
+    // context
+    require TEST_PATH . 'tools.php';
+
+    // testing
     $this->expectOutputString(
       CLI_BASE .
       str_pad(self::TASK_ROUTES, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO .
       'Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)' .
       PHP_EOL .
-      self::taskParameter(
+      taskParameter(
         'route',
         'The name of the route that we want information from, if we wish only one route description.',
         TasksManager::OPTIONAL_PARAMETER
       ) . END_COLOR
     );
 
+    // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,

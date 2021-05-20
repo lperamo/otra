@@ -6,8 +6,10 @@ namespace src\console\helpAndTools;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\cache\php\TEST_PATH;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
+use function otra\tests\tools\taskParameter;
 
 /**
  * @runTestsInSeparateProcesses
@@ -17,20 +19,6 @@ class ServeTest extends TestCase
   private const
     TASK_SERVE = 'serve',
     OTRA_TASK_HELP = 'help';
-
-   /**
-    * @param string $parameter
-    * @param string $description
-    * @param string $requiredOrOptional 'required' or 'optional'
-    *
-    * @return string
-    */
-  private static function taskParameter(string $parameter, string $description, string $requiredOrOptional) : string
-  {
-    return CLI_INFO_HIGHLIGHT . '   + ' .
-      str_pad($parameter, TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) . CLI_GRAY . ': ' .
-      CLI_INFO_HIGHLIGHT . '(' . $requiredOrOptional . ') ' . CLI_INFO . $description . PHP_EOL;
-  }
 
   /**
    * @author Lionel Péramo
@@ -61,18 +49,22 @@ class ServeTest extends TestCase
    */
   public function testServeHelp()
   {
+    // context
+    require TEST_PATH . 'tools.php';
+
+    // testing
     $this->expectOutputString(
       CLI_BASE .
       str_pad(self::TASK_SERVE, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO .
       'Creates a PHP web internal server.' .
       PHP_EOL .
-      self::taskParameter(
+      taskParameter(
         'port',
         'The port used by the server ... Defaults to 8000',
         TasksManager::OPTIONAL_PARAMETER
       ) .
-      self::taskParameter(
+      taskParameter(
         'env',
         'Environment mode [dev,prod]. Defaults to \'dev\'.',
         TasksManager::OPTIONAL_PARAMETER
