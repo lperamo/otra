@@ -5,6 +5,7 @@ namespace otra;
 use otra\config\{AllConfig, Routes};
 use Exception;
 use otra\cache\php\Logger;
+use function otra\tools\getOtraCommitNumber;
 use const otra\cache\php\{CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
 use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
 use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
@@ -115,6 +116,9 @@ trait DevControllerTrait
    */
   private function addDebugBar() : void
   {
+    require CORE_PATH . 'tools/getOtraCommitNumber.php';
+    $otraCommitNumber = getOtraCommitNumber();
+
     ob_start();
     // send variables to the debug toolbar
     require CORE_VIEWS_PATH . '/debugBar/debugBar.phtml';
