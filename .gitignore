@@ -9,7 +9,7 @@
 !**.gitkeep
 /src/console/closure-compiler.log
 /src/console/shellCompletions/shellCompletions.sh
-.idea
+/.idea
 **/tests/coverageHtml
 **/tests/coverage.xml
 **/tests/report.xml
@@ -23,3 +23,4 @@
 /node_modules/
 /.eslintrc.json
 /logs/**.txt
+/.eslintrc.json.dist

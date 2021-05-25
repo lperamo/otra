@@ -89,9 +89,10 @@ class SqlCreateDatabaseTaskTest extends TestCase
 
     // Testing
     $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '_force.sql';
+    define('src\\console\\database\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
-      self::CONFIG_FOLDER_SQL . $endPath
+      SCHEMA_FORCE_PATH
     );
 
     // cleaning
@@ -100,6 +101,10 @@ class SqlCreateDatabaseTaskTest extends TestCase
 
     if (!$bundlesFolderExists)
       rmdir(BUNDLES_PATH);
+
+    unlink(SCHEMA_FORCE_PATH);
+    unlink(self::SCHEMA_ABSOLUTE_PATH);
+    unlink(self::TABLES_ORDER_FILE_PATH);
   }
 
   /**
