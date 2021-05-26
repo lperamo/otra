@@ -13,6 +13,8 @@ use function otra\tools\getOtraCommitNumber;
  */
 class GetOtraCommitNumberTest extends TestCase
 {
+  private const GET_OTRA_COMMIT_NUMBER_PATH = CORE_PATH . 'tools/getOtraCommitNumber.php';
+
   /**
    * @author Lionel Péramo
    * @throws OtraException
@@ -20,13 +22,13 @@ class GetOtraCommitNumberTest extends TestCase
   public function testShortAndConsole() : void
   {
     // context
-    require CORE_PATH . 'tools/getOtraCommitNumber.php';
+    require self::GET_OTRA_COMMIT_NUMBER_PATH;
 
     // testing
     self::assertMatchesRegularExpression(
       '@^\\w{7}$@',
       getOtraCommitNumber(true, true),
-      'Testing short version of the commit'
+      'Testing short version of the commit for the console'
     );
   }
 
@@ -37,13 +39,13 @@ class GetOtraCommitNumberTest extends TestCase
   public function testShortAndWeb() : void
   {
     // context
-    require CORE_PATH . 'tools/getOtraCommitNumber.php';
+    require self::GET_OTRA_COMMIT_NUMBER_PATH;
 
     // testing
     self::assertMatchesRegularExpression(
       '@^\\w{7}$@',
       getOtraCommitNumber(false, true),
-      'Testing short version of the commit'
+      'Testing short version of the commit for the web'
     );
   }
 
@@ -54,13 +56,13 @@ class GetOtraCommitNumberTest extends TestCase
   public function testLongAndWeb() : void
   {
     // context
-    require CORE_PATH . 'tools/getOtraCommitNumber.php';
+    require self::GET_OTRA_COMMIT_NUMBER_PATH;
 
     // testing
     self::assertMatchesRegularExpression(
       '@^\\w{40}$@',
       getOtraCommitNumber(),
-      'Testing short version of the commit'
+      'Testing long version of the commit for the web'
     );
   }
 }

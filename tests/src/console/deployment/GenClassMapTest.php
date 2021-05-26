@@ -40,7 +40,7 @@ class GenClassMapTest extends TestCase
 
     // testing
     $content = '';
-    define('src\console\deployment\OTRA_MAX_FOLDERS', 150);
+    define('src\console\deployment\OTRA_MAX_FOLDERS', 151);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {

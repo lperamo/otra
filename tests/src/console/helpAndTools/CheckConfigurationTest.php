@@ -59,9 +59,14 @@ class CheckConfigurationTest extends TestCase
     LABEL_RESOURCES = 'resources',
     LABEL_MUST_BE_AN_ARRAY = ' must be an array.',
     LABEL_YOUR_ROUTE_CONFIGURATION = 'Your route configuration ',
-    ROUTES_PHP = 'Routes.php';
+    LABEL_YOU_HAVE = 'You have ',
+    LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION = ' warning/error in your routes configuration.',
+    ROUTES_PHP = 'Routes.php',
+    OTRA_PHP_BINARY = 'otra.php';
 
   private static string $labelAnalyzingFiles = '';
+
+  protected $preserveGlobalState = FALSE;
 
   /** @var array<int,array{0:string,1:string} Folder or file paths that will have to be clean */
   public static array $resourcesToClean = [];
@@ -153,7 +158,7 @@ class CheckConfigurationTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -168,7 +173,7 @@ class CheckConfigurationTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -197,14 +202,15 @@ class CheckConfigurationTest extends TestCase
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'You must put a ' . CLI_INFO_HIGHLIGHT . 'declare(strict_types=1);' . CLI_WARNING . ' declaration.' .
       END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING .
+      self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -232,14 +238,14 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'Your routes array is empty!' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -267,14 +273,14 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING . ' is not a string!' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -302,14 +308,14 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . 'HelloWorld' . CLI_WARNING . ' is empty!' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -340,14 +346,14 @@ class CheckConfigurationTest extends TestCase
       END_COLOR . PHP_EOL . CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING .
       ' does not exist! It can be : ' . implode(',', self::ROUTE_ALLOWED_PARAMETERS) . '.' . END_COLOR .
       PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '2' . CLI_WARNING . ' warnings/errors in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '2' . CLI_WARNING . ' warnings/errors in your routes configuration.'
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -377,14 +383,14 @@ class CheckConfigurationTest extends TestCase
       CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . 'coucou' . CLI_WARNING .
       ' does not exist! It can be : ' . implode(',', self::ROUTE_ALLOWED_PARAMETERS) . '.' . END_COLOR .
       PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -413,14 +419,14 @@ class CheckConfigurationTest extends TestCase
       self::$labelAnalyzingFiles .
       CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . 'chunks' . CLI_WARNING . ' is empty!' . END_COLOR .
       PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -449,14 +455,14 @@ class CheckConfigurationTest extends TestCase
       self::$labelAnalyzingFiles .
       CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . 'chunks' . CLI_WARNING .
       self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -487,14 +493,14 @@ class CheckConfigurationTest extends TestCase
       ' must have 5 parameters : url, bundle, module, controller and action. You currently have ' .
       CLI_INFO_HIGHLIGHT . 4 . CLI_WARNING . ' parameters!' . END_COLOR .
       PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -525,14 +531,14 @@ class CheckConfigurationTest extends TestCase
       ' contains a parameter ' . CLI_INFO_HIGHLIGHT . 'test' . CLI_WARNING .
       ' that does not exist! It can be : ' . implode(',', self::ROUTE_RESOURCES_ALLOWED_PARAMETERS) .
       '.' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -561,14 +567,14 @@ class CheckConfigurationTest extends TestCase
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'Your route resources parameter ' . CLI_INFO_HIGHLIGHT . '_css' . CLI_WARNING .
       self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
+      CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );
 
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
-      ['otra.php', self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 
@@ -588,7 +594,7 @@ class CheckConfigurationTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_CHECK_CONFIGURATION]
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 }
