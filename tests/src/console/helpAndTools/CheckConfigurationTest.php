@@ -9,7 +9,16 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
 use const otra\console\
-{ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, REMOVE_BOLD_INTENSITY};
+{ADD_BOLD,
+  CLI_BASE,
+  CLI_ERROR,
+  CLI_GRAY,
+  CLI_INFO,
+  CLI_INFO_HIGHLIGHT,
+  CLI_SUCCESS,
+  CLI_WARNING,
+  END_COLOR,
+  REMOVE_BOLD_INTENSITY};
 
 /**
  * @runTestsInSeparateProcesses
@@ -136,7 +145,8 @@ class CheckConfigurationTest extends TestCase
     // testing
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
-      self::$labelAnalyzingFiles
+      self::$labelAnalyzingFiles .
+      CLI_BASE . 'You do not have any problems in your routes configuration' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL
     );
 
     // launching
@@ -186,7 +196,8 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'You must put a ' . CLI_INFO_HIGHLIGHT . 'declare(strict_types=1);' . CLI_WARNING . ' declaration.' .
-      END_COLOR . PHP_EOL
+      END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -220,7 +231,8 @@ class CheckConfigurationTest extends TestCase
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
-      CLI_WARNING . 'Your routes array is empty!' . END_COLOR . PHP_EOL
+      CLI_WARNING . 'Your routes array is empty!' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -254,7 +266,8 @@ class CheckConfigurationTest extends TestCase
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
-      CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING . ' is not a string!' . END_COLOR . PHP_EOL
+      CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING . ' is not a string!' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -288,7 +301,8 @@ class CheckConfigurationTest extends TestCase
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
-      CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . 'HelloWorld' . CLI_WARNING . ' is empty!' . END_COLOR . PHP_EOL
+      CLI_WARNING . 'Your route ' . CLI_INFO_HIGHLIGHT . 'HelloWorld' . CLI_WARNING . ' is empty!' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -322,10 +336,11 @@ class CheckConfigurationTest extends TestCase
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
-      CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING . ' is not a string!' . END_COLOR .
-      PHP_EOL . CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING .
+      CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING . ' is not a string!' .
+      END_COLOR . PHP_EOL . CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . '3' . CLI_WARNING .
       ' does not exist! It can be : ' . implode(',', self::ROUTE_ALLOWED_PARAMETERS) . '.' . END_COLOR .
-      PHP_EOL
+      PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '2' . CLI_WARNING . ' warnings/errors in your routes configuration.'
     );
 
     // launching
@@ -361,7 +376,8 @@ class CheckConfigurationTest extends TestCase
       self::$labelAnalyzingFiles .
       CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . 'coucou' . CLI_WARNING .
       ' does not exist! It can be : ' . implode(',', self::ROUTE_ALLOWED_PARAMETERS) . '.' . END_COLOR .
-      PHP_EOL
+      PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -396,7 +412,8 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . 'chunks' . CLI_WARNING . ' is empty!' . END_COLOR .
-      PHP_EOL
+      PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -431,7 +448,8 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . 'chunks' . CLI_WARNING .
-      self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL
+      self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -468,7 +486,8 @@ class CheckConfigurationTest extends TestCase
       CLI_WARNING . self::LABEL_YOUR_ROUTE_CONFIGURATION . CLI_INFO_HIGHLIGHT . 'chunks' . CLI_WARNING .
       ' must have 5 parameters : url, bundle, module, controller and action. You currently have ' .
       CLI_INFO_HIGHLIGHT . 4 . CLI_WARNING . ' parameters!' . END_COLOR .
-      PHP_EOL
+      PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -505,7 +524,8 @@ class CheckConfigurationTest extends TestCase
       CLI_WARNING . self::LABEL_YOUR_ROUTE_PARAMETER . CLI_INFO_HIGHLIGHT . self::LABEL_RESOURCES . CLI_WARNING .
       ' contains a parameter ' . CLI_INFO_HIGHLIGHT . 'test' . CLI_WARNING .
       ' that does not exist! It can be : ' . implode(',', self::ROUTE_RESOURCES_ALLOWED_PARAMETERS) .
-      '.' . END_COLOR . PHP_EOL
+      '.' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
@@ -540,7 +560,8 @@ class CheckConfigurationTest extends TestCase
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
       CLI_WARNING . 'Your route resources parameter ' . CLI_INFO_HIGHLIGHT . '_css' . CLI_WARNING .
-      self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL
+      self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'You have ' . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . ' warning/error in your routes configuration.'
     );
 
     // launching
