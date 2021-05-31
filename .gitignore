@@ -3,6 +3,8 @@
 /cert
 /config
 /phpdoc/
+# reports folder is used to store reports that will be sent to SonarQube instances.
+/reports
 /sassdoc
 /vendor
 /web
