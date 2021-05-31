@@ -31,9 +31,9 @@
     <testsuite name="Block templating system">
       <file>./src/BlocksTest.php</file>
     </testsuite>
-<!--    <testsuite name="Controllers">-->
-<!--      <directory>./src/controllers</directory>-->
-<!--    </testsuite>-->
+    <testsuite name="Controllers">
+      <directory>./src/controllers</directory>
+    </testsuite>
     <testsuite name="Router">
       <file>./src/RouterTest.php</file>
     </testsuite>

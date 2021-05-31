@@ -859,21 +859,24 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
           }
         }
 
-        // str_replace to ensure us that the same character '/' is used each time
-        $constantPattern = '';
-
-        foreach ($parsedConstants as $constantString => $fullyQualifiedConstantName)
+        if (!empty($parsedConstants))
         {
-          $constantPattern .= '(?<!\\\\)' . $constantString . '|';
-        }
+          // str_replace to ensure us that the same character '/' is used each time
+          $constantPattern = '';
 
-        $constantPattern = substr($constantPattern, 0, -1);
-        preg_match_all('@' . $constantPattern . '@', $tempFile, $constantMatches);
+          foreach ($parsedConstants as $constantString => $fullyQualifiedConstantName)
+          {
+            $constantPattern .= '(?<!\\\\)' . $constantString . '|';
+          }
 
-        foreach ($constantMatches as $constantMatch)
-        {
-          if (!empty($constantMatch))
-            $tempFile = str_replace($constantMatch, $parsedConstants[$constantMatch[0]], $tempFile);
+          $constantPattern = substr($constantPattern, 0, -1);
+          preg_match_all('@' . $constantPattern . '@', $tempFile, $constantMatches);
+
+          foreach ($constantMatches as $constantMatch)
+          {
+            if (!empty($constantMatch))
+              $tempFile = str_replace($constantMatch, $parsedConstants[$constantMatch[0]], $tempFile);
+          }
         }
 
         $tempFile = str_replace(NAMESPACE_SEPARATOR, '/', eval('return ' . $tempFile . ';'));
