@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture;
+namespace src\console\architecture\createAction;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -13,10 +13,10 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * @runTestsInSeparateProcesses
  */
-class CreateControllerHelpTest extends TestCase
+class CreateActionHelpTest extends TestCase
 {
 
-  private const OTRA_TASK_CREATE_CONTROLLER = 'createController',
+  private const OTRA_TASK_CREATE_ACTION = 'createAction',
     OTRA_TASK_HELP = 'help';
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -29,21 +29,25 @@ class CreateControllerHelpTest extends TestCase
   {
     $this->expectOutputString(
       CLI_BASE .
-      str_pad(self::OTRA_TASK_CREATE_CONTROLLER, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
+      str_pad(self::OTRA_TASK_CREATE_ACTION, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO .
-      'Creates controllers.' .
+      'Creates actions.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('bundle', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
-      ') ' . CLI_INFO . 'The bundle where you want to put controllers' . PHP_EOL .
+      ') ' . CLI_INFO . 'The bundle where you want to put actions' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('module', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
-      ') ' . CLI_INFO . 'The module where you want to put controllers' . PHP_EOL .
+      ') ' . CLI_INFO . 'The module where you want to put actions' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('controller', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
-      ') ' . CLI_INFO . 'The name of the controller!' . PHP_EOL .
+      ') ' . CLI_INFO . 'The controller where you want to put actions' . PHP_EOL .
+      CLI_INFO_HIGHLIGHT .
+      '   + ' . str_pad('action', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
+      ') ' . CLI_INFO . 'The name of the action!' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('interactive', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
@@ -60,7 +64,7 @@ class CreateControllerHelpTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_CREATE_CONTROLLER]
+      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_CREATE_ACTION]
     );
   }
 }

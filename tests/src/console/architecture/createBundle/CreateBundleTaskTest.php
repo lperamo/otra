@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture;
+namespace src\console\architecture\createBundle;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -11,8 +11,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-if (!defined('src\console\architecture\TEST_BUNDLE_UPPER'))
-  define('src\console\architecture\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));
+if (!defined('src\console\architecture\createBundle\TEST_BUNDLE_UPPER'))
+  define('src\console\architecture\createBundle\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));
 
 /**
  * @runTestsInSeparateProcesses

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture;
+namespace src\console\architecture\createModel;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -12,8 +12,8 @@ use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, CLI_WARNING, END_COLOR, SUCCESS};
 use function otra\tools\{copyFileAndFolders,delTree};
 
-if (!defined('src\console\architecture\TEST_BUNDLE_UPPER'))
-  define('src\console\architecture\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
+if (!defined('src\console\architecture\createModel\TEST_BUNDLE_UPPER'))
+  define('src\console\architecture\createModel\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
 
 /**
  * @runTestsInSeparateProcesses
