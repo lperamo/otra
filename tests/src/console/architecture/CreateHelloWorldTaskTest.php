@@ -17,7 +17,7 @@ namespace src\console\architecture
    *
    * @runTestsInSeparateProcesses
    */
-  class CreateHelloWorldTest extends TestCase
+  class CreateHelloWorldTaskTest extends TestCase
   {
     private const
       HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
