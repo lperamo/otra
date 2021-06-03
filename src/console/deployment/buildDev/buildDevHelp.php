@@ -20,7 +20,6 @@ return [
     TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,
-    TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER
   ],
   'Deployment'
