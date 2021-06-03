@@ -160,7 +160,7 @@ abstract class Router
       // This is maybe the route (with parameters) we are looking for!
       if (str_contains($userUrl, $firstPartUntilParameters))
       {
-        $routeRegexp = '@^' . preg_replace('@\{[^}]{0,}\}@', '([^/?]{0,})', $routeUrl) .
+        $routeRegexp = '@^' . preg_replace('@{[^}]{0,}}@', '([^/?]{0,})', $routeUrl) .
           '(?:\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,})?$@';
 
         // The beginning of the route is ok, is the parameters section ok too?
@@ -189,7 +189,7 @@ abstract class Router
     $params = [];
 
     // get the parameters names
-    preg_match_all('@\{([^}]{1,})\}@', $routeUrl, $routeParameters);
+    preg_match_all('@{([^}]{1,})}@', $routeUrl, $routeParameters);
 
     // remove the global result
     array_shift($routeParameters);

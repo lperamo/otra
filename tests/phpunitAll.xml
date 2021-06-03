@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" verbose="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage includeUncoveredFiles="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" verbose="true"
+         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
+  <coverage pathCoverage="true">
     <include>
       <directory suffix=".php">../</directory>
       <directory suffix=".php">../bundles/*</directory>
@@ -17,18 +18,18 @@
       <directory>../logs</directory>
       <directory>./coverageHtml</directory>
       <directory>./tests</directory>
+      <directory>./vendor</directory>
     </exclude>
     <report>
       <clover outputFile="./coverage.xml"/>
-      <html outputDirectory="./coverageHtml"/>
     </report>
   </coverage>
-  <!--convertErrorsToExceptions="true"-->
-  <!--convertNoticesToExceptions="true"-->
-  <!--convertWarningsToExceptions="true"-->
   <testsuites>
     <testsuite name="Block templating system">
       <file>./src/BlocksTest.php</file>
+    </testsuite>
+    <testsuite name="Controllers">
+<!--      <directory>./src/controllers</directory>-->
     </testsuite>
     <testsuite name="Router">
       <file>./src/RouterTest.php</file>

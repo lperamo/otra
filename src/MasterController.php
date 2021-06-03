@@ -288,7 +288,12 @@ abstract class MasterController
 
     // If the template motor is not loaded then we quit
     if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
+    {
+      // closes the output buffering
+      ob_end_clean();
+
       return '';
+    }
 
     // Puts the motor template visualization system into session if we are in a development environment
     if ($_SERVER[APP_ENV] === DEV)

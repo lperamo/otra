@@ -29,6 +29,7 @@ typeset -a OTRA_COMMANDS=(
   'genSitemap'
   'genWatcher'
   'updateConf'
+  'checkConfiguration'
   'crypt'
   'generateTaskMetadata'
   'hash'
@@ -70,6 +71,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DEPLOYMENT} genSitemap                  : ${CYA}Generates a sitemap based on routes configuration.${ECO}"
   "${CAT_DEPLOYMENT} genWatcher                  : ${CYA}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${ECO}"
   "${CAT_DEPLOYMENT} updateConf                  : ${CYA}Updates the files related to bundles and routes : schemas, routes, securities.${ECO}"
+  "${CAT_HELP_AND_TOOLS} checkConfiguration          : ${CYA}Checks route configuration files structure.${ECO}"
   "${CAT_HELP_AND_TOOLS} crypt                       : ${CYA}Crypts a password and shows it.${ECO}"
   "${CAT_HELP_AND_TOOLS} generateTaskMetadata        : ${CYA}Generates files that are used to show the help, finds quickly all the tasks and gives shell completions.${ECO}"
   "${CAT_HELP_AND_TOOLS} hash                        : ${CYA}Returns a random hash.${ECO}"
