@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\database;
+namespace src\console\database\sqlCreateDatabase;
 
 use otra\config\AllConfig;
 use otra\console\database\Database;
@@ -11,7 +11,6 @@ use phpunit\framework\TestCase;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH,PROD,TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\tools\{copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
 
 /**
@@ -21,7 +20,6 @@ class SqlCreateDatabaseTaskTest extends TestCase
 {
   private const
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
-    OTRA_TASK_HELP = 'help',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
     CONFIG_FOLDER = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
@@ -58,7 +56,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
       $bundlesFolderExists = false;
       mkdir(BUNDLES_PATH);
 
-      define('src\console\database\HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
+      define('src\\console\\database\\sqlCreateDatabase\\HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
 
       if (!file_exists(HELLO_WORLD_PATH))
       {
@@ -89,7 +87,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
 
     // Testing
     $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '_force.sql';
-    define('src\\console\\database\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
+    define('src\\console\\database\\sqlCreateDatabase\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
       SCHEMA_FORCE_PATH
@@ -105,32 +103,5 @@ class SqlCreateDatabaseTaskTest extends TestCase
     unlink(SCHEMA_FORCE_PATH);
     unlink(self::SCHEMA_ABSOLUTE_PATH);
     unlink(self::TABLES_ORDER_FILE_PATH);
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testSqlCreateDatabaseHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::OTRA_TASK_SQL_CREATE_DATABASE, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Database creation, tables creation.(sql_generate_basic)' .
-      PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
-      ') ' . CLI_INFO . 'The database name !' .
-      PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('force', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'If true, we erase the database !' . PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_SQL_CREATE_DATABASE]
-    );
   }
 }
