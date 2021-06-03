@@ -663,41 +663,45 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string $m
 /**
  * Process the return in the PHP content from $contentToAdd and include it directly in the $finalContent.
  *
- * @param string $finalContent
- * @param string $contentToAdd
- * @param string $match
- * @param int    $posMatch
+ * @param string $includingCode    The whole file that contains the $inclusionCode
+ * @param string $includedCode     Like "<?php declare(strict_types=1);return [...];?>"
+ * @param string $inclusionCode    Like "'require BUNDLES_PATH . 'config/Routes.php');"
+ * @param int    $inclusionCodePos $inclusionCode position in $includingCode
  */
-function processReturn(string &$finalContent, string &$contentToAdd, string $match, int $posMatch) : void
+function processReturn(string &$includingCode, string &$includedCode, string $inclusionCode, int $inclusionCodePos) : void
 {
   // -5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(mb_substr(
-    $contentToAdd,
+  $includedCode = trim(mb_substr(
+    $includedCode,
     PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
-  if (str_contains($match, OTRA_LABEL_REQUIRE) &&
-    0 !== mb_substr_count($match, ')') % 2 && // if there is an odd number of parentheses
-    ';' === mb_substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
-  {
-    $contentToAdd = substr_replace($contentToAdd, '', -4);
-    $lengthToChange = mb_strrpos($match, ')');
-  } else
-    // We change only the require but we keep the parenthesis and the semicolon
-    // (cf. BASE_PATH . config/Routes.php init function)
-    $lengthToChange = mb_strlen(mb_substr($match, 0, mb_strpos($match, ');')));
+  // We change only the require but we keep the parenthesis and the semicolon
+  // (cf. BASE_PATH . config/Routes.php init function)
+  preg_match(
+    '@^\s*(?>require|include)(?>_once)?\s(?>(?=\\N)([^)]))+(\s*\);)@',
+    $inclusionCode,
+    $matches,
+    PREG_OFFSET_CAPTURE
+  );
 
   // We remove the requires like statements before adding the content
-  $finalContent = substr_replace($finalContent, $contentToAdd, $posMatch + 1, $lengthToChange);
+  $includingCode = substr_replace($includingCode, $includedCode, $inclusionCodePos, $matches[2][1]);
 }
 
 /**
- * @param array  $classesFromFile
- * @param string $class
+ * Returns false if :
+ *
+ * - We found this class in already parsed classes
+ * - There is no namespace
+ * - The class is not part of the generated classmap
+ *
+ * @param array  $classesFromFile Already parsed classes
+ * @param string $class           Class to analyze/search
  * @param string $contentToAdd
- * @param int    $match
+ * @param int    $match           Content extract position where the class was found
  *
  * @return false|string $tempFile
  */
@@ -710,7 +714,6 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
     if (false !== mb_strrpos($classFromFile, $class, (int) mb_strrpos($classFromFile,',')))
       return false;
   }
-
   // if it's not the case ... we search it in the directory of the file that we are parsing
   // /!\ BEWARE ! Maybe we don't have handled the case where the word namespace is in a comment.
   // we use a namespace so ...
@@ -727,7 +730,11 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 
   // then we can easily extract the namespace (10 = strlen('namespace'))
   // and concatenates it with a '\' and the class to get our file name
-  $newClass = mb_substr($tempContent, 10, mb_strpos($tempContent, ';') - 10) . NAMESPACE_SEPARATOR . $class;
+  $newClass = mb_substr(
+    $tempContent,
+    10,
+    mb_strpos($tempContent, ';') - 10
+  ) . NAMESPACE_SEPARATOR . $class;
 
   if (!isset(CLASSMAP[$newClass]))
   {
@@ -1241,7 +1248,7 @@ function assembleFiles(
  * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
  *
  * @param int       $level
- * @param string    $contentToAdd    Content actually parsed
+ * @param string    $contentToAdd    Content currently parsed
  * @param array{
  *  php:array{
  *    use ?: string[],

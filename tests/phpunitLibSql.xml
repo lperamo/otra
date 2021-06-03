@@ -22,6 +22,6 @@
         </whitelist>
     </filter>
     <logging>
-        <junit outputFile="./report.xml"/>
+       <junit outputFile="./report.xml"/>
     </logging>
 </phpunit>

@@ -21,10 +21,7 @@
       <directory>./vendor</directory>
     </exclude>
     <report>
-      <clover outputFile="./clover-report.xml"/>
-<!--      <text outputFile="./report.txt"/>-->
-<!--      <xml outputDirectory="./report"/>-->
-<!--      <html outputDirectory="./coverageHtml"/>-->
+      <clover outputFile="./coverage.xml"/>
     </report>
   </coverage>
   <testsuites>
@@ -32,7 +29,7 @@
       <file>./src/BlocksTest.php</file>
     </testsuite>
     <testsuite name="Controllers">
-      <directory>./src/controllers</directory>
+<!--      <directory>./src/controllers</directory>-->
     </testsuite>
     <testsuite name="Router">
       <file>./src/RouterTest.php</file>
