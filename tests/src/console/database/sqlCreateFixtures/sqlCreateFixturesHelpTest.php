@@ -10,13 +10,11 @@ use const otra\console\
 {CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, STRING_PAD_FOR_OPTION_FORMATTING};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
-
 /**
  * @runTestsInSeparateProcesses
  */
 class sqlCreateFixturesHelpTest extends TestCase
 {
-
   private const OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
     OTRA_TASK_HELP = 'help';
   // fixes issues like when AllConfig is not loaded while it should be

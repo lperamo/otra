@@ -16,13 +16,11 @@ use const otra\console\
   STRING_PAD_FOR_OPTION_FORMATTING};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
-
 /**
  * @runTestsInSeparateProcesses
  */
 class CreateModelHelpTest extends TestCase
 {
-
   private const OTRA_TASK_CREATE_MODEL = 'createModel',
     OTRA_TASK_HELP = 'help',
     OTRA_INTERACTIVE_MODE_NAME = 'interactive',
