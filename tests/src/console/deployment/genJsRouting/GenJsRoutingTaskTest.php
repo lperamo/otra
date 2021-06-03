@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\deployment;
+namespace src\console\deployment\genJsRouting;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+use const otra\console\{CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_PATH};
 
 /**
@@ -20,7 +20,6 @@ class GenJsRoutingTaskTest extends TestCase
     OTRA_TASK_INIT = 'init',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_JS_ROUTING = 'genJsRouting',
-    OTRA_TASK_HELP = 'help',
     JS_ROUTING_FILENAME = 'jsRouting.js',
     MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/',
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
@@ -83,26 +82,6 @@ class GenJsRoutingTaskTest extends TestCase
 
     if (file_exists(MAIN_RESOURCES_PATH))
       rmdir(MAIN_RESOURCES_PATH);
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testGenJsRoutingHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::OTRA_TASK_GEN_JS_ROUTING, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Generates a route mapping that can be used by JavaScript files.' .
-      PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      [self::OTRA_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_GEN_JS_ROUTING]
-    );
   }
 }
 
