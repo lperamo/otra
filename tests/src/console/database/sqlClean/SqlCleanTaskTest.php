@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\database;
+namespace src\console\database\sqlClean;
 
 use otra\bdd\Sql;
 use otra\console\database\Database;
@@ -11,7 +11,7 @@ use phpunit\framework\TestCase;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV,CORE_PATH,PROD,TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
 use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, removeFieldScopeProtection};
 
 /**
@@ -21,7 +21,6 @@ class SqlCleanTaskTest extends TestCase
 {
   private const
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
-    OTRA_TASK_HELP = 'help',
     DEPLOY_ARG_SQL_CLEANING_LEVEL = 2,
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
@@ -81,28 +80,5 @@ class SqlCleanTaskTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::DATABASE_NAME . '`;');
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testSqlCleanHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::OTRA_TASK_SQL_CLEAN, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Removes sql and yml files in the case where there are problems that had corrupted files.' .
-      PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('cleaningLevel', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'Type 1 in order to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_SQL_CLEAN]
-    );
   }
 }
