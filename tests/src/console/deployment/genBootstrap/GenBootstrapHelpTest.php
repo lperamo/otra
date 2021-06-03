@@ -9,7 +9,6 @@ use phpunit\framework\TestCase;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
-
 /**
  * @runTestsInSeparateProcesses
  */
