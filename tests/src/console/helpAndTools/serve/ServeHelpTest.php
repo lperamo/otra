@@ -1,45 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\serve;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\TEST_PATH;
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tests\tools\taskParameter;
 
 /**
  * @runTestsInSeparateProcesses
  */
-class ServeTest extends TestCase
+class ServeHelpTest extends TestCase
 {
   private const
     TASK_SERVE = 'serve',
     OTRA_TASK_HELP = 'help';
-
-  /**
-   * @author Lionel Péramo
-   */
-  public function testServe() : void
-  {
-    // testing
-    $this->expectException(OtraException::class);
-    $this->expectExceptionMessage(
-      'Problem when loading the command :' . PHP_EOL .
-      CLI_WARNING . 'OTRA_LIVE_APP_ENV=dev OTRA_LIVE_HTTPS=false php -d variables_order=EGPCS -S localhost:-50 -t /var/www/html/perso/otra/web web/indexDev.php 2>&1' . END_COLOR . PHP_EOL .
-      'Shell error code 1. Invalid address: localhost:-50'
-    );
-
-    // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::TASK_SERVE,
-      ['otra.php', self::TASK_SERVE, '-50']
-    );
-  }
 
   /**
    * @author Lionel Péramo

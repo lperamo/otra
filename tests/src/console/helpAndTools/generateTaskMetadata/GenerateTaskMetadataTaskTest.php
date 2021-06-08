@@ -1,26 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\generateTaskMetadata;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_SUCCESS, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
 use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 
 /**
  * @runTestsInSeparateProcesses
  */
-class GenerateTaskMetadataTest extends TestCase
+class GenerateTaskMetadataTaskTest extends TestCase
 {
   private const
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
-    OTRA_TASK_HELP = 'help',
     METADATA_EXAMPLES_PATH = TEST_PATH . 'examples/generateTaskMetadata/';
 
   /**
@@ -66,26 +65,6 @@ class GenerateTaskMetadataTest extends TestCase
     self::expectOutputString(
       CLI_BASE . 'Generation of help and task class map done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL .
       CLI_BASE . 'Generation of shell completions script done' . CLI_SUCCESS .' ✔' . END_COLOR . PHP_EOL
-    );
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testGenerateTaskMetadataHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::TASK_GENERATE_TASK_METADATA, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Generates files that are used to show the help, finds quickly all the tasks and gives shell completions.' .
-      PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::TASK_GENERATE_TASK_METADATA]
     );
   }
 }

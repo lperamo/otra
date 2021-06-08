@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\checkConfiguration;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -12,8 +12,6 @@ use const otra\console\
 {ADD_BOLD,
   CLI_BASE,
   CLI_ERROR,
-  CLI_GRAY,
-  CLI_INFO,
   CLI_INFO_HIGHLIGHT,
   CLI_SUCCESS,
   CLI_WARNING,
@@ -23,11 +21,10 @@ use const otra\console\
 /**
  * @runTestsInSeparateProcesses
  */
-class CheckConfigurationTest extends TestCase
+class CheckConfigurationTaskTest extends TestCase
 {
   private const
     OTRA_TASK_CHECK_CONFIGURATION = 'checkConfiguration',
-    OTRA_TASK_HELP = 'help',
     EXAMPLES_PATH = TEST_PATH . 'examples/tools/routesCheck/',
     ROUTE_ALLOWED_PARAMETERS = [
       'bootstrap',
@@ -575,26 +572,6 @@ class CheckConfigurationTest extends TestCase
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_CHECK_CONFIGURATION,
       [self::OTRA_PHP_BINARY, self::OTRA_TASK_CHECK_CONFIGURATION]
-    );
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testCheckConfigurationHelp() : void
-  {
-    // testing
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::OTRA_TASK_CHECK_CONFIGURATION, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO . 'Checks route configuration files structure.' . PHP_EOL . END_COLOR
-    );
-
-    // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      [self::OTRA_PHP_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_CHECK_CONFIGURATION]
     );
   }
 }

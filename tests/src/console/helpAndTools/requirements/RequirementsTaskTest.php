@@ -1,23 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\requirements;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\console\
-  {ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
  * @runTestsInSeparateProcesses
  */
-class RequirementsTest extends TestCase
+class RequirementsTaskTest extends TestCase
 {
   private const
     TASK_REQUIREMENTS = 'requirements',
-    OTRA_TASK_HELP = 'help',
     REQUIREMENTS_PADDING = 30;
 
   /**
@@ -88,27 +86,6 @@ class RequirementsTest extends TestCase
       require TASK_CLASS_MAP_PATH,
       self::TASK_REQUIREMENTS,
       ['otra.php', self::TASK_REQUIREMENTS]
-    );
-  }
-
-  /**
-   * @author Lionel Péramo
-   * @throws OtraException
-   */
-  public function testRequirementsHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::TASK_REQUIREMENTS, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Shows the requirements to use OTRA at its maximum capabilities.' .
-      PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::TASK_REQUIREMENTS]
     );
   }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\help;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -13,7 +13,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * @runTestsInSeparateProcesses
  */
-class HelpTest extends TestCase
+class HelpTaskTest extends TestCase
 {
   private const
     OTRA_TASK_HELP = 'help';

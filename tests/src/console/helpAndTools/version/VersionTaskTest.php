@@ -1,15 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\version;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{CORE_PATH, OTRA_VERSION};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
-use function otra\tools\getOtraCommitNumber;
+use const otra\console\END_COLOR;
 
 /**
  * @runTestsInSeparateProcesses
@@ -21,7 +20,6 @@ class VersionTaskTest extends TestCase
     CLI_BGD_LIGHT_BLACK = "\e[48;2;40;40;40m",
     CLI_INFO_GREEN = "\e[38;2;185;215;255m",
     CLI_VERSION_COLOR = "\e[38;2;220;220;220m",
-    OTRA_TASK_HELP = 'help',
     BLUE_ON_LIGHT_BLACK = "\e[38;2;140;170;255m" . self::CLI_BGD_LIGHT_BLACK,
     LIGHTBLUE_ON_LIGHT_BLACK = self::CLI_INFO_GREEN . self::CLI_BGD_LIGHT_BLACK,
     END_PADDING = 10,
@@ -82,27 +80,6 @@ class VersionTaskTest extends TestCase
       require TASK_CLASS_MAP_PATH,
       self::TASK_VERSION,
       ['otra.php', self::TASK_VERSION]
-    );
-  }
-
-  /**
-   * @author Lionel Péramo
-   * @throws OtraException
-   */
-  public function testVersionHelp()
-  {
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::TASK_VERSION, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Shows the framework version.' .
-      PHP_EOL . END_COLOR
-    );
-
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::TASK_VERSION]
     );
   }
 }

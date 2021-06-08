@@ -1,29 +1,26 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\routes;
 
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\cache\php\
-{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV, TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\copyFileAndFolders;
-use function otra\tests\tools\taskParameter;
 
 /**
  * @runTestsInSeparateProcesses
  */
-class RoutesTest extends TestCase
+class RoutesTaskTest extends TestCase
 {
   private const
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
     OTRA_TASK_BUILD_DEV = 'buildDev',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
-    OTRA_TASK_HELP = 'help',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BUNDLES_PATH . 'config/Routes.php',
     PHP_STATUS = '[PHP]';
@@ -79,9 +76,9 @@ class RoutesTest extends TestCase
    */
   public function testRoutes() : void
   {
-    define('src\console\helpAndTools\WIDTH_LEFT', 25);
-    define('src\console\helpAndTools\WIDTH_MIDDLE', 10);
-    define('src\console\helpAndTools\WIDTH_RIGHT', 70);
+    define('src\console\helpAndTools\routes\WIDTH_LEFT', 25);
+    define('src\console\helpAndTools\routes\WIDTH_MIDDLE', 10);
+    define('src\console\helpAndTools\routes\WIDTH_RIGHT', 70);
 
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
@@ -173,37 +170,6 @@ class RoutesTest extends TestCase
       $tasksClassMap,
       self::TASK_ROUTES,
       [self::OTRA_CONSOLE_FILENAME, self::TASK_ROUTES]
-    );
-  }
-
-  /**
-   * @author Lionel Péramo
-   * @throws OtraException
-   */
-  public function testRoutesHelp()
-  {
-    // context
-    require TEST_PATH . 'tools.php';
-
-    // testing
-    $this->expectOutputString(
-      CLI_BASE .
-      str_pad(self::TASK_ROUTES, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO .
-      'Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)' .
-      PHP_EOL .
-      taskParameter(
-        'route',
-        'The name of the route that we want information from, if we wish only one route description.',
-        TasksManager::OPTIONAL_PARAMETER
-      ) . END_COLOR
-    );
-
-    // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HELP,
-      [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_HELP, self::TASK_ROUTES]
     );
   }
 }

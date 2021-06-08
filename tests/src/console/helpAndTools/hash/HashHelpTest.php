@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console\helpAndTools\hash;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -12,29 +12,11 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * @runTestsInSeparateProcesses
  */
-class HashTest extends TestCase
+class HashHelpTest extends TestCase
 {
   private const
     OTRA_TASK_HASH = 'hash',
-    OTRA_TASK_HELP = 'help',
-    BLOWFISH_SALT_LENGTH = 22;
-
-  /**
-   * @author Lionel Péramo
-   * @throws OtraException
-   */
-  public function testHash() : void
-  {
-    // testing
-    $this->expectOutputRegex('@\$2y\$03\$[a-zA-Z0-9]{' . self::BLOWFISH_SALT_LENGTH . '}@');
-
-    // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_HASH,
-      ['otra.php', self::OTRA_TASK_HASH, 3]
-    );
-  }
+    OTRA_TASK_HELP = 'help';
 
   /**
    * @throws OtraException
