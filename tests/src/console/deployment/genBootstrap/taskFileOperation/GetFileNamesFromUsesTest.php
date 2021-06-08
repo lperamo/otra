@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace otra\console\deployment\genBootstrap\genBootstrap
+namespace otra\console\deployment\genBootstrap
 {
   const VERBOSE = 2;
 }
 
-namespace src\console\deployment\taskFileOperation
+namespace src\console\deployment\genBootstrap\taskFileOperation
 {
   use phpunit\framework\TestCase;
-  use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
+  use const otra\cache\php\CONSOLE_PATH;
   use function otra\console\deployment\genBootstrap\
-  {getFileNamesFromUses, hasSyntaxErrors, phpOrHTMLIntoEval};
+  {getFileNamesFromUses};
   use const otra\console\CLI_WARNING;
   use const otra\console\END_COLOR;
 

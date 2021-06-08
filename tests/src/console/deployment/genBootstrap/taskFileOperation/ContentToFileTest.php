@@ -26,12 +26,16 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       FINAL_FILE_PATH = BASE_PATH . self::RELATIVE_FINAL_FILE_PATH,
       NO_SYNTAX_ERRORS_FILE = TEST_PATH . 'examples/deployment/noSyntaxErrors.php',
       WITH_SYNTAX_ERRORS_FILE = TEST_PATH . 'examples/deployment/withSyntaxErrors.php',
-      FINAL_CHECKINGS = PHP_EOL . CLI_INFO . 'FINAL CHECKINGS => ';
+      FINAL_CHECKINGS = PHP_EOL . CLI_INFO . 'FINAL CHECKINGS => ',
+      LOGS_PATH = BASE_PATH . 'logs/';
 
     protected function setUp(): void
     {
       parent::setUp();
       require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+
+      if (!file_exists(self::LOGS_PATH))
+        mkdir(self::LOGS_PATH);
     }
 
     protected function tearDown(): void
