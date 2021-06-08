@@ -31,6 +31,11 @@ class RouterTest extends TestCase
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
+  }
+
+  protected function setUp(): void
+  {
+    parent::setUp();
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
