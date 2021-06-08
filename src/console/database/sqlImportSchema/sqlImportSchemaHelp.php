@@ -6,7 +6,6 @@ namespace otra\console\database\sqlImportSchema;
  * @package otra\console\database
  */
 
-
 use otra\console\TasksManager;
 
 return [

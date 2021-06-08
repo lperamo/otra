@@ -18,8 +18,7 @@ return [
       STRING_PAD_FOR_OPTION_FORMATTING . '2 => JS production files.' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '4 => CSS production files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '8 => Templates, JSON manifest and SVGs' . PHP_EOL .
-      STRING_PAD_FOR_OPTION_FORMATTING . '15 => all production files'
-    ,
+      STRING_PAD_FOR_OPTION_FORMATTING . '15 => all production files',
     'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
   ],
   [
