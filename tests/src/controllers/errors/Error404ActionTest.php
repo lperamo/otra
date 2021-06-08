@@ -30,13 +30,6 @@ class Error404ActionTest extends TestCase
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
-    ob_start();
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_CREATE_HELLO_WORLD,
-      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-    ob_end_clean();
   }
 
   /** Cleaning all the files and folders that have been created */
@@ -54,6 +47,18 @@ class Error404ActionTest extends TestCase
       delTree(BUNDLES_PATH . 'config/');
       rmdir(BASE_PATH . 'bundles');
     }
+  }
+
+  protected function setUp(): void
+  {
+    parent::setUp();
+    ob_start();
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_CREATE_HELLO_WORLD,
+      [self::OTRA_PHP_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
+    );
+    ob_end_clean();
   }
 
   /**

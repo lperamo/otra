@@ -19,7 +19,9 @@ class ClearSqlLogsActionTest extends TestCase
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
-    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld';
+    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
+    LOGS_DEV_PATH = BASE_PATH . 'logs/' . 'dev/',
+    DEV_SQL_LOG = self::LOGS_DEV_PATH . 'sql.txt';
 
   protected $preserveGlobalState = FALSE;
 
@@ -30,6 +32,17 @@ class ClearSqlLogsActionTest extends TestCase
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = DEV;
+
+    if (!file_exists(self::LOGS_DEV_PATH))
+      mkdir(self::LOGS_DEV_PATH, 0777, true);
+
+    if (!file_exists(self::DEV_SQL_LOG))
+      touch(self::DEV_SQL_LOG);
+  }
+
+  protected function setUp(): void
+  {
+    parent::setUp();
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
@@ -63,6 +76,9 @@ class ClearSqlLogsActionTest extends TestCase
    */
   public function testClearSqlLogsAction() : void
   {
+    // context
+
+
     // launching
     ob_start();
     new ClearSQLLogsAction([
