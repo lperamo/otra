@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\deployment\taskFileOperation;
+namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use phpunit\framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace otra\console\deployment\genBootstrap
+namespace otra\console\deployment\genBootstrap\genBootstrap
 {
   const VERBOSE = 2;
 }
