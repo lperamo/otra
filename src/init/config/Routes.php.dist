@@ -5,12 +5,12 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace config;
+namespace otra\config;
 
-use const otra\cache\php\BASE_PATH;
+use const otra\cache\php\BUNDLES_PATH;
 
 /**
- * @package config
+ * @package otra\config
  */
 abstract class Routes
 {
@@ -26,7 +26,7 @@ abstract class Routes
       'chunks' => ['exception'],
       'core' => true,
       'resources' => [
-        'core_css' => ['otraException'],
+        'core_css' => ['pages/otraException'],
         'core_js' => ['tools']
       ]
     ],
@@ -54,10 +54,10 @@ abstract class Routes
   {
     self::$allRoutes = array_merge(
       self::$allRoutes,
-      require BASE_PATH . 'bundles/config/Routes.php'
+      require BUNDLES_PATH . 'config/Routes.php'
     );
   }
 }
 
-Routes:: init();
+Routes::init();
 
