@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 /** THE framework production config
  *
- * @author Lionel Péramo */
+ * @author Lionel Péramo
+ */
+
 namespace otra\config;
 
 use const otra\cache\php\CACHE_PATH;
