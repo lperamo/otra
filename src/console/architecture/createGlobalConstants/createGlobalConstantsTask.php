@@ -58,7 +58,7 @@ $content = 'const DEV=\'dev' .
   ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)
-require_once BASE_PATH . 'src/console/colors.php';
+require_once BASE_PATH . ($otraProject ? 'vendor/otra/otra/src' : 'src') . '/console/colors.php';
 
 // Those lines are for when a developer installs OTRA via composer for the first time
 $configFolderPath = BASE_PATH . 'config/';
