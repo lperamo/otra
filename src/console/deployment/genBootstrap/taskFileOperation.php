@@ -909,9 +909,10 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
         if (in_array($tempFile, $parsedFiles, true))
           continue;
 
+        // actually it works only with 'str_pos' not 'mb_strpos'!
         $filesToConcat['php'][OTRA_KEY_REQUIRE][$tempFile] = [
           'match' => $match[0],
-          'posMatch' => mb_strpos($contentToAdd, $match[0])
+          'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
     } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))

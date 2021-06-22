@@ -32,12 +32,13 @@ class ProcessReturnTest extends TestCase
     // correctly
     $includedCode = '<?php declare(strict_types=1);return [\'testKey\'=>\'testValue\'];' . PHP_EOL . '?>';
 
-    // launching
+    // launching (actually it works only with 'str_pos' not 'mb_strpos'!) see TaskFileOperation:914 (can change) in
+    // getFileInfoFromRequiresAndExtends()
     processReturn(
       $includingCode,
       $includedCode,
       $inclusionCode,
-      mb_strpos($includingCode, $inclusionCode)
+      strpos($includingCode, $inclusionCode)
     );
 
     // testing
