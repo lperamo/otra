@@ -428,7 +428,7 @@ class DatabaseTest extends TestCase
   public function testCreateFixtures_TruncateOnly() : void
   {
     // context
-    define('src\console\VERBOSE', 2);
+    define(__NAMESPACE__ . '\\VERBOSE', 2);
     copyFileAndFolders(
       [
         self::SCHEMA_FILE_BACKUP,
@@ -708,7 +708,7 @@ class DatabaseTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
 
-    define('src\console\VERBOSE', 2);
+    define(__NAMESPACE__ . '\\VERBOSE', 2);
 
     $this->loadConfig();
 

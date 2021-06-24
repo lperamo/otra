@@ -14,7 +14,7 @@ use function otra\console\{architecture\createFolder,promptUser};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
-if (!function_exists('otra\console\architecture\createModule\createModule'))
+if (!function_exists(__NAMESPACE__ . '\\createModule'))
 {
   /**
    * @param string $bundleBasePath The path where we put modules
@@ -52,8 +52,8 @@ if (!function_exists('otra\console\architecture\createModule\createModule'))
   function moduleHandling(bool $interactive, bool $consoleForce, string $bundleName, string $moduleName) : void
   {
     // This constant is already defined if we have created a bundle on the process via CheckModuleExistence.php
-    if (!defined('otra\console\architecture\createModule\BUNDLE_BASE_PATH'))
-      define('otra\console\architecture\createModule\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
+    if (!defined(__NAMESPACE__ . '\\BUNDLE_BASE_PATH'))
+      define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
     if ($interactive)
     {

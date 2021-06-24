@@ -16,7 +16,7 @@ use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 require CREATE_MODEL_FOLDER . 'common.php';
 const MODEL_CREATED_FROM_NOTHING_MESSAGE = 'We will create one model from nothing.' . PHP_EOL;
 define(
-  'MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
+  __NAMESPACE__ . '\\MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
   'The model ' . CLI_INFO_HIGHLIGHT . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
 );
 

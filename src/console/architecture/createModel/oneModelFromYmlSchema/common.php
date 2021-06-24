@@ -38,7 +38,7 @@ function defineModelPath(int $modelLocation, string $bundlePath, string $moduleN
 function preparingBidule(string $modelName) : array
 {
   $modelFullName = $modelName . '.php';
-  define('otra\console\architecture\createModel\oneModelFromYmlSchema\AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
+  define(__NAMESPACE__ . '\\AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
 
   return [
     $modelFullName,

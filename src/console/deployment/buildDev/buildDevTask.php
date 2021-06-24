@@ -30,8 +30,8 @@ const BUILD_DEV_ARG_VERBOSE = 2,
 BUILD_DEV_ARG_SCOPE = 5;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('otra\console\deployment\buildDev\BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
-define('otra\console\deployment\buildDev\BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
+define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
+define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
 
 echo CLI_WARNING, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
 

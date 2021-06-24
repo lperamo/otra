@@ -7,7 +7,7 @@ use const otra\cache\php\init\CLASSMAP;
 use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CORE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\tools\delTree;
 
-define('otra\bin\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
   ? '/../../../..' // long path from vendor
   : '/..'

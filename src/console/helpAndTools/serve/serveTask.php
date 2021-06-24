@@ -15,8 +15,8 @@ require CORE_PATH . 'tools/cli.php';
 
 const PARAMETER_PORT = 2;
 const PARAMETER_ENV = 3;
-define('otra\console\helpAndTools\serve\OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
-define('otra\console\helpAndTools\serve\OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? DEV);
+define(__NAMESPACE__ . '\\OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
+define(__NAMESPACE__ . '\\OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? DEV);
 const OTRA_LIVE_HTTPS = 'false';
 
 echo CLI_INFO, 'Launching a PHP web internal server on localhost:', OTRA_APP_PORT, ' in ',

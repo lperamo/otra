@@ -25,8 +25,8 @@ $folders = [
 $classes = [];
 $processedDir = 0;
 
-if (!defined('otra\console\deployment\genClassMap\VERBOSE'))
-  define('otra\console\deployment\genClassMap\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
+if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+  define(__NAMESPACE__ . '\\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
 
 const ADDITIONAL_CLASSES_FILES_PATH = BASE_PATH . 'config/AdditionalClassFiles.php';
 $additionalClassesFiles = [];
@@ -41,7 +41,7 @@ $classesThatMayHaveToBeAdded = [];
 if (!function_exists('otra\console\promptUser'))
   require CONSOLE_PATH . 'tools.php';
 
-if (!empty($folders) && !function_exists('otra\console\deployment\genClassMap\iterateCM'))
+if (!empty($folders) && !function_exists(__NAMESPACE__ . '\\iterateCM'))
 {
   /**
    * @param string[]              $classes
@@ -250,8 +250,8 @@ if (VERBOSE !== 1)
   return;
 
 // If we come from the deploy task, this constant may already have been defined.
-if (!defined('otra\\console\\deployment\\genClassMap\\FIRST_CLASS_PADDING'))
-  define('otra\\console\\deployment\\genClassMap\\FIRST_CLASS_PADDING', 80);
+if (!defined(__NAMESPACE__ . '\\FIRST_CLASS_PADDING'))
+  define(__NAMESPACE__ . '\\FIRST_CLASS_PADDING', 80);
 
 echo CLI_WARNING, 'BASE_PATH = ', BASE_PATH, PHP_EOL;
 echo CLI_INFO, 'Class path', CLI_INFO_HIGHLIGHT, ' => ', CLI_INFO, 'Related file path', PHP_EOL, PHP_EOL;

@@ -42,7 +42,7 @@ const PATTERN = '@\s{0,}
   LABEL_CONST = 'const ',
   STRLEN_LABEL_CONST = 6,
   NAMESPACE_SEPARATOR = '\\';
-define('otra\console\deployment\genBootstrap\BASE_PATH_LENGTH', strlen(BASE_PATH));
+define(__NAMESPACE__ . '\\BASE_PATH_LENGTH', strlen(BASE_PATH));
 
 /**
  * We have to manage differently the code that we put into an eval either it is PHP code or not. Example :
@@ -1350,8 +1350,8 @@ function processStaticCalls(
  */
 function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '') : string
 {
-  if (!defined('otra\console\deployment\genBootstrap\VERBOSE'))
-    define('otra\console\deployment\genBootstrap\VERBOSE', $verbose);
+  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+    define(__NAMESPACE__ . '\\VERBOSE', $verbose);
 
   // we create these variables only for the reference pass
   $increment = 0; // process steps counter (more granular than $level variable)

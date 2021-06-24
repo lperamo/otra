@@ -26,8 +26,8 @@ if (!file_exists($modulePath))
   require CONSOLE_PATH . 'architecture/doWeCreateIt.php';
   doWeCreateIt($interactive, $consoleForce, $moduleRelativePath, 'module');
 
-  if (!defined('otra\console\architecture\createModule\BUNDLE_BASE_PATH'))
-    define('otra\console\architecture\createModule\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
+  if (!defined(__NAMESPACE__ . '\\BUNDLE_BASE_PATH'))
+    define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
   createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
 }

@@ -90,9 +90,9 @@ class WorkerTest extends TestCase
   public function testFail(): void
   {
     // context
-    define('src\tools\workers\TEST_STDOUT', 'Worker command failed.');
-    define('src\tools\workers\TEST_STDERR', 'my error.');
-    define('src\tools\workers\TEST_STATUS', -1);
+    define(__NAMESPACE__ . '\\TEST_STDOUT', 'Worker command failed.');
+    define(__NAMESPACE__ . '\\TEST_STDERR', 'my error.');
+    define(__NAMESPACE__ . '\\TEST_STATUS', -1);
 
     // launching
     $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);

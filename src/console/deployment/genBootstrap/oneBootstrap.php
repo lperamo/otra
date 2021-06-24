@@ -21,9 +21,9 @@ const
 
   OTRA_KEY_BOOTSTRAP = 'bootstrap',
   OTRA_KEY_DRIVER = 'driver';
-define('otra\console\deployment\genBootstrap\GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
-define('otra\console\deployment\genBootstrap\VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
-define('otra\console\deployment\genBootstrap\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
+define(__NAMESPACE__ . '\\VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
+define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 $route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
@@ -123,7 +123,7 @@ if (isset($params['core']) && $params['core'])
 }
 
 define(
-  'PATH_CONSTANTS',
+  __NAMESPACE__ . '\\PATH_CONSTANTS',
   [
     'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
     OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)

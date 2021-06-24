@@ -14,7 +14,7 @@ const
   CRYPT_ARG_PASSWORD = 2,
   CRYPT_ARG_ITERATIONS = 3;
 
-define('otra\console\helpAndTools\crypt\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null);
+define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null);
 
 if (!is_numeric(CRYPT_ITERATIONS))
 {

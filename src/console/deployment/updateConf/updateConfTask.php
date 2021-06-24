@@ -23,8 +23,8 @@ const
   UPDATE_CONF_ARG_ROUTE_NAME = 2,
   SINGLE_QUOTE = '\'';
 
-if (!defined('otra\console\deployment\updateConf\UPDATE_CONF_ROUTE_NAME'))
-  define('otra\console\deployment\updateConf\UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+if (!defined(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME'))
+  define(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
 
 if (!function_exists('otra\console\deployment\updateConf\writeConfigFile'))
 {

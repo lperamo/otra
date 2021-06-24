@@ -23,7 +23,7 @@ try
   require CACHE_PATH . 'php/init/RouteManagement.php';
 
   $route = Router::getByPattern($requestUri);
-  define('otra\web\OTRA_ROUTE', $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME]);
+  define(__NAMESPACE__ . '\\OTRA_ROUTE', $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME]);
 
   header('Content-Type: text/html; charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
@@ -94,11 +94,11 @@ try
 {
   $error = $issue instanceof Error;
   define(
-    'otra\web\ISSUE_RELATIVE_LOG_PATH',
+    __NAMESPACE__ . '\\ISSUE_RELATIVE_LOG_PATH',
     'logs/' . $_SERVER[APP_ENV] . ($error ? '/unknownFatalErrors.txt' : '/unknownExceptions.txt')
   );
-  define('otra\web\ISSUE_LOG_PATH', BASE_PATH . ISSUE_RELATIVE_LOG_PATH);
-  define('otra\web\ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . $issue->getLine());
+  define(__NAMESPACE__ . '\\ISSUE_LOG_PATH', BASE_PATH . ISSUE_RELATIVE_LOG_PATH);
+  define(__NAMESPACE__ . '\\ISSUE_TRACE', $issue->getMessage() . ' in ' . $issue->getFile() . ':' . $issue->getLine());
 
   if (!is_writable(ISSUE_LOG_PATH))
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color: blue;">' .

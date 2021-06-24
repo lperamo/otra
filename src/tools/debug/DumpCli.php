@@ -33,8 +33,8 @@ const OTRA_DUMP_INDENT_COLORS = [
   'otra\console\CLI_INDENT_COLOR_FIFTH'
 ];
 
-if (!defined('otra\tools\debug\OTRA_DUMP_INDENT_COLORS_COUNT'))
-  define('otra\tools\debug\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
+if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT'))
+  define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.

@@ -13,11 +13,11 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
 use const otra\cache\php\init\CLASSMAP;
 use function otra\tools\gzCompressFile;
 
-define('otra\\console\\deployment\\genAssets\\ARG_CACHE_PATH', $argv[1]);
-define('otra\\console\\deployment\\genAssets\\ARG_SITE_ROUTE', $argv[2]);
-define('otra\\console\\deployment\\genAssets\\ARG_SHA_NAME', $argv[3]);
+define(__NAMESPACE__ . '\\ARG_CACHE_PATH', $argv[1]);
+define(__NAMESPACE__ . '\\ARG_SITE_ROUTE', $argv[2]);
+define(__NAMESPACE__ . '\\ARG_SHA_NAME', $argv[3]);
 
-define('otra\\console\\deployment\\genAssets\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'

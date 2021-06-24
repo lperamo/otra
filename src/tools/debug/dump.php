@@ -35,10 +35,10 @@ if (!function_exists('otra\tools\debug\dump'))
    */
   function paramDump(?array $options = [], ... $params) : void
   {
-    if (!defined('otra\tools\debug\OTRA_DUMP_FINAL_CLASS'))
+    if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_FINAL_CLASS'))
     {
-      define('otra\\tools\\debug\\OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
-      define('otra\\tools\\debug\\OTRA_NAMESPACED_FINAL_CLASS', 'otra\\tools\\debug\\' . OTRA_DUMP_FINAL_CLASS);
+      define(__NAMESPACE__ . '\\OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
+      define(__NAMESPACE__ . '\\OTRA_NAMESPACED_FINAL_CLASS', 'otra\\tools\\debug\\' . OTRA_DUMP_FINAL_CLASS);
     }
 
     require_once CORE_PATH . 'tools/debug/' . OTRA_DUMP_FINAL_CLASS . '.php';

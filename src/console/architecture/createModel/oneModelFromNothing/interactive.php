@@ -9,7 +9,7 @@ namespace otra\console\architecture\createModel\oneModelFromNothing;
 
 use const otra\cache\php\DIR_SEPARATOR;
 use const otra\console\architecture\createModel\
-{CREATE_MODEL_FOLDER, MODEL_DIRECTORY, MODEL_LOCATION_BUNDLE, MODEL_PATH};
+{CREATE_MODEL_FOLDER, MODEL_DIRECTORY, MODEL_LOCATION_BUNDLE, MODEL_PATH, MODULE_BUNDLE_MESSAGE};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\architecture\createModel\{getModelFullNameAndModelExists,getModelLocation,getModuleName};
 use function otra\console\promptUser;

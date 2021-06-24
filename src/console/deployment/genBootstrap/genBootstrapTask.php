@@ -31,8 +31,8 @@ const
   GEN_BOOTSTRAP_ARG_ROUTE = 5,
   OTRA_KEY_DRIVER = 'driver';
 
-define('otra\console\deployment\genBootstrap\GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
-define('otra\console\deployment\genBootstrap\VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
+define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
+define(__NAMESPACE__ . '\\VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
 
 // We generate the class mapping file if we need it.
 if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
@@ -129,7 +129,7 @@ echo 'Create the specific routes management file... ', PHP_EOL;
 // CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
 // configuration. We checks if we do not have already loaded the configuration before.
 define(
-  'PATH_CONSTANTS',
+  __NAMESPACE__ . '\\PATH_CONSTANTS',
   [
     'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
     OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)

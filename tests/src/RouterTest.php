@@ -57,7 +57,7 @@ class RouterTest extends TestCase
   public function testGet_Launch() : void
   {
     // context
-    define('src\TEST_PARAMETERS_ARRAY', ['test' => 'coucou']);
+    define(__NAMESPACE__ . '\\TEST_PARAMETERS_ARRAY', ['test' => 'coucou']);
 
     // launching
     ob_start();

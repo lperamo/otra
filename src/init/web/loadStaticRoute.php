@@ -14,7 +14,7 @@ use function otra\services\{addCspHeader,addPermissionsPoliciesHeader};
 class MasterController {public static array $nonces = [];}
 require BASE_PATH . 'config/AllConfig.php';
 require CORE_PATH . 'services/securityService.php';
-define('otra\SECURITY_ROUTE_PATH', CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . DIR_SEPARATOR . OTRA_ROUTE . '.php');
+define(__NAMESPACE__ . '\\SECURITY_ROUTE_PATH', CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . DIR_SEPARATOR . OTRA_ROUTE . '.php');
 header('Content-Encoding: gzip');
 
 addCspHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);

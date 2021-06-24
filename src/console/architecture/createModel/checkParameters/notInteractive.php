@@ -47,14 +47,14 @@ $bundleName = $checkParameter(
 );
 
 $modelLocation = (int) $checkParameter(
-  'otra\console\architecture\createModel\ARG_MODEL_LOCATION',
+  __NAMESPACE__ . '\\ARG_MODEL_LOCATION',
   'location of the bundle : ' . CLI_INFO_HIGHLIGHT . 'bundle' . CLI_WARNING . ' location chosen.',
   'bundle',
   false
 );
 
 define(
-  'otra\console\architecture\createModel\MODULE_NAME',
+  __NAMESPACE__ . '\\MODULE_NAME',
   $checkParameter('otra\console\architecture\constants\ARG_MODULE_NAME', 'module name.')
 );
 
@@ -65,7 +65,7 @@ if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 }
 
 $modelName = $checkParameter(
-  'otra\console\architecture\createModel\ARG_MODEL_NAME',
+  __NAMESPACE__ . '\\ARG_MODEL_NAME',
   'name of the model. We will import all the models.',
   null,
   false
@@ -81,8 +81,8 @@ if (null === $modelName)
   $creationMode = CREATION_MODE_ALL_MODELS;
 else
 {
-  define('otra\console\architecture\createModel\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
-  define('otra\console\architecture\createModel\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+  define(__NAMESPACE__ . '\\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
+  define(__NAMESPACE__ . '\\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
 
   if (!YML_SCHEMA_REAL_PATH)
   {
@@ -91,7 +91,7 @@ else
     $creationMode = CREATION_MODE_FROM_NOTHING;
   } else
   {
-    define('otra\console\architecture\createModel\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
+    define(__NAMESPACE__ . '\\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
 
     $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
       ? CREATION_MODE_ONE_MODEL
@@ -102,13 +102,13 @@ else
 if ($creationMode === CREATION_MODE_FROM_NOTHING)
 {
   define(
-    'otra\console\architecture\createModel\MODEL_PROPERTIES',
-    $checkParameter('otra\console\architecture\createModel\ARG_MODEL_PROPERTIES', 'model properties.')
+    __NAMESPACE__ . '\\MODEL_PROPERTIES',
+    $checkParameter(__NAMESPACE__ . '\\ARG_MODEL_PROPERTIES', 'model properties.')
   );
   define(
-    'otra\console\architecture\createModel\MODEL_PROPERTIES_TYPES',
+    __NAMESPACE__ . '\\MODEL_PROPERTIES_TYPES',
     $checkParameter(
-      'otra\console\architecture\createModel\ARG_MODEL_PROPERTIES_TYPE',
+      __NAMESPACE__ . '\\ARG_MODEL_PROPERTIES_TYPE',
       'model properties types.'
     )
   );

@@ -12,7 +12,7 @@ use function otra\console\architecture\createModel\{getModelLocation,getModuleNa
 use function otra\console\promptUser;
 use const otra\console\ERASE_SEQUENCE;
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
-use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER, MODEL_LOCATION_BUNDLE, MODULE_BUNDLE_MESSAGE};
 
 /** @var string $bundleName */
 /** @var string $bundlePath */

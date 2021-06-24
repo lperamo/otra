@@ -77,12 +77,12 @@ const ROUTES_ARG_ROUTE = 2;
 
 // 'require_once' needed instead of 'require', if we execute TasksManager::execute multiple times as in tests or some
 // scripts
-if (!defined('otra\console\helpAndTools\routes\WIDTH_LEFT'))
+if (!defined(__NAMESPACE__ . '\\WIDTH_LEFT'))
 {
-  define('otra\console\helpAndTools\routes\WIDTH_LEFT', 25);
-  define('otra\console\helpAndTools\routes\WIDTH_MIDDLE', 10);
+  define(__NAMESPACE__ . '\\WIDTH_LEFT', 25);
+  define(__NAMESPACE__ . '\\WIDTH_MIDDLE', 10);
   // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
-  define('otra\console\helpAndTools\routes\WIDTH_RIGHT', 70);
+  define(__NAMESPACE__ . '\\WIDTH_RIGHT', 70);
 }
 
 $indexLines = 0;

@@ -13,7 +13,7 @@ use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 /** @var string $bundleName */
 
 define(
-  'MODULE_BUNDLE_MESSAGE',
+  __NAMESPACE__ . '\\MODULE_BUNDLE_MESSAGE',
   'A model in the bundle ' . CLI_INFO_HIGHLIGHT . $bundleName . END_COLOR . ' for the module ' .
   CLI_INFO_HIGHLIGHT . MODULE_NAME . END_COLOR . ' ...' . PHP_EOL
 );

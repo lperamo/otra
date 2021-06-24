@@ -94,8 +94,8 @@ abstract class Database
 
     self::initBase();
 
-    if (!defined('otra\console\database\VERBOSE'))
-      define('otra\console\database\VERBOSE', AllConfig::$verbose);
+    if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+      define(__NAMESPACE__ . '\\VERBOSE', AllConfig::$verbose);
 
     self::$base = $infosDb['db'];
     self::$motor = $infosDb['motor'] ?? (Sql::$currentConn)::DEFAULT_MOTOR;

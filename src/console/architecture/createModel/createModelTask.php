@@ -65,7 +65,7 @@ namespace otra\console\architecture\createModel
    * @var int    $creationMode
    */
   define(
-    'otra\console\architecture\createModel\INTERACTIVE_FILE_NAME',
+    __NAMESPACE__ . '\\INTERACTIVE_FILE_NAME',
     ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE
   );
   require CREATE_MODEL_FOLDER . 'checkParameters/' . INTERACTIVE_FILE_NAME;
@@ -79,10 +79,10 @@ namespace otra\console\architecture\createModel
     require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . INTERACTIVE_FILE_NAME;
   else
   {
-    if (!defined('otra\console\architecture\createModel\YML_SCHEMA_PATH'))
+    if (!defined(__NAMESPACE__ . '\\YML_SCHEMA_PATH'))
     {
-      define('otra\console\architecture\createModel\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
-      define('otra\console\architecture\createModel\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+      define(__NAMESPACE__ . '\\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
+      define(__NAMESPACE__ . '\\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
     }
 
     if (!YML_SCHEMA_REAL_PATH)
@@ -92,9 +92,9 @@ namespace otra\console\architecture\createModel
       throw new OtraException('', 1, '', null, [], true);
     }
 
-    if (!defined('otra\console\architecture\createModel\SCHEMA_DATA'))
+    if (!defined(__NAMESPACE__ . '\\SCHEMA_DATA'))
       define(
-        'otra\console\architecture\createModel\SCHEMA_DATA',
+        __NAMESPACE__ . '\\SCHEMA_DATA',
         Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
       );
 

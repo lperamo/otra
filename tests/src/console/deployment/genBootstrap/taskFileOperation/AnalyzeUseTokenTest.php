@@ -36,7 +36,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testRouterAlwaysIncluded()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . '\\DEBUG_LEVEL', 1);
     $filesToConcat = [];
     $parsedFiles = [];
     $class = 'config\\Router';
@@ -59,7 +59,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsDevControllerTrait()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . '\\DEBUG_LEVEL', 1);
     $filesToConcat = $parsedFiles = [];
     $class = 'DevControllerTrait';
 
@@ -84,7 +84,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsProdControllerTrait()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . '\\DEBUG_LEVEL', 1);
     $filesToConcat = $parsedFiles = [];
     $class = 'ProdControllerTrait';
 
@@ -115,7 +115,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsBlockSystem()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . '\\DEBUG_LEVEL', 1);
     $filesToConcat = [];
     $parsedFiles = [];
     $class = 'cache\\php\\BlocksSystem';
@@ -139,7 +139,7 @@ class AnalyzeUseTokenTest extends TestCase
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . '\\DEBUG_LEVEL', 1);
     $filesToConcat = $parsedFiles = [];
     $class = '\ProdControllerTrait';
 

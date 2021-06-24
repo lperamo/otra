@@ -12,7 +12,7 @@ use const otra\console\{CLI_INFO_HIGHLIGHT,CLI_WARNING,ERASE_SEQUENCE,END_COLOR}
 const BUNDLE_MASK_QUESTION_BEGINNING = 'Do you want to associate ';
 /** @var string $bundleName */
 define(
-  'BUNDLE_MASK_QUESTION_END',
+  __NAMESPACE__ . '\\BUNDLE_MASK_QUESTION_END',
   ' with that bundle ' . END_COLOR . CLI_INFO_HIGHLIGHT . $bundleName . CLI_WARNING . ' (n or y)?'
 );
 $bundleMask = 0; // By default, we create 0 additional folders

@@ -20,7 +20,7 @@ require CREATE_MODEL_FOLDER . 'common.php';
 const CREATE_ALL_MODELS_FROM_YAML_SCHEMA = 'We will create all the models from ' . CLI_INFO_HIGHLIGHT .
   DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL;
 define(
-  'CREATING_ALL_MODELS_FOR_BUNDLE',
+  __NAMESPACE__ . '\\CREATING_ALL_MODELS_FOR_BUNDLE',
   'Creating all the models for the bundle ' . CLI_INFO_HIGHLIGHT . $bundleName . END_COLOR . ' ...' . PHP_EOL
 );
 
