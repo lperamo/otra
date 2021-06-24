@@ -9,7 +9,7 @@ namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
 
 use otra\OtraException;
 use function otra\console\architecture\createModel\modelCreation;
-use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER,MODEL_LOCATION_BUNDLE};
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER, MODEL_LOCATION_BUNDLE, MODULE_BUNDLE_MESSAGE};
 use const otra\console\{CLI_ERROR, END_COLOR};
 
 /** @var string $bundleName */

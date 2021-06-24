@@ -32,7 +32,7 @@ require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/compression.php';
 
 define(
-  'JS_LEVEL_COMPILATION',
+  __NAMESPACE__ . '\\JS_LEVEL_COMPILATION',
   [
     'WHITESPACE_ONLY',
     'SIMPLE_OPTIMIZATIONS',
@@ -74,7 +74,7 @@ if (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argv[GEN_ASSETS_ARG
 }
 
 define(
-  'ASSETS_MASK',
+  __NAMESPACE__ . '\\ASSETS_MASK',
   (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
 ); // 31 = default to all assets
 
@@ -310,7 +310,7 @@ if (GEN_ASSETS_MANIFEST)
 
 if (GEN_ASSETS_SVG)
 {
-  define('otra\console\deployment\genAssets\FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
+  define(__NAMESPACE__ . '\\FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
   echo 'Checking for uncompressed SVGs in the folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
     PHP_EOL;
 

@@ -32,13 +32,13 @@ class GenerateOptimizedJavascriptTest extends TestCase
     require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
 
     // defining constants...
-    define('src\console\deployment\TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
-    define('src\console\deployment\TEST_JS_BASE_NAME', 'test');
-    define('src\console\deployment\TEST_JS_RESOURCE_FOLDER', TEST_RESOURCES_PATH . 'js/');
-    define('src\console\deployment\TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
-    define('src\console\deployment\TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
-    define('src\console\deployment\TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
-    define('src\console\deployment\TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
+    define(__NAMESPACE__ . '\\TEST_RESOURCES_PATH', TEST_PATH . 'src/bundles/resources/');
+    define(__NAMESPACE__ . '\\TEST_JS_BASE_NAME', 'test');
+    define(__NAMESPACE__ . '\\TEST_JS_RESOURCE_FOLDER', TEST_RESOURCES_PATH . 'js/');
+    define(__NAMESPACE__ . '\\TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
+    define(__NAMESPACE__ . '\\TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
+    define(__NAMESPACE__ . '\\TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
+    define(__NAMESPACE__ . '\\TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
 
     // testing
     self::expectOutputString(

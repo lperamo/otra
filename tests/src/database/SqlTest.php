@@ -20,7 +20,8 @@ class SqlTest extends TestCase
   private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
-    LOG_PATH = BASE_PATH . 'logs/';
+    LOG_PATH = BASE_PATH . 'logs/',
+    QUERY_SELECT_1 = 'SELECT 1';
 
   private static string $databaseName = 'testDB';
 
@@ -156,7 +157,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -172,7 +173,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals(null, Sql::$instance->query('SELECT 1'));
+    self::assertEquals(null, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -199,7 +200,7 @@ class SqlTest extends TestCase
     // launching task
     Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
-    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
     self::assertEquals(
       $sqlLogContent
         . ($sqlLogContent !== ''
@@ -479,7 +480,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    self::assertIsString(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -498,7 +499,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    self::assertNull(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -553,7 +554,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -572,7 +573,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -662,7 +663,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    $sqlInstance = Sql::$instance->query('SELECT 1');
+    $sqlInstance = Sql::$instance->query(self::QUERY_SELECT_1);
     self::assertNull(Sql::$instance->freeResult($sqlInstance));
   }
 

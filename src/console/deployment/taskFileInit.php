@@ -38,18 +38,18 @@ const FILE_TASK_ARG_MASK = 3,
 
 const GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 define(
-  'otra\console\deployment\PATHS_TO_AVOID',
+  __NAMESPACE__ . '\\PATHS_TO_AVOID',
   array_merge([BUNDLES_PATH . 'config'], AllConfig::$pathsToAvoidForBuild ?? [])
 );
 
 // Defines if we want to use Google Closure Compiler or not
 define(
-  'otra\console\deployment\FILE_TASK_GCC',
+  __NAMESPACE__ . '\\FILE_TASK_GCC',
   isset($argv[FILE_TASK_ARG_GCC]) && $argv[FILE_TASK_ARG_GCC] === 'true'
 );
 
 define(
-  'otra\console\deployment\TASK_FILE_SOURCE_MAPS',
+  __NAMESPACE__ . '\\TASK_FILE_SOURCE_MAPS',
   isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
@@ -62,13 +62,13 @@ if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
-define('otra\console\deployment\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
+define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
 
-define('otra\console\deployment\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
-define('otra\console\deployment\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
-define('otra\console\deployment\WATCH_FOR_PHP_FILES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_PHP));
+define(__NAMESPACE__ . '\\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
+define(__NAMESPACE__ . '\\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
+define(__NAMESPACE__ . '\\WATCH_FOR_PHP_FILES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_PHP));
 define(
-  'otra\console\deployment\WATCH_FOR_ROUTES',
+  __NAMESPACE__ . '\\WATCH_FOR_ROUTES',
   (
     $maskExists
     && ($argv[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES

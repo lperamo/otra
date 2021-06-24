@@ -5,8 +5,8 @@
  */
 declare(strict_types=1);
 namespace otra\cache\php {
-  defined('otra\\cache\\php\\OTRA_PROJECT')
-    || define('otra\\cache\\php\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
+  defined(__NAMESPACE__ . '\\OTRA_PROJECT')
+    || define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 }
 
 namespace otra\console\helpAndTools\generateTaskMetadata {
@@ -33,7 +33,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
     PROD,
     SPACE_INDENT
   };
-  use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
+  use const otra\console\{CLI_BASE, SUCCESS};
 
   if (!defined('\otra\cache\php\BASE_PATH'))
   {
@@ -44,9 +44,9 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
     if (OTRA_PROJECT)
       $temporaryBasePath .= '/../../..'; // long path from vendor
 
-    define('otra\\console\\helpAndTools\\generateTaskMetadata\\CONSTANTS_ENDING_PATH', '/config/constants.php');
+    define(__NAMESPACE__ . '\\CONSTANTS_ENDING_PATH', '/config/constants.php');
     define(
-      'otra\\console\\helpAndTools\\generateTaskMetadata\\CONSTANTS_PATH',
+      __NAMESPACE__ . '\\CONSTANTS_PATH',
       realpath(__DIR__ . $temporaryBasePath . CONSTANTS_ENDING_PATH)
     );
 
@@ -141,7 +141,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
   );
 
   if (PHP_SAPI === 'cli')
-    echo CLI_BASE, 'Generation of help and task class map done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Generation of help and task class map done', SUCCESS;
 
   /********************************
    * SHELL COMPLETIONS GENERATION *
@@ -197,5 +197,5 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
   file_put_contents(CONSOLE_PATH . 'shellCompletions/shellCompletions.sh', $shellCompletionsContent);
 
   if (PHP_SAPI === 'cli')
-    echo CLI_BASE, 'Generation of shell completions script done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Generation of shell completions script done', SUCCESS;
 }

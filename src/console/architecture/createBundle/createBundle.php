@@ -91,7 +91,7 @@ function bundleHandling(
   } else
     $bundleMask = $bundleMask ?? 15;
 
-  define('otra\console\architecture\createBundle\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
+  define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
   if (!file_exists(BUNDLE_BASE_PATH))
     mkdir(BUNDLE_BASE_PATH, 0755, true);
@@ -99,7 +99,7 @@ function bundleHandling(
   echo ERASE_SEQUENCE, CLI_BASE, 'Bundle ', CLI_INFO_HIGHLIGHT, OTRA_BUNDLES_MAIN_FOLDER_NAME, $bundleName, CLI_BASE,
     ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
-  define('otra\console\architecture\createBundle\BUNDLE_FOLDERS_MASK', $bundleMask);
+  define(__NAMESPACE__ . '\\BUNDLE_FOLDERS_MASK', $bundleMask);
 
   foreach (BUNDLE_FOLDERS as $numericKey => $folder)
   {

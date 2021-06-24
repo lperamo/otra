@@ -16,7 +16,8 @@ class AnalyzeUseTokenTest extends TestCase
   private const
     LABEL_TESTING_FILES_TO_CONCAT = 'Testing $filesToConcat variable...',
     LABEL_TESTING_PARSED_FILES = 'Testing $parsedFiles variable...',
-    PHP_EXTENSION = '.php';
+    PHP_EXTENSION = '.php',
+    CONST_NAME_DEBUG_LEVEL = '\\DEBUG_LEVEL';
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = false;
@@ -36,7 +37,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testRouterAlwaysIncluded()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = [];
     $parsedFiles = [];
     $class = 'config\\Router';
@@ -59,7 +60,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsDevControllerTrait()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = $parsedFiles = [];
     $class = 'DevControllerTrait';
 
@@ -73,7 +74,6 @@ class AnalyzeUseTokenTest extends TestCase
     );
 
     // testing
-    $filename = CORE_PATH . 'dev/' . $class . self::PHP_EXTENSION;
     static::expectOutputString(
       CLI_INFO . 'We will not send the development controller in production.' . END_COLOR . PHP_EOL
     );
@@ -84,7 +84,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsProdControllerTrait()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = $parsedFiles = [];
     $class = 'ProdControllerTrait';
 
@@ -115,7 +115,7 @@ class AnalyzeUseTokenTest extends TestCase
   public function testIsBlockSystem()
   {
     // context
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = [];
     $parsedFiles = [];
     $class = 'cache\\php\\BlocksSystem';
@@ -139,7 +139,7 @@ class AnalyzeUseTokenTest extends TestCase
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
-    define('DEBUG_LEVEL', 1);
+    define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = $parsedFiles = [];
     $class = '\ProdControllerTrait';
 

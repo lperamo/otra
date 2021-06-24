@@ -60,7 +60,7 @@ const
   LABEL_YOUR_ROUTE = 'Your route ',
   LABEL_MUST_BE_AN_ARRAY = ' must be an array.';
 
-define('otra\\console\\helpAndTools\\checkConfiguration\\BASE_PATH_LENGTH', mb_strlen(BASE_PATH));
+define(__NAMESPACE__ . '\\BASE_PATH_LENGTH', mb_strlen(BASE_PATH));
 echo 'Checking routes configuration...' . PHP_EOL;
 
 $dir_iterator = new RecursiveDirectoryIterator(BUNDLES_PATH, FilesystemIterator::SKIP_DOTS);

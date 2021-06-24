@@ -47,12 +47,12 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('otra\\console\\deployment\\genWatcher\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
+define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
 
 if (GEN_WATCHER_VERBOSE > 1 )
 {
   // Those constants are used in the maximum verbose mode only when we show the main events triggered
-  define('otra\\console\\deployment\\genWatcher\\WD_CONSTANTS', [
+  define(__NAMESPACE__ . '\\WD_CONSTANTS', [
     IN_ACCESS => 'IN_ACCESS',
     IN_MODIFY => 'IN_MODIFY',
     IN_ATTRIB => 'IN_ATTRIB',
@@ -82,15 +82,15 @@ if (GEN_WATCHER_VERBOSE > 1 )
     IN_ONESHOT => 'IN_ONESHOT'
   ]);
 
-  define('otra\\console\\deployment\\genWatcher\\HEADER_EVENT_PADDING', 18);
-  define('otra\\console\\deployment\\genWatcher\\HEADER_COOKIE_PADDING', 7);
-  define('otra\\console\\deployment\\genWatcher\\HEADER_NAME_PADDING', 30);
-  define('otra\\console\\deployment\\genWatcher\\HEADER_WATCHED_RESOURCE_PADDING', 60);
+  define(__NAMESPACE__ . '\\HEADER_EVENT_PADDING', 18);
+  define(__NAMESPACE__ . '\\HEADER_COOKIE_PADDING', 7);
+  define(__NAMESPACE__ . '\\HEADER_NAME_PADDING', 30);
+  define(__NAMESPACE__ . '\\HEADER_WATCHED_RESOURCE_PADDING', 60);
 
-  define('otra\\console\\deployment\\genWatcher\\DATA_EVENT_PADDING', 22);
-  define('otra\\console\\deployment\\genWatcher\\DATA_COOKIE_PADDING', 11);
-  define('otra\\console\\deployment\\genWatcher\\DATA_NAME_PADDING', 34);
-  define('otra\\console\\deployment\\genWatcher\\DATA_WATCHED_RESOURCE_PADDING', 64);
+  define(__NAMESPACE__ . '\\DATA_EVENT_PADDING', 22);
+  define(__NAMESPACE__ . '\\DATA_COOKIE_PADDING', 11);
+  define(__NAMESPACE__ . '\\DATA_NAME_PADDING', 34);
+  define(__NAMESPACE__ . '\\DATA_WATCHED_RESOURCE_PADDING', 64);
 }
 
 /**

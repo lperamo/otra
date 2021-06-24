@@ -11,7 +11,7 @@ use otra\config\AllConfig;
 use const otra\cache\php\{APP_ENV, BASE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_ERROR,CLI_SUCCESS,END_COLOR};
 
-define('otra\console\architecture\createGlobalConstants\CURRENT_FOLDER', str_replace('\\', '/', __DIR__));
+define(__NAMESPACE__ . '\\CURRENT_FOLDER', str_replace('\\', '/', __DIR__));
 $vendorPosition = mb_strrpos(CURRENT_FOLDER, 'vendor');
 $otraProject = $vendorPosition !== false;
 
@@ -30,7 +30,7 @@ if (!defined('otra\\cache\\php\\APP_ENV'))
   define('otra\\cache\\php\\DIR_SEPARATOR', '/');
 }
 
-define('otra\console\architecture\createGlobalConstants\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
+define(__NAMESPACE__ . '\\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
 const
   BASE_PATH_STRING = 'BASE_PATH.\'',
   CORE_RESOURCES_PATH = DIR_SEPARATOR . OTRA_PROJECT_SUFFIX . 'resources/',
@@ -54,7 +54,7 @@ $content = 'const DEV=\'dev' .
   '\',APP_ENV=\'APP_ENV' .
   '\',OTRA_VERSION=\'1.0.0-alpha.2.4.0' .
   '\',DIR_SEPARATOR=\'/' .
-  '\';if(!defined(\'otra\\\\cache\\\\php\\\\OTRA_PROJECT\'))define(\'otra\cache\php\OTRA_PROJECT\',' .
+  '\';if(!defined(__NAMESPACE__.\'\\\\OTRA_PROJECT\'))define(__NAMESPACE__.\'\\\\OTRA_PROJECT\',' .
   ($otraProject ? 'true' : 'false') . ');';
 
 // require_once in case we do not load this file directly (console already loads colors, not composer)

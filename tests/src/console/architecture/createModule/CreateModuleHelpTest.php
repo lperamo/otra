@@ -14,8 +14,11 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CreateModuleHelpTest extends TestCase
 {
-  private const OTRA_TASK_CREATE_MODULE = 'createModule',
-    OTRA_TASK_HELP = 'help';
+  private const
+    OTRA_TASK_CREATE_MODULE = 'createModule',
+    OTRA_TASK_HELP = 'help',
+    LABEL_PLUS = '   + ';
+
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
@@ -31,20 +34,20 @@ class CreateModuleHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Creates modules.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('bundle', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('bundle', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'The name of the bundle in which you want to put modules' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('module', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('module', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'The name of the module!' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('interactive', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('interactive', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO .
       'If set to false, no question will be asked but the status messages are shown. Defaults to true.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('force', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('force', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO .
       'If set to true, create intermediary steps (like folders) if they are missing. Defaults to false.' . PHP_EOL .

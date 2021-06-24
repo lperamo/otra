@@ -60,7 +60,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  define('otra\console\architecture\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
+  define(__NAMESPACE__ . '\\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
   file_put_contents(
     $actionPath,
     '<?php
@@ -122,7 +122,7 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT_2 . "]" . PHP_EOL .
     SPACE_INDENT . "]";
 
-  define('otra\\console\\architecture\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+  define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
 
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
   if (file_exists($routesConfigFolder))
@@ -194,8 +194,8 @@ class ' . $upperActionName . 'Action extends Controller
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // We update the class mapping since we have one action more.
-  if (!defined('otra\console\architecture\VERBOSE'))
-    define('otra\console\architecture\VERBOSE', 0);
+  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+    define(__NAMESPACE__ . '\\VERBOSE', 0);
 
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 }

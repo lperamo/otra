@@ -53,8 +53,8 @@ class WorkerManagerTest extends TestCase
     );
     $workerManager->attach($worker);
 
-    define('src\tools\workers\TEST_DETACH_STATUS_SUCCESS', 0);
-    define('src\tools\workers\TEST_DETACH_STATUS_WAS_RUNNING', true);
+    define(__NAMESPACE__ . '\\TEST_DETACH_STATUS_SUCCESS', 0);
+    define(__NAMESPACE__ . '\\TEST_DETACH_STATUS_WAS_RUNNING', true);
 
     // launching
     $foundKey = array_search($worker, $workerManager::$workers, true);

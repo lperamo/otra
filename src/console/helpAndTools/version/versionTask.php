@@ -23,8 +23,8 @@ const
   TOTAL_WIDTH = 39,
   TOTAL_PLUS_END_PADDING = TOTAL_WIDTH + END_PADDING;
 
-define('otra\console\helpAndTools\version\END_PADDING_STRING', str_repeat(' ', END_PADDING));
-define('otra\console\helpAndTools\version\BLANK_LINE', str_repeat(' ', TOTAL_PLUS_END_PADDING));
+define(__NAMESPACE__ . '\\END_PADDING_STRING', str_repeat(' ', END_PADDING));
+define(__NAMESPACE__ . '\\BLANK_LINE', str_repeat(' ', TOTAL_PLUS_END_PADDING));
 
 echo CLI_BGD_LIGHT_BLACK, BLANK_LINE, PHP_EOL .
   BLUE_ON_LIGHT_BLACK, " ..|''||   ", LIGHTBLUE_ON_LIGHT_BLACK, "|''||''| ", BLUE_ON_LIGHT_BLACK, "  '''|.   ", LIGHTBLUE_ON_LIGHT_BLACK, "    |    ", END_PADDING_STRING . PHP_EOL

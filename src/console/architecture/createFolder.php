@@ -35,7 +35,7 @@ if (!function_exists('otra\console\architecture\createFolder'))
     bool $consoleForce
   ) : void
   {
-    while (file_exists($absoluteFolderPath))
+    while ($pathExists = file_exists($absoluteFolderPath))
     {
       $sentence = CLI_ERROR . 'The ' . $folderType . ' ' . CLI_INFO_HIGHLIGHT .
         substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.';
@@ -45,6 +45,9 @@ if (!function_exists('otra\console\architecture\createFolder'))
         echo $sentence, END_COLOR, PHP_EOL;
         throw new OtraException('', 1, '', null, [], true);
       }
+
+      if ($consoleForce)
+        break;
 
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 
@@ -57,7 +60,8 @@ if (!function_exists('otra\console\architecture\createFolder'))
       echo DOUBLE_ERASE_SEQUENCE;
     }
 
-    mkdir($absoluteFolderPath, 0755);
+    if (!$pathExists)
+      mkdir($absoluteFolderPath, 0755);
   }
 }
 

@@ -45,7 +45,7 @@ class BlocksTest extends TestCase
    */
   public function testSimpleBlockSystem() : void
   {
-    define('src\SIMPLE_LAYOUT', 'simpleLayout.phtml');
+    define(__NAMESPACE__ . '\\SIMPLE_LAYOUT', 'simpleLayout.phtml');
     self::assertEquals(
       file_get_contents(self::BACKUPS_PATH . SIMPLE_LAYOUT),
       self::$controller->renderView(self::LAYOUTS_PATH . SIMPLE_LAYOUT, [], false, false)
@@ -60,7 +60,7 @@ class BlocksTest extends TestCase
    */
   public function testAdvancedBlockSystem() : void
   {
-    define('src\ADVANCED_LAYOUT', 'advancedLayout.phtml');
+    define(__NAMESPACE__ . '\\ADVANCED_LAYOUT', 'advancedLayout.phtml');
     self::assertEquals(
       file_get_contents(self::BACKUPS_PATH . ADVANCED_LAYOUT),
       self::$controller->renderView(self::LAYOUTS_PATH . ADVANCED_LAYOUT, [], false, false)
@@ -78,7 +78,7 @@ class BlocksTest extends TestCase
    */
   public function testComplexLayout() : void
   {
-    define('src\COMPLEX_LAYOUT', 'complexLayout.phtml');
+    define(__NAMESPACE__ . '\\COMPLEX_LAYOUT', 'complexLayout.phtml');
     self::assertEquals(
       file_get_contents(self::BACKUPS_PATH . COMPLEX_LAYOUT),
       self::$controller->renderView(self::LAYOUTS_PATH . COMPLEX_LAYOUT, [], false, false)
@@ -98,7 +98,7 @@ class BlocksTest extends TestCase
    */
   public function testCompleteLayout() : void
   {
-    define('src\COMPLETE_LAYOUT', 'completeLayout.phtml');
+    define(__NAMESPACE__ . '\\COMPLETE_LAYOUT', 'completeLayout.phtml');
     self::assertEquals(
       file_get_contents(self::BACKUPS_PATH . COMPLETE_LAYOUT),
       self::$controller->renderView(self::LAYOUTS_PATH . COMPLETE_LAYOUT, [], false, false)
@@ -118,7 +118,7 @@ class BlocksTest extends TestCase
    * @author Lionel Péramo
    */
   public function testEvenMoreCompleteLayout() : void {
-    define('src\EVEN_MORE_COMPLETE_LAYOUT', 'evenMoreCompleteLayout.phtml');
+    define(__NAMESPACE__ . '\\EVEN_MORE_COMPLETE_LAYOUT', 'evenMoreCompleteLayout.phtml');
     self::assertEquals(
       file_get_contents(self::BACKUPS_PATH . EVEN_MORE_COMPLETE_LAYOUT),
       self::$controller->renderView(self::LAYOUTS_PATH . EVEN_MORE_COMPLETE_LAYOUT, [], false, false)
@@ -138,9 +138,9 @@ class BlocksTest extends TestCase
    */
   public function testAnotherLayout():void
   {
-    define('src\OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayout.phtml');
-    define('src\BACKUP_ANOTHER_LAYOUT', self::BACKUPS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
-    define('src\TESTED_ANOTHER_LAYOUT', self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
+    define(__NAMESPACE__ . '\\OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayout.phtml');
+    define(__NAMESPACE__ . '\\BACKUP_ANOTHER_LAYOUT', self::BACKUPS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
+    define(__NAMESPACE__ . '\\TESTED_ANOTHER_LAYOUT', self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
     self::assertEquals(
       file_get_contents(BACKUP_ANOTHER_LAYOUT),
       self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false),

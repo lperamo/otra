@@ -9,7 +9,12 @@ namespace otra\console\architecture\createModel\oneModelFromNothing;
 
 use const otra\cache\php\DIR_SEPARATOR;
 use const otra\console\architecture\createModel\
-{CREATE_MODEL_FOLDER, MODEL_LOCATION_BUNDLE, MODEL_PROPERTIES, MODEL_PROPERTIES_TYPES, MODULE_NAME};
+{CREATE_MODEL_FOLDER,
+  MODEL_LOCATION_BUNDLE,
+  MODEL_PROPERTIES,
+  MODEL_PROPERTIES_TYPES,
+  MODULE_BUNDLE_MESSAGE,
+  MODULE_NAME};
 use function otra\console\architecture\createModel\retrieveFunctionsAndProperties;
 
 /** @var string $bundleName */
@@ -37,11 +42,11 @@ echo MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE;
 $functions = $propertiesCode = '';
 
 define(
-  'otra\console\architecture\createModel\oneModelFromNothing\MODEL_PROPERTIES_ARRAY',
+  __NAMESPACE__ . '\\MODEL_PROPERTIES_ARRAY',
   explode(',', MODEL_PROPERTIES)
 );
 define(
-  'otra\console\architecture\createModel\oneModelFromNothing\MODEL_PROPERTIES_TYPES_ARRAY',
+  __NAMESPACE__ . '\\MODEL_PROPERTIES_TYPES_ARRAY',
   explode(',', MODEL_PROPERTIES_TYPES)
 );
 $fakeTypeArray = array_fill(0, count(MODEL_PROPERTIES_TYPES_ARRAY), 'type');
@@ -52,12 +57,12 @@ function assignType(string $key, string $value) : array
 }
 
 $typesArray = array_map(
-  'otra\console\architecture\createModel\oneModelFromNothing\assignType',
+  __NAMESPACE__ . '\\assignType',
   array_keys($fakeTypeArray),
   $fakeTypeArray
 );
 define(
-  'otra\console\architecture\createModel\oneModelFromNothing\MODEL_COLUMNS_ARRAY',
+  __NAMESPACE__ . '\\MODEL_COLUMNS_ARRAY',
   array_combine(MODEL_PROPERTIES_ARRAY, $typesArray)
 );
 retrieveFunctionsAndProperties(

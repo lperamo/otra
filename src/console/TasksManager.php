@@ -31,7 +31,7 @@ abstract class TasksManager
    */
   public static function showCommands(string $message) : void
   {
-    define('otra\console\HELP_BETWEEN_TASK_AND_COLON', 28);
+    define(__NAMESPACE__ . '\\HELP_BETWEEN_TASK_AND_COLON', 28);
     echo PHP_EOL, CLI_WARNING, $message, CLI_BASE, PHP_EOL, PHP_EOL;
     echo 'The available commands are : ', PHP_EOL . PHP_EOL, '  - ', CLI_BASE,
       str_pad('no argument', HELP_BETWEEN_TASK_AND_COLON),
@@ -89,9 +89,9 @@ abstract class TasksManager
   }
 }
 
-if (!defined('otra\console\STRING_PAD_FOR_OPTION_FORMATTING'))
+if (!defined(__NAMESPACE__ . '\\STRING_PAD_FOR_OPTION_FORMATTING'))
   define(
-    'otra\console\STRING_PAD_FOR_OPTION_FORMATTING',
+    __NAMESPACE__ . '\\STRING_PAD_FOR_OPTION_FORMATTING',
     str_repeat(' ', TasksManager::STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING)
   );
 

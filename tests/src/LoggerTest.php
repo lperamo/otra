@@ -34,13 +34,10 @@ class LoggerTest extends TestCase
   {
     parent::tearDownAfterClass();
 
-    if (!OTRA_PROJECT)
+    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
     {
-      if (file_exists(self::LOG_PATH))
-      {
-        require CORE_PATH . 'tools/deleteTree.php';
-        delTree(self::LOG_PATH);
-      }
+      require CORE_PATH . 'tools/deleteTree.php';
+      delTree(self::LOG_PATH);
     }
   }
 
@@ -77,7 +74,7 @@ class LoggerTest extends TestCase
     // context
     $testLogsPath = 'logs/otraTests/';
     $logCustomFolder = '../' . $testLogsPath;
-    define('src\LOG_FILENAME', 'log.txt');
+    define(__NAMESPACE__ . '\\LOG_FILENAME', 'log.txt');
     $absolutePathToFolder = BASE_PATH . $testLogsPath;
     mkdir($absolutePathToFolder);
     $absolutePathToLogFilename = $absolutePathToFolder . LOG_FILENAME;
@@ -105,7 +102,7 @@ class LoggerTest extends TestCase
   public function testLg() : void
   {
     // context
-    define('src\TRACE_LOG_FILE', self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt');
+    define(__NAMESPACE__ . '\\TRACE_LOG_FILE', self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt');
 
     if (!file_exists('trace.txt'))
       touch(TRACE_LOG_FILE);
