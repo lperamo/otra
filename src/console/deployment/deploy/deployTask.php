@@ -12,9 +12,10 @@ use otra\config\AllConfig;
 use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
-use function otra\tools\cliCommand;
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
-use const otra\console\{CLI_ERROR, CLI_INFO, END_COLOR, SUCCESS};
+use const otra\console\
+{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR, SUCCESS};
+use function otra\tools\cliCommand;
 
 const DEPLOY_ARG_MASK = 2,
   DEPLOY_ARG_VERBOSE = 3,
@@ -68,9 +69,9 @@ if (!file_exists($mainBundlesFolder))
 }
 
 $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
-$verbose = (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0;
+define(__NAMESPACE__ . '\\VERBOSE', (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0);
 define(
-  'otra\console\deployment\deploy\DEPLOY_GCC_LEVEL_COMPILATION',
+  __NAMESPACE__ . '\\DEPLOY_GCC_LEVEL_COMPILATION',
   isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
 );
 
@@ -84,7 +85,7 @@ if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 
   // bootstraps
   $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
-  $argv[GEN_BOOTSTRAP_ARG_VERBOSE] = $verbose; // if true, print warnings when the task fails
+  $argv[GEN_BOOTSTRAP_ARG_VERBOSE] = VERBOSE; // if true, print warnings when the task fails
   require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
 }
 
@@ -104,7 +105,7 @@ if ($buildDevMode > 0)
 
   // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took into account
   [, $output] = cliCommand(
-    'php bin/otra.php buildDev ' . $verbose . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
+    'php bin/otra.php buildDev ' . VERBOSE . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
     CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
   );
 
@@ -154,10 +155,18 @@ CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
  * -R is for --relative, it will create missing folders
  * -m remove empty folders */
 
-$startCommand = 'rsync -qzaruvhP --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
-$startCommandRelativeRsync = 'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort;
+define(
+  __NAMESPACE__ . '\\START_COMMAND',
+  'rsync -qzaruvhP --delete -e \'ssh -i '  . $privateSshKey . ' -p ' . $destinationPort
+);
+define(
+  __NAMESPACE__ . '\\START_COMMAND_RELATIVE_RSYNC',
+  'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort
+);
 
 $workerManager = new WorkerManager();
+
+define(__NAMESPACE__ . '\\STRLEN_BASEPATH', strlen(BASE_PATH));
 
 /**
  * @param Worker[] $workers
@@ -193,9 +202,9 @@ $handleTransfer(
   [
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder,
-      'Site main folder' . SUCCESS,
+      'Site main folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Creating the site main folder if needed ...',
-      $verbose
+      VERBOSE
     )
   ],
   false,
@@ -205,10 +214,10 @@ $handleTransfer(
 $handleTransfer(
   [
     new Worker(
-      $startCommandRelativeRsync . '\' cache ' . $server . ':' . $folder,
-      'Cache' . SUCCESS,
+      START_COMMAND_RELATIVE_RSYNC . '\' cache ' . $server . ':' . $folder,
+      'Cache' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Sending cache ...',
-      $verbose
+      VERBOSE
     )
   ]
 );
@@ -219,10 +228,10 @@ if (file_exists(BASE_PATH . $preloadFilename))
   $handleTransfer(
     [
       new Worker(
-        $startCommand . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename,
-        'Preload file' . SUCCESS,
+        START_COMMAND . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename,
+        'Preload file' . CLI_SUCCESS . ' ✔' . END_COLOR,
         'Sending preload file ...',
-        $verbose
+        VERBOSE
       )
     ]
   );
@@ -230,10 +239,10 @@ if (file_exists(BASE_PATH . $preloadFilename))
 $handleTransfer(
   [
     new Worker(
-      $startCommand . '\' web/ ' . $server . ':' . $folder . 'web/',
-      'Web folder' . SUCCESS,
+      START_COMMAND . '\' web/ ' . $server . ':' . $folder . 'web/',
+      'Web folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Sending web folder ...',
-      $verbose
+      VERBOSE
     )
   ]
 );
@@ -243,15 +252,15 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'config',
-      'Config folder' . SUCCESS,
+      'Config folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Creating the config folder ...',
-      $verbose
+      VERBOSE
     ),
     new Worker(
-      $startCommand . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php',
-      'OTRA constants' . SUCCESS,
+      START_COMMAND . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php',
+      'OTRA constants' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Adding the OTRA constants ...',
-      $verbose
+      VERBOSE
     )
   ]
 );
@@ -261,18 +270,18 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'vendor',
-      'Vendor folder' . SUCCESS,
+      'Vendor folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Creating the vendor folder ...',
-      $verbose
+      VERBOSE
     ),
     new Worker(
-      $startCommand .
+      START_COMMAND .
       '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
       ' --include=\'otra/otra/src/templating/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
       ' --include=\'otra/otra/src/services/securityService.php\'' .
       ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
       '/vendor/',
-      'OTRA templating engine, the translate tool and the production controller' . SUCCESS,
+      'OTRA templating engine, the translate tool and the production controller' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Sending the OTRA templating engine, the translate tool and the production controller ...'
     )
   ]
@@ -283,14 +292,12 @@ $handleTransfer(
     new Worker(
       OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
       $folder . 'bundles',
-      'Bundles folder' . SUCCESS,
+      'Bundles folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Creating the bundles folder ...',
-      $verbose
+      VERBOSE
     )
   ]
 );
-
-define('otra\console\deployment\deploy\STRLEN_BASEPATH', strlen(BASE_PATH));
 
 /**
  * See which files to send and which files to keep
@@ -300,7 +307,7 @@ define('otra\console\deployment\deploy\STRLEN_BASEPATH', strlen(BASE_PATH));
  * @return Worker[]
  */
 $seekingToSendFiles = function (string $folderToAnalyze)
-use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destinationPort, &$server, $verbose)
+use (&$handleTransfer, &$seekingToSendFiles, &$folder, &$destinationPort, &$server)
 : array
 {
   $bundleFolders = new DirectoryIterator($folderToAnalyze);
@@ -320,11 +327,11 @@ use (&$handleTransfer, &$seekingToSendFiles, &$startCommand, &$folder, &$destina
     $folderRelativePath = substr($folderRealPath, STRLEN_BASEPATH);
 
     $newWorkersToChain[] = new Worker(
-      $startCommand .
+      START_COMMAND .
       '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath,
-      $folderRelativePath . ' folder' . SUCCESS,
+      $folderRelativePath . ' folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Sending ' . $folderRelativePath . ' folder ...',
-      $verbose
+      VERBOSE
     );
 
     $newWorkersToChain = array_merge($newWorkersToChain, $seekingToSendFiles($folderRealPath));
@@ -338,10 +345,10 @@ $handleTransfer($seekingToSendFiles($mainBundlesFolder));
 $handleTransfer(
   [
     new Worker(
-      $startCommandRelativeRsync . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder,
-      'Log folder' . SUCCESS,
+      START_COMMAND_RELATIVE_RSYNC . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder,
+      'Log folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
       'Checking log folder ...',
-      $verbose
+      VERBOSE
     )
   ]
 );

@@ -222,11 +222,8 @@ class WorkerManager
     // Handles workers chaining
     if (!empty(self::$workers[$foundKey]->subworkers))
     {
-      // We search the first worker to chain
-      $firstWorkerToChain = self::$workers[$foundKey]->subworkers[0];
-
-      // We remove it from the workers list to chain
-      unset(self::$workers[$foundKey]->subworkers[0]);
+      // We search the first worker to chain and we remove it from the workers list to chain
+      $firstWorkerToChain = array_shift(self::$workers[$foundKey]->subworkers);
 
       // We set the remaining workers to chain to the worker we just retrieved
       $firstWorkerToChain->subworkers = self::$workers[$foundKey]->subworkers;

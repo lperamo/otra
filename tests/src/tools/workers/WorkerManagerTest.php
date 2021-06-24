@@ -168,7 +168,7 @@ class WorkerManagerTest extends TestCase
       self::WAITING_MESSAGE,
       self::VERBOSE
     );
-    define('src\tools\workers\TEST_STREAM_NON_BLOCKING_MODE', false);
+    define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
 
     // launching
     $workerManager->attach($worker);
