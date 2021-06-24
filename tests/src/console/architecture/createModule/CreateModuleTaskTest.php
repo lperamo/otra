@@ -8,7 +8,8 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\delTree;
 
 if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
@@ -166,6 +167,8 @@ class CreateModuleTaskTest extends TestCase
   }
 
   /**
+   * In this case, we just ignore the folder creation if the folder already exists.
+   *
    * @author Lionel Péramo
    */
   public function testCreateModuleTask_ModuleAlreadyExists_Force() : void
@@ -174,10 +177,8 @@ class CreateModuleTaskTest extends TestCase
     $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::TEST_MODULE_PATH, 0777, true);
 
-    // testing exceptions
-    $this->expectException(OtraException::class);
-
     // launching
+    ob_start();
     TasksManager::execute(
       $tasksClassMap,
       self::TEST_TASK,
@@ -186,13 +187,21 @@ class CreateModuleTaskTest extends TestCase
         self::TEST_TASK,
         self::TEST_BUNDLE,
         self::TEST_MODULE,
-        self::CREATE_BUNDLE_NO_INTERACTIVE_MODE
+        self::CREATE_BUNDLE_NO_INTERACTIVE_MODE,
+        'true'
       ]
     );
 
     // testing
-    $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT . 'bundles/' . TEST_BUNDLE_UPPER .
-      DIR_SEPARATOR . self::TEST_MODULE . CLI_ERROR . ' already exists.' . END_COLOR . PHP_EOL);
+    $bundleNameUcFirst = ucfirst(self::TEST_BUNDLE);
+    $this->assertEquals(
+      CLI_BASE . 'Basic folder architecture created for ' . CLI_INFO_HIGHLIGHT . 'bundles/' .
+      $bundleNameUcFirst . '/' . self::TEST_MODULE . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL,
+      ob_get_clean(),
+      'Testing if we have a success message when we try to create the already existing module ' .
+      CLI_INFO_HIGHLIGHT . self::TEST_MODULE . CLI_ERROR . ' in the bundle ' . CLI_INFO_HIGHLIGHT . $bundleNameUcFirst .
+      CLI_ERROR
+    );
   }
 
   /**
