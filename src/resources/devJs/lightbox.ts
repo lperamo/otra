@@ -17,7 +17,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
    *
    * @param {Object} params
    */
-  let lightbox = function lightbox(params : any) : void
+  const lightbox = function lightbox(params : any) : void
   {
     params = {
       callback: params.callback,
