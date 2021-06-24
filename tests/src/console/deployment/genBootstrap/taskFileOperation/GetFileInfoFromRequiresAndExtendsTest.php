@@ -14,20 +14,27 @@ use function otra\console\deployment\genBootstrap\getFileInfoFromRequiresAndExte
 class GetFileInfoFromRequiresAndExtendsTest extends TestCase
 {
   private const
-    LABEL_BASE_PATH = 'BASE_PATH',
-    LABEL_SLASH = '\'';
-
-  private const KEY_LEVEL = 'level',
+    CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE',
+    KEY_LEVEL = 'level',
     KEY_CONTENT_TO_ADD = 'contentToAdd',
     KEY_FILENAME = 'filename',
     KEY_FILES_TO_CONCAT = 'filesToConcat',
     KEY_PARSED_FILES = 'parsedFiles',
     KEY_CLASSES_FROM_FILE = 'classesFromFile',
     KEY_PARSED_CONSTANTS = 'parsedConstants',
-    TEST_FILENAME_PHP = 'test_filename.php',
-    TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP = 'tests/examples/deployment/testRequire.php',
+    LABEL_BASE_PATH = 'BASE_PATH',
+    LABEL_SLASH = '\'',
+    LABEL_TESTING_LEVEL = 'Testing $level...',
+    LABEL_TESTING_CONTENT_TO_ADD = 'Testing $contentToAdd...',
+    LABEL_TESTING_FILENAME = 'Testing $filename...',
+    LABEL_TESTING_FILES_TO_CONCAT = 'Testing $filesToConcat...',
+    LABEL_TESTING_PARSED_FILES = 'Testing $parsedFiles...',
+    LABEL_TESTING_CLASSES_FROM_FILE = 'Testing $classesFromFile...',
+    LABEL_TESTING_PARSED_CONSTANTS = 'Testing $parsedConstants...',
     REQUIRE_MATCHED = PHP_EOL . 'require ' . self::LABEL_BASE_PATH . ' . ' . self::LABEL_SLASH .
-      self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP . self::LABEL_SLASH . ';' . PHP_EOL;
+  self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP . self::LABEL_SLASH . ';' . PHP_EOL,
+    TEST_FILENAME_PHP = 'test_filename.php',
+    TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP = 'tests/examples/deployment/testRequire.php';
 
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
@@ -47,7 +54,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
     $contentToAdd = 'echo \'test\';' . self::REQUIRE_MATCHED . '$a = 4;';
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
     $paramsArrayToPassAsReference = [
       self::KEY_LEVEL => 1,
       self::KEY_CONTENT_TO_ADD => $contentToAdd,
@@ -65,17 +72,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertEquals(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
-      'Testing $level...'
+      self::LABEL_TESTING_LEVEL
     );
     self::assertEquals(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
-      'Testing $contentToAdd...'
+      self::LABEL_TESTING_CONTENT_TO_ADD
     );
     self::assertEquals(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
-      'Testing $filename...'
+      self::LABEL_TESTING_FILENAME
     );
     self::assertEquals(
       [
@@ -90,22 +97,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
         ]
       ],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
-      'Testing $filesToConcat...'
+      self::LABEL_TESTING_FILES_TO_CONCAT
     );
     self::assertEquals(
       [$exampleFileAbsolutePath],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
-      'Testing $parsedFiles...'
+      self::LABEL_TESTING_PARSED_FILES
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
-      'Testing $classesFromFile...'
+      self::LABEL_TESTING_CLASSES_FROM_FILE
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
-      'Testing $parsedConstants...'
+      self::LABEL_TESTING_PARSED_CONSTANTS
     );
   }
 
@@ -118,7 +125,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
     $contentToAdd = 'echo \'test\';' . self::REQUIRE_MATCHED . '$a = 4;';
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
     $paramsArrayToPassAsReference = [
       self::KEY_LEVEL => 1,
       self::KEY_CONTENT_TO_ADD => $contentToAdd,
@@ -136,17 +143,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertEquals(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
-      'Testing $level...'
+      self::LABEL_TESTING_LEVEL
     );
     self::assertEquals(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
-      'Testing $contentToAdd...'
+      self::LABEL_TESTING_CONTENT_TO_ADD
     );
     self::assertEquals(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
-      'Testing $filename...'
+      self::LABEL_TESTING_FILENAME
     );
     self::assertEquals(
       [
@@ -161,22 +168,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
         ]
       ],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
-      'Testing $filesToConcat...'
+      self::LABEL_TESTING_FILES_TO_CONCAT
     );
     self::assertEquals(
       [$exampleFileAbsolutePath],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
-      'Testing $parsedFiles...'
+      self::LABEL_TESTING_PARSED_FILES
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
-      'Testing $classesFromFile...'
+      self::LABEL_TESTING_CLASSES_FROM_FILE
     );
     self::assertEquals(
       [self::LABEL_BASE_PATH => BASE_PATH],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
-      'Testing $parsedConstants...'
+      self::LABEL_TESTING_PARSED_CONSTANTS
     );
   }
 
@@ -188,7 +195,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
   {
     // context
     $contentToAdd = 'class TestExtendsController extends otra\Controller';
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
     $paramsArrayToPassAsReference = [
       self::KEY_LEVEL => 1,
       self::KEY_CONTENT_TO_ADD => $contentToAdd,
@@ -206,37 +213,37 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertEquals(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
-      'Testing $level...'
+      self::LABEL_TESTING_LEVEL
     );
     self::assertEquals(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
-      'Testing $contentToAdd...'
+      self::LABEL_TESTING_CONTENT_TO_ADD
     );
     self::assertEquals(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
-      'Testing $filename...'
+      self::LABEL_TESTING_FILENAME
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
-      'Testing $filesToConcat...'
+      self::LABEL_TESTING_FILES_TO_CONCAT
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
-      'Testing $parsedFiles...'
+      self::LABEL_TESTING_PARSED_FILES
     );
     self::assertEquals(
       ['otra\Controller'],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
-      'Testing $classesFromFile...'
+      self::LABEL_TESTING_CLASSES_FROM_FILE
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
-      'Testing $parsedConstants...'
+      self::LABEL_TESTING_PARSED_CONSTANTS
     );
   }
 
@@ -249,7 +256,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     // context
     $exampleFileAbsolutePath = TEST_PATH . 'examples/deployment/TestExtendsController.php';
     $contentToAdd = file_get_contents($exampleFileAbsolutePath);
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
     $paramsArrayToPassAsReference = [
       self::KEY_LEVEL => 1,
       self::KEY_CONTENT_TO_ADD => $contentToAdd,
@@ -267,17 +274,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertEquals(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
-      'Testing $level...'
+      self::LABEL_TESTING_LEVEL
     );
     self::assertEquals(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
-      'Testing $contentToAdd...'
+      self::LABEL_TESTING_CONTENT_TO_ADD
     );
     self::assertEquals(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
-      'Testing $filename...'
+      self::LABEL_TESTING_FILENAME
     );
     self::assertEquals(
       [
@@ -289,22 +296,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
         ]
       ],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
-      'Testing $filesToConcat...'
+      self::LABEL_TESTING_FILES_TO_CONCAT
     );
     self::assertEquals(
       [BASE_PATH .  'src/Controller.php'],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
-      'Testing $parsedFiles...'
+      self::LABEL_TESTING_PARSED_FILES
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
-      'Testing $classesFromFile...'
+      self::LABEL_TESTING_CLASSES_FROM_FILE
     );
     self::assertEquals(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
-      'Testing $parsedConstants...'
+      self::LABEL_TESTING_PARSED_CONSTANTS
     );
   }
 }

@@ -37,12 +37,9 @@ if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
   require CONSOLE_PATH . 'colors.php';
   require CORE_PATH . 'tools/removeFieldProtection.php';
 
-  if (!OTRA_PROJECT)
+  if (!OTRA_PROJECT && file_exists(BUNDLES_PATH))
   {
-    if (file_exists(BUNDLES_PATH))
-    {
-      require CORE_PATH . 'tools/deleteTree.php';
-      delTree(BUNDLES_PATH);
-    }
+    require CORE_PATH . 'tools/deleteTree.php';
+    delTree(BUNDLES_PATH);
   }
 }

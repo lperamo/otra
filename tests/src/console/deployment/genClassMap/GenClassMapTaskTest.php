@@ -35,11 +35,11 @@ class GenClassMapTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
-    define('src\\console\\deployment\\genClassMap\\FIRST_CLASS_PADDING', 80);
+    define(__NAMESPACE__ . '\\FIRST_CLASS_PADDING', 80);
 
     // testing
     $content = '';
-    define('src\\console\\deployment\\genClassMap\\OTRA_MAX_FOLDERS', 151);
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 151);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {

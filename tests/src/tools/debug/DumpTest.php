@@ -19,7 +19,9 @@ class DumpTest extends TestCase
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
     OTRA_DEBUG_TEST_VALUE_MAX_CHILDREN = 5,
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
-    OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3;
+    OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3,
+    LABEL_ARRAY6 = '0 => array (6) ',
+    LABEL_ONZE_ZEROS = '0 => string (11) \'00000000000\'';
 
   private static string $logsProdPath;
   private static bool $outputFlag = true;
@@ -44,13 +46,10 @@ class DumpTest extends TestCase
   {
     parent::tearDownAfterClass();
 
-    if (!OTRA_PROJECT)
+    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
     {
-      if (file_exists(self::LOG_PATH))
-      {
-        require CORE_PATH . 'tools/deleteTree.php';
-        delTree(self::LOG_PATH);
-      }
+      require CORE_PATH . 'tools/deleteTree.php';
+      delTree(self::LOG_PATH);
     }
   }
 
@@ -150,7 +149,7 @@ class DumpTest extends TestCase
     $this->expectOutputString(
       CLI_TABLE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 7) . PHP_EOL .
-      '0 => array (6) ' . PHP_EOL . END_COLOR .
+      self::LABEL_ARRAY6 . PHP_EOL . END_COLOR .
       '0 => string (11) \'\'' . ADD_BOLD . '(cut)' . REMOVE_BOLD_INTENSITY . PHP_EOL .
       '...' . PHP_EOL
     );
@@ -168,8 +167,8 @@ class DumpTest extends TestCase
     $this->expectOutputString(
       CLI_TABLE . self::DUMP_STRING . (__LINE__ + 8) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 7) . PHP_EOL .
-      '0 => array (6) ' . PHP_EOL . END_COLOR .
-      '0 => string (11) \'00000000000\'' . PHP_EOL .
+      self::LABEL_ARRAY6 . PHP_EOL . END_COLOR .
+      self::LABEL_ONZE_ZEROS . PHP_EOL .
       '...' . PHP_EOL
     );
 
@@ -183,8 +182,8 @@ class DumpTest extends TestCase
     $this->expectOutputString(
       CLI_TABLE . self::DUMP_STRING . (__LINE__ + 13) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 12) . PHP_EOL .
-      '0 => array (6) ' . PHP_EOL .
-      END_COLOR . '0 => string (11) \'00000000000\'' . PHP_EOL .
+      self::LABEL_ARRAY6 . PHP_EOL .
+      END_COLOR . self::LABEL_ONZE_ZEROS . PHP_EOL .
       END_COLOR . '1 => ' . PHP_EOL .
       END_COLOR . ADD_BOLD . '...' . REMOVE_BOLD_INTENSITY . PHP_EOL .
       END_COLOR . '2 => 0' . PHP_EOL .
@@ -203,8 +202,8 @@ class DumpTest extends TestCase
     $this->expectOutputString(
       CLI_TABLE . self::DUMP_STRING . (__LINE__ + 16) . END_COLOR . PHP_EOL . PHP_EOL .
       getSourceFromFileCli(__FILE__, __LINE__ + 15) . PHP_EOL .
-      '0 => array (6) ' . PHP_EOL .
-      END_COLOR . '0 => string (11) \'00000000000\'' . PHP_EOL .
+      self::LABEL_ARRAY6 . PHP_EOL .
+      END_COLOR . self::LABEL_ONZE_ZEROS . PHP_EOL .
       END_COLOR . '1 => array (1) ' . PHP_EOL .
       ADD_BOLD . CLI_INFO . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .
       ADD_BOLD . CLI_INFO . '│ ' . ADD_BOLD . CLI_ERROR . '│ ' . END_COLOR . '0 => array (1) ' . PHP_EOL .

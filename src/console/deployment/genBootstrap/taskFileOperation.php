@@ -1176,11 +1176,8 @@ function assembleFiles(
               );
             }
 
-            if (str_contains($filename, 'config/AllConfig'))
-            {
-              if (!in_array($filename, $parsedFiles, true))
-                $finalContentParts[]= $contentToAdd;
-            }
+            if (str_contains($filename, 'config/AllConfig') && !in_array($filename, $parsedFiles, true))
+              $finalContentParts[]= $contentToAdd;
 
             if (VERBOSE > 1)
               showFile($level, $tempFile, $method);

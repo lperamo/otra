@@ -76,9 +76,9 @@ class RoutesTaskTest extends TestCase
    */
   public function testRoutes() : void
   {
-    define('src\console\helpAndTools\routes\WIDTH_LEFT', 25);
-    define('src\console\helpAndTools\routes\WIDTH_MIDDLE', 10);
-    define('src\console\helpAndTools\routes\WIDTH_RIGHT', 70);
+    define(__NAMESPACE__ . '\\WIDTH_LEFT', 25);
+    define(__NAMESPACE__ . '\\WIDTH_MIDDLE', 10);
+    define(__NAMESPACE__ . '\\WIDTH_RIGHT', 70);
 
     // context
     $tasksClassMap = require TASK_CLASS_MAP_PATH;

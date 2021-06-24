@@ -22,7 +22,7 @@ class ProcessReturnTest extends TestCase
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
 
     $inclusionCode = PHP_EOL . 'require BUNDLES_PATH . \'config/Routes.php\'' . PHP_EOL . ');';
     $includingStartCode = 'self::$allRoutes = array_merge(' . PHP_EOL . 'self::$allRoutes,';

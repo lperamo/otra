@@ -16,7 +16,8 @@ class SearchForClassTest extends TestCase
 {
   private const
     TEST_CLASS = 'Controller',
-    LABEL_TESTING_CLASS_FOUND = 'Testing $classFound...';
+    LABEL_TESTING_CLASS_FOUND = 'Testing $classFound...',
+    CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE';
 
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
@@ -36,7 +37,7 @@ class SearchForClassTest extends TestCase
   public function testAlreadyParsed()
   {
     // context
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
 
     // launching
     $classFound = searchForClass(
@@ -56,7 +57,7 @@ class SearchForClassTest extends TestCase
   public function testNoNamespace()
   {
     // context
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
 
     // launching
     $classFound = searchForClass(
@@ -76,7 +77,7 @@ class SearchForClassTest extends TestCase
   public function testNotInClassMap_Verbose()
   {
     // context
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
 
     // launching
     ob_start();
@@ -104,7 +105,7 @@ class SearchForClassTest extends TestCase
   public function testNotInClassMap_NotVerbose()
   {
     // context
-    define('otra\console\deployment\genBootstrap\VERBOSE', 0);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 0);
 
     // launching
     ob_start();
@@ -130,7 +131,7 @@ class SearchForClassTest extends TestCase
   public function testIsInClassMap()
   {
     // context
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
 
     // launching
     $classFound = searchForClass(

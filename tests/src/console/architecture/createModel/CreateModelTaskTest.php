@@ -12,8 +12,8 @@ use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, CLI_WARNING, END_COLOR, SUCCESS};
 use function otra\tools\{copyFileAndFolders,delTree};
 
-if (!defined('src\console\architecture\createModel\TEST_BUNDLE_UPPER'))
-  define('src\console\architecture\createModel\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
 
 /**
  * @runTestsInSeparateProcesses

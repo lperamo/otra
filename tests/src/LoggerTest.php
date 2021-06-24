@@ -34,13 +34,10 @@ class LoggerTest extends TestCase
   {
     parent::tearDownAfterClass();
 
-    if (!OTRA_PROJECT)
+    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
     {
-      if (file_exists(self::LOG_PATH))
-      {
-        require CORE_PATH . 'tools/deleteTree.php';
-        delTree(self::LOG_PATH);
-      }
+      require CORE_PATH . 'tools/deleteTree.php';
+      delTree(self::LOG_PATH);
     }
   }
 

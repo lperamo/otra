@@ -27,15 +27,18 @@ class CheckBooleanArgumentTest extends TestCase
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
+  protected function setUp(): void
+  {
+    parent::setUp();
+    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+  }
+
   /**
    * @author Lionel Péramo
    * @throws OtraException
    */
   public function testNoArgument() : void
   {
-    // context
-    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-
     // launching
     $valid = checkBooleanArgument(
       [
@@ -66,7 +69,6 @@ class CheckBooleanArgumentTest extends TestCase
   public function testWrongArgument() : void
   {
     // context
-    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
     $wrongForceArgument = 'fal';
 
     // testing exception
@@ -104,7 +106,6 @@ class CheckBooleanArgumentTest extends TestCase
   public function testGoodArgument() : void
   {
     // context
-    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
     $passedForceArgument = 'true';
 
     // launching

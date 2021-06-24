@@ -19,8 +19,12 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 class RouterTest extends TestCase
 {
   // fixes issues like when AllConfig is not loaded while it should be
+  private const
+    LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
+    LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';
   protected $preserveGlobalState = FALSE;
-  protected const OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
+  protected const
+    OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
 
@@ -112,12 +116,12 @@ class RouterTest extends TestCase
     self::assertEquals(
       self::ROUTE_NAME,
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
-      'Testing route name...'
+      self::LABEL_TESTING_ROUTE_NAME
     );
     self::assertEquals(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
-      'Testing route params...'
+      self::LABEL_TESTING_ROUTE_PARAMS
     );
   }
 
@@ -133,12 +137,12 @@ class RouterTest extends TestCase
     self::assertEquals(
       'otra_404',
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
-      'Testing route name...'
+      self::LABEL_TESTING_ROUTE_NAME
     );
     self::assertEquals(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
-      'Testing route params...'
+      self::LABEL_TESTING_ROUTE_PARAMS
     );
   }
 
@@ -154,12 +158,12 @@ class RouterTest extends TestCase
     self::assertEquals(
       'otra_404',
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
-      'Testing route name...'
+      self::LABEL_TESTING_ROUTE_NAME
     );
     self::assertEquals(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
-      'Testing route params...'
+      self::LABEL_TESTING_ROUTE_PARAMS
     );
   }
 

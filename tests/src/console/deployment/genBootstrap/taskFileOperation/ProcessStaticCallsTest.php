@@ -24,7 +24,7 @@ class ProcessStaticCallsTest extends TestCase
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
-    define('otra\console\deployment\genBootstrap\VERBOSE', 2);
+    define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
 
     $contentToAdd = 'namespace otra;' . PHP_EOL .
       'self::test();' . PHP_EOL .

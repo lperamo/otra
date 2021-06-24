@@ -56,7 +56,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
       $bundlesFolderExists = false;
       mkdir(BUNDLES_PATH);
 
-      define('src\\console\\database\\sqlCreateDatabase\\HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
+      define(__NAMESPACE__ . '\\HELLO_WORLD_PATH', BUNDLES_PATH . 'HelloWorld');
 
       if (!file_exists(HELLO_WORLD_PATH))
       {
@@ -87,7 +87,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
 
     // Testing
     $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '_force.sql';
-    define('src\\console\\database\\sqlCreateDatabase\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
+    define(__NAMESPACE__ . '\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
       SCHEMA_FORCE_PATH

@@ -11,8 +11,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-define('src\console\architecture\createAction\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
-define('src\console\architecture\createAction\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');
+define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
+define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');
 
 /**
  * @runTestsInSeparateProcesses
@@ -119,7 +119,7 @@ class CreateActionTaskTest extends TestCase
     // assertions
     $this->expectException(OtraException::class);
     $this->expectOutputString(CLI_ERROR . 'The bundle ' . CLI_INFO_HIGHLIGHT . TEST_BUNDLE_UPPER .
-      CLI_ERROR . ' does not exist.' . END_COLOR . PHP_EOL);
+      CLI_ERROR . self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
 
     // launching
     TasksManager::execute(
@@ -199,7 +199,7 @@ class CreateActionTaskTest extends TestCase
     // testing
     $this->expectOutputString(CLI_ERROR . 'The module ' . CLI_INFO_HIGHLIGHT .
       substr(self::TEST_BUNDLE_PATH, strlen(BASE_PATH)) . self::TEST_MODULE_NAME . CLI_ERROR .
-      ' does not exist.' . END_COLOR . PHP_EOL);
+      self::OTRA_LABEL_DOES_NOT_EXIST . END_COLOR . PHP_EOL);
   }
 
   /**

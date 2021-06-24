@@ -29,6 +29,7 @@ class SecurityServiceTest extends TestCase
     CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';",
     DOT_PHP = '.php',
     DIRECTIVES = 1,
+    EXPECTED_SECURITY_POLICY_EXAMPLE = "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
     ROUTE = 'route',
     TEST_SECURITY_PATH = TEST_PATH . 'security/',
     TEST_SECURITY_DEV_PATH = self::TEST_SECURITY_PATH . DEV . DIR_SEPARATOR,
@@ -77,7 +78,7 @@ class SecurityServiceTest extends TestCase
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
@@ -106,7 +107,7 @@ class SecurityServiceTest extends TestCase
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
@@ -134,7 +135,7 @@ class SecurityServiceTest extends TestCase
     // testing
     self::assertIsArray($returnArray);
     self::assertEquals(
-      "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+      self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
     self::assertEquals(
@@ -387,7 +388,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';", $cspPolicy);
+    self::assertEquals(self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC, $cspPolicy);
   }
 
   /**
@@ -428,7 +429,7 @@ class SecurityServiceTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
-    $cspPolicy = "Content-Security-Policy: frame-ancestors 'none';";
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
     $nonce = getRandomNonceForCSP();
     $nonce2 = getRandomNonceForCSP();
