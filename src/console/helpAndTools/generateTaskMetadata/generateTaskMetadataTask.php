@@ -33,7 +33,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
     PROD,
     SPACE_INDENT
   };
-  use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
+  use const otra\console\{CLI_BASE, SUCCESS};
 
   if (!defined('\otra\cache\php\BASE_PATH'))
   {
@@ -141,7 +141,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
   );
 
   if (PHP_SAPI === 'cli')
-    echo CLI_BASE, 'Generation of help and task class map done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Generation of help and task class map done', SUCCESS;
 
   /********************************
    * SHELL COMPLETIONS GENERATION *
@@ -197,5 +197,5 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
   file_put_contents(CONSOLE_PATH . 'shellCompletions/shellCompletions.sh', $shellCompletionsContent);
 
   if (PHP_SAPI === 'cli')
-    echo CLI_BASE, 'Generation of shell completions script done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Generation of shell completions script done', SUCCESS;
 }
