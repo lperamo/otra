@@ -75,9 +75,14 @@ echo (file_put_contents(
 
 echo END_COLOR, PHP_EOL;
 
-// On the online side
+// Needed when installing/updating OTRA
 if (!class_exists(AllConfig::class))
+{
+  if (!defined('otra\\cache\\php\\BUNDLES_PATH'))
+    define('otra\\cache\\php\\BUNDLES_PATH', BASE_PATH . 'bundles/');
+
   require BASE_PATH . 'config/AllConfig.php';
+}
 
 if (isset(AllConfig::$deployment['folder']))
 {
