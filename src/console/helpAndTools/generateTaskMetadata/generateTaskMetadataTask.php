@@ -127,17 +127,23 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
 
   file_put_contents(CACHE_PHP_INIT_PATH . 'tasksHelp.php', $helpFileFinalContent);
 
-// Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
+  // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
   $taskClassMap = convertArrayFromVarExportToShortVersion(
     PHP_INIT_FILE_BEGINNING . var_export($taskClassMap, true) . ';'
   );
 
+  $taskClassMapFinalContent = str_replace("'" . BASE_PATH,
+      'BASE_PATH.\'',
+      str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap),
+      $basePathReplacements
+    ) . PHP_EOL;
+
+  if ($basePathReplacements > 0)
+    $taskClassMapFinalContent = str_replace('\\{CORE_PATH', '\\{BASE_PATH,CORE_PATH', $taskClassMapFinalContent);
+
   file_put_contents(
     CACHE_PHP_INIT_PATH . 'tasksClassMap.php',
-    str_replace("'" . BASE_PATH,
-      'BASE_PATH.\'',
-      str_replace("'" . CORE_PATH, 'CORE_PATH.\'', $taskClassMap)
-    ) . PHP_EOL
+    $taskClassMapFinalContent
   );
 
   if (PHP_SAPI === 'cli')
