@@ -238,7 +238,6 @@ abstract class Database
       throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
     }
 
-    /** TODO Find a solution on how to inform the final user that there are problems or not via the mysql command. */
     echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
       PHP_EOL;
   }
@@ -405,7 +404,6 @@ abstract class Database
 
     /**
      * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
-     * TODO Maybe we can store less things in this variable.
      */
     if (isset($tableData['relations']))
     {
@@ -787,7 +785,7 @@ abstract class Database
    * Generates the sql schema. A YAML schema is required.
    *
    * @param string $databaseName Database name
-   * @param bool   $force        If true, we erase the existing tables TODO it is not true anymore
+   * @param bool   $force        If true, we erase the existing tables
    *
    * @return string $dbFile Name of the sql file generated
    *
@@ -849,8 +847,6 @@ abstract class Database
     {
       $primaryKeys = [];
       $defaultCharacterSet = '';
-
-      /** @TODO CREATE TABLE IF NOT EXISTS ...AND ALTER TABLE ADD CONSTRAINT IF EXISTS ? */
       $tableSql[$table] = 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
 
       //**********************
@@ -896,7 +892,6 @@ abstract class Database
         } elseif ('indexes' === $property)
         {
           echo CLI_WARNING, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
-          /** @TODO Manage the indexes part */
         } elseif ('default_character_set' === $property)
           $defaultCharacterSet = $attributes;
       }

@@ -270,14 +270,6 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
       if (mb_substr($class, 0, 9) !== $cacheNamespace)
       {
         // It can be a SwiftMailer class for example.
-        /**
-         * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation
-         *  style like
-         *  use test/
-         *  {
-         *   class/test,
-         *   class/test2
-         *  } */
         if (VERBOSE > 0 &&
           !in_array(
             $chunk,
@@ -801,7 +793,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
   // For all the inclusions
   foreach($matches[0] as $match)
   {
-    if ('' === $match[0]) // TODO CAN WE SUPPRESS THIS CONDITION BY IMPROVING THE REGEXP ?
+    if ('' === $match[0])
       continue;
 
     $trimmedMatch = trim(preg_replace('@\s{1,}@', ' ', $match[0]));
@@ -847,8 +839,6 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
         )
           continue;
 
-        // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
-        //  inclusion of the dev/prod controller in the file src/Controller.php
         if ($tempFile === 'CORE_PATH . \'prod\' . DIR_SEPARATOR . ucfirst(\'prod\') . \'ControllerTrait.php')
           $tempFile .= "'";
 
@@ -950,7 +940,6 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
 //        $trimmedMatch = mb_substr($trimmedMatch, 1, -1);
 //      } else // More complicated...
 //      {
-//        /** TODO Maybe a case then with an expression, variable or something */
 //      }
 
 //      $tempDir = '';
@@ -1148,8 +1137,6 @@ function assembleFiles(
             $nextContentToAdd = file_get_contents($tempFile) . PHP_END_TAG_STRING;
 
             // we remove comments like // and /* bla */ to facilitate the search and replace operations that follow
-            /** TODO Find a way to use this regex without removing links because links can contain // as in
-             *   https://example.com */
             //$nextContentToAdd = preg_replace('@(//.*)|(/\*(.|\s)*?\*/)@', '', $nextContentToAdd);
 
             $isReturn = false;
@@ -1356,8 +1343,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   // we create these variables only for the reference pass
   $increment = 0; // process steps counter (more granular than $level variable)
   $level = 0; //  depth level of require/include calls
-  // TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
-  //   an use statement. Other comment to remove once fixed, before the fixFiles function call of genBootstrapTask.php
+
   // For the moment, as a workaround, we had temporary explicitly added the OtraException file to solve issues.
   $parsedFiles = [CORE_PATH . 'OtraException.php'];
   $contentToAdd = $content;
@@ -1428,8 +1414,6 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
     : '';
 
   /**
-   * TODO Remove those ugly temporary fixes (all but lines about PHPStorm Attributes) by implementing a clever solution
-   *   to handle "require" statements to remove
    * START SECTION
    */
   $finalContent = str_replace(
@@ -1474,7 +1458,6 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   $patternRemoveUse = '@^\buse\b@m';
 
   // We add the namespace otra\cache\php at the beginning of the file AND we add the security services functions
-  // @TODO include security services in micro bootstraps?
   // then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments
   // like 'becaUSE'
   return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .

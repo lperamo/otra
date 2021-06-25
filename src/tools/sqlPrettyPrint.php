@@ -11,7 +11,6 @@ use PDOStatement;
 use const otra\cache\php\{APP_ENV, DEV};
 
 const OTRA_LABEL_SELECT = 'SELECT ';
-// TODO Not fully tested !
 
 const SQL_CLAUSES = [
   '(SELECT ',
@@ -71,8 +70,6 @@ function sqlReplacements(
 }
 
 /**
- * TODO Not tested yet !
- *
  * @param string $rawSql Raw sql to pretty print
  * @param bool   $raw    Do we want the raw sql or the styled sql ?
  *
@@ -139,7 +136,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   $statement->debugDumpParams();
   $queryInformations = ob_get_clean();
   $rawSql = substr($queryInformations, 0, strpos($queryInformations, 'Params'));
-  $parameters = []; // TODO retrieve the SQL statement parameters in an array !
+  $parameters = [];
 
   $output .= $rawSql;
 

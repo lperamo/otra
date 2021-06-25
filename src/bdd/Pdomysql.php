@@ -63,7 +63,7 @@ abstract class Pdomysql
   public static function query(string $query) : PDOStatement
   {
     $result = Sql::$currentConn->query($query);
-    // TODO use PDOStatement::debugDumpParams() ?
+
     if (false === $result)
     {
       $errorInfo = Sql::$currentConn->errorInfo();

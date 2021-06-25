@@ -70,7 +70,6 @@ class ClearSqlLogsActionTest extends TestCase
   }
 
   /**
-   * @TODO Creates dummy SQL logs that will be cleaned so we can compare the two states 'before' and 'after'.
    * @author Lionel Péramo
    * @throws OtraException
    */

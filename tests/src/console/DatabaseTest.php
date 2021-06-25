@@ -20,6 +20,8 @@ use function otra\tools\
 
 /**
  * @runTestsInSeparateProcesses
+ *
+ * @author Lionel Péramo
  */
 class DatabaseTest extends TestCase
 {
@@ -121,8 +123,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws ReflectionException|OtraException
    * @depends testGetDirs
-   *
-   * @author Lionel Péramo
    */
   public function testInitBase() : void
   {
@@ -172,7 +172,6 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @author                   Lionel Péramo
    * @depends                  testInitBase
    *
    * @throws OtraException
@@ -203,9 +202,6 @@ class DatabaseTest extends TestCase
 
     foreach ($unprotectedFields as $fieldNameKey => $unprotectedField)
     {
-      // @TODO remove this conditioned code and handle the thing correctly.
-      //   As of today, among the folders retrieved by the 'getDirs' method, only the first folder is used.
-      //   We must correct this.
       if ($testKeys[$fieldNameKey] === 'pathYmlFixtures')
         continue;
 
@@ -219,7 +215,6 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws OtraException
-   * @author Lionel Péramo
    */
   public function testGetDirs() : void
   {
@@ -231,10 +226,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * TODO add files before the test to test if they are cleaned
-   *
-   * @author Lionel Péramo
    */
   public function testClean() : void
   {
@@ -261,7 +252,6 @@ class DatabaseTest extends TestCase
    * @throws ReflectionException
    * depends testInit
    * depends testDropDatabase
-   * @author Lionel Péramo
    */
   public function testCreateDatabase() : void
   {
@@ -294,11 +284,6 @@ class DatabaseTest extends TestCase
     );
   }
 
-
-  /**
-   * @author Lionel Péramo
-   * TODO Do a complete test, not just on the type
-   */
   public function testGetAttr() : void
   {
     $attrTest = Database::getAttr('test');
@@ -307,12 +292,7 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
-   *
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
    */
   public function test_SortTableByForeignKeysEmpty() : void
   {
@@ -322,10 +302,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
    */
   public function test_SortTableByForeignKeys() : void
   {
@@ -338,11 +315,7 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testCreateFixture() : void
   {
@@ -391,7 +364,6 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws OtraException
-   * @author Lionel Péramo
    */
   public function testCreateFixtures_TruncateOnly_NoSchema() : void
   {
@@ -421,9 +393,6 @@ class DatabaseTest extends TestCase
    * @depends testCreateFixture
    * @depends testExecuteFixture
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testCreateFixtures_TruncateOnly() : void
   {
@@ -481,8 +450,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
    */
   public function testCreateFixtures_TruncateOnly_NoTablesOrderFile() : void
   {
@@ -524,9 +491,6 @@ class DatabaseTest extends TestCase
    * @throws ReflectionException
    *
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testCreateFixtures_CleanAndTruncate() : void
   {
@@ -576,8 +540,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
    */
   public function testExecuteFile_DoesNotExist() : void
   {
@@ -594,9 +556,6 @@ class DatabaseTest extends TestCase
    * @depends testInitBase
    * @depends testCreateDatabase
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testTruncateTable() : void
   {
@@ -625,11 +584,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @author Lionel Péramo
-   *
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
    */
   public function testExecuteFile_Exists() : void
   {
@@ -644,9 +599,6 @@ class DatabaseTest extends TestCase
    * @depends testInit
    *
    * @doesNotPerformAssertions
-   *
-   * TODO Modify the code that create the fixture, do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testExecuteFixture() : void
   {
@@ -696,9 +648,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * TODO Do a complete test not just a type assertion
-   * @author Lionel Péramo
    */
   public function testDropDatabase() : void
   {
@@ -734,7 +683,6 @@ class DatabaseTest extends TestCase
    * @throws ReflectionException
    *
    * @depends testInitBase
-   * @author Lionel Péramo
    */
   public function testGenerateSqlSchema_NoSchema() : void
   {
@@ -758,15 +706,10 @@ class DatabaseTest extends TestCase
   }
 
   /**
+   * @depends testInitBase
+   * @doesNotPerformAssertions
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @depends testInitBase
-   *
-   * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testGenerateSqlSchema_DontForce() : void
   {
@@ -791,23 +734,16 @@ class DatabaseTest extends TestCase
   }
 
   /**
+   * @depends testInitBase
+   * @doesNotPerformAssertions
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @depends testInitBase
-   *
-   * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testGenerateSqlSchema_Force() : void
   {
     // Creating the context
     copyFileAndFolders([self::SCHEMA_FILE_BACKUP], [self::SCHEMA_ABSOLUTE_PATH]);
-
     $this->loadConfig();
-
     Database::init(self::DATABASE_CONNECTION);
 
     setScopeProtectedFields(
@@ -827,11 +763,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * TODO Create a test fixture file in order to test that function !
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testAnalyzeFixtures() : void
   {
@@ -844,14 +776,9 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException
-   * @throws OtraException
-   *
-   * @author Lionel Péramo
-   *
    * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
+   * @throws OtraException
+   * @throws ReflectionException
    */
   public function testInitImports_AllNull() : void
   {
@@ -889,8 +816,6 @@ class DatabaseTest extends TestCase
    * Testing with $database = null
    *
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
    */
   public function testInitImports_DatabaseNull() : void
   {
@@ -911,13 +836,9 @@ class DatabaseTest extends TestCase
   }
 
   /**
+   * @doesNotPerformAssertions
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @doesNotPerformAssertions
-   *
-   * TODO Do assertions and remove the related annotations
-   * @author Lionel Péramo
    */
   public function testInitImports_NoNull() : void
   {
@@ -952,8 +873,6 @@ class DatabaseTest extends TestCase
    * Test with a non existent database.
    *
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
    */
   public function testInitImports_BadDatabase() : void
   {
@@ -978,8 +897,6 @@ class DatabaseTest extends TestCase
   /**
    * @throws OtraException
    * @throws ReflectionException
-   *
-   * @author Lionel Péramo
    */
   public function testImportSchema() : void
   {
@@ -1018,8 +935,6 @@ class DatabaseTest extends TestCase
    * @throws ReflectionException
    *
    * @depends testInit
-   *
-   * @author Lionel Péramo
    */
   public function testImportFixtures() : void
   {

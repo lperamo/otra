@@ -44,10 +44,7 @@ namespace otra\console
       $userInput = askQuestion($question);
 
       while ('' === $userInput)
-      {
-        // TODO Bug with wsl ? it always loops and does not wait the input !
         $userInput = askQuestion($questionAlt);
-      }
 
       return $userInput;
     }
@@ -109,8 +106,6 @@ namespace otra\console
     }
 
     /**
-     * TODO we must use fgets instead and create the array as you go in order to not store the entire file into an array
-     * to save memory.
      * Shows the context of the error found in a given file.
      *
      * @param string $file      Name of the file that contains the error

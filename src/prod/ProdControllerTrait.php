@@ -42,7 +42,6 @@ trait ProdControllerTrait
     {
       require CORE_PATH . 'Logger.php';
       Logger::log('Problem when loading the file : ' . $templateFile);
-      // TODO Have a beautiful error page for that case !
       throw new OtraException(
         'Server problem : the requested file does not exist ! Please wait for the re-establishment of the file, sorry for the inconvenience.'
       );

@@ -128,7 +128,6 @@ function generateJavaScript(
     if ($verbose > 0)
       echo 'Launching Google Closure Compiler...', PHP_EOL;
 
-    // TODO add those lines to handle class map and fix the resulting issue
     // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
     // We do not launch an exception on error to avoid stopping the execution of the watcher
     [, $output] = cliCommand(
@@ -150,7 +149,7 @@ function generateJavaScript(
     if (file_exists($temporarySourceMap))
       unlink($temporarySourceMap);
 
-    /** TODO side note, the class mapping is not present when we pass by Google Closure.
+    /**
      * We have to check if we can add it.
      */
   } else

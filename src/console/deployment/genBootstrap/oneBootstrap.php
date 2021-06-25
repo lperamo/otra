@@ -79,7 +79,6 @@ if (isset($params['get']))
   $_GET = $params['get'];
 
 // We put default parameters in order to not write too much times the session configuration in the routes file
-// TODO remove this project related configuration line of code
 $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
 if (isset($params['session']))
@@ -142,8 +141,6 @@ set_error_handler(function (int $errno, string $message, string $file, int $line
 
 $chunks = $params['chunks'];
 
-// TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
-//   an use statement. Other comment to remove once fixed, in fixFiles function of taskFileOperation.php
 // For the moment, as a workaround, we will temporary explicitly add the OtraException file to solve issues.
 try
 {
