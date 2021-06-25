@@ -30,7 +30,6 @@
     "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
-    "ext-xdebug": "*",
     "ext-zlib": "*"
   },
   "suggest": {
