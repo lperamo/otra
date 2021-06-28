@@ -31,7 +31,8 @@ use function otra\tools\files\returnLegiblePath;
 require CORE_PATH . 'console/deployment/taskFileInit.php';
 
 const GEN_WATCHER_ARG_VERBOSE = 2,
- EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
+  EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
+  EVENTS_TO_WATCH = IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR,
 
   PATHS_TO_HAVE_PHP =
   [
@@ -223,6 +224,10 @@ foreach($iterator as $entry)
     if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath))
       continue;
 
+    // starters are only meant to be copied, not used
+    if (str_contains($realPath, 'starters'))
+      continue;
+
     if (in_array($extension, RESOURCES_TO_WATCH) || $isFolder)
     {
       $resourcesEntriesToWatch[] = $realPath;
@@ -247,10 +252,10 @@ unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
 // ******************** INTRODUCTION TEXT ********************
 
-  echo CLI_INFO, (GEN_WATCHER_VERBOSE > 0
-    ? 'BASE_PATH' . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
-    : 'Watcher started.' . END_COLOR)
-    , PHP_EOL;
+echo CLI_INFO, (GEN_WATCHER_VERBOSE > 0
+  ? 'BASE_PATH' . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
+  : 'Watcher started.' . END_COLOR)
+  , PHP_EOL;
 
 require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
@@ -336,11 +341,7 @@ while (true)
         if (!in_array($extension, EXTENSIONS_TO_WATCH))
          continue;
 
-        $foldersWatchedIds[inotify_add_watch(
-          $inotifyInstance,
-          $resourceName,
-          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-        )] = $resourceName;
+        $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
 
         if ($extension === '.scss' || $extension === '.sass')
         {
@@ -380,6 +381,8 @@ while (true)
         {
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
 
+          // If the file is meant to be used directly (this file will probably be the one that import the others)
+          // like resource.scss
           if (substr($filename, 0,1) !== '_')
           {
             unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
@@ -460,8 +463,10 @@ while (true)
               $baseName,
               $resourceName
             );
-          } elseif (substr($baseName, 0, 1) !== '_') // like resource.scss
+          } elseif (substr($baseName, 0, 1) !== '_')
           {
+            // If the file is meant to be used directly (this file will probably be the one that import the others)
+            // like resource.scss
             $return = generateStylesheetsFiles(
               $baseName,
               $resourcesMainFolder,
@@ -473,8 +478,10 @@ while (true)
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else // like _resource.scss
+          } else
           {
+            // If the file is not meant to be used directly (this file will probably be imported by other ones)
+            // like _resource.scss
             $stringToTest = substr($baseName, 1);
 
             foreach($sassMainResources as $mainResource)

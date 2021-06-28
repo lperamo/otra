@@ -14,16 +14,18 @@ use SplFileInfo;
 use function otra\console\deployment\
 {generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath};
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
-use const otra\console\{CLI_BASE,CLI_SUCCESS,CLI_WARNING,END_COLOR};
+use const otra\console\{CLI_BASE, CLI_WARNING, END_COLOR, SUCCESS};
 use const otra\console\deployment\
-{FILE_TASK_GCC,
+{
+  FILE_TASK_GCC,
   PATHS_TO_AVOID,
   PATHS_TO_HAVE_RESOURCES,
   RESOURCES_TO_WATCH,
   WATCH_FOR_CSS_RESOURCES,
   WATCH_FOR_PHP_FILES,
   WATCH_FOR_ROUTES,
-  WATCH_FOR_TS_RESOURCES};
+  WATCH_FOR_TS_RESOURCES
+};
 
 require CORE_PATH . 'console/deployment/taskFileInit.php';
 const BUILD_DEV_ARG_VERBOSE = 2,
@@ -128,6 +130,6 @@ unset($dir_iterator, $iterator, $entry, $realPath);
 if ($filesProcessed)
 {
   if (BUILD_DEV_VERBOSE === 0)
-    echo CLI_BASE, 'Files have been generated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Files have been generated', SUCCESS;
 } else
   echo CLI_WARNING, 'No files to process.', END_COLOR, PHP_EOL;

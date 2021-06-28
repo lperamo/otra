@@ -11,7 +11,6 @@ namespace otra\console\deployment;
 
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
@@ -166,7 +165,6 @@ function getPathInformations(string $fullName) : array
     {
       echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
         'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
-      debug_print_backtrace();
       throw new OtraException('', 1, '', NULL, [], true);
 
     }
