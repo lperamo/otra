@@ -26,9 +26,11 @@ $classes = [];
 $processedDir = 0;
 
 if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+{
   define(__NAMESPACE__ . '\\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
+  define(__NAMESPACE__ . '\\ADDITIONAL_CLASSES_FILES_PATH', BASE_PATH . 'config/AdditionalClassFiles.php');
+}
 
-const ADDITIONAL_CLASSES_FILES_PATH = BASE_PATH . 'config/AdditionalClassFiles.php';
 $additionalClassesFiles = [];
 
 if (file_exists(ADDITIONAL_CLASSES_FILES_PATH))
@@ -225,17 +227,21 @@ $prodClassMap = var_export($prodClasses, true);
 if (!file_exists(CACHE_PHP_INIT_PATH))
   mkdir(CACHE_PHP_INIT_PATH, 0755, true);
 
-/**
- * @param string $classMap
- * @param string $filename
- * @param string $environment
- */
-function generateClassMap(string $classMap, string $filename, string $environment = DEV) : void
+// This condition is needed because the 'genWatcher' task can launch this file multiple times.
+if (!function_exists(__NAMESPACE__ . '\\generateClassMap'))
 {
-  $filePointer = fopen(CACHE_PHP_INIT_PATH . $filename, 'w');
-  $contentToWrite = convertClassMapToPHPFile($classMap, $environment) . PHP_EOL;
-  fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
-  fclose($filePointer);
+  /**
+   * @param string $classMap
+   * @param string $filename
+   * @param string $environment
+   */
+  function generateClassMap(string $classMap, string $filename, string $environment = DEV): void
+  {
+    $filePointer = fopen(CACHE_PHP_INIT_PATH . $filename, 'w');
+    $contentToWrite = convertClassMapToPHPFile($classMap, $environment) . PHP_EOL;
+    fwrite($filePointer, $contentToWrite, strlen($contentToWrite));
+    fclose($filePointer);
+  }
 }
 
 // Forced to use fopen/fwrite + specified length otherwise PHP_EOL is automatically trimmed !!!
