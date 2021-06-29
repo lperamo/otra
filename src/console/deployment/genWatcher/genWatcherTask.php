@@ -506,7 +506,7 @@ while (true)
                 $baseName,
                 $resourcesMainFolder,
                 $resourcesFolderEndPath,
-                $resourceName,
+                $resourcesMainFolder . $resourcesFolderEndPath . $baseName . '.' . $extension,
                 $extension,
                 GEN_WATCHER_VERBOSE > 0
               );
