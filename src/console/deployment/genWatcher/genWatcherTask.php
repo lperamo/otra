@@ -242,7 +242,8 @@ foreach($iterator as $entry)
       {
         $mainResourceFilename = $entry->getFilename();
 
-        if (substr($mainResourceFilename, 0,1) !== '_')
+        if (substr($mainResourceFilename, 0,1) !== '_'
+          && ($extension === 'scss' || $extension === 'sass'))
           $sassMainResources[$mainResourceFilename] = $realPath;
       }
     }
