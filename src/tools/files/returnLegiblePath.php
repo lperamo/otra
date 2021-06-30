@@ -9,8 +9,10 @@ namespace otra\tools\files;
 use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
+const BASE_PATH_REPLACEMENT = CLI_INFO . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT;
+
 /**
- * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
+ * Returns the path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
  * @param string  $resource Most of the time the name of a folder
@@ -29,4 +31,17 @@ function returnLegiblePath(string $resource, ?string $fileName = '', ?bool $endC
       ? CLI_INFO . 'BASE_PATH ' . CLI_INFO_HIGHLIGHT . substr($resource, strlen(BASE_PATH)) . $fileName .
         END_COLOR
       : CLI_INFO_HIGHLIGHT . $resource . $fileName . END_COLOR) . ($endColor ? END_COLOR : '');
+}
+
+/**
+ * We know that we _have_ the value of BASE_PATH in the path so we replace it with 'BASE_PATH' in darker blue plus a
+ * ' + ' in lighter blue.
+ *
+ * @param string $path
+ *
+ * @return string
+ */
+function returnLegiblePath2(string $path) : string
+{
+  return str_replace(BASE_PATH, BASE_PATH_REPLACEMENT, $path) . END_COLOR;
 }

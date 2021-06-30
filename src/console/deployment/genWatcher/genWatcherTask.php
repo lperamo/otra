@@ -13,7 +13,8 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
-use const otra\console\{ADD_BOLD, CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\console\
+{ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
 use const otra\console\deployment\
 {
   FILE_TASK_GCC,
@@ -25,7 +26,7 @@ use const otra\console\deployment\
   WATCH_FOR_TS_RESOURCES
 };
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
-use function otra\tools\files\returnLegiblePath;
+use function otra\tools\files\{returnLegiblePath, returnLegiblePath2};
 
 // Initialization
 require CORE_PATH . 'console/deployment/taskFileInit.php';
@@ -155,6 +156,108 @@ function updatePHP(string $filename) : void
   // We updates routes configuration if the php file is a routes configuration file
   if ($filename === 'Routes.php')
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+}
+
+/**
+ * If we returns `false`, we have to use `break` in the main loop that has called this function,
+ * otherwise we break
+ *
+ * @param string $mainResource The main stylesheets where we have our stylesheets imports
+ * @param string $stringToTest The stylesheet name to import
+ * @param string $dotExtension .sass or .scss
+ * @param string $eventsDebug  Debugging messages that we show to the user
+ *
+ * @throws \otra\OtraException
+ * @return bool
+ */
+function searchFor(string $mainResource, string $stringToTest, string $dotExtension, string $eventsDebug) : bool
+{
+  $fileContent = file_get_contents($mainResource);
+  preg_match_all(
+    '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}\w{1,}\'@',
+    $fileContent,
+    $importedStylesheetsFound
+  );
+
+  // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
+  // files.
+  if (!isset($importedStylesheetsFound[0][0]))
+    return false;
+
+  $importedStylesheetsFound = $importedStylesheetsFound[0];
+
+  [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
+    getPathInformations($mainResource);
+
+  $resourcesPath = $resourcesMainFolder . $resourcesFolderEndPath;
+
+  foreach($importedStylesheetsFound as $importedStylesheetFound)
+  {
+    if (str_contains($importedStylesheetFound, $stringToTest))
+    {
+      $return = generateStylesheetsFiles(
+        $baseName,
+        $resourcesMainFolder,
+        $resourcesFolderEndPath,
+        $resourcesPath . $baseName . $dotExtension,
+        $extension,
+        GEN_WATCHER_VERBOSE > 0
+      );
+
+      if (GEN_WATCHER_VERBOSE > 0)
+        $eventsDebug .= $return;
+
+      // We only seek one file
+      return true;
+    }
+
+    $fullImportPath = mb_substr($importedStylesheetFound, 6, -1);
+    $lastSlashPosition = strrpos($fullImportPath, '/');
+
+    if ($lastSlashPosition !== false)
+    {
+      $importPath = mb_substr($fullImportPath, 0, $lastSlashPosition + 1);
+      $importedFileBaseName = mb_substr($fullImportPath, $lastSlashPosition + 1);
+    } else
+    {
+      $importedFileBaseName = $fullImportPath;
+      $importPath = '/';
+    }
+
+    // $importPath like ../../configuration
+    // $fullImportPath like ../../configuration/generic
+    // $importedFileBaseName like generic.scss
+    // $resourcesPath like /var/www/html/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
+
+    // The imported file can have the extension but it is not mandatory
+    if (!str_contains($importedFileBaseName, '.'))
+      $importedFileBaseName .= $dotExtension;
+
+    $absoluteImportPathWithParentFolders = $resourcesPath . $importPath . $importedFileBaseName;
+    $absoluteImportPathWithParentFoldersAlt = $resourcesPath . $importPath. '_' . $importedFileBaseName;
+
+    // Does the file exist without '_' at the beginning
+    $newResourceToAnalyze = realpath($absoluteImportPathWithParentFolders);
+
+    if ($newResourceToAnalyze === false)
+      // Does the file exist with '_' at the beginning
+      $newResourceToAnalyze = realpath($absoluteImportPathWithParentFoldersAlt);
+
+    // If does not exist in the two previously cases, it is surely a wrongly written import
+    if ($newResourceToAnalyze === false)
+    {
+      echo CLI_ERROR, 'In the file ', returnLegiblePath2($mainResource),
+        CLI_ERROR, ',', PHP_EOL, 'this import path is wrong ', CLI_INFO_HIGHLIGHT, $fullImportPath, CLI_ERROR,
+        PHP_EOL,'as it leads to ', returnLegiblePath2($absoluteImportPathWithParentFolders), CLI_ERROR,
+        ' or to ', returnLegiblePath2($absoluteImportPathWithParentFoldersAlt), CLI_ERROR, '.',
+        END_COLOR, PHP_EOL;
+    }
+
+    if (searchFor($newResourceToAnalyze, $stringToTest, $dotExtension, $eventsDebug))
+      break;
+  }
+
+  return false;
 }
 
 // Configuring inotify
@@ -484,36 +587,12 @@ while (true)
             // If the file is not meant to be used directly (this file will probably be imported by other ones)
             // like _resource.scss
             $stringToTest = substr($baseName, 1);
+            $dotExtension = '.' . $extension;
 
             foreach($sassMainResources as $mainResource)
             {
-              $fileContent = file_get_contents($mainResource);
-              preg_match(
-                '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest .
-                '\'@',
-                $fileContent,
-                $matches
-              );
-
-              // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
-              // files.
-              if (empty($matches))
-                continue;
-
-              [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
-                getPathInformations($mainResource);
-
-              $return = generateStylesheetsFiles(
-                $baseName,
-                $resourcesMainFolder,
-                $resourcesFolderEndPath,
-                $resourcesMainFolder . $resourcesFolderEndPath . $baseName . '.' . $extension,
-                $extension,
-                GEN_WATCHER_VERBOSE > 0
-              );
-
-                if (GEN_WATCHER_VERBOSE > 0)
-                  $eventsDebug .= $return;
+              if (searchFor($mainResource, $stringToTest, $dotExtension, $eventsDebug))
+                break;
             }
           }
         }
