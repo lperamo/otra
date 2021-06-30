@@ -9,10 +9,11 @@ namespace otra\console\deployment\genWatcher;
 
 use FilesystemIterator;
 use JetBrains\PhpStorm\Pure;
+use otra\config\AllConfig;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\
 {ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
 use const otra\console\deployment\
@@ -94,6 +95,13 @@ if (GEN_WATCHER_VERBOSE > 1 )
   define(__NAMESPACE__ . '\\DATA_NAME_PADDING', 34);
   define(__NAMESPACE__ . '\\DATA_WATCHED_RESOURCE_PADDING', 64);
 }
+
+define(
+  __NAMESPACE__ . '\\EVENT_TO_TEST_FOR_SAVE',
+  (!isset(AllConfig::$compileMode) || AllConfig::$compileMode === COMPILE_MODE_SAVE)
+  ? IN_CLOSE_WRITE
+  : IN_MODIFY
+);
 
 /**
  * @param string $header
@@ -528,7 +536,7 @@ while (true)
       } elseif ( // A save operation has been done
         (
           ($binaryMask & IN_ATTRIB) === IN_ATTRIB
-          || ($binaryMask & IN_MODIFY) === IN_MODIFY
+          || ($binaryMask & EVENT_TO_TEST_FOR_SAVE) === EVENT_TO_TEST_FOR_SAVE
         )
         && (in_array($resourceName, $phpEntriesToWatch)
           || in_array($resourceName, $resourcesEntriesToWatch)
