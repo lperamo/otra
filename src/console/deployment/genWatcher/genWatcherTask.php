@@ -473,7 +473,7 @@ while (true)
         if (GEN_WATCHER_VERBOSE > 0)
         {
           $eventsDebug .= PHP_EOL . 'The file ' .
-            returnLegiblePath($foldersWatchedIds[$watchDescriptor], $resourceName) .
+            returnLegiblePath($foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $resourceName) .
             ' has been deleted. We remove related generated files.' . PHP_EOL . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)
@@ -537,7 +537,7 @@ while (true)
       {
         if (GEN_WATCHER_VERBOSE > 0)
         {
-          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor], $filename)
+          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename)
             . ' modified! We launch the appropriate tasks.' . PHP_EOL;
 
           if (GEN_WATCHER_VERBOSE > 1)

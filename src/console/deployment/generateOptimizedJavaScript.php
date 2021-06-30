@@ -94,7 +94,7 @@ function generateJavaScript(
 
   unlink($temporaryTypescriptConfig);
 
-  $legibleCreatedTemporaryJsFile = returnLegiblePath($generatedTemporaryJsFile);
+  $legibleCreatedTemporaryJsFile = returnLegiblePath($generatedTemporaryJsFile, '');
   $jsFileExists = file_exists($generatedTemporaryJsFile);
 
   if (!$jsFileExists)
@@ -109,12 +109,12 @@ function generateJavaScript(
 
   if ($verbose > 0)
   {
-    echo CLI_BASE, 'TypeScript file ', returnLegiblePath($resourceName, '', false), CLI_BASE,
+    echo CLI_BASE, 'TypeScript file ', returnLegiblePath($resourceName, ''), CLI_BASE,
     ' have generated the temporary file';
 
     if (file_exists($temporarySourceMap))
       echo 's ', $legibleCreatedTemporaryJsFile, CLI_BASE, ' and ',
-      returnLegiblePath($generatedTemporaryJsFile . '.map', '', false);
+      returnLegiblePath($generatedTemporaryJsFile . '.map', '');
     else
       echo ' ', $legibleCreatedTemporaryJsFile;
 
@@ -195,8 +195,7 @@ function generateJavaScript(
       throw new OtraException('', 1, '', null, [], true);
     }
 
-    echo 'Service worker files moved to ', CLI_INFO_HIGHLIGHT, returnLegiblePath($serviceWorkerPath), END_COLOR,
-    ' and ', CLI_INFO_HIGHLIGHT, returnLegiblePath($newJsMapPath), END_COLOR, '.', PHP_EOL;
+    echo 'Service worker files moved to ', CLI_INFO_HIGHLIGHT, returnLegiblePath($serviceWorkerPath),
+    ' and ', CLI_INFO_HIGHLIGHT, returnLegiblePath($newJsMapPath), '.', PHP_EOL;
   }
 }
-

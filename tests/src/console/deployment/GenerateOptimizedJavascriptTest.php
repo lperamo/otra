@@ -6,7 +6,7 @@ namespace src\console\deployment;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{APP_ENV,CORE_PATH,DEV,TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
+use const otra\console\{CLI_BASE, SUCCESS};
 use function otra\console\deployment\generateJavaScript;
 use function otra\tools\files\returnLegiblePath;
 
@@ -43,10 +43,9 @@ class GenerateOptimizedJavascriptTest extends TestCase
     // testing
     self::expectOutputString(
       CLI_BASE . 'TypeScript file ' .
-      returnLegiblePath(TEST_TS_RESOURCE_NAME, '', false) . CLI_BASE .
-  ' have generated the temporary files ' . returnLegiblePath(TEST_TEMPORARY_JS_FILE) . CLI_BASE . ' and ' .
-          returnLegiblePath(TEST_TEMPORARY_JS_FILE . '.map', '', false) . CLI_SUCCESS . ' ✔' .
-      END_COLOR . PHP_EOL . PHP_EOL
+      returnLegiblePath(TEST_TS_RESOURCE_NAME, '') . CLI_BASE .
+  ' have generated the temporary files ' . returnLegiblePath(TEST_TEMPORARY_JS_FILE, '') . CLI_BASE . ' and ' .
+          returnLegiblePath(TEST_TEMPORARY_JS_FILE . '.map', '') . SUCCESS . PHP_EOL
     );
 
     // launching
