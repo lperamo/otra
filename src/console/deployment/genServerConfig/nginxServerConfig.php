@@ -16,8 +16,19 @@ use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
 
 const
   OTRA_LABEL_RETURN_403 = 'return 403;',
+  OPENING_BRACKET = SPACE_INDENT . '{' . PHP_EOL,
+  ENDING_BRACKET = SPACE_INDENT . '}' . PHP_EOL,
+  OPENING_BRACKET_2 = SPACE_INDENT_2 . '{' . PHP_EOL,
+  ENDING_BRACKET_2 = SPACE_INDENT_2 . '}' . PHP_EOL,
+  OTRA_LABEL_RETURN_403_BLOCK_2 = OPENING_BRACKET_2 .
+    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
+    ENDING_BRACKET_2,
   OTRA_LABEL_TYPES = 'types',
-  OTRA_LABEL_ROOT_PATH = 'root $rootPath;';
+  OTRA_LABEL_ROOT_PATH = 'root $rootPath;',
+  CHECK_HTTP_REFERER_2 = SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL . OTRA_LABEL_RETURN_403_BLOCK_2,
+  LABEL_TYPES_2 = SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL,
+  GZIP_HEADER_2 = SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL,
+  LABEL_APPLICATION_JSON_3 = SPACE_INDENT_3 . 'application/json map;' . PHP_EOL;
 
 /**
  * @return string
@@ -33,117 +44,6 @@ const
     ';' . PHP_EOL .
     SPACE_INDENT . str_pad('return', GEN_SERVER_CONFIG_STR_PAD) . '301 https://$server_name$request_uri; #Redirection' . PHP_EOL .
     '}' . PHP_EOL;
-}
-
-/**
- * Handles listening on SSL ports.
- * Sets the path to the SSL certificate.
- * Sets the path to the logs folders.
- * And some additional basic configuration...
- *
- * @return string
- */
-function handleBasicConfiguration() : string
-{
-  return SPACE_INDENT . 'listen 443 ssl http2;' . PHP_EOL .
-    SPACE_INDENT . 'listen [::]:443 ssl http2;' . PHP_EOL .
-    SPACE_INDENT . 'set $rootPath ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] . ';' . PHP_EOL .
-    SPACE_INDENT . 'index ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'indexDev.php;' : 'index.php;') . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
-    SPACE_INDENT . 'server_name ' . GEN_SERVER_CONFIG_SERVER_NAME . ';' . PHP_EOL .
-    SPACE_INDENT . 'error_log /var/log/nginx/' . GEN_SERVER_CONFIG_SERVER_NAME . '/error.log error;' . PHP_EOL .
-    SPACE_INDENT . 'access_log /var/log/nginx/' . GEN_SERVER_CONFIG_SERVER_NAME . '/access.log;' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . 'root $rootPath/web;' . PHP_EOL;
-}
-
-/**
- * Enables ssl.
- * Sets the certificates.
- * Improves security.
- * Protects against clickjacking, XSS attacks, hotlinking and some other things.
- *
- * @return string
- */
-function handleSecurity(): string
-{
-  return SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    'tmp/certs/server_crt.pem;' . PHP_EOL .
-    SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
-    'tmp/certs/server_key.pem;' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '#HSTS' . PHP_EOL .
-    SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '# XSS protections' . PHP_EOL .
-    SPACE_INDENT . 'add_header X-Content-Type-Options "nosniff";' . PHP_EOL .
-    SPACE_INDENT . 'add_header X-XSS-Protection "1; mode=block";' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '# Avoid showing server version ...' . PHP_EOL .
-    SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
-    SPACE_INDENT . 'more_set_headers \'Server: Welcome on my site!\';' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
-    SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
-    SPACE_INDENT . 'valid_referers none blocked ~.google. ~.bing. ~.yahoo. ' .
-    AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .
-    AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
-    ' localhost;' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT . SPACE_INDENT . OTRA_LABEL_RETURN_403 . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL;
-}
-
-/**
- * It forces to use already gzipped resources instead of classic/decompressed ones.
- *
- * @return string
- */
-function handleStaticCompression(): string
-{
-  return SPACE_INDENT . '# Forces static compression (for already gzipped files)' . PHP_EOL .
-    SPACE_INDENT . 'gzip off;' . PHP_EOL .
-    SPACE_INDENT . 'gzip_static always;' . PHP_EOL;
-}
-
-/**
- * If the HTTP referer is empty, we send a 403.
- *
- * @return string
- */
-function checkHttpReferer() : string
-{
-  return SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL;
-}
-
-/**
- * Handles the gzipped web manifest.
- *
- * @return string
- */
-#[Pure] function handleManifest(): string
-{
-  return SPACE_INDENT . '# Handling the gzipped web manifest' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /manifest\.gz' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'application/manifest+json gz;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
-    PHP_EOL .
-    SPACE_INDENT_2 . 'gzip_types application/manifest+json;' . PHP_EOL .
-    SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
-    addingSecurityAdjustments() .
-  SPACE_INDENT . '}' . PHP_EOL;
 }
 
 /**
@@ -174,25 +74,26 @@ function addingSecurityAdjustments() : string
     'tpl' => 'text/html'
   ][$assetType];
 
-  $content = SPACE_INDENT . '# Handling ' . strtoupper($assetType) . PHP_EOL .
+  $content = SPACE_INDENT . '# Handling cached ' . strtoupper($assetType) .
+    ' (PWA uses them even when we are in development mode)'. PHP_EOL .
     SPACE_INDENT . 'location ~ /cache/' . $assetType . '/.*\.gz$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() . PHP_EOL .
-    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
+    OPENING_BRACKET .
+    CHECK_HTTP_REFERER_2 . PHP_EOL .
+    LABEL_TYPES_2 .
+    OPENING_BRACKET_2 .
     SPACE_INDENT_3 . $mimeType . ' gz;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    ENDING_BRACKET_2 .
     PHP_EOL;
 
   // gzip_types has the text/html set by default so no need to add it again
   if ($assetType !== 'tpl')
     $content .= SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL;
 
-  return $content . SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL .
+  return $content . GZIP_HEADER_2 .
     addingSecurityAdjustments() .
     PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL;
+    ENDING_BRACKET;
 }
 
 /**
@@ -204,13 +105,13 @@ function addingSecurityAdjustments() : string
 {
   return SPACE_INDENT . '# Handling service worker, robots.txt and sitemaps' . PHP_EOL .
     SPACE_INDENT . 'location ~ /.*\.(js|txt|xml)$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() .
-    SPACE_INDENT . '}' . PHP_EOL .
+    OPENING_BRACKET .
+    CHECK_HTTP_REFERER_2 .
+    ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . '# Handling images and fonts' . PHP_EOL .
     SPACE_INDENT . 'location ~ /.*\.(ico|jpe?g|png|svg|webp|woff2)$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
+    OPENING_BRACKET .
     SPACE_INDENT_2 .
     '# Workaround, Firefox does not send referrer for favicons so we send always the images when Firefox is used' .
     PHP_EOL .
@@ -219,26 +120,24 @@ function addingSecurityAdjustments() : string
     SPACE_INDENT_2 . 'set $referer $http_referer;' . PHP_EOL.
     PHP_EOL .
     SPACE_INDENT_2 . 'if ($uri ~ "^/(favicon|apple-touch).*\.png$")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
+    OPENING_BRACKET_2 .
     SPACE_INDENT_3 . 'set $referer https://$server_name/;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    ENDING_BRACKET_2 .
     PHP_EOL .
     SPACE_INDENT_2 . 'if ($http_user_agent !~ ".*Firefox.*")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
+    OPENING_BRACKET_2 .
     SPACE_INDENT_3 . 'set $referer $http_referer;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    ENDING_BRACKET_2 .
     PHP_EOL .
     SPACE_INDENT_2 . 'if ($referer = "")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . OTRA_LABEL_RETURN_403 . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    OTRA_LABEL_RETURN_403_BLOCK_2 .
     PHP_EOL .
     SPACE_INDENT_2 . '# Handle vendor images' . PHP_EOL .
     SPACE_INDENT_2 . 'if ($uri ~ "^/vendor.*$")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
+    OPENING_BRACKET_2 .
     SPACE_INDENT_3 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL;
+    ENDING_BRACKET_2 .
+    ENDING_BRACKET;
 }
 
 /**
@@ -250,12 +149,12 @@ function handleRewriting() : string
 {
   return SPACE_INDENT . '# Handles rewriting' . PHP_EOL .
     SPACE_INDENT . 'location /' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? DEV : '') . '.php last;' . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL .
+    OPENING_BRACKET .
+    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? ucfirst(DEV) : '') . '.php last;' . PHP_EOL .
+    ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
+    OPENING_BRACKET .
     SPACE_INDENT_2 . 'include snippets/fastcgi-php.conf;' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;' . PHP_EOL .
     PHP_EOL .
@@ -269,50 +168,124 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   'server' . PHP_EOL .
   '{' . PHP_EOL .
-  handleBasicConfiguration() .
+  SPACE_INDENT . 'listen 443 ssl http2;' . PHP_EOL .
+  SPACE_INDENT . 'listen [::]:443 ssl http2;' . PHP_EOL .
+  SPACE_INDENT . 'set $rootPath ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] . ';' . PHP_EOL .
+  SPACE_INDENT . 'index index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'Dev' : '') . '.php;' . PHP_EOL .
   PHP_EOL .
-  handleSecurity() .
+  SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
+  SPACE_INDENT . 'server_name ' . GEN_SERVER_CONFIG_SERVER_NAME . ';' . PHP_EOL .
+  SPACE_INDENT . 'error_log /var/log/nginx/' . GEN_SERVER_CONFIG_SERVER_NAME . '/error.log error;' . PHP_EOL .
+  SPACE_INDENT . 'access_log /var/log/nginx/' . GEN_SERVER_CONFIG_SERVER_NAME . '/access.log;' . PHP_EOL .
   PHP_EOL .
-  handleStaticCompression() .
+  SPACE_INDENT . 'root $rootPath/web;' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
+  'tmp/certs/server_crt.pem;' . PHP_EOL .
+  SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
+  'tmp/certs/server_key.pem;' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'map $sent_http_content_type $expires {' . PHP_EOL .
+  SPACE_INDENT_2 . 'default                 off;' . PHP_EOL .
+  SPACE_INDENT_2 . 'text/html               epoch;' . PHP_EOL .
+  SPACE_INDENT_2 . 'text/css                max;' . PHP_EOL .
+  SPACE_INDENT_2 . 'application/javascript  max;' . PHP_EOL .
+  SPACE_INDENT_2 . 'text/javascript         max;' . PHP_EOL .
+  SPACE_INDENT_2 . '~image/                 max;' . PHP_EOL .
+  SPACE_INDENT_2 . 'application/json        max;' . PHP_EOL .
+  SPACE_INDENT_2 . 'font/woff2              max;' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'expires $expires;' .
+  SPACE_INDENT . '#HSTS' . PHP_EOL .
+  SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . '# XSS protections' . PHP_EOL .
+  SPACE_INDENT . 'add_header X-Content-Type-Options "nosniff";' . PHP_EOL .
+  SPACE_INDENT . 'add_header X-XSS-Protection "1; mode=block";' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . '# Avoid showing server version ...' . PHP_EOL .
+  SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
+  SPACE_INDENT . 'more_set_headers \'Server: Welcome on my site!\';' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
+  SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
+  SPACE_INDENT . 'valid_referers none blocked ~.google. ~.bing. ~.yahoo. ' .
+  AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .
+  AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
+  ' localhost;' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
+  OPENING_BRACKET .
+  SPACE_INDENT_2 . OTRA_LABEL_RETURN_403 . PHP_EOL .
+  ENDING_BRACKET .
+  PHP_EOL .
+  SPACE_INDENT . '# Forces static compression (for already gzipped files)' . PHP_EOL .
+  SPACE_INDENT . 'gzip off;' . PHP_EOL .
+  SPACE_INDENT . 'gzip_static always;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Blocking any page that don\'t send a referrer via if conditions in the next \'location\' blocks' .
   PHP_EOL .
   PHP_EOL .
-  handleManifest() .
+  SPACE_INDENT . '# Handling the gzipped web manifest' . PHP_EOL .
+  SPACE_INDENT . 'location ~ /manifest\.gz' . PHP_EOL .
+  OPENING_BRACKET .
+  CHECK_HTTP_REFERER_2 . PHP_EOL .
+  LABEL_TYPES_2 .
+  OPENING_BRACKET_2 .
+  SPACE_INDENT_3 . 'application/manifest+json gz;' . PHP_EOL .
+  ENDING_BRACKET_2 .
+  PHP_EOL .
+  SPACE_INDENT_2 . 'gzip_types application/manifest+json;' . PHP_EOL .
+  GZIP_HEADER_2 .
+  addingSecurityAdjustments() .
+  ENDING_BRACKET .
 
   (GEN_SERVER_CONFIG_ENVIRONMENT === DEV
   ? PHP_EOL .
-    SPACE_INDENT . '# Handling CSS and JS (project and vendor)' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    checkHttpReferer() . PHP_EOL .
+    handleGzippedAsset() .
+    PHP_EOL .
+    handleGzippedAsset('js') .
+    PHP_EOL .
+    SPACE_INDENT . '# Handling CSS, JS ...and TS for source maps(project and vendor)' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /(bundles|src|vendor)/.*\.(css|js|ts)$' . PHP_EOL .
+    OPENING_BRACKET .
+    CHECK_HTTP_REFERER_2 . PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL .
+    ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . '# Handling CSS and JS source maps (project and vendor)' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /(bundles|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'application/json map;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /(bundles|src|vendor)/.*\.(css|js)\.map$' . PHP_EOL .
+    OPENING_BRACKET .
+    LABEL_TYPES_2 .
+    OPENING_BRACKET_2 .
+    LABEL_APPLICATION_JSON_3 .
+    ENDING_BRACKET_2 .
     PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL
+    ENDING_BRACKET .
+    PHP_EOL .
+    SPACE_INDENT . '# Handling PWA js mapping' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /sw\.js\.map$' . PHP_EOL .
+    OPENING_BRACKET .
+    LABEL_TYPES_2 .
+    OPENING_BRACKET_2 .
+    LABEL_APPLICATION_JSON_3 .
+    ENDING_BRACKET_2 .
+    ENDING_BRACKET
   : PHP_EOL .
     handleGzippedAsset() .
     PHP_EOL .
     SPACE_INDENT . '# For local testing purpose only' . PHP_EOL .
     SPACE_INDENT . 'location ~ /vendor/.*\.css$' . PHP_EOL .
-    SPACE_INDENT . '{' . PHP_EOL .
-    SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL .
-    SPACE_INDENT_2 . '{' . PHP_EOL .
-    SPACE_INDENT_3 . 'return 403;' . PHP_EOL .
-    SPACE_INDENT_2 . '}' . PHP_EOL .
+    OPENING_BRACKET .
+    CHECK_HTTP_REFERER_2 .
     PHP_EOL .
     SPACE_INDENT_2 . 'gzip_types text/css;' . PHP_EOL .
     SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
-    SPACE_INDENT . '}' . PHP_EOL .
+    ENDING_BRACKET .
     PHP_EOL .
     handleGzippedAsset('js') .
     PHP_EOL .
