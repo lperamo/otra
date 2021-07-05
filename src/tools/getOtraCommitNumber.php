@@ -25,10 +25,12 @@ if (!function_exists('otra\tools\getOtraCommitNumber'))
         file_get_contents(BASE_PATH . 'vendor/composer/installed.json'),
         true
       )['packages'];
-      return $installedComposerPackages[array_search(
+      $commitNumber = $installedComposerPackages[array_search(
         'otra/otra',
         array_column($installedComposerPackages, 'name')
       )]['source']['reference'];
+
+      return $short ? substr($commitNumber, 0, 7) : $commitNumber;
     }
 
     require CORE_PATH . 'tools/cli.php';
