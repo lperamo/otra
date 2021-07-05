@@ -17,6 +17,13 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
 
+if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
+{
+  echo CLI_ERROR, 'Either you do not have any routes or you have to update your configuration with ', CLI_INFO_HIGHLIGHT,
+    'otra updateConf', CLI_ERROR, '.', PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 require CORE_PATH . 'tools/files/returnLegiblePath.php';
@@ -113,7 +120,7 @@ function generateStylesheetsFiles(
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
   [, $output] = cliCommand(
-    'sass ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath,
+    'sass --update -q ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath,
     null,
     false
   );

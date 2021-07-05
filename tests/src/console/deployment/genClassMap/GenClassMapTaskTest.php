@@ -8,7 +8,8 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{APP_ENV,BASE_PATH,DEV,TEST_PATH};
 use const otra\cache\php\init\CLASSMAP2;
-use const otra\console\{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 
 /**
@@ -81,8 +82,9 @@ class GenClassMapTaskTest extends TestCase
     self::assertFileEquals(
       self::EXAMPLES_CLASS_MAP_PATH . self::CLASS_MAP_FILENAME,
       self::CLASS_MAP_PATH,
-      'Development class mapping test. Here we compare ' . self::EXAMPLES_CLASS_MAP_PATH .
-      self::CLASS_MAP_FILENAME . ' and ' . self::CLASS_MAP_PATH
+      'Development class mapping test. Here we compare ' . CLI_INFO_HIGHLIGHT . self::EXAMPLES_CLASS_MAP_PATH .
+      self::CLASS_MAP_FILENAME . CLI_ERROR . ' and ' . CLI_INFO_HIGHLIGHT . self::CLASS_MAP_PATH . CLI_ERROR . '.' .
+      END_COLOR
     );
 
     // production class map assertions
@@ -90,8 +92,9 @@ class GenClassMapTaskTest extends TestCase
     self::assertFileEquals(
       self::EXAMPLES_CLASS_MAP_PATH . self::PROD_CLASS_MAP_FILENAME,
       self::PROD_CLASS_MAP_PATH,
-      'Production class mapping test. Here we compare ' . self::EXAMPLES_CLASS_MAP_PATH .
-      self::PROD_CLASS_MAP_FILENAME . ' and ' . self::PROD_CLASS_MAP_PATH
+      'Production class mapping test. Here we compare ' .CLI_INFO_HIGHLIGHT . self::EXAMPLES_CLASS_MAP_PATH .
+      self::PROD_CLASS_MAP_FILENAME . CLI_ERROR . ' and ' . CLI_INFO_HIGHLIGHT . self::PROD_CLASS_MAP_PATH . CLI_ERROR .
+      '.' . END_COLOR
     );
   }
 }
