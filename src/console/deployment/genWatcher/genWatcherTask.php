@@ -480,36 +480,44 @@ while (true)
               $baseName,
               $resourceName
             );
-          } elseif ($baseName[0] !== '_')
-          {
-            // If the file is meant to be used directly (this file will probably be the one that import the others)
-            // like resource.scss
-            $return = generateStylesheetsFiles(
-              $baseName,
-              $resourcesMainFolder,
-              $resourcesFolderEndPath,
-              $resourceName,
-              $extension,
-              GEN_WATCHER_VERBOSE > 0
-            );
-
-            if (GEN_WATCHER_VERBOSE > 0)
-              $eventsDebug .= $return;
           } else
           {
-            // If the file is not meant to be used directly (this file will probably be imported by other ones)
-            // like _resource.scss
-            foreach($sassTree[$resourceName] as $resourceToCompile)
+            if ($baseName[0] !== '_')
             {
-              generateStylesheetsFiles(
+              // If the file is meant to be used directly (this file will probably be the one that import the others)
+              // like resource.scss
+              $return = generateStylesheetsFiles(
                 $baseName,
                 $resourcesMainFolder,
                 $resourcesFolderEndPath,
-                $resourceToCompile,
+                $resourceName,
                 $extension,
                 GEN_WATCHER_VERBOSE > 0
               );
+            } else
+            {
+              $return = '';
+
+              // If the file is not meant to be used directly (this file will probably be imported by other ones)
+              // like _resource.scss
+              foreach($sassTree[$resourceName] as $resourceToCompile)
+              {
+                [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
+                  getPathInformations($resourceToCompile);
+
+                $return .= generateStylesheetsFiles(
+                  $baseName,
+                  $resourcesMainFolder,
+                  $resourcesFolderEndPath,
+                  $resourceToCompile,
+                  $extension,
+                  GEN_WATCHER_VERBOSE > 0
+                );
+              }
             }
+
+            if (GEN_WATCHER_VERBOSE > 0)
+              $eventsDebug .= $return;
           }
         }
       } elseif (GEN_WATCHER_VERBOSE > 1)

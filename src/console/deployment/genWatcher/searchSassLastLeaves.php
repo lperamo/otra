@@ -63,23 +63,23 @@ function searchSassLastLeaves(
     if (!str_contains($importedFileBaseName, '.'))
       $importedFileBaseName .= $dotExtension;
 
-    $absoluteImportPathWithParentFolders = $resourcesPath . $importPath . $importedFileBaseName;
-    $absoluteImportPathWithParentFoldersAlt = $resourcesPath . $importPath. '_' . $importedFileBaseName;
+    $absoluteImportPathWithDots = $resourcesPath . $importPath . $importedFileBaseName;
+    $absoluteImportPathWithDotsAlt = $resourcesPath . $importPath. '_' . $importedFileBaseName;
 
     // Does the file exist without '_' at the beginning
-    $newResourceToAnalyze = realpath($absoluteImportPathWithParentFolders);
+    $newResourceToAnalyze = realpath($absoluteImportPathWithDots);
 
     if ($newResourceToAnalyze === false)
       // Does the file exist with '_' at the beginning
-      $newResourceToAnalyze = realpath($absoluteImportPathWithParentFoldersAlt);
+      $newResourceToAnalyze = realpath($absoluteImportPathWithDotsAlt);
 
     // If does not exist in the two previously cases, it is surely a wrongly written import
     if ($newResourceToAnalyze === false)
     {
       echo CLI_ERROR, 'In the file ', returnLegiblePath2($previousImportedStylesheetFound),
       CLI_ERROR, ',', PHP_EOL, 'this import path is wrong ', CLI_INFO_HIGHLIGHT, $importedStylesheetsFound[0][$matchKey], CLI_ERROR,
-      PHP_EOL,'as it leads to ', returnLegiblePath2($absoluteImportPathWithParentFolders), CLI_ERROR,
-      ' or to ', returnLegiblePath2($absoluteImportPathWithParentFoldersAlt), CLI_ERROR, '.',
+      PHP_EOL,'as it leads to ', returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR,
+      ' or to ', returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.',
       END_COLOR, PHP_EOL;
     }
 
