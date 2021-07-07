@@ -23,7 +23,7 @@ const BASE_PATH_REPLACEMENT = CLI_INFO . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT;
  */
 function returnLegiblePath(string $path, ?string $endColor = END_COLOR) : string
 {
-  return (!str_contains($path, BASE_PATH)
+  return (str_contains($path, BASE_PATH)
     ? str_replace(BASE_PATH, BASE_PATH_REPLACEMENT, $path)
     : CLI_INFO_HIGHLIGHT . $path)
     . $endColor;

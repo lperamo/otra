@@ -14,8 +14,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use const otra\cache\php\{BASE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
-use const otra\console\
-{ADD_BOLD, CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\console\{ADD_BOLD, CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
 use const otra\console\deployment\
 {
   FILE_TASK_GCC,
@@ -27,7 +26,7 @@ use const otra\console\deployment\
   WATCH_FOR_TS_RESOURCES
 };
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
-use function otra\tools\files\{returnLegiblePath, returnLegiblePath2};
+use function otra\tools\files\returnLegiblePath;
 
 // Initialization
 require CORE_PATH . 'console/deployment/taskFileInit.php';
@@ -52,38 +51,41 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
 define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
 
-if (GEN_WATCHER_VERBOSE > 1 )
+if (GEN_WATCHER_VERBOSE > 1)
 {
   // Those constants are used in the maximum verbose mode only when we show the main events triggered
-  define(__NAMESPACE__ . '\\WD_CONSTANTS', [
-    IN_ACCESS => 'IN_ACCESS',
-    IN_MODIFY => 'IN_MODIFY',
-    IN_ATTRIB => 'IN_ATTRIB',
-    IN_CLOSE_WRITE => 'IN_CLOSE_WRITE',
-    IN_CLOSE_NOWRITE => 'IN_CLOSE_NOWRITE',
-    IN_OPEN => 'IN_OPEN',
-    IN_MOVED_TO => 'IN_MOVED_TO',
-    IN_MOVED_FROM => 'IN_MOVED_FROM',
-    IN_CREATE => 'IN_CREATE',
-    IN_DELETE => 'IN_DELETE',
-    IN_DELETE_SELF => 'IN_DELETE_SELF',
-    IN_MOVE_SELF => 'IN_MOVE_SELF',
-    IN_CLOSE => 'IN_CLOSE',
-    IN_MOVE => 'IN_MOVE',
-    IN_ALL_EVENTS => 'IN_ALL_EVENTS',
-    IN_UNMOUNT => 'IN_UNMOUNT',
-    IN_Q_OVERFLOW => 'IN_Q_OVERFLOW',
-    IN_IGNORED => 'IN_IGNORED',
-    IN_ISDIR => 'IN_ISDIR',
-    IN_CLOSE_NOWRITE_DIR => 'IN_CLOSE_NOWRITE_DIR',
-    IN_OPEN_DIR => 'IN_OPEN_DIR',
-    IN_CREATE_DIR => 'IN_CREATE_DIR',
-    IN_DELETE_DIR => 'IN_DELETE_DIR',
-    IN_ONLYDIR => 'IN_ONLYDIR',
-    IN_DONT_FOLLOW => 'IN_DONT_FOLLOW',
-    IN_MASK_ADD => 'IN_MASK_ADD',
-    IN_ONESHOT => 'IN_ONESHOT'
-  ]);
+  define(
+    __NAMESPACE__ . '\\WD_CONSTANTS',
+    [
+      IN_ACCESS => 'IN_ACCESS',
+      IN_MODIFY => 'IN_MODIFY',
+      IN_ATTRIB => 'IN_ATTRIB',
+      IN_CLOSE_WRITE => 'IN_CLOSE_WRITE',
+      IN_CLOSE_NOWRITE => 'IN_CLOSE_NOWRITE',
+      IN_OPEN => 'IN_OPEN',
+      IN_MOVED_TO => 'IN_MOVED_TO',
+      IN_MOVED_FROM => 'IN_MOVED_FROM',
+      IN_CREATE => 'IN_CREATE',
+      IN_DELETE => 'IN_DELETE',
+      IN_DELETE_SELF => 'IN_DELETE_SELF',
+      IN_MOVE_SELF => 'IN_MOVE_SELF',
+      IN_CLOSE => 'IN_CLOSE',
+      IN_MOVE => 'IN_MOVE',
+      IN_ALL_EVENTS => 'IN_ALL_EVENTS',
+      IN_UNMOUNT => 'IN_UNMOUNT',
+      IN_Q_OVERFLOW => 'IN_Q_OVERFLOW',
+      IN_IGNORED => 'IN_IGNORED',
+      IN_ISDIR => 'IN_ISDIR',
+      IN_CLOSE_NOWRITE_DIR => 'IN_CLOSE_NOWRITE_DIR',
+      IN_OPEN_DIR => 'IN_OPEN_DIR',
+      IN_CREATE_DIR => 'IN_CREATE_DIR',
+      IN_DELETE_DIR => 'IN_DELETE_DIR',
+      IN_ONLYDIR => 'IN_ONLYDIR',
+      IN_DONT_FOLLOW => 'IN_DONT_FOLLOW',
+      IN_MASK_ADD => 'IN_MASK_ADD',
+      IN_ONESHOT => 'IN_ONESHOT'
+    ]
+  );
 
   define(__NAMESPACE__ . '\\HEADER_EVENT_PADDING', 18);
   define(__NAMESPACE__ . '\\HEADER_COOKIE_PADDING', 7);
@@ -123,7 +125,7 @@ define(
  *
  * @return string The debug output
  */
-#[Pure] function debugEvent(
+function debugEvent(
   int $binaryMask,
   int $cookie,
   string $filename,
@@ -166,108 +168,6 @@ function updatePHP(string $filename) : void
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 }
 
-/**
- * If we returns `false`, we have to use `break` in the main loop that has called this function,
- * otherwise we break
- *
- * @param string $mainResource The main stylesheets where we have our stylesheets imports
- * @param string $stringToTest The stylesheet name to import
- * @param string $dotExtension .sass or .scss
- * @param string $eventsDebug  Debugging messages that we show to the user
- *
- * @throws \otra\OtraException
- * @return bool
- */
-function searchFor(string $mainResource, string $stringToTest, string $dotExtension, string $eventsDebug) : bool
-{
-  $fileContent = file_get_contents($mainResource);
-  preg_match_all(
-    '@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}\w{1,}\'@',
-    $fileContent,
-    $importedStylesheetsFound
-  );
-
-  // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources
-  // files.
-  if (!isset($importedStylesheetsFound[0][0]))
-    return false;
-
-  $importedStylesheetsFound = $importedStylesheetsFound[0];
-
-  [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
-    getPathInformations($mainResource);
-
-  $resourcesPath = $resourcesMainFolder . $resourcesFolderEndPath;
-
-  foreach($importedStylesheetsFound as $importedStylesheetFound)
-  {
-    if (str_contains($importedStylesheetFound, $stringToTest))
-    {
-      $return = generateStylesheetsFiles(
-        $baseName,
-        $resourcesMainFolder,
-        $resourcesFolderEndPath,
-        $resourcesPath . $baseName . $dotExtension,
-        $extension,
-        GEN_WATCHER_VERBOSE > 0
-      );
-
-      if (GEN_WATCHER_VERBOSE > 0)
-        $eventsDebug .= $return;
-
-      // We only seek one file
-      return true;
-    }
-
-    $fullImportPath = mb_substr($importedStylesheetFound, 6, -1);
-    $lastSlashPosition = strrpos($fullImportPath, '/');
-
-    if ($lastSlashPosition !== false)
-    {
-      $importPath = mb_substr($fullImportPath, 0, $lastSlashPosition + 1);
-      $importedFileBaseName = mb_substr($fullImportPath, $lastSlashPosition + 1);
-    } else
-    {
-      $importedFileBaseName = $fullImportPath;
-      $importPath = '/';
-    }
-
-    // $importPath like ../../configuration
-    // $fullImportPath like ../../configuration/generic
-    // $importedFileBaseName like generic.scss
-    // $resourcesPath like /var/www/html/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
-
-    // The imported file can have the extension but it is not mandatory
-    if (!str_contains($importedFileBaseName, '.'))
-      $importedFileBaseName .= $dotExtension;
-
-    $absoluteImportPathWithParentFolders = $resourcesPath . $importPath . $importedFileBaseName;
-    $absoluteImportPathWithParentFoldersAlt = $resourcesPath . $importPath. '_' . $importedFileBaseName;
-
-    // Does the file exist without '_' at the beginning
-    $newResourceToAnalyze = realpath($absoluteImportPathWithParentFolders);
-
-    if ($newResourceToAnalyze === false)
-      // Does the file exist with '_' at the beginning
-      $newResourceToAnalyze = realpath($absoluteImportPathWithParentFoldersAlt);
-
-    // If does not exist in the two previously cases, it is surely a wrongly written import
-    if ($newResourceToAnalyze === false)
-    {
-      echo CLI_ERROR, 'In the file ', returnLegiblePath2($mainResource),
-        CLI_ERROR, ',', PHP_EOL, 'this import path is wrong ', CLI_INFO_HIGHLIGHT, $fullImportPath, CLI_ERROR,
-        PHP_EOL,'as it leads to ', returnLegiblePath2($absoluteImportPathWithParentFolders), CLI_ERROR,
-        ' or to ', returnLegiblePath2($absoluteImportPathWithParentFoldersAlt), CLI_ERROR, '.',
-        END_COLOR, PHP_EOL;
-    }
-
-    if (searchFor($newResourceToAnalyze, $stringToTest, $dotExtension, $eventsDebug))
-      break;
-  }
-
-  return false;
-}
-
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
@@ -276,7 +176,7 @@ $inotifyInstance = inotify_init();
 stream_set_blocking($inotifyInstance, false);
 
 // ******************** ADDING WATCHES ********************
-
+require CONSOLE_PATH . 'deployment/genWatcher/searchSassLastLeaves.php';
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
 $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
@@ -284,6 +184,8 @@ $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SK
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
+// SASS/SCSS tree cache to optimize updates
+$sassTree = [0 => []];
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
 
@@ -353,13 +255,17 @@ foreach($iterator as $entry)
       {
         $mainResourceFilename = $entry->getFilename();
 
-        if (substr($mainResourceFilename, 0,1) !== '_'
-          && ($extension === 'scss' || $extension === 'sass'))
+        if (($extension === 'scss' || $extension === 'sass') && $mainResourceFilename[0] !== '_')
+        {
+          $dotExtension = '.' . $extension;
           $sassMainResources[$mainResourceFilename] = $realPath;
+          searchSassLastLeaves($sassTree, $realPath, $realPath, $dotExtension);
+        }
       }
     }
   }
 }
+
 unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
 // ******************** INTRODUCTION TEXT ********************
@@ -495,7 +401,7 @@ while (true)
 
           // If the file is meant to be used directly (this file will probably be the one that import the others)
           // like resource.scss
-          if (substr($filename, 0,1) !== '_')
+          if ($filename[0] !== '_')
           {
             unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
             [
@@ -575,33 +481,45 @@ while (true)
               $baseName,
               $resourceName
             );
-          } elseif (substr($baseName, 0, 1) !== '_')
+          } else
           {
-            // If the file is meant to be used directly (this file will probably be the one that import the others)
-            // like resource.scss
-            $return = generateStylesheetsFiles(
-              $baseName,
-              $resourcesMainFolder,
-              $resourcesFolderEndPath,
-              $resourceName,
-              $extension,
-              GEN_WATCHER_VERBOSE > 0
-            );
+            if ($baseName[0] !== '_')
+            {
+              // If the file is meant to be used directly (this file will probably be the one that import the others)
+              // like resource.scss
+              $return = generateStylesheetsFiles(
+                $baseName,
+                $resourcesMainFolder,
+                $resourcesFolderEndPath,
+                $resourceName,
+                $extension,
+                GEN_WATCHER_VERBOSE > 0
+              );
+            } else
+            {
+              $return = '';
+
+              // If the file is not meant to be used directly (this file will probably be imported by other ones)
+              // like _resource.scss ... then we use our tree to speed up things
+              foreach(array_keys($sassTree[$resourceName]) as $resourceToCompile)
+              {
+                $resourceFromTreeToCompile = $sassTree[0][$resourceToCompile];
+                [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
+                  getPathInformations($resourceFromTreeToCompile);
+
+                $return .= generateStylesheetsFiles(
+                  $baseName,
+                  $resourcesMainFolder,
+                  $resourcesFolderEndPath,
+                  $resourceFromTreeToCompile,
+                  $extension,
+                  GEN_WATCHER_VERBOSE > 0
+                );
+              }
+            }
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else
-          {
-            // If the file is not meant to be used directly (this file will probably be imported by other ones)
-            // like _resource.scss
-            $stringToTest = substr($baseName, 1);
-            $dotExtension = '.' . $extension;
-
-            foreach($sassMainResources as $mainResource)
-            {
-              if (searchFor($mainResource, $stringToTest, $dotExtension, $eventsDebug))
-                break;
-            }
           }
         }
       } elseif (GEN_WATCHER_VERBOSE > 1)
