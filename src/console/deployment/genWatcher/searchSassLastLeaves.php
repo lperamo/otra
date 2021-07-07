@@ -7,7 +7,12 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\deployment\getPathInformations;
 use function otra\tools\files\returnLegiblePath2;
 
+const REGEX_SASS_IMPORT = '`@(?:import|use)\s\'([^\':]{0,})\'\s{0,};`';
+
 /**
+ * We go to the top of the SASS/SCSS dependencies tree (the top having the files without '_') and
+ * stores the links between leaves and main stylesheets.
+ *
  * @param array  $sassTree
  * @param string $realPath
  * @param string $previousImportedStylesheetFound
@@ -28,7 +33,7 @@ function searchSassLastLeaves(
   $resourcesPath = $resourcesMainFolder . $resourcesFolderEndPath;
   $fileContent = file_get_contents($previousImportedStylesheetFound);
   preg_match_all(
-    '`@(?:import|use)\s\'([^\':]{0,})\'\s{0,};`',
+    REGEX_SASS_IMPORT,
     $fileContent,
     $importedStylesheetsFound
   );
@@ -83,7 +88,20 @@ function searchSassLastLeaves(
       END_COLOR, PHP_EOL;
     }
 
-    $sassTree[$previousImportedStylesheetFound][] = $realPath;
+    // if the stylesheet IS NOT the main stylesheet then we add it to the tree
+    if ($realPath !== $previousImportedStylesheetFound)
+    {
+      // If the stylesheet is not in the tree, we add it in the first entry that references all the main paths
+      // and we add to the tree the identifier that will be at the end of the references array
+      if (!in_array($realPath, $sassTree[0]))
+      {
+        $sassTree[0][] = $realPath;
+        $sassTree[$previousImportedStylesheetFound][count($sassTree[0]) - 1] = true;
+      } else
+        // If it WAS in the tree, then we just add the identifier found in the references array that matches this file
+        $sassTree[$previousImportedStylesheetFound][array_search($realPath, $sassTree[0])] = true;
+    }
+
     searchSassLastLeaves($sassTree, $realPath, $newResourceToAnalyze, $dotExtension);
   }
 }

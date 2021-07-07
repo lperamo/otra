@@ -185,8 +185,9 @@ $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SK
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 // SASS/SCSS tree cache to optimize updates
-// and SASS/SCSS resources (that have dependencies) that we have to watch
-$sassTree = $sassMainResources = [];
+$sassTree = [0 => []];
+// SASS/SCSS resources (that have dependencies) that we have to watch
+$sassMainResources = [];
 
 /** @var SplFileInfo $entry */
 foreach($iterator as $entry)
@@ -499,17 +500,18 @@ while (true)
               $return = '';
 
               // If the file is not meant to be used directly (this file will probably be imported by other ones)
-              // like _resource.scss
-              foreach($sassTree[$resourceName] as $resourceToCompile)
+              // like _resource.scss ... then we use our tree to speed up things
+              foreach(array_keys($sassTree[$resourceName]) as $resourceToCompile)
               {
+                $resourceFromTreeToCompile = $sassTree[0][$resourceToCompile];
                 [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
-                  getPathInformations($resourceToCompile);
+                  getPathInformations($resourceFromTreeToCompile);
 
                 $return .= generateStylesheetsFiles(
                   $baseName,
                   $resourcesMainFolder,
                   $resourcesFolderEndPath,
-                  $resourceToCompile,
+                  $resourceFromTreeToCompile,
                   $extension,
                   GEN_WATCHER_VERBOSE > 0
                 );
