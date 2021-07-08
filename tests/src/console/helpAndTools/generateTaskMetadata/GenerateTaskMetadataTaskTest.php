@@ -7,7 +7,8 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 
 /**
@@ -42,7 +43,8 @@ class GenerateTaskMetadataTaskTest extends TestCase
     self::assertFileEquals(
       $expectedFile,
       $fileToTest,
-      'Checking tasks help. ' . $expectedFile . ' vs ' . $fileToTest
+      'Checking tasks help. ' . CLI_INFO_HIGHLIGHT . $expectedFile . CLI_ERROR . ' vs ' . CLI_INFO_HIGHLIGHT .
+      $fileToTest . CLI_ERROR
     );
 
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME;
@@ -50,7 +52,8 @@ class GenerateTaskMetadataTaskTest extends TestCase
     self::assertFileEquals(
       $expectedFile,
       TASK_CLASS_MAP_PATH,
-      'Checking task classmap. ' . $expectedFile . ' vs ' . TASK_CLASS_MAP_PATH
+      'Checking task classmap. ' . CLI_INFO_HIGHLIGHT . $expectedFile . CLI_ERROR . ' vs ' .
+      CLI_INFO_HIGHLIGHT . TASK_CLASS_MAP_PATH . CLI_ERROR
     );
 
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::SHELL_COMPLETIONS_FILENAME;
@@ -59,7 +62,8 @@ class GenerateTaskMetadataTaskTest extends TestCase
     self::assertFileEquals(
       $expectedFile,
       $fileToTest,
-      'Checking shell completions. ' . $expectedFile . ' vs '. $fileToTest
+      'Checking shell completions. ' . CLI_INFO_HIGHLIGHT . $expectedFile . CLI_ERROR . ' vs '.
+      CLI_INFO_HIGHLIGHT . $fileToTest . CLI_ERROR
     );
 
     self::expectOutputString(

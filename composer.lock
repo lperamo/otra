@@ -92,12 +92,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8"
+                "reference": "8e3c2dd9318bd9b97eb7249f869a64f33c5039ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8",
-                "reference": "e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/8e3c2dd9318bd9b97eb7249f869a64f33c5039ad",
+                "reference": "8e3c2dd9318bd9b97eb7249f869a64f33c5039ad",
                 "shasum": ""
             },
             "require": {
@@ -155,7 +155,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-23T19:06:53+00:00"
+            "time": "2021-06-30T13:02:00+00:00"
         }
     ],
     "packages-dev": [],
@@ -178,5 +178,5 @@
         "ext-pdo_mysql": "*",
         "ext-zlib": "*"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
