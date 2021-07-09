@@ -10,7 +10,7 @@ use function otra\tools\files\returnLegiblePath2;
 const REGEX_SASS_IMPORT = '`@(?:import|use)\s\'([^\':]{0,})\'\s{0,};`';
 
 /**
- * We go to the top of the SASS/SCSS dependencies tree (the top having the files without '_') and
+ * We go to the SASS/SCSS dependencies tree (the top having the files without '_') and
  * stores the links between leaves and main stylesheets.
  *
  * @param array  $sassTree

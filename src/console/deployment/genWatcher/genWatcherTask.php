@@ -13,7 +13,7 @@ use otra\config\AllConfig;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use const otra\cache\php\{BASE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\{ADD_BOLD, CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
 use const otra\console\deployment\
 {
@@ -26,6 +26,7 @@ use const otra\console\deployment\
   WATCH_FOR_TS_RESOURCES
 };
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
+use function otra\console\convertArrayFromVarExportToShortVersion;
 use function otra\tools\files\returnLegiblePath;
 
 // Initialization
@@ -97,6 +98,9 @@ if (GEN_WATCHER_VERBOSE > 1)
   define(__NAMESPACE__ . '\\DATA_NAME_PADDING', 34);
   define(__NAMESPACE__ . '\\DATA_WATCHED_RESOURCE_PADDING', 64);
 }
+
+if (WATCH_FOR_CSS_RESOURCES)
+  define('SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
 
 define(
   __NAMESPACE__ . '\\EVENT_TO_TEST_FOR_SAVE',
@@ -188,6 +192,7 @@ $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterat
 $sassTree = [0 => []];
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
+$sassTreeDoesNotExist = !file_exists(SASS_TREE_CACHE_PATH);
 
 /** @var SplFileInfo $entry */
 foreach($iterator as $entry)
@@ -255,11 +260,12 @@ foreach($iterator as $entry)
       {
         $mainResourceFilename = $entry->getFilename();
 
-        if (($extension === 'scss' || $extension === 'sass') && $mainResourceFilename[0] !== '_')
+        if (($extension === 'scss' || $extension === 'sass')
+          && $mainResourceFilename[0] !== '_'
+          && $sassTreeDoesNotExist)
         {
-          $dotExtension = '.' . $extension;
           $sassMainResources[$mainResourceFilename] = $realPath;
-          searchSassLastLeaves($sassTree, $realPath, $realPath, $dotExtension);
+          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension);
         }
       }
     }
@@ -268,16 +274,35 @@ foreach($iterator as $entry)
 
 unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
+// If we are looking for SASS/SCSS resources then we certainly have created a dependency tree so we will now saving this
+// tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
+if (WATCH_FOR_CSS_RESOURCES)
+{
+  if ($sassTreeDoesNotExist)
+  {
+    require CONSOLE_PATH . '/tools.php';
+    file_put_contents(
+      SASS_TREE_CACHE_PATH,
+      '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
+      convertArrayFromVarExportToShortVersion(var_export($sassTree, true)) . ';'
+    );
+  } else
+    $sassTree = file_get_contents(SASS_TREE_CACHE_PATH);
+}
+
 // ******************** INTRODUCTION TEXT ********************
 
-echo CLI_INFO, (GEN_WATCHER_VERBOSE > 0
-  ? 'BASE_PATH' . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
-  : 'Watcher started.' . END_COLOR)
-  , PHP_EOL;
+echo (GEN_WATCHER_VERBOSE > 0
+  ? CLI_INFO . 'BASE_PATH' . CLI_BASE . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
+  : CLI_BASE . 'Watcher started.' . END_COLOR)
+  , 'Type ', CLI_INFO_HIGHLIGHT, 'q', CLI_BASE, ' to stop watching.',
+  END_COLOR, PHP_EOL;
 
 require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
 // ******************** Watching ! ********************
+// Allows to not be forced to type 'enter' after typing 'q'
+system('stty cbreak -echo');
 while (true)
 {
   $events = inotify_read($inotifyInstance);
@@ -531,6 +556,9 @@ while (true)
     if (GEN_WATCHER_VERBOSE > 0 && $eventsDebug !== '')
       echo $eventsDebug, PHP_EOL;
   }
+
+  if (fgetc(STDIN) === 'q')
+    break;
 
   // Avoid watching too much to avoid performance issues
   usleep(100);
