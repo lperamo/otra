@@ -1,0 +1,10 @@
+////
+/// @group Flex container
+/// @since 1.0
+/// @author Lionel Péramo
+////
+@media all and (min-width : 1000px) {
+  .max-width--50-percent {
+    max-width: 50%;
+  }
+}

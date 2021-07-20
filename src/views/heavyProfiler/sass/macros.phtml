@@ -1,0 +1,50 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\sass;
+
+use const otra\cache\php\BASE_PATH;
+
+/**
+ * @param string $sassFile
+ */
+function makeTooltip(string $sassFile)
+{
+  $shortSassFile = str_contains($sassFile, BASE_PATH)
+    ? str_replace(BASE_PATH, '', $sassFile)
+    : $sassFile;
+  ?>
+  <span class="sass-tooltip"><?= basename($sassFile) ?></span>
+  <div><?php
+    if (str_contains($sassFile, BASE_PATH))
+    { ?>
+      <?= BASE_PATH ?><span class="sass-tooltip--important-chunk"><?= $shortSassFile; ?></span><?php
+    } else
+      echo $shortSassFile
+    ?>
+  </div>
+  <?php
+}
+
+/**
+ * @param array $allSassKeys All keys of the array that contains all the SASS files
+ * @param array $tree        Sub branches of the calling branch from the full SASS dependencies tree
+ */
+function showBranch(array $allSassKeys, array $tree) : void
+{
+  ?><ul>
+  <?php
+  foreach ($tree as $sassFile => $branch)
+  {
+    ?>
+    <li>
+      <?php
+      makeTooltip($allSassKeys[$sassFile]);
+      if (!empty($branch)) showBranch($allSassKeys, $branch);
+      ?>
+    </li>
+    <?php
+  }
+  ?>
+  </ul><?php
+}
+?>

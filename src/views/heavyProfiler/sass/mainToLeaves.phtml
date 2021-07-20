@@ -1,0 +1,32 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\sass;
+
+const KEY_MAIN_TO_LEAVES = 1;
+/** @var array $allSassKeys */
+?>
+<details class="accordion">
+  <summary class="accordion">Main SASS/SCSS files to dependency leaves</summary>
+  <div class="accordion--block">
+    <ul>
+      <?php
+      if (isset($sassTree[KEY_MAIN_TO_LEAVES]))
+      {
+        foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $dependencyLeave => $mainSassFiles)
+        {
+          ?>
+          <li><?php makeTooltip($allSassKeys[$dependencyLeave]) ?>
+          <ul><?php
+          foreach ($mainSassFiles as $mainSassFile)
+          {
+            ?>
+            <li><?php makeTooltip($allSassKeys[$mainSassFile]); ?></li>
+            <?php
+          }
+          ?></ul></li><?php
+        }
+      }
+      ?>
+    </ul>
+  </div>
+</details>

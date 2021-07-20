@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+/** @var bool $cacheEnabled */
+if ($cacheEnabled)
+{
+  ?><button type="button" class="otra--help-cursor dbg-bar--block"
+            title="⚠ This tool is not available with an enabled cache">⚠ Template</button>
+  <div></div>
+  <?php
+} else
+{ ?>
+  <a href="<?= SITE_HOST ?>/profiler/templateStructure?route=<?= ROUTE ?>" rel="noopener nofollow noreferrer"
+     target="profiler" class="otra--help-cursor dbg-bar--block"
+     title="Template structure as viewed by the template motor">Template</a>
+<?php } ?>

@@ -100,7 +100,7 @@ namespace otra\bin
     require CLASSMAP[$className];
   });
 
-// If we didn't specify any command, list the available commands
+  // If we didn't specify any command, list the available commands
   if ($argc < 2)
   {
     TasksManager::showCommands('No specified commands ! We then show the available commands ... ');

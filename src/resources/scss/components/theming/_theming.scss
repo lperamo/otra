@@ -1,7 +1,8 @@
 ////
 /// Theming component.
-/// @access public
 ///
+/// @group Theming
+/// @access public
 /// @since 1.2
 /// @author Lionel Péramo
 ////
@@ -40,8 +41,8 @@ $processing-theme : '';
 /// @param  {map}    $theme                      - The theme 'light' or 'dark'.
 /// @param  {string} $property
 /// @param  {string} $color
-/// @param  {string} $additionalPropertiesBefore '' Will be put at the beginning of the value
-/// @param  {string} $additionalPropertiesAfter  '' Will be put at the end of the value
+/// @param  {string} $additionalPropertiesBefore [''] Will be put at the beginning of the value
+/// @param  {string} $additionalPropertiesAfter  [''] Will be put at the end of the value
 ///
 @mixin theme-property($theme, $property, $color, $additionalPropertiesBefore: '', $additionalPropertiesAfter: '') {
   $darkenPosition : str-index($additionalPropertiesBefore, 'darken');
@@ -51,18 +52,34 @@ $processing-theme : '';
     $color : darken(map-get($theme, $color), $additionalPropertiesAfter);
     $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $darkenPosition - 1);
 
-    #{$property}: unquote($additionalPropertiesBefore + ' ' + $color);
+    @if ($additionalPropertiesBefore != '') {
+      $additionalPropertiesBefore : $additionalPropertiesBefore + ' ';
+    }
+
+    #{$property}: unquote($additionalPropertiesBefore + $color);
   }
 
   @else if($lightenPosition != null) { // lighten function used
     $color : lighten(map-get($theme, $color), $additionalPropertiesAfter);
-    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $lightenPosition - 1);
+    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $lightenPosition - 1) + ' ';
 
-    #{$property}: unquote($additionalPropertiesBefore + ' ' + $color);
+    @if ($additionalPropertiesBefore != '') {
+      $additionalPropertiesBefore : $additionalPropertiesBefore + ' ';
+    }
+
+    #{$property}: unquote($additionalPropertiesBefore + $color);
   }
 
   @else {
-    #{$property}: unquote($additionalPropertiesBefore + ' ' + map-get($theme, $color) + ' ' + $additionalPropertiesAfter);
+    @if ($additionalPropertiesAfter != '') {
+      $additionalPropertiesAfter : ' ' + $additionalPropertiesAfter;
+    }
+
+    @if ($color == 'audio-player--thumb-border') {
+      @debug ('color', $color, map-get($theme, $color));
+    }
+
+    #{$property}: unquote($additionalPropertiesBefore + map-get($theme, $color) + $additionalPropertiesAfter);
   }
 }
 
@@ -72,8 +89,8 @@ $processing-theme : '';
 /// @access public
 /// @param  {string} $property
 /// @param  {string} $color
-/// @param  {string} $additionalPropertiesBefore '' Will be put at the beginning of the value
-/// @param  {string} $additionalPropertiesAfter  '' Will be put at the end of the value
+/// @param  {string} $additionalPropertiesBefore [''] Will be put at the beginning of the value
+/// @param  {string} $additionalPropertiesAfter  [''] Will be put at the end of the value
 ///
 @mixin theme($property, $color, $additionalPropertiesBefore : '', $additionalPropertiesAfter : '') {
   @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
@@ -117,16 +134,17 @@ $processing-theme : '';
 ///
 /// @return {list} $property-to-theme
 ///
-@function _get-color($theme, $suffix, $color) {
+@function _get-color-code($theme, $suffix, $color, $themeUsed) {
   // testing if color code exists in the themes map
   $suffixed-color : $color + $suffix;
 
   // Is there a color code for the suffix provided with the class?
-  @if ($suffixed-color != $color and map.get($theme, $suffixed-color) != null) {
+  @if ($themeUsed and $suffixed-color != $color and map.get($theme, $suffixed-color) != null) {
     $color : $suffixed-color;
   }
+
   // Is there a color code without suffix for this component?
-  @else if (map.get($theme, $color) == null) {
+  @else if (not $themeUsed or map.get($theme, $color) == null) {
     $default-color : 'default--' + $color;
 
     // Do we need the default component color code?
@@ -135,8 +153,9 @@ $processing-theme : '';
     }
 
     @else {
-      @error "The color '" + $suffixed-color + "' does not exist in your " + $processing-theme
-        + " theme map or you did not use a correct syntax.";
+      @error "Cannot set the color. Problem can be : - The color '" + $suffixed-color + "' does not exist in your " +
+        $processing-theme +
+        " theme map - you did not use a correct syntax - you wanted to use defaults values but there are no default values for this component - you set `null` for this color";
     }
   }
 
@@ -152,8 +171,14 @@ $processing-theme : '';
 ///
 @mixin mass-theme-properties($theme, $properties-to-theme) {
   $suffix : list.nth($properties-to-theme, 1);
+  $themeUsed : list.nth($properties-to-theme, 2);
+
+  // we remove the suffix from the map
+  $properties-to-theme : utils.remove-nth($properties-to-theme, 1);
+  // we remove the themeUsed variable from the map
   $properties-to-theme : utils.remove-nth($properties-to-theme, 1);
 
+  // Checks if there is only one property to theme
   @if (list.length(list.nth($properties-to-theme, 1)) < 2) {
     $property-to-theme: $properties-to-theme;
     $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
@@ -161,13 +186,13 @@ $processing-theme : '';
     @include theme-property(
       $theme,
       list.nth($property-to-theme, 1), // property
-      _get-color($theme, $suffix, list.nth($property-to-theme, 2)),
+      _get-color-code($theme, $suffix, list.nth($property-to-theme, 2), $themeUsed),
       list.nth($property-to-theme, 3), // before
       list.nth($property-to-theme, 4)  // after
     );
   }
 
-  @else {
+  @else { // Otherwise there are at least two properties to theme
     @each $property-to-theme in $properties-to-theme {
       @if (list.length($property-to-theme) > 1) {
         $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
@@ -175,7 +200,7 @@ $processing-theme : '';
         @include theme-property(
           $theme,
           list.nth($property-to-theme, 1), // property
-          _get-color($theme, $suffix, list.nth($property-to-theme, 2)),
+          _get-color-code($theme, $suffix, list.nth($property-to-theme, 2), $themeUsed),
           list.nth($property-to-theme, 3), // before
           list.nth($property-to-theme, 4)  // after
         );
@@ -189,8 +214,12 @@ $processing-theme : '';
 ///
 /// @access public
 /// @param  {list}    $properties-to-theme
+/// @param  {string}  $suffix              ['']    - Suffix put after all the selectors
+/// @param  {bool}    $themeUsed           [false] - Are we using a theme?
 ///
-@mixin mass-theme($properties-to-theme) {
+@mixin mass-theme($properties-to-theme, $suffix: '', $themeUsed: false) {
+  $properties-to-theme : list.join(($suffix, $themeUsed), $properties-to-theme);
+
   @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
     $processing-theme : 'light' !global;
 
@@ -209,8 +238,8 @@ $processing-theme : '';
 ///
 /// @access public
 /// @param {string} $image
-/// @param {string} $after      ''
-/// @param {string} $blend-mode 'soft-light'
+/// @param {string} $after      ['']
+/// @param {string} $blend-mode ['soft-light']
 ///
 @mixin blend-image($image, $after : '', $blend-mode : 'soft-light') {
   @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
@@ -267,16 +296,53 @@ $processing-theme : '';
 /// @access public
 ///
 /// @param {map}    $_to_theme
-/// @param {string} $suffix    '' - Suffix put after all the selectors
+/// @param {string} $suffix    ['']    - Suffix put after all the selectors
+/// @param {bool}   $suffix    [false] - Are we using a theme?
 ///
-@mixin to-theme($_to-theme, $suffix: '') {
+@mixin to-theme($_to-theme, $suffix: '', $themeUsed: true) {
   $suffixed-to-theme : ();
+  $found : false;
 
   @each $rule, $properties in $_to-theme {
-    // prepending the selector suffix
-    $properties : list.join($suffix, $properties);
-    $suffixed-to-theme : map.merge($suffixed-to-theme, ($rule : ($properties)));
-  }
+    $list-length : list.length($to-theme);
+    $found : false;
 
-  $to-theme : map.merge($to-theme, $suffixed-to-theme) !global;
+    @if ($list-length > 0) {
+      @for $i from 1 through $list-length {
+        $old-rule       : list.nth(map.keys($to-theme), $i);
+        $old-properties : list.nth(list.nth($to-theme, $i), 2);
+        // we remove the suffix from the map
+        $old-properties : utils.remove-nth($old-properties, 1);
+        // we remove the themeUsed variable from the map
+        $old-properties : utils.remove-nth($old-properties, 1);
+
+        @if ($rule == $old-rule) {
+          @if (list.length(list.nth($old-properties, 1)) > 1) {
+            $old-properties : list.join(
+              list.append((), list.nth($old-properties, 1)),
+              list.append((), list.nth($old-properties, 2)),
+              'comma'
+            );
+            $properties : list.join($properties, $old-properties, 'comma');
+          }
+
+          @else {
+            $properties : list.append((), $properties, 'comma');
+            $old-properties : list.append(list.nth($old-properties, 1), list.nth($old-properties, 2), 'comma');
+            $properties : list.append($properties, $old-properties, 'comma');
+          }
+
+          $found : true;
+          $i     : $list-length;
+        }
+      }
+    }
+
+    // prepending the selector suffix before updating the global themes
+    $to-theme : map.set(
+      $to-theme,
+      $rule,
+      list.join(($suffix, $themeUsed), $properties)
+    ) !global;
+  }
 }

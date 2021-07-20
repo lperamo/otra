@@ -1,3 +1,9 @@
+////
+/// @group Accordion
+/// @since 1.0
+/// @author Lionel Péramo
+////
+
 // loading sass modules
 @use 'sass:map';
 
@@ -29,9 +35,9 @@ $defaults : (
 /// @access public
 /// @param  {array} $options ()
 ///
-/// @since 1.0
-/// @author Lionel Péramo
+
 @mixin create($options : ()) {
+  $themeUsed: map.has-key($options, 'themes');
   $options : map.merge($defaults, $options);
   // extracting variables...
   // Suffix to allow different configurations for the same kind of component
@@ -73,7 +79,8 @@ $defaults : (
       // appearance
       @include theming.to-theme(
         (#{&} : ('background-image', map.get($options, 'accordion--background-image'))),
-        $suffix
+        $suffix,
+        $themeUsed
       );
 
       cursor          : pointer;
@@ -94,7 +101,8 @@ $defaults : (
         // appearance
         @include theming.to-theme(
           (#{&} : ('background-image', map.get($options, 'accordion--arrow--background-image'))),
-          $suffix
+          $suffix,
+          $themeUsed
         );
 
         -webkit-background-clip : text;

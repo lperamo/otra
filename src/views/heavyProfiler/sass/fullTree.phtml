@@ -1,0 +1,29 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\sass;
+
+const KEY_FULL_TREE = 2;
+/** @var array $allSassKeys */
+?>
+<details class="accordion">
+  <summary class="accordion">Full dependency tree</summary>
+  <div class="accordion--block">
+    <ul>
+      <?php
+      if (isset($sassTree[KEY_FULL_TREE]))
+      {
+        foreach ($sassTree[KEY_FULL_TREE] as $sassFile => $sassFullTree)
+        {
+          ?>
+          <li>
+          <?php
+          makeTooltip($allSassKeys[$sassFile]);
+          showBranch($allSassKeys, $sassFullTree);
+          ?>
+          </li><?php
+        }
+      }
+      ?>
+    </ul>
+  </div>
+</details>

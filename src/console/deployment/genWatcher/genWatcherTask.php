@@ -10,11 +10,23 @@ namespace otra\console\deployment\genWatcher;
 use FilesystemIterator;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
+use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use function otra\console\convertLongArrayToShort;
 use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
-use const otra\console\{ADD_BOLD, CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, REMOVE_BOLD_INTENSITY};
+use const otra\console\
+{ADD_BOLD,
+  CLI_BASE,
+  CLI_ERROR,
+  CLI_GRAY,
+  CLI_INFO,
+  CLI_INFO_HIGHLIGHT,
+  END_COLOR,
+  ERASE_SEQUENCE,
+  REMOVE_BOLD_INTENSITY,
+  SUCCESS};
 use const otra\console\deployment\
 {
   FILE_TASK_GCC,
@@ -26,7 +38,6 @@ use const otra\console\deployment\
   WATCH_FOR_TS_RESOURCES
 };
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
-use function otra\console\convertArrayFromVarExportToShortVersion;
 use function otra\tools\files\returnLegiblePath;
 
 // Initialization
@@ -121,6 +132,27 @@ define(
 }
 
 /**
+ * @param $fd
+ *
+ * @throws OtraException
+ * @return false|string
+ */
+function nonBlockRead($fd) : false|string
+{
+  $stdin = [$fd];
+  $stderr = $stdout = [];
+  $result = stream_select($stdin, $stdout, $stderr, 0);
+
+  if ($result === false)
+    throw new OtraException('stream_select failed');
+
+  if ($result === 0)
+    return false;
+
+  return stream_get_line($fd, 1);
+}
+
+/**
  * @param int    $binaryMask
  * @param int    $cookie
  * @param string $filename     Folder or file name
@@ -189,10 +221,11 @@ $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SK
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 // SASS/SCSS tree cache to optimize updates
-$sassTree = [0 => []];
+$sassTree = [0 => [], 1 => [], 2 => []];
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
 $sassTreeDoesNotExist = !file_exists(SASS_TREE_CACHE_PATH);
+$hasStartedCssTreeBuilding = false;
 
 /** @var SplFileInfo $entry */
 foreach($iterator as $entry)
@@ -264,8 +297,18 @@ foreach($iterator as $entry)
           && $mainResourceFilename[0] !== '_'
           && $sassTreeDoesNotExist)
         {
+          if (!$hasStartedCssTreeBuilding)
+          {
+            echo 'Building the SASS/SCSS dependency tree...', PHP_EOL;
+            $hasStartedCssTreeBuilding = true;
+          }
+
           $sassMainResources[$mainResourceFilename] = $realPath;
-          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension);
+          $level = 0;
+          $sassTreeString = SASS_TREE_STRING_INIT;
+          // We add the main sass file to the tree
+          $sassTree[KEY_ALL_SASS][$realPath] = true;
+          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $level, $sassTreeString);
         }
       }
     }
@@ -280,14 +323,28 @@ if (WATCH_FOR_CSS_RESOURCES)
 {
   if ($sassTreeDoesNotExist)
   {
+    echo ERASE_SEQUENCE, 'SASS/SCSS dependency tree built', SUCCESS, 'Saving the SASS/SCSS dependency tree...', PHP_EOL;
     require CONSOLE_PATH . '/tools.php';
-    file_put_contents(
-      SASS_TREE_CACHE_PATH,
-      '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-      convertArrayFromVarExportToShortVersion(var_export($sassTree, true)) . ';'
-    );
+    if (
+      file_put_contents(
+        SASS_TREE_CACHE_PATH,
+        '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
+        convertLongArrayToShort($sassTree) . ';'
+      ))
+      echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;
+    else
+    {
+      echo CLI_ERROR, 'Something went wrong when saving the tree.', END_COLOR, PHP_EOL;
+      throw new OtraException('', 1, '', NULL, [], true);
+    }
   } else
-    $sassTree = file_get_contents(SASS_TREE_CACHE_PATH);
+  {
+    echo 'Getting the SASS dependency tree...', PHP_EOL;
+    $sassTree = require SASS_TREE_CACHE_PATH;
+    echo ERASE_SEQUENCE, 'SASS dependency tree retrieved.', SUCCESS;
+  }
+
+  $sassTreeKeys = array_keys($sassTree[KEY_ALL_SASS]);
 }
 
 // ******************** INTRODUCTION TEXT ********************
@@ -526,9 +583,10 @@ while (true)
 
               // If the file is not meant to be used directly (this file will probably be imported by other ones)
               // like _resource.scss ... then we use our tree to speed up things
-              foreach(array_keys($sassTree[$resourceName]) as $resourceToCompile)
+              foreach ($sassTree[KEY_MAIN_TO_LEAVES][array_search($resourceName, $sassTreeKeys)] as
+                       $resourceToCompile)
               {
-                $resourceFromTreeToCompile = $sassTree[0][$resourceToCompile];
+                $resourceFromTreeToCompile = $sassTreeKeys[$resourceToCompile];
                 [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
                   getPathInformations($resourceFromTreeToCompile);
 
@@ -557,7 +615,7 @@ while (true)
       echo $eventsDebug, PHP_EOL;
   }
 
-  if (fgetc(STDIN) === 'q')
+  if (nonBlockRead(STDIN) === 'q')
     break;
 
   // Avoid watching too much to avoid performance issues

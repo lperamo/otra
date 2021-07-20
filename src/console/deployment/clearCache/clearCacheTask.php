@@ -189,6 +189,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 /* **************** CSS **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2)
 {
+  // TODO Handle CSS tree cache
   $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.gz');
   echo 'CSS files cleared', SUCCESS;
 }
@@ -273,4 +274,3 @@ if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
   unset($arrayToUnlink);
   echo 'Security files cleared', SUCCESS;
 }
-

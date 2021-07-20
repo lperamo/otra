@@ -89,6 +89,25 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #9ac,
+    // vertical menu
+    // -------------
+    'vertical-menu--border' : 1px solid #a3afff,
+    'vertical-menu--element--border' : 1px solid #a3afff,
+    // -- states start
+    // -- idle state
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'vertical-menu--element--color' : #ccc,
+    // -- active state
+    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'vertical-menu--element-active--color' : #fff,
+    // -- focus state
+    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'vertical-menu--element-focus--color' : #44a,
+    // -- hover state
+    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'vertical-menu--element-hover--color' : #fff,
+    // states end --
+    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
   ),
   'dark': (
     // generic color codes
@@ -96,7 +115,7 @@ $themes: (
     // ** body
     'body--background-image' : linear-gradient(185deg, #333, #446),
     'body--color' : #eee,
-    // ** exception
+    // ** exceptiontheming
     'exception--title--background-image' : linear-gradient(45deg, #333, #78b),
     'exception--title--text-shadow' : 0 0 3px #000,
     'exception--color--error-code' : #fda,
@@ -180,5 +199,24 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #bce,
+    // vertical menu
+    // -------------
+    'vertical-menu--border' : 1px solid #000,
+    'vertical-menu--element--border' : 1px solid #a3afff,
+    // -- states start
+    // -- idle state
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'vertical-menu--element--color' : #ccc,
+    // -- active state
+    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+    'vertical-menu--element-active--color' : #44a,
+    // -- focus state
+    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'vertical-menu--element-focus--color' : #44a,
+    // -- hover state
+    'vertical-menu--element-hover--background-image' : linear-gradient(#ccc 0%, #bedce8 45%, #ccc 100%),
+    'vertical-menu--element-hover--color' : #cc4,
+    // states end --
+    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
   )
 );
