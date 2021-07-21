@@ -14,7 +14,6 @@ use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use function otra\console\convertLongArrayToShort;
 use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\
 {ADD_BOLD,
@@ -37,6 +36,7 @@ use const otra\console\deployment\
   WATCH_FOR_PHP_FILES,
   WATCH_FOR_TS_RESOURCES
 };
+use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
 use function otra\tools\files\returnLegiblePath;
 
@@ -132,14 +132,14 @@ define(
 }
 
 /**
- * @param $fd
+ * @param $fileDescriptor
  *
  * @throws OtraException
  * @return false|string
  */
-function nonBlockRead($fd) : false|string
+function nonBlockRead($fileDescriptor) : false|string
 {
-  $stdin = [$fd];
+  $stdin = [$fileDescriptor];
   $stderr = $stdout = [];
   $result = stream_select($stdin, $stdout, $stderr, 0);
 
@@ -149,15 +149,15 @@ function nonBlockRead($fd) : false|string
   if ($result === 0)
     return false;
 
-  return stream_get_line($fd, 1);
+  return stream_get_line($fileDescriptor, 1);
 }
 
 /**
  * @param int    $binaryMask
  * @param int    $cookie
- * @param string $filename     Folder or file name
- * @param string $resource Folder of file watched
- * @param bool   $mustShowHeaders  Do we have to show the headers
+ * @param string $filename        Folder or file name
+ * @param string $resource        Folder of file watched
+ * @param bool   $mustShowHeaders Do we have to show the headers
  *
  * @return string The debug output
  */
@@ -202,6 +202,40 @@ function updatePHP(string $filename) : void
   // We updates routes configuration if the php file is a routes configuration file
   if ($filename === 'Routes.php')
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+}
+
+/**
+ * @param string $eventsDebug
+ * @param string $messageBefore
+ * @param string $filename
+ * @param string $messageAfter
+ * @param int    $binaryMask
+ * @param int    $cookie
+ * @param string $resourceToWatch
+ * @param bool   $headers
+ *
+ * @return string
+ */
+function addVerboseInformation(
+  string $eventsDebug,
+  string $messageBefore,
+  string $filename,
+  string $messageAfter,
+  int $binaryMask,
+  int $cookie,
+  string $resourceToWatch,
+  bool $headers
+) : string
+{
+  if (GEN_WATCHER_VERBOSE > 0)
+  {
+    $eventsDebug .= $messageBefore . returnLegiblePath($filename) . $messageAfter . PHP_EOL;
+
+    if (GEN_WATCHER_VERBOSE > 1)
+      $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $resourceToWatch, $headers);
+  }
+
+  return $eventsDebug;
 }
 
 // Configuring inotify
@@ -271,12 +305,12 @@ foreach($iterator as $entry)
   // Adding watches for resources files if needed
   if (!$haveBeenWatched && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
   {
-    // Does the resources path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath))
-      continue;
-
-    // starters are only meant to be copied, not used
-    if (str_contains($realPath, 'starters'))
+    if (
+      // Does the resources path belongs to a valid defined path ? If yes, we process it
+      isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath)
+      // starters are only meant to be copied, not used
+      || str_contains($realPath, 'starters')
+    )
       continue;
 
     if (in_array($extension, RESOURCES_TO_WATCH) || $isFolder)
@@ -315,7 +349,22 @@ foreach($iterator as $entry)
   }
 }
 
-unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
+// cleanup variables used to prepare the listening
+unset(
+  $argv,
+  $dir_iterator,
+  $entry,
+  $extension,
+  $hasStartedCssTreeBuilding,
+  $isFolder,
+  $iterator,
+  $mainResourceFilename,
+  $pathToAvoid,
+  $realPath,
+  // maybe those two variables have to been cleaned in TaskManager instead ?
+  $task,
+  $tasksClassMap
+);
 
 // If we are looking for SASS/SCSS resources then we certainly have created a dependency tree so we will now saving this
 // tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
@@ -347,6 +396,7 @@ if (WATCH_FOR_CSS_RESOURCES)
   $sassTreeKeys = array_keys($sassTree[KEY_ALL_SASS]);
 }
 
+unset($sassTreeDoesNotExist);
 // ******************** INTRODUCTION TEXT ********************
 
 echo (GEN_WATCHER_VERBOSE > 0
@@ -383,145 +433,18 @@ while (true)
       if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
-      $resourceName = is_dir($foldersWatchedIds[$watchDescriptor])
-        ? $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename
-        : $foldersWatchedIds[$watchDescriptor];
+      $resourceName = $foldersWatchedIds[$watchDescriptor];
+
+      if (is_dir($foldersWatchedIds[$watchDescriptor]))
+        $resourceName .= DIR_SEPARATOR . $filename;
 
       // If it is a temporary file, we skip it
       if (str_contains(substr($resourceName, -2), '~'))
         continue;
 
-      // User is adding a folder
-      if (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
-      {
-        // Adding a watch on the new folder
-        $foldersWatchedIds[inotify_add_watch(
-          $inotifyInstance,
-          $resourceName,
-          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-        )] = $resourceName;
+      $notTreated = true;
 
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($resourceName) . '. We now watching it.' .
-            PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
-        }
-
-        continue;
-      } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
-      {
-        // User is deleting a folder
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($resourceName) .
-            '. We do not watch it anymore.' . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
-        }
-
-        // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
-        unset($foldersWatchedIds[$watchDescriptor]);
-
-        continue;
-      } elseif ( // If it is an event IN_CREATE and is a file to watch
-        ($binaryMask & IN_CREATE) === IN_CREATE
-        && (
-          !isNotInThePath(PATHS_TO_HAVE_PHP, $resourceName)
-        || !isNotInThePath(PATHS_TO_HAVE_RESOURCES, $resourceName)
-        )
-      )
-      {
-        $extension = substr($filename, strrpos($filename, '.') + 1);
-
-        // If this is not a file that we want to watch, we skip it.
-        if (!in_array($extension, EXTENSIONS_TO_WATCH))
-         continue;
-
-        $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
-
-        if ($extension === '.scss' || $extension === '.sass')
-        {
-          $resourcesEntriesToWatch[] = $resourceName;
-          $sassMainResources[$filename] = $resourceName;
-        } elseif ($extension ===  'ts')
-          $resourcesEntriesToWatch[] = $resourceName;
-        elseif ($extension === 'php')
-          $phpEntriesToWatch[] = $resourceName;
-
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .= PHP_EOL . 'We are now watching the file ' . returnLegiblePath($filename) . '.' . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
-        }
-      } elseif ( // If it is an event IN_DELETE and is a file to watch
-        ($binaryMask & IN_DELETE) === IN_DELETE
-        && (in_array($resourceName, $phpEntriesToWatch)
-          || in_array($resourceName, $resourcesEntriesToWatch)
-        )
-      )
-      {
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .= PHP_EOL . 'The file ' .
-            returnLegiblePath($foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $resourceName) .
-            ' has been deleted. We remove related generated files.' . PHP_EOL . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
-        }
-
-        // // We make sure not to watch this file again and we clean up related generated files
-        if (str_contains($filename, '.scss'))
-        {
-          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-
-          // If the file is meant to be used directly (this file will probably be the one that import the others)
-          // like resource.scss
-          if ($filename[0] !== '_')
-          {
-            unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
-            [
-              $baseName,
-              $resourcesMainFolder,
-              $resourcesFolderEndPath
-            ] = getPathInformations($resourceName);
-
-            $cssPath = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5) . $baseName . '.css';
-            unlink($cssPath);
-            $cssMap = $cssPath . '.map';
-
-            if (file_exists($cssMap))
-              unlink($cssMap);
-          }
-        } elseif (str_contains($filename, '.ts'))
-        {
-          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-          [
-            $baseName,
-            $resourcesMainFolder,
-            $resourcesFolderEndPath
-          ] = getPathInformations($resourceName);
-
-          $jsPath = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 5) . $baseName . '.js';
-          unlink($jsPath);
-          $jsMap = $jsPath . '.map';
-
-          if (file_exists($jsMap))
-            unlink($jsMap);
-        }
-        elseif (str_contains($filename, '.php'))
-        {
-          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
-          updatePHP($resourceName);
-        }
-
-      } elseif ( // A save operation has been done
+      if ( // A save operation has been done
         (
           ($binaryMask & IN_ATTRIB) === IN_ATTRIB
           || ($binaryMask & EVENT_TO_TEST_FOR_SAVE) === EVENT_TO_TEST_FOR_SAVE
@@ -531,14 +454,17 @@ while (true)
         )
       )
       {
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename)
-            . ' modified! We launch the appropriate tasks.' . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
-        }
+        $notTreated = false;
+        addVerboseInformation(
+          $eventsDebug,
+          'The file ',
+          $filename,
+          ' modified! We launch the appropriate tasks.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename,
+          $headers
+        );
 
         if (in_array($resourceName, $phpEntriesToWatch))
           updatePHP($resourceName);
@@ -607,7 +533,151 @@ while (true)
               $eventsDebug .= $return;
           }
         }
-      } elseif (GEN_WATCHER_VERBOSE > 1)
+      } elseif ( // If it is an event IN_DELETE and is a file to watch
+        ($binaryMask & IN_DELETE) === IN_DELETE
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
+        )
+      )
+      {
+        $notTreated = false;
+
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'The file ',
+          $filename,
+          ' has been deleted. We remove related generated files.' . PHP_EOL,
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $resourceName,
+          $headers
+        );
+
+        // // We make sure not to watch this file again and we clean up related generated files
+        if (str_contains($filename, '.scss'))
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+
+          // If the file is meant to be used directly (this file will probably be the one that import the others)
+          // like resource.scss
+          if ($filename[0] !== '_')
+          {
+            unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
+            [
+              $baseName,
+              $resourcesMainFolder,
+              $resourcesFolderEndPath
+            ] = getPathInformations($resourceName);
+
+            $cssPath = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5) . $baseName . '.css';
+            unlink($cssPath);
+            $cssMap = $cssPath . '.map';
+
+            if (file_exists($cssMap))
+              unlink($cssMap);
+          }
+        } elseif (str_contains($filename, '.ts'))
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+          [
+            $baseName,
+            $resourcesMainFolder,
+            $resourcesFolderEndPath
+          ] = getPathInformations($resourceName);
+
+          $jsPath = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 5) . $baseName . '.js';
+          unlink($jsPath);
+          $jsMap = $jsPath . '.map';
+
+          if (file_exists($jsMap))
+            unlink($jsMap);
+        }
+        elseif (str_contains($filename, '.php'))
+        {
+          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+          updatePHP($resourceName);
+        }
+      } elseif ( // If it is an event IN_CREATE and is a file to watch
+        ($binaryMask & IN_CREATE) === IN_CREATE
+        && (
+          !isNotInThePath(PATHS_TO_HAVE_PHP, $resourceName)
+          || !isNotInThePath(PATHS_TO_HAVE_RESOURCES, $resourceName)
+        )
+      )
+      {
+        $notTreated = false;
+        $extension = substr($filename, strrpos($filename, '.') + 1);
+
+        // If this is not a file that we want to watch, we skip it.
+        if (!in_array($extension, EXTENSIONS_TO_WATCH))
+          continue;
+
+        $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
+
+        if ($extension === '.scss' || $extension === '.sass')
+        {
+          $resourcesEntriesToWatch[] = $resourceName;
+          $sassMainResources[$filename] = $resourceName;
+        } elseif ($extension === 'ts')
+          $resourcesEntriesToWatch[] = $resourceName;
+        elseif ($extension === 'php')
+          $phpEntriesToWatch[] = $resourceName;
+
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'We are now watching the file ',
+          $filename,
+          '.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+      } elseif (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
+      {
+        // Adding a watch on the new folder
+        // User is adding a folder
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $resourceName,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $resourceName;
+
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'Creating the folder ',
+          $resourceName,
+          '. We now watching it.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+
+        continue;
+      } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
+      {
+        $notTreated = false;
+
+        // User is deleting a folder
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'Deleting the folder ',
+          $resourceName,
+          '. We do not watch it anymore.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+
+        // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
+        unset($foldersWatchedIds[$watchDescriptor]);
+
+        continue;
+      }
+
+      if ($notTreated && GEN_WATCHER_VERBOSE > 1)
         $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
 
       $headers = false;
