@@ -590,7 +590,10 @@ while (true)
             deleteAsset($resourceName, 'css');
           }
         } elseif ($extension === 'ts')
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
           deleteAsset($resourceName, 'js');
+        }
         elseif ($extension === 'php')
         {
           unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
