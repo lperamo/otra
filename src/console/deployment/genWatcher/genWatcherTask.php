@@ -238,6 +238,30 @@ function addVerboseInformation(
   return $eventsDebug;
 }
 
+/**
+ * Delete an asset and its source map.
+ *
+ * @param string $assetName
+ * @param string $assetExtension
+ *
+ * @throws OtraException
+ */
+function deleteAsset(string $assetName, string $assetExtension)
+{
+  [
+    $baseName,
+    $resourcesMainFolder,
+    $resourcesFolderEndPath
+  ] = getPathInformations($assetName);
+
+  $assetPath = $resourcesMainFolder  . $assetExtension . '/' . substr($resourcesFolderEndPath, 5) . $baseName . '.' . $assetExtension;
+  unlink($assetPath);
+  $assetMap = $assetPath . '.map';
+
+  if (file_exists($assetMap))
+    unlink($assetMap);
+}
+
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
@@ -442,7 +466,11 @@ while (true)
       if (str_contains(substr($resourceName, -2), '~'))
         continue;
 
-      $notTreated = true;
+      // If it is not a folder
+      if (!(($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR
+    || ($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR))
+        // We store the extension without the dot
+        $extension = substr($filename, strrpos($filename, '.') + 1);
 
       if ( // A save operation has been done
         (
@@ -454,7 +482,6 @@ while (true)
         )
       )
       {
-        $notTreated = false;
         addVerboseInformation(
           $eventsDebug,
           'The file ',
@@ -473,8 +500,7 @@ while (true)
           [
             $baseName,
             $resourcesMainFolder,
-            $resourcesFolderEndPath,
-            $extension
+            $resourcesFolderEndPath
           ] = getPathInformations($resourceName);
 
           if ($extension === 'ts')
@@ -540,8 +566,6 @@ while (true)
         )
       )
       {
-        $notTreated = false;
-
         addVerboseInformation(
           $eventsDebug,
           PHP_EOL . 'The file ',
@@ -554,7 +578,7 @@ while (true)
         );
 
         // // We make sure not to watch this file again and we clean up related generated files
-        if (str_contains($filename, '.scss'))
+        if ($extension === 'scss')
         {
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
 
@@ -563,36 +587,11 @@ while (true)
           if ($filename[0] !== '_')
           {
             unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
-            [
-              $baseName,
-              $resourcesMainFolder,
-              $resourcesFolderEndPath
-            ] = getPathInformations($resourceName);
-
-            $cssPath = $resourcesMainFolder  . 'css/' . substr($resourcesFolderEndPath, 5) . $baseName . '.css';
-            unlink($cssPath);
-            $cssMap = $cssPath . '.map';
-
-            if (file_exists($cssMap))
-              unlink($cssMap);
+            deleteAsset($resourceName, 'css');
           }
-        } elseif (str_contains($filename, '.ts'))
-        {
-          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-          [
-            $baseName,
-            $resourcesMainFolder,
-            $resourcesFolderEndPath
-          ] = getPathInformations($resourceName);
-
-          $jsPath = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 5) . $baseName . '.js';
-          unlink($jsPath);
-          $jsMap = $jsPath . '.map';
-
-          if (file_exists($jsMap))
-            unlink($jsMap);
-        }
-        elseif (str_contains($filename, '.php'))
+        } elseif ($extension === 'ts')
+          deleteAsset($resourceName, 'js');
+        elseif ($extension === 'php')
         {
           unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
           updatePHP($resourceName);
@@ -605,16 +604,13 @@ while (true)
         )
       )
       {
-        $notTreated = false;
-        $extension = substr($filename, strrpos($filename, '.') + 1);
-
         // If this is not a file that we want to watch, we skip it.
         if (!in_array($extension, EXTENSIONS_TO_WATCH))
           continue;
 
         $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
 
-        if ($extension === '.scss' || $extension === '.sass')
+        if ($extension === 'scss' || $extension === 'sass')
         {
           $resourcesEntriesToWatch[] = $resourceName;
           $sassMainResources[$filename] = $resourceName;
@@ -657,8 +653,6 @@ while (true)
         continue;
       } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
       {
-        $notTreated = false;
-
         // User is deleting a folder
         addVerboseInformation(
           $eventsDebug,
@@ -675,10 +669,8 @@ while (true)
         unset($foldersWatchedIds[$watchDescriptor]);
 
         continue;
-      }
-
-      if ($notTreated && GEN_WATCHER_VERBOSE > 1)
-        $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
+      } elseif (GEN_WATCHER_VERBOSE > 1)
+          $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
 
       $headers = false;
     }
