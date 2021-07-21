@@ -601,6 +601,8 @@ while (true)
               }
             }
 
+            echo PHP_EOL;
+
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
           }
