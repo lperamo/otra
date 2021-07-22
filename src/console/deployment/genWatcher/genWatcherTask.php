@@ -18,7 +18,6 @@ use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH
 use const otra\console\
 {ADD_BOLD,
   CLI_BASE,
-  CLI_ERROR,
   CLI_GRAY,
   CLI_INFO,
   CLI_INFO_HIGHLIGHT,
@@ -36,7 +35,6 @@ use const otra\console\deployment\
   WATCH_FOR_PHP_FILES,
   WATCH_FOR_TS_RESOURCES
 };
-use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
 use function otra\tools\files\returnLegiblePath;
 
@@ -239,7 +237,7 @@ function addVerboseInformation(
 }
 
 /**
- * Delete an asset and its source map.
+ * Deletes an asset and its source map.
  *
  * @param string $assetName
  * @param string $assetExtension
@@ -254,7 +252,8 @@ function deleteAsset(string $assetName, string $assetExtension)
     $resourcesFolderEndPath
   ] = getPathInformations($assetName);
 
-  $assetPath = $resourcesMainFolder  . $assetExtension . '/' . substr($resourcesFolderEndPath, 5) . $baseName . '.' . $assetExtension;
+  $assetPath = $resourcesMainFolder . $assetExtension . '/' . substr($resourcesFolderEndPath,
+      5) . $baseName . '.' . $assetExtension;
   unlink($assetPath);
   $assetMap = $assetPath . '.map';
 
@@ -270,7 +269,7 @@ $inotifyInstance = inotify_init();
 stream_set_blocking($inotifyInstance, false);
 
 // ******************** ADDING WATCHES ********************
-require CONSOLE_PATH . 'deployment/genWatcher/searchSassLastLeaves.php';
+require CONSOLE_PATH . 'deployment/genWatcher/sassTools.php';
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
 $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
@@ -362,11 +361,10 @@ foreach($iterator as $entry)
           }
 
           $sassMainResources[$mainResourceFilename] = $realPath;
-          $level = 0;
           $sassTreeString = SASS_TREE_STRING_INIT;
           // We add the main sass file to the tree
           $sassTree[KEY_ALL_SASS][$realPath] = true;
-          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $level, $sassTreeString);
+          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $sassTreeString);
         }
       }
     }
@@ -397,19 +395,7 @@ if (WATCH_FOR_CSS_RESOURCES)
   if ($sassTreeDoesNotExist)
   {
     echo ERASE_SEQUENCE, 'SASS/SCSS dependency tree built', SUCCESS, 'Saving the SASS/SCSS dependency tree...', PHP_EOL;
-    require CONSOLE_PATH . '/tools.php';
-    if (
-      file_put_contents(
-        SASS_TREE_CACHE_PATH,
-        '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-        convertLongArrayToShort($sassTree) . ';'
-      ))
-      echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;
-    else
-    {
-      echo CLI_ERROR, 'Something went wrong when saving the tree.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
-    }
+    savingSassTree($sassTree);
   } else
   {
     echo 'Getting the SASS dependency tree...', PHP_EOL;
@@ -468,7 +454,7 @@ while (true)
 
       // If it is not a folder
       if (!(($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR
-    || ($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR))
+        || ($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR))
         // We store the extension without the dot
         $extension = substr($filename, strrpos($filename, '.') + 1);
 
@@ -503,6 +489,7 @@ while (true)
             $resourcesFolderEndPath
           ] = getPathInformations($resourceName);
 
+          /** @var string $extension */
           if ($extension === 'ts')
           {
             // 6 = length of devJs/
@@ -517,6 +504,45 @@ while (true)
             );
           } else
           {
+            preg_match_all(REGEX_SASS_IMPORT, file_get_contents($resourceName), $importedCssFound);
+            $countImports = 0;
+            $imports = [];
+
+            // if there are imports, we have to check
+            if (isset($importedCssFound[1][0]))
+            {
+              $matchedImports = $importedCssFound[1];
+
+              foreach($matchedImports as $matchedImport)
+              {
+                $resourcesPath = $resourcesMainFolder . $resourcesFolderEndPath;
+                [$newResourceToAnalyze] = getCssPathFromImport($matchedImport, '.' . $extension, $resourcesPath);
+                $foundKey = array_search($newResourceToAnalyze, $sassTreeKeys);
+                $imports[]= is_bool($foundKey) ? $newResourceToAnalyze : $foundKey;
+              }
+
+              $countImports = count($imports);
+            }
+
+            $sassFileKey = array_search($resourceName, $sassTreeKeys);
+
+            // browsing the full SASS/SCSS dependency tree to know if the imports number has changed
+            foreach ($sassTree[KEY_FULL_TREE] as $importingFile => &$importedFiles)
+            {
+              updateSassTreeAfterEvent(
+                $sassTree,
+                $sassTreeKeys,
+                $extension,
+                $sassFileKey,
+                $importingFile,
+                $importedFiles,
+                $countImports,
+                $imports
+              );
+            }
+
+            savingSassTree($sassTree);
+
             if ($baseName[0] !== '_')
             {
               // If the file is meant to be used directly (this file will probably be the one that import the others)

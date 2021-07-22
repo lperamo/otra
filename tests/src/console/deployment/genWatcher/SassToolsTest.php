@@ -13,7 +13,7 @@ use function otra\tools\debug\dump;
 /**
  * @runTestsInSeparateProcesses
  */
-class SearchSassLastLeavesTest extends TestCase
+class SassToolsTest extends TestCase
 {
   private const
     EXAMPLES_SCSS_PATH = TEST_PATH . 'examples/deployment/resources/scss/',
@@ -32,7 +32,7 @@ class SearchSassLastLeavesTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testOneMainSass() : void
+  public function testSearchOneMainSass() : void
   {
     // context
     // -- preparing the architecture
@@ -102,7 +102,7 @@ class SearchSassLastLeavesTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testTwoMainSass() : void
+  public function testSearchTwoMainSass() : void
   {
     // context
     // -- preparing the architecture
@@ -120,7 +120,7 @@ class SearchSassLastLeavesTest extends TestCase
 
     // -- including needed libraries
     require CORE_PATH . 'tools/debug/dump.php'; // only for debugging purposes
-    require CONSOLE_PATH . 'deployment/genWatcher/searchSassLastLeaves.php';
+    require CONSOLE_PATH . 'deployment/genWatcher/sassTools.php';
     require CONSOLE_PATH . 'deployment/taskFileInit.php';
 
     // -- defining constants and variables - part 2
