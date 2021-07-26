@@ -9,12 +9,12 @@ namespace otra\src\views\debugBar\sass;
   <div class="accordion--block">
     <ul>
       <?php
-      foreach(array_keys($sassTree[KEY_ALL_SASS]) as $sassFile)
+      foreach(array_keys($sassTree[KEY_ALL_SASS]) as $sassKey => $sassFile)
       {
         ?>
         <li>
         <?php
-        makeTooltip($sassFile);
+        makeTooltip($sassKey, $sassFile);
         ?>
         </li><?php
       }

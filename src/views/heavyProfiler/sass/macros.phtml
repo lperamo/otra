@@ -5,15 +5,16 @@ namespace otra\src\views\debugBar\sass;
 use const otra\cache\php\BASE_PATH;
 
 /**
+ * @param int    $sassKey
  * @param string $sassFile
  */
-function makeTooltip(string $sassFile)
+function makeTooltip(int $sassKey, string $sassFile)
 {
   $shortSassFile = str_contains($sassFile, BASE_PATH)
     ? str_replace(BASE_PATH, '', $sassFile)
     : $sassFile;
   ?>
-  <span class="sass-tooltip"><?= basename($sassFile) ?></span>
+  <span class="sass-tooltip"><?= $sassKey ?> => <?= basename($sassFile) ?></span>
   <div><?php
     if (str_contains($sassFile, BASE_PATH))
     { ?>
@@ -38,7 +39,7 @@ function showBranch(array $allSassKeys, array $tree) : void
     ?>
     <li>
       <?php
-      makeTooltip($allSassKeys[$sassFile]);
+      makeTooltip($sassFile, $allSassKeys[$sassFile]);
       if (!empty($branch)) showBranch($allSassKeys, $branch);
       ?>
     </li>

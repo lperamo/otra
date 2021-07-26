@@ -205,16 +205,16 @@ $themes: (
     'vertical-menu--element--border' : 1px solid #a3afff,
     // -- states start
     // -- idle state
-    'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #78b, #569, #78b),
     'vertical-menu--element--color' : #ccc,
     // -- active state
-    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #78b, #929fc3, #78b),
     'vertical-menu--element-active--color' : #44a,
     // -- focus state
     'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
     'vertical-menu--element-focus--color' : #44a,
     // -- hover state
-    'vertical-menu--element-hover--background-image' : linear-gradient(#ccc 0%, #bedce8 45%, #ccc 100%),
+    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #99a6cc, #569, #99a6cc),
     'vertical-menu--element-hover--color' : #cc4,
     // states end --
     'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'

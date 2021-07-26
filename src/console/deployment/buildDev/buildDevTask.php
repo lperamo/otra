@@ -114,7 +114,6 @@ foreach($iterator as $entry)
           $resourceName
         );
     } elseif (substr($baseName, 0, 1) !== '_' && WATCH_FOR_CSS_RESOURCES)
-    {
       generateStylesheetsFiles(
         $baseName,
         $resourcesMainFolder,
@@ -123,8 +122,6 @@ foreach($iterator as $entry)
         $extension,
         BUILD_DEV_VERBOSE > 0
       );
-      echo PHP_EOL;
-    }
   }
 }
 

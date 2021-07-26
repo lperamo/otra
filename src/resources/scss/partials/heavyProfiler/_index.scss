@@ -23,6 +23,10 @@
 
 $vertical-menu-width : 26rem;
 
+.vertical-menu.vertical-menu--container--item:first-child {
+  border-radius: 0;
+}
+
 .vertical-menu--container--item:hover:not(:active) {
   text-shadow : 1px 1px #6e7bcf;
 }

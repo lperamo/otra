@@ -604,9 +604,62 @@ while (true)
         );
 
         // // We make sure not to watch this file again and we clean up related generated files
-        if ($extension === 'scss')
+        if ($extension === 'scss' || $extension === 'sass')
         {
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+
+          // removing the sass file from the sass dependency tree
+          $sassKeyTreeToDelete = array_search($resourceName, $sassTreeKeys);
+
+          foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+          {
+            $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
+
+            if ($mainFileToDelete !== false)
+              unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
+
+            // If there are no more main files associated to the leave or the leave IS the file to delete
+            // => we remove the leave
+            if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
+              unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+          }
+
+          // We now adjust the indexes because there is one less element and therefore the things do not match anymore
+          $newMainToLeaves = [];
+
+          foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => $values)
+          {
+            $newLeave = ($leave > $sassKeyTreeToDelete) ? $leave - 1 : $leave;
+            $newValues = [];
+
+            foreach($values as $value)
+            {
+              $newValues[] = ($value > $sassKeyTreeToDelete) ? $value - 1 : $value;
+            }
+            $newMainToLeaves[$newLeave] = $newValues;
+          }
+          $sassTree[KEY_MAIN_TO_LEAVES] = $newMainToLeaves;
+
+          // cleaning variables that will not be used anymore
+          unset($leave, $value, $newMainToLeave);
+
+          $newFullTree = [];
+
+          foreach($sassTree[KEY_FULL_TREE] as $importingFile => $importedFiles)
+          {
+            if ($importingFile === $sassKeyTreeToDelete)
+              continue;
+
+            $newImportingFile = ($importingFile > $sassKeyTreeToDelete) ? $importingFile - 1 : $importingFile;
+            $newFullTree[$newImportingFile] = removeFileInFullTree($sassKeyTreeToDelete, $importedFiles);
+          }
+
+          $sassTree[KEY_FULL_TREE] = $newFullTree;
+
+          // removing the list of sass/scss files and cleaning variables that will not be used anymore
+          unset($sassTree[KEY_ALL_SASS][$resourceName], $sassKeyTreeToDelete);
+
+          savingSassTree($sassTree);
 
           // If the file is meant to be used directly (this file will probably be the one that import the others)
           // like resource.scss
@@ -643,6 +696,9 @@ while (true)
         {
           $resourcesEntriesToWatch[] = $resourceName;
           $sassMainResources[$filename] = $resourceName;
+
+          // We add the new resource to the SASS/SCSS dependency tree
+          $sassTree[KEY_ALL_SASS][$resourceName] = true;
         } elseif ($extension === 'ts')
           $resourcesEntriesToWatch[] = $resourceName;
         elseif ($extension === 'php')

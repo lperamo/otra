@@ -62,7 +62,7 @@ $defaults : (
       'default--vertical-menu--element--border' : 1px solid #000,
       // -- states start
       // idle state
-      'default--vertical-menu--element--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
+      'default--vertical-menu--element--background-image' : linear-gradient(45deg, #1c2427 0%, #18252a 45%, #1c2427 100%),
       'default--vertical-menu--element--color' : #ccc,
       // active state
       'default--vertical-menu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),

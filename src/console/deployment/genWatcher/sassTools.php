@@ -273,3 +273,28 @@ function updateSassTreeAfterEvent(
 
   return false;
 }
+
+/**
+ * @param int   $sassKeyTreeToDelete The stylesheet key to remove from the tree
+ * @param array $importedFiles       Tree branch to process
+ *
+ * @return array
+ */
+function removeFileInFullTree(int $sassKeyTreeToDelete, array $importedFiles) : array
+{
+  $newImportedFiles = [];
+
+  foreach($importedFiles as $otherImportingFile => $otherImportedFiles)
+  {
+    if ($otherImportingFile === $sassKeyTreeToDelete)
+      continue;
+
+    $newImportingFile = ($otherImportingFile > $sassKeyTreeToDelete) ? $otherImportingFile - 1 : $otherImportingFile;
+    $newImportedFiles[$newImportingFile] = removeFileInFullTree(
+      $sassKeyTreeToDelete,
+      $otherImportedFiles
+    );
+  }
+
+  return $newImportedFiles;
+}

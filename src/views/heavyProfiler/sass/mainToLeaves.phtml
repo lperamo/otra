@@ -15,12 +15,12 @@ const KEY_MAIN_TO_LEAVES = 1;
         foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $dependencyLeave => $mainSassFiles)
         {
           ?>
-          <li><?php makeTooltip($allSassKeys[$dependencyLeave]) ?>
+          <li><?php makeTooltip($dependencyLeave, $allSassKeys[$dependencyLeave]) ?>
           <ul><?php
-          foreach ($mainSassFiles as $mainSassFile)
+          foreach ($mainSassFiles as $sassKey => $mainSassFile)
           {
             ?>
-            <li><?php makeTooltip($allSassKeys[$mainSassFile]); ?></li>
+            <li><?php makeTooltip($sassKey, $allSassKeys[$mainSassFile]); ?></li>
             <?php
           }
           ?></ul></li><?php
