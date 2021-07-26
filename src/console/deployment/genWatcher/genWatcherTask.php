@@ -109,7 +109,7 @@ if (GEN_WATCHER_VERBOSE > 1)
 }
 
 if (WATCH_FOR_CSS_RESOURCES)
-  define('SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
+  define(__NAMESPACE__ . '\\SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
 
 define(
   __NAMESPACE__ . '\\EVENT_TO_TEST_FOR_SAVE',

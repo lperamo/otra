@@ -182,7 +182,7 @@ function savingSassTree(array $sassTree) : void
     file_put_contents(
       SASS_TREE_CACHE_PATH,
       '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-      convertLongArrayToShort($sassTree) . ';'
+      convertLongArrayToShort($sassTree) . ';' . PHP_EOL
     )
   )
     echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;
@@ -194,25 +194,28 @@ function savingSassTree(array $sassTree) : void
 }
 
 /**
- * @param array  $sassTree
- * @param array  $sassTreeKeys
- * @param string $extension
- * @param int    $sassFileKey
- * @param int    $importingFile
- * @param array  $importedFiles
- * @param int    $countImports
- * @param array  $imports
+ * This function is used in the case a developer updates a SASS/SCSS stylesheet.
+ * This will update the tree in cache accordingly due to those detected changes.
+ *
+ * @param array  $sassTree      Cached SASS/SCSS dependency tree
+ * @param array  $sassTreeKeys  Keys from KEY_ALL_SASS from $sassTree
+ * @param string $extension     Extension WITHOUT dot
+ * @param int    $sassFileKey   Key from KEY_ALL_SASS of resource to update in the tree
+ * @param int    $importingFile Importing file from the cache
+ * @param array  $importedFiles Imported files from the cache
+ * @param int    $countImports  Actual imports count
+ * @param array  $imports       Actual imported files
  *
  * @throws OtraException
  * @return bool
  */
 function updateSassTreeAfterEvent(
-  array $sassTree,
+  array &$sassTree,
   array $sassTreeKeys,
   string $extension,
   int $sassFileKey,
   int $importingFile,
-  array $importedFiles,
+  array &$importedFiles,
   int $countImports,
   array $imports
 ): bool
