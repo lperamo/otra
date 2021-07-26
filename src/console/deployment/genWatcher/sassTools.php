@@ -251,7 +251,11 @@ function updateSassTreeAfterEvent(
         $sassTree[KEY_ALL_SASS][$sassTreeKeys[$addedImport]] = true;
         $sassTree[KEY_MAIN_TO_LEAVES][$addedImport][] = $importingFile;
         // We add the main sass file to the tree
-        searchSassLastLeaves($sassTree, $sassTreeKeys[$addedImport], $sassTreeKeys[$addedImport], '.' . $extension, $sassTreeString);
+        searchSassLastLeaves($sassTree,
+          $sassTreeKeys[$addedImport],
+          $sassTreeKeys[$addedImport],
+          '.' . $extension,
+          $sassTreeString);
       }
     }
   }
