@@ -6,17 +6,20 @@ namespace src\console;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};
-use function otra\console\{convertArrayFromVarExportToShortVersion,showContext,showContextByError};
+use function otra\console\
+{convertArrayFromVarExportToShortVersion, convertLongArrayToShort, showContext, showContextByError};
 
 /**
  * @runTestsInSeparateProcesses
  */
 class ToolsTest extends TestCase
 {
-  public static function setUpBeforeClass(): void
-  {
-    parent::setUpBeforeClass();
+  // fixes isolation related issues
+  protected $preserveGlobalState = FALSE;
 
+  protected function setUp(): void
+  {
+    parent::setUp();
     require CONSOLE_PATH . 'tools.php';
   }
 
@@ -70,6 +73,25 @@ class ToolsTest extends TestCase
     // testing
     self::assertEquals(
       '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
+      $reducedArray
+    );
+  }
+
+  public function testConvertLongArrayToShort():void
+  {
+    // launching
+    $reducedArray = convertLongArrayToShort(
+      [
+        'test' => ['test2' => ['test3']], // tests deep arrays
+        'test2' => [3], // tests integers value without key
+        'test3' => [], // tests empty arrays
+        'test4' => true // tests booleans
+      ]
+    );
+
+    // testing
+    self::assertEquals(
+      "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
       $reducedArray
     );
   }

@@ -10,6 +10,9 @@
 // loading EcoComposer components
 @use '../../components/theming/theming';
 
+// partials
+@use 'blocksMotorTemplate';
+
 $debug-bar--size : 38px;
 
 .dbg-bar--block {
@@ -60,6 +63,23 @@ $debug-bar--size : 38px;
       }
     }
 
+    &left:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      bottom       : $debug-bar--size;
+      left         : 0;
+      right        : auto;
+      top          : -100vh;
+      transform    : rotate(180deg);
+      writing-mode : vertical-rl;
+    }
+
+    &right:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      bottom       : $debug-bar--size;
+      left         : auto;
+      right        : 0;
+      top          : -100vh;
+      writing-mode : tb-rl;
+    }
+
     &bottom,
     &left {
       &:checked ~ .dbg-bar > .dbg-bar--block--container {
@@ -73,31 +93,6 @@ $debug-bar--size : 38px;
       }
     }
 
-    &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template,
-    &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
-      bottom       : $debug-bar--size;
-      left         : 0;
-      right        : auto;
-      top          : -100vh;
-    }
-
-    &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
-      transform : rotate(-90deg);
-    }
-
-    &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
-      transform : rotate(90deg);
-    }
-
-    &left:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
-      bottom       : $debug-bar--size;
-      left         : 0;
-      right        : auto;
-      top          : -100vh;
-      transform    : rotate(180deg);
-      writing-mode : vertical-rl;
-    }
-
     // handles margins of the info boxes when the debug bar is on left/right sides
     &left,
     &right {
@@ -108,14 +103,6 @@ $debug-bar--size : 38px;
           margin-left : 0;
         }
       }
-    }
-
-    &right:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
-      bottom       : $debug-bar--size;
-      left         : auto;
-      right        : 0;
-      top          : -100vh;
-      writing-mode : tb-rl;
     }
   }
 
@@ -137,33 +124,6 @@ $debug-bar--size : 38px;
 
     // size
     padding : 10px;
-
-    @at-root .dbg-bar--toggle- {
-      // Handles template visualization info box when it is visible on bottom side
-      &bottom:checked {
-        & ~ .dbg-bar > .dbg-bar--block {
-          &:focus + .dbg-bar--block--container-motor-template,
-          & + .dbg-bar--block--container-motor-template:focus,
-          & + .dbg-bar--block--container-motor-template:hover {
-            top : calc(-100vh + #{$debug-bar--size});
-          }
-        }
-      }
-
-      // Handles template visualization info box when it is visible on top side
-      &top:checked ~ .dbg-bar > .dbg-bar--block {
-        &:focus + .dbg-bar--block--container-motor-template,
-        & + .dbg-bar--block--container-motor-template:focus,
-        & + .dbg-bar--block--container-motor-template:hover {
-          bottom : -100vh;
-          height : calc(100vh - #{$debug-bar--size});
-        }
-      }
-    }
-
-    &-motor-template {
-      overflow : auto;
-    }
 
     &--element {
       font-size     : 16px; // put to avoid CSS conflicts with the user project

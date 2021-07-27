@@ -8,7 +8,8 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
-use const otra\console\{CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_PATH};
 
 /**
@@ -73,7 +74,8 @@ class GenJsRoutingTaskTest extends TestCase
     self::assertFileEquals(
       self::BACKUP_MAIN_JS_ROUTING,
       self::MAIN_JS_ROUTING,
-      'Checking the contents of the file. ' . self::MAIN_JS_ROUTING . ' vs ' . self::BACKUP_MAIN_JS_ROUTING
+      'Checking the contents of the file. ' . CLI_INFO_HIGHLIGHT . self::MAIN_JS_ROUTING . CLI_ERROR . ' vs ' .
+      CLI_INFO_HIGHLIGHT . self::BACKUP_MAIN_JS_ROUTING . CLI_ERROR
     );
 
     // cleaning
@@ -84,4 +86,3 @@ class GenJsRoutingTaskTest extends TestCase
       rmdir(MAIN_RESOURCES_PATH);
   }
 }
-

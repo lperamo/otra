@@ -1,11 +1,21 @@
+// loading configuration
 @use 'colors';
 
+// loading partials
+@use '../../partials/heavyProfiler/index';
+
+.template-structure--container {
+  width : calc(100% - #{index.$vertical-menu-width});
+}
+
 .otra--template-rendering--title {
-  // Beware, this property is not standard, maybe it will not be compatible with browsers in the future!
-  -webkit-text-stroke : 1px colors.$another-shade;
-  color               : colors.$secondary;
-  text-align          : center;
-  text-shadow         : 0 0 2px colors.$tertiary, 1px 1px 1px colors.$tertiary, 2px 2px 2px colors.$tertiary;
+  @supports (-webkit-text-stroke : 1px colors.$another-shade) {
+    -webkit-text-stroke : 1px colors.$another-shade;
+  }
+
+  color       : colors.$secondary;
+  text-align  : center;
+  text-shadow : 0 0 2px colors.$tertiary, 1px 1px 1px colors.$tertiary, 2px 2px 2px colors.$tertiary;
 
   // put to avoid CSS conflicts with the user project
   font-size   : 32px;

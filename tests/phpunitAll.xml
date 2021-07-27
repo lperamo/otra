@@ -46,6 +46,9 @@
     <testsuite name="Help and tools console tasks">
       <directory>./src/console/helpAndTools</directory>
     </testsuite>
+    <testsuite name="Console tools">
+      <directory>./src/console/ToolsTest.php</directory>
+    </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>
     </testsuite>

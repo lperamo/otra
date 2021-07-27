@@ -40,15 +40,19 @@ class GenWatcherHelpTest extends TestCase
       STRING_PAD_FOR_OPTION_FORMATTING . '1 => Tells which file has been updated (default).' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING .
       '2 => Tells which file has been updated and the most important events that have been triggered.' . PHP_EOL .
-      STRING_PAD_FOR_OPTION_FORMATTING . 'Default to 1.' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . 'Defaults to 1.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('mask', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Default to 15.' . PHP_EOL .
+      ') ' . CLI_INFO . '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Defaults to 15.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('gcc', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'Should we use Google Closure Compiler for javascript/typescript files ?' . PHP_EOL .
+      ') ' . CLI_INFO . 'Should we use Google Closure Compiler for javascript/typescript files?' . PHP_EOL .
+      CLI_INFO_HIGHLIGHT .
+      self::LABEL_PLUS . str_pad('no SASS cache', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'Do we have to clean the SASS/SCSS cache first? (Defaults to 0)' . PHP_EOL .
       END_COLOR
     );
 

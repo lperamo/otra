@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace otra\src\views\debugBar;
 $logged = isset($_SESSION['sid']);
 ?>
   <button type="button" class="otra--help-cursor dbg-bar--block" title="Is a user logged in?">
@@ -13,5 +14,3 @@ $logged = isset($_SESSION['sid']);
       The user is <b><?= $logged ? 'connected' : 'disconnected'?></b>
     </p>
   </div>
-
-

@@ -11,18 +11,20 @@ use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
 use const otra\cache\php\init\CLASSMAP;
 // do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
-use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_VIEWS_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\console\showContextByError;
 
 require CONSOLE_PATH . 'tools.php';
 
-const PATTERN = '@\s{0,}
-        (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
-        (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
-        (?:->renderView\s{0,}\([^\),]{1,})
-        @mx',
-  // a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
+const
+  PATTERN = '@\s{0,}
+    (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
+    (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
+    (?:->renderView\s{0,}\([^\),]{1,})
+    @mx',
+  // a previous line in first position (we don't include it for now because the templates management is not optimal
+  // yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
   ANNOTATION_DEBUG_PAD = 80,
   LOADED_DEBUG_PAD = 80,

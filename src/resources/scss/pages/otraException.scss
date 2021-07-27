@@ -5,66 +5,16 @@
 @use '../components/accordion/accordion';
 @use '../components/theming/theming';
 
+// loading partials
+@use '../partials/otraPage/otraPage';
+
 // configuring components
 @include theming.init-themes($themes);
-@include accordion.create();
+@include accordion.create(
+  ('themes': $themes)
+);
 
 // specific style
-:root {
-  color-scheme : light dark;
-  font-size    : 10px;
-}
-
-body {
-  @include theming.to-theme(
-    (
-      #{&} : (
-        ('background-image', 'body--background-image'),
-        ('color', 'body--color')
-      )
-    )
-  );
-
-  // appearance
-  background-repeat     : no-repeat;
-  background-attachment : fixed;
-
-  // positioning
-  margin  : 0;
-  padding : 0;
-
-  // text
-  font-family : 'Times New Roman', serif;
-}
-
-.exception-title {
-  @include theming.to-theme(
-    (
-      #{&} : (
-        ('background-image', 'exception--title--background-image'),
-        ('text-shadow', 'exception--title--text-shadow')
-      )
-    )
-  );
-
-  // appearance
-  background-repeat     : no-repeat;
-  background-attachment : fixed;
-  box-shadow            : 0 0 3px #000f70;
-
-  // positioning
-  margin  : 0;
-  padding : 1rem 0;
-
-  // size
-  width : 100%;
-
-  /* text */
-  font-size   : 2rem;
-  font-weight : 400;
-  text-align  : center;
-}
-
 .exception-main {
   $main : &;
 

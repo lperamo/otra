@@ -1,0 +1,42 @@
+$debug-bar--size : 38px;
+
+.dbg-bar--toggle- {
+  &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template,
+  &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+    bottom : $debug-bar--size;
+    left   : 0;
+    right  : auto;
+    top    : -100vh;
+  }
+
+  &left:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+    transform : rotate(-90deg);
+  }
+
+  &right:checked ~ .dbg-bar > .dbg-bar--block--container.dbg-bar--block--container-motor-template {
+    transform : rotate(90deg);
+  }
+
+  // Handles template visualization info box when it is visible on bottom side
+  &bottom:checked ~ .dbg-bar > .dbg-bar--block {
+    &:focus + .dbg-bar--block--container-motor-template,
+    & + .dbg-bar--block--container-motor-template:focus,
+    & + .dbg-bar--block--container-motor-template:hover {
+      top : calc(-100vh + #{$debug-bar--size});
+    }
+  }
+
+  // Handles template visualization info box when it is visible on top side
+  &top:checked ~ .dbg-bar > .dbg-bar--block {
+    &:focus + .dbg-bar--block--container-motor-template,
+    & + .dbg-bar--block--container-motor-template:focus,
+    & + .dbg-bar--block--container-motor-template:hover {
+      bottom : -100vh;
+      height : calc(100vh - #{$debug-bar--size});
+    }
+  }
+}
+
+.dbg-bar--block--container-motor-template {
+  overflow : auto;
+}

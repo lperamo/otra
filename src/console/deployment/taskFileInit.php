@@ -130,7 +130,7 @@ function generateStylesheetsFiles(
   if ($verbose)
     echo strtoupper($extension) . ' file ', returnLegiblePath($resourceName) . ' have generated ',
       returnLegiblePath($cssPath) .
-      (TASK_FILE_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL . PHP_EOL;
+      (TASK_FILE_SOURCE_MAPS ? ' and ' . returnLegiblePath($sourceMapPath) : ''), '.', PHP_EOL;
 
   // We clean the source map if there is an old source map related to this CSS file
   if (!TASK_FILE_SOURCE_MAPS && file_exists($sourceMapPath))

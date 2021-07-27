@@ -39,6 +39,7 @@ $defaults : (
 /// @param  {array} $options ()
 ///
 @mixin create($options : ()) {
+  $themeUsed : map.has-key($options, 'themes');
   $options : map.merge($defaults, $options);
 
   // extracting variables...
@@ -55,7 +56,8 @@ $defaults : (
       (
         #{&} + ':not(:hover)' : ('background-color', map-get($options, 'ripple--background-color'))
       ),
-      $suffix
+      $suffix,
+      $themeUsed
     );
 
     // border
@@ -74,14 +76,24 @@ $defaults : (
     }
 
     &:hover {
+      $theme--ripple--background-color :  'ripple--hover--background-color';
+
       @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
-        $hover--background-color: map.get(theming.$themes, 'light', 'ripple--hover--background-color');
+        $hover--background-color: if(
+          $themeUsed,
+          map.get(theming.$themes, 'light', $theme--ripple--background-color),
+          map.get($defaults, 'themes', 'light', 'default--ripple--hover--background-color')
+        );
 
         background : $hover--background-color radial-gradient(circle, transparent 1%, $hover--background-color 1%) center/15000%;
       }
 
       @media all and (prefers-color-scheme : dark) {
-        $hover--background-color: map.get(theming.$themes, 'dark', 'ripple--hover--background-color');
+        $hover--background-color: if(
+          $themeUsed,
+          map.get(theming.$themes, 'dark', $theme--ripple--background-color),
+          map.get($defaults, 'themes', 'dark', 'default--ripple--hover--background-color')
+        );
 
         background : $hover--background-color radial-gradient(circle, transparent 1%, $hover--background-color 1%) center/15000%;
       }
@@ -92,7 +104,8 @@ $defaults : (
         (
           #{&} : ('background-color', map-get($options,'ripple--active--background-color'))
         ),
-        $suffix
+        $suffix,
+        $themeUsed
       );
 
       background-size : 100% !important;

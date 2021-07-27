@@ -9,14 +9,16 @@ namespace otra\console\deployment\clearCache;
 
 use otra\config\{AllConfig,Routes};
 use otra\OtraException;
-use function otra\console\{guessWords, promptUser};
 use const otra\bin\CACHE_PHP_INIT_PATH;
-use const otra\cache\php\{CACHE_PATH, CONSOLE_PATH};
+use const otra\cache\php\
+{BASE_PATH, CACHE_PATH, CONSOLE_PATH};
 use const otra\config\VERSION;
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_WARNING, END_COLOR, SUCCESS};
+use function otra\console\{guessWords, promptUser};
 
 // arguments
-const CLEAR_CACHE_ARG_MASK = 2,
+const
+  CLEAR_CACHE_ARG_MASK = 2,
   CLEAR_CACHE_ARG_ROUTE = 3,
 
   // masks
@@ -38,6 +40,7 @@ const CLEAR_CACHE_ARG_MASK = 2,
 $binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
+require BASE_PATH . 'config/AllConfig.php';
 // Handling route
 if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
   || ($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2
@@ -189,6 +192,13 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 /* **************** CSS **************** */
 if (($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2)
 {
+  define(__NAMESPACE__ . '\\SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
+
+  if (file_exists(SASS_TREE_CACHE_PATH))
+    unlink(SASS_TREE_CACHE_PATH);
+
+  echo 'SASS/SCSS cached tree cleared', SUCCESS;
+
   $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.gz');
   echo 'CSS files cleared', SUCCESS;
 }
@@ -273,4 +283,3 @@ if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
   unset($arrayToUnlink);
   echo 'Security files cleared', SUCCESS;
 }
-

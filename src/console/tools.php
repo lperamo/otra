@@ -198,5 +198,35 @@ namespace otra\console
         )
       );
     }
+
+    /**
+     * @param array $myArray
+     *
+     * @return string
+     */
+    function convertLongArrayToShort(array $myArray) : string
+    {
+      if ($myArray === [])
+        return '[]';
+
+      $arrayString = '[';
+
+      foreach($myArray as $arrayKey => $arrayItem)
+      {
+        if (is_string($arrayItem))
+          $newArrayItem = '\'' . $arrayItem . '\'';
+        elseif (is_bool($arrayItem))
+          $newArrayItem = $arrayItem ? 'true' : 'false';
+        else
+          $newArrayItem = $arrayItem;
+
+        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . (!is_array($arrayItem)
+            ? $newArrayItem
+            : convertLongArrayToShort($arrayItem)
+          ) . ',';
+      }
+
+      return mb_substr($arrayString, 0, -1) . ']';
+    }
   }
 }

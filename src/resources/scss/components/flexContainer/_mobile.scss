@@ -1,0 +1,10 @@
+////
+/// @group Flex container
+/// @since 1.0
+/// @author Lionel Péramo
+////
+@media all and (max-width : 1001px) {
+  .flex-container.reverse-on-mobile {
+    flex-direction: column-reverse;
+  }
+}

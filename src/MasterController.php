@@ -275,12 +275,13 @@ abstract class MasterController
   /**
    * Use the template engine to render the final template. Fast if the blocks stack is not used.
    *
+   * @param string $route
    * @param string $templateFilename
    * @param array  $variables
    *
    * @return string
    */
-  protected static function processFinalTemplate(string $templateFilename, array $variables)
+  protected static function processFinalTemplate(string $route, string $templateFilename, array $variables)
   {
     extract($variables);
     ob_start();
@@ -293,8 +294,10 @@ abstract class MasterController
       return ob_get_clean();
     }
 
-    // Puts the motor template visualization system into session if we are in a development environment
-    if ($_SERVER[APP_ENV] === DEV)
+    // Puts the motor template visualization system into session
+    // if we are in a development environment
+    // AND if we do not look an OTRA route
+    if ($_SERVER[APP_ENV] === DEV && !str_contains($route, 'otra_'))
     {
       if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
         return '';
@@ -302,7 +305,7 @@ abstract class MasterController
       {
         ob_start();
 
-        require CORE_PATH . 'templating/visualRendering.php';
+        require CORE_PATH . 'views/heavyProfiler/templateStructure/visualRendering.php';
         ob_clean();
         showBlocksVisually(false);
         $_SESSION['templateVisualization'] = ob_get_clean();
@@ -428,7 +431,7 @@ abstract class MasterController
     string $route,
     array $viewResourcePath = []) : string
   {
-    $content = MasterController::processFinalTemplate($templateFile, $variables);
+    $content = MasterController::processFinalTemplate($route, $templateFile, $variables);
     [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
     self::addResourcesToTemplate($content, $cssResource, $jsResource);
 

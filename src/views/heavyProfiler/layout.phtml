@@ -1,0 +1,44 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\heavyProfiler;
+
+use otra\config\Routes;
+use function otra\cache\php\{block, endblock};
+use const otra\cache\php\CORE_VIEWS_PATH;
+
+/** @var string $route */
+require CORE_VIEWS_PATH . 'layout.phtml';
+const
+  ROUTE_SASS_TREE = 'otra_css',
+  ROUTE_TEMPLATE_STRUCTURE = 'otra_template_structure',
+  LABEL_CHUNKS = 'chunks';
+
+define('ANALYZED_PAGE', '?route=' . $_GET['route']);
+define('ROUTE', urldecode($_GET['route']));
+define('SITE_HOST', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+block('body');
+?>
+<h1 class="otra-title">
+  OTRA profiler - Data about the route
+  <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] ?>"><?= ROUTE ?></a>
+</h1>
+<div class="profiler-container flex-container">
+  <ul class="vertical-menu vertical-menu--container">
+    <li
+      class="vertical-menu vertical-menu--container--item<?php
+      if ($route === ROUTE_SASS_TREE)
+        echo ' vertical-menu--container--item-active';
+      ?>">
+      <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE_SASS_TREE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>"
+         rel="noreferrer noopener">SASS/SCSS analysis</a>
+    </li>
+    <li class="vertical-menu vertical-menu--container--item<?php
+    if ($route === ROUTE_TEMPLATE_STRUCTURE)
+      echo ' vertical-menu--container--item-active';
+    ?>">
+      <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE_TEMPLATE_STRUCTURE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>">Template structure</a>
+    </li>
+  </ul>
+  <?php block('view', ''); ?>
+</div>
+<?php endblock();
