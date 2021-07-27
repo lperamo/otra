@@ -18,6 +18,7 @@ use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH
 use const otra\console\
 {ADD_BOLD,
   CLI_BASE,
+  CLI_ERROR,
   CLI_GRAY,
   CLI_INFO,
   CLI_INFO_HIGHLIGHT,
@@ -42,6 +43,7 @@ use function otra\tools\files\returnLegiblePath;
 require CORE_PATH . 'console/deployment/taskFileInit.php';
 
 const GEN_WATCHER_ARG_VERBOSE = 2,
+  GEN_WATCHER_ARG_NO_SASS_CACHE = 5,
   EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
   EVENTS_TO_WATCH = IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR,
 
@@ -60,6 +62,14 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
 define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
+define('NO_SASS_CACHE', isset($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? intval($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) : 0);
+
+if (NO_SASS_CACHE !== 0 && NO_SASS_CACHE !== 1)
+{
+  echo CLI_ERROR, 'The argument ', CLI_INFO_HIGHLIGHT, 'no SASS cache', CLI_ERROR, ' must be ', CLI_INFO_HIGHLIGHT, 0,
+    CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 1, CLI_ERROR, '.', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
 
 if (GEN_WATCHER_VERBOSE > 1)
 {
@@ -352,7 +362,7 @@ foreach($iterator as $entry)
 
         if (($extension === 'scss' || $extension === 'sass')
           && $mainResourceFilename[0] !== '_'
-          && $sassTreeDoesNotExist)
+          && ($sassTreeDoesNotExist || NO_SASS_CACHE === 1))
         {
           if (!$hasStartedCssTreeBuilding)
           {
@@ -392,7 +402,7 @@ unset(
 // tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
 if (WATCH_FOR_CSS_RESOURCES)
 {
-  if ($sassTreeDoesNotExist)
+  if ($sassTreeDoesNotExist || NO_SASS_CACHE === 1)
   {
     echo ERASE_SEQUENCE, 'SASS/SCSS dependency tree built', SUCCESS, 'Saving the SASS/SCSS dependency tree...', PHP_EOL;
     savingSassTree($sassTree);
