@@ -92,16 +92,16 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
  * stores the links between leaves and main stylesheets.
  *
  * @param array  $sassTree
- * @param string $realPath
+ * @param string $importingFileAbsolutePath
  * @param string $previousImportedCssFound
- * @param string $dotExtension             Extension with the dot as in '.scss'
+ * @param string $dotExtension              Extension with the dot as in '.scss'
  * @param string $sassTreeString
  *
  * @throws OtraException
  */
 function searchSassLastLeaves(
   array &$sassTree,
-  string $realPath,
+  string $importingFileAbsolutePath,
   string $previousImportedCssFound,
   string $dotExtension,
   string &$sassTreeString
@@ -135,7 +135,7 @@ function searchSassLastLeaves(
   // files.
   if (!isset($importedCssFound[1][0]))
   {
-    updateSassTree($sassTree, $realPath, $previousImportedCssFound);
+    updateSassTree($sassTree, $importingFileAbsolutePath, $previousImportedCssFound);
 
     // adds an entry to the full dependency tree
     $lastOpeningBracketPos = strrpos($sassTreeString, '[');
@@ -162,8 +162,8 @@ function searchSassLastLeaves(
         returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.', END_COLOR, PHP_EOL;
     }
 
-    updateSassTree($sassTree, $realPath, $previousImportedCssFound);
-    searchSassLastLeaves($sassTree, $realPath, $newResourceToAnalyze, $dotExtension, $sassTreeString);
+    updateSassTree($sassTree, $importingFileAbsolutePath, $previousImportedCssFound);
+    searchSassLastLeaves($sassTree, $importingFileAbsolutePath, $newResourceToAnalyze, $dotExtension, $sassTreeString);
 
     // Moves back the cursor up in the tree thanks to the previous backup of the cursor state
     $sassTreeString = $oldSassTreeString;
@@ -282,12 +282,15 @@ function updateSassTreeAfterEvent(
 }
 
 /**
- * @param int   $sassKeyTreeToDelete The stylesheet key to remove from the tree
+ * Removes deleted branches from the full SASS/SCSS tree. (Third index of the cached tree)
+ * Decrements all keys that are superior to the key that have been removed.
+ *
+ * @param int   $sassKeyTreeToDelete The stylesheet key to remove from the tree. Key of an importing file.
  * @param array $importedFiles       Tree branch to process
  *
  * @return array
  */
-function removeFileInFullTree(int $sassKeyTreeToDelete, array $importedFiles) : array
+function createPrunedFullTree(int $sassKeyTreeToDelete, array $importedFiles) : array
 {
   $newImportedFiles = [];
 
@@ -297,7 +300,7 @@ function removeFileInFullTree(int $sassKeyTreeToDelete, array $importedFiles) : 
       continue;
 
     $newImportingFile = ($otherImportingFile > $sassKeyTreeToDelete) ? $otherImportingFile - 1 : $otherImportingFile;
-    $newImportedFiles[$newImportingFile] = removeFileInFullTree(
+    $newImportedFiles[$newImportingFile] = createPrunedFullTree(
       $sassKeyTreeToDelete,
       $otherImportedFiles
     );

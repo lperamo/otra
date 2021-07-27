@@ -651,7 +651,7 @@ while (true)
               continue;
 
             $newImportingFile = ($importingFile > $sassKeyTreeToDelete) ? $importingFile - 1 : $importingFile;
-            $newFullTree[$newImportingFile] = removeFileInFullTree($sassKeyTreeToDelete, $importedFiles);
+            $newFullTree[$newImportingFile] = createPrunedFullTree($sassKeyTreeToDelete, $importedFiles);
           }
 
           $sassTree[KEY_FULL_TREE] = $newFullTree;

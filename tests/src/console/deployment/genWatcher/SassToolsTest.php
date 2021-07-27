@@ -6,13 +6,17 @@ namespace src\console\deployment\genWatcher;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
-use const otra\cache\php\
-{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_CSS_PATH, CORE_PATH, TEST_PATH};
+use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use const otra\console\deployment\genWatcher\{KEY_ALL_SASS, KEY_FULL_TREE, SASS_TREE_CACHE_PATH, SASS_TREE_STRING_INIT};
 
 use function otra\console\deployment\genWatcher\
-{getCssPathFromImport, savingSassTree, searchSassLastLeaves, updateSassTreeAfterEvent};
+{getCssPathFromImport,
+  createPrunedFullTree,
+  savingSassTree,
+  searchSassLastLeaves,
+  updateSassTree,
+  updateSassTreeAfterEvent};
 use function otra\tools\debug\dump;
 
 /**
@@ -95,6 +99,79 @@ class SassToolsTest extends TestCase
 
     // -- including needed libraries
     require CONSOLE_PATH . 'deployment/taskFileInit.php';
+  }
+
+
+  public function testCreatePrunedFullTree()
+  {
+    // launching
+    // 0 equals to array_search(self::SCSS_MAIN_PATH, $sassTreeKeys)
+    $prunedArray = createPrunedFullTree(1, self::BIG_TREE[KEY_FULL_TREE][0]);
+
+    // testing
+    self::assertEquals(
+      [2 => []],
+      $prunedArray
+    );
+  }
+
+  public function testGetCssPathFromImport()
+  {
+    // context
+    $partialPath = CORE_PATH . 'resources/scss/pages/templateStructure/';
+    $colors = 'colors';
+    $dotExtension = '.scss';
+    $fileName = $colors . $dotExtension;
+
+    // launching
+    [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
+      getCssPathFromImport(
+        $colors,
+        $dotExtension,
+        $partialPath
+      );
+
+    // testing
+    self::assertEquals(
+      $partialPath . '_' . $fileName,
+      $newResourceToAnalyze,
+      'Testing $newResourceToAnalyze ...'
+    );
+    self::assertEquals(
+      $partialPath . $fileName,
+      $absoluteImportPathWithDots,
+      'Testing $absoluteImportPathWithDots ...'
+    );
+    self::assertEquals(
+      $partialPath . '_' . $fileName,
+      $absoluteImportPathWithDotsAlt,
+      'Testing $absoluteImportPathWithDotsAlt ...'
+    );
+  }
+
+  /**
+   * @throws OtraException
+   */
+  public function testSavingSassTree()
+  {
+    // context
+    // If there is already a cache for the sass tree, we remove it to be sure it will not interfere with our test
+    if (file_exists(SASS_TREE_CACHE_PATH))
+      unlink(SASS_TREE_CACHE_PATH);
+
+    define(__NAMESPACE__ . '\\CACHED_SASS_TREE', TEST_PATH . 'examples/deployment/sassTree.php');
+
+    // launching
+    savingSassTree(self::BIG_TREE);
+
+    // testing
+    static::assertFileExists(SASS_TREE_CACHE_PATH);
+    static::assertFileEquals(
+      SASS_TREE_CACHE_PATH,
+      CACHED_SASS_TREE,
+    'Testing ' . CLI_INFO_HIGHLIGHT . SASS_TREE_CACHE_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
+    CACHED_SASS_TREE . CLI_ERROR . ';'
+    );
   }
 
   /**
@@ -195,28 +272,19 @@ class SassToolsTest extends TestCase
     );
   }
 
-  /**
-   * @throws OtraException
-   */
-  public function testSavingSassTree()
+  public function testUpdateSassTree()
   {
     // context
-    // If there is already a cache for the sass tree, we remove it to be sure it will not interfere with our test
-    if (file_exists(SASS_TREE_CACHE_PATH))
-      unlink(SASS_TREE_CACHE_PATH);
-
-    define(__NAMESPACE__ . '\\CACHED_SASS_TREE', TEST_PATH . 'examples/deployment/sassTree.php');
+    $sassTree = self::BIG_TREE;
 
     // launching
-    savingSassTree(self::BIG_TREE);
+    updateSassTree($sassTree, self::SCSS_MAIN_PATH, self::SCSS_MAIN_DEPENDENCY_LVL0_PATH);
 
     // testing
-    static::assertFileExists(SASS_TREE_CACHE_PATH);
-    static::assertFileEquals(
-      SASS_TREE_CACHE_PATH,
-      CACHED_SASS_TREE,
-    'Testing ' . CLI_INFO_HIGHLIGHT . SASS_TREE_CACHE_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
-    CACHED_SASS_TREE . CLI_ERROR . ';'
+    self::assertEquals(
+      self::BIG_TREE,
+      $sassTree,
+      'Testing $sassTree...'
     );
   }
 
@@ -275,40 +343,6 @@ class SassToolsTest extends TestCase
       ],
       $sassTree,
       'Testing if $sassTree has correctly been udpated...'
-    );
-  }
-
-  public function testGetCssPathFromImport()
-  {
-    // context
-    $partialPath = CORE_PATH . 'resources/scss/pages/templateStructure/';
-    $colors = 'colors';
-    $dotExtension = '.scss';
-    $fileName = $colors . $dotExtension;
-
-    // launching
-    [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
-      getCssPathFromImport(
-        $colors,
-        $dotExtension,
-        $partialPath
-      );
-
-    // testing
-    self::assertEquals(
-      $partialPath . '_' . $fileName,
-      $newResourceToAnalyze,
-      'Testing $newResourceToAnalyze ...'
-    );
-    self::assertEquals(
-      $partialPath . $fileName,
-      $absoluteImportPathWithDots,
-      'Testing $absoluteImportPathWithDots ...'
-    );
-    self::assertEquals(
-      $partialPath . '_' . $fileName,
-      $absoluteImportPathWithDotsAlt,
-      'Testing $absoluteImportPathWithDotsAlt ...'
     );
   }
 }
