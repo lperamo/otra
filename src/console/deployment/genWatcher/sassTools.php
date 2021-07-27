@@ -62,7 +62,7 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
   } else
   {
     $importedFileBaseName = $importedSass;
-    $importPath = '/';
+    $importPath = ($resourcesPath[strlen($resourcesPath) -1 ] === '/') ? '' : '/';
   }
 
   // $importPath like ../../configuration

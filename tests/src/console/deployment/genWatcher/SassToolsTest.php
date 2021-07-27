@@ -6,11 +6,13 @@ namespace src\console\deployment\genWatcher;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
-use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};
+use const otra\cache\php\
+{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_CSS_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use const otra\console\deployment\genWatcher\{KEY_ALL_SASS, KEY_FULL_TREE, SASS_TREE_CACHE_PATH, SASS_TREE_STRING_INIT};
 
-use function otra\console\deployment\genWatcher\{savingSassTree, searchSassLastLeaves, updateSassTreeAfterEvent};
+use function otra\console\deployment\genWatcher\
+{getCssPathFromImport, savingSassTree, searchSassLastLeaves, updateSassTreeAfterEvent};
 use function otra\tools\debug\dump;
 
 /**
@@ -273,6 +275,40 @@ class SassToolsTest extends TestCase
       ],
       $sassTree,
       'Testing if $sassTree has correctly been udpated...'
+    );
+  }
+
+  public function testGetCssPathFromImport()
+  {
+    // context
+    $partialPath = CORE_PATH . 'resources/scss/pages/templateStructure/';
+    $colors = 'colors';
+    $dotExtension = '.scss';
+    $fileName = $colors . $dotExtension;
+
+    // launching
+    [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
+      getCssPathFromImport(
+        $colors,
+        $dotExtension,
+        $partialPath
+      );
+
+    // testing
+    self::assertEquals(
+      $partialPath . '_' . $fileName,
+      $newResourceToAnalyze,
+      'Testing $newResourceToAnalyze ...'
+    );
+    self::assertEquals(
+      $partialPath . $fileName,
+      $absoluteImportPathWithDots,
+      'Testing $absoluteImportPathWithDots ...'
+    );
+    self::assertEquals(
+      $partialPath . '_' . $fileName,
+      $absoluteImportPathWithDotsAlt,
+      'Testing $absoluteImportPathWithDotsAlt ...'
     );
   }
 }
