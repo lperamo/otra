@@ -155,6 +155,24 @@ class RoutesTaskTest extends TestCase
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
+        'otra_css',
+        '/profiler/css',
+        '/otra/heavyProfilerController/cssAction',
+        self::PHP_STATUS,
+        '[05d97e8bfc8176c7ceafd1b7f83f0c6b47e0f822]',
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO,
+        'otra_template_structure',
+        '/profiler/templateStructure',
+        '/otra/heavyProfilerController/templateStructureAction',
+        self::PHP_STATUS,
+        '[6177bc3bc3c50aee610e89ceac4e2a095e69f385]',
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO_HIGHLIGHT,
         'HelloWorld',
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',

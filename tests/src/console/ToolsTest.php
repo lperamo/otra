@@ -14,6 +14,9 @@ use function otra\console\
  */
 class ToolsTest extends TestCase
 {
+  // fixes isolation related issues
+  protected $preserveGlobalState = FALSE;
+
   protected function setUp(): void
   {
     parent::setUp();

@@ -305,7 +305,7 @@ abstract class MasterController
       {
         ob_start();
 
-        require CORE_VIEWS_PATH . 'heavyProfiler/templateStructure/visualRendering.php';
+        require CORE_PATH . 'views/heavyProfiler/templateStructure/visualRendering.php';
         ob_clean();
         showBlocksVisually(false);
         $_SESSION['templateVisualization'] = ob_get_clean();
