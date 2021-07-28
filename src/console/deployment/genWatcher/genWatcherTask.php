@@ -405,7 +405,7 @@ if (WATCH_FOR_CSS_RESOURCES)
   if ($sassTreeDoesNotExist || NO_SASS_CACHE === 1)
   {
     echo ERASE_SEQUENCE, 'SASS/SCSS dependency tree built', SUCCESS, 'Saving the SASS/SCSS dependency tree...', PHP_EOL;
-    savingSassTree($sassTree);
+    saveSassTree($sassTree);
   } else
   {
     echo 'Getting the SASS dependency tree...', PHP_EOL;
@@ -551,7 +551,7 @@ while (true)
               );
             }
 
-            savingSassTree($sassTree);
+            saveSassTree($sassTree);
 
             if ($baseName[0] !== '_')
             {
@@ -669,7 +669,7 @@ while (true)
           // removing the list of sass/scss files and cleaning variables that will not be used anymore
           unset($sassTree[KEY_ALL_SASS][$resourceName], $sassKeyTreeToDelete);
 
-          savingSassTree($sassTree);
+          saveSassTree($sassTree);
 
           // If the file is meant to be used directly (this file will probably be the one that import the others)
           // like resource.scss

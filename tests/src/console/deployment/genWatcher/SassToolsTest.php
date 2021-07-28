@@ -13,7 +13,7 @@ use const otra\console\deployment\genWatcher\{KEY_ALL_SASS, KEY_FULL_TREE, SASS_
 use function otra\console\deployment\genWatcher\
 {getCssPathFromImport,
   createPrunedFullTree,
-  savingSassTree,
+  saveSassTree,
   searchSassLastLeaves,
   updateSassTree,
   updateSassTreeAfterEvent};
@@ -152,7 +152,7 @@ class SassToolsTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testSavingSassTree()
+  public function testSaveSassTree()
   {
     // context
     // If there is already a cache for the sass tree, we remove it to be sure it will not interfere with our test
@@ -162,7 +162,7 @@ class SassToolsTest extends TestCase
     define(__NAMESPACE__ . '\\CACHED_SASS_TREE', TEST_PATH . 'examples/deployment/sassTree.php');
 
     // launching
-    savingSassTree(self::BIG_TREE);
+    saveSassTree(self::BIG_TREE);
 
     // testing
     static::assertFileExists(SASS_TREE_CACHE_PATH);

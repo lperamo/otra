@@ -175,7 +175,7 @@ function searchSassLastLeaves(
  *
  * @throws OtraException
  */
-function savingSassTree(array $sassTree) : void
+function saveSassTree(array $sassTree) : void
 {
   require_once CONSOLE_PATH . '/tools.php';
   if (
