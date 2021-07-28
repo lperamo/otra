@@ -74,7 +74,8 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
     require CLASSMAP[$className];
   });
 
-  const PHP_CACHE_FOLDER = CACHE_PATH . 'php/';
+  if (!defined(__NAMESPACE__ . 'PHP_CACHE_FOLDER'))
+    define(__NAMESPACE__ . 'PHP_CACHE_FOLDER', CACHE_PATH . 'php/');
 
   /**************************************
    * HELP AND TASK CLASS MAP GENERATION *
