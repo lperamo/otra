@@ -1,6 +1,6 @@
 /// <reference path="./lightbox.ts" />
 
-const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
+const FWK_DEBUG = (function(w : Window, d : Document, u : undefined)
 {
   'use strict';
   function hideProfiler() : void
@@ -17,7 +17,7 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
     {
       if (4 === xhr.readyState && 200 === xhr.status)
       {
-        const SQLLogsSel = d.getElementById('dbg-sql-logs');
+        const SQLLogsSel = d.getElementById('profiler--sql--logs');
         SQLLogsSel.innerHTML = xhr.responseText + '</div></div></div>';
       }
     };
@@ -37,7 +37,7 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
     {
       if (4 === xhr.readyState && 200 === xhr.status)
       {
-        const SQLLogsSel = d.getElementById('dbg-sql-logs');
+        const SQLLogsSel = d.getElementById('profiler--sql--logs');
         SQLLogsSel.innerHTML = xhr.responseText + '</div></div></div>';
       }
     };
@@ -48,7 +48,8 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
 
   function copySqlToClipBoard() : void
   {
-    const elt = this.previousSibling.children[2];
+    console.log(this, this.previousElementSibling);
+    const elt = this.previousElementSibling.children[2];
 
     if (w.getSelection)
     {
@@ -67,16 +68,16 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
    */
   function initEvents() : void
   {
-    const btns : any = d.querySelectorAll('#profiler .lb-btn');
+    const btns : any = d.querySelectorAll('.ripple');
 
     for (let i : number = 3, len = btns.length; i < len; ++i)
     {
       btns[i].addEventListener('mouseup', copySqlToClipBoard)
     }
 
-    d.getElementById('dbg-hide-profiler').addEventListener('mouseup', hideProfiler);
-    d.getElementById('dbg-clear-sql-logs').addEventListener('mouseup', clearLogs);
-    d.getElementById('dbg-refresh-sql-logs').addEventListener('mouseup', refreshLogs)
+    d.getElementById('profiler--hide-profiler').addEventListener('mouseup', hideProfiler);
+    d.getElementById('profiler--clear-sql-logs').addEventListener('mouseup', clearLogs);
+    d.getElementById('profiler--refresh-sql-logs').addEventListener('mouseup', refreshLogs)
   }
 
   function initLightBox() : void
@@ -86,7 +87,7 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
 
   function runProfiler() : void
   {
-    const profilerlightbox : HTMLElement = d.getElementById('profiler-light-box');
+    const profilerlightbox : HTMLElement = d.getElementById('profiler--light-box');
 
     // Takes into account that lightbox can already be loaded by the site
     if (null === profilerlightbox && u === window['LIB_LIGHTBOX'])
@@ -117,7 +118,7 @@ const FWK_DEBUG  = (function(w : Window, d : Document, u : undefined)
       alert(e)
     }
 
-    d.getElementsByTagName('body')[0].innerHTML += '<div class="divError">' + data + '</div>'
+    d.getElementsByTagName('body')[0].innerHTML += '<div class="div-error">' + data + '</div>'
   }
 
   w.onload = function() : void

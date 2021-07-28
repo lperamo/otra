@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
-require CORE_PATH . 'templating/blocks.php' ?>
+
+use function otra\cache\php\{block,endblock};
+use const otra\cache\php\CORE_PATH;
+
+// require_once only used because of unit tests as it should be loaded only once.
+require_once CORE_PATH . 'templating/blocks.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,3 +47,4 @@ require CORE_PATH . 'templating/blocks.php' ?>
 Hello!
 <?php endblock(); ?>
 </body>
+</html>

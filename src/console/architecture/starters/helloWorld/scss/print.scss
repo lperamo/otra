@@ -1,0 +1,14 @@
+@use 'common';
+
+@media print {
+  body {
+    background-color : #fff;
+    color            : #000; // Hack for Chrome/Chromium in the case of dark theme
+
+    @at-root {
+      .hello-world--box {
+        border : 1px solid #bcbcbc;
+      }
+    }
+  }
+}

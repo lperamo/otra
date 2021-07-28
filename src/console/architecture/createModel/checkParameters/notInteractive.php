@@ -1,22 +1,39 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
 
+namespace otra\console\architecture\createModel;
+
 use otra\OtraException;
+use Symfony\Component\Yaml\Yaml;
+use const otra\cache\php\{BUNDLES_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
+use const otra\console\architecture\constants\{ARG_BUNDLE_NAME, ARG_MODULE_NAME};
+use const otra\console\architecture\createModel\{ARG_MODEL_NAME};
 
 /**
  * @param string $constantName
  * @param string $message
- * @param null   $defaultValue
+ * @param mixed  $defaultValue
  * @param bool   $exit
  *
- * @return mixed|null
+ * @throws OtraException
+ * @return mixed
  */
-$checkParameter = function (string $constantName, string $message, $defaultValue = null, $exit = true) use (&$argv)
+$checkParameter = function (
+  string $constantName,
+  string $message,
+  mixed $defaultValue = null,
+  bool $exit = true
+) use (&$argv) : mixed
 {
   if (isset($argv[constant($constantName)]))
     return $argv[constant($constantName)];
 
-  echo $exit ? CLI_RED : CLI_YELLOW, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
+  echo $exit ? CLI_ERROR : CLI_WARNING, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 
   if ($exit)
     throw new OtraException('', 1, '', NULL, [], true);
@@ -25,34 +42,37 @@ $checkParameter = function (string $constantName, string $message, $defaultValue
 };
 
 $bundleName = $checkParameter(
-  'ARG_BUNDLE_NAME',
+  'otra\console\architecture\constants\ARG_BUNDLE_NAME',
   'name of the bundle.'
 );
 
 $modelLocation = (int) $checkParameter(
-  'ARG_MODEL_LOCATION',
-  'location of the bundle : ' . CLI_LIGHT_CYAN . 'bundle' . CLI_YELLOW . ' location chosen.',
+  __NAMESPACE__ . '\\ARG_MODEL_LOCATION',
+  'location of the bundle : ' . CLI_INFO_HIGHLIGHT . 'bundle' . CLI_WARNING . ' location chosen.',
   'bundle',
   false
 );
 
-define('MODULE_NAME', $checkParameter('ARG_MODULE_NAME', 'module name.'));
+define(
+  __NAMESPACE__ . '\\MODULE_NAME',
+  $checkParameter('otra\console\architecture\constants\ARG_MODULE_NAME', 'module name.')
+);
 
-if (!file_exists($bundlesPath . ucfirst($bundleName)))
+if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
-  echo CLI_RED, 'The bundle ', CLI_LIGHT_CYAN, $bundleName, CLI_RED, ' does not exist !', END_COLOR, PHP_EOL;
+  echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist !', END_COLOR, PHP_EOL;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
 $modelName = $checkParameter(
-  'ARG_MODEL_NAME',
+  __NAMESPACE__ . '\\ARG_MODEL_NAME',
   'name of the model. We will import all the models.',
   null,
   false
 );
 
 // We add the chosen bundle name to the path
-$bundlePath = $bundlesPath . ucfirst($bundleName) . '/';
+$bundlePath = BUNDLES_PATH . ucfirst($bundleName) . DIR_SEPARATOR;
 
 if (isset($modelName))
   $modelFullName = ucfirst($modelName) . '.php';
@@ -61,22 +81,19 @@ if (null === $modelName)
   $creationMode = CREATION_MODE_ALL_MODELS;
 else
 {
-  define('YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
-  define('YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+  define(__NAMESPACE__ . '\\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
+  define(__NAMESPACE__ . '\\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
 
   if (!YML_SCHEMA_REAL_PATH)
   {
-    echo CLI_YELLOW . 'The YAML schema does not exist so we will create a model from the console parameters.',
+    echo CLI_WARNING . 'The YAML schema does not exist so we will create a model from the console parameters.',
       END_COLOR, PHP_EOL;
     $creationMode = CREATION_MODE_FROM_NOTHING;
   } else
   {
-    define(
-      'SCHEMA_DATA',
-      Symfony\Component\Yaml\Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
-    );
+    define(__NAMESPACE__ . '\\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
 
-    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)) === true)
+    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
       ? CREATION_MODE_ONE_MODEL
       : CREATION_MODE_FROM_NOTHING;
   }
@@ -85,16 +102,16 @@ else
 if ($creationMode === CREATION_MODE_FROM_NOTHING)
 {
   define(
-    'MODEL_PROPERTIES',
-    $checkParameter('ARG_MODEL_PROPERTIES', 'model properties.')
+    __NAMESPACE__ . '\\MODEL_PROPERTIES',
+    $checkParameter(__NAMESPACE__ . '\\ARG_MODEL_PROPERTIES', 'model properties.')
   );
-
   define(
-    'MODEL_PROPERTIES_TYPES',
-    $checkParameter('ARG_MODEL_PROPERTIES_TYPE', 'model properties types.')
+    __NAMESPACE__ . '\\MODEL_PROPERTIES_TYPES',
+    $checkParameter(
+      __NAMESPACE__ . '\\ARG_MODEL_PROPERTIES_TYPE',
+      'model properties types.'
+    )
   );
 }
 
-
 unset($checkParameter);
-

@@ -1,7 +1,14 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\database
+ */
 declare(strict_types=1);
 
+namespace otra\console\database\sqlCreateFixtures;
+
 use otra\console\TasksManager;
+use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
 return [
   'Generates fixtures sql files and executes them. (sql_generate_fixtures)',

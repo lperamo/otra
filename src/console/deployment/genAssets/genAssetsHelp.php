@@ -1,7 +1,14 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 
+namespace otra\console\deployment\genAssets;
+
 use otra\console\TasksManager;
+use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
 return [
   'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Gzips the SVGs.',

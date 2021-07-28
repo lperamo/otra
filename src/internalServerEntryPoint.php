@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
-define('OTRA_KEY_REQUEST_URI', 'REQUEST_URI');
+
+namespace otra;
+
+use const otra\cache\php\{APP_ENV,BASE_PATH};
+const OTRA_KEY_REQUEST_URI = 'REQUEST_URI';
 $_SERVER[APP_ENV] = $_ENV['OTRA_LIVE_APP_ENV'];
 $_SERVER['HTTPS'] = $_ENV['OTRA_LIVE_HTTPS'] === 'true';
 
@@ -12,6 +16,7 @@ preg_match(
 
 if (!empty($extension))
 {
+  /** @var string $path */
   switch($extension[0])
   {
     case '.css':
@@ -24,20 +29,21 @@ if (!empty($extension))
       header('Content-Type: application/json');
       break;
     default :
-      $path = (mb_strpos($_SERVER[OTRA_KEY_REQUEST_URI], 'src')
+      $filePath = (mb_strpos($_SERVER[OTRA_KEY_REQUEST_URI], 'src')
         ? BASE_PATH
         : 'web'
         ) . $_SERVER[OTRA_KEY_REQUEST_URI];
-      $finfo = finfo_open(FILEINFO_MIME_TYPE|FILEINFO_EXTENSION); // Retourne le type mime à l'extension mimetype
-      $mime_type = finfo_file($finfo, $path);
-      finfo_close($finfo);
+      // Returns the mime type
+      $fileInformations = finfo_open(FILEINFO_MIME_TYPE|FILEINFO_EXTENSION);
+      $mime_type = finfo_file($fileInformations, $filePath);
+      finfo_close($fileInformations);
       header('Content-Type:' . $mime_type);
   }
 
   if (in_array($extension[0], ['.css', '.js', '.json', '.gz']))
-    $path = BASE_PATH . $_SERVER[OTRA_KEY_REQUEST_URI];
+    $filePath = BASE_PATH . $_SERVER[OTRA_KEY_REQUEST_URI];
 
-  echo file_get_contents($path);
+  echo file_get_contents($filePath);
   return true;
 }
 

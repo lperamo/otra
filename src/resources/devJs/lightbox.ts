@@ -6,7 +6,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
       callbackYes,
       callbackNo;
 
-  const beginning = '<div class="lightbox-container"><div class="lightbox old-lightbox t-center"><div class="final-div',
+  const beginning = '<div class="lightbox--container"><div class="lightbox"><div class="final-div',
       lightboxBeginning = beginning + '">',
       confirmBeginning = beginning + ' confirm">',
       ending = '</div></div></div>',
@@ -17,7 +17,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
    *
    * @param {Object} params
    */
-  let lightbox = function lightbox(params : any) : void
+  const lightbox = function lightbox(params : any) : void
   {
     params = {
       callback: params.callback,

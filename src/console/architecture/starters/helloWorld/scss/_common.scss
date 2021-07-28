@@ -1,0 +1,39 @@
+:root {
+  color-scheme : light dark;
+  font-size    : 10px;
+}
+
+body,
+html {
+  height : 100%;
+  width  : 100%;
+}
+
+body {
+  // box
+  margin  : 0;
+  padding : 0;
+
+  // position
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+
+  // text
+  font-family : system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  font-size   : 1.6rem;
+}
+
+.hello-world--box {
+  // appearance
+  border-radius : 5rem;
+
+  // box
+  height  : 15rem;
+  padding : 3rem;
+
+  // position
+  align-items     : center;
+  display         : flex;
+  justify-content : center;
+}

@@ -1,10 +1,15 @@
 <?php
+/**
+ * @author Lionel Péramo
+ * @package otra\console\database
+ */
 declare(strict_types=1);
+namespace otra\console\database\sqlImportSchema;
+use otra\console\database\Database;
 
-use otra\console\Database;
-
-define('SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME', 2);
-define('SQL_IMPORT_SCHEMA_ARG_CONFIGURATION', 3);
+const
+  SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME = 2,
+  SQL_IMPORT_SCHEMA_ARG_CONFIGURATION = 3;
 
 if (isset($argv[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]))
 {

@@ -1,38 +1,35 @@
 <?php
 declare(strict_types=1);
-/**
- * LPFramework - Core - Errors - 404
- *
- * @author Lionel Péramo */
-
 namespace otra\controllers\errors;
 
 use otra\Controller;
-use config\Routes;
+use otra\config\Routes;
+use otra\OtraException;
 
 /**
+ * @author Lionel Péramo
  * @package otra\controllers\errors
  */
 class Error404Action extends Controller
 {
   /**
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
-    $routes = array_keys(Routes::$_);
+    parent::__construct($otraParams, $params);
+    $routes = array_keys(Routes::$allRoutes);
     $defaultUrl = null;
 
     foreach ($routes as $route)
     {
-      if (strpos($route, 'otra') !== false)
+      if (str_contains($route, 'otra'))
         continue;
 
-      $defaultUrl = Routes::$_[$route]['chunks'][0];
+      $defaultUrl = Routes::$allRoutes[$route]['chunks'][0];
       break;
     }
 

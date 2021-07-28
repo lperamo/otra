@@ -1,32 +1,51 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 
-namespace otra\console;
+namespace otra\console\deployment\genWatcher;
 
-require BASE_PATH . 'config/Routes.php';
-require CORE_PATH . 'tools/cli.php';
-
-use otra\console\Tasks;
+use FilesystemIterator;
+use JetBrains\PhpStorm\Pure;
+use otra\config\AllConfig;
+use otra\OtraException;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-
-// TODO Add parameter(s)? to add folder(s) to exclude from watching
-// TODO Improve fineness of the folders to explore, path (PATHS_TO_HAVE_PHP, PATHS_TO_HAVE_RESOURCES more precises etc.)
-// TODO We need to allow classic JavaScript files if the developers do not want to use TypeScript for their project.
-// TODO Handle the "rename" event
-// TODO Generate a new root css fileRoot.css when a sass dependency like _fileName.scss has been modified.
-// TODO Allow to not optimize via Google Closure Compiler (slow)
+use SplFileInfo;
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, COMPILE_MODE_SAVE, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\
+{ADD_BOLD,
+  CLI_BASE,
+  CLI_ERROR,
+  CLI_GRAY,
+  CLI_INFO,
+  CLI_INFO_HIGHLIGHT,
+  END_COLOR,
+  ERASE_SEQUENCE,
+  REMOVE_BOLD_INTENSITY,
+  SUCCESS};
+use const otra\console\deployment\
+{
+  FILE_TASK_GCC,
+  PATHS_TO_AVOID,
+  PATHS_TO_HAVE_RESOURCES,
+  RESOURCES_TO_WATCH,
+  WATCH_FOR_CSS_RESOURCES,
+  WATCH_FOR_PHP_FILES,
+  WATCH_FOR_TS_RESOURCES
+};
+use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
+use function otra\tools\files\returnLegiblePath;
 
 // Initialization
+require CORE_PATH . 'console/deployment/taskFileInit.php';
+
 const GEN_WATCHER_ARG_VERBOSE = 2,
- GEN_WATCHER_ARG_MASK = 3,
- GEN_WATCHER_ARG_GCC = 4,
- GEN_WATCHER_MASK_SCSS = 1,
- GEN_WATCHER_MASK_TS = 2,
- GEN_WATCHER_MASK_ROUTES = 4,
- GEN_WATCHER_MASK_PHP = 8,
- GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'],
- EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
- RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'],
+  GEN_WATCHER_ARG_NO_SASS_CACHE = 5,
+  EXTENSIONS_TO_WATCH = ['php', 'ts', 'scss', 'sass'],
+  EVENTS_TO_WATCH = IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR,
 
   PATHS_TO_HAVE_PHP =
   [
@@ -35,15 +54,6 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
     CORE_PATH
   ],
 
-  PATHS_TO_HAVE_RESOURCES =
-  [
-    BASE_PATH . 'bundles',
-    BASE_PATH . 'web',
-    CORE_PATH
-  ],
-
-  PATH_TO_AVOID = BASE_PATH . 'bundles/config',
-
   // Those variables have the same name for folders so we rename those for more clarity (PHP 7.3 at time of writing)
   IN_CLOSE_NOWRITE_DIR = 1073741840,
   IN_OPEN_DIR = 1073741856,
@@ -51,100 +61,72 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
   IN_DELETE_DIR = 1073742336;
 
 // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define('GEN_WATCHER_VERBOSE', array_key_exists(GEN_WATCHER_ARG_VERBOSE, $argv) ? $argv[GEN_WATCHER_ARG_VERBOSE] : 1);
+define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
+define('NO_SASS_CACHE', isset($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? intval($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) : 0);
 
-// Defines if we want to use Google Closure Compiler or not
-define(
-  'GEN_WATCHER_GCC',
-  array_key_exists(GEN_WATCHER_ARG_GCC, $argv) === true && $argv[GEN_WATCHER_ARG_GCC] === 'true'
-);
+if (NO_SASS_CACHE !== 0 && NO_SASS_CACHE !== 1)
+{
+  echo CLI_ERROR, 'The argument ', CLI_INFO_HIGHLIGHT, 'no SASS cache', CLI_ERROR, ' must be ', CLI_INFO_HIGHLIGHT, 0,
+    CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 1, CLI_ERROR, '.', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
 
-if (GEN_WATCHER_VERBOSE > 1 )
+if (GEN_WATCHER_VERBOSE > 1)
 {
   // Those constants are used in the maximum verbose mode only when we show the main events triggered
-  define('WD_CONSTANTS', [
-    IN_ACCESS => 'IN_ACCESS',
-    IN_MODIFY => 'IN_MODIFY',
-    IN_ATTRIB => 'IN_ATTRIB',
-    IN_CLOSE_WRITE => 'IN_CLOSE_WRITE',
-    IN_CLOSE_NOWRITE => 'IN_CLOSE_NOWRITE',
-    IN_OPEN => 'IN_OPEN',
-    IN_MOVED_TO => 'IN_MOVED_TO',
-    IN_MOVED_FROM => 'IN_MOVED_FROM',
-    IN_CREATE => 'IN_CREATE',
-    IN_DELETE => 'IN_DELETE',
-    IN_DELETE_SELF => 'IN_DELETE_SELF',
-    IN_MOVE_SELF => 'IN_MOVE_SELF',
-    IN_CLOSE => 'IN_CLOSE',
-    IN_MOVE => 'IN_MOVE',
-    IN_ALL_EVENTS => 'IN_ALL_EVENTS',
-    IN_UNMOUNT => 'IN_UNMOUNT',
-    IN_Q_OVERFLOW => 'IN_Q_OVERFLOW',
-    IN_IGNORED => 'IN_IGNORED',
-    IN_ISDIR => 'IN_ISDIR',
-    IN_CLOSE_NOWRITE_DIR => 'IN_CLOSE_NOWRITE_DIR',
-    IN_OPEN_DIR => 'IN_OPEN_DIR',
-    IN_CREATE_DIR => 'IN_CREATE_DIR',
-    IN_DELETE_DIR => 'IN_DELETE_DIR',
-    IN_ONLYDIR => 'IN_ONLYDIR',
-    IN_DONT_FOLLOW => 'IN_DONT_FOLLOW',
-    IN_MASK_ADD => 'IN_MASK_ADD',
-    IN_ONESHOT => 'IN_ONESHOT'
-  ]);
+  define(
+    __NAMESPACE__ . '\\WD_CONSTANTS',
+    [
+      IN_ACCESS => 'IN_ACCESS',
+      IN_MODIFY => 'IN_MODIFY',
+      IN_ATTRIB => 'IN_ATTRIB',
+      IN_CLOSE_WRITE => 'IN_CLOSE_WRITE',
+      IN_CLOSE_NOWRITE => 'IN_CLOSE_NOWRITE',
+      IN_OPEN => 'IN_OPEN',
+      IN_MOVED_TO => 'IN_MOVED_TO',
+      IN_MOVED_FROM => 'IN_MOVED_FROM',
+      IN_CREATE => 'IN_CREATE',
+      IN_DELETE => 'IN_DELETE',
+      IN_DELETE_SELF => 'IN_DELETE_SELF',
+      IN_MOVE_SELF => 'IN_MOVE_SELF',
+      IN_CLOSE => 'IN_CLOSE',
+      IN_MOVE => 'IN_MOVE',
+      IN_ALL_EVENTS => 'IN_ALL_EVENTS',
+      IN_UNMOUNT => 'IN_UNMOUNT',
+      IN_Q_OVERFLOW => 'IN_Q_OVERFLOW',
+      IN_IGNORED => 'IN_IGNORED',
+      IN_ISDIR => 'IN_ISDIR',
+      IN_CLOSE_NOWRITE_DIR => 'IN_CLOSE_NOWRITE_DIR',
+      IN_OPEN_DIR => 'IN_OPEN_DIR',
+      IN_CREATE_DIR => 'IN_CREATE_DIR',
+      IN_DELETE_DIR => 'IN_DELETE_DIR',
+      IN_ONLYDIR => 'IN_ONLYDIR',
+      IN_DONT_FOLLOW => 'IN_DONT_FOLLOW',
+      IN_MASK_ADD => 'IN_MASK_ADD',
+      IN_ONESHOT => 'IN_ONESHOT'
+    ]
+  );
 
-  define('HEADER_EVENT_PADDING', 18);
-  define('HEADER_COOKIE_PADDING', 7);
-  define('HEADER_NAME_PADDING', 30);
-  define('HEADER_WATCHED_RESOURCE_PADDING', 60);
+  define(__NAMESPACE__ . '\\HEADER_EVENT_PADDING', 18);
+  define(__NAMESPACE__ . '\\HEADER_COOKIE_PADDING', 7);
+  define(__NAMESPACE__ . '\\HEADER_NAME_PADDING', 30);
+  define(__NAMESPACE__ . '\\HEADER_WATCHED_RESOURCE_PADDING', 60);
 
-  define('DATA_EVENT_PADDING', 22);
-  define('DATA_COOKIE_PADDING', 11);
-  define('DATA_NAME_PADDING', 34);
-  define('DATA_WATCHED_RESOURCE_PADDING', 64);
+  define(__NAMESPACE__ . '\\DATA_EVENT_PADDING', 22);
+  define(__NAMESPACE__ . '\\DATA_COOKIE_PADDING', 11);
+  define(__NAMESPACE__ . '\\DATA_NAME_PADDING', 34);
+  define(__NAMESPACE__ . '\\DATA_WATCHED_RESOURCE_PADDING', 64);
 }
 
-/**
- * @param array  $paths
- * @param string $realPath
- *
- * @return bool
- */
-function isNotInThePath(array $paths, string $realPath) : bool
-{
-  $continue = true;
+if (WATCH_FOR_CSS_RESOURCES)
+  define(__NAMESPACE__ . '\\SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
 
-  foreach ($paths as $path)
-  {
-    // If we found a valid base path in the actual path
-    if (mb_strpos($realPath, $path) !== false){
-      $continue = false;
-    }
-  }
-
-  return $continue;
-}
-
-/**
- * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
- * otherwise returns resource name as is.
- *
- * @param string      $resource Most of the time the name of a folder
- * @param string|null $name     Most of the time the name of a file
- * @param bool|null   $endColor Do we have to reset color at the end ?
- *
- * @return string
- */
-function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor = true) : string
-{
-  // Avoid to finish with '/' if $resource is not a folder (and then $name = '')
-  if ($name !== '')
-    $name = '/' . $name;
-
-  return (mb_strpos($resource, BASE_PATH) !== false
-    ? CLI_LIGHT_BLUE . 'BASE_PATH ' . CLI_LIGHT_CYAN . mb_substr($resource, mb_strlen(BASE_PATH)) . $name . END_COLOR
-    : CLI_LIGHT_CYAN . $resource . $name . END_COLOR)
-    . ($endColor ? END_COLOR : '');
-}
+define(
+  __NAMESPACE__ . '\\EVENT_TO_TEST_FOR_SAVE',
+  (!isset(AllConfig::$compileMode) || AllConfig::$compileMode === COMPILE_MODE_SAVE)
+  ? IN_CLOSE_WRITE
+  : IN_MODIFY
+);
 
 /**
  * @param string $header
@@ -152,25 +134,52 @@ function returnLegiblePath(string $resource, ?string $name = '', ?bool $endColor
  *
  * @return string
  */
-function debugHeader(string $header, int $padding)
+#[Pure] function debugHeader(string $header, int $padding) : string
 {
-  return '│ ' . CLI_BOLD_WHITE . str_pad($header, $padding) .  END_COLOR;
+  return '│ ' . ADD_BOLD . CLI_BASE . REMOVE_BOLD_INTENSITY . str_pad($header, $padding) .  END_COLOR;
 }
 
 /**
- * @param int    $mask
+ * @param $fileDescriptor
+ *
+ * @throws OtraException
+ * @return false|string
+ */
+function nonBlockRead($fileDescriptor) : false|string
+{
+  $stdin = [$fileDescriptor];
+  $stderr = $stdout = [];
+  $result = stream_select($stdin, $stdout, $stderr, 0);
+
+  if ($result === false)
+    throw new OtraException('stream_select failed');
+
+  if ($result === 0)
+    return false;
+
+  return stream_get_line($fileDescriptor, 1);
+}
+
+/**
+ * @param int    $binaryMask
  * @param int    $cookie
- * @param string $name     Folder or file name
- * @param string $resource Folder of file watched
- * @param bool   $headers  Do we have to show the headers
+ * @param string $filename        Folder or file name
+ * @param string $resource        Folder of file watched
+ * @param bool   $mustShowHeaders Do we have to show the headers
  *
  * @return string The debug output
  */
-function debugEvent(int $mask, int $cookie, string $name, string $resource, bool $headers = false) : string
+function debugEvent(
+  int $binaryMask,
+  int $cookie,
+  string $filename,
+  string $resource,
+  bool $mustShowHeaders = false
+) : string
 {
   $debugToPrint = '';
 
-  if ($headers === true)
+  if ($mustShowHeaders)
     // Headers
     $debugToPrint .= debugHeader('Event',HEADER_EVENT_PADDING)
        . debugHeader('Cookie',HEADER_COOKIE_PADDING)
@@ -179,102 +188,142 @@ function debugEvent(int $mask, int $cookie, string $name, string $resource, bool
        . END_COLOR . PHP_EOL;
 
   // Data
-  $debugToPrint .= CLI_LIGHT_GRAY . str_pad('│ ' . WD_CONSTANTS[$mask], DATA_EVENT_PADDING)
+  $debugToPrint .= CLI_GRAY . str_pad('│ ' . WD_CONSTANTS[$binaryMask], DATA_EVENT_PADDING)
     . str_pad('│ ' . $cookie, DATA_COOKIE_PADDING)
-    . str_pad('│ ' . $name, DATA_NAME_PADDING)
+    . str_pad('│ ' . $filename, DATA_NAME_PADDING)
     . END_COLOR;
 
-  return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) . PHP_EOL;
+  return $debugToPrint . str_pad('│ ' . returnLegiblePath($resource), DATA_WATCHED_RESOURCE_PADDING) .
+    PHP_EOL;
 }
 
 /**
- * @param array $argv       Command line arguments
- * @param bool  $maskExists
- * @param int   $genWatcherMask
+ * Generates class mapping and updates all the configuration files.
  *
- * @return bool
+ * @param string $filename
  */
-$isWatched = function (array $argv, bool $maskExists, int $genWatcherMask) : bool
+function updatePHP(string $filename) : void
 {
-  return (
-      $maskExists === true
-      && ($argv[GEN_WATCHER_ARG_MASK] & $genWatcherMask) === $genWatcherMask
-    )
-    || $maskExists === false;
-};
+  // We generate the class mapping...
+  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
-$maskExists = array_key_exists(GEN_WATCHER_ARG_MASK, $argv);
-
-// Check if the binary mask is numeric
-if ($maskExists === true && is_numeric($argv[GEN_WATCHER_ARG_MASK]) === false)
-{
-  echo CLI_RED, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  exit(1);
+  // We updates routes configuration if the php file is a routes configuration file
+  if ($filename === 'Routes.php')
+    require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 }
 
-define('WATCH_FOR_CSS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_SCSS));
-define('WATCH_FOR_TS_RESOURCES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_TS));
-define('WATCH_FOR_PHP_FILES', $isWatched($argv, $maskExists, GEN_WATCHER_MASK_PHP));
+/**
+ * @param string $eventsDebug
+ * @param string $messageBefore
+ * @param string $filename
+ * @param string $messageAfter
+ * @param int    $binaryMask
+ * @param int    $cookie
+ * @param string $resourceToWatch
+ * @param bool   $headers
+ *
+ * @return string
+ */
+function addVerboseInformation(
+  string $eventsDebug,
+  string $messageBefore,
+  string $filename,
+  string $messageAfter,
+  int $binaryMask,
+  int $cookie,
+  string $resourceToWatch,
+  bool $headers
+) : string
+{
+  if (GEN_WATCHER_VERBOSE > 0)
+  {
+    $eventsDebug .= $messageBefore . returnLegiblePath($filename) . $messageAfter . PHP_EOL;
 
-unset($isWatched);
+    if (GEN_WATCHER_VERBOSE > 1)
+      $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $resourceToWatch, $headers);
+  }
 
-define(
-  'WATCH_FOR_ROUTES',
-  (
-    $maskExists === true
-    && ($argv[GEN_WATCHER_ARG_MASK] & GEN_WATCHER_MASK_ROUTES) === GEN_WATCHER_MASK_ROUTES
-  )
-  || $maskExists === false
-);
+  return $eventsDebug;
+}
 
-unset($maskExists);
+/**
+ * Deletes an asset and its source map.
+ *
+ * @param string $assetName
+ * @param string $assetExtension
+ *
+ * @throws OtraException
+ */
+function deleteAsset(string $assetName, string $assetExtension)
+{
+  [
+    $baseName,
+    $resourcesMainFolder,
+    $resourcesFolderEndPath
+  ] = getPathInformations($assetName);
+
+  $assetPath = $resourcesMainFolder . $assetExtension . '/' . substr($resourcesFolderEndPath,
+      5) . $baseName . '.' . $assetExtension;
+  unlink($assetPath);
+  $assetMap = $assetPath . '.map';
+
+  if (file_exists($assetMap))
+    unlink($assetMap);
+}
 
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
 // this is needed so inotify_read while operate in non blocking mode
 // (we then can do echos when we are listening to events)
-stream_set_blocking($inotifyInstance, 0);
+stream_set_blocking($inotifyInstance, false);
 
 // ******************** ADDING WATCHES ********************
-
+require CONSOLE_PATH . 'deployment/genWatcher/sassTools.php';
 $resourcesEntriesToWatch = $phpEntriesToWatch = $foldersWatchedIds = [];
 
-$dir_iterator = new \RecursiveDirectoryIterator(BASE_PATH, \FilesystemIterator::SKIP_DOTS);
+$dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
 // SELF_FIRST to have file AND folders in order to detect addition of new files
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
+// SASS/SCSS tree cache to optimize updates
+$sassTree = [0 => [], 1 => [], 2 => []];
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
+$sassTreeDoesNotExist = !file_exists(SASS_TREE_CACHE_PATH);
+$hasStartedCssTreeBuilding = false;
 
-/** @var \SplFileInfo $entry */
+/** @var SplFileInfo $entry */
 foreach($iterator as $entry)
 {
-  $folder = $entry->isDir();
+  $isFolder = $entry->isDir();
   $extension = $entry->getExtension();
 
-  if (in_array($extension, EXTENSIONS_TO_WATCH) === false && $folder === false)
+  if (!in_array($extension, EXTENSIONS_TO_WATCH) && !$isFolder)
     continue;
 
   $realPath = $entry->getRealPath();
   $haveBeenWatched = false;
 
-  if (mb_strpos($realPath, PATH_TO_AVOID) !== false)
-    continue;
+  foreach (PATHS_TO_AVOID as $pathToAvoid)
+  {
+    if (str_contains($realPath, $pathToAvoid))
+      continue 2;
+  }
 
   // Adding watches for PHP files if needed
-  if (WATCH_FOR_PHP_FILES === true)
+  if (WATCH_FOR_PHP_FILES)
   {
     // Does the PHP path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_PHP, $realPath) === true)
+    if (isNotInThePath(PATHS_TO_HAVE_PHP, $realPath))
       continue;
 
-    if ($extension === 'php' || $folder === true)
+    if ($extension === 'php' || $isFolder)
     {
       $phpEntriesToWatch[] = $realPath;
 
-      if ($folder === true)
+      if ($isFolder)
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
           $realPath,
@@ -287,43 +336,100 @@ foreach($iterator as $entry)
   }
 
   // Adding watches for resources files if needed
-  if ($haveBeenWatched === false && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
+  if (!$haveBeenWatched && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
   {
-    // Does the resources path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath) === true)
+    if (
+      // Does the resources path belongs to a valid defined path ? If yes, we process it
+      isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath)
+      // starters are only meant to be copied, not used
+      || str_contains($realPath, 'starters')
+    )
       continue;
 
-    if (in_array($extension, RESOURCES_TO_WATCH) === true|| $folder === true)
+    if (in_array($extension, RESOURCES_TO_WATCH) || $isFolder)
     {
       $resourcesEntriesToWatch[] = $realPath;
 
-      if ($folder === true)
+      if ($isFolder)
         $foldersWatchedIds[inotify_add_watch(
           $inotifyInstance,
           $realPath,
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $realPath;
-      else {
+      else
+      {
         $mainResourceFilename = $entry->getFilename();
 
-        if (substr($mainResourceFilename, 0,1) !== '_')
-          $sassMainResources[$mainResourceFilename]= $realPath;
+        if (($extension === 'scss' || $extension === 'sass')
+          && $mainResourceFilename[0] !== '_'
+          && ($sassTreeDoesNotExist || NO_SASS_CACHE === 1))
+        {
+          if (!$hasStartedCssTreeBuilding)
+          {
+            echo 'Building the SASS/SCSS dependency tree...', PHP_EOL;
+            $hasStartedCssTreeBuilding = true;
+          }
+
+          $sassMainResources[$mainResourceFilename] = $realPath;
+          $sassTreeString = SASS_TREE_STRING_INIT;
+          // We add the main sass file to the tree
+          $sassTree[KEY_ALL_SASS][$realPath] = true;
+          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $sassTreeString);
+        }
       }
     }
   }
 }
-unset($dir_iterator, $iterator, $entry, $realPath, $mainResourceFilename);
 
+// cleanup variables used to prepare the listening
+unset(
+  $argv,
+  $dir_iterator,
+  $entry,
+  $extension,
+  $hasStartedCssTreeBuilding,
+  $isFolder,
+  $iterator,
+  $mainResourceFilename,
+  $pathToAvoid,
+  $realPath,
+  // maybe those two variables have to been cleaned in TaskManager instead ?
+  $task,
+  $tasksClassMap
+);
+
+// If we are looking for SASS/SCSS resources then we certainly have created a dependency tree so we will now saving this
+// tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
+if (WATCH_FOR_CSS_RESOURCES)
+{
+  if ($sassTreeDoesNotExist || NO_SASS_CACHE === 1)
+  {
+    echo ERASE_SEQUENCE, 'SASS/SCSS dependency tree built', SUCCESS, 'Saving the SASS/SCSS dependency tree...', PHP_EOL;
+    saveSassTree($sassTree);
+  } else
+  {
+    echo 'Getting the SASS dependency tree...', PHP_EOL;
+    $sassTree = require SASS_TREE_CACHE_PATH;
+    echo ERASE_SEQUENCE, 'SASS dependency tree retrieved.', SUCCESS;
+  }
+
+  $sassTreeKeys = array_keys($sassTree[KEY_ALL_SASS]);
+}
+
+unset($sassTreeDoesNotExist);
 // ******************** INTRODUCTION TEXT ********************
 
-  echo CLI_LIGHT_BLUE, (GEN_WATCHER_VERBOSE > 0
-    ? 'BASE_PATH' . ' is equal to ' . CLI_LIGHT_CYAN . BASE_PATH . END_COLOR . PHP_EOL
-    : 'Watcher started.' . END_COLOR)
-    , PHP_EOL;
+echo (GEN_WATCHER_VERBOSE > 0
+  ? CLI_INFO . 'BASE_PATH' . CLI_BASE . ' is equal to ' . CLI_INFO_HIGHLIGHT . BASE_PATH . END_COLOR . PHP_EOL
+  : CLI_BASE . 'Watcher started.' . END_COLOR)
+  , 'Type ', CLI_INFO_HIGHLIGHT, 'q', CLI_BASE, ' to stop watching.',
+  END_COLOR, PHP_EOL;
 
 require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
 
 // ******************** Watching ! ********************
+// Allows to not be forced to type 'enter' after typing 'q'
+system('stty cbreak -echo');
 while (true)
 {
   $events = inotify_read($inotifyInstance);
@@ -334,183 +440,343 @@ while (true)
     $eventsDebug = '';
 
     // Loop though the events which occurred
+    /** @var array{wd:int,mask:int,cookie:int,name:string} $eventDetails */
     foreach ($events as $eventDetails)
     {
-      /**
-       * @var int    $wd
-       * @var int    $mask
-       * @var int    $cookie
-       * @var string $name
-       */
-      extract($eventDetails);
+      [
+        'wd' => $watchDescriptor,
+        'mask' => $binaryMask,
+        'cookie' => $cookie,
+        'name' => $filename
+      ] = $eventDetails;
 
-      // IN_OPEN || IN_MOVED_FROM
-      if ($mask === 96)
+      if ($binaryMask & IN_OPEN || $binaryMask & IN_MOVED_FROM)
         continue;
 
-      $resourceName = $foldersWatchedIds[$wd] . '/' . $name;
+      $resourceName = $foldersWatchedIds[$watchDescriptor];
 
-      // User is adding a folder
-      if (($mask & IN_CREATE_DIR) === IN_CREATE_DIR)
-      {
-        $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
+      if (is_dir($foldersWatchedIds[$watchDescriptor]))
+        $resourceName .= DIR_SEPARATOR . $filename;
 
-        // Adding a watch on the new folder
-        $foldersWatchedIds[inotify_add_watch(
-          $inotifyInstance,
-          $folderPath,
-          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-        )] = $folderPath;
-
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .=  PHP_EOL . 'Creating the folder ' . returnLegiblePath($folderPath) . '. We now watching it.' . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-        }
-
+      // If it is a temporary file, we skip it
+      if (str_contains(substr($resourceName, -2), '~'))
         continue;
-      } elseif (($mask & IN_DELETE_DIR) === IN_DELETE_DIR)
-      {
-        // User is deleting a folder
-        $folderPath = $foldersWatchedIds[$wd] . '/' . $name;
 
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          $eventsDebug .= PHP_EOL . 'Deleting the folder ' . returnLegiblePath($folderPath) . '. We do not watch it anymore.' . PHP_EOL;
+      // If it is not a folder
+      if (!(($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR
+        || ($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR))
+        // We store the extension without the dot
+        $extension = substr($filename, strrpos($filename, '.') + 1);
 
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-        }
-
-        // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
-        unset($foldersWatchedIds[$wd]);
-
-        continue;
-      } elseif ( // If it is an event IN_DELETE and is a file to watch
-        ($mask & IN_DELETE) === IN_DELETE
-        && (in_array($name, $phpEntriesToWatch) === true
-          || in_array($name, $resourcesEntriesToWatch) === true
+      if ( // A save operation has been done
+        (
+          ($binaryMask & IN_ATTRIB) === IN_ATTRIB
+          || ($binaryMask & EVENT_TO_TEST_FOR_SAVE) === EVENT_TO_TEST_FOR_SAVE
+        )
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
         )
       )
       {
-        if (GEN_WATCHER_VERBOSE > 0)
+        addVerboseInformation(
+          $eventsDebug,
+          'The file ',
+          $filename,
+          ' modified! We launch the appropriate tasks.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $filename,
+          $headers
+        );
+
+        if (in_array($resourceName, $phpEntriesToWatch))
+          updatePHP($resourceName);
+        elseif (in_array($resourceName, $resourcesEntriesToWatch))
         {
-          $eventsDebug .= PHP_EOL . 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name) . 'has been deleted. We launch the appropriate tasks.' . PHP_EOL . PHP_EOL;
+          [
+            $baseName,
+            $resourcesMainFolder,
+            $resourcesFolderEndPath
+          ] = getPathInformations($resourceName);
 
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-        }
-      } elseif ( // A save operation has been done
-          (
-            ($mask & IN_ATTRIB) === IN_ATTRIB
-            || ($mask & IN_MODIFY) === IN_MODIFY
-          )
-          && (in_array($resourceName, $phpEntriesToWatch) === true
-            || in_array($resourceName, $resourcesEntriesToWatch) === true
-          )
-      )
-      {
-        if (GEN_WATCHER_VERBOSE > 0)
-        {
-          echo 'The file ' . returnLegiblePath($foldersWatchedIds[$wd], $name)
-            . ' modified! We launch the appropriate tasks.' . PHP_EOL;
-
-          if (GEN_WATCHER_VERBOSE > 1)
-            $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
-        }
-
-        if (in_array($resourceName, $phpEntriesToWatch) === true)
-        {
-          // We generate the class mapping...
-          Tasks::genClassMap();
-
-          // We updates routes configuration if the php file is a routes configuration file
-          if ($name === 'Routes.php')
-            Tasks::upConf();
-        } elseif (in_array($resourceName, $resourcesEntriesToWatch) === true)
-        {
-          $fileInformations = explode('.', $name);
-          $resourceFolder = dirname($foldersWatchedIds[$wd]);
-
-          if ($fileInformations[1] === 'ts')
+          /** @var string $extension */
+          if ($extension === 'ts')
           {
-            generateJavaScript(GEN_WATCHER_VERBOSE, GEN_WATCHER_GCC, $resourceFolder, $fileInformations[0], $resourceName);
-          } elseif (substr($name, 0, 1) !== '_')
+            // 6 = length of devJs/
+            $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
+
+            generateJavaScript(
+              GEN_WATCHER_VERBOSE,
+              FILE_TASK_GCC,
+              $resourcesMainFolder,
+              $baseName,
+              $resourceName
+            );
+          } else
           {
-            $generatedCssFile = $fileInformations[0] . '.css';
+            preg_match_all(REGEX_SASS_IMPORT, file_get_contents($resourceName), $importedCssFound);
+            $countImports = 0;
+            $imports = [];
 
-            // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-            $cssFolder = $resourceFolder . '/css';
+            // if there are imports, we have to check
+            if (isset($importedCssFound[1][0]))
+            {
+              $matchedImports = $importedCssFound[1];
 
-            // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-            if (file_exists($cssFolder) === false)
-              mkdir($cssFolder);
+              foreach($matchedImports as $matchedImport)
+              {
+                $resourcesPath = $resourcesMainFolder . $resourcesFolderEndPath;
+                [$newResourceToAnalyze] = getCssPathFromImport($matchedImport, '.' . $extension, $resourcesPath);
+                $foundKey = array_search($newResourceToAnalyze, $sassTreeKeys);
+                $imports[]= is_bool($foundKey) ? $newResourceToAnalyze : $foundKey;
+              }
 
-            $cssPath = realpath($cssFolder) . '/' . $generatedCssFile;
+              $countImports = count($imports);
+            }
 
-            [, $return] = cli('sass --error-css ' . $resourceName . ':' . $cssPath);
+            $sassFileKey = array_search($resourceName, $sassTreeKeys);
 
-            echo 'SASS / SCSS file ', returnLegiblePath($resourceName) . ' have generated ',
-              returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-            PHP_EOL . PHP_EOL;
+            // browsing the full SASS/SCSS dependency tree to know if the imports number has changed
+            foreach ($sassTree[KEY_FULL_TREE] as $importingFile => &$importedFiles)
+            {
+              updateSassTreeAfterEvent(
+                $sassTree,
+                $sassTreeKeys,
+                $extension,
+                $sassFileKey,
+                $importingFile,
+                $importedFiles,
+                $countImports,
+                $imports
+              );
+            }
+
+            saveSassTree($sassTree);
+
+            if ($baseName[0] !== '_')
+            {
+              // If the file is meant to be used directly (this file will probably be the one that import the others)
+              // like resource.scss
+              $return = generateStylesheetsFiles(
+                $baseName,
+                $resourcesMainFolder,
+                $resourcesFolderEndPath,
+                $resourceName,
+                $extension,
+                GEN_WATCHER_VERBOSE > 0
+              );
+            } else
+            {
+              $return = '';
+
+              // If the file is not meant to be used directly (this file will probably be imported by other ones)
+              // like _resource.scss ... then we use our tree to speed up things
+              foreach ($sassTree[KEY_MAIN_TO_LEAVES][array_search($resourceName, $sassTreeKeys)] as
+                       $resourceToCompile)
+              {
+                $resourceFromTreeToCompile = $sassTreeKeys[$resourceToCompile];
+                [$baseName, $resourcesMainFolder, $resourcesFolderEndPath, $extension] =
+                  getPathInformations($resourceFromTreeToCompile);
+
+                $return .= generateStylesheetsFiles(
+                  $baseName,
+                  $resourcesMainFolder,
+                  $resourcesFolderEndPath,
+                  $resourceFromTreeToCompile,
+                  $extension,
+                  GEN_WATCHER_VERBOSE > 0
+                );
+              }
+            }
+
+            echo PHP_EOL;
 
             if (GEN_WATCHER_VERBOSE > 0)
               $eventsDebug .= $return;
-          } else {
-            $stringToTest = substr($fileInformations[0], 1);
-
-            foreach($sassMainResources as $key => $mainResource)
-            {
-                $fileContent = file_get_contents($mainResource);
-                preg_match('@\@(?:import|use)\s(?:\'[^\']{0,}\'\s{0,},\s{0,}){0,}\'(?:[^\']{0,}/){0,1}' . $stringToTest . '\'@', $fileContent, $matches);
-
-                // If this file does not contain the modified SASS/SCSS file, we look into other watched main resources files.
-                if (empty($matches) === true)
-                  continue;
-
-                $slashPosition = strrpos($mainResource, '/');
-                $mainResourceFolder = realpath(substr($mainResource, 0, $slashPosition) . '/..');
-                $mainResourceWithoutExtension = substr(
-                  $mainResource,
-                  $slashPosition + 1,
-                  strrpos($mainResource, '.') - $slashPosition - 1
-                );
-                $generatedCssFile = $mainResourceWithoutExtension . '.css';
-
-                // SASS / SCSS (Implemented for Dart SASS as Ruby SASS is deprecated, not tested with LibSass)
-                $mainResourceCssFolder = $mainResourceFolder . '/css';
-
-                // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
-                if (file_exists($mainResourceCssFolder) === false)
-                  mkdir($mainResourceCssFolder);
-
-                $cssPath = $mainResourceCssFolder . '/' . $generatedCssFile;
-
-                [, $return] = cli('sass --error-css ' . $mainResource . ':' . $cssPath);
-
-                echo 'SASS / SCSS file ', returnLegiblePath($mainResource) . ' have generated ',
-                  returnLegiblePath($cssPath) . ' and ', returnLegiblePath($cssPath . '.map'), '.',
-                  PHP_EOL . PHP_EOL;
-
-                if (GEN_WATCHER_VERBOSE > 0)
-                  $eventsDebug .= $return;
-            }
           }
         }
+      } elseif ( // If it is an event IN_DELETE and is a file to watch
+        ($binaryMask & IN_DELETE) === IN_DELETE
+        && (in_array($resourceName, $phpEntriesToWatch)
+          || in_array($resourceName, $resourcesEntriesToWatch)
+        )
+      )
+      {
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'The file ',
+          $filename,
+          ' has been deleted. We remove related generated files.' . PHP_EOL,
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor] . DIR_SEPARATOR . $resourceName,
+          $headers
+        );
+
+        // // We make sure not to watch this file again and we clean up related generated files
+        if ($extension === 'scss' || $extension === 'sass')
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+
+          // removing the sass file from the sass dependency tree
+          $sassKeyTreeToDelete = array_search($resourceName, $sassTreeKeys);
+
+          foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+          {
+            $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
+
+            if ($mainFileToDelete !== false)
+              unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
+
+            // If there are no more main files associated to the leave or the leave IS the file to delete
+            // => we remove the leave
+            if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
+              unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+          }
+
+          // We now adjust the indexes because there is one less element and therefore the things do not match anymore
+          $newMainToLeaves = [];
+
+          foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => $values)
+          {
+            $newLeave = ($leave > $sassKeyTreeToDelete) ? $leave - 1 : $leave;
+            $newValues = [];
+
+            foreach($values as $value)
+            {
+              $newValues[] = ($value > $sassKeyTreeToDelete) ? $value - 1 : $value;
+            }
+            $newMainToLeaves[$newLeave] = $newValues;
+          }
+          $sassTree[KEY_MAIN_TO_LEAVES] = $newMainToLeaves;
+
+          // cleaning variables that will not be used anymore
+          unset($leave, $value, $newMainToLeave);
+
+          $newFullTree = [];
+
+          foreach($sassTree[KEY_FULL_TREE] as $importingFile => $importedFiles)
+          {
+            if ($importingFile === $sassKeyTreeToDelete)
+              continue;
+
+            $newImportingFile = ($importingFile > $sassKeyTreeToDelete) ? $importingFile - 1 : $importingFile;
+            $newFullTree[$newImportingFile] = createPrunedFullTree($sassKeyTreeToDelete, $importedFiles);
+          }
+
+          $sassTree[KEY_FULL_TREE] = $newFullTree;
+
+          // removing the list of sass/scss files and cleaning variables that will not be used anymore
+          unset($sassTree[KEY_ALL_SASS][$resourceName], $sassKeyTreeToDelete);
+
+          saveSassTree($sassTree);
+
+          // If the file is meant to be used directly (this file will probably be the one that import the others)
+          // like resource.scss
+          if ($filename[0] !== '_')
+          {
+            unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
+            deleteAsset($resourceName, 'css');
+          }
+        } elseif ($extension === 'ts')
+        {
+          unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+          deleteAsset($resourceName, 'js');
+        }
+        elseif ($extension === 'php')
+        {
+          unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+          updatePHP($resourceName);
+        }
+      } elseif ( // If it is an event IN_CREATE and is a file to watch
+        ($binaryMask & IN_CREATE) === IN_CREATE
+        && (
+          !isNotInThePath(PATHS_TO_HAVE_PHP, $resourceName)
+          || !isNotInThePath(PATHS_TO_HAVE_RESOURCES, $resourceName)
+        )
+      )
+      {
+        // If this is not a file that we want to watch, we skip it.
+        if (!in_array($extension, EXTENSIONS_TO_WATCH))
+          continue;
+
+        $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
+
+        if ($extension === 'scss' || $extension === 'sass')
+        {
+          $resourcesEntriesToWatch[] = $resourceName;
+          $sassMainResources[$filename] = $resourceName;
+
+          // We add the new resource to the SASS/SCSS dependency tree
+          $sassTree[KEY_ALL_SASS][$resourceName] = true;
+        } elseif ($extension === 'ts')
+          $resourcesEntriesToWatch[] = $resourceName;
+        elseif ($extension === 'php')
+          $phpEntriesToWatch[] = $resourceName;
+
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'We are now watching the file ',
+          $filename,
+          '.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+      } elseif (($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR)
+      {
+        // Adding a watch on the new folder
+        // User is adding a folder
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $resourceName,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $resourceName;
+
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'Creating the folder ',
+          $resourceName,
+          '. We now watching it.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+
+        continue;
+      } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
+      {
+        // User is deleting a folder
+        addVerboseInformation(
+          $eventsDebug,
+          PHP_EOL . 'Deleting the folder ',
+          $resourceName,
+          '. We do not watch it anymore.',
+          $binaryMask,
+          $cookie,
+          $foldersWatchedIds[$watchDescriptor],
+          $headers
+        );
+
+        // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
+        unset($foldersWatchedIds[$watchDescriptor]);
+
+        continue;
       } elseif (GEN_WATCHER_VERBOSE > 1)
-        $eventsDebug .= debugEvent($mask, $cookie, $name, $foldersWatchedIds[$wd], $headers);
+          $eventsDebug .= debugEvent($binaryMask, $cookie, $filename, $foldersWatchedIds[$watchDescriptor], $headers);
 
       $headers = false;
     }
 
     if (GEN_WATCHER_VERBOSE > 0 && $eventsDebug !== '')
-      echo $eventsDebug . PHP_EOL;
+      echo $eventsDebug, PHP_EOL;
   }
 
+  if (nonBlockRead(STDIN) === 'q')
+    break;
+
   // Avoid watching too much to avoid performance issues
-  sleep(0.1);
+  usleep(100);
 }
-
-

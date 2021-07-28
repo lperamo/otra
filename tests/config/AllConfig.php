@@ -1,11 +1,20 @@
 <?php
-namespace config;
+declare(strict_types=1);
 
-define('VERSION', 'v1');
-define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
+namespace otra\config;
 
-define('CACHE_TIME', 300); // 5 minutes(5*60)
+use const otra\cache\php\CACHE_PATH;
 
+const
+  VERSION = '1.0.0-alpha.2.5.0',
+  RESOURCE_FILE_MIN_SIZE = 21000, // n characters
+  CACHE_TIME = 300; // 5 minutes(5*60)
+
+/**
+ * Class AllConfig
+ *
+ * @package config
+ */
 class AllConfig
 {
   public static int $verbose = 0;
@@ -17,5 +26,11 @@ class AllConfig
     $cachePath = CACHE_PATH,
     $version = 'v1',
     $defaultConn = ''; // mandatory in order to modify it later if needed
-  public static array $dbConnections = []; // mandatory in order to modify it later if needed
+  public static array $dbConnections = [], // mandatory in order to modify it later if needed
+    $debugConfig = [
+      'barPosition' => 'bottom',
+      'maxChildren' => 130,
+      'maxData' => 514,
+      'maxDepth' => 6
+    ];
 }

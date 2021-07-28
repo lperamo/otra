@@ -1,0 +1,24 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\sass;
+
+/** @var array $sassTree */
+?>
+<details class="accordion">
+  <summary class="accordion">All SASS/SCSS files</summary>
+  <div class="accordion--block">
+    <ul>
+      <?php
+      foreach(array_keys($sassTree[KEY_ALL_SASS]) as $sassKey => $sassFile)
+      {
+        ?>
+        <li>
+        <?php
+        makeTooltip($sassKey, $sassFile);
+        ?>
+        </li><?php
+      }
+      ?>
+    </ul>
+  </div>
+</details>

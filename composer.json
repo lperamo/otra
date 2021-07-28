@@ -8,7 +8,7 @@
   "authors": [
     {
       "name": "Lionel Péramo",
-      "email": "contact@lionel-peramo.com",
+      "email": "lionel.peramo@wexample.com",
       "homepage": "https://wexample.com"
     }
   ],
@@ -21,7 +21,7 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "php": ">=7.4.0",
+    "php": ">=8.0.0",
     "symfony/yaml": "^4.0"
   },
   "require-dev": {

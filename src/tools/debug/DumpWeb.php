@@ -1,13 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace otra;
-use config\AllConfig;
+namespace otra\tools\debug;
+
+use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
+use const otra\cache\php\CORE_CSS_PATH;
+use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.
  *
+ * @author Lionel Péramo
  * @package otra
  */
 abstract class DumpWeb extends DumpMaster {
@@ -33,13 +37,13 @@ abstract class DumpWeb extends DumpMaster {
 
   /**
    * @param int|string $paramType
-   * @param            $param
+   * @param mixed      $param
    * @param bool       $notFirstDepth
    * @param int        $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpArray($paramType, $param, bool $notFirstDepth, int $depth) : void
+  private static function dumpArray(int|string $paramType, mixed $param, bool $notFirstDepth, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
@@ -79,15 +83,15 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param      $param
-   * @param bool $notFirstDepth
-   * @param int  $depth
+   * @param mixed $param
+   * @param bool  $notFirstDepth
+   * @param int   $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpObject($param, bool $notFirstDepth, int $depth) : void
+  private static function dumpObject(mixed $param, bool $notFirstDepth, int $depth) : void
   {
-    list($className, $description) = parent::getClassDescription($param);
+    [$className, $description] = parent::getClassDescription($param);
     echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
 
     if ($notFirstDepth)
@@ -110,10 +114,10 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param string $className
-   * @param object $param
+   * @param string             $className
+   * @param object             $param
    * @param ReflectionProperty $property
-   * @param int $depth
+   * @param int                $depth
    *
    * @throws ReflectionException
    */
@@ -123,7 +127,7 @@ abstract class DumpWeb extends DumpMaster {
     object $param,
     ReflectionProperty $property,
     int $depth
-  )
+  ) : void
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
@@ -157,7 +161,7 @@ abstract class DumpWeb extends DumpMaster {
         echo $propertyType, ' => ', $propertyValue ? 'true' : 'false', $property->getDocComment();
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
         break;
       case DumpMaster::OTRA_DUMP_TYPE_STRING :
@@ -216,7 +220,7 @@ abstract class DumpWeb extends DumpMaster {
    *
    * @throws ReflectionException
    */
-  public static function analyseVar($paramKey, $param, int $depth, bool $isArray = false) : void
+  public static function analyseVar(int|string $paramKey, mixed $param, int $depth, bool $isArray = false) : void
   {
     $notFirstDepth = ($depth !== -1);
     $paramType = gettype($param);
@@ -246,7 +250,7 @@ abstract class DumpWeb extends DumpMaster {
         echo $paramType, $param ? ' true' : ' false', self::OTRA_DUMP_END_TEXT_BLOCK;
         break;
       case 'integer' :
-      case 'float' :
+      case 'double' :
         echo $param, '</span>', self::OTRA_DUMP_END_TEXT_BLOCK, '<br>';
         break;
       case 'NULL' : echo '<b>null</b><br>'; break;
@@ -286,36 +290,38 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * A nice dump function that takes as much parameters as we want to put.
-   *
-   * @param mixed $params
-   *
-   * @throws ReflectionException
+   * @param string $sourceFile
+   * @param int    $sourceLine
+   * @param string $content
    */
-  public static function dump(...$params) : void
+  protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
-    $secondTrace = debug_backtrace()[2];
-    $sourceFile = $secondTrace['file'];
-    $sourceLine = $secondTrace['line'];
-    require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    require_once CORE_PATH . 'tools/getSourceFromFile.php';
-    ?><link rel="stylesheet" href="<?= CORE_CSS_PATH ?>otraDump.css"/>
+    ?>
+    <link rel="stylesheet" href="<?= CORE_CSS_PATH ?>partials/otraDump/otraDump.css"/>
     <div class="otra-dump">
       <span class="otra-dump--intro">
         <?= 'OTRA DUMP - ' . $sourceFile . ':' . $sourceLine ?>
       </span><?php self::createFoldable(true); ?>
       <pre class="otra-dump--string"><!--
      --><strong class="otra--code--container"><mark class="otra--code--container-highlight"><?=
-            getSourceFromFile($sourceFile, $sourceLine, 2)
-            ?></mark></strong></pre>
+          getSourceFromFile($sourceFile, $sourceLine, 2)
+          ?></mark></strong></pre>
     </div>
     <pre class="otra-dump--string">
-<br><?php
-      foreach ($params as $paramKey => $param)
-      {
-        self::analyseVar($paramKey, $param, self::OTRA_DUMP_INITIAL_DEPTH, is_array($param));
-      }
-      ?></pre>
-    </div><?php
+      <br><?= $content ?>
+    </pre>
+    </div>
+    <?php
+  }
+
+  /**
+   * A nice dump function that takes as much parameters as we want to put.
+   * Calls the DumpMaster::dump that will use the 'dumpCallback' function.
+   *
+   * @param mixed $params
+   */
+  public static function dump(... $params) : void
+  {
+    parent::dump(... $params);
   }
 }

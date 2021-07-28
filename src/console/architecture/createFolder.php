@@ -1,33 +1,58 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
+
 declare(strict_types=1);
-if (function_exists('createFolder') === false)
+
+namespace otra\console\architecture;
+
+use otra\OtraException;
+use const otra\cache\php\BASE_PATH;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\promptUser;
+
+if (!function_exists('otra\console\architecture\createFolder'))
 {
   /**
    * @param string $absoluteFolderPath
    * @param string $relativeFolderPath Used to recreate the absolute path if the folder already exists.
    * @param string $folderType         Is it a 'controller' folder, 'module' folder ?
-   * @param bool   $interactive        Do we have to ask for another folder ?
+   * @param bool   $interactive        Do we allow questions to the user?
+   * @param bool $consoleForce         Determines whether we show an error when something is missing in non interactive
+   *                                   mode or not. The false value by default will stop the execution if something does
+   *                                   not exist and show an error.
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
-  function createFolder(string &$absoluteFolderPath, string $relativeFolderPath, string $folderType,
-                        bool $interactive)
+  function createFolder(
+    string &$absoluteFolderPath,
+    string $relativeFolderPath,
+    string $folderType,
+    bool $interactive,
+    bool $consoleForce
+  ) : void
   {
-    while (file_exists($absoluteFolderPath) === true)
+    while ($pathExists = file_exists($absoluteFolderPath))
     {
-      $sentence = CLI_RED . 'The ' . $folderType . ' ' . CLI_LIGHT_CYAN .
-        substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.';
+      $sentence = CLI_ERROR . 'The ' . $folderType . ' ' . CLI_INFO_HIGHLIGHT .
+        substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.';
 
-      if ($interactive === false)
+      if (!$interactive && !$consoleForce)
       {
         echo $sentence, END_COLOR, PHP_EOL;
-        throw new \otra\OtraException('', 1, '', NULL, [], true);
+        throw new OtraException('', 1, '', null, [], true);
       }
+
+      if ($consoleForce)
+        break;
 
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 
       if ($folderName === 'n')
-        exit(0);
+        throw new OtraException('', 0, '', null, [], true);
 
       $absoluteFolderPath = $relativeFolderPath . $folderName;
 
@@ -35,7 +60,8 @@ if (function_exists('createFolder') === false)
       echo DOUBLE_ERASE_SEQUENCE;
     }
 
-    mkdir($absoluteFolderPath, 0755);
+    if (!$pathExists)
+      mkdir($absoluteFolderPath, 0755);
   }
 }
 

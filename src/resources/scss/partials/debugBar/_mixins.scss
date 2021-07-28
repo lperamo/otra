@@ -1,0 +1,49 @@
+////
+/// @author Lionel Péramo
+/// @group Debug bar
+////
+
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
+
+///
+/// Mixin for a glowing red font
+///
+@mixin glowingRed() {
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('background-image', 'profiler--file--background-image'),
+        ('color', 'profiler--file--color'),
+        ('text-shadow', 'profiler--file--text-shadow')
+      )
+    )
+  );
+
+  -webkit-background-clip : text;
+  -webkit-text-fill-color : transparent;
+}
+
+///
+/// Mixin for a glowing yellow green font
+///
+@mixin glowingYellowGreen() {
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('color', 'profiler--line--color'),
+        ('text-shadow', 'profiler--line--text-shadow')
+      )
+    )
+  );
+}
+
+///
+/// Mixin for the text shadow when hovering the toggle buttons of the debug bar
+///
+@mixin debugToggleHoverTextShadow {
+  text-shadow : 0 0 1px #0b255e, 0 0 8px #fff, 0 0 8px #fff, 0 0 8px #fff;
+}

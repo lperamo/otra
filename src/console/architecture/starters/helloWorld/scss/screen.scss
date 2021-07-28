@@ -1,0 +1,29 @@
+@use 'common';
+
+@media screen {
+  body {
+    @media (prefers-color-scheme : light) {
+      background-color : #ddd;
+      color            : #000;
+    }
+
+    @media (prefers-color-scheme : dark) {
+      background-color : #444;
+      color            : #fff;
+    }
+
+    @at-root .hello-world--box {
+      @media (prefers-color-scheme : light) {
+        box-shadow :
+          2rem 2rem 6rem #bcbcbc,
+          -2rem -2rem 6rem #fefefe;
+      }
+
+      @media (prefers-color-scheme : dark) {
+        box-shadow :
+          2rem 2rem 6rem #2e2e2e,
+          -2rem -2rem 6rem #5c5c5c;
+      }
+    }
+  }
+}

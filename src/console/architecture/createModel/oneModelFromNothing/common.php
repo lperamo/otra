@@ -1,10 +1,23 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
+
+namespace otra\console\architecture\createModel\oneModelFromNothing;
+
+use function otra\console\architecture\createModel\{modelCreationSuccess,writeModelFile};
+use const otra\cache\php\SPACE_INDENT;
+use const otra\console\architecture\createModel\{CREATE_MODEL_FOLDER, FUNCTION_START, MODEL_PATH};
+use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
+
+/** @var string $modelName */
 require CREATE_MODEL_FOLDER . 'common.php';
-define('MODEL_CREATED_FROM_NOTHING_MESSAGE', 'We will create one model from nothing.' . PHP_EOL);
+const MODEL_CREATED_FROM_NOTHING_MESSAGE = 'We will create one model from nothing.' . PHP_EOL;
 define(
-  'MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
-  'The model ' . CLI_LIGHT_CYAN . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
+  __NAMESPACE__ . '\\MODEL_NAME_CREATED_FROM_NOTHING_MESSAGE',
+  'The model ' . CLI_INFO_HIGHLIGHT . $modelName . END_COLOR . ' will be created from nothing...' . PHP_EOL
 );
 
 /**
@@ -13,8 +26,8 @@ define(
  */
 function bundleModelPreparation(string $bundleName, string $bundlePath) : void
 {
-  echo 'A model for the bundle ', CLI_LIGHT_CYAN, $bundleName, END_COLOR, ' ...', PHP_EOL;
-  define('MODEL_PATH', $bundlePath);
+  echo 'A model for the bundle ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' ...', PHP_EOL;
+  define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 }
 
 /**

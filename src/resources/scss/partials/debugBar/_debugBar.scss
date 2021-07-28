@@ -1,0 +1,212 @@
+////
+/// @author Lionel Péramo
+/// @group Debug bar
+////
+
+// loading configuration
+@use '../../configuration/devModeFonts';
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
+
+// loading mixins
+@use 'mixins';
+
+// loading partials
+@use 'blocks';
+@use 'toggle';
+@use 'profiler';
+
+// initializing components
+@include theming.init-themes($themes);
+
+$debug-bar--size : 38px;
+
+.otra--help-cursor {
+  cursor : help;
+}
+
+.dbg-bar {
+  // background
+  @include theming.to-theme(
+    (
+      #{&} :
+      (
+        ('background-image', 'debug-bar--background-image'),
+        ('box-shadow', 'debug-bar--box-shadow')
+      )
+    )
+  );
+
+  // box
+  padding    : 0 5px 0 0;
+  box-sizing : border-box;
+
+  // positioning
+  align-items : center;
+  display     : flex;
+  flex-wrap   : wrap;
+  left        : 0;
+  position    : fixed;
+  right       : 0;
+  top         : 0;
+  z-index     : 10000;
+
+  // text
+  font-family : devModeFonts.$debug--font;
+
+  // animation
+  transition  : transform .2s;
+  will-change : transform;
+
+  // & = dbg-bar
+  &-- {
+    &btn:active {
+      box-shadow : 0 0 25px #fff inset;
+      position   : relative;
+      top        : 1px;
+    }
+
+    &hide {
+      display : none !important;
+    }
+
+    &primary {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('color', 'debug-bar--primary--color'),
+            ('text-shadow', 'debug-bar--primary--text-shadow')
+          )
+        )
+      );
+    }
+
+    &logged {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('color', 'debug-bar--logged-color'),
+            ('text-shadow', 'debug-bar--logged-text-shadow')
+          )
+        )
+      );
+    }
+
+    &not-logged {
+      @include theming.to-theme(
+        (
+          #{&} : (
+            ('color', 'debug-bar--not-logged-color'),
+            ('text-shadow', 'debug-bar--not-logged-text-shadow')
+          )
+        )
+      );
+    }
+
+    &primary,
+    &on,
+    &off {
+      // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
+      font-size   : 16px;
+      line-height : 16px;
+    }
+
+    &separator {
+      margin-left  : 5px;
+      margin-right : 5px;
+    }
+
+    &cache {
+      // positioning
+      position : relative;
+
+      // text
+      font-size   : 16px;
+      line-height : 16px;
+
+      @include theming.to-theme(
+        (
+          #{&} + '--disabled' : (
+            ('color', 'debug-bar--cache--disabled--color'),
+            ('text-shadow', 'debug-bar--cache--disabled--text-shadow')
+          ),
+          #{&} + '--enabled' : (
+            ('color', 'debug-bar--cache--enabled--color'),
+            ('text-shadow', 'debug-bar--cache--enabled--text-shadow')
+          )
+        )
+      );
+    }
+  }
+}
+
+// Button "Inspect SQL"
+.dbg-bar--btn {
+  // animation
+  transition : box-shadow .2s, color .2s, text-shadow .2s;
+  will-change: box-shadow, color, text-shadow;
+
+  @include theming.to-theme(
+    (
+      #{&} : (
+        ('background-image', 'debug-bar--button--background-image'),
+        ('box-shadow', 'debug-bar--button--box-shadow'),
+        ('color', 'debug-bar--button--color'),
+        ('text-shadow', 'debug-bar--button--text-shadow')
+      )
+    )
+  );
+
+  // background
+  border        : none;
+  border-radius : 5px;
+
+  // box
+  height      : auto;
+  padding     : 5px;
+  display     : inline-block;
+  margin-left : 10px;
+
+  // text
+  font-weight : 400;
+
+  // others
+  cursor : pointer;
+
+  &:hover,
+  &:active,
+  &:focus {
+    @include theming.to-theme(
+      (
+        #{&} : (
+          ('color', 'debug-bar--buttons--hover--color'),
+          ('box-shadow', 'debug-bar--buttons--hover--box-shadow'),
+          ('text-shadow', 'debug-bar--buttons--hover--text-shadow')
+        )
+      )
+    );
+  }
+
+  &:focus {
+    outline : none;
+  }
+}
+
+.div-error {
+  // background
+  @include theming.to-theme(
+    (
+      #{&} : ('background-color', 'debug-bar--error--background-color')
+    )
+  );
+
+  // box
+  height     : 100%;
+  width      : 100%;
+
+  // positioning
+  position   : absolute;
+  top        : 0;
+}

@@ -1,70 +1,79 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="TestBootstrap.php" verbose="true">
-  <!--convertErrorsToExceptions="true"-->
-  <!--convertNoticesToExceptions="true"-->
-  <!--convertWarningsToExceptions="true"-->
-  <testsuites>
-    <testsuite name="Block templating system">
-      <file>./src/BlocksTest.php</file>
-    </testsuite>
-
-    <testsuite name="Database console tasks functions">
-      <file>./src/console/DatabaseTest.php</file>
-    </testsuite>
-
-    <testsuite name="Database console tasks">
-      <directory suffix="Test.php">./src/console/database</directory>
-    </testsuite>
-
-    <testsuite name="Help and tools console tasks">
-      <directory suffix="Test.php">./src/console/helpAndTools</directory>
-    </testsuite>
-
-    <testsuite name="SQL DBAL and the SQL drivers">
-      <directory>./src/database</directory>
-    </testsuite>
-
-    <testsuite name="Debug and log tools">
-      <file>./src/tools/debug/DumpTest.php</file>
-      <file>./src/LoggerTest.php</file>
-      <file>./src/OtraExceptionTest.php</file>
-      <file>./src/console/OtraExceptionCliTest.php</file>
-      <file>./config/AllConfigTest.php</file>
-    </testsuite>
-
-    <testsuite name="Console architecture tasks">
-      <directory>./src/console/architecture</directory>
-    </testsuite>
-    <testsuite name="Worker tools">
-
-      <directory suffix="Test.php">./src/tools/workers</directory>
-    </testsuite>
-  </testsuites>
-
-  <filter>
-    <whitelist addUncoveredFilesFromWhitelist="false">
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" verbose="true"
+         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
+  <coverage pathCoverage="true">
+    <include>
       <directory suffix=".php">../</directory>
       <directory suffix=".php">../bundles/*</directory>
       <directory suffix=".php">../src/</directory>
       <directory suffix=".php">../web/</directory>
-
-      <exclude>
-        <directory>./</directory>
-        <directory>./bundles/</directory>
-        <directory>../.git</directory>
-        <directory>../.idea</directory>
-        <directory>../bundles/config</directory>
-        <directory>../cache</directory>
-        <directory>../logs</directory>
-        <directory>./coverageHtml</directory>
-        <directory>./tests</directory>
-      </exclude>
-    </whitelist>
-  </filter>
-
+    </include>
+    <exclude>
+      <directory>./</directory>
+      <directory>./bundles/</directory>
+      <directory>../.git</directory>
+      <directory>../.idea</directory>
+      <directory>../bundles/config</directory>
+      <directory>../cache</directory>
+      <directory>../logs</directory>
+      <directory>./coverageHtml</directory>
+      <directory>./tests</directory>
+      <directory>./vendor</directory>
+    </exclude>
+    <report>
+      <clover outputFile="./coverage.xml"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="Block templating system">
+      <file>./src/BlocksTest.php</file>
+    </testsuite>
+    <testsuite name="Controllers">
+      <directory>./src/controllers</directory>
+    </testsuite>
+    <testsuite name="Router">
+      <file>./src/RouterTest.php</file>
+    </testsuite>
+    <testsuite name="Database console tasks functions">
+      <file>./src/console/DatabaseTest.php</file>
+    </testsuite>
+    <testsuite name="Database console tasks">
+      <directory>./src/console/database</directory>
+    </testsuite>
+    <testsuite name="Deployment console tasks">
+      <directory>./src/console/deployment</directory>
+    </testsuite>
+    <testsuite name="Help and tools console tasks">
+      <directory>./src/console/helpAndTools</directory>
+    </testsuite>
+    <testsuite name="Console tools">
+      <directory>./src/console/ToolsTest.php</directory>
+    </testsuite>
+    <testsuite name="SQL DBAL and the SQL drivers">
+      <directory>./src/database</directory>
+    </testsuite>
+    <testsuite name="Debug and log tools">
+      <file>./config/AllConfigTest.php</file>
+      <file>./src/LoggerTest.php</file>
+      <file>./src/OtraExceptionTest.php</file>
+      <file>./src/console/OtraExceptionCliTest.php</file>
+      <file>./src/tools/ReformatSourceTest.php</file>
+      <file>./src/tools/GetOtraCommitNumberTest.php</file>
+      <file>./src/tools/debug/DumpTest.php</file>
+      <file>./src/tools/debug/GetCallerTest.php</file>
+      <file>./src/tools/debug/TailCustomTest.php</file>
+    </testsuite>
+    <testsuite name="Console architecture tasks">
+      <directory>./src/console/architecture</directory>
+    </testsuite>
+    <testsuite name="Services">
+      <directory>./src/services</directory>
+    </testsuite>
+    <testsuite name="Worker tools">
+      <directory>./src/tools/workers</directory>
+    </testsuite>
+  </testsuites>
   <logging>
-    <log type="coverage-clover" target="./coverage.xml"/>
-    <log type="coverage-html" target="./coverageHtml"/>
-    <log type="junit" target="./report.xml"/>
+    <junit outputFile="./report.xml"/>
   </logging>
 </phpunit>

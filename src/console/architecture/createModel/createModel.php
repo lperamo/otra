@@ -1,12 +1,17 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
 
+namespace otra\console\architecture\createModel;
+
 use otra\OtraException;
-
-if (!defined('OTRA_SUCCESS'))
-  define('OTRA_SUCCESS', CLI_GREEN . ' ✔' . END_COLOR . PHP_EOL);
-
-$bundlesPath = BASE_PATH . 'bundles/';
+use const otra\cache\php\SPACE_INDENT;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, SUCCESS};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\promptUser;
 
 /**
  * If we do not have the information of the type of this property in schema.yml,
@@ -14,16 +19,16 @@ $bundlesPath = BASE_PATH . 'bundles/';
  *
  * @param string $modelName
  * @param string $columnName
- * @param string $type
+ * @param ?string $type
  *
  * @throws OtraException
  */
-function checkDataType(string $modelName, string $columnName, string $type)
+function checkDataType(string $modelName, string $columnName, ?string $type) : void
 {
-  if (false === isset($type))
+  if (!isset($type))
   {
-    echo CLI_RED, 'SCHEMA.YML => Model ', CLI_YELLOW, $modelName, CLI_RED, ' : There are no type for the property ', CLI_YELLOW,
-    $columnName, CLI_RED, '.', END_COLOR;
+    echo CLI_ERROR, 'SCHEMA.YML => Model ', CLI_WARNING, $modelName, CLI_ERROR, ' : There are no type for the property ',
+      CLI_WARNING, $columnName, CLI_ERROR, '.', END_COLOR;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 }
@@ -40,24 +45,24 @@ function checkDataType(string $modelName, string $columnName, string $type)
  */
 function getDataType(string $modelName, string $columnName, string $type) : string
 {
-  if (false !== strpos($type, 'char') || false !== strpos($type, 'text'))
+  if (str_contains($type, 'char') || str_contains($type, 'text'))
     return 'string';
 
-  if (false !== strpos($type, 'int'))
+  if (str_contains($type, 'int'))
     return 'int';
 
-  if (false !== strpos($type, 'float') || false !== strpos($type, 'double'))
+  if (str_contains($type, 'float') || str_contains($type, 'double'))
     return 'float';
 
-  if (false !== strpos($type, 'bool'))
+  if (str_contains($type, 'bool'))
     return 'bool';
 
-  if (false !== strpos($type, 'timestamp') || false !== strpos($type, 'date'))
+  if (str_contains($type, 'timestamp') || str_contains($type, 'date'))
     return 'DateTime';
 
   // If we don't know this type !
-  echo CLI_RED, 'We don\'t know the type ', CLI_YELLOW, $type, CLI_RED, ' in ', CLI_YELLOW, $modelName, CLI_RED, ' for the property 
-  ', CLI_YELLOW, $columnName, CLI_RED, ' !', END_COLOR;
+  echo CLI_ERROR, 'We don\'t know the type ', CLI_WARNING, $type, CLI_ERROR, ' in ', CLI_WARNING, $modelName, CLI_ERROR,
+    ' for the property ', CLI_WARNING, $columnName, CLI_ERROR, ' !', END_COLOR;
   throw new OtraException('', 1, '', NULL, [], true);
 }
 
@@ -65,10 +70,10 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
  * Returns the code of the getters and setters related to this property
  *
  * @param string $columnName
- * @param string $type          Column type
- * @param string $functions     Existing creation code for functions
+ * @param string $type       Column type
+ * @param string $functions  Existing creation code for functions
  */
-function addGettersAndSetters(string $columnName, string $type, string &$functions)
+function addGettersAndSetters(string $columnName, string $type, string &$functions) : void
 {
   $ucfirstColumnName = ucfirst($columnName);
   $functionEnd = $columnName . ';' . PHP_EOL . '  }' . PHP_EOL;
@@ -79,6 +84,7 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
     'set' . $ucfirstColumnName . '(' . ($type === '' ? '' : $type . ' ') . '$' . $columnName . ') : void' . START_ACCOLADE . SPACE_INDENT . SPACE_INDENT . '$this->' .
     $columnName . ' = ' . '$' . $functionEnd;
 }
+
 /**
  * Shows the success sentence after the successful creation of a model.
  *
@@ -86,15 +92,15 @@ function addGettersAndSetters(string $columnName, string $type, string &$functio
  * @param string      $modelName
  * @param string|null $propertiesTxt
  */
-function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null)
+function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null) : void
 {
-  echo 'The model ', CLI_LIGHT_CYAN, $modelName, END_COLOR, ' has been created in the bundle ', CLI_LIGHT_CYAN,
+  echo 'The model ', CLI_INFO_HIGHLIGHT, $modelName, END_COLOR, ' has been created in the bundle ', CLI_INFO_HIGHLIGHT,
     $bundleName, END_COLOR;
 
   if (null !== $propertiesTxt)
     echo ' with those properties [', substr($propertiesTxt, 0, strlen($propertiesTxt) - 2), ']';
 
-  echo '.', OTRA_SUCCESS;
+  echo '.', SUCCESS;
 }
 
 /**
@@ -115,37 +121,37 @@ function writeModelFile(
   string $modelName,
   string $modelFullName,
   string $propertiesCode,
-  string $functions)
+  string $functions) : void
 {
   // If the 'models' folder doesn't exist => creates it.
   $modelsPath = $bundlePath . MODEL_DIRECTORY;
 
-  if (false === file_exists($modelsPath))
+  if (!file_exists($modelsPath))
     mkdir($modelsPath, 0755, true);
 
   // Creates the model with all the content that we gathered.
-  $fp = fopen($modelsPath . ucfirst($modelFullName), 'w');
+  $filePointer = fopen($modelsPath . ucfirst($modelFullName), 'w');
 
   // If we use DateTime type then we add a use statement to handle this type.
   $useDateTime = '';
 
-  if (mb_strpos($functions, 'DateTime') !== false)
+  if (str_contains($functions, 'DateTime'))
     $useDateTime = PHP_EOL . 'use \DateTime;' . PHP_EOL;
 
-  fwrite($fp, '<?php' . PHP_EOL .
+  fwrite($filePointer, '<?php' . PHP_EOL .
     'namespace bundles\\' . ucfirst($bundleName) .
     ($modelLocation === MODEL_LOCATION_MODULE ? '\\' . MODULE_NAME : '') . '\\models;' . PHP_EOL .
     $useDateTime . PHP_EOL .
     'class ' . ucfirst($modelName) . PHP_EOL .
     '{' . PHP_EOL . $propertiesCode . $functions . '}' . PHP_EOL);
-  fclose($fp);
+  fclose($filePointer);
 }
 
 /**
  * @param string $modelName
  * @param string $modelNameQuestion
  *
- * @return array [$modelFullName, $modelExists]
+ * @return array{0:string, 1:string} [$modelFullName, $modelExists]
  */
 function getModelFullNameAndModelExists(string $modelName, string $modelNameQuestion) : array
 {
@@ -187,7 +193,7 @@ function getModuleName(string $bundlePath) : string
   $question = 'In which module do you want to create the model ?';
   $moduleName = promptUser($question);
 
-  while(false === file_exists($bundlePath . $moduleName))
+  while(!file_exists($bundlePath . $moduleName))
   {
     echo DOUBLE_ERASE_SEQUENCE;
     $moduleName = promptUser('This module does not exist.' . $question);
@@ -197,11 +203,11 @@ function getModuleName(string $bundlePath) : string
 }
 
 /**
- * @param array       $columns
- * @param string      $modelName
- * @param string      $functionsCode
- * @param string      $propertiesCode
- * @param string|null $propertiesTxt
+ * @param array<string, array> $columns
+ * @param string               $modelName
+ * @param string               $functionsCode
+ * @param string               $propertiesCode
+ * @param string|null          $propertiesTxt
  *
  * @throws OtraException
  */
@@ -211,13 +217,14 @@ function retrieveFunctionsAndProperties(
   string &$functionsCode,
   string &$propertiesCode,
   ?string &$propertiesTxt = null
-)
+) : void
 {
   foreach ($columns as $column => $columnData)
   {
     $functionsCode .= PHP_EOL;
-    $type = $columnData['type']; // e.g. int(5O)
-    $typeSimple = $type === '' ? '' : getDataType($modelName, $column, $type); // e.g. int
+    /** @var string $columnDataType */
+    $columnDataType = $columnData['type']; // e.g. int(5O)
+    $typeSimple = $columnDataType === '' ? '' : getDataType($modelName, $column, $columnDataType); // e.g. int
 
     // Adds property declaration
     $propertiesCode .= SPACE_INDENT . 'protected ' . ($typeSimple === '' ? '' : $typeSimple . ' ') . '$' . $column .
@@ -226,7 +233,7 @@ function retrieveFunctionsAndProperties(
     if ($propertiesTxt !== null)
       $propertiesTxt .= $column . ', ';
 
-    checkDataType($modelName, $column, $type);
+    checkDataType($modelName, $column, $columnDataType);
     /** @var string $startAccolade */
     addGettersAndSetters(
       $column,
@@ -235,4 +242,3 @@ function retrieveFunctionsAndProperties(
     );
   }
 }
-

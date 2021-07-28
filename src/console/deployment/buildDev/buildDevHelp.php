@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
+namespace otra\console\deployment\buildDev;
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
 
 use otra\console\TasksManager;
 
@@ -12,7 +17,6 @@ return [
     'scope' => '0 => project files (default), 1 => OTRA files, 2 => All the files'
   ],
   [
-    TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,

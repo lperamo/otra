@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace src\tools\workers;
 
+use ReflectionException;
 use otra\tools\workers\{Worker};
 use phpunit\framework\TestCase;
+use const otra\cache\php\CORE_PATH;
+use const otra\console\{CLI_ERROR, END_COLOR};
+use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,8 +23,11 @@ class WorkerTest extends TestCase
     TIMEOUT = 120,
     WHITE = "\e[15;2]";
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
-   * @throws \ReflectionException
+   * @throws ReflectionException
    *
    * @author Lionel Péramo
    */
@@ -83,9 +90,9 @@ class WorkerTest extends TestCase
   public function testFail(): void
   {
     // context
-    define('TEST_STDOUT', 'Worker command failed.');
-    define('TEST_STDERR', 'my error.');
-    define('TEST_STATUS', -1);
+    define(__NAMESPACE__ . '\\TEST_STDOUT', 'Worker command failed.');
+    define(__NAMESPACE__ . '\\TEST_STDERR', 'my error.');
+    define(__NAMESPACE__ . '\\TEST_STATUS', -1);
 
     // launching
     $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);
@@ -94,7 +101,7 @@ class WorkerTest extends TestCase
     // testing
     self::assertIsString($string);
     self::assertEquals(
-      CLI_RED . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
+      CLI_ERROR . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
       'Exit code : ' . TEST_STATUS,

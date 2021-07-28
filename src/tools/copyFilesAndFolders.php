@@ -1,49 +1,60 @@
 <?php
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
 declare(strict_types=1);
+namespace otra\tools;
 
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
-if (!function_exists('copyFileAndFolders'))
+if (!function_exists('otra\tools\copyFileAndFolders'))
 {
   /**
    * Copy the file or an entire folder to the destination
    *
-   * @param array $filesOrFoldersSrc  Must be the absolute path
-   * @param array $filesOrFoldersDest Must be the absolute path
+   * @param string[] $filesOrFoldersSrc  Must be the absolute path
+   * @param string[] $filesOrFoldersDest Must be the absolute path
    *
    * @throws OtraException If we can't create a folder or copy a file.
    */
-  function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest): void
+  function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest) : void
   {
     /** @var int $key */
-    foreach ($filesOrFoldersSrc as $key => $fileOrFolderSrc)
+    foreach ($filesOrFoldersSrc as $numericKey => $fileOrFolderSrc)
     {
-      $fileOrFolderDest = $filesOrFoldersDest[$key];
+      $fileOrFolderDest = $filesOrFoldersDest[$numericKey];
 
-      if (is_dir($fileOrFolderSrc) === true)
+      if (is_dir($fileOrFolderSrc))
         iterateOnFilesAndFolders($fileOrFolderSrc, $fileOrFolderDest);
       else
       {
         $destinationFolder = substr($fileOrFolderDest, 0, -strlen(basename($fileOrFolderDest)));
 
-        if (false === file_exists($destinationFolder))
+        if (!file_exists($destinationFolder))
           mkdir($destinationFolder, 0777, true);
 
-        if (false === copy($fileOrFolderSrc, $fileOrFolderDest))
-          throw new OtraException('Cannot copy the file \'' . $fileOrFolderSrc . ' to ' . $fileOrFolderDest . '\'.', E_CORE_ERROR);
+        if (!copy($fileOrFolderSrc, $fileOrFolderDest))
+          throw new OtraException(
+            'Cannot copy the file \'' . $fileOrFolderSrc . ' to ' . $fileOrFolderDest . '\'.',
+            E_CORE_ERROR
+          );
       }
     }
   }
 
   /**
-   * @param $source
-   * @param $destination
+   * @param string $source
+   * @param string $destination
    *
    * @throws OtraException
    */
-  function iterateOnFilesAndFolders($source, $destination): void
+  function iterateOnFilesAndFolders(string $source, string $destination): void
   {
-    if (false === file_exists($destination) && false === mkdir($destination, 0777, true))
+    if (!file_exists($destination) && !mkdir($destination, 0777, true))
       throw new OtraException('Cannot create the folder ' . $destination);
 
     $initialFolderLength = strlen($source);
@@ -53,22 +64,24 @@ if (!function_exists('copyFileAndFolders'))
       RecursiveIteratorIterator::SELF_FIRST
     );
 
-    /** @var SplFileInfo $file */
-    foreach ($files as $file)
+    /** @var SplFileInfo $splFileInfo */
+    foreach ($files as $splFileInfo)
     {
-      if ($file->isDir() === true)
+      if ($splFileInfo->isDir())
       {
-        $destinationFolder = $destination . $file->getFilename();
+        $destinationFolder = $destination . $splFileInfo->getFilename();
 
-        if (file_exists($destinationFolder) === false && false === mkdir($destinationFolder))
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
       } else
       {
-        $filePath = $file->getRealPath();
+        $filePath = $splFileInfo->getRealPath();
         $destinationFilePath = $destination . substr($filePath, $initialFolderLength);
 
-        if (false === copy($filePath, $destinationFilePath))
-          throw new OtraException('Cannot copy the file \'' . $file . ' to ' . $destinationFilePath . '\'.');
+        if (!copy($filePath, $destinationFilePath))
+          throw new OtraException(
+            'Cannot copy the file \'' . $filePath . ' to ' . $destinationFilePath . '\'.'
+          );
       }
     }
   }

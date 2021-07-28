@@ -1,16 +1,23 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
-require CREATE_MODEL_FOLDER . 'common.php';
-define(
-  'MODEL_CREATED_FROM_YAML_SCHEMA',
-  'We will create one model from ' . CLI_LIGHT_CYAN . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL
-);
 
-define(
-  'MODEL_NAME_CREATED_FOR_BUNDLE_NAME',
-  DOUBLE_ERASE_SEQUENCE . ERASE_SEQUENCE . 'Creating the model ' . CLI_YELLOW . $modelName . END_COLOR .
-  ' for the bundle ' . CLI_YELLOW . $bundleName . ' ...' . PHP_EOL
-);
+namespace otra\console\architecture\createModel\oneModelFromYmlSchema;
+
+use JetBrains\PhpStorm\ArrayShape;
+use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\architecture\createModel\
+{CREATE_MODEL_FOLDER, DEFAULT_BDD_SCHEMA_NAME, MODEL_DIRECTORY, MODEL_LOCATION_MODULE, MODEL_PATH, SCHEMA_DATA};
+
+
+/** @var string $bundleName */
+/** @var string $modelName */
+require CREATE_MODEL_FOLDER . 'common.php';
+const MODEL_CREATED_FROM_YAML_SCHEMA = 'We will create one model from ' . CLI_INFO_HIGHLIGHT . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL;
 
 /**
  * @param int    $modelLocation
@@ -19,19 +26,19 @@ define(
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
-  if (defined('MODEL_PATH') === false)
-    define('MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . '/' : ''));
+  if (!defined('otra\console\architecture\createModel\MODEL_PATH'))
+    define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . ($modelLocation === MODEL_LOCATION_MODULE ? $moduleName . DIR_SEPARATOR : ''));
 }
 
 /**
  * @param string $modelName
  *
- * @return array
+ * @return array{0:string, 1:bool, 2:bool}
  */
 function preparingBidule(string $modelName) : array
 {
   $modelFullName = $modelName . '.php';
-  define('AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
+  define(__NAMESPACE__ . '\\AVAILABLE_TABLES', array_keys(SCHEMA_DATA));
 
   return [
     $modelFullName,
@@ -43,8 +50,12 @@ function preparingBidule(string $modelName) : array
  * @param string $modelFullName
  * @param string $modelName
  *
- * @return array $modelExists, $tableExists
+ * @return array{0:bool, 1:bool} $modelExists, $tableExists
  */
+#[ArrayShape([
+  'bool',
+  'bool'
+])]
 function checksModelAndTableExistence(string $modelFullName, string $modelName) : array
 {
   return [
@@ -61,10 +72,10 @@ function checksModelAndTableExistence(string $modelFullName, string $modelName) 
  */
 function preparingErrorMessage(bool $modelExists, bool $tableExists, string $modelName, string &$errorLabel) : void
 {
-  if (true === $modelExists)
+  if ($modelExists)
     $errorLabel .= 'This model \'' . $modelName . '\' already exists. ';
 
-  if (false === $tableExists)
+  if (!$tableExists)
     $errorLabel .= 'The schema does not contains this table ' . $modelName . ' (maybe ... check the case).';
 }
 

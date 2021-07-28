@@ -6,6 +6,9 @@ namespace src\tools\workers;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
 use phpunit\framework\TestCase;
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -30,6 +33,9 @@ class WorkerManagerTest extends TestCase
     CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE,
     WHITE = "\e[15;2]";
 
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @param string $command
    *
@@ -47,8 +53,8 @@ class WorkerManagerTest extends TestCase
     );
     $workerManager->attach($worker);
 
-    define('TEST_DETACH_STATUS_SUCCESS', 0);
-    define('TEST_DETACH_STATUS_WAS_RUNNING', true);
+    define(__NAMESPACE__ . '\\TEST_DETACH_STATUS_SUCCESS', 0);
+    define(__NAMESPACE__ . '\\TEST_DETACH_STATUS_WAS_RUNNING', true);
 
     // launching
     $foundKey = array_search($worker, $workerManager::$workers, true);
@@ -162,7 +168,7 @@ class WorkerManagerTest extends TestCase
       self::WAITING_MESSAGE,
       self::VERBOSE
     );
-    define('TEST_STREAM_NON_BLOCKING_MODE', false);
+    define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
 
     // launching
     $workerManager->attach($worker);
@@ -300,7 +306,7 @@ class WorkerManagerTest extends TestCase
     // Testing
     $this->expectOutputString(
       self::WAITING_MESSAGE_2 . PHP_EOL .
-      CLI_RED . 'The process that launched ' . CLI_LIGHT_CYAN . self::COMMAND_SLEEP_2 . CLI_RED .
+      CLI_ERROR . 'The process that launched ' . CLI_INFO_HIGHLIGHT . self::COMMAND_SLEEP_2 . CLI_ERROR .
       ' was hanging during ' . self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
     );
 

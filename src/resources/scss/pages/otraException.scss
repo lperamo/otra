@@ -1,0 +1,94 @@
+// loading configuration
+@use '../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../components/accordion/accordion';
+@use '../components/theming/theming';
+
+// loading partials
+@use '../partials/otraPage/otraPage';
+
+// configuring components
+@include theming.init-themes($themes);
+@include accordion.create(
+  ('themes': $themes)
+);
+
+// specific style
+.exception-main {
+  $main : &;
+
+  // size
+  margin-bottom : 1rem;
+  padding       : 2rem;
+
+  // text
+  font-size : 2em;
+
+  @at-root .mb20 {
+    margin-bottom : 2rem;
+  }
+
+  &--paragraph {
+    &-first,
+    &-second {
+      margin-top    : 0;
+    }
+
+    &-first {
+      margin-bottom : 0;
+    }
+
+    &-second {
+      margin-bottom : 2rem;
+    }
+  }
+
+  &--color-- {
+    &error-code,
+    &file-and-line {
+      font-weight : 700;
+    }
+
+    &error-code {
+      @include theming.to-theme(
+        (#{&} :('color', 'exception--color--error-code'))
+      );
+    }
+
+    &file-and-line {
+      @include theming.to-theme(
+        (#{&} :('color', 'exception--color--file'))
+      );
+    }
+  }
+
+  .accordion {
+    @include theming.to-theme(
+      (
+        #{&} :('box-shadow', 'accordion--text-shadow')
+      )
+    );
+
+    &--block {
+      @include theming.to-theme(
+        (
+          #{&} :('background-image', 'accordion--inner--background-image')
+        )
+      );
+
+      @at-root #{$main}--code-block {
+        // margins
+        margin-bottom : 0;
+        margin-top    : 0;
+
+        // text
+        font-size   : 1.5rem;
+        white-space : pre-wrap;
+      }
+    }
+  }
+}
+
+// applying theme
+@include theming.global-mass-theme();

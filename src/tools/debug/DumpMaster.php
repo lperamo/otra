@@ -1,13 +1,18 @@
 <?php
 declare(strict_types=1);
-namespace otra;
-use config\AllConfig;
+
+namespace otra\tools\debug;
+
+use otra\config\AllConfig;
 use ReflectionClass;
+use ReflectionException;
+use const otra\cache\php\CORE_PATH;
 
 /**
  * Class that provides things for both web and CLI sides of the dump function.
  *
- * @package otra
+ * @author Lionel Péramo
+ * @package otra\tools\debug
  */
 abstract class DumpMaster {
   protected const
@@ -54,9 +59,15 @@ abstract class DumpMaster {
    * returns the configuration if it exists
    * otherwise returns the default configuration.
    *
-   * @param array|null $options
+   * @param ?int[] $options
    *
-   * @return array Returns the actual dump configuration.
+   * @return array{
+   *   maxChildren ?: int,
+   *   maxData ?:int,
+   *   maxDepth ?: int,
+   *   autoLaunch ?: bool,
+   *   barPosition ?: string
+   * } Returns the actual dump configuration.
    */
   public static function setDumpConfig(array $options = null) : array
   {
@@ -80,6 +91,10 @@ abstract class DumpMaster {
       {
         AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] =
           $options[$optionKey] ?? AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]];
+
+        // Handles the -1 value
+        if (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] === -1)
+          AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]] = 100000;
       }
     }
 
@@ -87,12 +102,12 @@ abstract class DumpMaster {
   }
 
   /**
-   * @param $param
+   * @param object $param
    *
-   * @throws \ReflectionException
-   * @return array
+   * @throws ReflectionException
+   * @return string[]
    */
-  protected static function getClassDescription($param) : array
+  protected static function getClassDescription(object $param) : array
   {
     $className = get_class($param);
     $reflectedClass = new ReflectionClass($className);
@@ -109,5 +124,30 @@ abstract class DumpMaster {
       $description .= ' implements ' . implode(',', $classInterfaces);
 
     return [$className, $description];
+  }
+
+  /**
+   * @param mixed ...$params
+   */
+  public static function dump(... $params) : void
+  {
+    $debugBacktrace = debug_backtrace();
+
+    // We check if we come from the 'dump' function shortcut or the 'paramDump' function
+    $secondTrace = ($debugBacktrace[3]['file'] === CORE_PATH . 'tools/debug/dump.php')
+      ? $debugBacktrace[4]
+      : $debugBacktrace[3];
+
+    require_once CORE_PATH . 'tools/removeFieldProtection.php';
+    require_once CORE_PATH . 'tools/getSourceFromFile.php';
+
+    ob_start();
+
+    foreach ($params as $paramKey => $param)
+    {
+      static::analyseVar($paramKey, $param, self::OTRA_DUMP_INITIAL_DEPTH, is_array($param));
+    }
+
+    static::dumpCallback($secondTrace['file'], $secondTrace['line'], ob_get_clean());
   }
 }

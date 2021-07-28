@@ -1,14 +1,21 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
 
-if (!defined('SPACE_INDENT_2'))
-  define('SPACE_INDENT_2', SPACE_INDENT . SPACE_INDENT);
+namespace otra\console\architecture;
 
-if (!defined('SPACE_INDENT_3'))
-  define('SPACE_INDENT_3', SPACE_INDENT_2 . SPACE_INDENT);
+use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\promptUser;
 
-if (!defined('BUNDLES_PATH'))
-  define('BUNDLES_PATH', BASE_PATH . 'bundles/');
+const
+  SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT,
+  SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
 
 /**
  * Creates the folder of the specified controller.
@@ -21,30 +28,30 @@ if (!defined('BUNDLES_PATH'))
  * @param bool   $interactive
  * @param bool   $consoleForce
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function createAction(string $bundleName, string $moduleName, string $controllerName,
-                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce)
+                      string $controllerPath, string $actionName, bool $interactive, bool $consoleForce) : void
 {
   $upperActionName = ucfirst($actionName);
   $actionPath = $controllerPath . $upperActionName . 'Action.php';
 
-  $actionAlreadyExistsSentence = CLI_RED . 'The action ' . CLI_LIGHT_CYAN .
-    substr($actionPath, strlen(BASE_PATH)) . CLI_RED . ' already exists.' . END_COLOR;
+  $actionAlreadyExistsSentence = CLI_ERROR . 'The action ' . CLI_INFO_HIGHLIGHT .
+    substr($actionPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.' . END_COLOR;
 
-  while (file_exists($actionPath) === true)
+  while (file_exists($actionPath))
   {
     // If the file does not exist and we are not in interactive mode, we exit the program.
-    if ($interactive === false)
+    if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
-      throw new \otra\OtraException('', 1, '', NULL, [], true);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
 
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
 
     if ($actionName === 'n')
-      exit(0);
+      throw new OtraException('', 0, '', NULL, [], true);
 
     $upperActionName = ucfirst($actionName);
     $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -53,7 +60,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  define('OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
+  define(__NAMESPACE__ . '\\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
   file_put_contents(
     $actionPath,
     '<?php
@@ -71,38 +78,38 @@ class ' . $upperActionName . 'Action extends Controller
   /**
    * ' . $upperActionName . 'Action constructor.
    *
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
   }
 }' . PHP_EOL);
 
-  echo CLI_LIGHT_GREEN, 'Action ', CLI_LIGHT_CYAN, substr($actionPath,
-    strlen(BASE_PATH)), CLI_LIGHT_GREEN, ' created.', END_COLOR, PHP_EOL;
+  echo CLI_BASE, 'Action ', CLI_INFO_HIGHLIGHT, substr($actionPath,
+    strlen(BASE_PATH)), CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 
-  $viewFolder = BUNDLES_PATH . $bundleName . '/' . $moduleName . '/views/' . $controllerName;
+  $viewFolder = BUNDLES_PATH . $bundleName . DIR_SEPARATOR . $moduleName . '/views/' . $controllerName;
 
   // If the action folder does not exist
-  if (file_exists($viewFolder) === false)
+  if (!file_exists($viewFolder))
     mkdir($viewFolder, 0777, true);
   else
-    echo CLI_YELLOW, 'For your information, the folder ', CLI_LIGHT_CYAN, $viewFolder, CLI_YELLOW, ' already existed.',
+    echo CLI_WARNING, 'For your information, the folder ', CLI_INFO_HIGHLIGHT, $viewFolder, CLI_WARNING, ' already existed.',
       END_COLOR, PHP_EOL;
 
-  $template = $viewFolder . '/' . $actionName . '.phtml';
+  $template = $viewFolder . DIR_SEPARATOR . $actionName . '.phtml';
 
   // If the template file already exists
-  if (file_exists($template) === true)
-    echo CLI_YELLOW, 'For your information, the template file ', CLI_LIGHT_CYAN, $template, CLI_YELLOW,
+  if (file_exists($template))
+    echo CLI_WARNING, 'For your information, the template file ', CLI_INFO_HIGHLIGHT, $template, CLI_WARNING,
       ' already existed.', END_COLOR, PHP_EOL;
 
   // We just create an empty template file
   touch($template);
 
-  if ($consoleForce === true)
+  if ($consoleForce)
     return;
 
   $routesConfigFolder = BUNDLES_PATH . $bundleName . '/config';
@@ -115,13 +122,15 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT_2 . "]" . PHP_EOL .
     SPACE_INDENT . "]";
 
+  define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
-  if (file_exists($routesConfigFolder) === true)
+  if (file_exists($routesConfigFolder))
   {
-    $routesArray = file_exists($routeConfigurationFile) === true ? require $routeConfigurationFile : [];
+    $routesArray = file_exists($routeConfigurationFile) ? require $routeConfigurationFile : [];
     $routesArray[$controllerName . $upperActionName] = [
       'chunks' => [
-        '/' . $controllerName . $upperActionName,
+        DIR_SEPARATOR . $controllerName . $upperActionName,
         $bundleName,
         $moduleName,
         $controllerName,
@@ -160,7 +169,7 @@ class ' . $upperActionName . 'Action extends Controller
 
     file_put_contents(
       $routeConfigurationFile,
-      '<?php' . PHP_EOL .
+      PHP_FILE_START .
       'return ' . $routesArray . ';' . PHP_EOL
     );
   } else
@@ -171,22 +180,22 @@ class ' . $upperActionName . 'Action extends Controller
     // Adds a routes config file
     file_put_contents(
       $routeConfigurationFile,
-      "<?php" . PHP_EOL .
+      PHP_FILE_START .
       "return [" . PHP_EOL .
       SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
       "];" . PHP_EOL
     );
   }
 
-  echo 'Route configuration file ', CLI_LIGHT_CYAN, $routeConfigurationFile, CLI_GREEN, ' created.',
-    PHP_EOL;
+  echo 'Route configuration file ', CLI_INFO_HIGHLIGHT, $routeConfigurationFile, CLI_BASE, ' created', CLI_SUCCESS,
+    ' ✔', PHP_EOL;
 
   // We update the routes configuration as we just add one route.
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 
   // We update the class mapping since we have one action more.
-  if (defined('VERBOSE') === false)
-    define('VERBOSE', 0);
+  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+    define(__NAMESPACE__ . '\\VERBOSE', 0);
 
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 }
@@ -200,12 +209,12 @@ class ' . $upperActionName . 'Action extends Controller
  * @param string $actionName
  * @param bool   $consoleForce
  *
- * @throws \otra\OtraException
+ * @throws OtraException
  */
 function actionHandling(bool $interactive, string $bundleName, string $moduleName, string $controllerName,
-                        string $controllerPath, string $actionName, bool $consoleForce = false)
+                        string $controllerPath, string $actionName, bool $consoleForce = false) : void
 {
-  if ($interactive === true)
+  if ($interactive)
   {
     while($actionName !== 'n')
     {
@@ -215,4 +224,3 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   } else
     createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
 }
-

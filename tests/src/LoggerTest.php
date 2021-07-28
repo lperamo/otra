@@ -3,35 +3,41 @@ declare(strict_types=1);
 
 namespace src;
 
-use otra\Logger;
+use otra\cache\php\Logger;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, PROD};
+use function otra\tools\debug\tailCustom;
+use function otra\tools\delTree;
 
 /**
  * @runTestsInSeparateProcesses
  */
 class LoggerTest extends TestCase
 {
-  const LOG_PATH = BASE_PATH . 'logs/';
-  private static string $LOGS_PROD_PATH;
+  protected const LOG_PATH = BASE_PATH . 'logs/';
+  private static string $logsProdPath;
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {
-    $_SERVER[APP_ENV] = 'prod';
-    self::$LOGS_PROD_PATH = self::LOG_PATH . $_SERVER[APP_ENV] . '/';
-    // @TODO we should be able to do a simple require and not require_once as this code must be executed only once !
-    require_once CORE_PATH . 'tools/debug/dump.php';
-    require_once CORE_PATH . 'tools/debug/tailCustom.php';
+    parent::setUpBeforeClass();
+    $_SERVER[APP_ENV] = PROD;
+    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
+    require CORE_PATH . 'tools/debug/tailCustom.php';
 
-    if (file_exists(self::$LOGS_PROD_PATH) === false)
-      mkdir(self::$LOGS_PROD_PATH, 0777, true);
+    if (!file_exists(self::$logsProdPath))
+      mkdir(self::$logsProdPath, 0777, true);
   }
 
-  public static function tearDownAfterClass(): void
+  public static function tearDownAfterClass() : void
   {
-    if (OTRA_PROJECT === false)
+    parent::tearDownAfterClass();
+
+    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
     {
-      rmdir(self::$LOGS_PROD_PATH);
-      rmdir(self::LOG_PATH);
+      require CORE_PATH . 'tools/deleteTree.php';
+      delTree(self::LOG_PATH);
     }
   }
 
@@ -41,22 +47,22 @@ class LoggerTest extends TestCase
   public function testLog() : void
   {
     // context
-    $logFile = self::$LOGS_PROD_PATH . 'log.txt';
+    $logFile = self::$logsProdPath . 'log.txt';
 
-    if (!file_exists(self::$LOGS_PROD_PATH))
-      mkdir(self::$LOGS_PROD_PATH, 0777,true);
+    if (!file_exists(self::$logsProdPath))
+      mkdir(self::$logsProdPath, 0777,true);
 
     if (!file_exists($logFile))
       touch($logFile);
 
     Logger::log('[OTRA_LOGGER_TEST]');
-    self::assertRegExp(
+    self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
-      tailCustom($logFile, 1)
+      tailCustom($logFile)
     );
 
     // cleaning
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
       unlink($logFile);
   }
 
@@ -66,12 +72,10 @@ class LoggerTest extends TestCase
   public function testLogToPath() : void
   {
     // context
-    // @TODO duplication of code to require dump.php. Why putting this code in setUpBeforeClass creates a fatal
-    // error "Cannot redeclare lg()" etc. ? This method should be executed only once ...
-    $path = 'logs/otraTests/';
-    $logCustomFolder = '../' . $path;
-    define('LOG_FILENAME', 'log.txt');
-    $absolutePathToFolder = BASE_PATH . $path;
+    $testLogsPath = 'logs/otraTests/';
+    $logCustomFolder = '../' . $testLogsPath;
+    define(__NAMESPACE__ . '\\LOG_FILENAME', 'log.txt');
+    $absolutePathToFolder = BASE_PATH . $testLogsPath;
     mkdir($absolutePathToFolder);
     $absolutePathToLogFilename = $absolutePathToFolder . LOG_FILENAME;
     $logCustomPath = $logCustomFolder . 'log';
@@ -79,13 +83,41 @@ class LoggerTest extends TestCase
 
     // testing the logger...
     Logger::logToRelativePath('[OTRA_LOGGER_TEST]', $logCustomPath);
-    $this->assertRegExp(
+    self::assertMatchesRegularExpression(
       '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
-      tailCustom($absolutePathToLogFilename, 1)
+      tailCustom($absolutePathToLogFilename)
     );
 
     // cleaning
     unlink($absolutePathToLogFilename);
     rmdir($absolutePathToFolder);
+  }
+
+  /**
+   * we use "Depends" and not "depends" (note the uppercase letter) as it does not work with "depends"
+   * @Depends src\tools\debug\TailCustomTest::testTailCustom
+   *
+   * @author Lionel Péramo
+   */
+  public function testLg() : void
+  {
+    // context
+    define(__NAMESPACE__ . '\\TRACE_LOG_FILE', self::LOG_PATH . $_SERVER[APP_ENV] . '/trace.txt');
+
+    if (!file_exists('trace.txt'))
+      touch(TRACE_LOG_FILE);
+
+    // launching
+    Logger::lg('[OTRA_TEST_DEBUG_TOOLS_LG]');
+
+    // testing
+    self::assertMatchesRegularExpression(
+      '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
+      tailCustom(TRACE_LOG_FILE)
+    );
+
+    // cleaning
+    if (!OTRA_PROJECT)
+      unlink(TRACE_LOG_FILE);
   }
 }

@@ -1,29 +1,28 @@
 <?php
-
 declare(strict_types=1);
 
-namespace {
+namespace otra\tests;
 
-  use phpunit\framework\TestCase;
+use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV,PROD};
+
+/**
+ * @runTestsInSeparateProcesses
+ */
+class ConsoleTest extends TestCase
+{
+  protected function setUp(): void
+  {
+    parent::setUp();
+    $_SERVER[APP_ENV] = PROD;
+  }
 
   /**
-   * @runTestsInSeparateProcesses
+   * @author Lionel Péramo
+   * @doesNotPerformAssertions
    */
-  class ConsoleTest extends TestCase
+  public function testExecConsole(): void
   {
-    protected function setUp(): void
-    {
-      parent::setUp();
-      $_SERVER[APP_ENV] = 'prod';
-    }
-
-    /**
-     * @author Lionel Péramo
-     * @doesNotPerformAssertions
-     */
-    public function testExecConsole(): void
-    {
-      exec('php ' . __DIR__ . '/../otra.php');
-    }
+    exec('php ' . __DIR__ . '/../otra.php');
   }
 }

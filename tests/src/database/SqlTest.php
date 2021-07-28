@@ -7,6 +7,10 @@ use Exception;
 use PDOStatement;
 use phpunit\framework\TestCase;
 use otra\{bdd\Sql,OtraException};
+use ReflectionException;
+use TypeError;
+use const otra\cache\php\{APP_ENV, BASE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
+use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -16,27 +20,28 @@ class SqlTest extends TestCase
   private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
-    LOG_PATH = BASE_PATH . 'logs/';
+    LOG_PATH = BASE_PATH . 'logs/',
+    QUERY_SELECT_1 = 'SELECT 1';
 
   private static string $databaseName = 'testDB';
 
   protected function setUp() : void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
   }
 
   protected function tearDown(): void
   {
     parent::tearDown();
 
-    if (isset($_SESSION['bootstrap']) === true)
+    if (isset($_SESSION['bootstrap']))
       unset($_SESSION['bootstrap']);
 
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
 
     try {
-      Sql::getDB()->__destruct();
+      Sql::getDb()->__destruct();
     } catch (Exception $exception) {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
@@ -86,7 +91,7 @@ class SqlTest extends TestCase
   private function createDatabaseForTest() : void {
     require(self::TEST_CONFIG_GOOD_PATH);
 
-    Sql::getDB(null, false);
+    Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
     $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
     Sql::$instance->freeResult($dbResult);
@@ -105,7 +110,7 @@ class SqlTest extends TestCase
     require self::TEST_CONFIG_GOOD_PATH;
 
     // launching task
-    $sqlInstance = Sql::getDB(null, false);
+    $sqlInstance = Sql::getDb(null, false);
     self::assertInstanceOf(Sql::class, $sqlInstance);
   }
 
@@ -119,7 +124,7 @@ class SqlTest extends TestCase
    */
   public function fetch(string $fetchMethod, $column = null)
   {
-    Sql::getDB();
+    Sql::getDb();
 
     $this->createTemporaryTestTable();
     $this->createTemporaryTestValues();
@@ -151,8 +156,8 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
-    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    Sql::getDb();
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -167,8 +172,8 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
-    self::assertEquals(null, Sql::$instance->query('SELECT 1'));
+    Sql::getDb();
+    self::assertEquals(null, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -180,32 +185,38 @@ class SqlTest extends TestCase
     // context
     require self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
-    $_SERVER[APP_ENV] = 'dev';
+    $_SERVER[APP_ENV] = DEV;
 
     $devLogFolder = self::LOG_PATH . 'dev/';
 
-    if (file_exists($devLogFolder) === false)
+    if (!file_exists($devLogFolder))
       mkdir($devLogFolder, 0777, true);
 
     $sqlLogPath = $devLogFolder . 'sql.txt';
 
-    if (file_exists($sqlLogPath) === false)
+    if (!file_exists($sqlLogPath))
       touch($sqlLogPath);
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
-    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query('SELECT 1'));
+    self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
     self::assertEquals(
       $sqlLogContent
-        . '[{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1151,"query":"SELECT 1"},',
+        . ($sqlLogContent !== ''
+        ? ''
+        : '[')
+      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
-    if (OTRA_PROJECT === false)
+    if (!OTRA_PROJECT)
     {
       unlink($sqlLogPath);
-      rmdir($devLogFolder);
+
+      // only remove the log folder if it is really empty
+      if (empty(array_diff(scandir($devLogFolder), ['..', '.'])))
+        rmdir($devLogFolder);
     }
   }
 
@@ -409,12 +420,12 @@ class SqlTest extends TestCase
     require self::TEST_CONFIG_GOOD_PATH;
     $this->createDatabaseForTest();
 
-    $this->expectException(\TypeError::class);
+    $this->expectException(TypeError::class);
     $this->expectExceptionMessage(
-      'call_user_func_array() expects parameter 1 to be a valid callback, class \'otra\bdd\Pdomysql\' does not have a method \'selectDb\''
+      'call_user_func_array(): Argument #1 ($callback) must be a valid callback, class otra\bdd\Pdomysql does not have a method "selectDb"'
     );
 
-    $sqlInstance = Sql::getDB('test');
+    $sqlInstance = Sql::getDb('test');
     $sqlInstance->selectDb();
   }
 
@@ -432,7 +443,7 @@ class SqlTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('This function does not exist with \'PDOMySQL\'.');
 
-    $sqlInstance = Sql::getDB('testOtherDriver');
+    $sqlInstance = Sql::getDb('testOtherDriver');
     $sqlInstance->selectDb();
   }
 
@@ -449,7 +460,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     $this->expectOutputString('Test \\\' string');
     echo Sql::$instance->quote('Test \' string');
   }
@@ -468,8 +479,8 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
-    self::assertIsString(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    Sql::getDb();
+    self::assertIsString(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -487,8 +498,8 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
-    self::assertNull(Sql::$instance->single(Sql::$instance->query('SELECT 1')));
+    Sql::getDb();
+    self::assertNull(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -505,7 +516,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertIsArray(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
@@ -524,7 +535,7 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     self::assertNull(Sql::$instance->values(Sql::$instance->query('SELECT 1,2')));
   }
 
@@ -542,8 +553,8 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
-    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    Sql::getDb();
+    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -561,8 +572,8 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
-    self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query('SELECT 1')));
+    Sql::getDb();
+    self::assertNull(Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -575,10 +586,10 @@ class SqlTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
 
-    $sqlInstance = Sql::getDB();
+    $sqlInstance = Sql::getDb();
     $sqlInstance->__destruct();
 
-    self::assertEquals(null, Sql::$_currentConn);
+    self::assertEquals(null, Sql::$currentConn);
   }
 
   /**
@@ -591,10 +602,10 @@ class SqlTest extends TestCase
   {
     // Creating the context (having a SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
-    $sqlInstance = Sql::getDB('test');
+    $sqlInstance = Sql::getDb('test');
 
     // Launching the task
-    $sqlInstance2 = Sql::getDB('test');
+    $sqlInstance2 = Sql::getDb('test');
 
     // Testing !
     self::assertEquals($sqlInstance, $sqlInstance2);
@@ -608,12 +619,15 @@ class SqlTest extends TestCase
    */
   public function testGetDB_NoDefaultConnection() : void
   {
+    // context
+    require TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
+
     // assertions
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
 
     // Launching the task
-    Sql::getDB();
+    Sql::getDb();
   }
 
   /**
@@ -632,7 +646,7 @@ class SqlTest extends TestCase
     $this->expectExceptionMessage('This DBMS \'Hello\' is not available...yet ! Available DBMS are : Pdomysql');
 
     // Launching the task
-    Sql::getDB('test');
+    Sql::getDb('test');
   }
 
   /**
@@ -648,8 +662,8 @@ class SqlTest extends TestCase
     $_SESSION['bootstrap'] = true;
 
     // launching task
-    Sql::getDB();
-    $sqlInstance = Sql::$instance->query('SELECT 1');
+    Sql::getDb();
+    $sqlInstance = Sql::$instance->query(self::QUERY_SELECT_1);
     self::assertNull(Sql::$instance->freeResult($sqlInstance));
   }
 
@@ -664,7 +678,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->beginTransaction();
     self::assertTrue(Sql::$instance->inTransaction());
     Sql::$instance->commit();
@@ -681,7 +695,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
     Sql::$instance->beginTransaction();
     self::assertTrue(Sql::$instance->rollBack());
   }
@@ -697,7 +711,7 @@ class SqlTest extends TestCase
     $this->createDatabaseForTest();
 
     // launching task
-    Sql::getDB();
+    Sql::getDb();
 
     try {
       Sql::$instance->query('bogus sql');
@@ -715,7 +729,7 @@ class SqlTest extends TestCase
   }
 
   /**
-   * @throws \ReflectionException
+   * @throws ReflectionException
    * @throws OtraException
    *
    * @author Lionel Péramo
@@ -724,7 +738,7 @@ class SqlTest extends TestCase
   {
     // context
     require self::TEST_CONFIG_GOOD_PATH;
-    Sql::getDB();
+    Sql::getDb();
 
     // testing
     Sql::$instance = null;

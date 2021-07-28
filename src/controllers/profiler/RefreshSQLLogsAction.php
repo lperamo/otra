@@ -1,26 +1,26 @@
 <?php
 declare(strict_types=1);
-/**
- * LPFramework - Core - Profiler - RefreshSQLLogs
- *
- * @author Lionel Péramo */
 
 namespace otra\controllers\profiler;
 
-use otra\{Controller, services\ProfilerService};
+use otra\{Controller, OtraException, services\ProfilerService};
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
 
 /**
+ * @author Lionel Péramo
  * @package otra\controllers\profiler
  */
 class RefreshSQLLogsAction extends Controller
 {
   /**
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
+   *
+   * @throws OtraException
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
     require CORE_PATH . 'tools/translate.php';
     echo ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt');

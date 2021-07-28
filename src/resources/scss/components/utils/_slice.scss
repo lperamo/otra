@@ -1,0 +1,62 @@
+////
+/// @group Utils
+/// @since 2.0
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+
+/// Slicing a list
+///
+/// @param {List}   $list
+/// @param {Number} $start
+/// @param {Number} $end
+///
+/// @example
+/// $list: a, b, c, d, e, f;
+/// $new-list: slice($list, 3, 5); // c, d, e
+/// $new-list: slice($list, 4, 4); // d
+/// $new-list: slice($list, 5, 3); // error
+/// $new-list: slice($list, -1, 10); // error
+///
+/// @return {List}
+///
+@function slice($list, $start: 1, $end: list.length($list)) {
+  $result : null;
+
+  @if meta.type-of($start) != number {
+    @error "$start is not a number for 'slice'.";
+  }
+
+  @if meta.type-of($end) != number {
+    @error "$end is not a number for 'slice'.";
+  }
+
+  @if $start > $end {
+    @error "The start index has to be lesser than or equals to the end index for 'slice'.";
+  }
+
+  @if $start < 1 or $end < 1 {
+    @error "List indexes must be non-zero integers for 'slice'.";
+  }
+
+  $list-length : list.length($list);
+
+  @if $start > $list-length {
+    @error "List index is #{$start} but list is only #{$list-length} item long for 'slice'.";
+  }
+
+  @if $end > $list-length {
+    @error "List index is #{$end} but list is only #{$list-length} item long for 'slice'.";
+  }
+
+  $result : ();
+
+  @for $i from $start through $end {
+    $result : list.append($result, list.nth($list, $i));
+  }
+
+  @return $result;
+}

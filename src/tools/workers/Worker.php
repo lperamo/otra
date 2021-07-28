@@ -3,41 +3,36 @@ declare(strict_types=1);
 
 namespace otra\tools\workers;
 
+use const otra\console\{CLI_ERROR,END_COLOR};
+
 /**
+ * A worker is a process that can be launch in parallel with another workers, asynchronously.
+ *
  * @package otra\tools
  */
 class Worker
 {
-  public int
-    $verbose,
-    $timeout,
-    $keyInWorkersArray = -1;
-
-  public string
-    $command,
-    $waitingMessage;
-
-  private string $successMessage;
+  public int $keyInWorkersArray = -1;
 
   /**
-   * @param string $command
-   * @param string $successMessage
-   * @param string $waitingMessage
-   * @param int    $verbose
-   * @param int    $timeout
+   * Worker constructor.
+   *
+   * @param string   $command
+   * @param string   $successMessage
+   * @param string   $waitingMessage
+   * @param int      $verbose
+   * @param int      $timeout
+   * @param Worker[] $subworkers
    */
   public function __construct(
-    string $command,
-    string $successMessage = '',
-    string $waitingMessage = 'Waiting ...',
-    int $verbose = 1,
-    int $timeout = 60)
+    public string $command,
+    public string $successMessage = '',
+    public string $waitingMessage = 'Waiting ...',
+    public int $verbose = 1,
+    public int $timeout = 60,
+    public array $subworkers = []
+  )
   {
-    $this->command = $command;
-    $this->successMessage = $successMessage;
-    $this->waitingMessage = $waitingMessage;
-    $this->verbose = $verbose;
-    $this->timeout = $timeout;
   }
 
   /**
@@ -59,7 +54,7 @@ class Worker
    */
   public function fail(string $stdout, string $stderr, int $exitCode) : string
   {
-    return CLI_RED . 'Fail! The command was : "' . $this->command . '"' . END_COLOR . PHP_EOL .
+    return CLI_ERROR . 'Fail! The command was : "' . $this->command . '"' . END_COLOR . PHP_EOL .
       'STDOUT : ' . $stdout . PHP_EOL .
       'STDERR : ' . $stderr . PHP_EOL .
       'Exit code : ' . $exitCode;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra\tools\workers;
 
 use RuntimeException;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * @package otra\tools
@@ -14,7 +15,7 @@ class WorkerManager
     STDOUT = 1,
     STDERR = 2,
     NON_BLOCKING = false,
-    //BLOCKING = true,
+    //BLOCKING = true,?
     DESCRIPTOR_SPEC = [
       ['pipe', 'r'],
       ['pipe', 'w'],
@@ -25,11 +26,15 @@ class WorkerManager
   public const
     ERASE_TO_END_OF_LINE = "\033[K";
 
+  /** @var Worker[] $workers */
   public static array $workers = [],
     $allMessages = [];
 
+  /** @var resource[] */
+  private array $processes = [];
+
   private array
-    $processes = [],
+    /** @var resource[]  */
     $stdinStreams = [],
     $stdoutStreams = [],
     $stderrStreams = [];
@@ -60,20 +65,21 @@ class WorkerManager
   }
 
   /**
-   * @param int  $timeout
-   * @param int  $verbose
+   * @param int $timeout
+   * @param int $verbose
    */
   public function listen(int $timeout = 200000, int $verbose = 1) : void
   {
+    /** @var resource[] $dataRead */
     $dataRead = [];
     
     foreach (self::$workers as $workerKey => &$worker)
     {
-      /** @var Worker $worker */
+      /** @var resource */
       $dataRead[] = $this->stdoutStreams[$workerKey];
       $dataRead[] = $this->stderrStreams[$workerKey];
 
-      if ($verbose > 0 && self::$hasStarted === false)
+      if ($verbose > 0 && !self::$hasStarted)
       {
         $worker->keyInWorkersArray = $workerKey;
         self::$allMessages[$workerKey] = $worker->waitingMessage;
@@ -103,7 +109,7 @@ class WorkerManager
     foreach ($dataRead as $stream)
     {
       // Which stream do we have to check STDOUT or STDERR ?
-      /** @var int $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
+      /** @var false|int|string $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
       $foundKey = array_search($stream, $this->stdoutStreams, true);
 
       if (false === $foundKey)
@@ -115,7 +121,6 @@ class WorkerManager
       }
 
       // Getting information from workers
-      /** @var Worker $worker */
       $worker = self::$workers[$foundKey];
       $stdout = stream_get_contents($this->stdoutStreams[$foundKey]);
       $stderr = stream_get_contents($this->stderrStreams[$foundKey]);
@@ -129,8 +134,6 @@ class WorkerManager
       else // is this really possible ?
         throw new RuntimeException();
 
-      unset($status);
-
       if ($verbose > 0)
       {
         if ($worker->verbose > 1)
@@ -138,8 +141,15 @@ class WorkerManager
 
         if (self::$hasPrinted)
         {
-          foreach (self::$allMessages as $message)
+          $messagesCount = count(self::$allMessages);
+
+          for ($index = 0; $index < $messagesCount; ++$index)
+          {
             echo "\033[1A" . self::ERASE_TO_END_OF_LINE;
+          }
+
+          unset($messagesCount);
+
         }
 
         self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;
@@ -163,7 +173,7 @@ class WorkerManager
    *
    * @param Worker $worker
    *
-   * @return array [bool running, int status 0 => Success, more => failure, else => abnormal]
+   * @return array{0: bool, 1: int} [bool running, int status 0 => Success, more => failure, else => abnormal]
    */
   public function detach(Worker $worker) : array
   {
@@ -200,7 +210,7 @@ class WorkerManager
       // If the process is too long, kills it.
       if ($elapsedTime > $worker->timeout * 10)
       {
-        echo CLI_RED, 'The process that launched ', CLI_LIGHT_CYAN, $worker->command, CLI_RED, ' was hanging during ',
+        echo CLI_ERROR, 'The process that launched ', CLI_INFO_HIGHLIGHT, $worker->command, CLI_ERROR, ' was hanging during ',
           $worker->timeout, ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR,
           PHP_EOL;
         proc_terminate($this->processes[$foundKey]);
@@ -208,6 +218,19 @@ class WorkerManager
     } while (self::$informations[$foundKey]['running']);
 
     proc_close($this->processes[$foundKey]);
+
+    // Handles workers chaining
+    if (!empty(self::$workers[$foundKey]->subworkers))
+    {
+      // We search the first worker to chain and we remove it from the workers list to chain
+      $firstWorkerToChain = array_shift(self::$workers[$foundKey]->subworkers);
+
+      // We set the remaining workers to chain to the worker we just retrieved
+      $firstWorkerToChain->subworkers = self::$workers[$foundKey]->subworkers;
+
+      // Finally, we attach the new main worker to the WorkerManager
+      $this->attach($firstWorkerToChain);
+    }
 
     unset(
       self::$workers[$foundKey],

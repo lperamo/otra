@@ -1,0 +1,33 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\sass;
+
+use const otra\cache\php\{CACHE_PATH, CORE_VIEWS_PATH};
+use function otra\cache\php\{block, endblock};
+
+require CORE_VIEWS_PATH . 'heavyProfiler/layout.phtml';
+
+const
+  KEY_ALL_SASS = 0,
+  SASS_TREE_PATH = CACHE_PATH . 'css/sassTree.php';
+
+block('title', 'Profiler - Sass tree');
+block('view');
+?>
+<div class="sass-trees--container">
+  <?php
+  if (file_exists(SASS_TREE_PATH))
+  {
+    $sassTree = require SASS_TREE_PATH;
+    $allSassKeys = array_keys($sassTree[KEY_ALL_SASS]);
+    require CORE_VIEWS_PATH . 'heavyProfiler/sass/macros.phtml';
+    require CORE_VIEWS_PATH . 'heavyProfiler/sass/allFiles.phtml';
+    require CORE_VIEWS_PATH . 'heavyProfiler/sass/mainToLeaves.phtml';
+    require CORE_VIEWS_PATH . 'heavyProfiler/sass/fullTree.phtml';
+  } else
+  {
+    ?><span>No SASS/SCSS files found.</span> <?php
+  }
+  ?>
+</div>
+<?php endblock();

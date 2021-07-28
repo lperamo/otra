@@ -5,16 +5,20 @@ namespace src\console;
 
 use otra\{console\OtraExceptionCli, OtraException};
 use phpunit\framework\TestCase;
+use const otra\cache\php\{APP_ENV,PROD};
 
 /**
  * @runTestsInSeparateProcesses
  */
 class OtraExceptionCliTest extends TestCase
 {
+  // fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
   }
 
   /**

@@ -1,0 +1,28 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+$phpVersion = phpversion();
+?>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="PHP informations">PHP <?= $phpVersion ?></button>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">
+    Version : <b><?= $phpVersion ?></b>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Loaded Configuration File : <b><?= php_ini_loaded_file() ?></b>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Modules : <?php
+    $extensions = '';
+    $extensionsArray = get_loaded_extensions();
+    natcasesort($extensionsArray);
+
+    foreach ($extensionsArray as $phpExtension)
+    {
+      $extensions .= $phpExtension . ', ';
+    }
+
+    echo substr($extensions, 0, -2);
+    ?>
+  </p>
+</div>

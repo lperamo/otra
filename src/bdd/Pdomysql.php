@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace otra\bdd;
 use otra\OtraException;
 use PDO, PDOStatement;
+use PDOException;
+use const otra\cache\php\PROD;
 
 /**
  * @package otra\bdd
@@ -27,16 +29,16 @@ abstract class Pdomysql
    * @return PDO Returns a MySQL link identifier on success, or false on error
    * @throws OtraException
    */
-  public static function connect($dsn = '127.0.0.1:3306', $username = 'root', $password = '')
+  public static function connect(string $dsn = '127.0.0.1:3306', string $username = 'root', string $password = '')
   {
     try
     {
       $conn = new PDO($dsn, $username, $password);
-    }catch(\PDOException $e)
+    }catch(PDOException $exception)
     {
       throw new OtraException(
-        'Database connection failed: ' . $e->getMessage() .
-        ($_SERVER['APP_ENV'] === 'prod'
+        'Database connection failed: ' . $exception->getMessage() .
+        ($_SERVER['APP_ENV'] === PROD
           ? ''
           : ' - Context : ' . $dsn . ' ' . $username . ' ' . $password
         )
@@ -53,19 +55,20 @@ abstract class Pdomysql
    *                      The query string should not end with a semicolon. Data inside the query should be properly
    *                      escaped.
    *
-   * @return false|PDOStatement Returns a resource on success, otherwise an exception is raised
+   * @return PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
    * @link http://php.net/manual/en/function.mysql-query.php
    */
-  public static function query(string $query)
+  public static function query(string $query) : PDOStatement
   {
-    $result = Sql::$_currentConn->query($query);
-    // TODO use PDOStatement::debugDumpParams() ?
+    $result = Sql::$currentConn->query($query);
+
     if (false === $result)
     {
-      $errorInfo = Sql::$_currentConn->errorInfo();
-      throw new OtraException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] . ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
+      $errorInfo = Sql::$currentConn->errorInfo();
+      throw new OtraException('Invalid SQL request (error code : ' . $errorInfo[0] . ' ' . $errorInfo[1] .
+        ') : <br><br>' . nl2br($query) . '<br><br>' . $errorInfo[2]);
     } else
       return $result;
   }
@@ -73,12 +76,15 @@ abstract class Pdomysql
   /**
    * Returns the results
    *
-   * @param PDOStatement $statement   The query statement
+   * @param PDOStatement $statement The query statement
    *
-   * @return array The next result
+   * @return mixed The next result
    * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
-  public static function fetchAssoc(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_ASSOC); }
+  public static function fetchAssoc(PDOStatement $statement) : mixed
+  {
+    return $statement->fetch(PDO::FETCH_ASSOC);
+  }
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
@@ -86,46 +92,55 @@ abstract class Pdomysql
    * @param PDOStatement $statement   The query statement
    * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
-   * @return array The next result
+   * @return false|array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchArray(PDOStatement $statement, int $fetch_style = PDO::FETCH_BOTH) { return $statement->fetch($fetch_style); }
+  public static function fetchArray(PDOStatement $statement, int $fetch_style = PDO::FETCH_BOTH)
+  {
+    return $statement->fetch($fetch_style);
+  }
 
   /**
    * Returns the results
    *
    * @param PDOStatement $statement The query statement
    *
-   * @return array The next result
+   * @return false|array The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchRow(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_NUM); }
+  public static function fetchRow(PDOStatement $statement)
+  {
+    return $statement->fetch(PDO::FETCH_NUM);
+  }
 
   /**
    * Returns the results as an object (simplified version of the existing one)
    *
    * @param PDOStatement $statement The query statement
    *
-   * @return array The next result
+   * @return false|object The next result
    * @link http://php.net/manual/en/pdostatement.fetch.php
    */
-  public static function fetchObject(PDOStatement $statement) { return $statement->fetch(PDO::FETCH_OBJ); }
+  public static function fetchObject(PDOStatement $statement)
+  {
+    return $statement->fetch(PDO::FETCH_OBJ);
+  }
 
   /**
    * Returns all the results in an associative array
    *
    * @param PDOStatement $statement The query statement
    *
-   * @return bool|array The results. Returns false if there are no results.
+   * @return array The results. Returns false if there are no results.
    */
-  public static function values(PDOStatement $statement)
+  public static function values(PDOStatement $statement) : array
   {
-    if (0 == $statement->rowCount())
+    if (0 === $statement->rowCount())
       return [];
 
     $results = [];
 
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $row; }
+    while ($sqlRow = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $sqlRow; }
 
     return $results;
   }
@@ -137,16 +152,16 @@ abstract class Pdomysql
    *
    * @return bool|array The results. Returns false if there are no results.
    */
-  public static function valuesOneCol(PDOStatement $statement)
+  public static function valuesOneCol(PDOStatement $statement) : bool|array
   {
-    if (0 == $statement->rowCount())
+    if (0 === $statement->rowCount())
       return false;
 
-    $row = $statement->fetch(PDO::FETCH_ASSOC);
+    $sqlRow = $statement->fetch(PDO::FETCH_ASSOC);
     $results = [];
-    $results[] = $row[($key = key($row))];
+    $results[] = $sqlRow[($rowKey = key($sqlRow))];
 
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $row[$key]; }
+    while ($sqlRow = $statement->fetch(PDO::FETCH_ASSOC)) { $results[] = $sqlRow[$rowKey]; }
 
     return $results;
   }
@@ -156,6 +171,7 @@ abstract class Pdomysql
    *
    * @param PDOStatement $statement The query statement
    *
+   * @throws OtraException
    * @return bool|mixed The result. Returns false if there are no result.
    */
   public static function single(PDOStatement $statement)
@@ -163,7 +179,16 @@ abstract class Pdomysql
     if (0 == $statement->rowCount())
       return false;
 
-    return current($statement->fetch(PDO::FETCH_ASSOC));
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+    if ($result)
+      return current($result);
+    else
+    {
+      ob_start();
+      $statement->debugDumpParams();
+      throw new OtraException('Cannot retrieve the data : ' . ob_get_clean());
+    }
   }
 
   /**
@@ -174,7 +199,7 @@ abstract class Pdomysql
    * @return bool Returns true on success or false on failure.
    * @link http://php.net/manual/en/function.mysql-free-result.php
    */
-  public static function freeResult(PDOStatement $statement) { return $statement->closeCursor(); }
+  public static function freeResult(PDOStatement $statement) : bool { return $statement->closeCursor(); }
 
   /**
    * Returns metadata for a column in a result set
@@ -182,21 +207,24 @@ abstract class Pdomysql
    * @param PDOStatement $statement The query statement
    * @param int $column
    *
-   * @return array The results
+   * @return false|array The results
    */
-  public static function getColumnMeta(PDOStatement $statement, int $column) { return $statement->getColumnMeta($column); }
+  public static function getColumnMeta(PDOStatement $statement, int $column)
+  {
+    return $statement->getColumnMeta($column);
+  }
 
   /**
    * Closes connection.
    *
-   * @param bool|SQL $instanceToClose
+   * @param bool|Sql $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
-  public static function close(&$instanceToClose = true) : bool
+  public static function close(bool|Sql &$instanceToClose = true) : bool
   {
     if ($instanceToClose === true)
-      Sql::$_currentConn = null;
+      Sql::$currentConn = null;
     else
       $instanceToClose = null;
 
@@ -208,10 +236,14 @@ abstract class Pdomysql
    *
    * @param string|null $sequenceName
    *
-   * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
+   * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous
+   *                query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
-  public static function lastInsertedId(string $sequenceName = null) : string { return Sql::$_currentConn->lastInsertId($sequenceName); }
+  public static function lastInsertedId(string $sequenceName = null) : string
+  {
+    return Sql::$currentConn->lastInsertId($sequenceName);
+  }
 
   /**
    * @param string $string
@@ -220,7 +252,7 @@ abstract class Pdomysql
    */
   public static function quote(string $string)
   {
-    return trim(Sql::$_currentConn->quote($string), '\'');
+    return trim(Sql::$currentConn->quote($string), '\'');
   }
 
   /**
@@ -228,7 +260,7 @@ abstract class Pdomysql
  */
   public static function beginTransaction() : bool
   {
-    return Sql::$_currentConn->beginTransaction();
+    return Sql::$currentConn->beginTransaction();
   }
 
   /**
@@ -236,7 +268,7 @@ abstract class Pdomysql
    */
   public static function inTransaction() : bool
   {
-    return Sql::$_currentConn->inTransaction();
+    return Sql::$currentConn->inTransaction();
   }
 
   /**
@@ -244,7 +276,7 @@ abstract class Pdomysql
    */
   public static function commit() : bool
   {
-    return Sql::$_currentConn->commit();
+    return Sql::$currentConn->commit();
   }
 
   /**
@@ -252,7 +284,7 @@ abstract class Pdomysql
    */
   public static function rollBack() : bool
   {
-    return Sql::$_currentConn->rollBack();
+    return Sql::$currentConn->rollBack();
   }
 
   /**
@@ -260,7 +292,7 @@ abstract class Pdomysql
    */
   public static function errorInfo() : array
   {
-    return Sql::$_currentConn->errorInfo();
+    return Sql::$currentConn->errorInfo();
   }
 }
 

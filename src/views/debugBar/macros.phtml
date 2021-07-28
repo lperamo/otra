@@ -1,0 +1,49 @@
+<?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\views\debugBar
+ */
+declare(strict_types=1);
+
+namespace otra\src\views\debugBar;
+
+use otra\config\AllConfig;
+
+if (!function_exists('otra\src\views\debugBar\generateArrows'))
+{
+  /**
+   * @param string $inputType
+   */
+  function generateArrows(string $inputType = 'radio') : void
+  {
+    $debugBarPosition = isset(AllConfig::$debugConfig, AllConfig::$debugConfig['barPosition'])
+      ? AllConfig::$debugConfig['barPosition']
+      : 'top';
+    $positions = [
+      '▲' => 'top',
+      '▶' => 'right',
+      '▼' => 'bottom',
+      '◀' => 'left'
+    ];
+
+    foreach($positions as $arrow => $position)
+    {
+      if ($inputType === 'radio')
+      {
+        ?>
+        <input type="radio" id="dbg-bar--toggle-<?= $position ?>" name="dbg-bar--position"
+               class="dbg-bar--toggle-direction dbg-bar--toggle-<?= $position ?>"<?php
+        if ($debugBarPosition === $position)
+          echo ' checked';
+        ?>>
+        <?php
+      } else
+      {
+        ?>
+        <label for="dbg-bar--toggle-<?= $position ?>" class="dbg-bar--toggle dbg-bar--toggle-<?= $position ?>"
+               title="Move the debug bar to the <?= $position ?>"><?= $arrow ?></label>
+        <?php
+      }
+    }
+  }
+}

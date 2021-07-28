@@ -1,23 +1,45 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 
-if (!defined('CHUNKS_KEY_LENGTH'))
-  define('CHUNKS_KEY_LENGTH', 10); // length of the string "chunks'=>["
+namespace otra\console\deployment\updateConf;
 
-if (!function_exists('writeConfigFile'))
+use otra\config\Routes;
+use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
+
+if (!file_exists(BUNDLES_PATH))
+{
+  echo CLI_ERROR, 'There is no bundles to update.', END_COLOR, PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
+const
+  CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
+  UPDATE_CONF_ARG_ROUTE_NAME = 2,
+  SINGLE_QUOTE = '\'';
+
+if (!defined(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME'))
+  define(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+
+if (!function_exists('otra\console\deployment\updateConf\writeConfigFile'))
 {
   /**
    * @param string $configFile
    * @param string $content
    */
-  function writeConfigFile(string $configFile, string $content)
+  function writeConfigFile(string $configFile, string $content) : void
   {
-    if (true === empty($content))
+    if (empty($content))
     {
-      echo CLI_YELLOW, 'Nothing to put into ', CLI_LIGHT_CYAN, $configFile, CLI_YELLOW,
+      echo CLI_WARNING, 'Nothing to put into ', CLI_INFO_HIGHLIGHT, $configFile, CLI_WARNING,
         ' so we\'ll delete the main file if it exists.', END_COLOR, PHP_EOL;
 
-      if (true === file_exists($configFile))
+      if (file_exists($configFile))
         unlink($configFile);
 
       return;
@@ -30,8 +52,8 @@ if (!function_exists('writeConfigFile'))
       $configFile,
       rtrim(preg_replace('@\s+@', ' ', php_strip_whitespace($configFile))) . PHP_EOL
     );
-    echo CLI_BLUE, 'BASE_PATH + ', CLI_LIGHT_CYAN, substr($configFile, strlen(BASE_PATH)), CLI_GREEN, ' updated.',
-      END_COLOR, PHP_EOL;
+    echo CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, substr($configFile, strlen(BASE_PATH)), CLI_BASE,
+      ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 
   /**
@@ -39,25 +61,35 @@ if (!function_exists('writeConfigFile'))
    *
    * @param string $content
    * @param array  $array
-   * @param bool   $routeConfigFile
+   * @param bool   $isARouteConfigFile
    * @param string $actualRouteKey
    */
-  function loopForEach(string &$content, array &$array, bool $routeConfigFile = false, string $actualRouteKey = '')
+  function loopForEach(
+    string &$content,
+    array &$array,
+    bool $isARouteConfigFile = false,
+    string $actualRouteKey = ''
+  ) : void
   {
-    foreach ($array as $key => &$arrayChunk)
+    /**
+     * @var int|string $key
+     * @var mixed      $arrayChunk
+     */
+    foreach ($array as $arrayKey => &$arrayChunk)
     {
-      $key = (is_numeric($key)) ? '' : '\'' . $key . '\'' . '=>';
+      $arrayKey = (is_numeric($arrayKey)) ? '' : SINGLE_QUOTE . $arrayKey . SINGLE_QUOTE . '=>';
 
       if (!is_array($arrayChunk))
       {
         if (is_numeric($arrayChunk))
-          $content .= $key . $arrayChunk . ',';
-        elseif (false === $routeConfigFile)
-          $content .= '\'' . addslashes($arrayChunk) . '\',';
+          $content .= $arrayKey . ((string) $arrayChunk) . ',';
+        elseif (!$isARouteConfigFile)
+          $content .= SINGLE_QUOTE . addslashes($arrayChunk) . '\',';
         else
         {
-          $arrayChunk = (is_bool($arrayChunk))
-            ? (true === $arrayChunk) ? 'true' : 'false'
+          $isBoolArrayChunk = is_bool($arrayChunk);
+          $arrayChunk = ($isBoolArrayChunk)
+            ? ($arrayChunk ? 'true' : 'false')
             : addslashes($arrayChunk);
 
           /* If it is a route config file then we search for the main pattern,
@@ -65,17 +97,19 @@ if (!function_exists('writeConfigFile'))
             Once found, we add it to the route configuration.
             It will help the router to go faster to name the parameters. */
 
-          if ('\'chunks\'=>' === $actualRouteKey && false !== strpos($arrayChunk, '{'))
+          if ('\'chunks\'=>' === $actualRouteKey && str_contains($arrayChunk, '{'))
           {
-            $bracketPosition = strpos($arrayChunk, '{');
-            $mainPattern     = (false === $bracketPosition) ? $arrayChunk : substr($arrayChunk, 0, $bracketPosition);
-            $content         = substr($content, 0, strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' . $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
+            $bracketPosition = mb_strpos($arrayChunk, '{');
+            $mainPattern = (false === $bracketPosition)
+              ? $arrayChunk
+              : mb_substr($arrayChunk, 0, $bracketPosition);
+            $content = mb_substr($content, 0, mb_strlen($content) - CHUNKS_KEY_LENGTH) . 'mainPattern\'=>\'' .
+              $mainPattern . '\', \'chunks\'=>[\'' . $arrayChunk . '\',';
           } else
           {
-            $separator  = ('true' === $arrayChunk || 'false' === $arrayChunk) ? ' ' : '\'';
+            $separator  = $isBoolArrayChunk ? ' ' : SINGLE_QUOTE;
             $arrayChunk = $separator . $arrayChunk . $separator . ',';
-
-            $content .= $key . $arrayChunk;
+            $content .= $arrayKey . $arrayChunk;
           }
         }
 
@@ -86,30 +120,27 @@ if (!function_exists('writeConfigFile'))
       if ([] === $arrayChunk)
         continue;
 
-      $content .= $key . '[';
+      $content .= $arrayKey . '[';
 
-      loopForEach($content, $arrayChunk, $routeConfigFile, $key);
-      $content = substr($content, 0, -1);
+      loopForEach($content, $arrayChunk, $isARouteConfigFile, $arrayKey);
+      $content = mb_substr($content, 0, -1);
       $content .= '],';
     }
   }
 }
 
 /** BEGINNING OF THE TASK */
-if (!defined('BUNDLES_PATH'))
-  define('BUNDLES_PATH', BASE_PATH . 'bundles/');
-
 $folderHandler = opendir(BUNDLES_PATH);
-$securities = $configs = $routes = $schemas = [];
+$securities = $configs = $routes = [];
 
 // we scan the bundles directory to retrieve all the bundles name ...
-while (false !== ($file = readdir($folderHandler)))
+while (false !== ($filename = readdir($folderHandler)))
 {
   // 'config' and 'views' are not bundles ... just a configuration folder
-  if (in_array($file, ['.', '..', 'config', 'views']))
+  if (in_array($filename, ['.', '..', 'config', 'views']))
     continue;
 
-  $bundleDir = BUNDLES_PATH . $file;
+  $bundleDir = BUNDLES_PATH . $filename;
 
   // We don't need the files either
   if (!is_dir($bundleDir))
@@ -119,8 +150,10 @@ while (false !== ($file = readdir($folderHandler)))
   $bundleConfigDir = $bundleDir . '/config/';
   $bundleConfigs = glob($bundleConfigDir . '*Config.php');
   $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
-  $bundleSchemas = glob($bundleConfigDir . 'data/yml/*Schema.yml');
-  $bundleSecurities = glob($bundleConfigDir . 'security/*', GLOB_ONLYDIR);
+  $bundleSecurities = glob(
+    $bundleConfigDir . 'security/' . (UPDATE_CONF_ROUTE_NAME === null ? '*' : UPDATE_CONF_ROUTE_NAME . DIR_SEPARATOR),
+    GLOB_ONLYDIR
+  );
 
   if (!empty($bundleConfigs))
     $configs = array_merge($configs, $bundleConfigs);
@@ -134,15 +167,12 @@ while (false !== ($file = readdir($folderHandler)))
 closedir($folderHandler);
 
 // now we have all the informations, we can create the files in 'bundles/config'
-const BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
-  SECURITIES_FOLDER = CACHE_PATH . 'php/security/';
-
-if (!defined('OTRA_LABEL_SECURITY_NONE'))
-{
-  define('OTRA_LABEL_SECURITY_NONE', "'none'");
-  define('OTRA_LABEL_SECURITY_SELF', "'self'");
-  define('OTRA_LABEL_SECURITY_STRICT_DYNAMIC', "'strict-dynamic'");
-}
+const
+  BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
+  SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
+  OTRA_LABEL_SECURITY_NONE = "'none'",
+  OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
+  PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
 
 if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
   mkdir(BUNDLES_MAIN_CONFIG_DIR, 0755);
@@ -158,20 +188,20 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Config.php', $configsContent);
 /** ROUTES MANAGEMENT */
 $routesArray = [];
 
-foreach($routes as &$route)
+foreach($routes as $route)
   $routesArray = array_merge($routesArray, require $route);
+
+unset($route);
 
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
-if (!function_exists('sortRoutes'))
+/** @var Closure $sortRoutes */
+if (!function_exists('otra\console\deployment\updateConf\sortRoutes'))
 {
-  if (!defined('ROUTE_PATH'))
-    define ('ROUTE_PATH', 0);
-
-  $sortRoutes = function (string $routeA, string $routeB) use ($routesArray)
+  $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
-    /** @var array $routesArray */
-    return (strlen($routesArray[$routeA]['chunks'][ROUTE_PATH]) <= strlen($routesArray[$routeB]['chunks'][ROUTE_PATH]))
+    /** @var array<string,array<string, array<int|string,string|array>>> $routesArray */
+    return (strlen($routesArray[$routeA]['chunks'][Routes::ROUTES_CHUNKS_URL]) <= strlen($routesArray[$routeB]['chunks'][Routes::ROUTES_CHUNKS_URL]))
       ? 1
       : -1;
   };
@@ -180,7 +210,7 @@ if (!function_exists('sortRoutes'))
 uksort($routesArray, $sortRoutes);
 
 // Transforms the array in code that returns the array.
-$routesContent = '<?php declare(strict_types=1);return [';
+$routesContent = PHP_FILE_BEGINNING;
 loopForEach($routesContent, $routesArray, true);
 $routesContent = substr($routesContent, 0, -1) . '];';
 
@@ -188,86 +218,83 @@ writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent);
 
 /** SECURITIES MANAGEMENT */
 $securitiesArray = [];
-define('OTRA_DEVELOPMENT_ENVIRONMENT', 'dev');
-define('OTRA_PRODUCTION_ENVIRONMENT', 'prod');
-define('OTRA_PHP_DOT_EXTENSION', '.php');
+
+const
+  OTRA_PHP_DOT_EXTENSION = '.php',
+  OTRA_SECURITY_DEV_FOLDER = SECURITIES_FOLDER . DEV . DIR_SEPARATOR,
+  OTRA_SECURITY_PROD_FOLDER = SECURITIES_FOLDER . PROD . DIR_SEPARATOR,
+  OTRA_END_FILE = '];';
+
+require CORE_PATH . 'services/securityService.php';
 
 foreach($securities as $securityFileConfigFolder)
 {
-  $devSecurityFile = $securityFileConfigFolder . '/' . OTRA_DEVELOPMENT_ENVIRONMENT .
-    OTRA_PHP_DOT_EXTENSION;
+  $devSecurityFile = $securityFileConfigFolder . DIR_SEPARATOR . DEV . OTRA_PHP_DOT_EXTENSION;
+  $prodSecurityFile = $securityFileConfigFolder . DIR_SEPARATOR . PROD . OTRA_PHP_DOT_EXTENSION;
+  $securityBaseFolderArray = basename($securityFileConfigFolder);
 
   if (file_exists($devSecurityFile))
-    $securitiesArray[basename($securityFileConfigFolder)][OTRA_DEVELOPMENT_ENVIRONMENT] = require $devSecurityFile;
-
-  $prodSecurityFile = $securityFileConfigFolder . '/' . OTRA_PRODUCTION_ENVIRONMENT .
-    OTRA_PHP_DOT_EXTENSION;
+    $securitiesArray[$securityBaseFolderArray][DEV] = require $devSecurityFile;
 
   if (file_exists($prodSecurityFile))
-    $securitiesArray[basename($securityFileConfigFolder)][OTRA_PRODUCTION_ENVIRONMENT] = require $prodSecurityFile;
+    $securitiesArray[$securityBaseFolderArray][PROD] = require $prodSecurityFile;
 }
 
-// we ensure that security folders are
-if (!defined('OTRA_SECURITY_DEV_FOLDER'))
-{
-  define('OTRA_SECURITY_DEV_FOLDER', SECURITIES_FOLDER . 'dev/');
-  define('OTRA_SECURITY_PROD_FOLDER', SECURITIES_FOLDER . 'prod/');
-  define('OTRA_BEGINNING_OF_CONFIG_FILE', '<?php declare(strict_types=1);return [');
-}
-
+// we ensure that security folders exist
 if (!file_exists(OTRA_SECURITY_DEV_FOLDER))
   mkdir(OTRA_SECURITY_DEV_FOLDER, 0777, true);
 
 if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
   mkdir(OTRA_SECURITY_PROD_FOLDER, 0777, true);
 
-$securityContent = '<?php declare(strict_types=1);return ';
-
-/**
- * @param array $configurationArray
- *
- * @return string
- */
-function arrayExport(array $configurationArray) : string
+if (!function_exists('otra\console\deployment\updateConf\arrayExport'))
 {
-  $content = '';
-
-  foreach($configurationArray as $key => $value)
+  /**
+   * @param array{
+   *   csp?: array<string,string>,
+   *   permissionsPolicy?: array<string,string>
+   * }|array<string,string> $configurationArray
+   *
+   * @return string
+   */
+  function arrayExport(array $configurationArray) : string
   {
-    $content .= "'" . $key . '\'=>';
+    $content = '';
 
-    if (is_array($value))
+    foreach($configurationArray as $policyType => $value)
     {
-      $content .= '[' . arrayExport($value) . ']';
+      $content .= "'" . $policyType . '\'=>' . (is_array($value)
+        ? '[' . arrayExport($value) . ']'
+        : '"' . $value . '"');
 
-      if (array_key_last($configurationArray) !== $key)
-        $content .= ',';
-    } else
-    {
-      $content .= '"' . $value . '"';
-
-      if (array_key_last($configurationArray) !== $key)
+      if (array_key_last($configurationArray) !== $policyType)
         $content .= ',';
     }
-  }
 
-  return $content;
+    return $content;
+  }
 }
 
 foreach($securitiesArray as $route => $securityArray)
 {
-  $fileName = $route . '.php';
+  $fileName = $route . OTRA_PHP_DOT_EXTENSION;
+
   // dev environment
-  if (isset($securityArray['dev']))
+  if (isset($securityArray[DEV]))
   {
-    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['dev']) . '];';
-    writeConfigFile(OTRA_SECURITY_DEV_FOLDER .  $fileName, $securityContent);
+    writeConfigFile(
+      OTRA_SECURITY_DEV_FOLDER . $fileName,
+      PHP_FILE_BEGINNING . arrayExport($securityArray[DEV]) . OTRA_END_FILE
+    );
   }
 
   // prod environment
-  if (isset($securityArray['prod']))
+  if (isset($securityArray[PROD]))
   {
-    $securityContent = OTRA_BEGINNING_OF_CONFIG_FILE . arrayExport($securityArray['prod']) . '];';
-    writeConfigFile(OTRA_SECURITY_PROD_FOLDER . $fileName, $securityContent);
+    writeConfigFile(
+      OTRA_SECURITY_PROD_FOLDER . $fileName,
+      PHP_FILE_BEGINNING . arrayExport($securityArray[PROD]) . OTRA_END_FILE
+    );
   }
 }
+

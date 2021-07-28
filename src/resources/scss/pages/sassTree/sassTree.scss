@@ -1,0 +1,72 @@
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/accordion/accordion';
+@use '../../components/theming/theming';
+
+// loading partials
+@use '../../partials/heavyProfiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
+@include accordion.create(
+  ('themes': $themes)
+);
+
+.sass-trees--container {
+  // box
+  box-sizing : border-box;
+  overflow : auto;
+  padding    : 2rem;
+  width      : calc(100% - #{index.$vertical-menu-width});
+
+  // text
+  word-break : break-word;
+
+  & li {
+    position: relative;
+  }
+
+  @at-root .sass-tooltip {
+    cursor : help;
+
+    &--important-chunk {
+      color       : #88f;
+      text-shadow : 0 0 1px #ccf;
+    }
+
+    @at-root .sass-trees--container li > div {
+      // box
+      background-image : linear-gradient(45deg, #222, #444, #222);
+      border-radius    : .5rem;
+
+      // positioning
+      padding  : 1rem;
+      position : absolute;
+      inset    : -6rem 0 0 0; // We shift it sufficiently to prevent flickering
+      z-index  : 1; // on Chrome (at least) it seems to be semi-transparent if we don't do that!
+
+      // size
+      @supports (width: fit-content) {
+        height : fit-content;
+        width  : fit-content;
+      }
+
+      @supports (width: -moz-fit-content) and (not (width: fit-content)) {
+        height : -moz-fit-content;
+        width  : -moz-fit-content;
+      }
+
+      // text
+      color : #ddd;
+    }
+
+    &:not(:hover) + div {
+      display : none;
+    }
+  }
+}
+
+// applying theme
+@include theming.global-mass-theme();

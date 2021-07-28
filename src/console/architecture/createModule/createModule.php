@@ -1,52 +1,69 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\architecture
+ */
 declare(strict_types=1);
+
+namespace otra\console\architecture\createModule;
+
+use otra\OtraException;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\console\{architecture\createFolder,promptUser};
 
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
-if (function_exists('createModule') === false)
+if (!function_exists(__NAMESPACE__ . '\\createModule'))
 {
   /**
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
-   * @param bool   $interactive
+   * @param bool   $interactive    Do we allow questions to the user?
+   * @param bool   $consoleForce   Determines whether we show an error when something is missing in non interactive
+   *                               mode or not. The false value by default will stop the execution if something does
+   *                               not exist and show an error.
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
-  function createModule(string $bundleBasePath, string $moduleName, bool $interactive): void
+  function createModule(string $bundleBasePath, string $moduleName, bool $interactive, bool $consoleForce): void
   {
     $modulePath = $bundleBasePath . $moduleName;
 
     // If the folder does not exist and we are not in interactive mode, we exit the program.
-    createFolder($modulePath, $bundleBasePath, 'module', $interactive);
+    createFolder($modulePath, $bundleBasePath, 'module', $interactive, $consoleForce);
 
     mkdir($modulePath . '/controllers', 0755);
     mkdir($modulePath . '/views', 0755);
-    echo CLI_GREEN, 'Basic folder architecture created for ', CLI_LIGHT_CYAN, substr($modulePath,
-      strlen(BASE_PATH)), CLI_GREEN, '.', END_COLOR, PHP_EOL;
+    echo CLI_BASE, 'Basic folder architecture created for ', CLI_INFO_HIGHLIGHT, substr($modulePath,
+      strlen(BASE_PATH)), CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 
   /**
-   * @param bool   $interactive
+   * @param bool   $interactive  Do we allow questions to the user?
+   * @param bool   $consoleForce Determines whether we show an error when something is missing in non interactive
+   *                             mode or not. The false value by default will stop the execution if something does
+   *                             not exist and show an error.
    * @param string $bundleName
    * @param string $moduleName
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
-  function moduleHandling(bool $interactive, string $bundleName, string $moduleName)
+  function moduleHandling(bool $interactive, bool $consoleForce, string $bundleName, string $moduleName) : void
   {
     // This constant is already defined if we have created a bundle on the process via CheckModuleExistence.php
-    if (defined('BUNDLE_BASE_PATH') === false)
-      define('BUNDLE_BASE_PATH', BASE_PATH . 'bundles/' . $bundleName . '/');
+    if (!defined(__NAMESPACE__ . '\\BUNDLE_BASE_PATH'))
+      define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
-    if ($interactive === true)
+    if ($interactive)
     {
       while ($moduleName !== 'n')
       {
-        createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
+        createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
         $moduleName = promptUser('What is the name of the next module ? (type n to stop)');
       }
     } else
-      createModule(BUNDLE_BASE_PATH, $moduleName, $interactive);
+      createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
   }
 }
 

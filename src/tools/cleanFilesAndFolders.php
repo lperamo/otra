@@ -1,14 +1,23 @@
 <?php
 declare(strict_types=1);
+namespace otra\tools;
+/**
+ * @author Lionel Péramo
+ * @package otra\tools
+ */
 
+use Exception;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
-if (!function_exists('cleanFileAndFolders'))
+if (!function_exists('otra\tools\cleanFileAndFolders'))
 {
   /**
    * Removes all files and folders specified in the array.
    *
-   * @param array $fileOrFolders
+   * @param string[] $fileOrFolders
    *
    * @throws OtraException If we cannot remove a file or a folder
    */
@@ -16,19 +25,20 @@ if (!function_exists('cleanFileAndFolders'))
   {
     foreach ($fileOrFolders as $folder)
     {
-      if (true === file_exists($folder))
+      if (file_exists($folder))
       {
         $files = new RecursiveIteratorIterator(
           new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
           RecursiveIteratorIterator::CHILD_FIRST
         );
 
-        foreach ($files as $file)
+        /** @var SplFileInfo $fileObject */
+        foreach ($files as $fileObject)
         {
-          $realPath = $file->getRealPath();
-          $method = true === $file->isDir() ? 'rmdir' : 'unlink';
+          $realPath = $fileObject->getRealPath();
+          $method = $fileObject->isDir() ? 'rmdir' : 'unlink';
 
-          if (false === $method($realPath))
+          if (!$method($realPath))
             throw new OtraException('Cannot remove the file/folder \'' . $realPath . '\'.', E_CORE_ERROR);
         }
 
@@ -36,11 +46,15 @@ if (!function_exists('cleanFileAndFolders'))
 
         try
         {
-          if (false === rmdir($folder))
+          if (!rmdir($folder))
             throw new OtraException($exceptionMessage, E_CORE_ERROR);
-        } catch (Exception $e)
+        } catch (Exception $exception)
         {
-          throw new OtraException('Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' . $exceptionMessage, $e->getCode());
+          throw new OtraException(
+            'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ' .
+              $exceptionMessage,
+            $exception->getCode()
+          );
         }
       }
     }

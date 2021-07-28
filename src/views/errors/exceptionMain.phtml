@@ -1,0 +1,67 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\errors;
+
+use const otra\cache\php\{BASE_PATH, CORE_PATH};
+/**
+ * @var array  $backtraces
+ * @var array<string,array{
+ *   class: string,
+ *   file: string,
+ *   function: string,
+ *   type: string,
+ *   line: int
+ * }> $context
+ * @var string $errorCode
+ * @var string $fileName
+ * @var int    $fileLine
+ * @var string $message
+ */
+
+use function otra\tools\files\showTraceLine;
+
+if (!defined('otra\src\views\errors\BASE_PATH_LENGTH'))
+{
+  define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+  require CORE_PATH . 'tools/getSourceFromFile.php';
+  require CORE_PATH . 'tools/files/showTraceLine.php';
+}
+?>
+<h1 class="otra-title">Exception</h1>
+<div class="exception-main">
+  <p class="exception-main--paragraph-first">
+    Error code
+    <span class="exception-main--color--error-code"><?= $errorCode ?></span>
+    in
+    <span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $fileName ?>">
+      <?= $fileName ?><!--
+    --></span><!--
+    -->:<!--
+    --><span class="exception-main--color--file-and-line" title="<?= BASE_PATH . $fileLine ?>"><!--
+      --><?= $fileLine ?>
+    </span>
+  </p>
+
+  <p class="exception-main--paragraph-second mb20">
+    <?= $message ?>
+  </p>
+  <?php
+  require CORE_PATH . 'tools/debug/dump.php';
+
+  // showing first line only of backtraces
+  showTraceLine([
+    'class' => $backtraces[0]['class'] ?? null,
+    'file' => BASE_PATH . $fileName,
+    'function' => $backtraces[0]['function'] ?? null,
+    'line' => $fileLine,
+    'type' => $backtraces[0]['type'],
+    'args' => $backtraces[0]['variables'] ?? null
+  ]);
+
+  // Showing the error context
+  foreach($context as $contextItem)
+  {
+    showTraceLine($contextItem);
+  }
+  ?>
+</div>

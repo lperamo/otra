@@ -1,93 +1,94 @@
 <?php
 declare(strict_types=1);
-
 namespace otra;
-
-use config\AllConfig;
+use otra\config\AllConfig;
+use otra\bdd\Sql;
+use ReflectionObject;
 
 /**
  * A classic MVC model class
  *
  * @author Lionel Péramo
+ * @package otra
  */
 abstract class Model
 {
   private string $table;
 
   /**
-   * @param $property
+   * @param string $property
    *
    * @return mixed
    */
-  public function get($property) { return $this->$property; }
+  public function get(string $property) : mixed { return $this->$property; }
 
   /**
-   * @param $property
-   * @param $value
+   * @param string $property
+   * @param mixed $value
    */
-  public function set($property, $value) { $this->$property = $value; }
+  public function set(string $property, mixed $value) : void { $this->$property = $value; }
 
   /**
    * Save or update if the id is known
    *
-   * @return int The last id used
+   * @return string The last id used
    */
-  public function save()
+  public function save() : string
   {
     $dbName = Session::get('db');
-    /* @var \otra\bdd\Sql $db */
-    $db = Session::get('dbConn');
+    /* @var Sql $dbConn */
+    $dbConn = Session::get('dbConn');
 
-    $refl = new \ReflectionObject($this);
-    $props = $refl->getProperties();
-    $properties = [];
-    $update = false;
+    $reflectedObject = new ReflectionObject($this);
+    $reflectedProperties = $reflectedObject->getProperties();
+    $computedProperties = [];
+    $isUpdate = false;
 
-    foreach($props as $prop)
+    foreach($reflectedProperties as $reflectedProperty)
     {
-      $name = $prop->name;
-      $properties[$name] = empty($this->$name) ? null : $this->$name;
+      $propertyName = $reflectedProperty->name;
+      $computedProperties[$propertyName] = empty($this->$propertyName) ? null : $this->$propertyName;
 
-      if (strpos($name, 'id') !== false)
+      if (str_contains($propertyName, 'id'))
       {
-        $id = $name;
+        $identifier = $propertyName;
 
-        if (!empty($properties[$name]))
-          $update  = true;
+        if (!empty($computedProperties[$propertyName]))
+          $isUpdate  = true;
       }
     }
-    unset($properties['table'], $props, $prop, $refl);
+    unset($computedProperties['table'], $reflectedProperties, $propertyName, $reflectedProperty, $reflectedObject);
 
-    if ($update === true)
+    if ($isUpdate)
     { // It's an update of the model
       $query = 'UPDATE `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` SET ';
-      $idValue = $properties[$id];
-      unset($properties[$id]);
+      $idValue = $computedProperties[$identifier];
+      unset($computedProperties[$identifier]);
 
-      foreach($properties as $name => $value)
+      foreach($computedProperties as $propertyName => $value)
       {
-        $query .= '`' . $name . '`=' ;
+        $query .= '`' . $propertyName . '`=' ;
         $query .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ' ';
       }
 
-      $query = substr($query, 0, -1) . ' WHERE `'. $id . '`=' . $idValue;
+      $query = substr($query, 0, -1) . ' WHERE `'. $identifier . '`=' . $idValue;
     } else // we add a entry
     {
-      unset($properties[$id]);
+      unset($computedProperties[$identifier]);
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
       $values = '';
 
-      foreach($properties as $name => $value)
+      foreach($computedProperties as $propertyName => $value)
       {
-        $query .= '`' . $name . '`,';
+        $query .= '`' . $propertyName . '`,';
         $values .= (is_string($value)) ? '\'' . addslashes($value) . '\',' : $value . ',';
       }
       $query = substr($query , 0, -1) . ') VALUES (' . substr($values,0,-1) . ')';
     }
 
-    $db->fetchAssoc($db->query($query));
+    $dbConn->fetchAssoc($dbConn->query($query));
 
-    return $db->lastInsertedId();
+    return $dbConn->lastInsertedId();
   }
 }
 

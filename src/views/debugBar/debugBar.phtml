@@ -1,0 +1,37 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+use const otra\cache\php\{CACHE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_VIEWS_PATH};
+
+require CORE_VIEWS_PATH . 'debugBar/macros.phtml';
+$this::css([
+  [CORE_CSS_PATH . 'partials/devMode/devMode'],
+  [CORE_CSS_PATH . 'partials/devMode/devModePrint', true]
+]);
+generateArrows();
+?>
+<div id="dbg-bar" class="dbg-bar">
+  <?php
+  define('ROUTE', urlencode($this->route));
+  define(
+    'SITE_HOST',
+    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
+  );
+
+  require CORE_VIEWS_PATH . 'debugBar/otra.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/php.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/route.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/http.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/chrono.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/cache.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/connection.phtml';
+  require CORE_VIEWS_PATH . 'debugBar/templateStructure.phtml';
+
+  if (file_exists(CACHE_PATH . 'css/sassTree.php'))
+    require CORE_VIEWS_PATH . 'debugBar/sass.phtml';
+?>
+  <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
+  <?php generateArrows('label') ?>
+</div>
+<?php $this::js(CORE_JS_PATH . 'debug_bar');
+  $this::js(CORE_JS_PATH . 'lightbox');

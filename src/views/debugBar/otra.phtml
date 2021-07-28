@@ -1,0 +1,25 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+
+use const otra\cache\php\OTRA_VERSION;
+/** @var string $otraCommitNumber */
+?>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="OTRA informations">OTRA <?= OTRA_VERSION ?></button>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">
+    Version : <b><?= OTRA_VERSION ?></b>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Commit : <b><?= $otraCommitNumber ?></b>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Site : <a href="https://otra.tech" target="_blank" rel="nofollow noopener noreferrer">https://otra.tech</a>
+  </p>
+  <p class="dbg-bar--block--container--element">
+    Repository :
+    <a href="https://github.com/lperamo/otra" target="_blank" rel="nofollow noopener noreferrer">
+      OTRA Github repository
+    </a>
+  </p>
+</div>

@@ -5,28 +5,28 @@
  * @author Lionel Péramo
  */
 declare(strict_types=1);
-namespace config;
+namespace otra\config;
+
+use const otra\cache\php\BUNDLES_PATH;
 
 /**
- * @package config
+ * @package otra\config
  */
 abstract class Routes
 {
-  public static array $default = [
-    'pattern' => '/frontend/index',
-    'bundle' => 'App',
-    'module' => 'frontend',
-    'controller' => 'index',
-    'action' => 'indexAction',
-    'route' => 'homePage'
-  ],
+  public const
+    ROUTES_CHUNKS_URL = 0,
+    ROUTES_CHUNKS_BUNDLE = 1,
+    ROUTES_CHUNKS_MODULE = 2,
+    ROUTES_CHUNKS_CONTROLLER = 3,
+    ROUTES_CHUNKS_ACTION = 4;
 
-  $_ = [
+  public static array $allRoutes = [
     'otra_exception' => [
       'chunks' => ['exception'],
       'core' => true,
       'resources' => [
-        'core_css' => ['otraException'],
+        'core_css' => ['pages/otraException'],
         'core_js' => ['tools']
       ]
     ],
@@ -50,13 +50,14 @@ abstract class Routes
     ]
   ];
 
-  public static function init()
+  public static function init() : void
   {
-    self::$_ = array_merge(
-      self::$_,
-      require BASE_PATH . 'bundles/config/Routes.php'); // TODO find a way to allow the parenthesis to be correctly placed ! For now, change it breaks the production task code :/
+    self::$allRoutes = array_merge(
+      self::$allRoutes,
+      require BUNDLES_PATH . 'config/Routes.php'
+    );
   }
 }
 
-Routes:: init();
+Routes::init();
 

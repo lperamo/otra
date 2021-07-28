@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
-return  [
+
+use const otra\services\OTRA_LABEL_SECURITY_SELF;
+
+return [
   'csp' => [
-    'script-src' => OTRA_LABEL_SECURITY_SELF
+    'script-src' => OTRA_LABEL_SECURITY_SELF,
+    'style-src' => OTRA_LABEL_SECURITY_SELF
   ]
 ];

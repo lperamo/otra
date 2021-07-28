@@ -1,0 +1,162 @@
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading components
+@use '../../components/theming/theming';
+
+// initializing components
+@include theming.init-themes($themes);
+
+:root {
+  color-scheme : light dark;
+}
+
+$font-variable : 13px;
+
+div.otra-dump {
+  @include theming.to-theme(
+    (
+      #{&} : ('box-shadow', 'dump--box-shadow')
+    )
+  );
+
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    background-image : radial-gradient(#ddd, #fff);
+  }
+
+  @media all and (prefers-color-scheme : dark) {
+    background-color : #333;
+  }
+
+  // positioning
+  padding : .5rem;
+
+  // text
+  font-family : 'Courier New', monospace;
+  font-size   : $font-variable;
+  word-break  : break-all;
+
+  @at-root {
+    span.otra-dump--intro {
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--intro--color')
+        )
+      );
+
+      font-size : $font-variable;
+      margin    : 0;
+    }
+
+    span.otra-dump--value {
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--value--color')
+        )
+      );
+
+      margin    : 0;
+
+      // text
+      white-space : pre-wrap;
+      word-break  : break-all;
+    }
+
+    pre.otra-dump--string {
+      @include theming.to-theme(
+        (
+          #{&} : ('color', 'dump--string--color')
+        )
+      );
+
+      // positioning
+      display   : inline;
+      margin    : 0;
+
+      // text
+      font-family : 'Courier New', monospace;
+      //font-size   : 1em;
+      white-space : pre-wrap;
+      word-break  : break-all;
+
+      @at-root b.otra--code--container {
+        @include theming.to-theme(
+          (
+            #{&} : ('outline', 'dump--code-container--outline')
+          )
+        );
+
+        font-weight : 400;
+
+        @at-root mark.otra--code--container-highlight {
+          @include theming.to-theme(
+            (
+              #{&} : ('background-color', 'dump--code-container--highlight--background-color')
+            )
+          );
+
+          color            : inherit;
+          position         : relative;
+        }
+      }
+    }
+
+    label {
+      &.otra-dump--foldable {
+        cursor : pointer;
+
+        // text
+        font-family : 'Courier New', monospace;
+        white-space : pre-wrap;
+        word-break  : break-all;
+
+        &:not(:hover) {
+          color : #a00;
+        }
+
+        &:hover {
+          color : #160;
+        }
+      }
+
+      &.otra-dump--margin-bottom {
+        display       : inline-block;
+        margin-bottom : 10px;
+      }
+
+      &.otra-dump--expand-icon {
+        font-size   : 20px;
+        line-height : 10px;
+      }
+    }
+
+    input[type=checkbox].otra-dump--foldable-checkbox {
+      display : none;
+
+      &:not(:checked) {
+        & + div {
+          display : none;
+        }
+      }
+
+      &:checked + div {
+        @at-root .otra-dump--help {
+          cursor : help;
+        }
+
+        & + br {
+          display : none;
+        }
+      }
+    }
+  }
+}
+
+// avoids too long lines in XDebug outputs
+.xdebug-var-dump {
+  white-space : pre-wrap;
+  word-break  : break-all;
+}
+
+// applying theme
+@include theming.global-mass-theme();

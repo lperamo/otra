@@ -1,0 +1,11 @@
+{
+  "autofill": [],
+  "package" : {
+    "description" : "OTRA - User centric PHP framework.",
+    "homepage" : "https://otra.tech",
+    "name" : "OTRA",
+    "license" : "X11",
+    "title" : "OTRA",
+    "version" : "1.0.0-alpha.2.5.0"
+  }
+}

@@ -1,11 +1,16 @@
 <?php
-declare(strict_types=1);
-
 /** Bootstrap of the framework - Development entry point
  *
- * @author Lionel Péramo */
-require __DIR__ . '/../config/constants.php';
+ * @author Lionel Péramo
+ */
+declare(strict_types=1);
 
+namespace otra\web;
+
+use const otra\cache\php\{BASE_PATH,CACHE_PATH,CORE_PATH};
+use const otra\cache\php\init\CLASSMAP;
+
+require __DIR__ . '/../config/constants.php';
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -18,21 +23,19 @@ define ('BEFORE', microtime(true));
 if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntryPoint.php')
   return true;
 
-require CORE_PATH . 'tools/debug/dump.php';
-
 ini_set('display_errors', '1');
 ini_set('html_errors', '1');
 error_reporting(-1 & ~E_DEPRECATED);
 
 /** CLASS MAPPING */
-require CACHE_PATH . 'php/ClassMap.php';
+require CACHE_PATH . 'php/init/ClassMap.php';
 
 /** MAIN CONFIGURATION */
 require BASE_PATH . 'config/AllConfig.php';
 
-spl_autoload_register(function(string $className)
+spl_autoload_register(function(string $className) : void
 {
-  if (false === isset(CLASSMAP[$className]))
+  if (!isset(CLASSMAP[$className]))
     echo 'Path not found for the class name : ', $className, '<br>';
   else
     require CLASSMAP[$className];

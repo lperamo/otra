@@ -1,0 +1,28 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+
+use otra\config\AllConfig;
+use otra\MasterController;
+use const otra\cache\php\BASE_PATH;
+
+// Value used also in CORE_PATH . 'debugBar/templateMotor.phtml'
+$cacheEnabled = (!isset(AllConfig::$cache) || AllConfig::$cache);
+?>
+<button type="button" class="otra--help-cursor dbg-bar--cache dbg-bar--block dbg-bar--block--border-left
+  dbg-bar--cache<?= $cacheEnabled ? '--enabled' : '--disabled'?>"
+title="Controller">Cache</button>
+<div class="dbg-bar--block--container">
+  <p class="dbg-bar--block--container--element">Loaded from <b><?= MasterController::$cacheUsed ?></b>.</p>
+  <p class="dbg-bar--block--container--element">Templates stored in memory :</p>
+  <?php
+  $basePathLength = strlen(BASE_PATH);
+
+  foreach (array_keys(MasterController::$rendered) as $template)
+  {
+    ?><p class="dbg-bar--block--container--element"><?=
+  str_contains($template, BASE_PATH) ? 'BASE_PATH + ' . mb_substr($template, $basePathLength) : $template
+    ?></p><?php
+  }
+  ?>
+</div>

@@ -1,0 +1,222 @@
+$themes: (
+  'light': (
+    // generic color codes
+    // -------------------
+    // ** body
+    'body--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
+    'body--color' : #333,
+    // ** exception
+    'exception--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'exception--title--text-shadow' : 0 0 3px #fff,
+    'exception--color--error-code' : #f55,
+    'exception--color--file' : #f55,
+    // ** components
+    'accordion--text-shadow' : 0 3px 6px #aaa,
+    'accordion--inner--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
+    // ** debug bar - generic
+    'debug-bar--background-image' : linear-gradient(90deg, #fff, #fff),
+    'debug-bar--box-shadow' : 0 0 30px 0 #ccc inset,
+    'debug-bar--primary--color' : #444,
+    'debug-bar--primary--text-shadow' : 0 0 3px #ccc,
+    // ** debug bar - connection
+    'debug-bar--logged-color' : #7dff7a,
+    'debug-bar--logged-text-shadow' : .5px .5px .5px #444,
+    'debug-bar--not-logged-color' : #d00,
+    'debug-bar--not-logged-text-shadow' : 0 0 9px #fda,
+    // ** debug bar - cache
+    'debug-bar--cache--disabled--color' : #d00,
+    'debug-bar--cache--disabled--text-shadow' : 0 0 9px #fda,
+    'debug-bar--cache--enabled--color' : #7dff7a,
+    'debug-bar--cache--enabled--text-shadow' : .5px .5px .5px #444,
+    // ** debug bar - blocks
+    'debug-bar--block--background-color' : transparent,
+    'debug-bar--block--border-color' : #bbb,
+    'debug-bar--block--color' : #333,
+    // ** debug bar - buttons
+    'debug-bar--button--background-image' : radial-gradient(#ff8, #fdc),
+    'debug-bar--button--box-shadow' : 0 0 3px #bbb,
+    'debug-bar--button--color' : #333,
+    'debug-bar--button--text-shadow' : 0 0 3px #aaa,
+    // ** debug bar - buttons hover
+    'debug-bar--buttons--hover--color' : #000,
+    'debug-bar--buttons--hover--box-shadow' : 0 0 3px #777,
+    'debug-bar--buttons--hover--text-shadow' : 0 0 1px #777,
+    // ** debug bar - toggle buttons
+    'debug-bar--toggle--color' : #fd9,
+    'debug-bar--toggle--text-shadow' : 0 0 1px #540,
+    // ** debug bar ?  - error
+    'debug-bar--error--background-color' : #fff,
+    // ** lightbox
+    'lightbox--background-image' : url('../../../img/profiler_light.png'),
+    'lightbox--container--color' : #444,
+    'lightbox--container--text-shadow' : 0 0 3px #ccc,
+    // ** profiler - generic
+    'profiler--sql--logs--background--hover--color' : #b4defb,
+    // ** profiler - file and sql clauses
+    'profiler--file--color' : #f55,
+    'profiler--file--text-shadow' : 0 0 1px #fa1,
+    'profiler--file--background-image' : linear-gradient(90deg, #bb0, #770),
+    // ** profiler - line
+    'profiler--line--color' : #882,
+    'profiler--line--text-shadow' : 0 0 1px #cc3,
+    // ** profiler - fields
+    'profiler--field--color' : #88f,
+    'profiler--field--text-shadow' : 0 0 1px #88f,
+    'profiler--field--gradient' : linear-gradient(
+      90deg,
+      #88f,
+      #04f
+    ),
+    // ** profiler - sql logs
+    'profiler--sql--logs--background-color' : transparentize(#000, 0.9),
+    'profiler--sql--logs--hover--background-color' : #ccc,
+    'profiler--sql--logs--selection-color' : #667,
+    // ** dump
+    'dump--code-container--outline' : 1px solid #666,
+    'dump--code-container--highlight--background-color' : #eee,
+    'dump--box-shadow' : 1px 1px 3px #777,
+    'dump--intro--color' : #004e9c,
+    'dump--value--color' : #004e9c,
+    'dump--string--color' : #155859,
+    // components styles
+    // ================
+    // accordion
+    // ---------
+    'accordion--arrow--background-image' : linear-gradient(90deg, #bcd, #99c, #78b),
+    'accordion--background-image' : linear-gradient(45deg, #bcf, #ddf, #bcf),
+    // ripple
+    // ------
+    'ripple--background-color' : #bce,
+    'ripple--active--background-color' : lighten(#bce, 10),
+    'ripple--hover--background-color' : #9ac,
+    // vertical menu
+    // -------------
+    'vertical-menu--border' : 1px solid #a3afff,
+    'vertical-menu--element--border' : 1px solid #a3afff,
+    // -- states start
+    // -- idle state
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'vertical-menu--element--color' : #ccc,
+    // -- active state
+    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'vertical-menu--element-active--color' : #fff,
+    // -- focus state
+    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'vertical-menu--element-focus--color' : #44a,
+    // -- hover state
+    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'vertical-menu--element-hover--color' : #fff,
+    // states end --
+    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
+  ),
+  'dark': (
+    // generic color codes
+    // -------------------
+    // ** body
+    'body--background-image' : linear-gradient(185deg, #333, #446),
+    'body--color' : #eee,
+    // ** exceptiontheming
+    'exception--title--background-image' : linear-gradient(45deg, #333, #78b),
+    'exception--title--text-shadow' : 0 0 3px #000,
+    'exception--color--error-code' : #fda,
+    'exception--color--file' : #fda,
+    // ** components
+    'accordion--text-shadow' : 0 3px 6px #334,
+    'accordion--inner--background-image' : linear-gradient(185deg, hsl(240deg 20% 23%), #585884),
+    // ** debug bar - generic
+    'debug-bar--background-image' : linear-gradient(90deg, #777, #bbb),
+    'debug-bar--box-shadow' : 0 0 30px 0 #555 inset,
+    'debug-bar--primary--color' : #eee,
+    'debug-bar--primary--text-shadow' : 0 0 3px #ccc,
+    // ** debug bar - connection
+    'debug-bar--logged-color' : #afffae,
+    'debug-bar--logged-text-shadow' : 0 0 3px #7fcf7e,
+    'debug-bar--not-logged-color' : #fc7,
+    'debug-bar--not-logged-text-shadow' : 0 0 9px #fda,
+    // ** debug bar - cache
+    'debug-bar--cache--disabled--color' : #d00,
+    'debug-bar--cache--disabled--text-shadow' : 0 0 9px #fda,
+    'debug-bar--cache--enabled--color' : #afffae,
+    'debug-bar--cache--enabled--text-shadow' : 0 0 3px #7fcf7e,
+    // ** debug bar - blocks
+    'debug-bar--block--background-color' : transparent,
+    'debug-bar--block--border-color' : #555,
+    'debug-bar--block--color' : #eee,
+    // ** debug bar - buttons
+    'debug-bar--button--background-image' : radial-gradient(#fd4, #f90),
+    'debug-bar--button--box-shadow' : 0 0 3px #47a,
+    'debug-bar--button--color' : #eee,
+    'debug-bar--button--text-shadow' : 0 0 3px #333,
+    // ** debug bar - buttons hover
+    'debug-bar--buttons--hover--color' : #fff,
+    'debug-bar--buttons--hover--box-shadow' : 0 0 5px #444,
+    'debug-bar--buttons--hover--text-shadow' : 0 0 2px #000,
+    // ** debug bar - toggle buttons
+    'debug-bar--toggle--color' : #fd9,
+    'debug-bar--toggle--text-shadow' : 0 0 1px #540,
+    // ** debug bar ?  - error
+    'debug-bar--error--background-color' : #fff,
+    // ** lightbox
+    'lightbox--background-image' : url('../../../img/profiler_dark.jpg'),
+    'lightbox--container--color' : #eee,
+    'lightbox--container--text-shadow' : 0 0 3px #777,
+    // ** profiler - generic
+    'profiler--sql--logs--background--hover--color' : #b4defb,
+    // ** profiler - file and sql clauses
+    'profiler--file--color' : #f55,
+    'profiler--file--text-shadow' : 0 0 1px #fa1,
+    'profiler--file--background-image' : linear-gradient(90deg, #cc0, #e27),
+    // ** profiler - line
+    'profiler--line--color' : #dd5,
+    'profiler--line--text-shadow' : 0 0 1px #cc3,
+    // ** profiler - fields
+    'profiler--field--color' : #88f,
+    'profiler--field--text-shadow' : #88f,
+    'profiler--field--gradient' : linear-gradient(
+      90deg,
+      #88f,
+      #04f
+    ),
+    // ** profiler - sql logs
+    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
+    'profiler--sql--logs--hover--background-color' : #303030,
+    'profiler--sql--logs--selection-color' : #667,
+    // ** dump
+    'dump--code-container--outline' : 1px solid #666,
+    'dump--code-container--highlight--background-color' : #aaa,
+    'dump--box-shadow' : 1px 1px 3px #777,
+    'dump--intro--color' : #adf,
+    'dump--value--color' : #adf,
+    'dump--string--color' : #346,
+    // components styles
+    // =================
+    // accordion
+    // ---------
+    'accordion--arrow--background-image' : linear-gradient(90deg, #bcd, #99c, #78b),
+    'accordion--background-image' : linear-gradient(45deg, #78b, #569, #78b),
+    // ripple
+    // ------
+    'ripple--background-color' : #bce,
+    'ripple--active--background-color' : lighten(#bce, 10),
+    'ripple--hover--background-color' : #bce,
+    // vertical menu
+    // -------------
+    'vertical-menu--border' : 1px solid #000,
+    'vertical-menu--element--border' : 1px solid #a3afff,
+    // -- states start
+    // -- idle state
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #78b, #569, #78b),
+    'vertical-menu--element--color' : #ccc,
+    // -- active state
+    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #78b, #929fc3, #78b),
+    'vertical-menu--element-active--color' : #44a,
+    // -- focus state
+    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'vertical-menu--element-focus--color' : #44a,
+    // -- hover state
+    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #99a6cc, #569, #99a6cc),
+    'vertical-menu--element-hover--color' : #cc4,
+    // states end --
+    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
+  )
+);

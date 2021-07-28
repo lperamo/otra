@@ -1,24 +1,31 @@
 <?php
-declare(strict_types=1);
 /**
  * Profiler service
  *
- * @author Lionel Péramo
+ * @author  Lionel Péramo
  */
+declare(strict_types=1);
 
 namespace otra\services;
+
+use otra\OtraException;
+use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
+use function otra\tools\{rawSqlPrettyPrint,t};
 
 /**
  * @package otra\services
  */
 class ProfilerService
 {
-  public static function securityCheck()
+  /**
+   * @throws OtraException
+   */
+  public static function securityCheck() : void
   {
-    if ('dev' !== $_SERVER[APP_ENV])
+    if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
-      exit (1);
+      throw new OtraException('', 1, '', NULL, [], true);
     }
   }
 
@@ -27,28 +34,33 @@ class ProfilerService
    *
    * @return false|string
    */
-  public static function getLogs(string $file)
+  public static function getLogs(string $file) : false|string
   {
-    if ( false === file_exists($file) || '' === ($contents = file_get_contents($file)))
+    if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
       return t('No stored queries in ') . $file . '.';
 
+    /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
       str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
       true
     );
+
     require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
+    $basePathLength = strlen(BASE_PATH);
     ob_start();
-    foreach($requests as $r)
+    foreach($requests as $request)
     {
       ?>
-      <div>
-        <div class="dbg-left-block dbg-fl">
-          <?= t('In file') . ' <span class="dbg-file">', substr($r['file'], strlen(BASE_PATH)), '</span> '
-            . t('at line') . '&nbsp;<span class="dbg-line">', $r['line'], '</span>&nbsp;:',
-          '<p>', rawSqlPrettyPrint($r['query']), '</p>'?>
+      <div class="profiler--sql-logs--element">
+        <div class="profiler--sql-logs--element--left-block">
+          <?= t('In file') . ' <span class="profiler--sql-logs--element--file">', substr($request['file'],
+            $basePathLength), '</span> '
+            . t('at line') . '&nbsp;<span class="profiler--sql-logs--element--line">', $request['line'],
+          '</span>&nbsp;:',
+          rawSqlPrettyPrint($request['query']) ?>
         </div>
-        <button class="dbg-fr lb-btn"><?= t('Copy') ?></button>
+        <button class="profiler--sql-logs--element--ripple ripple"><?= t('Copy') ?></button>
       </div>
       <?php
     }

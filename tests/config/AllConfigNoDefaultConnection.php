@@ -1,17 +1,20 @@
 <?php
-namespace config;
+declare(strict_types=1);
 
-define('CACHE_PATH', BASE_PATH . 'cache/');
+namespace otra\config;
 
-// Framework core resources
-define('CORE_VIEWS_PATH', CORE_PATH . 'views/');
-define('CORE_CSS_PATH', CORE_PATH . 'resources/css/');
-define('CORE_JS_PATH', CORE_PATH . 'resources/js/');
+use const otra\cache\php\CACHE_PATH;
 
-define('VERSION', 'v1');
-define('RESOURCE_FILE_MIN_SIZE', 21000); // n characters
+const
+  VERSION = '1.0.0-alpha.2.5.0',
+  RESOURCE_FILE_MIN_SIZE = 21000, // n characters
+  CACHE_TIME = 300; // 5 minutes(5*60)
 
-define('CACHE_TIME', 300); // 5 minutes(5*60)
+/**
+ * Class AllConfig
+ *
+ * @package config
+ */
 class AllConfig
 {
   public static int $verbose = 0;

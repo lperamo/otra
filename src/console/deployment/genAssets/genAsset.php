@@ -1,32 +1,42 @@
 <?php
+/**
+ * @author Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 
+namespace otra\console\deployment\genAssets;
+
+use otra\cache\php\Logger;
 use otra\Router;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\init\CLASSMAP;
+use function otra\tools\gzCompressFile;
 
-define('ARG_CACHE_PATH', $argv[1]);
-define('ARG_SITE_ROUTE', $argv[2]);
-define('ARG_SHA_NAME', $argv[3]);
+define(__NAMESPACE__ . '\\ARG_CACHE_PATH', $argv[1]);
+define(__NAMESPACE__ . '\\ARG_SITE_ROUTE', $argv[2]);
+define(__NAMESPACE__ . '\\ARG_SHA_NAME', $argv[3]);
 
-define('OTRA_PROJECT', strpos(__DIR__, 'vendor') !== false);
+define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'
   ) . '/config/constants.php';
-$_SERVER[APP_ENV] = 'prod';
+$_SERVER[APP_ENV] = PROD;
 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en';
 
 // Loads the main configuration
 require BASE_PATH . 'config/AllConfig.php';
 
 // Loads the production class mapping
-require CACHE_PATH . 'php/ClassMap.php';
+require BASE_PATH . 'cache/php/init/ClassMap.php';
 
-spl_autoload_register(function ($className)
+spl_autoload_register(function (string $className) : void
 {
-  if (false === isset(CLASSMAP[$className]))
+  if (!isset(CLASSMAP[$className]))
   {
     require_once CORE_PATH . 'Logger.php';
-    \otra\Logger::logTo(
+    Logger::logTo(
       'Path not found for the class name : ' . $className . PHP_EOL .
       'Stack trace : ' . PHP_EOL .
       print_r(debug_backtrace(), true),

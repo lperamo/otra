@@ -1,52 +1,80 @@
 <?php
+/**
+ * @author  Lionel Péramo
+ * @package otra\console\deployment
+ */
 declare(strict_types=1);
 
+namespace otra\console\deployment\genBootstrap;
+
+use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
+use const otra\cache\php\init\CLASSMAP;
+// do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_VIEWS_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\showContextByError;
 
-define('PATTERN', '@\s{0,}
-        (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
-        (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
-        (?:->renderView\s{0,}\([^\),]{1,})
-        @mx');
-// a previous line in first position (we don't include it for now because the templates management is not optimal yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
+require CONSOLE_PATH . 'tools.php';
 
-define('ANNOTATION_DEBUG_PAD', 80);
-define('LOADED_DEBUG_PAD', 80);
-define('PHP_OPEN_TAG_STRING', '<?php');
-define('PHP_OPEN_TAG_LENGTH', 5);
-define('PHP_END_TAG_STRING', '?>');
-define('PHP_END_TAG_LENGTH', 2);
-define('RETURN_AND_STRICT_TYPE_DECLARATION', 31);
+const
+  PATTERN = '@\s{0,}
+    (?:(?<!//\\s)require(?:_once){0,1}\s[^;]{1,};\s{0,})|
+    (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
+    (?:->renderView\s{0,}\([^\),]{1,})
+    @mx',
+  // a previous line in first position (we don't include it for now because the templates management is not optimal
+  // yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
-define('OTRA_ALREADY_PARSED_LABEL', ' ALREADY PARSED');
-define('OTRA_KEY_REQUIRE', 'require');
-define('OTRA_KEY_EXTENDS', 'extends');
-define('OTRA_KEY_STATIC', 'static');
-define('OTRA_KEY_FINAL_CONTENT_PARTS', 'finalContentParts');
+  ANNOTATION_DEBUG_PAD = 80,
+  LOADED_DEBUG_PAD = 80,
+  PHP_OPEN_TAG_STRING = '<?php',
+  PHP_OPEN_TAG_LENGTH = 5,
+  PHP_END_TAG_STRING = '?>',
+  PHP_END_TAG_LENGTH = 2,
+  RETURN_AND_STRICT_TYPE_DECLARATION = 31,
 
-define('OTRA_LABEL_REQUIRE', 'require');
+  OTRA_ALREADY_PARSED_LABEL = ' ALREADY PARSED',
+  OTRA_KEY_REQUIRE = 'require',
+  OTRA_KEY_EXTENDS = 'extends',
+  OTRA_KEY_STATIC = 'static',
+
+  OTRA_LABEL_REQUIRE = 'require',
+  ADJUST_SPACES_AROUND_REQUIRE_STATEMENT = '@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@',
+  LABEL_CONST = 'const ',
+  STRLEN_LABEL_CONST = 6,
+  NAMESPACE_SEPARATOR = '\\';
+define(__NAMESPACE__ . '\\BASE_PATH_LENGTH', strlen(BASE_PATH));
 
 /**
- * We have to manage differently the code that we put into an eval either it is PHP code or not
+ * We have to manage differently the code that we put into an eval either it is PHP code or not. Example :
+ *
+ *     <?php declare(strict_types=1);echo \'test\'; ?>
+ * becomes
+ *     declare(strict_types=1);echo 'test';
+ *
+ *     <?php declare(strict_types=1);echo 'test';
+ * becomes
+ *     declare(strict_types=1);echo 'test';<?php
+ *
+ *     <div></div>
+ * becomes
+ *     ?><div></div><?php
  *
  * @param string $contentToAdd
- *
- * @return bool
  */
-function phpOrHTMLIntoEval(string &$contentToAdd)
+function phpOrHTMLIntoEval(string &$contentToAdd) : void
 {
-  // Beginning of content
-  $contentToAdd = PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
-    ? substr($contentToAdd, PHP_OPEN_TAG_LENGTH)
+  // Beginning of content (+1 to strip the space)
+  $contentToAdd = PHP_OPEN_TAG_STRING === mb_substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+    ? mb_substr($contentToAdd, PHP_OPEN_TAG_LENGTH + 1)
     : PHP_END_TAG_STRING . $contentToAdd;
 
   // Ending of content
-  if (PHP_END_TAG_STRING === substr($contentToAdd, - PHP_END_TAG_LENGTH))
-    $contentToAdd = substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
+  if (PHP_END_TAG_STRING === mb_substr($contentToAdd, - PHP_END_TAG_LENGTH))
+    $contentToAdd = mb_substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
     $contentToAdd .= PHP_OPEN_TAG_STRING;
-
-  return PHP_OPEN_TAG_STRING === substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH);
 }
 
 /**
@@ -56,79 +84,137 @@ function phpOrHTMLIntoEval(string &$contentToAdd)
  */
 function hasSyntaxErrors(string $file) : bool
 {
-  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output); // Syntax verification, 2>&1 redirects stderr to stdout
+  // Syntax verification, 2>&1 redirects stderr to stdout
+  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output);
   $output = implode(PHP_EOL, $output);
 
-  if (strlen($output) > 6 && false !== strpos($output, 'pars', 7))
-  {
-    echo PHP_EOL, CLI_LIGHT_RED, $output, PHP_EOL, PHP_EOL;
-    require CONSOLE_PATH . 'tools.php';
-    showContextByError($file, $output, 10);
+  if (mb_strlen($output) <= 6 || false === mb_strpos($output, 'pars', 7))
+    return false;
 
-    return true;
-  }
+  echo PHP_EOL, CLI_ERROR, $output, PHP_EOL, PHP_EOL;
+  showContextByError($file, $output, 10);
 
-  return false;
+  return true;
 }
 
 /**
+ * Compress PHP files contents. Beware, it makes some hard compression that can lead to false positives (in strings)
+ *
  * @param string $fileToCompress
  * @param string $outputFile
  */
-function compressPHPFile(string $fileToCompress, string $outputFile)
+function compressPHPFile(string $fileToCompress, string $outputFile) : void
 {
-  // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace is dangerous !
-  $contentToCompress = rtrim(preg_replace('@\s{1,}@', ' ', php_strip_whitespace($fileToCompress)) . PHP_EOL);
-
+  // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace
+  // is dangerous !
   // strips HTML comments that are not HTML conditional comments
-  $contentToCompress = preg_replace('@<!--.*?-->@', '', $contentToCompress);
-
   file_put_contents(
     $outputFile . '.php',
-    preg_replace('@;\s(class\s[^\s]{1,}) { @', ';$1{', $contentToCompress, -1, $count)
+    rtrim(str_replace(
+      [
+        '; }',
+        '} }',
+        'strict_types=1); namespace',
+        '?> <?php',
+        '  ',
+        '; ',
+        'public function', // a function is public by default...
+        'public static function',
+        ' = ',
+        'if (',
+        ' { ',
+        ' ?? ',
+        ' === ',
+        ' == ',
+        ' && ',
+        ' || '
+      ],
+      [
+        ';}',
+        '}}',
+        'strict_types=1);namespace',
+        '',
+        ' ',
+        ';',
+        'function',
+        'static function',
+        '=',
+        'if(',
+        '{',
+        '??',
+        '===',
+        '==',
+        '&&',
+        '||'
+      ],
+      preg_replace(
+      [
+        '@\s{1,}@m',
+        '@<!--.*?-->@',
+        '@;\s(class\s[^\s]{0,}) { @',
+        '@(function\s[^\s]{0,}) {\s{0,}@'
+
+      ],
+      [
+        ' ',
+        '',
+        ';$1{',
+        '$1{'
+      ],
+      php_strip_whitespace($fileToCompress)
+    ))) . PHP_EOL
   );
   unlink($fileToCompress);
 }
 
 /**
+ * Puts the final contents into a temporary file.
+ * Checks syntax errors.
+ * If all was ok, retrieves the contents of the temporary file in the real final file.
+ * Then it checks namespaces errors.
+ * If all was ok, deletes the temporary file.
+ *
  * @param string $content
  * @param string $outputFile
  *
  * @throws OtraException
  */
-function contentToFile(string $content, string $outputFile)
+function contentToFile(string $content, string $outputFile) : void
 {
-  echo PHP_EOL, PHP_EOL, CLI_CYAN, 'FINAL CHECKINGS => ';
+  if (VERBOSE > 0)
+    echo PHP_EOL;
+
+  echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
 
   // Test each part of the process in order to precisely detect where there is an error.
-  if (true === hasSyntaxErrors($tempFile))
+  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
-    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[CLASSIC SYNTAX ERRORS in ' . substr($tempFile, strlen(BASE_PATH)) . '!]',
+    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . mb_substr($tempFile, BASE_PATH_LENGTH) . '!]',
       END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  $smallOutputFile = substr($outputFile, strlen(BASE_PATH));
+  $smallOutputFile = mb_substr($outputFile, BASE_PATH_LENGTH);
 
-  echo CLI_LIGHT_GREEN, '[CLASSIC SYNTAX]';
+  echo CLI_SUCCESS, '[CLASSIC SYNTAX]';
 
   file_put_contents($outputFile, $content);
 
-  if (true === hasSyntaxErrors($outputFile))
+  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($outputFile))
   {
-    echo PHP_EOL, PHP_EOL, CLI_LIGHT_RED, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
+    echo PHP_EOL, PHP_EOL, CLI_ERROR, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
 
-  echo CLI_LIGHT_GREEN, '[NAMESPACES]', END_COLOR, PHP_EOL;
+  echo CLI_SUCCESS, '[NAMESPACES]', END_COLOR, PHP_EOL;
 
   if (!unlink($tempFile))
   {
-    echo CLI_RED, 'There has been an error during removal of the file ', CLI_CYAN, $tempFile, CLI_RED,
+    echo CLI_ERROR, 'There has been an error during removal of the file ', CLI_INFO, $tempFile, CLI_ERROR,
     '. Task aborted.', END_COLOR, PHP_EOL;
     throw new OtraException('', 1, '', NULL, [], true);
   }
@@ -137,12 +223,24 @@ function contentToFile(string $content, string $outputFile)
 /**
  * We analyze the use statement in order to retrieve the name of each class which is included in it.
  *
- * @param int    $level
- * @param array  $filesToConcat Files to parse after have parsed this one
- * @param string $class
- * @param array  $parsedFiles   Remaining files to concatenate
+ * @param int      $level
+ * @param array{
+ *  php:array{
+ *    use ?: string[],
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }               $filesToConcat Files to parse after have parsed this one
+ * @param string   $class
+ * @param string[] $parsedFiles   Remaining files to concatenate
+ * @param string   $chunk         Original chunk (useful for the external library class warning)
  */
-function analyzeUseToken(int $level, array &$filesToConcat, string $class, array &$parsedFiles)
+function analyzeUseToken(int $level, array &$filesToConcat, string $class, array &$parsedFiles, string $chunk) : void
 {
   $class = trim($class);
 
@@ -150,121 +248,219 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
   if ('config\\Router' === $class)
     return;
 
-  // dealing with / at the beginning of the use
-  if (false === isset(CLASSMAP[$class]))
+  // dealing with \ at the beginning of the use
+  if (!isset(CLASSMAP[$class]))
   {
-    if ('/' === substr($class, 1))
-      $class = substr($class, 1);
-    else
+    $revisedClass = mb_substr($class, 1);
+
+    if (NAMESPACE_SEPARATOR === $revisedClass)
+      $class = $revisedClass;
+    elseif (in_array($class, ['DevControllerTrait', 'ProdControllerTrait']))
     {
-      // It can be a SwiftMailer class for example.
-      /**
-       * TODO We have to manage the case where we write the use statement on multiple lines because of factorisation style like
-       * use test/
-       * {
-       *  class/test,
-       *  class/test2
-       * } */
-      echo CLI_YELLOW, 'EXTERNAL LIBRARY CLASS : ' . $class, END_COLOR, PHP_EOL;
-      return ;
+      if ($class === 'DevControllerTrait')
+      {
+        echo CLI_INFO, 'We will not send the development controller in production.', END_COLOR, PHP_EOL;
+        return;
+      }
+      // Avoids to consider DevControllerTrait and ProdControllerTrait as external library classes
+      $class = 'otra\\' . $class;
+    } else
+    {
+      $cacheNamespace = 'cache\\php';
+
+      // Handles cache/php namespaces and otra namespaces (9 is length of $cacheNamespace)
+      if (mb_substr($class, 0, 9) !== $cacheNamespace)
+      {
+        // It can be a SwiftMailer class for example.
+        if (VERBOSE > 0 &&
+          !in_array(
+            $chunk,
+            [
+              'ReflectionClass',
+              'ReflectionException',
+              'ReflectionMethod',
+              'ReflectionProperty',
+              'SplFileObject',
+              'Error',
+              'Exception',
+              'JetBrains\PhpStorm\Pure',
+              'JetBrains\PhpStorm\NoReturn'
+            ],
+            true
+          )
+        )
+          echo CLI_WARNING, 'EXTERNAL LIBRARY CLASS : ' . $chunk, END_COLOR, PHP_EOL;
+
+        return;
+      } elseif ($class === $cacheNamespace . '\\BlocksSystem')
+        // The class cache\php\BlocksSystem is already loaded via the MasterController class
+        return;
     }
   }
 
   $tempFile = CLASSMAP[$class];
 
   // We add the file found in the use statement only if we don't have it yet
-  if (false === in_array($tempFile, $parsedFiles))
+  if (!in_array($tempFile, $parsedFiles))
   {
     $filesToConcat['php']['use'][] = $tempFile;
     $parsedFiles[] = $tempFile;
-  } elseif (1 < VERBOSE)
+  } elseif (VERBOSE > 1)
     showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 }
 
 /**
  * We retrieve file names to include that are found via the use statements to $filesToConcat in php/use category.
  * We then clean the use keywords ...
+ * This function only evaluates ONE use statement at a time.
  *
- * @param int    $level
- * @param string $contentToAdd  Content actually parsed
- * @param array  $filesToConcat Files to parse after have parsed this one
- * @param array  $parsedFiles   Remaining files to concatenate
+ * @param int       $level
+ * @param string    $contentToAdd  Content actually parsed
+ * @param array{
+ *  php:array{
+ *    use ?: string[],
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }                $filesToConcat Files to parse after have parsed this one
+ * @param string[]  $parsedFiles   Remaining files to concatenate
+ * @param string[]  $parsedConstants
  *
- * @return array $classesFromFile
+ * @return string[] $classesFromFile
  */
-function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles) : array
+function getFileNamesFromUses(
+  int $level,
+  string &$contentToAdd,
+  array &$filesToConcat,
+  array &$parsedFiles,
+  array &$parsedConstants
+) : array
 {
-  preg_match_all('@^\\s{0,}use\\s{1,}([^;]{0,});\\s{0,}@mx', $contentToAdd, $useMatches, PREG_OFFSET_CAPTURE);
+  preg_match_all(
+    '@^\\s{0,}use\\s{1,}([^;]{0,});\\s{0,}$@mx',
+    $contentToAdd,
+    $useMatches,
+    PREG_OFFSET_CAPTURE
+  );
 
   $classesFromFile = [];
 
   foreach($useMatches[1] as $useMatch)
   {
     $chunks = explode(',', $useMatch[0]);
-    $beginString = '';
+    $isConst = (substr($useMatch[0], 0, STRLEN_LABEL_CONST) === LABEL_CONST);
+
+    if (!$isConst && (substr($useMatch[0], 0, 9) === 'function '))
+      continue;
+
+    $beginString = $originalChunk = '';
 
     foreach ($chunks as &$chunk)
     {
       $chunk = trim($chunk);
-      $posLeftParenthesis = strpos($chunk, '{');
+      $posLeftParenthesis = mb_strpos($chunk, '{');
 
       // case use xxx\xxx{XXX, xxx, xxx}; (notice the uppercase, it's where we are, one or more xxx between the braces)
       // example otra\otra\bdd\{Sql, Pdomysql}
       if (false !== $posLeftParenthesis)
       {
-        $beginString = substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
-        $lastChunk = substr($chunk, $posLeftParenthesis + 1); // like Sql
+        $beginString = mb_substr($chunk, 0, $posLeftParenthesis); // like otra\otra\bdd\
+
+        // originalChunk is used to determine the FQCN that will be displayed if the class comes from an external
+        // library class
+        if ($originalChunk === '' && $chunk !== '')
+          $originalChunk = $beginString;
+
+        $lastChunk = mb_substr($chunk, $posLeftParenthesis + 1); // like Sql
+
+        if ($isConst)
+          $constantName = $lastChunk;
+
         $classToReplace = $beginString . str_replace(' ', '', $lastChunk);
 
         // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-        str_replace($classToReplace, $lastChunk, $contentToAdd);
+        $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
 
         // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
-        if (substr($classToReplace, -1) === '}')
-          $classToReplace = substr($classToReplace, 0,-1);
-
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
-        analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
+        if ($classToReplace[-1] === '}')
+          $classToReplace = mb_substr($classToReplace, 0, -1);
       } else
       {
         /** if we have a right parenthesis we strip it and put the content before the beginning of the use statement,
-         * /*  otherwise ... if it uses a PHP7 shortcut with parenthesis, we add the beginning of the use statement
-         * /*  otherwise ... we just put the string directly */
-
-        if (false === strrpos($chunk, '}'))
+         * otherwise ... if it uses a PHP7 shortcut with parenthesis, we add the beginning of the use statement
+         * otherwise ... we just put the string directly */
+        if (!str_contains($chunk, '}'))
         {
           if ('' === $beginString) // case use xxx/xxx/xxx;
           {
             $classToReplace = $chunk;
-            $tempChunks = explode('\\', $classToReplace);
+            $tempChunks = explode(NAMESPACE_SEPARATOR, $classToReplace);
+
+            if ($isConst)
+              $constantName = $tempChunks[count($tempChunks) - 1];
 
             // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-            str_replace($classToReplace, array_pop($tempChunks), $contentToAdd);
+            $contentToAdd = str_replace($classToReplace, array_pop($tempChunks), $contentToAdd);
           } else // case use xxx/xxx{xxx, XXX, xxx}; (notice the uppercase, it's where we are)
           {
             $classToReplace = $beginString . $chunk;
 
+            if ($isConst)
+              $constantName = $chunk;
+
             // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-            str_replace($classToReplace, $chunk, $contentToAdd);
+            $contentToAdd = str_replace($classToReplace, $chunk, $contentToAdd);
           }
-        } else { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
-          $lastChunk = substr($chunk, 0, -1);
+
+          $lastChunk = $chunk;
+
+        } else
+        { // case use xxx/xxx{xxx, xxx, XXX}; (notice the uppercase, it's where we are)
+          $lastChunk = mb_substr($chunk, 0, -1);
           $classToReplace = $beginString . $lastChunk;
 
-          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-          str_replace($classToReplace, $lastChunk, $contentToAdd);
-        }
+          if ($isConst)
+            $constantName = $lastChunk;
 
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
-        analyzeUseToken($level, $filesToConcat, $classToReplace, $parsedFiles);
+          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+          $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+        }
       }
 
-      // The classes will be useful when we will analyze the extends statements
-      $classesFromFile[] = $classToReplace;
+      // Example of fully qualified constant name => otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE
+      $fullyQualifiedConstantName = (
+        $originalChunk !== ''
+          ? (str_ends_with($originalChunk, NAMESPACE_SEPARATOR)
+            ? $originalChunk
+            : $originalChunk . NAMESPACE_SEPARATOR )
+          : ''
+        ) . $lastChunk;
+
+      if ($isConst)
+        $parsedConstants[$constantName] = substr($fullyQualifiedConstantName, STRLEN_LABEL_CONST);
+      else
+      {
+        // We analyze the use statement in order to retrieve the name of each class which is included in it.
+        analyzeUseToken(
+          $level,
+          $filesToConcat,
+          $classToReplace,
+          $parsedFiles,
+          $fullyQualifiedConstantName
+        );
+
+        // The classes will be useful when we will analyze the extends statements
+        $classesFromFile[] = $classToReplace;
+      }
 
       // Now that we have retrieved the files to include, we can clean all the use statements
-      // i need the modifier m in order to make the ^ work as expected
-      $contentToAdd = preg_replace('@^use [^;]{1,};@m', '', $contentToAdd, -1, $count);
+      // We need the modifier m in order to make the ^ work as expected
+      $contentToAdd = preg_replace('@^use [^;]{1,};$@m', '', $contentToAdd, -1, $count);
     }
   }
 
@@ -274,43 +470,53 @@ function getFileNamesFromUses(int $level, string &$contentToAdd, array &$filesTo
 /**
  * We test if we have dynamic variables into the require/include statement, and replace them if they exists
  *
- * @param string $tempFile
- * @param string $file
- * @param string $trimmedMatch
+ * @param string $fileContent  Content of the file $filename
+ * @param string $filename
+ * @param string $trimmedMatch Match (with spaces neither to the left nor to the right) in the file $filename that
+ *                             potentially contains dynamic variable to change
  *
- * @return array $isTemplate
+ * @throws OtraException
+ * @return array{0: string, 1: bool} [$fileContent, $isTemplate]
  */
-function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch) : array
+#[ArrayShape([
+  'string',
+  'bool'
+])]
+function evalPathVariables(string &$fileContent, string $filename, string $trimmedMatch) : array
 {
   // no path variables found
-  if (false === strpos($trimmedMatch, '$'))
-    return [$tempFile, false];
+  if (!str_contains($trimmedMatch, '$'))
+    return [$fileContent, false];
 
-  // the flag is necessary in order to validate correctly the next condition (with empty($pathVariables) I mean)
-  preg_match_all('@\\$([^\\s\\)\\(]+)@', $tempFile, $pathVariables);
+  preg_match_all('@\\$([^\\s)(]+)@', $fileContent, $pathVariables);
   $isTemplate = false;
 
-  if (false === empty($pathVariables))
+  if (!empty($pathVariables))
   {
     // we don't need the complete mask
     unset($pathVariables[0]);
 
     foreach($pathVariables as $pathVariable)
     {
-      if (true === isset(PATH_CONSTANTS[$pathVariable[0]]))
-        $tempFile = str_replace('$' . $pathVariable[0], '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'', $tempFile);
+      if (isset(PATH_CONSTANTS[$pathVariable[0]]))
+        $fileContent = str_replace(
+          '$' . $pathVariable[0],
+          '\'' . PATH_CONSTANTS[$pathVariable[0]] . '\'',
+          $fileContent
+        );
       /* we make an exception for this particular require statement because
            it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
       elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
-        && 'require CACHE_PATH . \'php/security/\' . $route . \'.php\';' !== $trimmedMatch
+        && 'require $routeSecurityFilePath;' !== $trimmedMatch
+        && 'require $renderController->viewPath . \'renderedWithoutController.phtml\';' !== $trimmedMatch
       )
       {
-        echo CLI_RED, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_YELLOW,
-        '$', $pathVariable[0], CLI_RED, ' in ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' in the file ', CLI_YELLOW,
-        $file, CLI_RED, ' !', END_COLOR, PHP_EOL;
-        exit(1);
+        echo CLI_ERROR, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_WARNING,
+        '$', $pathVariable[0], CLI_ERROR, ' in ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' in the file ', CLI_WARNING,
+        $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
+        throw new OtraException('', 1, '', null, [], true);
       }
 
       // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
@@ -318,43 +524,50 @@ function evalPathVariables(string &$tempFile, string $file, string $trimmedMatch
     }
   }
 
-  return [$tempFile, $isTemplate];
+  return [$fileContent, $isTemplate];
 }
 
 /**
  * Shows the file name in the console for debug purposes
  *
  * @param int    $level
- * @param string $file
+ * @param string $fileAbsolutePath
  * @param string $otherText
  */
-function showFile(int $level, string $file, string $otherText = ' first file')
+function showFile(int $level, string $fileAbsolutePath, string $otherText = ' first file') : void
 {
-  if (0 < VERBOSE)
+  if (VERBOSE > 0)
     echo str_pad(
-      str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') . substr($file, BASE_PATH_LENGTH),
+      str_repeat(' ', $level << 1) . (0 !== $level ? '| ' : '') .
+      mb_substr($fileAbsolutePath, BASE_PATH_LENGTH),
       ANNOTATION_DEBUG_PAD,
       '.'
-    ), CLI_YELLOW, $otherText, END_COLOR, PHP_EOL;
+    ), CLI_WARNING, $otherText, END_COLOR, PHP_EOL;
 }
 
 /**
- * We escape the quotes only in the PHP portions of the file that we want to add
+ * We escape the single quotes only in the PHP portions of the file that we want to add
+ * (This content needs to begin by <?php and finish by ?>)
  *
  * @param string $contentToAdd
  */
-function escapeQuotesInPhpParts(string &$contentToAdd)
+function escapeQuotesInPhpParts(string &$contentToAdd) : void
 {
   $offset = 0;
 
   while (false !== ($posBeginPHP = strpos($contentToAdd, PHP_OPEN_TAG_STRING, $offset)))
   {
-    $posFinPHP = strpos($contentToAdd, PHP_END_TAG_STRING, $posBeginPHP);
+    $length = strpos($contentToAdd, PHP_END_TAG_STRING, $posBeginPHP) - $posBeginPHP;
 
-    $contentToAdd = substr_replace($contentToAdd,
-      str_replace('\'', '\\\'', substr($contentToAdd, $posBeginPHP, $posFinPHP - $posBeginPHP), $nbReplacements),
+    $contentToAdd = substr_replace(
+      $contentToAdd,
+      str_replace(
+        '\'',
+        '\\\'',
+        substr($contentToAdd, $posBeginPHP, $length),
+        $nbReplacements),
       $posBeginPHP,
-      $posFinPHP - $posBeginPHP
+      $length
     );
 
     $offset = $posBeginPHP + PHP_OPEN_TAG_LENGTH + $nbReplacements;
@@ -365,23 +578,30 @@ function escapeQuotesInPhpParts(string &$contentToAdd)
  * Extracts the file name and the 'isTemplate' information from the require/include statement.
  * Potentially replaces dynamic $variables by their value to know which file to use.
  *
- * @param string $trimmedMatch
- * @param string $file
+ * @param string $trimmedMatch Match (with spaces neither to the left nor to the right) in the file $filename that
+ *                             potentially contains dynamic variable to change
+ * @param string $filename
  *
- * @return array [$file, $isTemplate]
+ * @throws OtraException
+ * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
  */
-function getFileInfoFromRequireMatch(string $trimmedMatch, string $file) : array
+#[ArrayShape([
+  'string',
+  'bool'
+])]
+function getFileInfoFromRequireMatch(string $trimmedMatch, string $filename) : array
 {
   // Extracts the file name in the require/include statement ...
   preg_match('@(?:require|include)(?:_once)?\s*([^;]+)\\)?@m', $trimmedMatch, $inclusionMatches);
-  $tempFile = $inclusionMatches[1];
+  $fileContent = $inclusionMatches[1];
 
-  /* We checks if the require/include statement is in a function call
+  /* Not sure of the safety of this code
+     We checks if the require/include statement is in a function call
      by counting the number of parenthesis between the require statement and the semicolon */
-  if (0 !== substr_count($trimmedMatch, ')') % 2 )
-    $tempFile = substr($tempFile, 0, -1);
+  if (0 !== (mb_substr_count($trimmedMatch, ')') + mb_substr_count($trimmedMatch, '(')) % 2 )
+    $fileContent = mb_substr($fileContent, 0, -1);
 
-  return evalPathVariables($tempFile, $file, $trimmedMatch);
+  return evalPathVariables($fileContent, $filename, $trimmedMatch);
 }
 
 /**
@@ -397,118 +617,125 @@ function getFileInfoFromRequireMatch(string $trimmedMatch, string $file) : array
 function processTemplate(string &$finalContent, string &$contentToAdd, string $match, int $posMatch) : string
 {
   escapeQuotesInPhpParts($contentToAdd);
+  $pregQuotedMatch = preg_quote($match);
 
   /* We ensure us that the content have only one space after the PHP opening tag and before the PHP ending tag
    * that surrounds the require statement */
-  $finalContent = preg_replace('@((?<=<\?)(\s){2,})|((\s){2,}(?=\\' . PHP_END_TAG_STRING . '))@', ' ', $finalContent);
+  $finalContent = preg_replace(ADJUST_SPACES_AROUND_REQUIRE_STATEMENT, ' ', $finalContent);
 
   // We have to process the $match value because we have modified the code
   $newMatch = preg_replace('@\s{2,}@', '', $match);
 
   // Checks if our $match is in an eval()
-  $inEval = preg_match('@(?<=BOOTSTRAP###)[\S\s]*' . preg_quote($match) . '[\S\s]*(?=###BOOTSTRAP)@', $finalContent);
+  $inEval = preg_match('@(?<=BOOTSTRAP###)[\S\s]*' . $pregQuotedMatch . '[\S\s]*(?=###BOOTSTRAP)@', $finalContent);
 
   /* If our $match is in PHP code then we determine the replacement string according to the context */
-  if(1 === preg_match('@(?<=<\?).*' . preg_quote($match) . '.*(?=\\' . PHP_END_TAG_STRING . ')@', $finalContent))
+  if (1 === preg_match('@(?<=<\?).*' . $pregQuotedMatch . '.*(?=\\' . PHP_END_TAG_STRING . ')@', $finalContent))
   {
     // We remove PHP tags
     $finalContent = substr_replace($finalContent, $newMatch, $posMatch - PHP_OPEN_TAG_LENGTH, $posMatch);
 
     $replacement = $contentToAdd;
-  } elseif(1 === $inEval)
-  {
-    phpOrHTMLIntoEval($contentToAdd);
-    $replacement = 'eval(\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\\'); ';
   } else
   {
     phpOrHTMLIntoEval($contentToAdd);
-    $replacement = 'eval(\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\'); ';
+    $replacement = 'eval(' . (1 === $inEval
+      ? '\\\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP\\'
+      : '\'BOOTSTRAP###' . $contentToAdd . '###BOOTSTRAP')
+      . '\'); ';
   }
 
   // Adds the code in the finalContent
   return substr_replace(
     $finalContent,
     $replacement,
-    strpos($finalContent, $newMatch),
-    strlen($newMatch)
+    mb_strpos($finalContent, $newMatch),
+    mb_strlen($newMatch)
   );
 }
 
 /**
  * Process the return in the PHP content from $contentToAdd and include it directly in the $finalContent.
  *
- * @param string $finalContent
- * @param string $contentToAdd
- * @param string $match
- * @param int    $posMatch
+ * @param string $includingCode    The whole file that contains the $inclusionCode
+ * @param string $includedCode     Like "<?php declare(strict_types=1);return [...];?>"
+ * @param string $inclusionCode    Like "'require BUNDLES_PATH . 'config/Routes.php');"
+ * @param int    $inclusionCodePos $inclusionCode position in $includingCode
  */
-function processReturn(string &$finalContent, string &$contentToAdd, string $match, int $posMatch)
+function processReturn(string &$includingCode, string &$includedCode, string $inclusionCode, int $inclusionCodePos) : void
 {
-  //-5 for the semicolon, the ending tag and the mandatory line break
+  // -5 for the semicolon, the ending tag and the mandatory line break
   // That way, we then only retrieve the needed array
-  $contentToAdd = trim(substr(
-    $contentToAdd,
+  $includedCode = trim(mb_substr(
+    $includedCode,
     PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION,
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
-  if (false !== strpos($match, OTRA_LABEL_REQUIRE) &&
-    0 !== substr_count($match, ')') % 2 && // if there is an odd number of parentheses
-    ';' === substr($contentToAdd, -4, 1)) // We are looking for the only semicolon in the compiled 'Routes.php' file
-  {
-    $contentToAdd = substr_replace($contentToAdd, '', -4);
-    $lengthToChange = strrpos($match, ')');
-  } else
-  {
-    // We change only the require but we keep the parenthesis and the semicolon
-    // (cf. BASE_PATH . config/Routes.php init function)
-    $lengthToChange = strlen(substr($match, 0, strpos($match, ');')));
-  }
+  // We change only the require but we keep the parenthesis and the semicolon
+  // (cf. BASE_PATH . config/Routes.php init function)
+  preg_match(
+    '@^\s*(?>require|include)(?>_once)?\s(?>(?=\\N)([^)]))+(\s*\);)@',
+    $inclusionCode,
+    $matches,
+    PREG_OFFSET_CAPTURE
+  );
 
   // We remove the requires like statements before adding the content
-  $finalContent = substr_replace($finalContent, $contentToAdd, $posMatch, $lengthToChange);
+  $includingCode = substr_replace($includingCode, $includedCode, $inclusionCodePos, $matches[2][1]);
 }
 
 /**
- * @param array  $classesFromFile
- * @param string $class
- * @param string $contentToAdd
- * @param string $match
+ * Returns false if :
  *
- * @return string $tempFile
+ * - We found this class in already parsed classes
+ * - There is no namespace
+ * - The class is not part of the generated classmap
+ *
+ * @param array  $classesFromFile Already parsed classes
+ * @param string $class           Class to analyze/search
+ * @param string $contentToAdd
+ * @param int    $match           Content extract position where the class was found
+ *
+ * @return false|string $tempFile
  */
-function searchForClass(array $classesFromFile, string $class, string $contentToAdd, string $match)
+function searchForClass(array $classesFromFile, string $class, string $contentToAdd, int $match) : false|string
 {
   // Do we already have this class ?
+  /** @var string $classFromFile */
   foreach($classesFromFile as $classFromFile)
   {
-    if (false !== strrpos($classFromFile, $class, (int) strrpos($classFromFile,',')))
+    if (false !== mb_strrpos($classFromFile, $class, (int) mb_strrpos($classFromFile,',')))
       return false;
   }
-
   // if it's not the case ... we search it in the directory of the file that we are parsing
-
   // /!\ BEWARE ! Maybe we don't have handled the case where the word namespace is in a comment.
-
   // we use a namespace so ...
 
   // we search the namespace in the content before the extends call
-  $pos = strrpos($contentToAdd, 'namespace', $match - strlen($contentToAdd));
+  $namespacePosition = mb_strrpos($contentToAdd, 'namespace', $match - mb_strlen($contentToAdd));
 
   // no namespace found, we return false
-  if ($pos === false)
+  if ($namespacePosition === false)
     return false;
 
   // then we find the section that interests us
-  $tempContent = substr($contentToAdd, $pos, $match - $pos);
+  $tempContent = mb_substr($contentToAdd, $namespacePosition, $match - $namespacePosition);
 
   // then we can easily extract the namespace (10 = strlen('namespace'))
   // and concatenates it with a '\' and the class to get our file name
-  $newClass = substr($tempContent, 10, strpos($tempContent, ';') - 10) . '\\' . $class;
+  $newClass = mb_substr(
+    $tempContent,
+    10,
+    mb_strpos($tempContent, ';') - 10
+  ) . NAMESPACE_SEPARATOR . $class;
 
-  if (isset(CLASSMAP[$newClass]) === false)
+  if (!isset(CLASSMAP[$newClass]))
   {
-    echo CLI_YELLOW, 'Notice : Please check if you use a class ', CLI_CYAN, $class, CLI_YELLOW, ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.', END_COLOR, PHP_EOL;
+    if (VERBOSE > 0)
+      echo CLI_WARNING, 'Notice : Please check if you use a class ', CLI_INFO, $class, CLI_WARNING,
+        ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.',
+        END_COLOR, PHP_EOL;
 
     return false;
   }
@@ -519,22 +746,56 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 /**
  * Retrieves informations about what kind of file inclusion we have, the related code and its position.
  *
- * @param int    $level           Only for debugging purposes.
- * @param string $contentToAdd    Content actually parsed
- * @param string $file            Name of the file actually parsed
- * @param array  $filesToConcat   Files to parse after have parsed this one
- * @param array  $parsedFiles     Remaining files to concatenate
- * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
- *                                (useful only for extends statements)
+ * @param array{
+ *   level: int,
+ *   contentToAdd: string,
+ *   filename: string,
+ *   filesToConcat: array{
+ *     php:array{
+ *       use ?: string[],
+ *       require ?: array<string,array{
+ *         match: string,
+ *         posMatch: int
+ *       }>,
+ *       extends ?: string[],
+ *       static ?: string[]
+ *     },
+ *     template: array
+ *   },
+ *  parsedFiles: string[],
+ *  classesFromFile: array,
+ *  parsedConstants: array<string,string>
+ * } $parameters
+ * $level           Only for debugging purposes.
+ * $contentToAdd    Content actually parsed
+ * $filename        Name of the file actually parsed
+ * $filesToConcat   Files to parse after have parsed this one
+ * $parsedFiles     Remaining files to concatenate
+ * $classesFromFile Classes that we have retrieved from the previous analysis of use statements
+ *                  (useful only for extends statements)
+ * $parsedConstants Constants detected in the parsed content
+ *
+ * @throws OtraException
  */
-function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, string $file, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
+function getFileInfoFromRequiresAndExtends(array &$parameters) : void
 {
+//  list($level, $contentToAdd, $filename, $filesToConcat, &$parsedFiles, $classesFromFile, &$parsedConstants) = $parameters;
+  [
+    'level' => $level,
+    'contentToAdd' => $contentToAdd,
+    'filename' => $filename,
+    'filesToConcat' => &$filesToConcat,
+    'parsedFiles' => &$parsedFiles,
+    'classesFromFile' => $classesFromFile,
+    'parsedConstants' => $parsedConstants
+  ] = $parameters;
+
   preg_match_all(PATTERN, $contentToAdd, $matches, PREG_OFFSET_CAPTURE);
 
   // For all the inclusions
   foreach($matches[0] as $match)
   {
-    if ('' === $match[0]) // TODO CAN WE SUPPRESS THIS CONDITION BY IMPROVING THE REGEXP ?
+    if ('' === $match[0])
       continue;
 
     $trimmedMatch = trim(preg_replace('@\s{1,}@', ' ', $match[0]));
@@ -542,155 +803,210 @@ function getFileInfoFromRequiresAndExtends(int $level, string $contentToAdd, str
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
-    if (false !== strpos($trimmedMatch, OTRA_LABEL_REQUIRE))
+    if (str_contains($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
-      list($tempFile, $isTemplate) = getFileInfoFromRequireMatch($trimmedMatch, $file);
+      [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $filename);
 
       /* we make an exception for this particular require statement because
          it is a require made by the prod controller and then it is a template ...
          (so no need to include it because html templates management is not totally functional right now) */
-      if (false === $isTemplate) // if the file to include is not a template
+      if (!$isTemplate) // if the file to include is not a template
       {
         // If we find __DIR__ in the include/require statement then we replace it with the good folder and not the actual folder (...console ^^)
         $posDir = strpos($tempFile, '__DIR__ .');
 
-        // TODO replace the value 9 by a constant or at least put an explanation !
         if ($posDir !== false)
-          $tempFile = substr_replace('__DIR__ . ', '\'' . dirname($file) . '/' . basename(substr($tempFile, $posDir, -1)) . '\'', $posDir, 9);
+        {
+          $tempFile = substr_replace(
+            '__DIR__ . ',
+            '\'' . dirname($filename) . '/' . basename(mb_substr($tempFile, $posDir, -1)) . '\'',
+            $posDir,
+            9 // 9 is the length of the string '__DIR__ .'
+          );
+        }
 
         // we must not change these inclusions from
         // - CORE_PATH . Router.php
         // - securities configuration
         // - dump tool
-        if ($tempFile === 'CACHE_PATH . \'php/\' . $route . \'.php\''
-          || $tempFile === 'CACHE_PATH . \'php/security/\' . \'' . $_SERVER[APP_ENV] . '\' . \'/\' . $route . \'.php\''
-          || $tempFile === 'CORE_PATH . \'tools/debug/\' . OTRA_DUMP_FINAL_CLASS . \'.php\''
+        if (in_array(
+          $tempFile,
+          [
+            'CACHE_PATH . \'php/\' . $route . \'.php\'',
+            '$routeSecurityFilePath',
+            'CORE_PATH . \'tools/debug/\' . OTRA_DUMP_FINAL_CLASS . \'.php\'',
+            '$renderController->viewPath . \'renderedWithoutController.phtml\''
+          ],
+          true)
         )
           continue;
 
-        // TODO temporary workaround to fix a regression. Find a better way to handle this case which is
-        // inclusion of the dev/prod controller in the file src/Controller.php
-        if ($tempFile === 'CORE_PATH . \'prod\' . \'/\' . ucfirst(\'prod\') . \'ControllerTrait.php')
+        if ($tempFile === 'CORE_PATH . \'prod\' . DIR_SEPARATOR . ucfirst(\'prod\') . \'ControllerTrait.php')
           $tempFile .= "'";
 
-        // str_replace to ensure us that the same character '/' is used each time
-        $tempFile = str_replace('\\', '/', eval('return ' . $tempFile . ';'));
-
-        // we must not take care of the bundles/config/Config.php as it is an optional config file.
-        if ($tempFile === BASE_PATH . 'bundles/config/Config.php')
-          continue;
-
-        if (VERBOSE > 0 && strpos($tempFile, BASE_PATH) === false)
-          echo PHP_EOL, CLI_YELLOW, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
-          '\' in ', $file, '.', PHP_EOL, 'Ignore this warning if your path is already an absolute one and your file is
-           outside of the project folder.', END_COLOR, PHP_EOL;
-
-        if (false === file_exists($tempFile))
-        {
-          echo PHP_EOL, CLI_RED, 'There is a problem with ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' => ', CLI_YELLOW,
+        /** @var string $tempFile */
+        // Here we handle the namespaces issues (if we were not using namespaces, we would not need this condition
+        if (preg_match_all(
+          '@BASE_PATH|BUNDLES_PATH|CORE_PATH|DIR_SEPARATOR@',
           $tempFile,
-          CLI_RED
-          , ' in ', CLI_YELLOW, $file, CLI_RED, ' !', END_COLOR, PHP_EOL, PHP_EOL;
-          exit(1);
+          $constantsMatches
+        ))
+        {
+          foreach ($constantsMatches[0] as $constantsMatch)
+          {
+            $tempFile = str_replace($constantsMatch, 'otra\\cache\\php\\' . $constantsMatch, $tempFile);
+          }
         }
 
-        if (true === in_array($tempFile, $parsedFiles, true))
+        if (!empty($parsedConstants))
+        {
+          // str_replace to ensure us that the same character '/' is used each time
+          $constantPattern = '';
+
+          foreach ($parsedConstants as $constantString => $fullyQualifiedConstantName)
+          {
+            $constantPattern .= '(?<!\\\\)' . $constantString . '|';
+          }
+
+          $constantPattern = substr($constantPattern, 0, -1);
+          preg_match_all('@' . $constantPattern . '@', $tempFile, $constantMatches);
+
+          foreach ($constantMatches as $constantMatch)
+          {
+            if (!empty($constantMatch))
+              $tempFile = str_replace($constantMatch, $parsedConstants[$constantMatch[0]], $tempFile);
+          }
+        }
+
+        $tempFile = str_replace(NAMESPACE_SEPARATOR, '/', eval('return ' . $tempFile . ';'));
+
+        // we must not take care of the bundles/config/Config.php as it is an optional config file.
+        if ($tempFile === BUNDLES_PATH . 'config/Config.php')
           continue;
 
+        if (VERBOSE > 0 && !str_contains($tempFile, BASE_PATH))
+          echo PHP_EOL, CLI_WARNING, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
+          '\' in ', $filename, '.', PHP_EOL,
+          'Ignore this warning if your path is already an absolute one or your file is outside of the project folder.',
+          END_COLOR, PHP_EOL;
+
+        if (!file_exists($tempFile))
+        {
+          echo PHP_EOL, CLI_ERROR, 'There is a problem with ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' => ',
+            CLI_WARNING, $tempFile, CLI_ERROR, ' in ', CLI_WARNING, $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL,
+            PHP_EOL;
+          throw new OtraException('', 1, '', null, [], true);
+        }
+
+        if (in_array($tempFile, $parsedFiles, true))
+          continue;
+
+        // actually it works only with 'str_pos' not 'mb_strpos'!
         $filesToConcat['php'][OTRA_KEY_REQUIRE][$tempFile] = [
           'match' => $match[0],
           'posMatch' => strpos($contentToAdd, $match[0])
         ];
       }
-    } elseif(false !== strpos($trimmedMatch, 'extends')) /** EXTENDS */
-    {
-      // Extracts the file name in the extends statement ... (8 = strlen('extends '))
-      $class = substr($trimmedMatch, 8);
+    } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))
+    { // Extends block is only tested if the class has not been loaded via an use statement before
 
-      // if the class begin by \ then it is a standard class and then we do nothing otherwise we do this ...
-      if ('\\' !== $class[0])
-        $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $match[1]);
-      else
-        $tempFile = false;
+      // Extracts the file name in the extends statement ... (8 = strlen('extends '))
+      $class = mb_substr($trimmedMatch, 8);
+
+      // if the class begin by \ then it is a standard class and then we do nothing
+      if (NAMESPACE_SEPARATOR === $class[0])
+        continue;
+
+      $tempFile = searchForClass($classesFromFile, $class, $contentToAdd, $match[1]);
 
       // If we already have included the class
       if (false === $tempFile)
         continue;
-      elseif (in_array($tempFile, $parsedFiles) === true)
+
+      if (in_array($tempFile, $parsedFiles))
       {
-        if (1 < VERBOSE)
+        if (VERBOSE > 1)
           showFile($level, $tempFile, OTRA_ALREADY_PARSED_LABEL);
 
         continue;
       }
 
       $filesToConcat['php'][OTRA_KEY_EXTENDS][] = $tempFile;
-    } elseif(false === strpos($file, 'prod/Controller.php')) /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
-    {
-      $trimmedMatch = substr($trimmedMatch, strpos($trimmedMatch, '(') + 1);
+    }// elseif(!str_contains($filename, 'prod/Controller.php'))
+    //{ /** TEMPLATE via framework 'renderView' (and not containing method signature)*/
+//      $trimmedMatch = mb_substr($trimmedMatch, mb_strpos($trimmedMatch, '(') + 1);
+//
+//      // If the template file parameter supplied for renderView method is just a string
+//      if ($trimmedMatch[0] === '\'')
+//      {
+//        $trimmedMatch = mb_substr($trimmedMatch, 1, -1);
+//      } else // More complicated...
+//      {
+//      }
 
-      // If the template file parameter supplied for renderView method is just a string
-      if ($trimmedMatch[0] === '\'')
-      {
-        $trimmedMatch = substr($trimmedMatch, 1, -1);
-      } else // More complicated...
-      {
-        /** TODO Maybe a case then with an expression, variable or something */
-      }
+//      $tempDir = '';
 
-      $tempDir = '';
-
-      if (file_exists($trimmedMatch) === false)
-      {
-        $tempDir = str_replace('\\', '/', dirname($file));
-
-        if (file_exists($tempDir . $trimmedMatch) === false)
-        {
-          // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
-          $tempDir = realpath($tempDir . '/../../views' . substr($tempDir, strrpos($tempDir, '/'))) . '/';
-
-          if (file_exists($tempDir . $trimmedMatch) === false)
-          {
-            if ($trimmedMatch === '/exception.phtml')
-              $tempDir = CORE_PATH . 'views/' ;
-            // no ? so where is that file ?
-            elseif (strpos($trimmedMatch, 'html') === false)
-            {
-              echo CLI_RED, '/!\\ We cannot find the file ', CLI_YELLOW, $trimmedMatch, CLI_RED, ' seen in ' .
-                CLI_YELLOW,
-              $file,
-              CLI_RED, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-              die;
-            }
-          }
-        }
-      }
+//      if (!file_exists($trimmedMatch))
+//      {
+//        $tempDir = str_replace(NAMESPACE_SEPARATOR, '/', dirname($filename));
+//
+//        if (!file_exists($tempDir . $trimmedMatch))
+//        {
+//          // Retrieves the last directory name which is (maybe) the specific controller directory name which we will use as a view directory name instead
+//          $tempDir = realpath($tempDir . '/../../views' . mb_substr($tempDir, mb_strrpos($tempDir, '/'))) . '/';
+//
+//          if (!file_exists($tempDir . $trimmedMatch))
+//          {
+//            if ($trimmedMatch === '/exception.phtml')
+//              $tempDir = CORE_PATH . 'views/' ;
+//            // no ? so where is that file ?
+//            elseif (!str_contains($trimmedMatch, 'html'))
+//            {
+//              echo CLI_ERROR, '/!\\ We cannot find the file ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' seen in ' .
+//                CLI_WARNING,
+//              $filename,
+//              CLI_ERROR, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
+//              throw new OtraException('', 1, '', NULL, [], true);
+//            }
+//          }
+//        }
+//      }
 
       //$templateFile = $tempDir . $trimmedMatch;
 
       //if (in_array($templateFile, $filesToConcat['template']) === false)
       //  $filesToConcat['template'][] = $templateFile;
-    }
+//    }
 
+    /** @var ?string $tempFile */
     // if we have to add a file that we don't have yet...
-    if (true === isset($tempFile))
+    if (isset($tempFile))
       $parsedFiles[] = $tempFile;
   }
 }
 
 /**
- * @param int    $inc            Only for debugging purposes.
- * @param int    $level          Only for debugging purposes.
- * @param string $file
- * @param string $contentToAdd   Actual content to be processed
- * @param array  $parsedFiles    Remaining files to concatenate
+ * @param int      $increment       Only for debugging purposes.
+ * @param int      $level           Only for debugging purposes.
+ * @param string   $filename
+ * @param string   $contentToAdd    Actual content to be processed
+ * @param string[] $parsedFiles     Remaining files to concatenate
+ * @param string[] $parsedConstants Constants parsed from 'use' statements
  *
- * @return bool False we break, true we continue
+ * @throws OtraException
+ * @return string $finalContent
  */
-function assembleFiles(int &$inc, int &$level, string $file, string $contentToAdd, array &$parsedFiles)
+function assembleFiles(
+  int &$increment,
+  int &$level,
+  string $filename,
+  string $contentToAdd,
+  array &$parsedFiles,
+  array &$parsedConstants
+) : string
 {
-  if (0 === $level)
-    showFile($level, $file);
+  if (0 === $level && VERBOSE > 1)
+    showFile($level, $filename);
 
   ++$level;
 
@@ -704,31 +1020,75 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
     ],
     'template' => []
   ];
+  $classesFromFile = getFileNamesFromUses(
+    $level,
+    $contentToAdd,
+    $filesToConcat,
+    $parsedFiles,
+    $parsedConstants
+  );
 
-  $classesFromFile = getFileNamesFromUses($level, $contentToAdd, $filesToConcat, $parsedFiles);
-
+  $toPassAsReference = [
+    'level' => $level,
+    'contentToAdd' => $contentToAdd,
+    'filename' => $filename,
+    'filesToConcat' => $filesToConcat,
+    'parsedFiles' => $parsedFiles,
+    'classesFromFile' => $classesFromFile,
+    'parsedConstants' => $parsedConstants
+  ];
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
-  getFileInfoFromRequiresAndExtends($level, $contentToAdd, $file, $filesToConcat, $parsedFiles, $classesFromFile);
+  getFileInfoFromRequiresAndExtends(
+    $toPassAsReference
+  );
+
+  [
+    'level' => $level,
+    'contentToAdd' => $contentToAdd,
+    'filename' => $filename,
+    'filesToConcat' => $filesToConcat,
+    'parsedFiles' => $parsedFiles,
+    'classesFromFile' => $classesFromFile,
+    'parsedConstants' => $parsedConstants
+  ] = $toPassAsReference;
 
   processStaticCalls($level, $contentToAdd, $filesToConcat, $parsedFiles, $classesFromFile);
-
   $finalContentParts = [];
 
-  if (false === empty($filesToConcat))
+  if (!empty($filesToConcat))
   {
+    /**
+     * @var string $fileType
+     * @var array{
+     *   use ?: string[],
+     *   require ?: array<string,array{
+     *    match: string,
+     *    posMatch: int
+     *   }>,
+     *   extends ?: string[],
+     *   static ?: string[]
+     * } | string[] $entries
+     */
     foreach ($filesToConcat as $fileType => $entries)
     {
       if ('php' === $fileType)
       {
+        /**
+         * @var string $inclusionMethod
+         * @var string[]|array<string,array{match:string,posMatch:int}> $phpEntries
+         */
         foreach($entries as $inclusionMethod => $phpEntries)
         {
+          // $nextFileOrInfo is an array only if we are in a require/include statement
           foreach($phpEntries as $keyOrFile => $nextFileOrInfo)
           {
             // We increase the process step (DEBUG)
-            ++$inc;
+            ++$increment;
 
-            /** @var string $tempFile */
-            /** @var string $method */
+            /**
+             *  @var string $tempFile
+             *  @var string $method
+             */
             switch($inclusionMethod)
             {
               case 'use' :
@@ -748,36 +1108,37 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
                 $method = ' via static direct call';
             }
 
+            /** @var string $tempFile In all cases, this is a string,
+             *                        redundant PHPDoc but Psalm does not understand otherwise
+             */
             // If it is a class from an external library (not from the framework),
             // we let the inclusion code and we do not add the content to the bootstrap file.
-            if (false !== strpos($tempFile, 'vendor') && false === strpos($tempFile, 'otra'))
+            if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
             {
-              echo CLI_YELLOW, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL; // It can be a SwiftMailer class
-              // for example
+              // It can be a SwiftMailer class for example
+              echo CLI_WARNING, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
 
             // Files already loaded by default will not be added
-            if ($file !== CORE_PATH . 'Router.php'
+            if ($filename !== CORE_PATH . 'Router.php'
               && ($tempFile === BASE_PATH . 'config/Routes.php' || $tempFile === CORE_PATH . 'Router.php'))
             {
-              echo CLI_YELLOW, 'This file will be already loaded by default for each route : ' . substr($tempFile,
-                  strlen(BASE_PATH)), END_COLOR, PHP_EOL;
+              echo CLI_WARNING, 'This file will be already loaded by default for each route : ' .
+                substr($tempFile, BASE_PATH_LENGTH), END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
 
-            // The file CORE_PATH . templating/blocks.php needs an alias for CORE_PATH . MasterController.php so we have to handle
-            // that case
+            // The file CORE_PATH . templating/blocks.php needs an alias for CORE_PATH . MasterController.php so we have
+            // to handle that case
             if ($tempFile === CACHE_PATH . 'php/MasterController.php')
               $tempFile = CORE_PATH . 'MasterController.php';
 
             $nextContentToAdd = file_get_contents($tempFile) . PHP_END_TAG_STRING;
 
-            // we remove comments to facilitate the search and replace operations that follow
-            /* @TODO Find a way to use this regex without removing links because links can contain // as in
-             * https://example.com */
+            // we remove comments like // and /* bla */ to facilitate the search and replace operations that follow
             //$nextContentToAdd = preg_replace('@(//.*)|(/\*(.|\s)*?\*/)@', '', $nextContentToAdd);
 
             $isReturn = false;
@@ -785,8 +1146,8 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
             if (OTRA_KEY_REQUIRE === $inclusionMethod
               /* if the file has contents that begin by a return statement and strict type declaration then we apply a
                particular process*/
-              && false !== strpos(
-                substr(
+              && str_contains(
+                mb_substr(
                   $nextContentToAdd,
                   PHP_OPEN_TAG_LENGTH + 1,
                   PHP_OPEN_TAG_LENGTH + RETURN_AND_STRICT_TYPE_DECLARATION
@@ -794,6 +1155,7 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
                 'return'
               ))
             {
+              /** @var array{match:string,posMatch:int} $nextFileOrInfo $isReturn */
               $isReturn = true;
               processReturn(
                 $contentToAdd,
@@ -803,59 +1165,65 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
               );
             }
 
-            if (strpos($file, 'config/AllConfig') !== false)
-            {
+            if (str_contains($filename, 'config/AllConfig') && !in_array($filename, $parsedFiles, true))
               $finalContentParts[]= $contentToAdd;
-              $_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS] = true;
-            }
 
-            showFile($level, $tempFile, $method);
+            if (VERBOSE > 1)
+              showFile($level, $tempFile, $method);
 
             // If we have a "return type" PHP file then the file have already been included before,
             // in the 'processReturn' function
-            if (false === $isReturn)
-              $finalContentParts[] = assembleFiles($inc, $level, $tempFile, $nextContentToAdd, $parsedFiles);
+            if (!$isReturn)
+            {
+              $finalContentParts[] =
+                assembleFiles(
+                  $increment,
+                  $level,
+                  $tempFile,
+                  $nextContentToAdd,
+                  $parsedFiles,
+                  $parsedConstants
+                );
+            }
 
             unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
           }
         }
       } else // it is a template
       {
+        /** @var string $templateEntry */
         foreach ($entries as $templateEntry)
         {
-          //var_dump($templateEntries);die;
-          showFile($level, $templateEntry, ' via renderView');
+          if (VERBOSE > 1)
+            showFile($level, $templateEntry, ' via renderView');
+
           $nextContentToAdd = file_get_contents($templateEntry) . PHP_END_TAG_STRING;
-          ++$inc;
-          assembleFiles($inc, $level, $templateEntry, $nextContentToAdd, $parsedFiles);
+          ++$increment;
+          assembleFiles(
+            $increment,
+            $level,
+            $templateEntry,
+            $nextContentToAdd,
+            $parsedFiles,
+            $parsedConstants
+          );
         }
 
 //        foreach($entries as $nextFileOrInfo => $matchesInfo)
 //        {
 //          processTemplate($finalContent, $contentToAdd, $match, $posMatch);
 //          showFile($level, $nextFileOrInfo, ' TEMPLATE, NOT FULLY IMPLEMENTED FOR NOW !');
-//          assembleFiles($inc, $level, $nextFile, $finalContent, $contentToAdd, $parsedFiles);
+//          assembleFiles($increment, $level, $nextFile, $finalContent, $contentToAdd, $parsedFiles, $parsedConstants);
 //        }
       }
     }
-  }
-
-  /** TODO Code to remove once we have found a better fix for the fact that generic AllConfig must be loaded before the
-   * dev/prod configuration because of the generic constant declaration. This block is related with the previous block
-   * line 752 as I wrote those lines.
-   */
-  if (isset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]) === true && empty($finalContentParts) === false)
-  {
-    unset($_SESSION[OTRA_KEY_FINAL_CONTENT_PARTS]);
-    $contentToAdd = '';
-    echo CLI_BOLD_RED, $contentToAdd, END_COLOR, PHP_EOL;
   }
 
   // contentToAdd is "purged" we can add it to the finalContent
   $finalContent = implode(PHP_EOL, $finalContentParts) . $contentToAdd;
 
   // We increase the process step (DEBUG)
-  ++$inc;
+  ++$increment;
 
   //  ****** // Either we begin the process, either we return to the roots of the process so ... (DEBUG)
   --$level;
@@ -866,17 +1234,34 @@ function assembleFiles(int &$inc, int &$level, string $file, string $contentToAd
 /**
  * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
  *
- * @param int    $level
- * @param string $contentToAdd    Content actually parsed
- * @param array  $filesToConcat   Files to parse after have parsed this one
- * @param array  $parsedFiles     Files already parsed
- * @param array  $classesFromFile Classes that we have retrieved from the previous analysis of use statements
+ * @param int       $level
+ * @param string    $contentToAdd    Content currently parsed
+ * @param array{
+ *  php:array{
+ *    use ?: string[],
+ *    require ?: array<string,array{
+ *      match: string,
+ *      posMatch: int
+ *    }>,
+ *    extends ?: string[],
+ *    static ?: string[]
+ *  },
+ *  template: array
+ * }                $filesToConcat   Files to parse after have parsed this one
+ * @param string[]  $parsedFiles     Files already parsed
+ * @param array     $classesFromFile Classes that we have retrieved from the previous analysis of use statements
  *                                (useful only for extends statements)
  */
-function processStaticCalls(int $level, string &$contentToAdd, array &$filesToConcat, array &$parsedFiles, array $classesFromFile)
+function processStaticCalls(
+  int $level,
+  string &$contentToAdd,
+  array &$filesToConcat,
+  array &$parsedFiles,
+  array $classesFromFile
+) : void
 {
   preg_match_all(
-    '@(?:(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,}))@',
+    '@(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,})@',
     $contentToAdd,
     $matches,
     PREG_SET_ORDER | PREG_OFFSET_CAPTURE
@@ -887,12 +1272,11 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
   foreach($matches as &$match)
   {
     // if we don't have all the capturing groups, then it is not what we seek
-    if (false === isset($match[1][1]))
+    if (!isset($match[1][1]))
       continue;
 
     unset($match[0]);
-    $classPath = $match[1][0];
-    $offset = $match[1][1];
+    [$classPath, $offset] = $match[1];
     $classAndFunction = $match[2][0];
     $class = $match[3][0];
 
@@ -903,35 +1287,33 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     // no need to include self or parent !!
     // renderController is an edge case present in OtraException.php
     // PDO is a native class, no need to import it !
-    if (true === in_array($class, ['self', 'parent', 'renderController', 'PDO']))
+    if (in_array($class, ['self', 'parent', 'renderController', 'PDO']))
       continue;
 
     // str_replace to ensure us that the same character is used each time
-    $newFile = BASE_PATH . str_replace('\\', '/', $classPath . $class . '.php');
+    $newFile = BASE_PATH . str_replace(NAMESPACE_SEPARATOR, '/', $classPath . $class . '.php');
 
     // does the class exist ? if not we search the real path of it
-    if (false === file_exists($newFile))
+    if (!file_exists($newFile))
     {
-      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, (string) $offset);
+      $newFile = searchForClass($classesFromFile, $class, $contentToAdd, $offset);
 
       // now that we are sure that we have the real path, we test it again
       // and if we already have included the file, we also continue
-      if (true === in_array($newFile, $parsedFiles, true) || false === $newFile)
+      if (in_array($newFile, $parsedFiles, true) || false === $newFile)
         continue;
     }
 
     // We add the file found in the use statement only if we don't have it yet
-    if (false === in_array($newFile, $parsedFiles))
+    if (!in_array($newFile, $parsedFiles))
     {
       $parsedFiles[] = $newFile;
       $filesToConcat['php'][OTRA_KEY_STATIC][] = $newFile;
-    } elseif (1 < VERBOSE)
-    {
+    } elseif (VERBOSE > 1)
       showFile($level, $newFile, OTRA_ALREADY_PARSED_LABEL);
-    }
 
     // We have to readjust the found offset each time with $lengthAdjustment 'cause we change the content length by removing content
-    $length = strlen($classPath . $classAndFunction);
+    $length = mb_strlen($classPath . $classAndFunction);
     $contentToAdd = substr_replace($contentToAdd,
       $classAndFunction,
       $offset - $lengthAdjustment,
@@ -939,86 +1321,102 @@ function processStaticCalls(int $level, string &$contentToAdd, array &$filesToCo
     );
 
     // We calculate the new offset for the offset !
-    $lengthAdjustment += $length - strlen($classAndFunction);
+    $lengthAdjustment += $length - mb_strlen($classAndFunction);
   }
 }
 
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
- * @param string $bundle
- * @param string $route
- * @param string $content       Content to fix
- * @param int   $verbose
- * @param mixed  $fileToInclude Files to merge
+ * @param string  $bundle
+ * @param string  $route
+ * @param string  $content       Content to fix
+ * @param int     $verbose
+ * @param string  $fileToInclude File to merge
  *
- * @return mixed
+ * @throws OtraException
+ * @return string
  */
-function fixFiles(string $bundle, string $route, string $content, int $verbose, $fileToInclude = '')
+function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '') : string
 {
-  if (defined('VERBOSE') === false)
-    define('VERBOSE', (int) $verbose);
-
-  if (0 < VERBOSE)
-    define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+    define(__NAMESPACE__ . '\\VERBOSE', $verbose);
 
   // we create these variables only for the reference pass
-  $inc = 0; // process steps counter (more granular than $level variable)
+  $increment = 0; // process steps counter (more granular than $level variable)
   $level = 0; //  depth level of require/include calls
-  // TODO Add the retrieval of the classes via loaded via "throw new" in case they are not loaded via require, include or
-  //   an use statement. Other comment to remove once fixed, before the fixFiles function call of genBootstrapTask.php
+
   // For the moment, as a workaround, we had temporary explicitly added the OtraException file to solve issues.
   $parsedFiles = [CORE_PATH . 'OtraException.php'];
   $contentToAdd = $content;
+  $parsedConstants = [];
 
   if ('' !== $fileToInclude)
-    $finalContent = assembleFiles($inc, $level, $fileToInclude, $contentToAdd, $parsedFiles);
+    $finalContent = assembleFiles(
+      $increment,
+      $level,
+      $fileToInclude,
+      $contentToAdd,
+      $parsedFiles,
+      $parsedConstants
+    );
   else
   {
     $finalContent = $content;
-    preg_match_all('@^\\s{0,}use\\s{1,}[^;]{0,};\\s{0,}@mx', $finalContent, $useMatches, PREG_OFFSET_CAPTURE);
+    preg_match_all(
+      '@^\\s{0,}use\\s{1,}[^;]{0,};\\s{0,}$@mx',
+      $finalContent,
+      $useMatches,
+      PREG_OFFSET_CAPTURE
+    );
     $offset = 0;
 
     foreach($useMatches[0] as $useMatch)
     {
-      $length = strlen($useMatch[0]);
+      $length = mb_strlen($useMatch[0]);
       $finalContent = substr_replace($finalContent, '', $useMatch[1] - $offset, $length);
       $offset += $length;
     }
   }
 
-  echo PHP_EOL, str_pad('Files to include ', LOADED_DEBUG_PAD, '.'),
-    CLI_GREEN, ' [LOADED]', END_COLOR;
+  if (VERBOSE > 0)
+    echo PHP_EOL;
+
+  echo str_pad('Files to include ', LOADED_DEBUG_PAD, '.'), CLI_SUCCESS, ' [LOADED]', END_COLOR;
 
   /** We remove all the declare strict types declarations */
-  $finalContent = str_replace('declare(strict_types=1);', '', $finalContent);
-
-  /** We stick the php files by removing end and open php tag between files */
-  $finalContent = preg_replace('@\\' . PHP_END_TAG_STRING . '\s*<\?php@', '', $finalContent);
-
-  /** We suppress namespaces */
-  $finalContent = preg_replace(
-    '@\s*namespace [^;]{1,};\s*@',
-    '',
+  $finalContent = str_replace(
+    [
+      'declare(strict_types=1);',
+      // We suppress our markers that helped us for the eval()
+      'BOOTSTRAP###',
+      '###BOOTSTRAP'
+    ],
+    [''],
     $finalContent
   );
 
-  // We fix PDO and PDOStatement namespaces
-  $finalContent = preg_replace('@\\\\{0,1}(PDO(?:Statement){0,1})@', '\\\\$1', $finalContent);
+  $finalContent = preg_replace(
+    [
+      '@\\' . PHP_END_TAG_STRING . '\s*<\?php@', // We stick the php files by removing end and open php tag between files
+      '@^\s*namespace [^;]{1,};\s*$@m', // We suppress namespaces
+      '@\\\\{0,1}(PDO(?:Statement){0,1})@' // We fix PDO and PDOStatement namespaces
+    ],
+    [
+      '',
+      '',
+      '\\\\$1'
+    ],
+    $finalContent
+  );
 
-  // We suppress our markers that helped us for the eval()
-  $finalContent = str_replace(['BOOTSTRAP###', '###BOOTSTRAP'], '', $finalContent);
+  $vendorNamespaceConfigFile = BUNDLES_PATH . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
+  $vendorNamespaces = file_exists($vendorNamespaceConfigFile)
+    ? file_get_contents($vendorNamespaceConfigFile) . PHP_END_TAG_STRING
+    : '';
 
-  /* We add the namespace cache\php at the beginning of the file
-    then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments like 'becaUSE'
-  */
-
-  $vendorNamespaceConfigFile = BASE_PATH . 'bundles/' . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
-  $vendorNamespaces = true === file_exists($vendorNamespaceConfigFile) ? file_get_contents($vendorNamespaceConfigFile) .
-    PHP_END_TAG_STRING : '';
-
-  /** TODO Remove those ugly temporary fixes by implementing a clever solution to handle "require" statements to remove
-   *  START SECTION
+  /**
+   * START SECTION
    */
   $finalContent = str_replace(
     [
@@ -1033,19 +1431,45 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
       // line in OtraException at the beginning of the method errorMessage()
       'require_once BASE_PATH . \'config/AllConfig.php\';',
       // line in generic AllConfig file
-      'require_once BASE_PATH . \'config/\' . $_SERVER[\'APP_ENV\'] . \'/AllConfig.php\';'
+      'require_once BASE_PATH . \'config/\' . $_SERVER[APP_ENV] . \'/AllConfig.php\';',
+      // line in MasterController
+      'require CORE_PATH . \'services/securityService.php\';',
+      // PHPStorm PHP attributes
+      '#[Pure] ',
+      '#[NoReturn] '
     ],
     '',
-    $finalContent);
+    $finalContent
+  );
   /** END SECTION */
 
-  $patternRemoveUse = '@^\buse\b@m';
+  // Finalizing the constants imports
+  $parsedConstantString = 'use const ';
+
+  $parsedConstants = array_keys($parsedConstants);
+
+  foreach ($parsedConstants as $parsedConstant)
+  {
+    $parsedConstantString .= $parsedConstant . ',';
+  }
+
+  $parsedConstantString = substr($parsedConstantString, 0, -1) . ';';
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
-  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL . 'namespace cache\php;use \\Exception; use \\stdClass; ' . $vendorNamespaces .
-    (PHP_OPEN_TAG_STRING == substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
-      ? preg_replace($patternRemoveUse, '', substr($finalContent, PHP_OPEN_TAG_LENGTH))
+  $patternRemoveUse = '@^\buse\b@m';
+
+  // We add the namespace otra\cache\php at the beginning of the file AND we add the security services functions
+  // then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments
+  // like 'becaUSE'
+  return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .
+    'namespace otra\\cache\\php;' .
+    ($fileToInclude !== '/var/www/html/perso/otra/src/Router.php'
+      ? 'use \\Exception; use \\stdClass;'
+      : ''
+    ) . $vendorNamespaces .
+    (PHP_OPEN_TAG_STRING === mb_substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+      ? preg_replace($patternRemoveUse, '', mb_substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
     );
 }

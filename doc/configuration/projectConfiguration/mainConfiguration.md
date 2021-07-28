@@ -31,4 +31,9 @@ It will contain additional configuration that you want to pass like paths for ex
 In the file `config/AdditionalClassFiles.php`, must contain the paths of OTRA classes that are included dynamically via
 require(_once)/include(_once) directives. Most of the time, you do not have to touch this file.
 
+You can set the way the `genWatcher` task compile assets by choosing between two modes : 
+- COMPILE_MODE_MODIFY
+- COMPILE_MODE_SAVE
+Put one of those values into AllConfig::$compileMode to choose the mode.
+
 Next section : [Routes configuration file](routesConfiguration.md)

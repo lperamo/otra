@@ -1,20 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\helpAndTools;
+namespace src\console;
 
-use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
+use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};
+use function otra\console\
+{convertArrayFromVarExportToShortVersion, convertLongArrayToShort, showContext, showContextByError};
 
 /**
  * @runTestsInSeparateProcesses
  */
 class ToolsTest extends TestCase
 {
-  private const
-    OTRA_TASK_HASH = 'hash',
-    OTRA_TASK_HELP = 'help',
-    BLOWFISH_SALT_LENGTH = 22;
+  // fixes isolation related issues
+  protected $preserveGlobalState = FALSE;
+
+  protected function setUp(): void
+  {
+    parent::setUp();
+    require CONSOLE_PATH . 'tools.php';
+  }
 
   /**
    * @author Lionel Péramo
@@ -23,13 +30,12 @@ class ToolsTest extends TestCase
   {
     // testing
     $this->expectOutputString(
-      CLI_GREEN . 4 . CLI_LIGHT_GRAY . ' // variables declaration' . PHP_EOL .
-      CLI_RED . 5 . ' $blabla = "blabla";' . PHP_EOL .
-      CLI_GREEN . 6 . CLI_LIGHT_GRAY . ' $superCool = \'superCool\';' . PHP_EOL
+      CLI_SUCCESS . 4 . CLI_GRAY . ' // variables declaration' . PHP_EOL .
+      CLI_ERROR . 5 . ' $blabla = "blabla";' . PHP_EOL .
+      CLI_SUCCESS . 6 . CLI_GRAY . ' $superCool = \'superCool\';' . PHP_EOL
     );
 
     // launching
-    require CONSOLE_PATH . 'tools.php';
     showContextByError(TEST_PATH . '/examples/tools/toolsExample.php', 'error in line 5', 2);
   }
 
@@ -40,22 +46,20 @@ class ToolsTest extends TestCase
   {
     // testing
     $this->expectOutputString(
-      CLI_GREEN . 3 . CLI_LIGHT_GRAY .  ' '. PHP_EOL .
-      CLI_GREEN . 4 . CLI_LIGHT_GRAY . ' // variables declaration' . PHP_EOL .
-      CLI_RED . 5 . ' $blabla = "blabla";' . PHP_EOL .
-      CLI_GREEN . 6 . CLI_LIGHT_GRAY . ' $superCool = \'superCool\';' . PHP_EOL .
-      CLI_GREEN . 7 . CLI_LIGHT_GRAY . ' ' . PHP_EOL
+      CLI_SUCCESS . 3 . CLI_GRAY .  ' '. PHP_EOL .
+      CLI_SUCCESS . 4 . CLI_GRAY . ' // variables declaration' . PHP_EOL .
+      CLI_ERROR . 5 . ' $blabla = "blabla";' . PHP_EOL .
+      CLI_SUCCESS . 6 . CLI_GRAY . ' $superCool = \'superCool\';' . PHP_EOL .
+      CLI_SUCCESS . 7 . CLI_GRAY . ' ' . PHP_EOL
     );
 
     // launching
-    require CONSOLE_PATH . 'tools.php';
     showContext(TEST_PATH . '/examples/tools/toolsExample.php', 5, 4);
   }
 
   public function testConvertArrayFromVarExportToShortVersion(): void
   {
     // launching
-    require CONSOLE_PATH . 'tools.php';
     $reducedArray = convertArrayFromVarExportToShortVersion(
       var_export(
         [
@@ -67,8 +71,27 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    $this->assertEquals(
+    self::assertEquals(
       '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
+      $reducedArray
+    );
+  }
+
+  public function testConvertLongArrayToShort():void
+  {
+    // launching
+    $reducedArray = convertLongArrayToShort(
+      [
+        'test' => ['test2' => ['test3']], // tests deep arrays
+        'test2' => [3], // tests integers value without key
+        'test3' => [], // tests empty arrays
+        'test4' => true // tests booleans
+      ]
+    );
+
+    // testing
+    self::assertEquals(
+      "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
       $reducedArray
     );
   }

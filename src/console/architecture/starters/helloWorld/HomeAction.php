@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace bundles\HelloWorld\frontend\controllers\index;
 
 use otra\Controller;
+use otra\OtraException;
 
 /**
  * OTRA starter action
@@ -15,14 +16,14 @@ class HomeAction extends Controller
   /**
    * HomeAction constructor.
    *
-   * @param array $baseParams
-   * @param array $getParams
+   * @param array $otraParams
+   * @param array $params
    *
-   * @throws \otra\OtraException
+   * @throws OtraException
    */
-  public function __construct(array $baseParams = [], array $getParams = [])
+  public function __construct(array $otraParams = [], array $params = [])
   {
-    parent::__construct($baseParams, $getParams);
+    parent::__construct($otraParams, $params);
     echo $this->renderView('home.phtml', []);
   }
 }
