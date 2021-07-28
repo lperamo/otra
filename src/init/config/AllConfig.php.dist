@@ -11,7 +11,7 @@ namespace otra\config;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH};
 
 const
-  VERSION = '1.0.0-alpha.2.4.0',
+  VERSION = '1.0.0-alpha.2.5.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
 // require_once 'cause maybe the class OtraException will attempt to load it too !
