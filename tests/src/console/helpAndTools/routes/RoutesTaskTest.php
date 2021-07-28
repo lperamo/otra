@@ -10,6 +10,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
 use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\copyFileAndFolders;
+use const otra\config\VERSION;
 
 /**
  * @runTestsInSeparateProcesses
@@ -23,7 +24,16 @@ class RoutesTaskTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BUNDLES_PATH . 'config/Routes.php',
-    PHP_STATUS = '[PHP]';
+    PHP_STATUS = '[PHP]',
+    LABEL_NO_OTHER_RESOURCES = ' No other resources. ',
+    ROUTE_OTRA_REFRESH_LOGS = 'otra_refreshSQLLogs',
+    ROUTE_OTRA_CLEAR_SQL_LOGS = 'otra_clearSQLLogs',
+    ROUTE_OTRA_PROFILER = 'otra_profiler',
+    ROUTE_OTRA_404 = 'otra_404',
+    ROUTE_OTRA_CSS = 'otra_css',
+    ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_template_structure',
+    ROUTE_HELLO_WORLD = 'HelloWorld';
+
 
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -33,6 +43,18 @@ class RoutesTaskTest extends TestCase
     parent::setUpBeforeClass();
     // To avoid "Constant otra\console\ADD_BOLD already defined" in this test file
     require_once CONSOLE_PATH . 'colors.php';
+  }
+
+  /**
+   * Gets the hashed route using SHA1 algorith, enclosed by brackets
+   *
+   * @param string $route
+   *
+   * @return string
+   */
+  private static function getShaRoute(string $route) : string
+  {
+    return '[' . sha1('ca' . $route . VERSION . 'che') . ']';
   }
 
   /**
@@ -119,66 +141,66 @@ class RoutesTaskTest extends TestCase
     $this->expectOutputString(
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        'otra_refreshSQLLogs',
+        self::ROUTE_OTRA_REFRESH_LOGS,
         '/dbg/refreshSQLLogs',
         '/otra/profilerController/refreshSQLLogsAction',
         self::PHP_STATUS,
-        ' No other resources. [a42f984c604230353390071b56f3ecf5476da82c]',
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_REFRESH_LOGS),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO,
-        'otra_clearSQLLogs',
+        self::ROUTE_OTRA_CLEAR_SQL_LOGS,
         '/dbg/clearSQLLogs',
         '/otra/profilerController/clearSQLLogsAction',
         self::PHP_STATUS,
-        ' No other resources. [527dadb06d335d3fd1810f3a9f4772a137fc210e]',
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_CLEAR_SQL_LOGS),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        'otra_profiler',
+        self::ROUTE_OTRA_PROFILER,
         '/dbg',
         '/otra/profilerController/indexAction',
         self::PHP_STATUS,
-        ' No other resources. [0bebf28ae270fcd9d29136f5e48f28543f84b45b]',
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_PROFILER),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO,
-        'otra_404',
+        self::ROUTE_OTRA_404,
         '/404',
         '/otra/errorsController/error404Action',
         self::PHP_STATUS,
-        ' No other resources. [3a95d6505bd70f30fe340609c9246709d6025fc5]',
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_404),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        'otra_css',
+        self::ROUTE_OTRA_CSS,
         '/profiler/css',
         '/otra/heavyProfilerController/cssAction',
         self::PHP_STATUS,
-        '[05d97e8bfc8176c7ceafd1b7f83f0c6b47e0f822]',
+        self::getShaRoute(self::ROUTE_OTRA_CSS),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO,
-        'otra_template_structure',
+        self::ROUTE_OTRA_TEMPLATE_STRUCTURE,
         '/profiler/templateStructure',
         '/otra/heavyProfilerController/templateStructureAction',
         self::PHP_STATUS,
-        '[6177bc3bc3c50aee610e89ceac4e2a095e69f385]',
+        self::getShaRoute(self::ROUTE_OTRA_TEMPLATE_STRUCTURE),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        'HelloWorld',
+        self::ROUTE_HELLO_WORLD,
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',
         '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS .
           '[TEMPLATE]',
-        '[ee81412660816b84c10bda5ec4679b72b0d8f132]',
+        self::getShaRoute(self::ROUTE_HELLO_WORLD),
         false
       ) . END_COLOR
     );
