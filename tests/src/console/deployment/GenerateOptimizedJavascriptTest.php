@@ -50,6 +50,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
 
     // launching
     generateJavaScript(
+      false,
       1,
       false,
       TEST_JS_RESOURCE_FOLDER,

@@ -125,9 +125,7 @@ class RoutesTaskTest extends TestCase
       self::OTRA_TASK_BUILD_DEV,
       [
         self::OTRA_CONSOLE_FILENAME,
-        self::OTRA_TASK_BUILD_DEV,
-        0, // not verbose
-        1 // only SCSS
+        'genBootstrap'
       ]
     );
     TasksManager::execute(

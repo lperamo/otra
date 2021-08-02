@@ -506,6 +506,7 @@ while (true)
             $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
 
             generateJavaScript(
+              true,
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
               $resourcesMainFolder,
