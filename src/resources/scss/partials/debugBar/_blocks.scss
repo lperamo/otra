@@ -10,9 +10,6 @@
 // loading EcoComposer components
 @use '../../components/theming/theming';
 
-// partials
-@use 'blocksMotorTemplate';
-
 $debug-bar--size : 38px;
 
 .dbg-bar--block {

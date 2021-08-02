@@ -234,9 +234,10 @@ function updateSassTreeAfterEvent(
       // removes "removed stylesheets imports" from the tree
       foreach ($removedImports as $removedImport)
       {
-        unset(
-          $importedFiles[$removedImport],
-          $sassTree[KEY_MAIN_TO_LEAVES][$removedImport][array_search(
+        unset($importedFiles[$removedImport]);
+
+        if (isset($sassTree[KEY_MAIN_TO_LEAVES][$removedImport]))
+          unset($sassTree[KEY_MAIN_TO_LEAVES][$removedImport][array_search(
             $sassFileKey,
             $sassTree[KEY_MAIN_TO_LEAVES][$removedImport]
           )]);
