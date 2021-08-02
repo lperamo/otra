@@ -47,6 +47,20 @@ abstract class Routes
     'otra_404' => [
       'chunks' => ['/404', '', 'otra', 'errors', 'error404Action'],
       'core' => true
+    ],
+    'otra_css' => [
+      'chunks' => ['/profiler/css', '', 'otra', 'heavyProfiler', 'cssAction'],
+      'core' => true,
+      'resources' => [
+        'core_css' => ['pages/sassTree/sassTree']
+      ]
+    ],
+    'otra_template_structure' => [
+      'chunks' => ['/profiler/templateStructure', '', 'otra', 'heavyProfiler', 'templateStructureAction'],
+      'core' => true,
+      'resources' => [
+        'core_css' => ['pages/templateStructure/templateStructure']
+      ]
     ]
   ];
 
@@ -60,4 +74,3 @@ abstract class Routes
 }
 
 Routes::init();
-
