@@ -12,13 +12,12 @@
 // loading mixins
 @use 'mixins';
 
-$debug-bar--size : 38px;
-
 .dbg-bar--toggle {
   // size
   box-sizing : border-box;
 
   // positioning
+  display     : inline-block; // needed for transforms
   margin-left : 10px;
 
   // animation
@@ -58,37 +57,45 @@ $debug-bar--size : 38px;
 
   &-top {
     &:checked ~ #dbg-bar {
-      transform: rotateZ(0deg);
+      top       : 0;
+      transform : rotateZ(0deg);
     }
   }
 
   &-right {
     &:checked ~ #dbg-bar {
-      transform-origin : right;
-      transform        : rotateZ(-90deg) translate(#{$debug-bar--size/2}, calc(100vw - 102.1vh));
+      top              : 0;
+      transform-origin : top left;
+      transform        : rotateZ(90deg) translateY(-100vw);
       width            : 100vh;
 
-      & > .dbg-bar--toggle {
-        transform : rotateZ(90deg);
+      & .dbg-bar--toggle {
+        transform : rotateZ(-90deg);
       }
     }
   }
 
   &-bottom {
     &:checked ~ #dbg-bar {
-      transform-origin : top left;
-      transform        : translate(0, calc(100vh - #{$debug-bar--size}));
+      bottom         : 0;
+      flex-direction : row-reverse;
+      transform      : rotate(180deg);
+
+      & > .dbg-bar--transformer {
+        transform : rotate(180deg);
+      }
     }
   }
 
   &-left {
     &:checked + #dbg-bar {
-      transform-origin : left;
-      transform        : rotateZ(90deg) translate(-#{$debug-bar--size/2}, -#{$debug-bar--size/2});
+      top              : 0;
+      transform-origin : top left;
+      transform        : rotateZ(-90deg) translateX(-100%);
       width            : 100vh;
 
-      & > .dbg-bar--toggle {
-        transform : rotateZ(-90deg);
+      & .dbg-bar--toggle {
+        transform : rotateZ(90deg);
       }
     }
   }

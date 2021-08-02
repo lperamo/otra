@@ -48,44 +48,39 @@ $debug-bar--size : 38px;
   @at-root .dbg-bar--toggle- {
     &bottom,
     &right {
-      &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      &:checked ~ .dbg-bar .dbg-bar--block--container {
         border-radius : 5px 5px 0 0;
       }
     }
 
     &left,
     &top {
-      &:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
+      &:checked ~ .dbg-bar .dbg-bar--block--container {
         border-radius : 0 0 5px 5px;
       }
     }
 
-    &left:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
-      bottom       : $debug-bar--size;
-      left         : 0;
-      right        : auto;
-      top          : -100vh;
+    &left:checked ~ .dbg-bar .dbg-bar--block--container {
+      height       : calc(100vw - 100% - 1rem);
+      top          : 100%;
+      writing-mode : vertical-rl;
+    }
+
+    &right:checked ~ .dbg-bar .dbg-bar--block--container {
+      height       : calc(100vw - 100% - 2rem);
+      top          : 100%;
       transform    : rotate(180deg);
       writing-mode : vertical-rl;
     }
 
-    &right:checked ~ .dbg-bar > .dbg-bar--block--container:not(.dbg-bar--block--container-motor-template) {
-      bottom       : $debug-bar--size;
-      left         : auto;
-      right        : 0;
-      top          : -100vh;
-      writing-mode : tb-rl;
-    }
-
-    &bottom,
-    &left {
-      &:checked ~ .dbg-bar > .dbg-bar--block--container {
-        bottom : $debug-bar--size;
+    &bottom {
+      &:checked ~ .dbg-bar .dbg-bar--block--container {
+        bottom : 100%;
       }
     }
 
     &top {
-      &:checked ~ .dbg-bar > .dbg-bar--block--container {
+      &:checked ~ .dbg-bar .dbg-bar--block--container {
         top : $debug-bar--size;
       }
     }
@@ -121,6 +116,9 @@ $debug-bar--size : 38px;
 
     // size
     padding : 10px;
+
+    // text
+    word-break : break-all;
 
     &--element {
       font-size     : 16px; // put to avoid CSS conflicts with the user project

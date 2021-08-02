@@ -11,6 +11,7 @@ $this::css([
 generateArrows();
 ?>
 <div id="dbg-bar" class="dbg-bar">
+  <div class="dbg-bar--transformer">
   <?php
   define('ROUTE', urlencode($this->route));
   define(
@@ -32,6 +33,7 @@ generateArrows();
 ?>
   <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
   <?php generateArrows('label') ?>
+  </div>
 </div>
 <?php $this::js(CORE_JS_PATH . 'debug_bar');
   $this::js(CORE_JS_PATH . 'lightbox');
