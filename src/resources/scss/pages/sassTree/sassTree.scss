@@ -28,6 +28,10 @@
     position: relative;
   }
 
+  &--error-message {
+    font-size: 1.6rem;
+  }
+
   @at-root .sass-tooltip {
     cursor : help;
 
