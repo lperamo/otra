@@ -16,6 +16,8 @@ use function otra\tools\files\returnLegiblePath;
 
 const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 
+require CONSOLE_PATH . 'deployment/googleClosureCompile.php';
+
 /**
  * @param bool   $watching
  * @param int    $verbose
