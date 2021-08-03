@@ -21,7 +21,9 @@
 );
 
 :root {
-  color-scheme : light dark;
+  @supports (color-scheme: light dark) {
+    color-scheme : light dark;
+  }
 }
 
 // applying theme

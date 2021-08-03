@@ -21,8 +21,12 @@
   margin-left : 10px;
 
   // animation
-  transition  : text-shadow .25s;
-  will-change : text-shadow;
+  transition : text-shadow .25s;
+
+  // For IE (needed by WebHint)
+  @supports (will-change : text-shadow) {
+    will-change : text-shadow;
+  }
 
   // text
   @include theming.to-theme(

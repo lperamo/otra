@@ -3,9 +3,13 @@ declare(strict_types=1);
 namespace otra\src\views\debugBar;
 use otra\MasterController;
 
+/**
+ * @var int $debugBarTabIndexActualValue
+ */
 $responseCode = strval(http_response_code());
 ?>
-<button type="button" class="otra--help-cursor dbg-bar--block" title="HTTP response code"><?= $responseCode ?></button>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="HTTP response code"
+        tabindex="<?= $debugBarTabIndexActualValue++ ?>"><?= $responseCode ?></button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">
     HTTP response code :

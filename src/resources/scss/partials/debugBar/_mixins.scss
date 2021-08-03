@@ -23,8 +23,11 @@
     )
   );
 
-  -webkit-background-clip : text;
-  -webkit-text-fill-color : transparent;
+  // For IE (needed by WebHint)
+  @supports (-webkit-background-clip : text) {
+    -webkit-background-clip : text;
+    -webkit-text-fill-color : transparent;
+  }
 }
 
 ///
