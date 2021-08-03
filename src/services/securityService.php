@@ -26,7 +26,6 @@ const
     OTRA_KEY_PERMISSIONS_POLICY => 'Permissions-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ],
-  OTRA_STRLEN_SCRIPT_SRC = 10,
   CSP_ARRAY = [
     'base-uri' => OTRA_LABEL_SECURITY_SELF,
     'form-action' => OTRA_LABEL_SECURITY_SELF,
@@ -247,10 +246,11 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
     )
     {
       // we insert 'strict-dynamic' in the 'script-src' or 'style-src' policy (depends on $directive).
+      echo $policy . '*';
       $policy = substr_replace(
         $policy,
         ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC,
-        mb_strpos($policy, $directive) + OTRA_STRLEN_SCRIPT_SRC,
+        mb_strpos($policy, $directive) + strlen($directive),
         0
       );
     }

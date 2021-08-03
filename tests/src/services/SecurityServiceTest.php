@@ -369,6 +369,34 @@ class SecurityServiceTest extends TestCase
   }
 
   /**
+   * If we have nonces with a style-src policy that contains 'strict-dynamic' mode.
+   * Beware, here we only test 'style-src'.
+   *
+   * @depends testGetRandomNonceForCSP
+   * @throws Exception
+   */
+  public function testHandleStrictDynamic_Dev_WithStyleSrc_StrictDynamic_Nonces() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = DEV;
+    AllConfig::$debug =  true;
+    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
+    require self::SECURITY_SERVICE;
+    $nonce = getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE);
+
+    // launching
+    handleStrictDynamic(
+      OTRA_KEY_STYLE_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY],
+      self::ROUTE
+    );
+
+    // testing
+    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';style-src 'strict-dynamic' 'self' 'nonce-" . $nonce . "';", $cspPolicy);
+  }
+
+  /**
    * If we have an empty policy, we simply remove that directive.
    * Beware, here we only test 'script-src'.
    */
