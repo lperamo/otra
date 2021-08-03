@@ -4,9 +4,7 @@ namespace otra\src\console\deployment;
 
 use otra\OtraException;
 use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\
-{CLI_BASE, CLI_ERROR, CLI_SUCCESS, deployment\genAssets\JS_LEVEL_COMPILATION, END_COLOR};
-use const otra\console\deployment\GOOGLE_CLOSURE_COMPILER_VERBOSITY;
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_SUCCESS, END_COLOR};
 
 use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
@@ -14,7 +12,8 @@ use function otra\tools\files\returnLegiblePath;
 const
   JAVA_COMPILING_PATH = 'java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH .
   'deployment/compiler.jar"',
-  PROBLEM_OCCURRED = CLI_ERROR . 'A problem occurred.' . END_COLOR;
+  PROBLEM_OCCURRED = CLI_ERROR . 'A problem occurred.' . END_COLOR,
+  GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 
 /**
  * @param int    $verbose

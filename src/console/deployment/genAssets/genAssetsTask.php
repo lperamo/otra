@@ -14,7 +14,6 @@ use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use function otra\src\console\deployment\googleClosureCompile;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\config\VERSION;
@@ -26,6 +25,7 @@ use const otra\console\
   CLI_SUCCESS,
   CLI_WARNING,
   END_COLOR};
+use function otra\src\console\deployment\googleClosureCompile;
 use function otra\tools\gzCompressFile;
 
 if (!file_exists(BUNDLES_PATH))
@@ -155,6 +155,9 @@ if (
   echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL,
     PHP_EOL;
 
+  require_once CONSOLE_PATH . 'deployment/googleClosureCompile.php';
+  require CORE_PATH . 'tools/cli.php';
+
   foreach($routes as $routeName => $route)
   {
     // Showing the route name
@@ -226,49 +229,16 @@ if (
       {
         $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
 
-        /** @var ?array{
-         *   compilerOptions?: array{
-         *     target?: string,
-         *     module?: string,
-         *     sourceMap?: bool,
-         *     lib?: string[],
-         *     noResolve?: bool,
-         *     pretty?: bool,
-         *     removeComments?: bool,
-         *     noImplicitUseStrict?: bool,
-         *     watch?: bool
-         *   }
-         * } $typescriptConfig
-         */
-        $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
-        googleClosureCompile($verbose, $typescriptConfig, $generatedTemporaryJsFile, $generatedJsFile);
+        $jsFileOut = mb_substr($pathAndFile, 0, -1);
+        googleClosureCompile(
+          0,
+          json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true),
+          $pathAndFile,
+          $jsFileOut,
+          JS_LEVEL_COMPILATION
+        );
 
-        // Linux or Windows ? We have java or jamvm ?
-        if (!str_contains(php_uname('s'), 'Windows')) // LINUX CASE
-        {
-          if (!empty(exec('which java'))) // JAVA CASE
-          {
-            // JAVA CASE
-            exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH .
-              'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --language_in ' .
-              $jsLanguageTarget . ' --language_out ' . $jsLanguageTarget . ' --js "' . $pathAndFile .
-              '" --js_output_file "' . $pathAndFile . '" -O ' . JS_LEVEL_COMPILATION);
-          } else
-          {
-            // JAMVM CASE
-            exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js;');
-          }
-        } elseif (empty(exec('where java'))) // WINDOWS AND JAMVM CASE
-        {
-          exec('jamvm -Xmx32m -jar ../src/yuicompressor-2.4.8.jar "' . $pathAndFile . '" -o "' . $pathAndFile . '" --type js');
-        } else
-        {
-          // JAVA CASE
-          exec('java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH . 'deployment/compiler.jar" --logging_level FINEST -W QUIET --rewrite_polyfills=false --js "' .
-            $pathAndFile . '" --js_output_file "' . $pathAndFile . '" --language_in=ECMASCRIPT6_STRICT --language_out=ES5_STRICT -O ' . JS_LEVEL_COMPILATION);
-        }
-
-        gzCompressFile($pathAndFile, $pathAndFile . '.gz', GZIP_COMPRESSION_LEVEL);
+        gzCompressFile($jsFileOut, $jsFileOut . '.gz', GZIP_COMPRESSION_LEVEL);
         echo status('JS');
       } else
         echo status('NO JS', OTRA_CLI_INFO_STRING);
@@ -412,6 +382,9 @@ function loadAndSaveResources(
 
   $resourceFolderPath = CACHE_PATH . $type . DIR_SEPARATOR;
   $pathAndFile = $resourceFolderPath . $shaName;
+
+  if ($type === 'js')
+    $pathAndFile .= '_';
 
   if (!file_exists($resourceFolderPath))
     mkdir($resourceFolderPath, 0755, true);
