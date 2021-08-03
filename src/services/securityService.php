@@ -246,7 +246,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
     )
     {
       // we insert 'strict-dynamic' in the 'script-src' or 'style-src' policy (depends on $directive).
-      echo $policy . '*';
       $policy = substr_replace(
         $policy,
         ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC,
