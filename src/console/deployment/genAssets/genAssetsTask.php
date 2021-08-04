@@ -152,7 +152,7 @@ if (
   if ($cptRoutes > 1)
     $routePlural = 's';
 
-  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ... ', PHP_EOL,
+  echo $cptRoutes, ' route', $routePlural, ' to process. Processing the route', $routePlural, ' ...', PHP_EOL,
     PHP_EOL;
 
   require_once CONSOLE_PATH . 'deployment/googleClosureCompile.php';
