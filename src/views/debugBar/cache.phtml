@@ -12,8 +12,7 @@ use const otra\cache\php\BASE_PATH;
 // Value used also in CORE_PATH . 'debugBar/templateMotor.phtml'
 $cacheEnabled = (!isset(AllConfig::$cache) || AllConfig::$cache);
 ?>
-<button type="button" class="otra--help-cursor dbg-bar--cache dbg-bar--block dbg-bar--block--border-left
-  dbg-bar--cache<?= $cacheEnabled ? '--enabled' : '--disabled'?>"
+<button type="button" class="otra--help-cursor dbg-bar--cache dbg-bar--block dbg-bar--cache<?= $cacheEnabled ? '--enabled' : '--disabled'?>"
 title="Controller" tabindex="<?= $debugBarTabIndexActualValue++ ?>">Cache</button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">Loaded from <b><?= MasterController::$cacheUsed ?></b>.</p>

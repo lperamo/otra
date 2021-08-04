@@ -20,13 +20,13 @@ $debug-bar--size : 38px;
   );
 
   border-style     : solid;
-  border-width     : 0 1px 0 0;
+  border-width     : 0 1px 1px 0;
   padding          : 11px 5px;
 
   // text
   // Chrome (not Firefox) needs this to avoid that native button font-family overrides the debug bar font family
   font-family : devModeFonts.$debug--font;
-  font-size   : 1.6rem;
+  font-size   : 16px;
 
   &:not(.dbg-bar--cache,.dbg-bar--logged,.dbg-bar--not-logged) {
     @include theming.to-theme(
@@ -49,10 +49,6 @@ $debug-bar--size : 38px;
     outline : 0;
   }
 
-  &--border-left {
-    border-left-width : 1px;
-  }
-
   @at-root .dbg-bar--toggle- {
     &bottom,
     &right {
@@ -69,13 +65,13 @@ $debug-bar--size : 38px;
     }
 
     &left:checked ~ .dbg-bar .dbg-bar--block--container {
-      height       : calc(100vw - 100% - 1rem);
+      height       : calc(100vw - 100% - 10px);
       top          : 100%;
       writing-mode : vertical-rl;
     }
 
     &right:checked ~ .dbg-bar .dbg-bar--block--container {
-      height       : calc(100vw - 100% - 2rem);
+      height       : calc(100vw - 100% - 20px);
       top          : 100%;
       transform    : rotate(180deg);
       writing-mode : vertical-rl;

@@ -13,9 +13,6 @@
 @use 'mixins';
 
 .dbg-bar--toggle {
-  // size
-  box-sizing : border-box;
-
   // positioning
   display     : inline-block; // needed for transforms
   margin-left : 10px;
@@ -36,6 +33,7 @@
   );
 
   font-size   : 20px;
+  line-height : 36px;
 
   // others
   cursor      : pointer;
@@ -54,7 +52,6 @@
 
   // Arrows
   &-direction {
-    // positioning
     position : fixed;
     left     : -10000px;
   }

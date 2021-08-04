@@ -125,6 +125,12 @@ $debug-bar--size : 38px;
         )
       );
     }
+
+    &block,
+    &toggle {
+      height     : 36px;
+      box-sizing : border-box;
+    }
   }
 }
 
