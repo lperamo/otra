@@ -36,7 +36,7 @@ $debug-bar--size : 38px;
     );
   }
 
-  &:not(:focus) {
+  &:not(:focus,:hover) {
     @include theming.to-theme(
       (
         #{&} : ('background-color', 'debug-bar--block--background-color')
@@ -44,8 +44,16 @@ $debug-bar--size : 38px;
     );
   }
 
+  &:hover,
   &:focus {
-    background-color : rgba(0, 0, 0, .2);
+    @include theming.to-theme(
+      (
+        #{&} : (
+          ('background-color', 'debug-bar--block--hover--background-color')
+        )
+      )
+    );
+
     outline : 0;
   }
 
