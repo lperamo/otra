@@ -13,8 +13,9 @@ if (!function_exists('otra\src\views\debugBar\generateArrows'))
 {
   /**
    * @param string $inputType
+   * @param ?int   $debugBarTabIndexActualValue
    */
-  function generateArrows(string $inputType = 'radio') : void
+  function generateArrows(string $inputType = 'radio', ?int $debugBarTabIndexActualValue = null) : void
   {
     $debugBarPosition = isset(AllConfig::$debugConfig, AllConfig::$debugConfig['barPosition'])
       ? AllConfig::$debugConfig['barPosition']
@@ -41,7 +42,7 @@ if (!function_exists('otra\src\views\debugBar\generateArrows'))
       {
         ?>
         <label for="dbg-bar--toggle-<?= $position ?>" class="dbg-bar--toggle dbg-bar--toggle-<?= $position ?>"
-               title="Move the debug bar to the <?= $position ?>"><?= $arrow ?></label>
+               title="Move the debug bar to the <?= $position ?>" tabindex="<?= $debugBarTabIndexActualValue++ ?>"><?= $arrow ?></label>
         <?php
       }
     }

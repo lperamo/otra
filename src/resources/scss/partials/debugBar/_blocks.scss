@@ -15,18 +15,26 @@ $debug-bar--size : 38px;
 .dbg-bar--block {
   @include theming.to-theme(
     (
-      #{&} : (
-        ('border-color', 'debug-bar--block--border-color'),
-        ('color', 'debug-bar--block--color')
-      )
+      #{&} : ('border-color', 'debug-bar--block--border-color')
     )
   );
 
   border-style     : solid;
-  border-width     : 0 1px 0 0;
-  // Chrome (not Firefox) needs this to avoid that native button font-family overrides the debug bar font family
-  font-family      : devModeFonts.$debug--font;
+  border-width     : 0 1px 1px 0;
   padding          : 11px 5px;
+
+  // text
+  // Chrome (not Firefox) needs this to avoid that native button font-family overrides the debug bar font family
+  font-family : devModeFonts.$debug--font;
+  font-size   : 16px;
+
+  &:not(.dbg-bar--cache,.dbg-bar--logged,.dbg-bar--not-logged) {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'debug-bar--block--color')
+      )
+    );
+  }
 
   &:not(:focus) {
     @include theming.to-theme(
@@ -39,10 +47,6 @@ $debug-bar--size : 38px;
   &:focus {
     background-color : rgba(0, 0, 0, .2);
     outline : 0;
-  }
-
-  &--border-left {
-    border-left-width : 1px;
   }
 
   @at-root .dbg-bar--toggle- {
@@ -61,13 +65,13 @@ $debug-bar--size : 38px;
     }
 
     &left:checked ~ .dbg-bar .dbg-bar--block--container {
-      height       : calc(100vw - 100% - 1rem);
+      height       : calc(100vw - 100% - 10px);
       top          : 100%;
       writing-mode : vertical-rl;
     }
 
     &right:checked ~ .dbg-bar .dbg-bar--block--container {
-      height       : calc(100vw - 100% - 2rem);
+      height       : calc(100vw - 100% - 20px);
       top          : 100%;
       transform    : rotate(180deg);
       writing-mode : vertical-rl;

@@ -13,16 +13,17 @@
 @use 'mixins';
 
 .dbg-bar--toggle {
-  // size
-  box-sizing : border-box;
-
   // positioning
   display     : inline-block; // needed for transforms
   margin-left : 10px;
 
   // animation
-  transition  : text-shadow .25s;
-  will-change : text-shadow;
+  transition : text-shadow .25s;
+
+  // For IE (needed by WebHint)
+  @supports (will-change : text-shadow) {
+    will-change : text-shadow;
+  }
 
   // text
   @include theming.to-theme(
@@ -32,6 +33,7 @@
   );
 
   font-size   : 20px;
+  line-height : 36px;
 
   // others
   cursor      : pointer;
@@ -50,7 +52,6 @@
 
   // Arrows
   &-direction {
-    // positioning
     position : fixed;
     left     : -10000px;
   }
@@ -75,16 +76,8 @@
     }
   }
 
-  &-bottom {
-    &:checked ~ #dbg-bar {
-      bottom         : 0;
-      flex-direction : row-reverse;
-      transform      : rotate(180deg);
-
-      & > .dbg-bar--transformer {
-        transform : rotate(180deg);
-      }
-    }
+  &-bottom:checked ~ #dbg-bar {
+    bottom : 0;
   }
 
   &-left {
