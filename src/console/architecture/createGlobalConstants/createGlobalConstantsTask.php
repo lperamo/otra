@@ -81,10 +81,11 @@ if (!class_exists(AllConfig::class))
   if (!defined('otra\\cache\\php\\BUNDLES_PATH'))
     define('otra\\cache\\php\\BUNDLES_PATH', BASE_PATH . 'bundles/');
 
-  require BASE_PATH . 'config/AllConfig.php';
+  if (file_exists(BASE_PATH . 'config/AllConfig.php'))
+    require BASE_PATH . 'config/AllConfig.php';
 }
 
-if (isset(AllConfig::$deployment['folder']))
+if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
 {
   echo (file_put_contents(
     BASE_PATH . 'config/prodConstants.php',
