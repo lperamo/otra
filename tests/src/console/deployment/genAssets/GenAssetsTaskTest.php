@@ -9,7 +9,6 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\BASE_PATH;
 use const otra\config\VERSION;
-use const otra\console\CLI_BASE;
 use const otra\console\CLI_ERROR;
 use const otra\console\CLI_GRAY;
 use const otra\console\CLI_INFO;
