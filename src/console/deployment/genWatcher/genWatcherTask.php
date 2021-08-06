@@ -506,6 +506,7 @@ while (true)
             $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
 
             generateJavaScript(
+              true,
               GEN_WATCHER_VERBOSE,
               FILE_TASK_GCC,
               $resourcesMainFolder,
@@ -621,17 +622,21 @@ while (true)
           // removing the sass file from the sass dependency tree
           $sassKeyTreeToDelete = array_search($resourceName, $sassTreeKeys);
 
-          foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+          // Prevents some edge cases to crash the script
+          if ($sassKeyTreeToDelete !== false)
           {
-            $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
+            foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+            {
+              $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
 
-            if ($mainFileToDelete !== false)
-              unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
+              if ($mainFileToDelete !== false)
+                unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
 
-            // If there are no more main files associated to the leave or the leave IS the file to delete
-            // => we remove the leave
-            if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
-              unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+              // If there are no more main files associated to the leave or the leave IS the file to delete
+              // => we remove the leave
+              if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
+                unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+            }
           }
 
           // We now adjust the indexes because there is one less element and therefore the things do not match anymore

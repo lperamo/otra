@@ -9,8 +9,10 @@ namespace otra\console\deployment\genServerConfig;
 
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
+use otra\OtraException;
 use const otra\cache\php\{DEV,SPACE_INDENT};
-use const otra\console\{CLI_INFO_HIGHLIGHT,END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /** @var string $fileName */
 
@@ -185,18 +187,7 @@ $content = handlesHTTPSRedirection() .
   SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
   'tmp/certs/server_key.pem;' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . 'map $sent_http_content_type $expires {' . PHP_EOL .
-  SPACE_INDENT_2 . 'default                 off;' . PHP_EOL .
-  SPACE_INDENT_2 . 'text/html               epoch;' . PHP_EOL .
-  SPACE_INDENT_2 . 'text/css                max;' . PHP_EOL .
-  SPACE_INDENT_2 . 'application/javascript  max;' . PHP_EOL .
-  SPACE_INDENT_2 . 'text/javascript         max;' . PHP_EOL .
-  SPACE_INDENT_2 . '~image/                 max;' . PHP_EOL .
-  SPACE_INDENT_2 . 'application/json        max;' . PHP_EOL .
-  SPACE_INDENT_2 . 'font/woff2              max;' . PHP_EOL .
-  SPACE_INDENT . '}' . PHP_EOL .
-  PHP_EOL .
-  SPACE_INDENT . 'expires $expires;' .
+  SPACE_INDENT . 'expires $expires;' . PHP_EOL .
   SPACE_INDENT . '#HSTS' . PHP_EOL .
   SPACE_INDENT . 'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";' . PHP_EOL .
   PHP_EOL .
@@ -297,8 +288,38 @@ $content = handlesHTTPSRedirection() .
   handleRewriting() . PHP_EOL .
   '}' . PHP_EOL;
 
-file_put_contents($fileName, $content);
+// Generating the main configuration file.
+if (file_put_contents($fileName, $content) === false)
+{
+  echo CLI_ERROR . 'There was a problem when saving the Nginx configuration in the file ' . CLI_INFO_HIGHLIGHT .
+    $fileName . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
 
-echo 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'development' : 'production') .
-  ' server configuration generated in ' . CLI_INFO_HIGHLIGHT . $fileName . END_COLOR . '.' . PHP_EOL;
+$dotPosition = mb_strrpos($fileName, '.');
+$cacheHandlingFilename = mb_substr($fileName, 0, $dotPosition) . '_cache' . mb_substr($fileName, $dotPosition);
+
+if (file_put_contents(
+  $cacheHandlingFilename,
+  'map $sent_http_content_type $expires {' . PHP_EOL .
+  SPACE_INDENT . 'default                 off;' . PHP_EOL .
+  SPACE_INDENT . 'text/html               epoch;' . PHP_EOL .
+  SPACE_INDENT . 'text/css                max;' . PHP_EOL .
+  SPACE_INDENT . 'application/javascript  max;' . PHP_EOL .
+  SPACE_INDENT . 'text/javascript         max;' . PHP_EOL .
+  SPACE_INDENT . '~image/                 max;' . PHP_EOL .
+  SPACE_INDENT . 'application/json        max;' . PHP_EOL .
+  SPACE_INDENT . 'font/woff2              max;' . PHP_EOL .
+  '}' . PHP_EOL
+) === false)
+{
+  echo CLI_ERROR . 'There was a problem when saving the Nginx cache configuration in the file ' . CLI_INFO_HIGHLIGHT .
+    $cacheHandlingFilename . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
+  throw new OtraException('', 1, '', NULL, [], true);
+}
+
+echo CLI_BASE . 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'development' : 'production') .
+  ' server configuration generated in ' . CLI_INFO_HIGHLIGHT . $fileName . CLI_BASE .
+  ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . $cacheHandlingFilename . CLI_BASE . '.' . PHP_EOL .
+  'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL;
 return 0;

@@ -52,7 +52,7 @@ $content = 'const DEV=\'dev' .
   '\',CORE_JS_PATH=\'' . CORE_RESOURCES_PATH . 'js/' .
   '\',SPACE_INDENT=\'  ' .
   '\',APP_ENV=\'APP_ENV' .
-  '\',OTRA_VERSION=\'1.0.0-alpha.2.5.0' .
+  '\',OTRA_VERSION=\'1.0.0-alpha.2.5.1' .
   '\',DIR_SEPARATOR=\'/' .
   '\';if(!defined(__NAMESPACE__.\'\\\\OTRA_PROJECT\'))define(__NAMESPACE__.\'\\\\OTRA_PROJECT\',' .
   ($otraProject ? 'true' : 'false') . ');';
@@ -81,10 +81,11 @@ if (!class_exists(AllConfig::class))
   if (!defined('otra\\cache\\php\\BUNDLES_PATH'))
     define('otra\\cache\\php\\BUNDLES_PATH', BASE_PATH . 'bundles/');
 
-  require BASE_PATH . 'config/AllConfig.php';
+  if (file_exists(BASE_PATH . 'config/AllConfig.php'))
+    require BASE_PATH . 'config/AllConfig.php';
 }
 
-if (isset(AllConfig::$deployment['folder']))
+if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
 {
   echo (file_put_contents(
     BASE_PATH . 'config/prodConstants.php',

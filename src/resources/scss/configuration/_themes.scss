@@ -30,8 +30,9 @@ $themes: (
     'debug-bar--cache--enabled--text-shadow' : .5px .5px .5px #444,
     // ** debug bar - blocks
     'debug-bar--block--background-color' : transparent,
-    'debug-bar--block--border-color' : #bbb,
+    'debug-bar--block--border-color' : #ddd,
     'debug-bar--block--color' : #333,
+    'debug-bar--block--hover--background-color' : rgba(0, 0, 0, .2),
     // ** debug bar - buttons
     'debug-bar--button--background-image' : radial-gradient(#ff8, #fdc),
     'debug-bar--button--box-shadow' : 0 0 3px #bbb,
@@ -142,6 +143,7 @@ $themes: (
     'debug-bar--block--background-color' : transparent,
     'debug-bar--block--border-color' : #555,
     'debug-bar--block--color' : #eee,
+    'debug-bar--block--hover--background-color' : rgba(255, 255, 255, .2),
     // ** debug bar - buttons
     'debug-bar--button--background-image' : radial-gradient(#fd4, #f90),
     'debug-bar--button--box-shadow' : 0 0 3px #47a,

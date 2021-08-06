@@ -26,7 +26,9 @@ block('view');
     require CORE_VIEWS_PATH . 'heavyProfiler/sass/fullTree.phtml';
   } else
   {
-    ?><span>No SASS/SCSS files found.</span> <?php
+    ?><span class="sass-trees--container--error-message">There is no cache about SASS/SCSS files or there are no such files. To create the cache, launch : </span>
+    <pre class="sass-trees--container--error-message">otra genWatcher 0 1</pre>
+    <span class="sass-trees--container--error-message">and stops it when the file is generated.</span><?php
   }
   ?>
 </div>

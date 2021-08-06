@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace otra\src\views\debugBar;
 use const otra\cache\php\{CACHE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_VIEWS_PATH};
 
-require CORE_VIEWS_PATH . 'debugBar/macros.phtml';
+const DEBUG_BAR_PATH = CORE_VIEWS_PATH . 'debugBar/';
+require DEBUG_BAR_PATH . 'macros.phtml';
 $this::css([
   [CORE_CSS_PATH . 'partials/devMode/devMode'],
   [CORE_CSS_PATH . 'partials/devMode/devModePrint', true]
@@ -17,21 +18,20 @@ generateArrows();
     'SITE_HOST',
     (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
   );
+  $debugBarTabIndexActualValue = 950;
 
-  require CORE_VIEWS_PATH . 'debugBar/otra.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/php.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/route.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/http.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/chrono.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/cache.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/connection.phtml';
-  require CORE_VIEWS_PATH . 'debugBar/templateStructure.phtml';
+  foreach(['otra', 'php', 'route', 'http', 'chrono', 'cache', 'connection', 'templateStructure'] as $template)
+  {
+    require DEBUG_BAR_PATH . $template . '.phtml';
+  }
+
+  unset($template);
 
   if (file_exists(CACHE_PATH . 'css/sassTree.php'))
-    require CORE_VIEWS_PATH . 'debugBar/sass.phtml';
+    require DEBUG_BAR_PATH . 'sass.phtml';
 ?>
-  <button id="show-sql" class="dbg-bar--btn">Inspect SQL</button>
-  <?php generateArrows('label') ?>
+  <button type="button" id="show-sql" class="dbg-bar--btn" tabindex="<?= $debugBarTabIndexActualValue++ ?>">Inspect SQL</button>
+  <?php generateArrows('label', $debugBarTabIndexActualValue) ?>
 </div>
 <?php $this::js(CORE_JS_PATH . 'debug_bar');
   $this::js(CORE_JS_PATH . 'lightbox');

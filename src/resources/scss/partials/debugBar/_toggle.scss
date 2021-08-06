@@ -12,18 +12,18 @@
 // loading mixins
 @use 'mixins';
 
-$debug-bar--size : 38px;
-
 .dbg-bar--toggle {
-  // size
-  box-sizing : border-box;
-
   // positioning
+  display     : inline-block; // needed for transforms
   margin-left : 10px;
 
   // animation
-  transition  : text-shadow .25s;
-  will-change : text-shadow;
+  transition : text-shadow .25s;
+
+  // For IE (needed by WebHint)
+  @supports (will-change : text-shadow) {
+    will-change : text-shadow;
+  }
 
   // text
   @include theming.to-theme(
@@ -33,6 +33,7 @@ $debug-bar--size : 38px;
   );
 
   font-size   : 20px;
+  line-height : 36px;
 
   // others
   cursor      : pointer;
@@ -51,44 +52,44 @@ $debug-bar--size : 38px;
 
   // Arrows
   &-direction {
-    // positioning
     position : fixed;
     left     : -10000px;
   }
 
   &-top {
     &:checked ~ #dbg-bar {
-      transform: rotateZ(0deg);
+      top       : 0;
+      transform : rotateZ(0deg);
     }
   }
 
   &-right {
     &:checked ~ #dbg-bar {
-      transform-origin : right;
-      transform        : rotateZ(-90deg) translate(#{$debug-bar--size/2}, calc(100vw - 102.1vh));
+      top              : 0;
+      transform-origin : top left;
+      transform        : rotateZ(90deg) translateY(-100vw);
       width            : 100vh;
 
-      & > .dbg-bar--toggle {
-        transform : rotateZ(90deg);
+      & .dbg-bar--toggle {
+        transform : rotateZ(-90deg);
       }
     }
   }
 
-  &-bottom {
-    &:checked ~ #dbg-bar {
-      transform-origin : top left;
-      transform        : translate(0, calc(100vh - #{$debug-bar--size}));
-    }
+  &-bottom:checked ~ #dbg-bar {
+    bottom    : 0;
+    transform : rotate(360deg);
   }
 
   &-left {
     &:checked + #dbg-bar {
-      transform-origin : left;
-      transform        : rotateZ(90deg) translate(-#{$debug-bar--size/2}, -#{$debug-bar--size/2});
+      top              : 0;
+      transform-origin : top left;
+      transform        : rotateZ(-90deg) translateX(-100%);
       width            : 100vh;
 
-      & > .dbg-bar--toggle {
-        transform : rotateZ(-90deg);
+      & .dbg-bar--toggle {
+        transform : rotateZ(90deg);
       }
     }
   }

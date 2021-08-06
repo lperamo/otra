@@ -16,13 +16,13 @@
   "config": {
     "sort-packages": true
   },
-  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
+    "php": ">=8.0.0",
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "php": ">=8.0.0",
-    "symfony/yaml": "^4.0"
+    "symfony/yaml": "5.2.10"
   },
   "require-dev": {
     "ext-curl": "*",

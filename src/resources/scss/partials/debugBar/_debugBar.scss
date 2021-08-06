@@ -50,7 +50,6 @@ $debug-bar--size : 38px;
   left        : 0;
   position    : fixed;
   right       : 0;
-  top         : 0;
   z-index     : 10000;
 
   // text
@@ -58,7 +57,11 @@ $debug-bar--size : 38px;
 
   // animation
   transition  : transform .2s;
-  will-change : transform;
+
+  // For IE compatibility (needed by WebHint)
+  @supports (will-change : transform) {
+    will-change : transform;
+  }
 
   // & = dbg-bar
   &-- {
@@ -105,26 +108,9 @@ $debug-bar--size : 38px;
       );
     }
 
-    &primary,
-    &on,
-    &off {
-      // The font size style is here in order that CSS from the project that uses OTRA do not perturb the debug bar CSS.
-      font-size   : 16px;
-      line-height : 16px;
-    }
-
-    &separator {
-      margin-left  : 5px;
-      margin-right : 5px;
-    }
-
     &cache {
       // positioning
       position : relative;
-
-      // text
-      font-size   : 16px;
-      line-height : 16px;
 
       @include theming.to-theme(
         (
@@ -139,6 +125,12 @@ $debug-bar--size : 38px;
         )
       );
     }
+
+    &block,
+    &toggle {
+      height     : 36px;
+      box-sizing : border-box;
+    }
   }
 }
 
@@ -146,7 +138,10 @@ $debug-bar--size : 38px;
 .dbg-bar--btn {
   // animation
   transition : box-shadow .2s, color .2s, text-shadow .2s;
-  will-change: box-shadow, color, text-shadow;
+
+  @supports (will-change: box-shadow, color, text-shadow) {
+    will-change: box-shadow, color, text-shadow;
+  }
 
   @include theming.to-theme(
     (

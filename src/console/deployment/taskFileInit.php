@@ -42,7 +42,6 @@ const FILE_TASK_ARG_MASK = 3,
   ],
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
 
-const GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 define(
   __NAMESPACE__ . '\\PATHS_TO_AVOID',
   array_merge([BUNDLES_PATH . 'config'], AllConfig::$pathsToAvoidForBuild ?? [])

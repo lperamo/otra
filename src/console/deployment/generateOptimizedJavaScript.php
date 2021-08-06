@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment;
 
 use otra\OtraException;
+use function otra\src\console\deployment\googleClosureCompile;
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\tools\cliCommand;
@@ -15,7 +16,10 @@ use function otra\tools\files\returnLegiblePath;
 
 const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 
+require CONSOLE_PATH . 'deployment/googleClosureCompile.php';
+
 /**
+ * @param bool   $watching
  * @param int    $verbose
  * @param bool   $mustLaunchGcc
  * @param string $resourceFolder
@@ -25,6 +29,7 @@ const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
  * @throws OtraException
  */
 function generateJavaScript(
+  bool $watching,
   int $verbose,
   bool $mustLaunchGcc,
   string $resourceFolder,
@@ -33,9 +38,9 @@ function generateJavaScript(
 ) : void
 {
   /* TypeScript seems to not handle the compilation of one file using the json configuration file !
-         * It is either the entire project with the json configuration file
-         * or a list of files without json configuration ... but not a list with json configuration ...
-         * so we create one temporary json that list only the file we want */
+   * It is either the entire project with the json configuration file
+   * or a list of files without json configuration ... but not a list with json configuration ...
+   * so we create one temporary json that list only the file we want */
   /** @var ?array{
    *   compilerOptions?: array{
    *     target?: string,
@@ -90,7 +95,7 @@ function generateJavaScript(
 
   /* Launches typescript compilation on the file with project json configuration
      and launches Google Closure Compiler on the output just after */
-  [, $output] = cliCommand('/usr/bin/tsc -p ' . $temporaryTypescriptConfig);
+  [, $output] = cliCommand('/usr/bin/tsc --pretty -p ' . $temporaryTypescriptConfig, null, !$watching);
 
   unlink($temporaryTypescriptConfig);
 
@@ -100,9 +105,13 @@ function generateJavaScript(
   if (!$jsFileExists)
   {
     echo CLI_WARNING,
-    'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
-    CLI_INFO_HIGHLIGHT, OTRA_LABEL_TSCONFIG_JSON, CLI_WARNING, ' file.', END_COLOR, PHP_EOL, $output;
-    throw new OtraException('', 1, '', null, [], true);
+      'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
+      CLI_INFO_HIGHLIGHT, OTRA_LABEL_TSCONFIG_JSON, CLI_WARNING, ' file.', END_COLOR, PHP_EOL, $output;
+
+    if (!$watching)
+      throw new OtraException('', 1, '', null, [], true);
+
+    return;
   }
 
   $temporarySourceMap = $generatedTemporaryJsFile . '.map';
@@ -125,26 +134,13 @@ function generateJavaScript(
   // should we launch Google Closure Compiler ?
   if ($mustLaunchGcc)
   {
-    if ($verbose > 0)
-      echo 'Launching Google Closure Compiler...', PHP_EOL;
-
-    // ' --create_source_map --source_map_input ' . $generatedTemporaryJsFile . '.map'
-    // We do not launch an exception on error to avoid stopping the execution of the watcher
-    [, $output] = cliCommand(
-      'java -jar ' . CONSOLE_PATH . 'deployment/compiler.jar -W '
-      . GOOGLE_CLOSURE_COMPILER_VERBOSITY[$verbose]
-      . ' -O ADVANCED --rewrite_polyfills=false --js ' . $generatedTemporaryJsFile . ' --js_output_file '
-      . $generatedJsFile,
-      CLI_ERROR . 'A problem occurred.' . END_COLOR . $output . PHP_EOL,
-      false
+    googleClosureCompile(
+      $verbose,
+      $typescriptConfig,
+      $generatedTemporaryJsFile,
+      $generatedJsFile,
+      'ADVANCED_OPTIMIZATIONS'
     );
-
-    if ($verbose > 0)
-      echo $output, CLI_BASE, 'Javascript ', returnLegiblePath($generatedJsFile), ' has been optimized', CLI_SUCCESS,
-      ' ✔', PHP_EOL;
-
-    // Cleaning temporary files ...(js and the mapping)
-    unlink($generatedTemporaryJsFile);
 
     if (file_exists($temporarySourceMap))
       unlink($temporarySourceMap);

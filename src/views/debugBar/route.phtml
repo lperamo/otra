@@ -1,4 +1,12 @@
-<button type="button" class="otra--help-cursor dbg-bar--block" title="Route">@<?= $this->route ?></button>
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar;
+/**
+* @var int $debugBarTabIndexActualValue
+ */
+?>
+<button type="button" class="otra--help-cursor dbg-bar--block" title="Route" tabindex="<?= $debugBarTabIndexActualValue++ ?>">
+  @<?= $this->route ?></button>
 <div class="dbg-bar--block--container">
   <p class="dbg-bar--block--container--element">
     Route : <b><?= $this->route ?></b>

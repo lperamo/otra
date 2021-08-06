@@ -297,4 +297,3 @@ foreach($securitiesArray as $route => $securityArray)
     );
   }
 }
-

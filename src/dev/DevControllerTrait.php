@@ -6,7 +6,7 @@ use otra\config\{AllConfig, Routes};
 use Exception;
 use otra\cache\php\Logger;
 use function otra\tools\getOtraCommitNumber;
-use const otra\cache\php\{CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
 use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
 use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
 
@@ -192,7 +192,7 @@ trait DevControllerTrait
       'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . DIR_SEPARATOR,
       '_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
-      'core_' . $assetType => $debLink . '/src/resources/' . $assetType . DIR_SEPARATOR
+      'core_' . $assetType => $debLink . ($assetType === 'css' ? CORE_CSS_PATH : CORE_JS_PATH)
     ];
 
     // For each kind of asset file, we will looks for them in their respective folders

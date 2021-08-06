@@ -51,7 +51,7 @@ if (WATCH_FOR_ROUTES)
 {
   // We updates routes configuration if the php file is a routes configuration file
   echo 'Launching routes update...', PHP_EOL;
-  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
   $filesProcessed = true;
 }
 
@@ -107,6 +107,7 @@ foreach($iterator as $entry)
 
       if (WATCH_FOR_TS_RESOURCES)
         generateJavaScript(
+          false,
           BUILD_DEV_VERBOSE,
           FILE_TASK_GCC,
           $resourcesMainFolder,
