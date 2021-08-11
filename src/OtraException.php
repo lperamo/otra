@@ -48,9 +48,9 @@ class OtraException extends Exception
    * OtraException constructor.
    *
    * @param string     $message
-   * @param ?int       $code
+   * @param ?int|mixed $code
    * @param string     $file
-   * @param int|null   $line
+   * @param ?int       $line
    * @param array|null $context
    * @param bool       $isOtraCliWarning True only if we came from a console task that wants to do an exit.
    *
@@ -59,7 +59,7 @@ class OtraException extends Exception
 
   public function __construct(
     string $message = 'Error !',
-    ?int $code = NULL,
+    mixed $code = NULL,
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
