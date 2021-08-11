@@ -50,7 +50,7 @@ abstract class Pdomysql
 
   /**
    * Sends an SQL query !
-   * @see http://php.net/manual/en/function.mysql-query.php
+   * @link http://php.net/manual/en/function.mysql-query.php
    *
    * @param string $query SQL query.
    *                      The query string should not end with a semicolon. Data inside the query should be properly
@@ -75,7 +75,7 @@ abstract class Pdomysql
 
   /**
    * Returns the results
-   * @see http://php.net/manual/en/function.mysql-fetch-assoc.php
+   * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    *
    * @param PDOStatement $statement The query statement
    *
@@ -88,7 +88,7 @@ abstract class Pdomysql
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
-   * @see http://php.net/manual/en/pdostatement.fetch.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement   The query statement
    * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
@@ -102,7 +102,7 @@ abstract class Pdomysql
 
   /**
    * Returns the results
-   * @see http://php.net/manual/en/pdostatement.fetch.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
@@ -115,7 +115,7 @@ abstract class Pdomysql
 
   /**
    * Returns the results as an object (simplified version of the existing one)
-   * @see http://php.net/manual/en/pdostatement.fetch.php
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
@@ -193,18 +193,17 @@ abstract class Pdomysql
 
   /**
    * Free result memory
-   * @see https://www.php.net/manual/en/pdostatement.closeCursor
+   * @link https://www.php.net/manual/en/pdostatement.closeCursor
    *
    * @param PDOStatement $statement The query statement
    *
    * @return bool Returns true on success or false on failure.
-   * @link http://php.net/manual/en/function.mysql-free-result.php
    */
   public static function freeResult(PDOStatement $statement) : bool { return $statement->closeCursor(); }
 
   /**
    * Returns metadata for a column in a result set
-   * @see https://www.php.net/manual/en/pdostatement.getcolumnmeta.php
+   * @link https://www.php.net/manual/en/pdostatement.getcolumnmeta.php
    *
    * @param PDOStatement $statement The query statement
    * @param int $column
@@ -247,7 +246,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.quote.php
+   * @link https://www.php.net/manual/en/pdo.quote.php
    *
    * @param string $string
    *
@@ -259,7 +258,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.begintransaction.php
+   * @link https://www.php.net/manual/en/pdo.begintransaction.php
    *
    * @return bool
    */
@@ -269,7 +268,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.intransaction.php
+   * @link https://www.php.net/manual/en/pdo.intransaction.php
    *
    * @return bool
    */
@@ -279,7 +278,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.commit
+   * @link https://www.php.net/manual/en/pdo.commit
    *
    * @return bool
    */
@@ -289,7 +288,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.rollback
+   * @link https://www.php.net/manual/en/pdo.rollback
    *
    * @return bool
    */
@@ -299,7 +298,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.errorInfo
+   * @link https://www.php.net/manual/en/pdo.errorInfo
    *
    * @return array
    */
@@ -309,7 +308,7 @@ abstract class Pdomysql
   }
 
   /**
-   * @see https://www.php.net/manual/en/pdo.prepare.php
+   * @link https://www.php.net/manual/en/pdo.prepare.php
    * @param string $query
    * @param array  $options
    *
