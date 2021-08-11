@@ -19,7 +19,14 @@ class OtraExceptionCli extends Exception
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
     ARGUMENTS_WIDTH = 51,
-    KEY_VARIABLES = 'variables';
+    KEY_VARIABLES = 'variables',
+    TABLE_WIDTHS = [self::FUNCTION_WIDTH, self::LINE_WIDTH, self::FILE_WIDTH, self::ARGUMENTS_WIDTH],
+    TOP_INTERSECTION_SEPARATOR = '┬',
+    INTERSECTION_OPERATOR = '├',
+    BOTTOM_INTERSECTION_SEPARATOR = '┴',
+    HORIZONTAL_SEPARATOR = '─';
+
+  private static $typeHeaderSpaces = '';
 
   /**
    * @param OtraException $exception
@@ -37,6 +44,8 @@ class OtraExceptionCli extends Exception
     $exception->scode = OtraException::$codes[$exception->code] ?? 'UNKNOWN';
     $exception->message = preg_replace('/<br\s*\/?>/i', '', $exception->message);
 
+    self::$typeHeaderSpaces = str_repeat(self::HORIZONTAL_SEPARATOR,self::TYPE_WIDTH);
+
     self::showMessage($exception);
   }
 
@@ -52,89 +61,6 @@ class OtraExceptionCli extends Exception
   {
     return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR . ' + ' .
       mb_substr($file, mb_strlen(constant('otra\\cache\\php\\' . $pathType . '_PATH')));
-  }
-
-  /**
-   * @param array  $backtraces
-   * @param string $errorCode
-   *
-   * @return string
-   */
-  private static function getBacktracesOutput(array $backtraces, string $errorCode = '') : string
-  {
-    /******************************
-     * Write HEADERS of the table *
-     ******************************/
-    $backtracesOutput =
-      CLI_TABLE . '┌' . str_repeat('─',self::TYPE_WIDTH)
-      . '┬' . str_repeat('─',self::FUNCTION_WIDTH)
-      . '┬' . str_repeat('─',self::LINE_WIDTH)
-      . '┬' . str_repeat('─',self::FILE_WIDTH)
-      . '┬' . str_repeat('─',self::ARGUMENTS_WIDTH) . END_COLOR . PHP_EOL .
-      self::consoleHeaders() .
-      PHP_EOL .
-      CLI_TABLE . '├' . str_repeat('─',self::TYPE_WIDTH) .
-        '┼' . str_repeat('─',self::FUNCTION_WIDTH) .
-        '┼' . str_repeat('─',self::LINE_WIDTH) .
-        '┼' . str_repeat('─',self::FILE_WIDTH) .
-        '┼' . str_repeat('─',self::ARGUMENTS_WIDTH) . END_COLOR . END_COLOR . PHP_EOL;
-
-    /*******************************
-     * Write the BODY of the table *
-     *******************************/
-
-    for($actualTraceIndex = 0, $trace = $backtraces, $maxTraceIndex = count($trace);
-        $actualTraceIndex < $maxTraceIndex;
-        $actualTraceIndex++)
-    {
-      $actualTrace = $trace[$actualTraceIndex];
-      $actualTraceFile = $actualTrace['file'] ?? '';
-
-      if (0 === $actualTraceIndex) unset($actualTrace['args'][self::KEY_VARIABLES]);
-
-      $compositeColoredPath = true;
-
-      if ($actualTraceFile !== '')
-      {
-        $actualTraceFile = str_replace('\\', DIR_SEPARATOR, $actualTraceFile);
-
-        if (str_contains($actualTraceFile, CONSOLE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
-        elseif (str_contains($actualTraceFile, CORE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
-        elseif (str_contains($actualTraceFile, BASE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
-        else
-          $compositeColoredPath = false;
-      } else
-        $compositeColoredPath = false;
-
-      $backtracesOutput .= CLI_TABLE . '| ' . END_COLOR .
-        str_pad(0 === $actualTraceIndex ? $errorCode : '', self::TYPE_WIDTH - 1) .
-        self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH) .
-        self::consoleLine($actualTrace, 'line', self::LINE_WIDTH) .
-          /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
-        self::consoleLine(
-          $actualTrace,
-          'file',
-          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-          $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
-          $actualTraceFile
-        ) .
-          /** ARGUMENTS */
-        CLI_TABLE . '|' . END_COLOR .
-        ' NOT IMPLEMENTED YET' .
-        PHP_EOL;
-
-      // echo $now['args']; after args has been converted
-    }
-
-    // End of the table
-    return $backtracesOutput . CLI_TABLE . '└' . str_repeat('─', self::TYPE_WIDTH)
-      . '┴' . str_repeat('─', self::FUNCTION_WIDTH)
-      . '┴' . str_repeat('─', self::LINE_WIDTH)
-      . '┴' . str_repeat('─', self::FILE_WIDTH)
-      . '┴' . str_repeat('─', self::ARGUMENTS_WIDTH) . END_COLOR . PHP_EOL;
   }
 
   /**
@@ -161,13 +87,83 @@ class OtraExceptionCli extends Exception
         ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
 
-    echo self::getBacktracesOutput($exception->backtraces, $exception->scode);
+    $exceptionBacktraces = $exception->backtraces;
 
+    // If there is a context, we add it
     if (!empty($exception->context))
+      array_push($exceptionBacktraces, ...$exception->context);
+
+    // Preparing table decorations
+    $tableEnd = $headersTop = $headersEnd = '';
+
+    foreach(self::TABLE_WIDTHS as $headerWidth)
     {
-      echo 'And the context...', PHP_EOL;
-      echo self::getBacktracesOutput($exception->context);
+      $headersTop .= self::TOP_INTERSECTION_SEPARATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
+      $headersEnd .= self::INTERSECTION_OPERATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
+      $tableEnd .= self::BOTTOM_INTERSECTION_SEPARATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
     }
+
+    unset($headerWidth);
+
+    /******************************
+     * Write HEADERS of the table *
+     ******************************/
+    $backtracesOutput = CLI_TABLE . '┌' . self::$typeHeaderSpaces . $headersTop . END_COLOR . PHP_EOL .
+      self::consoleHeaders() . PHP_EOL .
+      CLI_TABLE . '├' . self::$typeHeaderSpaces . $headersEnd . END_COLOR . END_COLOR . PHP_EOL;
+
+    /*******************************
+     * Write the BODY of the table *
+     *******************************/
+
+    unset($exceptionBacktraces[0]['args'][self::KEY_VARIABLES]);
+
+    for ($actualTraceIndex = 0, $maxTraceIndex = count($exceptionBacktraces);
+         $actualTraceIndex < $maxTraceIndex;
+         $actualTraceIndex++)
+    {
+      $actualTrace = $exceptionBacktraces[$actualTraceIndex];
+      $actualTraceFile = $actualTrace['file'] ?? '';
+
+      $compositeColoredPath = true;
+
+      if ($actualTraceFile !== '')
+      {
+        $actualTraceFile = str_replace('\\', DIR_SEPARATOR, $actualTraceFile);
+
+        if (str_contains($actualTraceFile, CONSOLE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
+        elseif (str_contains($actualTraceFile, CORE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
+        elseif (str_contains($actualTraceFile, BASE_PATH))
+          $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
+        else
+          $compositeColoredPath = false;
+      } else
+        $compositeColoredPath = false;
+
+      $backtracesOutput .= CLI_TABLE . '| ' . END_COLOR .
+        str_pad(0 === $actualTraceIndex ? $exception->scode : '', self::TYPE_WIDTH - 1) .
+        self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH) .
+        self::consoleLine($actualTrace, 'line', self::LINE_WIDTH) .
+        /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
+        self::consoleLine(
+          $actualTrace,
+          'file',
+          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
+          $actualTraceFile
+        ) .
+        /** ARGUMENTS */
+        CLI_TABLE . '|' . END_COLOR .
+        ' NOT IMPLEMENTED YET' .
+        PHP_EOL;
+
+      // echo $now['args']; after args has been converted
+    }
+
+    // End of the table
+    echo $backtracesOutput . CLI_TABLE . '└' . self::$typeHeaderSpaces . $tableEnd . END_COLOR . PHP_EOL;
   }
 
   /**
@@ -214,4 +210,3 @@ class OtraExceptionCli extends Exception
       );
   }
 }
-
