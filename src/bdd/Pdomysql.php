@@ -49,7 +49,8 @@ abstract class Pdomysql
   }
 
   /**
-   * Sends a SQL query !
+   * Sends an SQL query !
+   * @see http://php.net/manual/en/function.mysql-query.php
    *
    * @param string $query SQL query.
    *                      The query string should not end with a semicolon. Data inside the query should be properly
@@ -58,7 +59,6 @@ abstract class Pdomysql
    * @return PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
-   * @link http://php.net/manual/en/function.mysql-query.php
    */
   public static function query(string $query) : PDOStatement
   {
@@ -75,11 +75,11 @@ abstract class Pdomysql
 
   /**
    * Returns the results
+   * @see http://php.net/manual/en/function.mysql-fetch-assoc.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return mixed The next result
-   * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
   public static function fetchAssoc(PDOStatement $statement) : mixed
   {
@@ -88,12 +88,12 @@ abstract class Pdomysql
 
   /**
    * Fetch a result row as an associative array, a numeric array, or both
+   * @see http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement   The query statement
    * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
    * @return false|array The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchArray(PDOStatement $statement, int $fetch_style = PDO::FETCH_BOTH)
   {
@@ -102,11 +102,11 @@ abstract class Pdomysql
 
   /**
    * Returns the results
+   * @see http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return false|array The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchRow(PDOStatement $statement)
   {
@@ -115,11 +115,11 @@ abstract class Pdomysql
 
   /**
    * Returns the results as an object (simplified version of the existing one)
+   * @see http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return false|object The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchObject(PDOStatement $statement)
   {
@@ -193,6 +193,7 @@ abstract class Pdomysql
 
   /**
    * Free result memory
+   * @see https://www.php.net/manual/en/pdostatement.closeCursor
    *
    * @param PDOStatement $statement The query statement
    *
@@ -203,6 +204,7 @@ abstract class Pdomysql
 
   /**
    * Returns metadata for a column in a result set
+   * @see https://www.php.net/manual/en/pdostatement.getcolumnmeta.php
    *
    * @param PDOStatement $statement The query statement
    * @param int $column
@@ -238,7 +240,6 @@ abstract class Pdomysql
    *
    * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous
    *                query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
-   * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
   public static function lastInsertedId(string $sequenceName = null) : string
   {
@@ -246,6 +247,8 @@ abstract class Pdomysql
   }
 
   /**
+   * @see https://www.php.net/manual/en/pdo.quote.php
+   *
    * @param string $string
    *
    * @return string
@@ -256,14 +259,18 @@ abstract class Pdomysql
   }
 
   /**
- * @return bool
- */
+   * @see https://www.php.net/manual/en/pdo.begintransaction.php
+   *
+   * @return bool
+   */
   public static function beginTransaction() : bool
   {
     return Sql::$currentConn->beginTransaction();
   }
 
   /**
+   * @see https://www.php.net/manual/en/pdo.intransaction.php
+   *
    * @return bool
    */
   public static function inTransaction() : bool
@@ -272,6 +279,8 @@ abstract class Pdomysql
   }
 
   /**
+   * @see https://www.php.net/manual/en/pdo.commit
+   *
    * @return bool
    */
   public static function commit() : bool
@@ -280,6 +289,8 @@ abstract class Pdomysql
   }
 
   /**
+   * @see https://www.php.net/manual/en/pdo.rollback
+   *
    * @return bool
    */
   public static function rollBack() : bool
@@ -288,11 +299,24 @@ abstract class Pdomysql
   }
 
   /**
+   * @see https://www.php.net/manual/en/pdo.errorInfo
+   *
    * @return array
    */
   public static function errorInfo() : array
   {
     return Sql::$currentConn->errorInfo();
   }
-}
 
+  /**
+   * @see https://www.php.net/manual/en/pdo.prepare.php
+   * @param string $query
+   * @param array  $options
+   *
+   * @return \PDOStatement|false
+   */
+  public static function prepare(string $query, array $options = []) : \PDOStatement|false
+  {
+    return Sql::$currentConn->prepare($query, $options);
+  }
+}

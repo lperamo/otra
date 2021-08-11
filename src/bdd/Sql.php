@@ -426,5 +426,15 @@ class Sql
   {
     return call_user_func(self::$currentDBMS . '::errorInfo');
   }
-}
 
+  /**
+   * @param string $query
+   * @param array  $options
+   *
+   * @return \PDOStatement|false
+   */
+  public function prepare(string $query, array $options = []): \PDOStatement|false
+  {
+    return call_user_func(self::$currentDBMS . '::prepare', $query, $options);
+  }
+}
