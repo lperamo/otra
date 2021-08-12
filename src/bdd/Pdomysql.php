@@ -33,7 +33,7 @@ abstract class Pdomysql
   {
     try
     {
-      $conn = new PDO($dsn, $username, $password);
+      $connection = new PDO($dsn, $username, $password);
     }catch(PDOException $exception)
     {
       throw new OtraException(
@@ -45,7 +45,7 @@ abstract class Pdomysql
       );
     }
 
-    return $conn;
+    return $connection;
   }
 
   /**

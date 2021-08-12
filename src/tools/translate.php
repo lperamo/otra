@@ -9,7 +9,7 @@ namespace otra\tools;
 if (!function_exists('otra\tools\t'))
 {
   // Will be the future translation feature
-  function t(string $text): string
+  function trans(string $text): string
   {
     return $text;
   }
@@ -38,4 +38,3 @@ if (!function_exists('otra\tools\t'))
     return array_filter($languages, $filterLangs)[0] ?: 'en';
   }
 }
-

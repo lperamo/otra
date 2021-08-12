@@ -20,9 +20,10 @@ const OTRA_FILENAME_TRACE = 'trace';
  */
 trait DevControllerTrait
 {
+  // Those two static variables are constants in fact, but we have to maintain the naming norm
   private static int
-    $STYLESHEET_FILE = 0,
-    $STYLESHEET_PRINT = 1;
+    $stylesheetFile = 0,
+    $printStylesheet = 1;
   private static bool $debugBarHasBeenAdded = false;
 
   /**
@@ -45,7 +46,7 @@ trait DevControllerTrait
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
    * @param bool        $ajax      Is this an ajax partial ?
-   * @param bool|string $viewPath  If true, we adds the usual view path before the $file variable.
+   * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
    *
    * @throws OtraException
    * @throws Exception
@@ -169,7 +170,7 @@ trait DevControllerTrait
     $resourceContent = '';
     $chunks = $route['chunks'];
 
-    // Bundle and module informations do not exist on exceptions
+    // Bundle and module information do not exist on exceptions
     if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
       $chunks[Routes::ROUTES_CHUNKS_BUNDLE] = $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
 
@@ -195,7 +196,7 @@ trait DevControllerTrait
       'core_' . $assetType => $debLink . ($assetType === 'css' ? CORE_CSS_PATH : CORE_JS_PATH)
     ];
 
-    // For each kind of asset file, we will looks for them in their respective folders
+    // For each kind of asset file, we will look for them in their respective folders
     foreach ($resourcesType as $resourceType => $resourceTypeInfo)
     {
       if (isset($resources[$resourceType]))
@@ -263,8 +264,8 @@ trait DevControllerTrait
     foreach(self::$stylesheets as $stylesheet)
     {
       $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
-        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$STYLESHEET_FILE] .
-        '.css" media="' . (!(isset($stylesheet[self::$STYLESHEET_PRINT]) && $stylesheet[self::$STYLESHEET_PRINT])
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
+        '.css" media="' . (!(isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet])
         ? 'screen'
         : 'print')
         . '"/>';
@@ -293,7 +294,7 @@ trait DevControllerTrait
   }
 
   /**
-   * Uses calculations in order to put scripts in correct order that has been specified in the routes configuration file
+   * Uses calculations in order to put scripts in correct order that has been specified in the routes' configuration file
    *
    * @param string[] $unorderedArray Unordered array of files
    * @param string[] $orderedArray   Ordered array of files

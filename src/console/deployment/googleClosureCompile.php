@@ -45,7 +45,7 @@ function googleClosureCompile(
     'ES2018' => 'ECMASCRIPT_2018',
     'ES2019' => 'ECMASCRIPT_2019',
     'ES2020' => 'ECMASCRIPT_2020',
-    'ESNext' => 'ECMASCRIPT_NEXT',
+    // 'ESNext' => 'ECMASCRIPT_NEXT',
     default  => 'ECMASCRIPT_NEXT'
   };
 
