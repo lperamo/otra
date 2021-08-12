@@ -52,7 +52,7 @@ foreach ($distFiles as $distFile)
     copy($distFile, $destinationFilePath);
 }
 
-// We need a routes configuration file even empty.
+// We need a routes' configuration file even empty.
 const OTRA_BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/';
 
 if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
@@ -118,7 +118,7 @@ foreach (OTRA_LOG_FILES_PATH as $logFile)
   if (!file_exists($logFile))
     touch($logFile);
 
-  // Force the rights mode in order to be sure to be able to overwrite the file.
+  // Force the rights' mode in order to be sure to be able to overwrite the file.
   chmod($logFile, 0666);
 }
 
