@@ -208,10 +208,20 @@ $content = handlesHTTPSRedirection() .
   AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
   ' localhost;' . PHP_EOL .
   PHP_EOL .
+  SPACE_INDENT . 'if ($uri ~ "^/$")' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'set $invalid_referer "";' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'if ($uri ~ "^/(robots.txt|sitemap.xml)$")' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'set $invalid_referer "";' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
   SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
-  OPENING_BRACKET .
-  SPACE_INDENT_2 . OTRA_LABEL_RETURN_403 . PHP_EOL .
-  ENDING_BRACKET .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'return 403;' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Forces static compression (for already gzipped files)' . PHP_EOL .
   SPACE_INDENT . 'gzip off;' . PHP_EOL .
