@@ -34,7 +34,7 @@ class CreateBundleHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Creates a bundle.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      self::LABEL_PLUS . str_pad('bundle name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('bundle-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . 'The name of the bundle!' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .

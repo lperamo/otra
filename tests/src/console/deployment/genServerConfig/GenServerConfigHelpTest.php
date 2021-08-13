@@ -35,15 +35,15 @@ class GenServerConfigHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Generates a server configuration adapted to OTRA.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      self::LABEL_PLUS . str_pad('file name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('filename', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'Name of the file to put the generated configuration' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      self::LABEL_PLUS . str_pad('environment', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('env', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . CLI_INFO_HIGHLIGHT . DEV . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . PROD . PHP_EOL .
+      ') ' . CLI_INFO . 'Target environment : ' . CLI_INFO_HIGHLIGHT . DEV . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . PROD . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      self::LABEL_PLUS . str_pad('serverTechnology', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('tech', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . CLI_INFO_HIGHLIGHT . 'nginx' . CLI_INFO . ' (default) or ' . CLI_INFO_HIGHLIGHT . 'apache' .
       CLI_WARNING . ' (but works only for Nginx for now)' . PHP_EOL .

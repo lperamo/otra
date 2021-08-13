@@ -18,6 +18,7 @@ abstract class TasksManager
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
     TASK_DESCRIPTION = 0,
+    TASK_NAME = 1,
     TASK_PARAMETERS = 1,
     TASK_STATUS = 2,
     TASK_CATEGORY = 3,
@@ -72,6 +73,7 @@ abstract class TasksManager
    */
   public static function execute(array $tasksClassMap, string $task, array $argv) : void
   {
+    // If the class map does not exist yet, we create it and load it
     if (!file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
     {
       echo CLI_WARNING,
@@ -82,9 +84,10 @@ abstract class TasksManager
       // If the task was genClassMap...then we have nothing left to do !
       if ($task === 'genClassMap')
         throw new OtraException('', 0, '', NULL, [], true);
+
+      require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
     }
 
-    require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
   }
 }

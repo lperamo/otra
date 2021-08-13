@@ -10,7 +10,7 @@ namespace otra\services;
 
 use otra\OtraException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
-use function otra\tools\{rawSqlPrettyPrint,t};
+use function otra\tools\{rawSqlPrettyPrint, trans};
 
 /**
  * @package otra\services
@@ -37,7 +37,7 @@ class ProfilerService
   public static function getLogs(string $file) : false|string
   {
     if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
-      return t('No stored queries in ') . $file . '.';
+      return trans('No stored queries in ') . $file . '.';
 
     /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
@@ -54,13 +54,13 @@ class ProfilerService
       ?>
       <div class="profiler--sql-logs--element">
         <div class="profiler--sql-logs--element--left-block">
-          <?= t('In file') . ' <span class="profiler--sql-logs--element--file">', substr($request['file'],
+          <?= trans('In file') . ' <span class="profiler--sql-logs--element--file">', substr($request['file'],
             $basePathLength), '</span> '
-            . t('at line') . '&nbsp;<span class="profiler--sql-logs--element--line">', $request['line'],
+            . trans('at line') . '&nbsp;<span class="profiler--sql-logs--element--line">', $request['line'],
           '</span>&nbsp;:',
           rawSqlPrettyPrint($request['query']) ?>
         </div>
-        <button class="profiler--sql-logs--element--ripple ripple"><?= t('Copy') ?></button>
+        <button class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
       </div>
       <?php
     }
