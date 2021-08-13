@@ -5,7 +5,7 @@ namespace otra\controllers\profiler;
 
 use otra\{Controller, OtraException, services\ProfilerService};
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
-use function otra\tools\t;
+use function otra\tools\trans;
 
 /**
  * Class ClearSQLLogsAction
@@ -31,7 +31,6 @@ class ClearSQLLogsAction extends Controller
     fclose($handle);
 
     require CORE_PATH . 'tools/translate.php';
-    echo t('No more stored queries in '), $sqlLogFile, '.';
+    echo trans('No more stored queries in '), $sqlLogFile, '.';
   }
 }
-

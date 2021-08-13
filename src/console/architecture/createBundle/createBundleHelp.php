@@ -19,7 +19,7 @@ $showMaskOption = static function (string $text) : string
 return [
   'Creates a bundle.',
   [
-    'bundle name' => 'The name of the bundle!',
+    'bundle-name' => 'The name of the bundle!',
     'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
       $showMaskOption('0 => nothing (default)') . PHP_EOL .
       $showMaskOption('1 => config') . PHP_EOL .

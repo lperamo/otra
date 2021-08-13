@@ -31,7 +31,7 @@ class SqlImportSchemaHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Creates the database schema from your database. (importSchema)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      '   + ' . str_pad('database-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . 'The database name ! If not specified, we use the database specified in the configuration file.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .

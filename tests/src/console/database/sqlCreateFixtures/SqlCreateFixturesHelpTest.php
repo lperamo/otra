@@ -32,7 +32,7 @@ class SqlCreateFixturesHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Generates fixtures sql files and executes them. (sql_generate_fixtures)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      '   + ' . str_pad('database-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'The database name !' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .

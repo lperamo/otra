@@ -10,10 +10,9 @@ namespace otra\config
 namespace otra\bin
 {
   use otra\{console\TasksManager, OtraException};
-  use function otra\console\guessWords;
-  use function otra\console\promptUser;
+  use function otra\console\{guessWords, launchTask, launchTaskPosixWay, promptUser};
   use const otra\cache\php\init\CLASSMAP;
-  use const otra\cache\php\{APP_ENV, CACHE_PATH, CONSOLE_PATH, CORE_PATH, OTRA_PROJECT, DIR_SEPARATOR, PROD};
+  use const otra\cache\php\{APP_ENV, CACHE_PATH, CONSOLE_PATH, CORE_PATH, OTRA_PROJECT, PROD};
   use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
 
   require __DIR__ . (OTRA_PROJECT
@@ -41,56 +40,11 @@ namespace otra\bin
       END_COLOR, PHP_EOL;
   }
 
-  /**
-   * Launch a task if there is a description for it and if the parameters are correctly set.
-   *
-   * @param array $tasksClassMap
-   * @param array $arguments
-   * @param int   $argumentsCount
-   *
-   * @throws OtraException
-   */
-  function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount): void
-  {
-    $taskName = $arguments[TasksManager::TASK_PARAMETERS];
-    $paramsDesc = require $tasksClassMap[$taskName][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $taskName .
-      'Help.php';
+  // If the class map already exists, we load it right away to better handle errors
+  if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
+    require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
 
-    // We test if the number of parameters is correct
-    $total = $required = 0;
-
-    if (isset($paramsDesc[2]))
-    {
-      $result = array_count_values($paramsDesc[2]);
-
-      // Retrieves the number of required parameters
-      if (isset($result['required']))
-        $required = $result['required'];
-
-      // Retrieves the number of required parameters and then the final total of parameters
-      $total = $required + ($result['optional'] ?? 0);
-    }
-
-    if ($argumentsCount > $total + 2)
-    {
-      echo CLI_ERROR . 'There are too much parameters ! The total number of existing parameters is : ' . $total
-        . END_COLOR . PHP_EOL . PHP_EOL;
-      TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-      throw new OtraException('', 1, '', null, [], true);
-    }
-
-    if ($argumentsCount < $required + 2)
-    {
-      echo CLI_ERROR . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
-        . PHP_EOL . PHP_EOL;
-      TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-      throw new OtraException('', 1, '', null, [], true);
-    }
-
-    // And we runs the task if all is correct
-    TasksManager::execute($tasksClassMap, $arguments[1], $arguments);
-  }
-
+  // Error handling
   ini_set('display_errors', '1');
   error_reporting(E_ALL & ~E_DEPRECATED);
   require CORE_PATH . 'OtraException.php';
@@ -107,34 +61,51 @@ namespace otra\bin
     throw new OtraException('', 1, '', null, [], true);
   }
 
+  $arguments = $argv;
+
   $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
+  if ($arguments[TasksManager::TASK_NAME][0] === '-')
+  {
+    define(__NAMESPACE__ . '\\POSIX_MODE', true);
+    $taskName = getopt('t:')['t'];
+    $launchArgs = [$tasksClassMap, $arguments, $taskName];
+  } else
+  {
+    define(__NAMESPACE__ . '\\POSIX_MODE', false);
+    $taskName = $arguments[TasksManager::TASK_NAME];
+    $launchArgs = [$tasksClassMap, $arguments, $argc, $taskName];
+  }
+
+  $launchCallback = POSIX_MODE ? 'launchTaskPosixWay' : 'launchTask';
+  require CONSOLE_PATH . $launchCallback . '.php';
+  $launchCallback = 'otra\\console\\' . $launchCallback;
+
   // if the command exists, runs it
-  if (isset($tasksClassMap[$argv[TasksManager::TASK_PARAMETERS]]))
-    launchTask($tasksClassMap, $argv, $argc);
+  if (isset($tasksClassMap[$taskName]))
+    $launchCallback(...$launchArgs);
   else // otherwise we'll try to guess if it looks like an existing one
   {
-    $methods = array_keys($tasksClassMap);
+     $tasks = array_keys($tasksClassMap);
 
     require CONSOLE_PATH . 'tools.php';
-    $method = $argv[TasksManager::TASK_PARAMETERS];
-    [$newTask] = guessWords($method, $methods);
+    [$newTask] = guessWords($taskName,  $tasks);
 
     // If there are no existing task with a close name ...
     if (null === $newTask)
     {
-      echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $method, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
+      echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $taskName, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
       throw new OtraException('', 1, '', null, [], true);
     }
 
     // Otherwise, we suggest the closest name that we have found.
-    $choice = promptUser('> There is no task named ' . CLI_BASE . $method . CLI_WARNING .
+    $choice = promptUser('> There is no task named ' . CLI_BASE . $taskName . CLI_WARNING .
       ' ! Do you mean ' . CLI_BASE . $newTask . CLI_WARNING . ' ? (y/n)');
 
     if ('y' === $choice)
     {
-      $argv[1] = $newTask;
-      launchTask($tasksClassMap, $argv, $argc);
+      $arguments[TasksManager::TASK_NAME] = $newTask;
+      $launchCallback($tasksClassMap, $arguments, $argc, $taskName);
     } else
       TasksManager::showCommands('This command does not exist. ');
   }
