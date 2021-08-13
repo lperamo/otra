@@ -45,13 +45,13 @@ function createAction(string $bundleName, string $moduleName, string $controller
     if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
 
     if ($actionName === 'n')
-      throw new OtraException('', 0, '', NULL, [], true);
+      throw new OtraException(exit: true);
 
     $upperActionName = ucfirst($actionName);
     $actionPath = $controllerPath . $upperActionName . 'Action.php';

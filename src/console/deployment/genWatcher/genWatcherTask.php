@@ -68,7 +68,7 @@ if (NO_SASS_CACHE !== 0 && NO_SASS_CACHE !== 1)
 {
   echo CLI_ERROR, 'The argument ', CLI_INFO_HIGHLIGHT, 'no SASS cache', CLI_ERROR, ' must be ', CLI_INFO_HIGHLIGHT, 0,
     CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 1, CLI_ERROR, '.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 if (GEN_WATCHER_VERBOSE > 1)

@@ -39,8 +39,7 @@ if (true === $modelExists || false === $tableExists)
   preparingErrorMessage($modelExists, $tableExists, $bundleName, $errorLabel);
 
   echo CLI_ERROR, $errorLabel, END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-

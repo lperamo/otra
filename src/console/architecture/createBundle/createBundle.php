@@ -46,7 +46,7 @@ function bundleHandling(
         ' does not exist.'),
       END_COLOR, PHP_EOL;
 
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   while (file_exists(BUNDLES_PATH . $bundleName))
@@ -62,7 +62,7 @@ function bundleHandling(
     $bundleName = promptUser($errorMessage . ' Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
-      throw new OtraException('', 0, '', null, [], true);
+      throw new OtraException(exit: true);
 
     $bundleName = ucfirst($bundleName);
 
@@ -112,4 +112,3 @@ function bundleHandling(
     }
   }
 }
-

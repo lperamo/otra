@@ -293,7 +293,7 @@ if (file_put_contents($fileName, $content) === false)
 {
   echo CLI_ERROR . 'There was a problem when saving the Nginx configuration in the file ' . CLI_INFO_HIGHLIGHT .
     $fileName . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $dotPosition = mb_strrpos($fileName, '.');
@@ -315,7 +315,7 @@ if (file_put_contents(
 {
   echo CLI_ERROR . 'There was a problem when saving the Nginx cache configuration in the file ' . CLI_INFO_HIGHLIGHT .
     $cacheHandlingFilename . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 echo CLI_BASE . 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'development' : 'production') .

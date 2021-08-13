@@ -195,7 +195,7 @@ function contentToFile(string $content, string $outputFile) : void
   {
     echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . mb_substr($tempFile, BASE_PATH_LENGTH) . '!]',
       END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   $smallOutputFile = mb_substr($outputFile, BASE_PATH_LENGTH);
@@ -207,7 +207,7 @@ function contentToFile(string $content, string $outputFile) : void
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($outputFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_ERROR, '[NAMESPACES ERRORS in ' . $smallOutputFile . '!]', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   echo CLI_SUCCESS, '[NAMESPACES]', END_COLOR, PHP_EOL;
@@ -216,7 +216,7 @@ function contentToFile(string $content, string $outputFile) : void
   {
     echo CLI_ERROR, 'There has been an error during removal of the file ', CLI_INFO, $tempFile, CLI_ERROR,
     '. Task aborted.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -516,7 +516,7 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
         echo CLI_ERROR, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_WARNING,
         '$', $pathVariable[0], CLI_ERROR, ' in ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' in the file ', CLI_WARNING,
         $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
-        throw new OtraException('', 1, '', null, [], true);
+        throw new OtraException(code: 1, exit: true);
       }
 
       // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
@@ -895,7 +895,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
           echo PHP_EOL, CLI_ERROR, 'There is a problem with ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' => ',
             CLI_WARNING, $tempFile, CLI_ERROR, ' in ', CLI_WARNING, $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL,
             PHP_EOL;
-          throw new OtraException('', 1, '', null, [], true);
+          throw new OtraException(code: 1, exit: true);
         }
 
         if (in_array($tempFile, $parsedFiles, true))
@@ -966,7 +966,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
 //                CLI_WARNING,
 //              $filename,
 //              CLI_ERROR, '. ', PHP_EOL, 'Please fix this and try again.', PHP_EOL, END_COLOR;
-//              throw new OtraException('', 1, '', NULL, [], true);
+//              throw new OtraException(code: 1, exit: true);
 //            }
 //          }
 //        }

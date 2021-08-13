@@ -44,7 +44,7 @@ const DEPLOY_ARG_MASK = 2,
 if (!isset(AllConfig::$deployment))
 {
   echo CLI_ERROR . 'You have not defined deployment configuration.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $deploymentParameters = ['server', 'port', 'folder', 'privateSshKey', 'gcc'];
@@ -54,7 +54,7 @@ foreach($deploymentParameters as $deploymentParameter)
   if (!isset(AllConfig::$deployment[$deploymentParameter]))
   {
     echo CLI_ERROR . 'You have not defined the ' . $deploymentParameter . ' in deployment configuration.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -65,7 +65,7 @@ $mainBundlesFolder = BASE_PATH . 'bundles';
 if (!file_exists($mainBundlesFolder))
 {
   echo CLI_ERROR . 'You do not have any bundles yet to deploy!', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;

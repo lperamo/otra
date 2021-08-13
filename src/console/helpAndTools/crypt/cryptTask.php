@@ -19,7 +19,7 @@ define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null
 if (!is_numeric(CRYPT_ITERATIONS))
 {
   echo 'Iterations parameter must be numeric!', PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $securitySalt = openssl_random_pseudo_bytes(16);

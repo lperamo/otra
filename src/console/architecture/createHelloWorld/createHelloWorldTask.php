@@ -38,7 +38,7 @@ namespace otra\console\architecture\createHelloWorld
   if (file_exists(BUNDLES_PATH . 'HelloWorld'))
   {
     echo CLI_WARNING, 'The bundle ', CLI_INFO, 'HelloWorld', CLI_WARNING, ' already exists.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   const ARG_ACTION_NAME = 5;

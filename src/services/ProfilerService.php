@@ -25,7 +25,7 @@ class ProfilerService
     if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
   }
 

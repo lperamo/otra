@@ -52,7 +52,7 @@ class OtraException extends Exception
    * @param string     $file
    * @param ?int       $line
    * @param array|null $context
-   * @param bool       $isOtraCliWarning True only if we came from a console task that wants to do an exit.
+   * @param bool       $exit    True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
    */
@@ -63,13 +63,14 @@ class OtraException extends Exception
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
-    private bool $isOtraCliWarning = false)
+    private bool $exit = false
+  )
   {
     parent::__construct();
     $this->code = (null !== $code) ? $code : $this->getCode();
 
     // When $otraCliWarning is true then we only need the error code that will be used as exit code
-    if ($isOtraCliWarning)
+    if ($exit)
       return;
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
@@ -112,7 +113,7 @@ class OtraException extends Exception
       {
         echo CLI_ERROR . 'Error in ' . CLI_INFO_HIGHLIGHT . $this->file . CLI_ERROR . ':' . CLI_INFO_HIGHLIGHT .
           $this->line . CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
-        throw new OtraException('', 1, '', NULL, [], true);
+        throw new OtraException(code: 1, exit: true);
       } else
         return '<span style="color: #e00;">Error in </span><span style="color: #0aa;">' . $this->file .
           '</span>:<span style="color: #0aa;">' . $this->line . '</span><span style="color: #e00;"> : ' . $this->message .
@@ -146,7 +147,7 @@ class OtraException extends Exception
       } else
         echo 'A major problem has occurred. Sorry for the inconvenience. Please contact the site administrator.';
 
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     return $renderController->renderView(
@@ -215,7 +216,7 @@ class OtraException extends Exception
         $exception->getFile(),
         $exception->getLine(),
         $exception->getTrace(),
-        $exception->isOtraCliWarning ?? false
+        $exception->exit ?? false
       );
     }
 

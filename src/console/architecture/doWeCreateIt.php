@@ -34,7 +34,7 @@ if (!function_exists('otra\console\architecture\doWeCreateIt'))
     {
       echo CLI_ERROR, 'The ' . $folderType . ' ', CLI_INFO_HIGHLIGHT, $folderPath, CLI_ERROR, ' does not exist.',
         END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     } else
       return;
 
@@ -49,6 +49,6 @@ if (!function_exists('otra\console\architecture\doWeCreateIt'))
     }
 
     if ($answer === 'n')
-      throw new OtraException('', 0, '', null, [], true);
+      throw new OtraException(exit: true);
   }
 }

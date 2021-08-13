@@ -89,7 +89,7 @@ namespace otra\console\architecture\createModel
     {
       echo CLI_ERROR, 'The YAML schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
         DIR_SEPARATOR . YML_SCHEMA_PATH, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     if (!defined(__NAMESPACE__ . '\\SCHEMA_DATA'))
@@ -102,7 +102,7 @@ namespace otra\console\architecture\createModel
     {
       echo CLI_ERROR, 'The schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
       YML_SCHEMA_PATH, CLI_ERROR, ' is empty !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     require CREATE_MODEL_FOLDER .

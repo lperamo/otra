@@ -51,7 +51,7 @@ function launchTaskPosixWay(array $tasksClassMap, array $arguments, string $task
     {
       echo CLI_ERROR . 'The parameter ' . CLI_INFO_HIGHLIGHT . $parameter . CLI_ERROR . ' is required!' .
         END_COLOR . PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     // @codeCoverageIgnoreStart

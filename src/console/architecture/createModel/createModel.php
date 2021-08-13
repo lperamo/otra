@@ -29,7 +29,7 @@ function checkDataType(string $modelName, string $columnName, ?string $type) : v
   {
     echo CLI_ERROR, 'SCHEMA.YML => Model ', CLI_WARNING, $modelName, CLI_ERROR, ' : There are no type for the property ',
       CLI_WARNING, $columnName, CLI_ERROR, '.', END_COLOR;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -63,7 +63,7 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
   // If we don't know this type !
   echo CLI_ERROR, 'We don\'t know the type ', CLI_WARNING, $type, CLI_ERROR, ' in ', CLI_WARNING, $modelName, CLI_ERROR,
     ' for the property ', CLI_WARNING, $columnName, CLI_ERROR, ' !', END_COLOR;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 /**

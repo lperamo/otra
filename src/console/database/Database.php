@@ -138,7 +138,7 @@ abstract class Database
     {
       echo CLI_ERROR, 'The folder ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, self::$folder, CLI_ERROR,
         ' does not exist.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $folderHandler = opendir($folder);
@@ -418,7 +418,7 @@ abstract class Database
         } catch(ParseException $parseException)
         {
           echo CLI_ERROR, $parseException->getMessage(), END_COLOR, PHP_EOL;
-          throw new OtraException('', 1, '', NULL, [], true);
+          throw new OtraException(code: 1, exit: true);
         }
 
         foreach ($fixturesRows as $otherTable => $otherTableData)

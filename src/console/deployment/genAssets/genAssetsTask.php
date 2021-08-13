@@ -31,7 +31,7 @@ use function otra\tools\gzCompressFile;
 if (!file_exists(BUNDLES_PATH))
 {
   echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 require_once BASE_PATH . 'config/AllConfig.php';
@@ -79,7 +79,7 @@ if (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argv[GEN_ASSETS_ARG
 {
   echo CLI_ERROR, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
     '.', END_COLOR;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 define(
@@ -109,7 +109,7 @@ if (
     if (!isset($routes[$theRoute]))
     {
       echo PHP_EOL, CLI_WARNING, 'This route does not exist !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     echo 'Cleaning the resources cache...';

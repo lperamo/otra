@@ -15,7 +15,7 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CL
 if (!file_exists(BUNDLES_PATH))
 {
   echo CLI_ERROR, 'There is no bundles to update.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 const

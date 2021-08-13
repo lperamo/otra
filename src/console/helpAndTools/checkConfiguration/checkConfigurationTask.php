@@ -19,7 +19,7 @@ use const otra\console\
 if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
 {
   echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 const

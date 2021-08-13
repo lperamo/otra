@@ -36,7 +36,7 @@ $checkParameter = function (
   echo $exit ? CLI_ERROR : CLI_WARNING, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 
   if ($exit)
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
 
   return $defaultValue;
 };
@@ -61,7 +61,7 @@ define(
 if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
   echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist !', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $modelName = $checkParameter(

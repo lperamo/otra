@@ -20,7 +20,7 @@ use const otra\bin\CACHE_PHP_INIT_PATH;
 if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
 {
   echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 // If we come from the deploy task, those two constants are already defined
@@ -56,7 +56,7 @@ if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName'
 {
   echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
   ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 require BASE_PATH . 'config/Routes.php';
@@ -88,7 +88,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
     if ('n' === $choice)
     {
       echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $route = $newRoute;

@@ -131,7 +131,7 @@ function unlinkFile(string $file, string $fileShownInTheError) : void
   {
     echo CLI_ERROR, 'There has been an error during removal of the file ', CLI_INFO, $fileShownInTheError, CLI_ERROR,
       '. Task aborted.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -147,7 +147,7 @@ function checkFolder(string $folder, string $folderShownInTheError) : void
   {
     echo CLI_WARNING, 'The folder ', CLI_INFO, $folderShownInTheError, CLI_WARNING, ' does not exist. Task aborted.',
       END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 

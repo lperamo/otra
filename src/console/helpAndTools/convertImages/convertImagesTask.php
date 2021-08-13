@@ -20,7 +20,7 @@ define(
 if (QUALITY < 0 || QUALITY > 100)
 {
   echo CLI_ERROR, 'The quality must be between 0 and 100.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 const

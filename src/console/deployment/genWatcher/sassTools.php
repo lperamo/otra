@@ -189,7 +189,7 @@ function saveSassTree(array $sassTree) : void
   else
   {
     echo CLI_ERROR, 'Something went wrong when saving the tree.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 

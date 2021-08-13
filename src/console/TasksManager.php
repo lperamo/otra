@@ -83,7 +83,7 @@ abstract class TasksManager
 
       // If the task was genClassMap...then we have nothing left to do !
       if ($task === 'genClassMap')
-        throw new OtraException('', 0, '', NULL, [], true);
+        throw new OtraException(exit: true);
 
       require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
     }

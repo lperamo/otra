@@ -21,7 +21,7 @@ if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 {
   echo CLI_ERROR, 'Either you do not have any routes or you have to update your configuration with ', CLI_INFO_HIGHLIGHT,
     'otra updateConf', CLI_ERROR, '.', PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 require BASE_PATH . 'config/Routes.php';
@@ -64,7 +64,7 @@ $maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argv);
 if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
 {
   echo CLI_ERROR, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
@@ -171,7 +171,7 @@ function getPathInformations(string $fullName) : array
     {
       echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
         'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
 
     }
 

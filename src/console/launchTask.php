@@ -41,7 +41,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount,
     echo CLI_ERROR . 'There are too much parameters ! The total number of existing parameters is : ' . $total
       . END_COLOR . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   if ($argumentsCount < $required + 2)
@@ -49,7 +49,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount,
     echo CLI_ERROR . 'Not enough parameters ! The total number of required parameters is : ' . $required . END_COLOR
       . PHP_EOL . PHP_EOL;
     TasksManager::execute($tasksClassMap, 'help', [$_SERVER['SCRIPT_FILENAME'], 'help', $arguments[1]]);
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   // And we runs the task if all is correct

@@ -43,7 +43,7 @@ if (!function_exists('otra\console\architecture\createFolder'))
       if (!$interactive && !$consoleForce)
       {
         echo $sentence, END_COLOR, PHP_EOL;
-        throw new OtraException('', 1, '', null, [], true);
+        throw new OtraException(code: 1, exit: true);
       }
 
       if ($consoleForce)
@@ -52,7 +52,7 @@ if (!function_exists('otra\console\architecture\createFolder'))
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 
       if ($folderName === 'n')
-        throw new OtraException('', 0, '', null, [], true);
+        throw new OtraException(exit: true);
 
       $absoluteFolderPath = $relativeFolderPath . $folderName;
 
@@ -64,4 +64,3 @@ if (!function_exists('otra\console\architecture\createFolder'))
       mkdir($absoluteFolderPath, 0755);
   }
 }
-

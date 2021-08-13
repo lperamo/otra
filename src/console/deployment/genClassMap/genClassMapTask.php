@@ -133,7 +133,7 @@ if (!empty($folders) && !function_exists(__NAMESPACE__ . '\\iterateCM'))
     closedir($folderHandler);
 
     echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   /**

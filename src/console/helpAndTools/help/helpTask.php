@@ -27,7 +27,7 @@ if (!isset($tasksClassMap[$consoleTask]))
   if (null === $newTask)
   {
     echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $consoleTask, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   // Otherwise, we suggest the closest name that we have found.
@@ -39,7 +39,7 @@ if (!isset($tasksClassMap[$consoleTask]))
   else
   {
     echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -65,4 +65,3 @@ if (isset($paramsDesc[TasksManager::TASK_PARAMETERS]))
 }
 
 echo END_COLOR;
-

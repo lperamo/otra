@@ -17,7 +17,7 @@ use function otra\console\{guessWords,promptUser};
 if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 {
   echo CLI_WARNING, 'No custom routes are defined.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 /** Task that show all or one of the routes available for the application.
  * It shows for each related route :
@@ -107,7 +107,7 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
     if ('n' === $choice)
     {
       echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $route = $newRoute;
@@ -186,5 +186,3 @@ foreach($routes as $route => $details)
 
   ++$indexLines;
 }
-
-

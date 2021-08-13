@@ -32,7 +32,7 @@ namespace otra\console\architecture\createBundle
     echo CLI_ERROR, 'There is no ', CLI_INFO_HIGHLIGHT, 'bundles', CLI_ERROR,
       ' folder to put bundles! Please create this folder or launch ', CLI_INFO_HIGHLIGHT, 'otra init', CLI_ERROR,
       ' to solve it.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   require CONSOLE_PATH . 'tools.php';
@@ -64,4 +64,3 @@ namespace otra\console\architecture\createBundle
     true
   );
 }
-

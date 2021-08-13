@@ -58,7 +58,7 @@ namespace otra\bin
   if ($argc < 2)
   {
     TasksManager::showCommands('No specified commands ! We then show the available commands ... ');
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   $arguments = $argv;
@@ -95,7 +95,7 @@ namespace otra\bin
     if (null === $newTask)
     {
       echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $taskName, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     // Otherwise, we suggest the closest name that we have found.
