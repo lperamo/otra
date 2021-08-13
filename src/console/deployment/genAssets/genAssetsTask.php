@@ -252,7 +252,7 @@ if (
       else
       {
         // Generates the gzipped template files
-        passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genAssets/genAsset.php" "' .
+        passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genAssets/genTemplate.php" "' .
           CACHE_PATH . '" "' .
           $routeName . '" ' .
           $shaName . ' "' .
