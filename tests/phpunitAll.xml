@@ -47,7 +47,9 @@
       <directory>./src/console/helpAndTools</directory>
     </testsuite>
     <testsuite name="Console tools">
-      <directory>./src/console/ToolsTest.php</directory>
+      <file>./src/console/LaunchTaskTest.php</file>
+      <file>./src/console/LaunchTaskPosixWayTest.php</file>
+      <file>./src/console/ToolsTest.php</file>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>

@@ -63,24 +63,27 @@ namespace otra\bin
 
   $arguments = $argv;
 
+  $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
+
   if ($arguments[TasksManager::TASK_NAME][0] === '-')
   {
     define(__NAMESPACE__ . '\\POSIX_MODE', true);
     $taskName = getopt('t:')['t'];
+    $launchArgs = [$tasksClassMap, $arguments, $taskName];
   } else
   {
     define(__NAMESPACE__ . '\\POSIX_MODE', false);
     $taskName = $arguments[TasksManager::TASK_NAME];
+    $launchArgs = [$tasksClassMap, $arguments, $argc, $taskName];
   }
 
   $launchCallback = POSIX_MODE ? 'launchTaskPosixWay' : 'launchTask';
   require CONSOLE_PATH . $launchCallback . '.php';
   $launchCallback = 'otra\\console\\' . $launchCallback;
-  $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
   // if the command exists, runs it
   if (isset($tasksClassMap[$taskName]))
-    $launchCallback($tasksClassMap, $arguments, $argc, $taskName);
+    $launchCallback(...$launchArgs);
   else // otherwise we'll try to guess if it looks like an existing one
   {
      $tasks = array_keys($tasksClassMap);

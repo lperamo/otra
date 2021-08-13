@@ -9,12 +9,11 @@ use const otra\cache\php\DIR_SEPARATOR;
 /**
  * @param array  $tasksClassMap
  * @param array  $arguments
- * @param int    $argumentsCount
  * @param string $taskName
  *
  * @throws OtraException
  */
-function launchTaskPosixWay(array $tasksClassMap, array $arguments, int $argumentsCount, string $taskName) : void
+function launchTaskPosixWay(array $tasksClassMap, array $arguments, string $taskName) : void
 {
   $paramsDesc = require $tasksClassMap[$taskName][TasksManager::TASK_CLASS_MAP_TASK_PATH] .
     DIR_SEPARATOR . $taskName . 'Help.php';
@@ -55,8 +54,10 @@ function launchTaskPosixWay(array $tasksClassMap, array $arguments, int $argumen
       throw new OtraException('', 1, '', null, [], true);
     }
 
-    $arguments[]= $getoptArguments[$parameter];
+    // @codeCoverageIgnoreStart
+    $arguments[]= $getoptArguments[$parameter]; // @code
   }
+
 
   foreach ($optionalParams as $parameter)
   {
@@ -68,4 +69,5 @@ function launchTaskPosixWay(array $tasksClassMap, array $arguments, int $argumen
 
   // And we runs the task if all is correct
   TasksManager::execute($tasksClassMap, $taskName, $arguments);
+  // @codeCoverageIgnoreEnd
 }
