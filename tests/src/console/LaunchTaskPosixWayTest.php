@@ -6,9 +6,9 @@ namespace src\console;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{CONSOLE_PATH, DEV};
 use const otra\console\{ CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTaskPosixWay;
-use const otra\cache\php\CONSOLE_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -41,7 +41,7 @@ class LaunchTaskPosixWayTest extends TestCase
       [
         'bin/otra.php',
         '-t=genServerConfig',
-        '--environment=dev',
+        '--environment=' . DEV,
         '--tech=nginx'
       ],
       'genServerConfig'
