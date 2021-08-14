@@ -522,7 +522,7 @@ abstract class Database
       $first = false;
     }
 
-    $tableSql = substr($tableSql, 0, -1) . ';';
+    $tableSql = substr($tableSql, 0, -1) . ';' . PHP_EOL;
 
     // We create sql file that can generate the fixtures in the BDD.
     if (!file_exists(self::$pathSqlFixtures))
@@ -692,7 +692,7 @@ abstract class Database
 
   /**
    * @param string      $file
-   * @param string|null $databaseName Where to execute the SQL file ?
+   * @param string|null $databaseName Where to execute the SQL file?
    *
    * @throws OtraException if the file to execute doesn't exist
    */
