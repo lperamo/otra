@@ -6,9 +6,8 @@ namespace src\console;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\
-{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\cache\php\{APP_ENV, CONSOLE_PATH, DEV, PROD};
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTask;
 
 /**
@@ -16,6 +15,8 @@ use function otra\console\launchTask;
  */
 class LaunchTaskTest extends TestCase
 {
+  private const CONF_FILE_NAME = 'test.conf';
+
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
 
@@ -26,7 +27,7 @@ class LaunchTaskTest extends TestCase
   public function test() : void
   {
     // context
-    $_SERVER['APP_ENV'] = 'prod';
+    $_SERVER[APP_ENV] = PROD;
     require CONSOLE_PATH . 'launchTask.php';
 
     // launching
@@ -38,8 +39,8 @@ class LaunchTaskTest extends TestCase
       [
         'bin/otra.php',
         'genServerConfig',
-        'test.conf',
-        'dev',
+        self::CONF_FILE_NAME,
+        DEV,
         'nginx'
       ],
       5,
@@ -47,9 +48,10 @@ class LaunchTaskTest extends TestCase
     );
 
     self::assertEquals(
-      CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT . 'test.conf' .
-      CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . 'test_cache.conf' . CLI_BASE . '.' . PHP_EOL .
-      'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL,
+      CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT .
+      self::CONF_FILE_NAME . CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . 'test_cache.conf' .
+      CLI_BASE . '.' . PHP_EOL . 'Do not forget to include the cache file in your main server configuration file!' .
+      END_COLOR . PHP_EOL,
       ob_get_clean()
     );
   }

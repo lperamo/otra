@@ -9,7 +9,8 @@ use otra\console\database\Database;
 use otra\{OtraException, bdd\Sql, Session};
 use ReflectionException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
-use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,
@@ -28,6 +29,7 @@ class DatabaseTest extends TestCase
   private const
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
+    TRUNCATE_ONLY = 1,
     CONFIG_FOLDER = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
     CONFIG_BACKUP_FOLDER = TEST_PATH . 'config/data/',
     DATABASE_CONNECTION = 'test',
@@ -38,6 +40,8 @@ class DatabaseTest extends TestCase
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
+    CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES = self::CONFIG_FOLDER_SQL . 'truncate/',
+    CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . 'truncate/',
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     CONFIG_FOLDER_YML_FIXTURES = self::CONFIG_FOLDER_YML . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/',
@@ -88,16 +92,7 @@ class DatabaseTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
-    $this->cleanAll();
-  }
 
-  /**
-   * Clean files and the database that are created for tests.
-   *
-   * @throws OtraException
-   */
-  protected function cleanAll() : void
-  {
     cleanFileAndFolders([
       self::CONFIG_FOLDER_SQL,
       self::CONFIG_FOLDER_YML
@@ -392,7 +387,6 @@ class DatabaseTest extends TestCase
    * @depends testTruncateTable
    * @depends testCreateFixture
    * @depends testExecuteFixture
-   * @doesNotPerformAssertions
    */
   public function testCreateFixtures_TruncateOnly() : void
   {
@@ -413,6 +407,7 @@ class DatabaseTest extends TestCase
 
     $this->loadConfig();
 
+    ob_start();
     Database::init(self::DATABASE_CONNECTION);
     setScopeProtectedFields(
       Database::class,
@@ -442,9 +437,44 @@ class DatabaseTest extends TestCase
         self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
       ]
     );
+    ob_end_clean();
 
     // launching task
-    Database::createFixtures(self::DATABASE_NAME, 1);
+    ob_start();
+    Database::createFixtures(self::DATABASE_NAME, self::TRUNCATE_ONLY);
+
+    // testing
+    self::assertEquals(
+      PHP_EOL . CLI_INFO_HIGHLIGHT . CLI_INFO_HIGHLIGHT . 'testDB.testDB_table2' . END_COLOR . PHP_EOL .
+      'Table ' . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR . CLI_SUCCESS . '[TRUNCATED]' . END_COLOR .  PHP_EOL .
+      'Data  '. CLI_SUCCESS . '[YML IDENTIFIERS] ' . END_COLOR . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR .
+      CLI_SUCCESS . '[SQL EXECUTION]' . END_COLOR .  PHP_EOL . PHP_EOL .
+      CLI_INFO . CLI_INFO_HIGHLIGHT . 'testDB.testDB_table3' . END_COLOR . PHP_EOL .
+      'Table '. CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR . CLI_SUCCESS . '[TRUNCATED]' . END_COLOR .  PHP_EOL .
+      'Data  '. CLI_SUCCESS . '[YML IDENTIFIERS] ' . END_COLOR . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR .
+      CLI_SUCCESS . '[SQL EXECUTION]' . END_COLOR . PHP_EOL . PHP_EOL .
+      CLI_INFO_HIGHLIGHT . CLI_INFO_HIGHLIGHT . 'testDB.testDB_table' . END_COLOR . PHP_EOL .
+      'Table '. CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR . CLI_SUCCESS . '[TRUNCATED]' . END_COLOR .  PHP_EOL .
+      'Data  '. CLI_SUCCESS . '[YML IDENTIFIERS] ' . END_COLOR . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR .
+      CLI_SUCCESS . '[SQL EXECUTION]' . END_COLOR .  PHP_EOL .
+      END_COLOR,
+      ob_get_clean()
+    );
+
+    foreach(self::TABLES_ORDER as $table)
+    {
+      // Fixtures creation files
+      self::assertFileExists(self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+      self::assertFileEquals(
+        self::CONFIG_FOLDER_SQL_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql',
+        self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+
+      // Fixtures tables truncation files
+      self::assertFileExists(self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+      self::assertFileEquals(
+        self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql'
+        ,self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+    }
   }
 
   /**
