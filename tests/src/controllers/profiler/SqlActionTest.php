@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\IndexAction;
+use otra\controllers\profiler\SqlAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
@@ -14,7 +14,7 @@ use function otra\tools\delTree;
 /**
  * @runTestsInSeparateProcesses
  */
-class IndexActionTest extends TestCase
+class SqlActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
@@ -60,20 +60,22 @@ class IndexActionTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testIndexAction() : void
+  public function test() : void
   {
     // context
     require CORE_PATH . 'templating/blocks.php';
+    $_GET['route'] = 'HelloWorld';
+    $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
 
     // launching
     ob_start();
-    new IndexAction([
-      'pattern' => '/dbg',
+    new SqlAction([
+      'pattern' => '/profiler/sql',
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'indexAction',
-      'route' => 'otra_profiler',
+      'action' => 'sqlAction',
+      'route' => 'otra_sql',
       'js' => false,
       'css' => false
     ]);
@@ -81,9 +83,9 @@ class IndexActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profilerIndexAction.phtml'),
+      file_get_contents(TEST_PATH . 'examples/profiler/sqlAction.phtml'),
       $output,
-      'Testing profiler indexAction page output...'
+      'Testing profiler sqlAction page output...'
     );
   }
 }

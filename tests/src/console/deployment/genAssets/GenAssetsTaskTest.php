@@ -82,9 +82,9 @@ class GenAssetsTaskTest extends TestCase
       'otra_exception',
       'otra_refreshSQLLogs',
       'otra_clearSQLLogs',
-      'otra_profiler',
       'otra_404',
       'otra_css',
+      'otra_sql',
       'otra_template_structure',
       'HelloWorld'
     ];
@@ -97,13 +97,18 @@ class GenAssetsTaskTest extends TestCase
         $outputExpected .= ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]';
       elseif (in_array(
         $route,
-        ['otra_exception', 'otra_refreshSQLLogs', 'otra_clearSQLLogs', 'otra_profiler', 'otra_404']
+        ['otra_exception', 'otra_refreshSQLLogs', 'otra_clearSQLLogs', 'otra_404']
       ))
         $outputExpected .= ' [' . CLI_INFO . 'Nothing to do' . CLI_GRAY . '] =>' . CLI_SUCCESS . ' OK' . END_COLOR;
       elseif (in_array($route, ['otra_css', 'otra_template_structure']))
-        $outputExpected .= ' [' . CLI_INFO . 'NO SCREEN CSS' . CLI_GRAY . ']' .
+        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
           ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO JS' . CLI_GRAY . ']' .
+          ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
+      elseif ($route === 'otra_sql')
+        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
+          ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
+          ' [' . CLI_SUCCESS . 'JS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
       else
         $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .

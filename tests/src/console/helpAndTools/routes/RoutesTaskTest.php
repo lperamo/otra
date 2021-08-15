@@ -31,6 +31,7 @@ class RoutesTaskTest extends TestCase
     ROUTE_OTRA_PROFILER = 'otra_profiler',
     ROUTE_OTRA_404 = 'otra_404',
     ROUTE_OTRA_CSS = 'otra_css',
+    ROUTE_OTRA_SQL = 'otra_sql',
     ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_template_structure',
     ROUTE_HELLO_WORLD = 'HelloWorld';
 
@@ -157,15 +158,6 @@ class RoutesTaskTest extends TestCase
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        self::ROUTE_OTRA_PROFILER,
-        '/dbg',
-        '/otra/profilerController/indexAction',
-        self::PHP_STATUS,
-        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_PROFILER),
-        true
-      ) .
-      self::showRouteInformations(
-        CLI_INFO,
         self::ROUTE_OTRA_404,
         '/404',
         '/otra/errorsController/error404Action',
@@ -174,12 +166,21 @@ class RoutesTaskTest extends TestCase
         true
       ) .
       self::showRouteInformations(
-        CLI_INFO_HIGHLIGHT,
+        CLI_INFO,
         self::ROUTE_OTRA_CSS,
         '/profiler/css',
         '/otra/profilerController/cssAction',
         self::PHP_STATUS,
         self::getShaRoute(self::ROUTE_OTRA_CSS),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO_HIGHLIGHT,
+        self::ROUTE_OTRA_SQL,
+        '/profiler/sql',
+        '/otra/profilerController/sqlAction',
+        self::PHP_STATUS,
+        self::getShaRoute(self::ROUTE_OTRA_SQL),
         true
       ) .
       self::showRouteInformations(
