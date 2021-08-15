@@ -535,6 +535,7 @@ while (true)
               $countImports = count($imports);
             }
 
+            var_dump($resourceName);
             $sassFileKey = array_search($resourceName, $sassTreeKeys);
 
             // browsing the full SASS/SCSS dependency tree to know if the imports number has changed
@@ -702,10 +703,13 @@ while (true)
       )
       {
         // If this is not a file that we want to watch, we skip it.
-        if (!in_array($extension, EXTENSIONS_TO_WATCH))
+        if (isset($extension) && !in_array($extension, EXTENSIONS_TO_WATCH))
           continue;
 
         $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
+
+        if (!isset($extension))
+          continue;
 
         if ($extension === 'scss' || $extension === 'sass')
         {

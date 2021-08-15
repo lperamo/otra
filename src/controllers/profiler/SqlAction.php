@@ -4,13 +4,16 @@ declare(strict_types=1);
 namespace otra\controllers\profiler;
 
 use otra\{Controller, OtraException, services\ProfilerService};
-use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
+use const otra\cache\php\APP_ENV;
+use const otra\cache\php\{BASE_PATH, CORE_PATH};
 
 /**
- * @author Lionel Péramo
+ * Class CssAction
+ *
+ * @author  Lionel Péramo
  * @package otra\controllers\profiler
  */
-class IndexAction extends Controller
+class SqlAction extends Controller
 {
   /**
    * @param array $otraParams
@@ -21,13 +24,14 @@ class IndexAction extends Controller
   public function __construct(array $otraParams = [], array $params = [])
   {
     parent::__construct($otraParams, $params);
-    ProfilerService::securityCheck();
     require CORE_PATH . 'tools/translate.php';
-
+    ProfilerService::securityCheck();
     echo $this->renderView(
-      'profiler.phtml',
-      ['sqlLogs' => ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt')]
+      'sql/index.phtml',
+      [
+        'route' => $this->route,
+        'sqlLogs' => ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt')
+      ]
     );
   }
 }
-

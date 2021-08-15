@@ -177,7 +177,7 @@ class RoutesTaskTest extends TestCase
         CLI_INFO_HIGHLIGHT,
         self::ROUTE_OTRA_CSS,
         '/profiler/css',
-        '/otra/heavyProfilerController/cssAction',
+        '/otra/profilerController/cssAction',
         self::PHP_STATUS,
         self::getShaRoute(self::ROUTE_OTRA_CSS),
         true
@@ -186,7 +186,7 @@ class RoutesTaskTest extends TestCase
         CLI_INFO,
         self::ROUTE_OTRA_TEMPLATE_STRUCTURE,
         '/profiler/templateStructure',
-        '/otra/heavyProfilerController/templateStructureAction',
+        '/otra/profilerController/templateStructureAction',
         self::PHP_STATUS,
         self::getShaRoute(self::ROUTE_OTRA_TEMPLATE_STRUCTURE),
         true

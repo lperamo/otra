@@ -5,7 +5,7 @@ namespace otra\src\views\debugBar\sass;
 use const otra\cache\php\{CACHE_PATH, CORE_VIEWS_PATH};
 use function otra\cache\php\{block, endblock};
 
-require CORE_VIEWS_PATH . 'heavyProfiler/layout.phtml';
+require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 
 const
   KEY_ALL_SASS = 0,
@@ -20,10 +20,10 @@ block('view');
   {
     $sassTree = require SASS_TREE_PATH;
     $allSassKeys = array_keys($sassTree[KEY_ALL_SASS]);
-    require CORE_VIEWS_PATH . 'heavyProfiler/sass/macros.phtml';
-    require CORE_VIEWS_PATH . 'heavyProfiler/sass/allFiles.phtml';
-    require CORE_VIEWS_PATH . 'heavyProfiler/sass/mainToLeaves.phtml';
-    require CORE_VIEWS_PATH . 'heavyProfiler/sass/fullTree.phtml';
+    require CORE_VIEWS_PATH . 'profiler/sass/macros.phtml';
+    require CORE_VIEWS_PATH . 'profiler/sass/allFiles.phtml';
+    require CORE_VIEWS_PATH . 'profiler/sass/mainToLeaves.phtml';
+    require CORE_VIEWS_PATH . 'profiler/sass/fullTree.phtml';
   } else
   {
     ?><span class="sass-trees--container--error-message">There is no cache about SASS/SCSS files or there are no such files. To create the cache, launch : </span>

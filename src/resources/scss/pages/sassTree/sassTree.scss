@@ -6,7 +6,7 @@
 @use '../../components/theming/theming';
 
 // loading partials
-@use '../../partials/heavyProfiler/index';
+@use '../../partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);

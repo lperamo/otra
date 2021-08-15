@@ -49,14 +49,14 @@ abstract class Routes
       'core' => true
     ],
     'otra_css' => [
-      'chunks' => ['/profiler/css', '', 'otra', 'heavyProfiler', 'cssAction'],
+      'chunks' => ['/profiler/css', '', 'otra', 'profiler', 'cssAction'],
       'core' => true,
       'resources' => [
         'core_css' => ['pages/sassTree/sassTree']
       ]
     ],
     'otra_template_structure' => [
-      'chunks' => ['/profiler/templateStructure', '', 'otra', 'heavyProfiler', 'templateStructureAction'],
+      'chunks' => ['/profiler/templateStructure', '', 'otra', 'profiler', 'templateStructureAction'],
       'core' => true,
       'resources' => [
         'core_css' => ['pages/templateStructure/templateStructure']

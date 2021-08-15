@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace otra\controllers\heavyProfiler;
+namespace otra\controllers\profiler;
 
 use otra\{Controller, OtraException, services\ProfilerService};
 
 /**
- * Class TemplateStructureAction
+ * Class CssAction
  *
  * @author  Lionel Péramo
- * @package otra\controllers\heavyProfiler
+ * @package otra\controllers\profiler
  */
-class TemplateStructureAction extends Controller
+class CssAction extends Controller
 {
   /**
    * @param array $otraParams
@@ -23,6 +23,6 @@ class TemplateStructureAction extends Controller
   {
     parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
-    echo $this->renderView('templateStructure/index.phtml', ['route' => $this->route]);
+    echo $this->renderView('sass/index.phtml', ['route' => $this->route]);
   }
 }

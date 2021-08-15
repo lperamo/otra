@@ -54,13 +54,12 @@ class ProfilerService
       ?>
       <div class="profiler--sql-logs--element">
         <div class="profiler--sql-logs--element--left-block">
-          <?= trans('In file') . ' <span class="profiler--sql-logs--element--file">', substr($request['file'],
-            $basePathLength), '</span> '
-            . trans('at line') . '&nbsp;<span class="profiler--sql-logs--element--line">', $request['line'],
+          <?= trans('In file') . ' <span class="profiler--sql-logs--element--file" title="Click to select">', substr($request['file'],
+            $basePathLength), '</span>:<span class="profiler--sql-logs--element--line" title="Click to select">', $request['line'],
           '</span>&nbsp;:',
           rawSqlPrettyPrint($request['query']) ?>
         </div>
-        <button class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
+        <button type="button" class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
       </div>
       <?php
     }

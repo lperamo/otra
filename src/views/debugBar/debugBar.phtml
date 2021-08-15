@@ -30,8 +30,7 @@ generateArrows();
   if (file_exists(CACHE_PATH . 'css/sassTree.php'))
     require DEBUG_BAR_PATH . 'sass.phtml';
 ?>
-  <button type="button" id="show-sql" class="dbg-bar--btn" tabindex="<?= $debugBarTabIndexActualValue++ ?>">Inspect SQL</button>
+  <a href="<?= SITE_HOST ?>/profiler/sql?route=<?= ROUTE ?>" rel="noopener nofollow noreferrer" target="profiler"
+     class="dbg-bar--block" title="Check SQL logs" tabindex="<?= $debugBarTabIndexActualValue++ ?>">SQL</a>
   <?php generateArrows('label', $debugBarTabIndexActualValue) ?>
 </div>
-<?php $this::js(CORE_JS_PATH . 'debug_bar');
-  $this::js(CORE_JS_PATH . 'lightbox');
