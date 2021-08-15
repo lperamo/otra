@@ -38,33 +38,37 @@ const RIGHT_STYLE_CLAUSE_CODE = '</span>';
 /**
  * Returns the pretty printed versions of sql clauses
  *
+ * @param bool   $raw
  * @param string $leftStyleClauseCode
  * @param string $rightStyleClauseCode
  *
  * @return string[]
  */
 function sqlReplacements(
+  bool $raw,
   string $leftStyleClauseCode = LEFT_STYLE_CLAUSE_CODE,
   string $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE
 ) : array
 {
+  $carriageReturn = $raw ? PHP_EOL : '<br/>';
+
    return [
-    '(' . PHP_EOL . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
+    '(' . $carriageReturn . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'LEFT OUTER JOIN' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'LEFT JOIN' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'INNER JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'LEFT OUTER JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'LEFT JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'INNER JOIN' . $rightStyleClauseCode,
     $leftStyleClauseCode . ' ON ' . $rightStyleClauseCode,
     $leftStyleClauseCode . 'IN ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . '  AND ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . '  OR ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'WHERE ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'UNION ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'GROUP BY ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'ORDER BY ' . $rightStyleClauseCode,
-    PHP_EOL . $leftStyleClauseCode . 'LIMIT ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . '  AND ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . '  OR ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'WHERE ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'UNION ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'GROUP BY ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'ORDER BY ' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'LIMIT ' . $rightStyleClauseCode,
     $leftStyleClauseCode . 'OFFSET ' . $rightStyleClauseCode
   ];
 }
@@ -82,9 +86,9 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   // If we want to style the SQL with HTML markup + CSS
   if (!$raw)
   {
-    $output = '<pre class="sql--logs--request">';
+    $output = '<div class="profiler--sql-logs--request">';
     $leftStyleClauseCode = $_SERVER[APP_ENV] === DEV
-      ? '<span class="sql--logs--clause">'
+      ? '<span class="profiler--sql-logs--clause">'
       : LEFT_STYLE_CLAUSE_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
@@ -95,7 +99,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   {
     $output = preg_replace(
       '/(:?\.)[^ (]{1,}/',
-      '<span class="sql--logs--field">$0</span>',
+      '<span class="profiler--sql-logs--field">$0</span>',
       preg_replace(
         '/:[^ )]{1,}/',
         '<span style="color: #4b4;">$0</span>',
@@ -106,11 +110,11 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
 
   $output = str_replace(
     SQL_CLAUSES,
-    sqlReplacements($leftStyleClauseCode, $rightStyleClauseCode),
+    sqlReplacements($raw, $leftStyleClauseCode, $rightStyleClauseCode),
     $output
   );
 
-  return $output . (!$raw ? '</pre>' : PHP_EOL . PHP_EOL);
+  return $output . (!$raw ? '</div>' : PHP_EOL . PHP_EOL);
 }
 
 /**
@@ -127,7 +131,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   // If we want to style the SQL with HTML markup + CSS
   if (!$raw)
   {
-    $output = '<pre>';
+    $output = '<div>';
     $leftStyleClauseCode = '<span style="color: #e44;">';
     $rightStyleClauseCode = '</span>';
   }
@@ -164,7 +168,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   $output = str_replace(
     SQL_CLAUSES,
-    sqlReplacements($leftStyleClauseCode, $rightStyleClauseCode),
+    sqlReplacements($raw, $leftStyleClauseCode, $rightStyleClauseCode),
     $output
   );
 
@@ -180,8 +184,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   }
 
   if (!$raw)
-    $output .= '</pre>';
+    $output .= '</div>';
 
   return $output;
 }
-

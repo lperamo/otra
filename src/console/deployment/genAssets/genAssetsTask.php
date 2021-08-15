@@ -15,7 +15,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use const otra\cache\php\
-{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\config\VERSION;
 use const otra\console\
 {CLI_ERROR,
@@ -229,6 +229,12 @@ if (
       {
         $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
 
+        if ($pathAndFile === null)
+        {
+          echo CLI_ERROR . 'You are trying to generate empty assets!' . END_COLOR . PHP_EOL;
+          throw new OtraException(code:1, exit:true);
+        }
+
         $jsFileOut = mb_substr($pathAndFile, 0, -1);
         googleClosureCompile(
           0,
@@ -354,7 +360,7 @@ if (GEN_ASSETS_SVG)
 /**
  * @param array  $resources
  * @param array  $routeChunks
- * @param string $type       'css' or 'js'
+ * @param string $assetType   'css' or 'js'
  * @param string $bundlePath
  * @param string $shaName
  *
@@ -363,27 +369,34 @@ if (GEN_ASSETS_SVG)
 function loadAndSaveResources(
   array $resources,
   array $routeChunks,
-  string $type,
+  string $assetType,
   string $bundlePath,
   string $shaName
 ) : ?string
 {
   ob_start();
-  loadResource($resources, $routeChunks, 'first_' . $type, $bundlePath);
-  loadResource($resources, $routeChunks, 'bundle_' . $type, $bundlePath, '');
-  loadResource($resources, $routeChunks, 'module_' . $type, $bundlePath . $routeChunks[2] . DIR_SEPARATOR);
-  loadResource($resources, $routeChunks, '_' . $type, $bundlePath);
+  loadResource($resources, $routeChunks, '_' . $assetType, $bundlePath);
+  loadResource($resources, $routeChunks, 'bundle_' . $assetType, $bundlePath, '');
+  loadResource(
+    $resources,
+    $routeChunks,
+    'core_' . $assetType,
+    CORE_PATH,
+    ''
+  );
+  loadResource($resources, $routeChunks, 'first_' . $assetType, $bundlePath);
+  loadResource($resources, $routeChunks, 'module_' . $assetType, $bundlePath . $routeChunks[2] . DIR_SEPARATOR);
 
   $allResources = ob_get_clean();
 
-  // If there was no resources to optimize
+  // If there were no resources to optimize
   if ('' === $allResources)
     return null;
 
-  $resourceFolderPath = CACHE_PATH . $type . DIR_SEPARATOR;
+  $resourceFolderPath = CACHE_PATH . $assetType . DIR_SEPARATOR;
   $pathAndFile = $resourceFolderPath . $shaName;
 
-  if ($type === 'js')
+  if ($assetType === 'js')
     $pathAndFile .= '_';
 
   if (!file_exists($resourceFolderPath))
@@ -418,7 +431,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   foreach ($resources[$key] as $resource)
   {
     ob_start();
-
+    echo $resource, PHP_EOL;
     if (!str_contains($resource, 'http'))
     {
       $finalPath = $resourcePath . $resource . '.' . $resourceType;

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace otra\src\views\heavyProfiler\templateStructure;
+namespace otra\src\views\profiler\templateStructure;
 
 use const otra\cache\php\CORE_VIEWS_PATH;
 use function otra\cache\php\{block, endblock};
@@ -8,7 +8,7 @@ use function otra\cache\php\{block, endblock};
 /** @var bool $cacheEnabled */
 const KEY_TEMPLATE_VISUALIZATION = 'templateVisualization';
 
-require CORE_VIEWS_PATH . 'heavyProfiler/layout.phtml';
+require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 block('title', 'Profiler - Template structure');
 block('view');
 if (isset($_SESSION[KEY_TEMPLATE_VISUALIZATION]))

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace otra\src\views\heavyProfiler;
+namespace otra\src\views\profiler;
 
 use otra\config\Routes;
 use function otra\cache\php\{block, endblock};
@@ -11,11 +11,34 @@ require CORE_VIEWS_PATH . 'layout.phtml';
 const
   ROUTE_SASS_TREE = 'otra_css',
   ROUTE_TEMPLATE_STRUCTURE = 'otra_template_structure',
+  ROUTE_SQL = 'otra_sql',
   LABEL_CHUNKS = 'chunks';
 
 define('ANALYZED_PAGE', '?route=' . $_GET['route']);
 define('ROUTE', urldecode($_GET['route']));
 define('SITE_HOST', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+
+/**
+ * Adds an HTML menu item to a list
+ *
+ * @param string $routeToTest
+ * @param string $itemLabel
+ */
+$menuItem = function (string $routeToTest, string $itemLabel) use ($route)
+{
+  /** @var string $route */
+  ?>
+  <li
+    class="vertical-menu vertical-menu--container--item<?php
+    if ($route === $routeToTest)
+      echo ' vertical-menu--container--item-active';
+    ?>">
+    <a href="<?= SITE_HOST . Routes::$allRoutes[$routeToTest][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>"
+       rel="noreferrer noopener"><?= $itemLabel ?></a>
+  </li>
+  <?php
+};
+
 block('body');
 ?>
 <h1 class="otra-title">
@@ -24,20 +47,17 @@ block('body');
 </h1>
 <div class="profiler-container flex-container">
   <ul class="vertical-menu vertical-menu--container">
-    <li
-      class="vertical-menu vertical-menu--container--item<?php
-      if ($route === ROUTE_SASS_TREE)
-        echo ' vertical-menu--container--item-active';
-      ?>">
-      <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE_SASS_TREE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>"
-         rel="noreferrer noopener">SASS/SCSS analysis</a>
-    </li>
-    <li class="vertical-menu vertical-menu--container--item<?php
-    if ($route === ROUTE_TEMPLATE_STRUCTURE)
-      echo ' vertical-menu--container--item-active';
-    ?>">
-      <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE_TEMPLATE_STRUCTURE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>">Template structure</a>
-    </li>
+    <?php
+    foreach([
+      ROUTE_SASS_TREE => 'SASS/SCSS analysis',
+      ROUTE_SQL => 'SQL',
+      ROUTE_TEMPLATE_STRUCTURE => 'Template structure'
+    ] as $routeToTest => $itemLabel
+    )
+    {
+      $menuItem($routeToTest, $itemLabel);
+    }
+    ?>
   </ul>
   <?php block('view', ''); ?>
 </div>

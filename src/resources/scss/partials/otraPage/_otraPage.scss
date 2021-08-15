@@ -24,7 +24,10 @@ body {
 
   // appearance
   background-repeat     : no-repeat;
-  background-attachment : fixed;
+  // background-attachment is not supported by Safari!
+  @supports (background-attachment : fixed) {
+    background-attachment : fixed;
+  }
 
   // box
   margin  : 0;
@@ -44,8 +47,12 @@ body {
   );
 
   // appearance
+  // background-attachment is not supported by Safari!
+  @supports (background-attachment : fixed) {
+    background-attachment : fixed;
+  }
+
   background-repeat     : no-repeat;
-  background-attachment : fixed;
   box-shadow            : 0 0 3px #000f70;
 
   // positioning
