@@ -44,7 +44,7 @@ abstract class Logger
     // remote address ip is not set if we come from the console or if we are in localhost
     $infos['i'] = (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
       ? ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR])
-      : '';
+      : 'l';
 
     // user agent not set if we come from the console
     $infos['u'] =  (isset($_SERVER[self::HTTP_USER_AGENT]) && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
@@ -114,11 +114,8 @@ abstract class Logger
     $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt';
     $filePointer = fopen($logPath, 'r+');
 
-    if (!($logData = fread($filePointer, 1)))
-    {
+    if (!fread($filePointer, 1))
       fwrite($filePointer, '[');
-//      fwrite($filePointer, json_encode([['d'=>'test','u' => 'coucou']]));
-    }
 
     fclose($filePointer);
 

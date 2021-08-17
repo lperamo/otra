@@ -65,19 +65,16 @@ const TRACE_LABELS = [
 
                 // Checks if it was console log or web log
                 if ($labelKey === 'c')
-                {
-                  $value = $tracePropertyValue === '0' ? 'True' : 'False';
-                  $isString = false;
-                } else
+                  $value = $tracePropertyValue === '1' ? '✔' : '✘';
+                else
                 {
                   // Formats the date if it's a date
                   if ($labelKey === 'd')
                     $tracePropertyValue = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
 
-                  $isString = is_string($tracePropertyValue);
-
                   if ($labelKey === 'm')
                   {
+                    $isString = is_string($tracePropertyValue);
                     $value = '<span>';
 
                     if ($isString)
@@ -90,7 +87,9 @@ const TRACE_LABELS = [
 
                     $value .= '</span>';
                   } else {
-                    $value = $tracePropertyValue;
+                    $value = ($labelKey === 'i' && $tracePropertyValue === 'l')
+                      ? 'localhost'
+                      : $tracePropertyValue;
                   }
                 }
                 ?>
