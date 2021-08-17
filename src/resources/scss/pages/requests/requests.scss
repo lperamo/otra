@@ -1,0 +1,33 @@
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/accordion/accordion';
+@use '../../components/theming/theming';
+
+// loading partials
+@use '../../partials/profiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
+@include accordion.create(
+  ('themes': $themes)
+);
+
+#requests-container {
+  // box
+  box-sizing : border-box;
+  overflow   : auto;
+  padding    : 2rem;
+  width      : calc(100% - #{index.$vertical-menu-width});
+
+  // text
+  font-size  : 1.6rem;
+  // word-break is not supported by IE!
+  @supports (word-break: break-word) {
+    word-break : break-word;
+  }
+}
+
+// applying theme
+@include theming.global-mass-theme();

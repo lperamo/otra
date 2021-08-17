@@ -65,13 +65,13 @@ $defaults : (
       'default--vertical-menu--element--background-image' : linear-gradient(45deg, #1c2427 0%, #18252a 45%, #1c2427 100%),
       'default--vertical-menu--element--color' : #ccc,
       // active state
-      'default--vertical-menu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+      'default--vertical-menu--element-active--background-image' : linear-gradient(45deg, #1c2427 0%, #2b414a 45%, #1c2427 100%),
       'default--vertical-menu--element-active--color' : #44a,
       // focus state
-      'default--vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--vertical-menu--element-focus--background-image' : linear-gradient(45deg, #185b77 0%, #204756 45%, #185b77 100%),
       'default--vertical-menu--element-focus--color' : #44a,
       // hover state
-      'default--vertical-menu--element-hover--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
+      'default--vertical-menu--element-hover--background-image' : linear-gradient(45deg, #1c2427 0%, #3d7085 45%, #1c2427 100%),
       'default--vertical-menu--element-hover--color' : #cc4,
       // states end --
       'default--vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'

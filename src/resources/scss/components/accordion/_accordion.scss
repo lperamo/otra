@@ -15,7 +15,8 @@ $defaults : (
   'accordion--background-image' : 'accordion--background-image',
   'font-size' : 2rem,
   'margin-bottom' : 1rem,
-  'padding' : 1rem,
+  'details-padding' : 1rem,
+  'summary-padding' : 1rem,
   'suffix' : '',
   'themes' :  (
     'light' : (
@@ -43,7 +44,8 @@ $defaults : (
   // Suffix to allow different configurations for the same kind of component
   $suffix : map.get($options, 'suffix');
   $font-size : map.get($options, 'font-size');
-  $padding : map.get($options, 'padding');
+  $details-padding : map.get($options, 'details-padding');
+  $summary-padding : map.get($options, 'summary-padding');
 
   @include theming.add-themes(map-get($options, 'themes'));
 
@@ -62,8 +64,10 @@ $defaults : (
       }
     }
 
-    .accordion#{$suffix}--block {
-      padding : $padding;
+    @if ($details-padding != null) {
+      .accordion#{$suffix}--block {
+        padding : $details-padding;
+      }
     }
 
     &,
@@ -78,9 +82,9 @@ $defaults : (
     @at-root summary.accordion#{$suffix} {
       // appearance
       @include theming.to-theme(
-        (#{&} : ('background-image', map.get($options, 'accordion--background-image'))),
-        $suffix,
-        $themeUsed
+          (#{&} : ('background-image', map.get($options, 'accordion--background-image'))),
+          $suffix,
+          $themeUsed
       );
 
       cursor          : pointer;
@@ -89,7 +93,7 @@ $defaults : (
 
       // positioning
       position : relative;
-      padding  : $padding $padding $padding $padding * 2 + $font-size;
+      padding  : $summary-padding $summary-padding $summary-padding $summary-padding * 2 + $font-size;
       outline  : 0;
 
       &::-webkit-details-marker {
@@ -100,9 +104,9 @@ $defaults : (
       &::before {
         // appearance
         @include theming.to-theme(
-          (#{&} : ('background-image', map.get($options, 'accordion--arrow--background-image'))),
-          $suffix,
-          $themeUsed
+            (#{&} : ('background-image', map.get($options, 'accordion--arrow--background-image'))),
+            $suffix,
+            $themeUsed
         );
 
         -webkit-background-clip : text;
@@ -113,7 +117,7 @@ $defaults : (
         left            : 0;
         position        : absolute;
         top             : 50%;
-        transform       : translate($padding, -50%);
+        transform       : translate($summary-padding, -50%);
         transform-style : preserve-3d; // fix needed (at least) for Firefox
       }
     }

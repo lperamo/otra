@@ -1,0 +1,137 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\routes;
+
+use otra\config\Routes;
+use const otra\cache\php\
+{BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH};
+use function otra\cache\php\{block, endblock};
+use function otra\src\tools\{checkPHPPath, checkResourcePath};
+use const otra\config\VERSION;
+
+require_once BASE_PATH . 'config/Routes.php';
+require CORE_VIEWS_PATH . 'profiler/layout.phtml';
+require CORE_PATH . 'tools/checkFilePath.php';
+
+block('title', 'Profiler - Routes');
+block('view');
+?>
+<div id="routes-container">
+  <?php
+  $otraRoutes = $projectRoutes = '';
+
+  foreach (Routes::$allRoutes as $routeName => $routeProperties)
+  {
+    if ($routeName === 'otra_exception')
+      continue;
+
+//    echo nl2br(print_r($routeProperties, true));
+
+    $chunks = $routeProperties['chunks'];
+    $resources = $routeProperties['resources'] ?? null;
+    $shaName = sha1('ca' . $routeName . VERSION . 'che');
+    ob_start();
+    ?>
+    <div class="routes--block">
+      <h2 class="routes--block--title"><?= $routeName ?></h2>
+      <div class="routes--block--line">
+        <span class="routes--block--line--label">Url</span>
+        <span class="routes--block--line--informations-box"><?= $chunks[Routes::ROUTES_CHUNKS_URL] ?></span>
+      </div>
+      <div class="routes--block--line">
+        <span class="routes--block--line--label">Path</span>
+        <span class="routes--block--line--informations-box"><?=
+          $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/' .
+          $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/' .
+          $chunks[Routes::ROUTES_CHUNKS_CONTROLLER] . '/' .
+          $chunks[Routes::ROUTES_CHUNKS_ACTION] . '/';
+        ?>
+        </span>
+      </div>
+      <div class="routes--block--line">
+        <span class="routes--block--line--label">Resources</span>
+        <?php if ($resources !== null)
+        {?>
+          <!-- PHP -->
+          <?php if (!isset($resources['template']))
+          {?>
+          <span class="routes--block--line--informations-box"><?php
+            echo '<span class="routes--block--line--file-status--' .
+              (checkPHPPath(CACHE_PATH, $routeName) ? 'success' : 'error'),
+            '">PHP</span>';
+            ?></span><?php
+          } ?>
+          <!-- SCREEN CSS -->
+          <?php if (isset($resources['_css'])
+            || isset($resources['bundle_css'])
+            || isset($resources['core_css'])
+            || isset($resources['module_css'])
+          )
+          {?>
+            <span class="routes--block--line--informations-box"><?php
+              echo '<span class="routes--block--line--file-status--' .
+                (checkResourcePath('css',CACHE_PATH, $shaName) ? 'success' : 'error'),
+              '">SCREEN CSS</span>';
+            ?></span>
+
+            <!-- PRINT CSS -->
+            <span class="routes--block--line--informations-box"><?php
+              echo '<span class="routes--block--line--file-status--' .
+                (checkResourcePath('css',CACHE_PATH, 'print_' . $shaName) ? 'success' : 'error'),
+              '">PRINT CSS</span>';
+            ?></span><?php
+          } ?>
+          <!-- JS -->
+          <?php if (isset($resources['_js'])
+            || isset($resources['bundle_js'])
+            || isset($resources['core_js'])
+            || isset($resources['module_js'])
+            || isset($resources['first_js'])) {?>
+          <span class="routes--block--line--informations-box"><?php
+            echo '<span class="routes--block--line--file-status--' .
+              (checkResourcePath('js',CACHE_PATH, $shaName) ? 'success' : 'error'),
+            '">JS</span>';
+            ?></span><?php
+          } ?>
+          <!-- TEMPLATE -->
+          <?php if (isset($resources['template']))
+          {?>
+            <span class="routes--block--line--informations-box"><?php
+              echo '<span class="routes--block--line--file-status--' .
+                (checkResourcePath('tpl',CACHE_PATH, $shaName) ? 'success' : 'error'),
+              '">TEMPLATE</span>';
+              ?></span><?php
+          }
+        } else {
+          ?>
+          <span class="routes--block--line--informations-box"><?php
+            echo '<span class="routes--block--line--file-status--' .
+              (checkPHPPath(CACHE_PATH, $routeName) ? 'success' : 'error'),
+              '">PHP</span>', 'No other resources';
+            ?></span><?php
+        } ?>
+      </div>
+
+      <div class="routes--block--line">
+        <span class="routes--block--line--label">Cache key</span>
+        <span class="routes--block--line--informations-box"><?= $shaName ?></span>
+      </div>
+    </div>
+    <?php
+    if (str_starts_with($routeName, 'otra_'))
+      $otraRoutes .= ob_get_clean();
+    else
+      $projectRoutes .= ob_get_clean();
+  }
+  ?>
+  <details class="accordion">
+    <summary class="accordion">OTRA routes</summary>
+    <div class="accordion--block"><?= $otraRoutes ?></div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">Project routes</summary>
+    <div class="accordion--block"><?= $projectRoutes ?></div>
+  </details>
+</div>
+  <?php endblock();

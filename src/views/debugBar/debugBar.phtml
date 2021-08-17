@@ -26,9 +26,7 @@ generateArrows();
   }
 
   unset($template);
-
-  if (file_exists(CACHE_PATH . 'css/sassTree.php'))
-    require DEBUG_BAR_PATH . 'sass.phtml';
+  require DEBUG_BAR_PATH . 'sass.phtml';
 ?>
   <a href="<?= SITE_HOST ?>/profiler/sql?route=<?= ROUTE ?>" rel="noopener nofollow noreferrer" target="profiler"
      class="dbg-bar--block" title="Check SQL logs" tabindex="<?= $debugBarTabIndexActualValue++ ?>">SQL</a>

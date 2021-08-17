@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\debugBar\routes;
+
+use const otra\cache\php\{BASE_PATH, CORE_VIEWS_PATH};
+use function otra\cache\php\{block, endblock};
+
+require CORE_VIEWS_PATH . 'profiler/layout.phtml';
+
+block('title', 'Profiler - Routes');
+block('view');
+?>
+  <div id="requests-container">
+  </div>
+  <?php endblock();
