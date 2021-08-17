@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace otra\src\views\debugBar\routes;
+namespace otra\src\views\profiler\routes;
 
 use otra\config\Routes;
-use const otra\cache\php\
-{BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH};
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH};
 use function otra\cache\php\{block, endblock};
 use function otra\src\tools\{checkPHPPath, checkResourcePath};
 use const otra\config\VERSION;
@@ -24,8 +23,6 @@ block('view');
   {
     if ($routeName === 'otra_exception')
       continue;
-
-//    echo nl2br(print_r($routeProperties, true));
 
     $chunks = $routeProperties['chunks'];
     $resources = $routeProperties['resources'] ?? null;

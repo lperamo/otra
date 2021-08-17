@@ -1,0 +1,77 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\requests;
+
+/**
+ * @param array $tabRadioNames
+ * @param array $tabNames
+ */
+function createTabs(array $tabRadioNames, array $tabNames) : void
+{
+  foreach($tabRadioNames as $tabKey => $tabName)
+  {
+    ?><input type="radio" id="<?= $tabName?>-tab" class="tabs-radios" name="requests"<?php
+      if (array_key_first($tabNames) === $tabKey) {?>checked<?php }
+    ?>><?php
+  }
+  unset($tabKey, $tabName);
+  ?>
+  <ul class="tabs"><?php
+    foreach ($tabNames as $tabKey => $tabName)
+    {
+      ?><li class="tabs--item" role="tab">
+        <label for="<?= $tabRadioNames[$tabKey] ?>-tab" class="tab--item-label"><?= $tabName ?></label>
+      </li><?php
+    }?>
+  </ul>
+  <?php
+}
+
+/**
+ * Creates an HTML table that shows array parameters and their values
+ *
+ * @param array  $parameters
+ * @param string $type
+ */
+function showParameters(array $parameters, string $type) : void
+{
+  if (!empty($parameters))
+  {
+    ?>
+    <table class="table suffix" aria-label="Table about <?= $type ?> parameters">
+      <thead class="table-header">
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        foreach ($parameters as $parameterName => $parameterValue)
+        {
+          $isString = is_string($parameterValue);
+          $value = '<span>';
+
+          if ($isString)
+            $value .= '<span class="requests--parameter--string">"</span>';
+
+          $value .= $parameterValue;
+
+          if ($isString)
+            $value .= '<span class="requests--parameter--string">"</span>';
+
+          $value .= '</span>';
+          ?>
+          <tr>
+            <td data-label="Key"><?= $parameterName ?></td>
+            <td data-label="Value"><?= $value ?></td>
+          </tr>
+          <?php
+        } ?></tbody>
+    </table>
+    <?php
+  } else
+  {
+    ?>No <?= $type ?> parameters.<?php
+  }
+}

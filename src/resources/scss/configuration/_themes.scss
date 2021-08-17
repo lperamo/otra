@@ -51,16 +51,22 @@ $themes: (
     'lightbox--background-image' : url('../../../img/profiler_light.png'),
     'lightbox--container--color' : #444,
     'lightbox--container--text-shadow' : 0 0 3px #ccc,
-    // ** profiler - generic
+    // ** profiler - requests
+    'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--string--color' : #c60,
+    // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
-    // ** profiler - file and sql clauses
+    'profiler--sql--logs--background-color' : #eff0f5,
+    'profiler--sql--logs--hover--background-color' : #e0e2eb,
+    'profiler--sql--logs--selection-color' : #667,
+    // ** profiler - SQL logs - file and sql clauses
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
     'profiler--file--background-image' : linear-gradient(90deg, #bb0, #770),
-    // ** profiler - line
+    // ** profiler - SQL logs - line
     'profiler--line--color' : #882,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
-    // ** profiler - fields
+    // ** profiler - SQL logs - fields
     'profiler--field--color' : #88f,
     'profiler--field--text-shadow' : 0 0 1px #88f,
     'profiler--field--gradient' : linear-gradient(
@@ -68,10 +74,6 @@ $themes: (
       #88f,
       #04f
     ),
-    // ** profiler - sql logs
-    'profiler--sql--logs--background-color' : #eff0f5,
-    'profiler--sql--logs--hover--background-color' : #e0e2eb,
-    'profiler--sql--logs--selection-color' : #667,
     // ** profiler - routes status
     'profiler--routes--file-status--error--background-color' : #f2d9d9,
     'profiler--routes--file-status--error--border-color' : .1rem solid #d98c8c,
@@ -95,6 +97,13 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #9ac,
+    // tabs
+    // ----
+    'tabs--background--color' : #ddd,
+    'tabs--background-hover--color' : #ddf,
+    'tabs--color' : #000,
+    'tabs--div--background' : #eee,
+    'tabs--div--box-shadow' : 0 0 3px #000,
     // vertical menu
     // -------------
     'vertical-menu--border' : 1px solid #a3afff,
@@ -167,16 +176,22 @@ $themes: (
     'lightbox--background-image' : url('../../../img/profiler_dark.jpg'),
     'lightbox--container--color' : #eee,
     'lightbox--container--text-shadow' : 0 0 3px #777,
-    // ** profiler - generic
+    // ** profiler - requests
+    'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--string--color' : #c60,
+    // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
-    // ** profiler - file and sql clauses
+    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
+    'profiler--sql--logs--hover--background-color' : #303030,
+    'profiler--sql--logs--selection-color' : #667,
+    // ** profiler - SQL logs -file and sql clauses
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
     'profiler--file--background-image' : linear-gradient(90deg, #cc0, #e27),
-    // ** profiler - line
+    // ** profiler - SQL logs -line
     'profiler--line--color' : #dd5,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
-    // ** profiler - fields
+    // ** profiler - SQL logs -fields
     'profiler--field--color' : #88f,
     'profiler--field--text-shadow' : #88f,
     'profiler--field--gradient' : linear-gradient(
@@ -184,10 +199,6 @@ $themes: (
       #88f,
       #04f
     ),
-    // ** profiler - sql logs
-    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
-    'profiler--sql--logs--hover--background-color' : #303030,
-    'profiler--sql--logs--selection-color' : #667,
     // ** profiler - routes status
     'profiler--routes--file-status--error--background-color' : #f2d9d9,
     'profiler--routes--file-status--error--border-color' : .1rem solid #d98c8c,
@@ -211,6 +222,13 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #bce,
+    // tabs
+    // ----
+    'tabs--background--color' : #ddd,
+    'tabs--background-hover--color' : #ddf,
+    'tabs--color' : #000,
+    'tabs--div--background' : #333,
+    'tabs--div--box-shadow' : 0 0 3px #fff,
     // vertical menu
     // -------------
     'vertical-menu--border' : 1px solid #000,

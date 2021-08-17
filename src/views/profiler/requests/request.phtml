@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\requests;
+?>
+<div class="activatable-divs--item">
+  <details class="accordion">
+    <summary class="accordion">GET parameters</summary>
+    <div class="accordion--block">
+      <?php showParameters($_GET, 'GET'); ?>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">POST parameters</summary>
+    <div class="accordion--block">
+      <?php showParameters($_POST, 'POST'); ?>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">Request headers</summary>
+    <div class="accordion--block">
+      <?php showParameters(apache_request_headers(), 'POST'); ?>
+    </div>
+  </details>
+</div>
