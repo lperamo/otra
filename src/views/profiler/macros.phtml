@@ -1,0 +1,28 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler;
+
+/**
+ * @param array $tabRadioNames
+ * @param array $tabNames
+ */
+function createTabs(array $tabRadioNames, array $tabNames) : void
+{
+  foreach($tabRadioNames as $tabKey => $tabName)
+  {
+    ?><input type="radio" id="<?= $tabName?>-tab" class="tabs-radios" name="requests"<?php
+  if (array_key_first($tabNames) === $tabKey) {?>checked<?php }
+    ?>><?php
+  }
+  unset($tabKey, $tabName);
+  ?>
+  <ul class="tabs"><?php
+    foreach ($tabNames as $tabKey => $tabName)
+    {
+      ?><li class="tabs--item" role="tab">
+      <label for="<?= $tabRadioNames[$tabKey] ?>-tab" class="tab--item-label"><?= $tabName ?></label>
+      </li><?php
+    }?>
+  </ul>
+  <?php
+}

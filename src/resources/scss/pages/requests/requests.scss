@@ -51,7 +51,8 @@
 
       margin     : 0 .1rem;
 
-      & td::before {
+      @at-root #requests-container td,
+      #requests-container td::before {
         min-width : 8rem;
       }
 

@@ -1,0 +1,112 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\logs;
+
+use const otra\cache\php\{BASE_PATH, DEV};
+const TRACE_LABELS = [
+  'd' => 'Date',
+  'c' => 'CLI',
+  'i' => 'IP',
+  'm' => 'Message',
+  's' => 'Stack trace',
+  'u' => 'User Agent'
+]
+?>
+<div class="activatable-divs--item">
+  <a href="sql?route=<?= $_GET['route'] ?>" class="ripple ripple-link" rel="noopener noreferrer">SQL logs</a><br/><br/>
+
+  <details class="accordion">
+    <summary class="accordion">Trace</summary>
+    <div class="accordion--block">
+      <?php
+      $traceLogs = file_get_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt');
+
+      if (!empty($traceLogs))
+      {
+        $traceLogs = json_decode(substr($traceLogs, 0, -2) . ']', true);
+//        $traceLogs = nl2br($traceLogs);
+//
+//        preg_replace(
+//          '@\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d@',
+//          '',
+//          $traceLogs
+//        );
+        ?>
+        <table class="table suffix" aria-label="Table about trace logs">
+          <thead class="table-header">
+            <tr>
+            <?php
+            foreach (TRACE_LABELS as $labelKey => $labelValue)
+            {
+              ?><th scope="col"<?php if ($labelKey === 'c')
+              {
+                ?> title="Command line" class="trace-table--cli"<?php
+              }
+
+              if ($labelKey === '')
+              ?>><?= $labelValue?></th><?php
+            }?>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            foreach ($traceLogs as $traceProperties)
+            {
+              ?><tr><?php
+              foreach (TRACE_LABELS as $labelKey => $labelValue)
+              {
+                if (!isset($traceProperties[$labelKey]))
+                {
+                  ?><td></td><?php
+                  continue;
+                }
+
+                $tracePropertyValue = $traceProperties[$labelKey];
+
+                // Checks if it was console log or web log
+                if ($labelKey === 'c')
+                {
+                  $value = $tracePropertyValue === '0' ? 'True' : 'False';
+                  $isString = false;
+                } else
+                {
+                  // Formats the date if it's a date
+                  if ($labelKey === 'd')
+                    $tracePropertyValue = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
+
+                  $isString = is_string($tracePropertyValue);
+
+                  if ($labelKey === 'm')
+                  {
+                    $value = '<span>';
+
+                    if ($isString)
+                      $value .= '<span class="requests--parameter--string">"</span>';
+
+                    $value .= htmlentities($tracePropertyValue);
+
+                    if ($isString)
+                      $value .= '<span class="requests--parameter--string">"</span>';
+
+                    $value .= '</span>';
+                  } else {
+                    $value = $tracePropertyValue;
+                  }
+                }
+                ?>
+                  <td data-label="<?= TRACE_LABELS[$labelKey] ?> "><?= $value ?></td>
+                <?php
+              }
+              ?></tr><?php
+            } ?></tbody>
+        </table>
+        <?php
+      }
+      else
+      {
+        ?>No trace logs.<?php
+      }
+      ?>
+    </div>
+  </details>
+</div>

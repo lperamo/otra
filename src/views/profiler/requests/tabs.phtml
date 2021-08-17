@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 namespace otra\src\views\profiler\requests;
+
+use function otra\src\views\profiler\createTabs;
+
 createTabs(
   ['request', 'response', 'cookies', 'session'],
   ['Request', 'Response', 'Cookies', 'Session']

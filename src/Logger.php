@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace otra\cache\php;
 
+use otra\OtraException;
+
 /** Simple logger class
  *
  * @package otra
@@ -22,31 +24,32 @@ abstract class Logger
   /**
    * Returns the date or also the ip address and the browser if different
    *
-   * @return string
+   * @return array
    */
-  private static function logIpTest() : string
+  private static function logIpTest() : array
   {
     if (!isset($_SESSION[self::SESSION_DATE]))
       $_SESSION[self::SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[self::SESSION_BROWSER] = '';
 
-    $infos = '';
+    $infos = [];
     $todayDate = date(DATE_ATOM, time());
 
     if ($todayDate !== $_SESSION[self::SESSION_DATE])
-      $infos .= '[' . ($_SESSION[self::SESSION_DATE] = $todayDate) . '] ';
+      $infos['d'] = $_SESSION[self::SESSION_DATE] = $todayDate;
 
     // if we come from console, adds it to the log
-    $infos .= (PHP_SAPI === 'cli') ? '[OTRA_CONSOLE] ' : '';
+    $infos['c'] = (PHP_SAPI === 'cli') ? '1' : '0';
 
     /** @var array{REMOTE_ADDR?: string, HTTP_USER_AGENT?: string} $_SERVER */
     // remote address ip is not set if we come from the console or if we are in localhost
-    $infos .= (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
-      ? '[' . ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR]) . '] '
+    $infos['i'] = (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
+      ? ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR])
       : '';
 
     // user agent not set if we come from the console
-    if (isset($_SERVER[self::HTTP_USER_AGENT]) && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
-      return $infos . '[' .  ($_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT]) . '] ';
+    $infos['u'] =  (isset($_SERVER[self::HTTP_USER_AGENT]) && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
+      ? ($_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT])
+      : '';
 
     return $infos;
   }
@@ -72,9 +75,11 @@ abstract class Logger
    */
   public static function log(string $message) : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
-      self::logIpTest() . $message . PHP_EOL
+      json_encode($infos) . PHP_EOL
     );
   }
 
@@ -86,9 +91,11 @@ abstract class Logger
    */
   public static function logToRelativePath(string $message, string $path = '') : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
     self::logging(
       __DIR__ . DIR_SEPARATOR . $path . '.txt',
-      self::logIpTest() . $message . PHP_EOL
+      json_encode($infos) . PHP_EOL
     );
   }
 
@@ -96,13 +103,28 @@ abstract class Logger
    * Appends a message to the log file at the specified path into log path
    *
    * @param string $message
-   * @param string $path
+   * @param string $logPath
+   *
+   * @throws OtraException
    */
-  public static function logTo(string $message, string  $path = '') : void
+  public static function logTo(string $message, string  $logPath = 'log') : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
+    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt';
+    $filePointer = fopen($logPath, 'r+');
+
+    if (!($logData = fread($filePointer, 1)))
+    {
+      fwrite($filePointer, '[');
+//      fwrite($filePointer, json_encode([['d'=>'test','u' => 'coucou']]));
+    }
+
+    fclose($filePointer);
+
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt',
-      self::logIpTest() . $message . PHP_EOL
+      $logPath,
+      json_encode($infos) . ',' . PHP_EOL
     );
   }
 
@@ -137,11 +159,13 @@ abstract class Logger
    */
   public static function logExceptionOrErrorTo(string $message, string $errorType): void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $errorType . ' : ' .$message;
+    $infos['s'] = print_r(debug_backtrace(), true);
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
         ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
-      self::logIpTest() . $errorType . ' : ' . $message . PHP_EOL . 'Stack trace : ' . PHP_EOL .
-        print_r(debug_backtrace(), true) . PHP_EOL
+      json_encode($infos) . PHP_EOL
     );
   }
 

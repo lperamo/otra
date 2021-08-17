@@ -7,9 +7,10 @@ use function otra\cache\php\{block, endblock};
 
 require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 
-block('title', 'Profiler - Routes');
+block('title', 'Profiler - Requests');
 block('view');
 
+require CORE_VIEWS_PATH . 'profiler/macros.phtml';
 require CORE_VIEWS_PATH . 'profiler/requests/macros.phtml';
 ?>
 <div id="requests-container">

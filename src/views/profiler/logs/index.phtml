@@ -2,14 +2,24 @@
 declare(strict_types=1);
 namespace otra\src\views\debugBar\routes;
 
-use const otra\cache\php\{BASE_PATH, CORE_VIEWS_PATH};
+use const otra\cache\php\CORE_VIEWS_PATH;
 use function otra\cache\php\{block, endblock};
 
 require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 
-block('title', 'Profiler - Routes');
+block('title', 'Profiler - Logs');
 block('view');
+
+require CORE_VIEWS_PATH . 'profiler/macros.phtml';
 ?>
-  <div id="requests-container">
+<div id="logs-container">
+  <?php require CORE_VIEWS_PATH . 'profiler/logs/tabs.phtml'; ?>
+
+  <div class="activatable-divs">
+    <?php
+    require CORE_VIEWS_PATH . 'profiler/logs/development.phtml';
+    require CORE_VIEWS_PATH . 'profiler/logs/production.phtml';
+    ?>
   </div>
-  <?php endblock();
+</div>
+<?php endblock();
