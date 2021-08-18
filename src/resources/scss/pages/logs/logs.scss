@@ -4,7 +4,6 @@
 // loading EcoComposer components
 @use '../../components/accordion/accordion';
 @use '../../components/styledButtons/ripple';
-@use '../../components/table/table';
 @use '../../components/tabs/tabs';
 @use '../../components/theming/theming';
 
@@ -16,8 +15,6 @@
 @include ripple.create(
   ('themes': $themes)
 );
-@include table.init();
-@include table.create();
 @include tabs.create(
   (
     'count' : 2,
@@ -26,13 +23,15 @@
   )
 );
 @include accordion.create(
-  ('themes': $themes)
+  (
+    'details-padding' : null,
+    'themes': $themes
+  )
 );
 
 #logs-container {
   // box
   box-sizing : border-box;
-  overflow   : auto;
   padding    : 2rem;
   width      : calc(100% - #{index.$vertical-menu-width});
 
@@ -43,13 +42,45 @@
     word-break : break-word;
   }
 
-  @at-root .ripple-link {
-    text-decoration : none;
+  @at-root .accordion--block {
+    margin-left  : .1rem;
+    margin-right : .1rem;
+
+    @at-root .logs-container--item-container {
+      box-shadow    : 0 0 .3rem #444;
+      margin-bottom : 1rem;
+      padding       : 1rem;
+    }
   }
 
-  @at-root #logs-container td,
-  #logs-container td::before {
-    min-width : 14rem;
+  @at-root .logs-container--label {
+    width : 15rem;
+  }
+
+  @at-root .logs-container--message-container--label {
+    width : 13.6rem;
+  }
+
+  @at-root .logs-container--label,
+  .logs-container--message-container--label {
+    // positioning
+    display       : inline-block;
+    margin-bottom : 1rem;
+
+    // text
+    font-size   : 2rem;
+  }
+
+  @at-root .yes-icon {
+    color : #5bd75b;
+  }
+
+  @at-root .no-icon {
+    color : #cb6767;
+  }
+
+  @at-root .ripple-link {
+    text-decoration : none;
   }
 
   @at-root .requests--parameter--string {
@@ -60,8 +91,19 @@
     );
   }
 
-  @at-root .trace-table--cli {
-    max-width: 2rem;
+  @at-root .requests--parameter--path {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'profiler--requests--parameter--path--color')
+      )
+    );
+  }
+
+  @at-root .message-container {
+    border-style : solid;
+    border-width : 0 0 0 0.3rem;
+    padding-left : 1rem;
+    border-color : #5781ff;
   }
 }
 

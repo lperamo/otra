@@ -21,6 +21,8 @@ abstract class Logger
     SESSION_BROWSER = '_browser',
     REMOTE_ADDR = 'REMOTE_ADDR';
 
+  public const LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK;
+
   /**
    * Returns the date or also the ip address and the browser if different
    *
@@ -47,9 +49,9 @@ abstract class Logger
       : 'l';
 
     // user agent not set if we come from the console
-    $infos['u'] =  (isset($_SERVER[self::HTTP_USER_AGENT]) && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
-      ? ($_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT])
-      : '';
+    if (isset($_SERVER[self::HTTP_USER_AGENT])
+      && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
+      $infos['u'] = $_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT];
 
     return $infos;
   }
@@ -79,7 +81,7 @@ abstract class Logger
     $infos['m'] = $message;
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
-      json_encode($infos) . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
     );
   }
 
@@ -95,7 +97,7 @@ abstract class Logger
     $infos['m'] = $message;
     self::logging(
       __DIR__ . DIR_SEPARATOR . $path . '.txt',
-      json_encode($infos) . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
     );
   }
 
@@ -104,8 +106,6 @@ abstract class Logger
    *
    * @param string $message
    * @param string $logPath
-   *
-   * @throws OtraException
    */
   public static function logTo(string $message, string  $logPath = 'log') : void
   {
@@ -121,7 +121,7 @@ abstract class Logger
 
     self::logging(
       $logPath,
-      json_encode($infos) . ',' . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
     );
   }
 
@@ -157,12 +157,12 @@ abstract class Logger
   public static function logExceptionOrErrorTo(string $message, string $errorType): void
   {
     $infos = self::logIpTest();
-    $infos['m'] = $errorType . ' : ' .$message;
+    $infos['m'] = $errorType . ' : ' . $message;
     $infos['s'] = print_r(debug_backtrace(), true);
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
         ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
-      json_encode($infos) . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
     );
   }
 

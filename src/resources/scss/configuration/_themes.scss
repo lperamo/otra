@@ -53,6 +53,7 @@ $themes: (
     'lightbox--container--text-shadow' : 0 0 3px #ccc,
     // ** profiler - requests
     'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--path--color' : #5781ff,
     'profiler--requests--parameter--string--color' : #c60,
     // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
@@ -102,7 +103,7 @@ $themes: (
     'tabs--background--color' : #ddd,
     'tabs--background-hover--color' : #ddf,
     'tabs--color' : #000,
-    'tabs--div--background' : #eee,
+    'tabs--div--background' : transparent,
     'tabs--div--box-shadow' : 0 0 3px #000,
     // vertical menu
     // -------------
@@ -178,6 +179,7 @@ $themes: (
     'lightbox--container--text-shadow' : 0 0 3px #777,
     // ** profiler - requests
     'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--path--color' : #5781ff,
     'profiler--requests--parameter--string--color' : #c60,
     // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,

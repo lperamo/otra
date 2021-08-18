@@ -6,7 +6,8 @@ use otra\config\{AllConfig, Routes};
 use Exception;
 use otra\cache\php\Logger;
 use function otra\tools\getOtraCommitNumber;
-use const otra\cache\php\{CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
+use const otra\cache\php\
+{BASE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
 use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
 use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
 
@@ -37,7 +38,16 @@ trait DevControllerTrait
     if (!isset(AllConfig::$debugConfig['autoLaunch']) || AllConfig::$debugConfig['autoLaunch'])
       require CORE_PATH . 'tools/debug/dump.php';
 
-    Logger::logTo(PHP_EOL . "\tRoute [" . $this->route . "] Patt : " . $this->pattern, OTRA_FILENAME_TRACE);
+    Logger::logTo(
+      json_encode(
+        [
+          'r' => $this->route,
+          'p' => $this->pattern
+        ],
+        Logger::LOG_JSON_MASK
+      ),
+      OTRA_FILENAME_TRACE
+    );
   }
 
   /**
@@ -62,10 +72,16 @@ trait DevControllerTrait
     [$templateFile, $otraRoute] = $this->getTemplateFile($file, $viewPath);
 
     // We log : ajax state, action variables and the template file name into logs/trace.txt
-    Logger::logTo("\tAjax : " . ($ajax ? 'true' : 'false') . PHP_EOL .
-      "\tVariables :" . PHP_EOL .
-      print_r($variables, true) . PHP_EOL .
-      'File : ' . $templateFile,
+    // a for AJAX, v for variables, f for file
+    Logger::logTo(
+      json_encode(
+        [
+          'a' => ($ajax ? '✔' : '✘'),
+          'v' => $variables,
+          'f' => str_replace([CORE_PATH, BASE_PATH], ['CORE_PATH + ', 'BASE_PATH + '], $templateFile)
+        ],
+        Logger::LOG_JSON_MASK
+      ),
       OTRA_FILENAME_TRACE
     );
 

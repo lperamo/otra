@@ -10,6 +10,7 @@ const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
     <details class="accordion">
       <summary class="accordion">Classes not found</summary>
       <div class="accordion--block">
+        <div class="logs-container--item-container">
         <?php
         $traceLogs = file_get_contents(PROD_LOGS_PATH . 'classNotFound.txt');
 
@@ -20,12 +21,14 @@ const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
           ?>No logs about classes not found.<?php
         }
         ?>
+        </div>
       </div>
     </details>
 
     <details class="accordion">
       <summary class="accordion">Classic logs</summary>
       <div class="accordion--block">
+        <div class="logs-container--item-container">
         <?php
         $traceLogs = file_get_contents(PROD_LOGS_PATH . 'log.txt');
 
@@ -36,12 +39,14 @@ const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
           ?>No classic logs.<?php
         }
         ?>
+        </div>
       </div>
     </details>
 
     <details class="accordion">
       <summary class="accordion">Unknown exceptions</summary>
       <div class="accordion--block">
+        <div class="logs-container--item-container">
         <?php
         $traceLogs = file_get_contents(PROD_LOGS_PATH . 'unknownExceptions.txt');
 
@@ -52,12 +57,14 @@ const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
           ?>No unknown exceptions logs.<?php
         }
         ?>
+        </div>
       </div>
     </details>
 
     <details class="accordion">
       <summary class="accordion">Unknown fatal errors</summary>
       <div class="accordion--block">
+        <div class="logs-container--item-container">
         <?php
         $traceLogs = file_get_contents(PROD_LOGS_PATH . 'unknownFatalErrors.txt');
 
@@ -68,6 +75,7 @@ const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
           ?>No unknown fatal errors logs.<?php
         }
         ?>
+        </div>
       </div>
     </details>
   </div>

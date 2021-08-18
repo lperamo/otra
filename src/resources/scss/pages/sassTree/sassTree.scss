@@ -24,6 +24,18 @@
   // text
   word-break : break-word;
 
+  @at-root .accordion--block {
+    box-shadow    : 0 0 .3rem #444;
+    margin-left  : .1rem;
+    margin-right : .1rem;
+
+    //& ul {
+    //  box-shadow    : 0 0 .3rem #444;
+    //  margin-bottom : 1rem;
+    //  padding       : 1rem;
+    //}
+  }
+
   & li {
     position: relative;
   }
