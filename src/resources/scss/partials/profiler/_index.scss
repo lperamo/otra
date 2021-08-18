@@ -8,6 +8,7 @@
 
 // loading partials
 @use '../../partials/otraPage/otraPage';
+@use 'mobile';
 
 // configuring components
 @include theming.init-themes($themes);
@@ -18,10 +19,11 @@
     'border-radius' : 0 0 0.5rem 0,
     'themes' : $themes,
     'vertical-menu--background-image' : false,
+    'width' : false
   )
 );
 
-$vertical-menu-width : 26rem;
+$vertical-menu-width : 24rem;
 
 .vertical-menu {
   &.vertical-menu--container--item :first-child {

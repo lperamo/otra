@@ -35,7 +35,6 @@
 #requests-container {
   // box
   box-sizing : border-box;
-  overflow   : auto;
   padding    : 2rem;
   width      : calc(100% - #{index.$vertical-menu-width});
 
