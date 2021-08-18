@@ -22,7 +22,9 @@
   box-sizing : border-box;
   overflow   : auto;
   padding    : 2rem;
-  width      : calc(100% - #{index.$vertical-menu-width});
+  // the following combination prevent to go outside the screen but taking all the space available in the flex container
+  flex-grow : 1;
+  width     : min-content;
 
   // text
   font-size  : 1.6rem;
