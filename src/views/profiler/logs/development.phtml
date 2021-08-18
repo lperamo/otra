@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace otra\src\views\profiler\logs;
 
-use function otra\tools\debug\dump;
 use const otra\cache\php\{BASE_PATH, DEV};
 const
   TRACE_LABELS = [
@@ -20,6 +19,8 @@ const
   NO_ICON = '✘';
 
 /**
+ * Shows an information line in the 'Message' kind of blocks in the logs
+ *
  * @param string $label
  * @param string $messageProperty
  *
@@ -33,7 +34,7 @@ function showMessageBlock(string $label, string $messageProperty) : string
 <div class="activatable-divs--item">
   <a href="sql?route=<?= $_GET['route'] ?>" class="ripple ripple-link" rel="noopener noreferrer">SQL logs</a><br/><br/>
 
-  <details class="accordion">
+  <details class="accordion" open>
     <summary class="accordion">Trace</summary>
     <div class="accordion--block">
       <?php
@@ -75,6 +76,10 @@ function showMessageBlock(string $label, string $messageProperty) : string
 
                 $value = '';
 
+                /**
+                 * @var int|string $messageKey
+                 * @var string     $messageProperty
+                 */
                 foreach ($tracePropertyValue as $messageKey => $messageProperty)
                 {
                   // We skip variables for now
@@ -110,7 +115,7 @@ function showMessageBlock(string $label, string $messageProperty) : string
               case 'i':
                 if ($tracePropertyValue === 'l')
                 {
-                  $value = 'localhost';
+                  $value = 'Localhost';
                   break;
                 }
               default:

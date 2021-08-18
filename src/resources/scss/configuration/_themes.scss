@@ -98,6 +98,10 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #9ac,
+    // table
+    'table--border' : 0,
+    'table--td--border' : 0,
+    'table--th--border' : 0,
     // tabs
     // ----
     'tabs--background--color' : #ddd,
@@ -224,6 +228,10 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #bce,
+    // table
+    'table--border' : 0,
+    'table--td--border' : 0,
+    'table--th--border' : 0,
     // tabs
     // ----
     'tabs--background--color' : #ddd,

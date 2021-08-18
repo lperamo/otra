@@ -18,7 +18,12 @@
   )
 );
 @include table.init();
-@include table.create();
+@include table.create(
+  (
+    'desktop--td-padding' : 1rem,
+    'themes': $themes
+  )
+);
 @include tabs.create(
   (
     'count' : 4,
@@ -49,7 +54,20 @@
         )
       );
 
-      margin     : 0 .1rem;
+      margin : 0 .1rem;
+
+      @at-root #requests-container tr:nth-child(2n),
+      #requests-container .table-header > tr {
+        background-color : rgb(96 138 255 / 15%);
+      }
+
+      @at-root #requests-container table {
+        width : 100%;
+      }
+
+      @at-root #requests-container th {
+        padding : 1rem;
+      }
 
       @at-root #requests-container td,
       #requests-container td::before {
