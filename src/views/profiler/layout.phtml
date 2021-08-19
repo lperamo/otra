@@ -42,7 +42,7 @@ $menuItem = function (string $routeToTest, array $itemProperties) use ($route)
       href="<?= SITE_HOST . Routes::$allRoutes[$routeToTest][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>"
       rel="noreferrer noopener" class="vertical-menu--container--item--link" >
       <span title="<?= $itemProperties[LABEL] ?>"><?= $itemProperties[ICON] ?> </span>
-      <?= $itemProperties[LABEL] ?>
+      <span class="vertical-menu--container--item--link--label"><?= $itemProperties[LABEL] ?></span>
     </a>
   </li>
   <?php
