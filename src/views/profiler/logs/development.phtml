@@ -31,7 +31,7 @@ function showMessageBlock(string $label, string $messageProperty) : string
   return '<div>' . KEY_CONTAINER . $label . ' ' . KEY_CONTAINER_END . $messageProperty . '</div>';
 }
 ?>
-<div class="activatable-divs--item">
+<div class="activatable-divs--item" role="tabpanel">
   <a href="sql?route=<?= $_GET['route'] ?>" class="ripple ripple-link" rel="noopener noreferrer">SQL logs</a><br/><br/>
 
   <details class="accordion" open>
