@@ -1,7 +1,12 @@
 <?php
 declare(strict_types=1);
 namespace otra\src\views\profiler\requests;
+/** @var array $session Session that was logged in a file in `cache/php/sessions` folder */
 ?>
 <div class="activatable-divs--item">
-  <?php showParameters([], 'response headers'); ?>
+  <p>
+    This will not contain <i>CSP</i>, <i>Feature-Policies</i> and some headers that will be added after. This
+    is <strong><em>not</em></strong> perfect.
+  </p>
+  <?php showParameters($session['responseHeaders'], 'response headers'); ?>
 </div>

@@ -5,15 +5,15 @@ namespace otra\src\views\profiler\requests;
 /**
  * Creates an HTML table that shows array parameters and their values
  *
- * @param array  $parameters
- * @param string $type
+ * @param array  $parameters Eg: GET, POST, SESSION parameters
+ * @param string $type       Used for labels and descriptions
  */
 function showParameters(array $parameters, string $type) : void
 {
   if (!empty($parameters))
   {
     ?>
-    <table class="table suffix" aria-label="Table about <?= $type ?> parameters">
+    <table class="table suffix" aria-label="Table about <?= $type ?>">
       <thead class="table-header">
         <tr>
           <th scope="col">Key</th>
@@ -47,6 +47,6 @@ function showParameters(array $parameters, string $type) : void
     <?php
   } else
   {
-    ?>No <?= $type ?> parameters.<?php
+    ?>No <?= $type ?>.<?php
   }
 }

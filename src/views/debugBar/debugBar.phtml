@@ -1,10 +1,51 @@
 <?php
 declare(strict_types=1);
 namespace otra\src\views\debugBar;
-use const otra\cache\php\{CACHE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_VIEWS_PATH};
+use function otra\console\convertLongArrayToShort;
+use const otra\cache\php\
+{CACHE_PATH, CONSOLE_PATH, CORE_CSS_PATH, CORE_PATH, CORE_VIEWS_PATH};
+use const otra\config\VERSION;
 
-const DEBUG_BAR_PATH = CORE_VIEWS_PATH . 'debugBar/';
+const
+  DEBUG_BAR_PATH = CORE_VIEWS_PATH . 'debugBar/',
+  CACHE_PHP_SESSION_PATH = CACHE_PATH . 'php/sessions/';
+
+define('ROUTE', urlencode($this->route));
+
+require CONSOLE_PATH . 'colors.php';
+require CONSOLE_PATH . 'tools.php';
 require DEBUG_BAR_PATH . 'macros.phtml';
+
+if (!file_exists(CACHE_PHP_SESSION_PATH))
+  mkdir(CACHE_PHP_SESSION_PATH);
+
+$sessionDebugFile = CACHE_PHP_SESSION_PATH . sha1('ca' . ROUTE . VERSION . 'che') . '.php';
+
+$responseHeaders = [];
+$headers = headers_list();
+
+foreach ($headers as $header)
+{
+  $header = explode(':', $header);
+  $responseHeaders[array_shift($header)] = trim(implode(':', $header));
+}
+
+file_put_contents(
+  $sessionDebugFile,
+  '<?php declare(strict_types=1);namespace otra\cache\php\sessions;return ' .
+convertLongArrayToShort([
+  'GET' => $_GET,
+  'POST' => $_POST,
+  'COOKIE' => $_COOKIE,
+  'SESSION' => $_SESSION,
+  'requestHeaders' => apache_request_headers(),
+  'responseHeaders' => $responseHeaders,
+]) . ';' . PHP_EOL
+);
+
+if ($_SERVER['REMOTE_ADDR'] === '::1')
+  chmod($sessionDebugFile, 0775);
+
 $this::css([
   [CORE_CSS_PATH . 'partials/devMode/devMode'],
   [CORE_CSS_PATH . 'partials/devMode/devModePrint', true]
@@ -13,7 +54,6 @@ generateArrows();
 ?>
 <div id="dbg-bar" class="dbg-bar">
   <?php
-  define('ROUTE', urlencode($this->route));
   define(
     'SITE_HOST',
     (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']

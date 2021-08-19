@@ -214,7 +214,7 @@ namespace otra\console
       foreach($myArray as $arrayKey => $arrayItem)
       {
         if (is_string($arrayItem))
-          $newArrayItem = '\'' . $arrayItem . '\'';
+          $newArrayItem = '\'' . addslashes($arrayItem) . '\'';
         elseif (is_bool($arrayItem))
           $newArrayItem = $arrayItem ? 'true' : 'false';
         else
