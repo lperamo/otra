@@ -17,6 +17,7 @@
 @include verticalMenu.create(
   (
     'border-radius' : 0 0 0.5rem 0,
+    'padding' : null,
     'themes' : $themes,
     'vertical-menu--background-image' : false,
     'width' : false
@@ -34,6 +35,12 @@
     }
 
     &--link {
+      // box
+      display : inline-block;
+      padding : 1rem;
+      width   : 100%;
+
+      // text
       text-decoration : none;
     }
   }
