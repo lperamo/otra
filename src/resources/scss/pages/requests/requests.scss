@@ -59,7 +59,11 @@
 
       @at-root #requests-container tr:nth-child(2n),
       #requests-container .table-header > tr {
-        background-color : rgb(96 138 255 / 15%);
+        @include theming.to-theme(
+          (
+            #{&} : ('background-color', 'table--td--background-color')
+          )
+        );
       }
 
       @at-root #requests-container table {
@@ -80,6 +84,14 @@
         @include theming.to-theme(
           (
             #{&} : ('color', 'profiler--requests--parameter--string--color')
+          )
+        );
+      }
+
+      @at-root #requests-container  tbody > tr:nth-child(2n + 1) {
+        @include theming.to-theme(
+          (
+            #{&} : ('box-shadow', 'table--td--alternate--box-shadow')
           )
         );
       }

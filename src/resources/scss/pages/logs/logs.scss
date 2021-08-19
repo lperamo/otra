@@ -44,11 +44,23 @@
     word-break : break-word;
   }
 
+  @at-root .ripple-link {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'profiler--logs--sql-button--color')
+      )
+    );
+  }
+
   @at-root .accordion--block {
     margin-left  : .1rem;
     margin-right : .1rem;
 
     @at-root .logs-container--item-container {
+      @media all and (prefers-color-scheme : dark) {
+        background-color: hsl(240deg 20% 53% / 15%);
+      }
+
       box-shadow    : 0 0 .3rem #444;
       margin-bottom : 1rem;
       padding       : 1rem;
@@ -102,6 +114,12 @@
   }
 
   @at-root .message-container {
+    @include theming.to-theme(
+      (
+        #{&} : ('border-color', 'profiler--logs--message-container--border-color')
+      )
+    );
+
     border-style : solid;
     border-width : 0 0 0 0.3rem;
     padding-left : 1rem;

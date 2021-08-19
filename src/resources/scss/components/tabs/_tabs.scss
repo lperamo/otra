@@ -132,6 +132,8 @@ div.activatable-divs {
 
   @if ($background != null) {
     li.tabs--item {
+      transition : background-color .5s;
+
       &:not(:hover) {
         @include theming.to-theme(
           (
@@ -228,7 +230,11 @@ div.activatable-divs {
 
   #{$mega-selector--hidden} {
     opacity : 0;
-    height  : 0;
+
+    // those properties are only set to those values to prevent the active tab to have the height of the bigger hidden
+    // tab
+    height   : 0;
+    overflow : hidden;
   }
 
   #{$mega-selector--visible} {

@@ -26,6 +26,14 @@
   )
 );
 
+.otra-title--link {
+  @include theming.to-theme(
+    (
+      #{&} : ('color', 'profiler--otra-title--link-color')
+    )
+  );
+}
+
 .vertical-menu {
   &.vertical-menu--container--item :first-child {
     border-radius : 0;
@@ -43,6 +51,7 @@
       width   : 100%;
 
       // text
+      color           : inherit;
       text-decoration : none;
     }
   }
