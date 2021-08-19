@@ -81,6 +81,7 @@ $themes: (
       #04f
     ),
     // ** profiler - routes status
+    'profiler--routes--file-status--color' : #333,
     'profiler--routes--file-status--error--background-color' : #f2d9d9,
     'profiler--routes--file-status--error--border-color' : .1rem solid #d98c8c,
     'profiler--routes--file-status--success--background-color' : #d6f5d6,
@@ -219,10 +220,11 @@ $themes: (
       #04f
     ),
     // ** profiler - routes status
-    'profiler--routes--file-status--error--background-color' : #f2d9d9,
-    'profiler--routes--file-status--error--border-color' : .1rem solid #d98c8c,
-    'profiler--routes--file-status--success--background-color' : #d6f5d6,
-    'profiler--routes--file-status--success--border-color' : .1rem solid #85e085,
+    'profiler--routes--file-status--color' : #222,
+    'profiler--routes--file-status--error--background-color' : #d19494,
+    'profiler--routes--file-status--error--border-color' : .1rem solid #e0b8b8,
+    'profiler--routes--file-status--success--background-color' : #93d293,
+    'profiler--routes--file-status--success--border-color' : .1rem solid #b2e6b2,
     // ** dump
     'dump--code-container--outline' : 1px solid #666,
     'dump--code-container--highlight--background-color' : #aaa,

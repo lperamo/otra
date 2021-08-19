@@ -68,6 +68,13 @@
             // positioning
             margin-right : .5rem;
             padding      : 0.25rem 0.5rem;
+
+            // text
+            @include theming.to-theme(
+              (
+                #{&} : ('color', 'profiler--routes--file-status--color')
+              )
+            );
           }
 
           &--file-status--error {

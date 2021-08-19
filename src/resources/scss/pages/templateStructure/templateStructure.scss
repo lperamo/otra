@@ -1,8 +1,15 @@
 // loading configuration
 @use 'colors';
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
 
 // loading partials
 @use '../../partials/profiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
 
 $padding : 1rem;
 
@@ -153,3 +160,6 @@ $padding : 1rem;
     }
   }
 }
+
+// applying theme
+@include theming.global-mass-theme();

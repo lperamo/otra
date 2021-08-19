@@ -123,12 +123,13 @@ $defaults : (
 /// 'vertical-menu--background-image'
 /// @param  {string} $suffix          - Suffix put after all the selectors
 /// @param  {bool}   $themeUsed       - Are we using a theme?
+/// @param  {string} $specificity     - Do we have to add :not(.active) for example to the selector?
 ///
-@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed) {
+@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed, $specifity: '') {
   @if ($value != false) {
     @include theming.to-theme(
       (
-        #{&} : ($property, $value)
+        #{&} + $specifity : ($property, $value)
       ),
       $suffix,
       $themeUsed
@@ -222,12 +223,18 @@ $defaults : (
     }
 
     &.vertical-menu--container--item {
-      @include _handleThemedFeature('background-image', $vertical-menu--element--background-image, $suffix, $themeUsed);
+      @include _handleThemedFeature(
+        'background-image',
+        $vertical-menu--element--background-image,
+        $suffix,
+        $themeUsed,
+        ':not(:active,' + #{&} + '-active)'
+      );
 
       @if ($vertical-menu--element--border != false) {
         @include theming.to-theme(
           (
-            #{&} : ( 'border', $vertical-menu--element--border)
+            #{&} + ':not(:active,' + #{&} + '-active)' : ( 'border', $vertical-menu--element--border)
           ),
           $suffix,
           $themeUsed

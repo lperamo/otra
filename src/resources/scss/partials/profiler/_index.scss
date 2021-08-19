@@ -13,7 +13,6 @@
 @use 'mobile';
 
 // configuring components
-@include theming.init-themes($themes);
 @include flexContainer.create();
 @include verticalMenu.init();
 @include verticalMenu.create(
@@ -56,6 +55,3 @@
     }
   }
 }
-
-// applying theme
-@include theming.global-mass-theme();
