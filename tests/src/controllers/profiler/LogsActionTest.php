@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\SqlAction;
+use otra\controllers\profiler\LogsAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlActionTest extends TestCase
+class LogsActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
@@ -67,16 +67,17 @@ class SqlActionTest extends TestCase
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
+    file_put_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt', '');
 
     // launching
     ob_start();
-    new SqlAction([
-      'pattern' => '/profiler/sql',
+    new LogsAction([
+      'pattern' => '/profiler/logs',
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'sqlAction',
-      'route' => 'otra_sql',
+      'action' => 'logsAction',
+      'route' => 'otra_logs',
       'js' => false,
       'css' => false
     ]);
@@ -84,9 +85,9 @@ class SqlActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profiler/sqlAction.phtml'),
+      file_get_contents(TEST_PATH . 'examples/profiler/logsAction.phtml'),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output...'
     );
   }
 }

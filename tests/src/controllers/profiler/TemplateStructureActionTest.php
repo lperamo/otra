@@ -4,23 +4,25 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\SqlAction;
+use otra\controllers\profiler\TemplateStructureAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlActionTest extends TestCase
+class TemplateStructureActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
-    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld';
+    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
+    ACTION = 'templateStructure',
+    FULL_ACTION_NAME = self::ACTION . 'Action';
 
   protected $preserveGlobalState = FALSE;
 
@@ -70,13 +72,13 @@ class SqlActionTest extends TestCase
 
     // launching
     ob_start();
-    new SqlAction([
-      'pattern' => '/profiler/sql',
+    new TemplateStructureAction([
+      'pattern' => '/profiler/' . self::ACTION,
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'sqlAction',
-      'route' => 'otra_sql',
+      'action' => self::FULL_ACTION_NAME,
+      'route' => 'otra_' . self::ACTION,
       'js' => false,
       'css' => false
     ]);
@@ -84,9 +86,9 @@ class SqlActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profiler/sqlAction.phtml'),
+      file_get_contents(TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml'),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output...'
     );
   }
 }
