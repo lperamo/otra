@@ -34,7 +34,7 @@
 }
 
 .vertical-menu {
-  &.vertical-menu--container--item :first-child {
+  &.vertical-menu--container--item:first-child {
     border-radius : 0;
   }
 

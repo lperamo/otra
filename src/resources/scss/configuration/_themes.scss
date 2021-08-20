@@ -124,6 +124,8 @@ $themes: (
     // -------------
     'vertical-menu--border' : 1px solid #a3afff,
     'vertical-menu--element--border' : 1px solid #a3afff,
+    'vertical-menu--element--border-color' : #a3afff,
+    'vertical-menu--element--border-style' : solid,
     // -- states start
     // -- idle state
     'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
@@ -263,8 +265,10 @@ $themes: (
     'tabs--div--box-shadow' : 0 0 3px #fff,
     // vertical menu
     // -------------
-    'vertical-menu--border' : 1px solid #000,
+    'vertical-menu--border' : 1px solid #a3afff,
     'vertical-menu--element--border' : 1px solid #a3afff,
+    'vertical-menu--element--border-color' : #a3afff,
+    'vertical-menu--element--border-style' : solid,
     // -- states start
     // -- idle state
     'vertical-menu--element--background-image' : linear-gradient(45deg, #56a, #78b),
