@@ -15,6 +15,6 @@ if (isset($_SESSION[KEY_TEMPLATE_VISUALIZATION]))
   echo $_SESSION[KEY_TEMPLATE_VISUALIZATION];
 else
 {
-?><p>There is no template data in the session right now.</p><?php
+?><p class="no-template-in-session">There is no template data in the session right now.</p><?php
 }
 endblock();

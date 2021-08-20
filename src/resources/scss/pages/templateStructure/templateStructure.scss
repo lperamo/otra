@@ -1,5 +1,6 @@
 // loading configuration
 @use 'colors';
+@use '../../configuration/devModeFonts';
 @use '../../configuration/themes' as *;
 
 // loading EcoComposer components
@@ -12,6 +13,12 @@
 @include theming.init-themes($themes);
 
 $padding : 1rem;
+
+.no-template-in-session {
+  font-family : devModeFonts.$debug--font;
+  font-size   : 16px;
+  padding     : 0 1rem;
+}
 
 .template-structure--container {
   padding-left  : .5rem;
