@@ -8,9 +8,11 @@ use otra\controllers\profiler\CssAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
-use function otra\tools\delTree;
+use const otra\cache\php\
+{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
+use function otra\tools\delTree;
+
 
 /**
  * @runTestsInSeparateProcesses
@@ -22,16 +24,18 @@ class CssActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'css',
-    FULL_ACTION_NAME = self::ACTION . 'Action';
+    FULL_ACTION_NAME = self::ACTION . 'Action',
+    SASS_TREE_CACHE_PATH = CACHE_PATH . 'css/sassTree.php',
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
 
   protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
    */
-  public static function setUpBeforeClass(): void
+  protected function setUp(): void
   {
-    parent::setUpBeforeClass();
+    parent::setUp();
     $_SERVER[APP_ENV] = DEV;
     ob_start();
     TasksManager::execute(
@@ -63,12 +67,15 @@ class CssActionTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function test() : void
+  public function test_noSassCache() : void
   {
     // context
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
+
+    if (file_exists(self::SASS_TREE_CACHE_PATH))
+      unlink(self::SASS_TREE_CACHE_PATH);
 
     // launching
     ob_start();
@@ -86,9 +93,10 @@ class CssActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml'),
+      file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
+      CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }
 }

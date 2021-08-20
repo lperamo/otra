@@ -9,6 +9,7 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
@@ -75,9 +76,6 @@ class ClearSqlLogsActionTest extends TestCase
    */
   public function testClearSqlLogsAction() : void
   {
-    // context
-
-
     // launching
     ob_start();
     new ClearSQLLogsAction([
@@ -96,7 +94,7 @@ class ClearSqlLogsActionTest extends TestCase
     self::assertEquals(
       'No more stored queries in ' . BASE_PATH . 'logs/dev/sql.txt.',
       $output,
-      'Testing profiler ClearSQLLogsAction page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'ClearSQLLogsAction' . CLI_ERROR . ' page output...'
     );
   }
 }

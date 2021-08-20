@@ -8,7 +8,7 @@ use otra\controllers\profiler\LogsAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
@@ -20,16 +20,25 @@ class LogsActionTest extends TestCase
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
-    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld';
+    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/logsAction.phtml',
+    LOGS_PATH = BASE_PATH . 'logs/',
+    LOGS_DEV_PATH = self::LOGS_PATH . DEV . '/',
+    LOGS_PROD_PATH = self::LOGS_PATH . PROD . '/',
+    LOG_DEV_TRACE = self::LOGS_DEV_PATH . 'trace.txt',
+    LOG_PROD_CLASS_NOT_FOUND = self::LOGS_PROD_PATH . 'classNotFound.txt',
+    LOG_PROD_CLASSIC_LOG = self::LOGS_PROD_PATH . 'log.txt',
+    LOG_PROD_UNKNOWN_EXCEPTIONS = self::LOGS_PROD_PATH . 'unknownExceptions.txt',
+    LOG_PROD_UNKNOWN_FATAL_ERRORS = self::LOGS_PROD_PATH . 'unknownFatalErrors.txt';
 
   protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
    */
-  public static function setUpBeforeClass(): void
+  protected function setUp(): void
   {
-    parent::setUpBeforeClass();
+    parent::setUp();
     $_SERVER[APP_ENV] = DEV;
     ob_start();
     TasksManager::execute(
@@ -67,7 +76,27 @@ class LogsActionTest extends TestCase
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
-    file_put_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt', '');
+
+    if (!file_exists(self::LOGS_DEV_PATH))
+      mkdir(self::LOGS_DEV_PATH, 0755, true);
+
+    if (!file_exists(self::LOGS_PROD_PATH))
+      mkdir(self::LOGS_PROD_PATH);
+
+    if (!file_exists(self::LOG_DEV_TRACE))
+      touch(self::LOG_DEV_TRACE);
+
+    if (!file_exists(self::LOG_PROD_CLASS_NOT_FOUND))
+      touch(self::LOG_PROD_CLASS_NOT_FOUND);
+
+    if (!file_exists(self::LOG_PROD_CLASSIC_LOG))
+      touch(self::LOG_PROD_CLASSIC_LOG);
+
+    if (!file_exists(self::LOG_PROD_UNKNOWN_EXCEPTIONS))
+      touch(self::LOG_PROD_UNKNOWN_EXCEPTIONS);
+
+    if (!file_exists(self::LOG_PROD_UNKNOWN_FATAL_ERRORS))
+      touch(self::LOG_PROD_UNKNOWN_FATAL_ERRORS);
 
     // launching
     ob_start();
@@ -85,9 +114,10 @@ class LogsActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profiler/logsAction.phtml'),
+      file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .
+      CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }
 }

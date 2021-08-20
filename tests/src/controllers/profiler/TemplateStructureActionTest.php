@@ -22,16 +22,17 @@ class TemplateStructureActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'templateStructure',
-    FULL_ACTION_NAME = self::ACTION . 'Action';
+    FULL_ACTION_NAME = self::ACTION . 'Action',
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
 
   protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
    */
-  public static function setUpBeforeClass(): void
+  protected function setUp(): void
   {
-    parent::setUpBeforeClass();
+    parent::setUp();
     $_SERVER[APP_ENV] = DEV;
     ob_start();
     TasksManager::execute(
@@ -86,9 +87,10 @@ class TemplateStructureActionTest extends TestCase
 
     // testing
     self::assertEquals(
-      file_get_contents(TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml'),
+      file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output...'
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
+      CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }
 }
