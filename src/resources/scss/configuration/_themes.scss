@@ -5,9 +5,9 @@ $themes: (
     // ** body
     'body--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
     'body--color' : #333,
+    'otra--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'otra--title--text-shadow' : 0 0 3px #fff,
     // ** exception
-    'exception--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
-    'exception--title--text-shadow' : 0 0 3px #fff,
     'exception--color--error-code' : #f55,
     'exception--color--file' : #f55,
     // ** components
@@ -80,6 +80,8 @@ $themes: (
       #88f,
       #04f
     ),
+    // ** profiler - routes block
+    'profiler--routes--block--background-color' : transparent,
     // ** profiler - routes status
     'profiler--routes--file-status--color' : #333,
     'profiler--routes--file-status--error--background-color' : #f2d9d9,
@@ -144,9 +146,9 @@ $themes: (
     // ** body
     'body--background-image' : linear-gradient(185deg, #222, #232334),
     'body--color' : #ddd,
-    // ** exceptiontheming
-    'exception--title--background-image' : linear-gradient(45deg, #333, #78b),
-    'exception--title--text-shadow' : 0 0 3px #000,
+    'otra--title--background-image' : linear-gradient(45deg, #879bc5 50%, #7279c0),
+    'otra--title--text-shadow' : 0 0 3px #000,
+    // ** exception theming
     'exception--color--error-code' : #fda,
     'exception--color--file' : #fda,
     // ** components
@@ -219,6 +221,8 @@ $themes: (
       #88f,
       #04f
     ),
+    // ** profiler - routes block
+    'profiler--routes--block--background-color' : rgb(77 77 77 / 15%),
     // ** profiler - routes status
     'profiler--routes--file-status--color' : #222,
     'profiler--routes--file-status--error--background-color' : #d19494,

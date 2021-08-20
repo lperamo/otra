@@ -37,6 +37,12 @@
     padding : 0 .1rem;
 
     @at-root .routes--block {
+      @include theming.to-theme(
+        (
+          #{&} : ('background-color', 'profiler--routes--block--background-color')
+        )
+      );
+
       box-shadow    : 0 0 3px #444;
       margin-bottom : 1.5rem;
       padding       : 1rem 2rem;
