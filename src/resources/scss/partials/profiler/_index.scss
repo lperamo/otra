@@ -9,27 +9,49 @@
 // loading partials
 @use '../../partials/otraPage/otraPage';
 
+// responsive
+@use 'mobile';
+
 // configuring components
-@include theming.init-themes($themes);
 @include flexContainer.create();
 @include verticalMenu.init();
 @include verticalMenu.create(
   (
     'border-radius' : 0 0 0.5rem 0,
+    'padding' : null,
     'themes' : $themes,
     'vertical-menu--background-image' : false,
+    'width' : false
   )
 );
 
-$vertical-menu-width : 26rem;
-
-.vertical-menu.vertical-menu--container--item:first-child {
-  border-radius: 0;
+.otra-title--link {
+  @include theming.to-theme(
+    (
+      #{&} : ('color', 'profiler--otra-title--link-color')
+    )
+  );
 }
 
-.vertical-menu--container--item:hover:not(:active) {
-  text-shadow : 1px 1px #6e7bcf;
-}
+.vertical-menu {
+  &.vertical-menu--container--item:first-child {
+    border-radius : 0;
+  }
 
-// applying theme
-@include theming.global-mass-theme();
+  &--container--item {
+    &:hover:not(:active) {
+      text-shadow : 1px 1px #6e7bcf;
+    }
+
+    &--link {
+      // box
+      display : inline-block;
+      padding : 1rem;
+      width   : 100%;
+
+      // text
+      color           : inherit;
+      text-decoration : none;
+    }
+  }
+}

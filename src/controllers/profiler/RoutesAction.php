@@ -9,7 +9,7 @@ use otra\{Controller, OtraException, services\ProfilerService};
  * @author  Lionel Péramo
  * @package otra\controllers\profiler
  */
-class CssAction extends Controller
+class RoutesAction extends Controller
 {
   /**
    * @param array $otraParams
@@ -21,6 +21,6 @@ class CssAction extends Controller
   {
     parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
-    echo $this->renderView('sass/index.phtml', ['route' => $this->route]);
+    echo $this->renderView('routes/index.phtml', ['route' => $this->route]);
   }
 }

@@ -6,6 +6,7 @@
 
 // loading sass module list
 @use 'sass:map';
+@use 'sass:list';
 
 // loading theming component
 @use '../../components/theming/theming';
@@ -18,6 +19,8 @@ $defaults : (
   'vertical-menu--background-image' : 'vertical-menu--background-image',
   'vertical-menu--border' : 'vertical-menu--border',
   'vertical-menu--element--border' : 'vertical-menu--element--border',
+  'vertical-menu--element--border-style' : 'vertical-menu--element--border-style',
+  'vertical-menu--element--border-color' : 'vertical-menu--element--border-color',
   // -- states start
   // idle state
   'vertical-menu--element--background-image' : 'vertical-menu--element--background-image',
@@ -40,6 +43,8 @@ $defaults : (
       'default--vertical-menu--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
       'default--vertical-menu--border' : 1px solid #000,
       'default--vertical-menu--element--border' : 1px solid #000,
+      'default--vertical-menu--element--border-style' : solid,
+      'default--vertical-menu--element--border-color' : #000,
       // -- states start
       // idle state
       'default--vertical-menu--element--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
@@ -60,18 +65,20 @@ $defaults : (
       'default--vertical-menu--background-image' : linear-gradient(#3e5e6a, #517a8a),
       'default--vertical-menu--border' : 1px solid #000,
       'default--vertical-menu--element--border' : 1px solid #000,
+      'default--vertical-menu--element--border-style' : solid,
+      'default--vertical-menu--element--border-color' : #000,
       // -- states start
       // idle state
       'default--vertical-menu--element--background-image' : linear-gradient(45deg, #1c2427 0%, #18252a 45%, #1c2427 100%),
       'default--vertical-menu--element--color' : #ccc,
       // active state
-      'default--vertical-menu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+      'default--vertical-menu--element-active--background-image' : linear-gradient(45deg, #1c2427 0%, #2b414a 45%, #1c2427 100%),
       'default--vertical-menu--element-active--color' : #44a,
       // focus state
-      'default--vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--vertical-menu--element-focus--background-image' : linear-gradient(45deg, #185b77 0%, #204756 45%, #185b77 100%),
       'default--vertical-menu--element-focus--color' : #44a,
       // hover state
-      'default--vertical-menu--element-hover--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
+      'default--vertical-menu--element-hover--background-image' : linear-gradient(45deg, #1c2427 0%, #3d7085 45%, #1c2427 100%),
       'default--vertical-menu--element-hover--color' : #cc4,
       // states end --
       'default--vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
@@ -123,12 +130,13 @@ $defaults : (
 /// 'vertical-menu--background-image'
 /// @param  {string} $suffix          - Suffix put after all the selectors
 /// @param  {bool}   $themeUsed       - Are we using a theme?
+/// @param  {string} $specificity     - Do we have to add :not(.active) for example to the selector?
 ///
-@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed) {
+@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed, $specifity: '') {
   @if ($value != false) {
     @include theming.to-theme(
       (
-        #{&} : ($property, $value)
+        #{&} + $specifity : ($property, $value)
       ),
       $suffix,
       $themeUsed
@@ -176,7 +184,8 @@ $defaults : (
   $vertical-menu--background-image: map.get($options, 'vertical-menu--background-image');
   $vertical-menu--border : map.get($options, 'vertical-menu--border');
   $vertical-menu--element--border : map.get($options, 'vertical-menu--element--border');
-  $vertical-menu--element--color: map.get($options, 'vertical-menu--element--color');
+  $vertical-menu--element--border-color : map.get($options, 'vertical-menu--element--border-color');
+  $vertical-menu--element--border-style : map.get($options, 'vertical-menu--element--border-style');
   $vertical-menu--element--background-image : map.get($options, 'vertical-menu--element--background-image');
   $vertical-menu--element-active--background-image : map.get($options, 'vertical-menu--element-active--background-image');
   $vertical-menu--element-active--color: map.get($options, 'vertical-menu--element-active--color');
@@ -195,7 +204,7 @@ $defaults : (
       @if ($vertical-menu--border != false) {
         @include theming.to-theme(
           (
-            #{&} : ( 'border', $vertical-menu--border)
+            #{&} : ('border', $vertical-menu--border)
           ),
           $suffix,
           $themeUsed
@@ -222,16 +231,30 @@ $defaults : (
     }
 
     &.vertical-menu--container--item {
-      @include _handleThemedFeature('background-image', $vertical-menu--element--background-image, $suffix, $themeUsed);
+      $selectorButNotActive : ':not(:active,' + #{&} + '-active,:hover,:focus)';
+
+      @include _handleThemedFeature(
+        'background-image',
+        $vertical-menu--element--background-image,
+        $suffix,
+        $themeUsed,
+        $selectorButNotActive
+      );
 
       @if ($vertical-menu--element--border != false) {
-        @include theming.to-theme(
-          (
-            #{&} : ( 'border', $vertical-menu--element--border)
-          ),
-          $suffix,
-          $themeUsed
-        );
+        @if ($vertical-menu--element--border-style != false) {
+          @include theming.theme(
+            'border-style',
+            $vertical-menu--element--border-style
+          );
+        }
+
+        @if ($vertical-menu--element--border-color != false) {
+          @include theming.theme(
+            'border-color',
+            $vertical-menu--element--border-color
+          );
+        }
 
         @if ($border-radius != false) {
           &:first-child {

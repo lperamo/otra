@@ -9,10 +9,11 @@ namespace otra\console\helpAndTools\routes;
 
 use otra\config\Routes;
 use otra\OtraException;
-use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\config\VERSION;
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\console\{guessWords,promptUser};
+use function otra\src\tools\{checkPHPPath,checkResourcePath};
 
 if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 {
@@ -26,50 +27,6 @@ if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
  * - the resources generated
  * - the key used for the cached file names
  */
-
-/**
- * Show [RESOURCE_NAME] in green if the resource file exists, in red otherwise.
- *
- * @param string $resourceExtension
- * @param string $resourceType
- * @param string $basePath
- * @param string $shaName
- * @param string $altColor
- */
-function showResourceState(
-  string $resourceExtension,
-  string $resourceType,
-  string $basePath,
-  string $shaName,
-  string $altColor
-) : void
-{
-  echo (file_exists($basePath . $resourceExtension . DIR_SEPARATOR . $shaName. '.gz'))
-    ? CLI_SUCCESS
-    : CLI_ERROR,
-    '[', $resourceType, ']', $altColor;
-}
-
-/**
- * Show [PHP] in green if the PHP file exists, in red otherwise.
- *
- * @param string $basePath
- * @param string $route
- * @param string $altColor
- */
-function showPHPState(string $basePath, string $route, string $altColor) : void
-{
-  $routePath = $basePath . 'php/';
-
-  if (str_contains($route, 'otra_'))
-    $routePath .= 'otraRoutes/';
-
-  $routePath .= $route . '.php';
-  echo (file_exists($routePath))
-    ? CLI_SUCCESS
-    : CLI_ERROR,
-    '[PHP]', $altColor;
-}
 
 // beware require_once only needed for automated tests
 require_once BASE_PATH . 'config/AllConfig.php';
@@ -117,6 +74,8 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
 } else
   $routes = Routes::$allRoutes;
 
+require CORE_PATH . 'tools/checkFilePath.php';
+
 /** @var array<string,array<string, array<int|string,string|array>>> $routes */
 foreach($routes as $route => $details)
 {
@@ -137,7 +96,6 @@ foreach($routes as $route => $details)
 
   // shaName is the encrypted key that match a particular route / version
   $shaName = sha1('ca' . $route . VERSION . 'che');
-  $basePath = BASE_PATH . 'cache/';
 
   echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
 
@@ -147,33 +105,47 @@ foreach($routes as $route => $details)
     $resources = $details['resources'];
 
     if (!isset($resources['template']))
-      showPHPState($basePath, $route, $altColor);
+      echo (checkPHPPath(CACHE_PATH, $route) ? CLI_SUCCESS : CLI_ERROR), '[PHP]', $altColor;
 
-    if (isset($resources['_css']) || isset($resources['bundle_css']) || isset($resources['module_css']))
+    if (isset($resources['_css'])
+      || isset($resources['bundle_css'])
+      || isset($resources['core_css'])
+      || isset($resources['module_css']))
     {
-      showResourceState('css', 'SCREEN CSS', $basePath, $shaName, $altColor);
+      echo (checkResourcePath('css',CACHE_PATH, $shaName)
+        ? CLI_SUCCESS
+        : CLI_ERROR),
+      '[SCREEN CSS]', $altColor;
 
-      showResourceState(
-        'css',
-        'PRINT CSS',
-        $basePath,
-        'print_' . $shaName,
-        $altColor
-      );
+      echo (checkResourcePath('css',CACHE_PATH, 'print_' . $shaName)
+        ? CLI_SUCCESS
+        : CLI_ERROR),
+      '[PRINT CSS]', $altColor;
     }
 
     if (isset($resources['_js'])
       || isset($resources['bundle_js'])
+      || isset($resources['core_js'])
       || isset($resources['module_js'])
       || isset($resources['first_js']))
-      showResourceState('js', 'JS', $basePath, $shaName, $altColor);
+    {
+      echo (checkResourcePath('js',CACHE_PATH, $shaName)
+        ? CLI_SUCCESS
+        : CLI_ERROR),
+        '[JS]', $altColor;
+    }
 
     if (isset($resources['template']))
-      showResourceState('tpl', 'TEMPLATE', $basePath, $shaName, $altColor);
+    {
+      echo (checkResourcePath('tpl',CACHE_PATH, $shaName)
+        ? CLI_SUCCESS
+        : CLI_ERROR),
+      '[TEMPLATE]', $altColor;
+    }
   } else
   {
-    showPHPState($basePath, $route, $altColor);
-    echo ' No other resources. ';
+    echo (checkPHPPath(CACHE_PATH, $route) ? CLI_SUCCESS : CLI_ERROR), '[PHP]', $altColor,
+      ' No other resources. ';
   }
 
   echo '[', $shaName, ']', PHP_EOL, END_COLOR;

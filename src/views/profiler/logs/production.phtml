@@ -1,0 +1,80 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\logs;
+
+use const otra\cache\php\{BASE_PATH, PROD};
+const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
+?>
+<div class="activatable-divs--item" role="tabpanel">
+  <details class="accordion">
+    <summary class="accordion">Classes not found</summary>
+    <div class="accordion--block">
+      <div class="logs-container--item-container">
+      <?php
+      $traceLogs = file_get_contents(PROD_LOGS_PATH . 'classNotFound.txt');
+
+      if (!empty($traceLogs))
+        echo $traceLogs;
+      else
+      {
+        ?>No logs about classes not found.<?php
+      }
+      ?>
+      </div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">Classic logs</summary>
+    <div class="accordion--block">
+      <div class="logs-container--item-container">
+      <?php
+      $traceLogs = file_get_contents(PROD_LOGS_PATH . 'log.txt');
+
+      if (!empty($traceLogs))
+        echo $traceLogs;
+      else
+      {
+        ?>No classic logs.<?php
+      }
+      ?>
+      </div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">Unknown exceptions</summary>
+    <div class="accordion--block">
+      <div class="logs-container--item-container">
+      <?php
+      $traceLogs = file_get_contents(PROD_LOGS_PATH . 'unknownExceptions.txt');
+
+      if (!empty($traceLogs))
+        echo $traceLogs;
+      else
+      {
+        ?>No unknown exceptions logs.<?php
+      }
+      ?>
+      </div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary class="accordion">Unknown fatal errors</summary>
+    <div class="accordion--block">
+      <div class="logs-container--item-container">
+      <?php
+      $traceLogs = file_get_contents(PROD_LOGS_PATH . 'unknownFatalErrors.txt');
+
+      if (!empty($traceLogs))
+        echo $traceLogs;
+      else
+      {
+        ?>No unknown fatal errors logs.<?php
+      }
+      ?>
+      </div>
+    </div>
+  </details>
+</div>

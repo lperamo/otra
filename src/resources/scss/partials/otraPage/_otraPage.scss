@@ -40,8 +40,8 @@ body {
   @include theming.to-theme(
     (
       #{&} : (
-        ('background-image', 'exception--title--background-image'),
-        ('text-shadow', 'exception--title--text-shadow')
+        ('background-image', 'otra--title--background-image'),
+        ('text-shadow', 'otra--title--text-shadow')
       )
     )
   );

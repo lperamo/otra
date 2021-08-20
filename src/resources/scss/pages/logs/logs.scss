@@ -1,0 +1,131 @@
+// loading configuration
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/accordion/accordion';
+@use '../../components/styledButtons/ripple';
+@use '../../components/tabs/tabs';
+@use '../../components/theming/theming';
+
+// loading partials
+@use '../../partials/profiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
+@include ripple.create(
+  ('themes': $themes)
+);
+@include tabs.create(
+  (
+    'count' : 2,
+    'themes' : $themes,
+    'border-radius' : 0 0 .5rem .5rem
+  )
+);
+@include accordion.create(
+  (
+    'details-padding' : null,
+    'themes': $themes
+  )
+);
+
+#logs-container {
+  // box
+  box-sizing : border-box;
+  padding    : 2rem;
+  // the following combination prevent to go outside the screen but taking all the space available in the flex container
+  flex-grow : 1;
+  width     : min-content;
+
+  // text
+  font-size  : 1.6rem;
+  // word-break is not supported by IE!
+  @supports (word-break: break-word) {
+    word-break : break-word;
+  }
+
+  @at-root .ripple-link {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'profiler--logs--sql-button--color')
+      )
+    );
+  }
+
+  @at-root .accordion--block {
+    margin-left  : .1rem;
+    margin-right : .1rem;
+
+    @at-root .logs-container--item-container {
+      @media all and (prefers-color-scheme : dark) {
+        background-color: hsl(240deg 20% 53% / 15%);
+      }
+
+      box-shadow    : 0 0 .3rem #444;
+      margin-bottom : 1rem;
+      padding       : 1rem;
+    }
+  }
+
+  @at-root .logs-container--label {
+    width : 15rem;
+  }
+
+  @at-root .logs-container--message-container--label {
+    width : 13.6rem;
+  }
+
+  @at-root .logs-container--label,
+  .logs-container--message-container--label {
+    // positioning
+    display       : inline-block;
+    margin-bottom : 1rem;
+
+    // text
+    font-size   : 2rem;
+  }
+
+  @at-root .yes-icon {
+    color : #5bd75b;
+  }
+
+  @at-root .no-icon {
+    color : #cb6767;
+  }
+
+  @at-root .ripple-link {
+    text-decoration : none;
+  }
+
+  @at-root .requests--parameter--string {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'profiler--requests--parameter--string--color')
+      )
+    );
+  }
+
+  @at-root .requests--parameter--path {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'profiler--requests--parameter--path--color')
+      )
+    );
+  }
+
+  @at-root .message-container {
+    @include theming.to-theme(
+      (
+        #{&} : ('border-color', 'profiler--logs--message-container--border-color')
+      )
+    );
+
+    border-style : solid;
+    border-width : 0 0 0 0.3rem;
+    padding-left : 1rem;
+    border-color : #5781ff;
+  }
+}
+
+// applying theme
+@include theming.global-mass-theme();

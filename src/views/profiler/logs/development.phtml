@@ -1,0 +1,153 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\logs;
+
+use const otra\cache\php\{BASE_PATH, DEV};
+const
+  TRACE_LABELS = [
+    'd' => 'Date',
+    'c' => 'CLI',
+    'i' => 'IP',
+    'm' => 'Message',
+    's' => 'Stack trace',
+    'u' => 'User Agent'
+  ],
+  QUOTE = '<span class="requests--parameter--string">"</span>',
+  KEY_CONTAINER = '<i class="logs-container--message-container--label">',
+  KEY_CONTAINER_END = '</i>',
+  YES_ICON = '✔',
+  NO_ICON = '✘';
+
+/**
+ * Shows an information line in the 'Message' kind of blocks in the logs
+ *
+ * @param string $label
+ * @param string $messageProperty
+ *
+ * @return string
+ */
+function showMessageBlock(string $label, string $messageProperty) : string
+{
+  return '<div>' . KEY_CONTAINER . $label . ' ' . KEY_CONTAINER_END . $messageProperty . '</div>';
+}
+?>
+<div class="activatable-divs--item" role="tabpanel">
+  <a href="sql?route=<?= $_GET['route'] ?>" class="ripple ripple-link" rel="noopener noreferrer">SQL logs</a><br/><br/>
+
+  <details class="accordion" open>
+    <summary class="accordion">Trace</summary>
+    <div class="accordion--block">
+      <?php
+      $traceLogs = file_get_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt');
+
+      if (!empty($traceLogs))
+      {
+        $traceLogs = json_decode(substr($traceLogs, 0, -2) . ']', true);
+
+        foreach ($traceLogs as $traceProperties)
+        {
+          ?><div class="logs-container--item-container"><?php
+          foreach (TRACE_LABELS as $labelKey => $labelValue)
+          {
+            if (!isset($traceProperties[$labelKey]))
+              continue;
+
+            $tracePropertyValue = $traceProperties[$labelKey];
+
+            // Checks if it was console log or web log
+            switch($labelKey)
+            {
+              case 'c' :
+                $value = $tracePropertyValue === '1'
+                  ? '<span class="yes-icon">' . YES_ICON . '</span>'
+                  : '<span class="no-icon">' . NO_ICON . '</span>';
+                break;
+              case 'd' :
+                // Formats the date if it's a date
+                $value = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
+                break;
+              case 'm':
+                $decodedMessage = json_decode($tracePropertyValue, true);
+
+                if (json_last_error() === JSON_ERROR_NONE)
+                  $tracePropertyValue = $decodedMessage;
+                else
+                  $tracePropertyValue = [$tracePropertyValue];
+
+                $value = '';
+
+                /**
+                 * @var int|string $messageKey
+                 * @var string     $messageProperty
+                 */
+                foreach ($tracePropertyValue as $messageKey => $messageProperty)
+                {
+                  // We skip variables for now
+                  if ($messageKey === 'v')
+                    continue;
+
+                  $isString = is_string($messageProperty) && $messageKey !== 'a' && $messageKey !== 'f';
+
+                  if ($messageProperty === YES_ICON)
+                    $messageProperty = '<span class="yes-icon">' . YES_ICON . '</span>';
+                  elseif ($messageProperty === NO_ICON)
+                    $messageProperty = '<span class="no-icon">' . NO_ICON . '</span>';
+
+                  $value .= match ($messageKey)
+                  {
+                    'a' => showMessageBlock('Ajax', $messageProperty),
+                    'f' => showMessageBlock('Path', str_replace(
+                        ['CORE_PATH +', 'BASE_PATH'],
+                        [
+                          '<span class="requests--parameter--path">CORE_PATH + </span>',
+                          '<span class="requests--parameter--path">BASE_PATH + </span>'
+                        ],
+                        $messageProperty
+                      )),
+                    'p' => showMessageBlock('Pattern', $messageProperty),
+                    'r' => showMessageBlock('Route', $messageProperty),
+                    default => ($isString)
+                      ? QUOTE . htmlentities($messageProperty) . QUOTE
+                      : htmlentities($messageProperty),
+                  };
+                }
+                break;
+              case 'i':
+                if ($tracePropertyValue === 'l')
+                {
+                  $value = 'Localhost';
+                  break;
+                }
+              default:
+                $value = $tracePropertyValue;
+            }
+            ?>
+            <div<?php if ($labelKey === 'm') {?> class="message-container"<?php }?>>
+              <?php
+              if ($labelKey === 'm')
+              {?>
+                <i class="logs-container--label">
+                  <b><?= TRACE_LABELS[$labelKey] ?></b>
+                </i>
+                <br>
+                <?= $value; ?>
+                <?php
+              } else
+              {?>
+                <i class="logs-container--label"><?= TRACE_LABELS[$labelKey];?></i>
+                <?php echo $value;
+              }
+              ?>
+            </div><?php
+          }?>
+          </div><?php
+        }
+      }
+      else
+      {
+        ?><div class="logs-container--item-container">No trace logs.</div><?php
+      }
+      ?>
+    </div>
+  </details>
+</div>

@@ -5,9 +5,9 @@ $themes: (
     // ** body
     'body--background-image' : linear-gradient(185deg, #fff, #ccd3ff),
     'body--color' : #333,
+    'otra--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'otra--title--text-shadow' : 0 0 3px #fff,
     // ** exception
-    'exception--title--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
-    'exception--title--text-shadow' : 0 0 3px #fff,
     'exception--color--error-code' : #f55,
     'exception--color--file' : #f55,
     // ** components
@@ -52,15 +52,27 @@ $themes: (
     'lightbox--container--color' : #444,
     'lightbox--container--text-shadow' : 0 0 3px #ccc,
     // ** profiler - generic
+    'profiler--otra-title--link-color' : #333,
+    // ** profiler - requests
+    'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--path--color' : #5781ff,
+    'profiler--requests--parameter--string--color' : #c60,
+    // ** profiler - classic logs
+    'profiler--logs--sql-button--color' : inherit,
+    // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
-    // ** profiler - file and sql clauses
+    'profiler--sql--logs--background-color' : #eff0f5,
+    'profiler--sql--logs--hover--background-color' : #e0e2eb,
+    'profiler--sql--logs--selection-color' : #667,
+    'profiler--logs--message-container--border-color' : rgb(96 138 255 / 15%),
+    // ** profiler - SQL logs - file and sql clauses
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
     'profiler--file--background-image' : linear-gradient(90deg, #bb0, #770),
-    // ** profiler - line
+    // ** profiler - SQL logs - line
     'profiler--line--color' : #882,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
-    // ** profiler - fields
+    // ** profiler - SQL logs - fields
     'profiler--field--color' : #88f,
     'profiler--field--text-shadow' : 0 0 1px #88f,
     'profiler--field--gradient' : linear-gradient(
@@ -68,10 +80,14 @@ $themes: (
       #88f,
       #04f
     ),
-    // ** profiler - sql logs
-    'profiler--sql--logs--background-color' : #eff0f5,
-    'profiler--sql--logs--hover--background-color' : #e0e2eb,
-    'profiler--sql--logs--selection-color' : #667,
+    // ** profiler - routes block
+    'profiler--routes--block--background-color' : transparent,
+    // ** profiler - routes status
+    'profiler--routes--file-status--color' : #333,
+    'profiler--routes--file-status--error--background-color' : #f2d9d9,
+    'profiler--routes--file-status--error--border-color' : .1rem solid #d98c8c,
+    'profiler--routes--file-status--success--background-color' : #d6f5d6,
+    'profiler--routes--file-status--success--border-color' : .1rem solid #85e085,
     // ** dump
     'dump--code-container--outline' : 1px solid #666,
     'dump--code-container--highlight--background-color' : #eee,
@@ -90,10 +106,26 @@ $themes: (
     'ripple--background-color' : #bce,
     'ripple--active--background-color' : lighten(#bce, 10),
     'ripple--hover--background-color' : #9ac,
+    // table
+    'table--border' : 0,
+    'table--td--border' : 0,
+    'table--th--border' : 0,
+    // table ** specific
+    'table--td--background-color' : rgba(96, 138, 255, .15),
+    'table--td--alternate--box-shadow' : 0 0 0.3rem #ddd inset,
+    // tabs
+    // ----
+    'tabs--background--color' : #ddd,
+    'tabs--background-hover--color' : #ddf,
+    'tabs--color' : #000,
+    'tabs--div--background' : transparent,
+    'tabs--div--box-shadow' : 0 0 3px #000,
     // vertical menu
     // -------------
     'vertical-menu--border' : 1px solid #a3afff,
     'vertical-menu--element--border' : 1px solid #a3afff,
+    'vertical-menu--element--border-color' : #a3afff,
+    'vertical-menu--element--border-style' : solid,
     // -- states start
     // -- idle state
     'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
@@ -114,11 +146,11 @@ $themes: (
     // generic color codes
     // -------------------
     // ** body
-    'body--background-image' : linear-gradient(185deg, #333, #446),
-    'body--color' : #eee,
-    // ** exceptiontheming
-    'exception--title--background-image' : linear-gradient(45deg, #333, #78b),
-    'exception--title--text-shadow' : 0 0 3px #000,
+    'body--background-image' : linear-gradient(185deg, #222, #232334),
+    'body--color' : #ddd,
+    'otra--title--background-image' : linear-gradient(45deg, #879bc5 50%, #7279c0),
+    'otra--title--text-shadow' : 0 0 3px #000,
+    // ** exception theming
     'exception--color--error-code' : #fda,
     'exception--color--file' : #fda,
     // ** components
@@ -163,15 +195,27 @@ $themes: (
     'lightbox--container--color' : #eee,
     'lightbox--container--text-shadow' : 0 0 3px #777,
     // ** profiler - generic
+    'profiler--otra-title--link-color' : #ddd,
+    // ** profiler - requests
+    'profiler--requests--accordion-box--box-shadow' : 0 0 3px #444,
+    'profiler--requests--parameter--path--color' : #95adf3,
+    'profiler--requests--parameter--string--color' : #c60,
+    // ** profiler - classic logs
+    'profiler--logs--sql-button--color' : inherit,
+    // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
-    // ** profiler - file and sql clauses
+    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
+    'profiler--sql--logs--hover--background-color' : #303030,
+    'profiler--sql--logs--selection-color' : #667,
+    'profiler--logs--message-container--border-color' : #8da2e2,
+    // ** profiler - SQL logs -file and sql clauses
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
     'profiler--file--background-image' : linear-gradient(90deg, #cc0, #e27),
-    // ** profiler - line
+    // ** profiler - SQL logs -line
     'profiler--line--color' : #dd5,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
-    // ** profiler - fields
+    // ** profiler - SQL logs -fields
     'profiler--field--color' : #88f,
     'profiler--field--text-shadow' : #88f,
     'profiler--field--gradient' : linear-gradient(
@@ -179,10 +223,14 @@ $themes: (
       #88f,
       #04f
     ),
-    // ** profiler - sql logs
-    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
-    'profiler--sql--logs--hover--background-color' : #303030,
-    'profiler--sql--logs--selection-color' : #667,
+    // ** profiler - routes block
+    'profiler--routes--block--background-color' : rgb(77 77 77 / 15%),
+    // ** profiler - routes status
+    'profiler--routes--file-status--color' : #222,
+    'profiler--routes--file-status--error--background-color' : #d19494,
+    'profiler--routes--file-status--error--border-color' : .1rem solid #e0b8b8,
+    'profiler--routes--file-status--success--background-color' : #93d293,
+    'profiler--routes--file-status--success--border-color' : .1rem solid #b2e6b2,
     // ** dump
     'dump--code-container--outline' : 1px solid #666,
     'dump--code-container--highlight--background-color' : #aaa,
@@ -198,26 +246,42 @@ $themes: (
     'accordion--background-image' : linear-gradient(45deg, #78b, #569, #78b),
     // ripple
     // ------
-    'ripple--background-color' : #bce,
-    'ripple--active--background-color' : lighten(#bce, 10),
-    'ripple--hover--background-color' : #bce,
+    'ripple--background-color' : #92a2d3,
+    'ripple--active--background-color' : lighten(#92a2d3, 10),
+    'ripple--hover--background-color' : #92a2d3,
+    // table
+    'table--border' : 0,
+    'table--td--border' : 0,
+    'table--th--border' : 0,
+    // table ** specific
+    'table--td--background-color' : rgba(122, 158, 255, .3),
+    'table--td--alternate--box-shadow' : 0 0 0.3rem #444 inset,
+    // tabs
+    // ----
+    'tabs--background--color' : #92a2d3,
+    'tabs--background-hover--color' : #b7c1e1,
+    'tabs--color' : #000,
+    'tabs--div--background' : rgb(102 102 102 / 15%),
+    'tabs--div--box-shadow' : 0 0 3px #fff,
     // vertical menu
     // -------------
-    'vertical-menu--border' : 1px solid #000,
+    'vertical-menu--border' : 1px solid #a3afff,
     'vertical-menu--element--border' : 1px solid #a3afff,
+    'vertical-menu--element--border-color' : #a3afff,
+    'vertical-menu--element--border-style' : solid,
     // -- states start
     // -- idle state
-    'vertical-menu--element--background-image' : linear-gradient(45deg, #78b, #569, #78b),
+    'vertical-menu--element--background-image' : linear-gradient(45deg, #56a, #78b),
     'vertical-menu--element--color' : #ccc,
     // -- active state
-    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #78b, #929fc3, #78b),
+    'vertical-menu--element-active--background-image' :linear-gradient(45deg, #929fd3, #78b),
     'vertical-menu--element-active--color' : #44a,
     // -- focus state
     'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
     'vertical-menu--element-focus--color' : #44a,
     // -- hover state
-    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #99a6cc, #569, #99a6cc),
-    'vertical-menu--element-hover--color' : #cc4,
+    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #6d7fc5, #78b),
+    'vertical-menu--element-hover--color' : #3838b7,
     // states end --
     'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
   )
