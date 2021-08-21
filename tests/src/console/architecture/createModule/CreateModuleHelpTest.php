@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture;
+namespace src\console\architecture\createModule;
 
 use otra\console\TasksManager;
 use otra\OtraException;

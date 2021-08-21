@@ -23,9 +23,6 @@ class Error404ActionTest extends TestCase
 
   protected $preserveGlobalState = FALSE;
 
-  /**
-   * @throws OtraException
-   */
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
@@ -49,6 +46,9 @@ class Error404ActionTest extends TestCase
     }
   }
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();

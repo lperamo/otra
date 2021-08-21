@@ -22,9 +22,6 @@ class SearchForClassTest extends TestCase
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
 
-  /**
-   * @throws OtraException
-   */
   protected function setUp(): void
   {
     parent::setUp();

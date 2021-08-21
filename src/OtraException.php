@@ -130,7 +130,7 @@ class OtraException extends Exception
     $traces = $this->getTrace();
     $simplifiedFilePath = mb_substr($this->file, mb_strlen(BASE_PATH));
 
-    // This test avoid trying to render an exception that cannot be rendered by classic ways...
+    // This test avoids trying to render an exception that cannot be rendered by classic ways...
     if (isset($traces[1], $traces[1]['function']) && $traces[1]['function'] === 'renderView')
     {
       if ($_SERVER[APP_ENV] === DEV)

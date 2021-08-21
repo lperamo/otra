@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture\createAction;
+namespace src\console\deployment\genClassMap;
 
 use otra\console\TasksManager;
 use otra\OtraException;

@@ -20,7 +20,7 @@ if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
  */
 class CreateModuleTaskTest extends TestCase
 {
-  private const 
+  private const
     TEST_TASK = 'createModule',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
     TEST_MODULE_PATH = self::TEST_BUNDLE_PATH . CreateModuleTaskTest::TEST_MODULE . DIR_SEPARATOR,
@@ -170,6 +170,7 @@ class CreateModuleTaskTest extends TestCase
    * In this case, we just ignore the folder creation if the folder already exists.
    *
    * @author Lionel Péramo
+   * @throws OtraException
    */
   public function testCreateModuleTask_ModuleAlreadyExists_Force() : void
   {
@@ -194,7 +195,7 @@ class CreateModuleTaskTest extends TestCase
 
     // testing
     $bundleNameUcFirst = ucfirst(self::TEST_BUNDLE);
-    $this->assertEquals(
+    self::assertEquals(
       CLI_BASE . 'Basic folder architecture created for ' . CLI_INFO_HIGHLIGHT . 'bundles/' .
       $bundleNameUcFirst . '/' . self::TEST_MODULE . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL,
       ob_get_clean(),

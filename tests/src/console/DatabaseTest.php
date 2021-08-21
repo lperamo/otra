@@ -9,8 +9,7 @@ use otra\console\database\Database;
 use otra\{OtraException, bdd\Sql, Session};
 use ReflectionException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
-use const otra\console\
-{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,

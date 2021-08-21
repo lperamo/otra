@@ -7,7 +7,7 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH};
 use const otra\console\{CLI_WARNING, END_COLOR};
-use const otra\console\deployment\genBootstrap\{ANNOTATION_DEBUG_PAD, BASE_PATH_LENGTH};
+use const otra\console\deployment\genBootstrap\{ANNOTATION_DEBUG_PAD};
 use function otra\console\deployment\genBootstrap\{showFile, evalPathVariables};
 
 /**

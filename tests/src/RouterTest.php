@@ -28,15 +28,15 @@ class RouterTest extends TestCase
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
 
-  /**
-   * @throws OtraException
-   */
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
   }
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();

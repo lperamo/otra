@@ -26,9 +26,6 @@ class ClearSqlLogsActionTest extends TestCase
 
   protected $preserveGlobalState = FALSE;
 
-  /**
-   * @throws OtraException
-   */
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
@@ -41,6 +38,9 @@ class ClearSqlLogsActionTest extends TestCase
       touch(self::DEV_SQL_LOG);
   }
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();

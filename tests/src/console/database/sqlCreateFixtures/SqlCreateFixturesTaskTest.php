@@ -9,6 +9,7 @@ use otra\config\AllConfig;
 use otra\console\database\Database;
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, PROD, TEST_PATH};
 use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
@@ -86,7 +87,7 @@ class SqlCreateFixturesTaskTest extends TestCase
   /**
    * @author Lionel Péramo
    * @throws OtraException
-   * @throws \ReflectionException
+   * @throws ReflectionException
    *
    * we use "Depends" and not "depends" (note the uppercase letter) as it does not work with "depends"
    * @Depends src\console\DataBaseTest::testCreateFixtures
