@@ -100,7 +100,7 @@ class LogsActionTest extends TestCase
 
     // launching
     ob_start();
-    new LogsAction([
+    $logsAction = new LogsAction([
       'pattern' => '/profiler/logs',
       'bundle' => '',
       'module' => 'otra',
@@ -113,6 +113,7 @@ class LogsActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(LogsAction::class, $logsAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,

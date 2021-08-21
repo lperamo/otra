@@ -71,7 +71,7 @@ class RoutesActionTest extends TestCase
 
     // launching
     ob_start();
-    new RoutesAction([
+    $routesAction = new RoutesAction([
       'pattern' => '/profiler/sql',
       'bundle' => '',
       'module' => 'otra',
@@ -84,6 +84,7 @@ class RoutesActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(RoutesAction::class, $routesAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
