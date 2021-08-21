@@ -14,7 +14,11 @@ use function otra\tools\delTree;
  */
 class LoggerTest extends TestCase
 {
-  protected const LOG_PATH = BASE_PATH . 'logs/';
+  protected const
+    LOG_PATH = BASE_PATH . 'logs/',
+    ATOM_DATE_REGEX = '\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d',
+    IP_ADDRESS_REGEX = '((25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?))|((([0–9A-Fa-f]{1,4}:){7}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){6}:[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){5}:([0–9A-Fa-f]{1,4}:)?[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){4}:([0–9A-Fa-f]{1,4}:){0,2}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){3}:([0–9A-Fa-f]{1,4}:){0,3}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){2}:([0–9A-Fa-f]{1,4}:){0,4}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){6}((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|(([0–9A-Fa-f]{1,4}:){0,5}:((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|(::([0–9A-Fa-f]{1,4}:){0,5}((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|([0–9A-Fa-f]{1,4}::([0–9A-Fa-f]{1,4}:){0,5}[0–9A-Fa-f]{1,4})|(::([0–9A-Fa-f]{1,4}:){0,6}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){1,7}:))';
+
   private static string $logsProdPath;
   // fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -56,8 +60,14 @@ class LoggerTest extends TestCase
       touch($logFile);
 
     Logger::log('[OTRA_LOGGER_TEST]');
+
     self::assertMatchesRegularExpression(
-      '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
+      '@\{
+      "d":"' . self::ATOM_DATE_REGEX. '",
+      "c":[01], 
+      "i":"l|' . self::IP_ADDRESS_REGEX . '",
+      "m":"\[OTRA_LOGGER_TEST\]"
+      \}@mx',
       tailCustom($logFile)
     );
 
@@ -84,7 +94,12 @@ class LoggerTest extends TestCase
     // testing the logger...
     Logger::logToRelativePath('[OTRA_LOGGER_TEST]', $logCustomPath);
     self::assertMatchesRegularExpression(
-      '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_LOGGER_TEST\]@',
+      '@\{
+      "d":"' . self::ATOM_DATE_REGEX. '",
+      "c":[01], 
+      "i":"l|' . self::IP_ADDRESS_REGEX . '",
+      "m":"\[OTRA_LOGGER_TEST\]"
+      \}@mx',
       tailCustom($absolutePathToLogFilename)
     );
 
@@ -112,7 +127,12 @@ class LoggerTest extends TestCase
 
     // testing
     self::assertMatchesRegularExpression(
-      '@\[\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d\]\s\[OTRA_CONSOLE\]\s\[OTRA_TEST_DEBUG_TOOLS_LG\]@',
+      '@\{
+      "d":"' . self::ATOM_DATE_REGEX. '",
+      "c":[01], 
+      "i":"l|' . self::IP_ADDRESS_REGEX . '",
+      "m":"\[OTRA_TEST_DEBUG_TOOLS_LG\]"
+      \}@mx',
       tailCustom(TRACE_LOG_FILE)
     );
 

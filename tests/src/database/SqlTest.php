@@ -206,7 +206,7 @@ class SqlTest extends TestCase
         . ($sqlLogContent !== ''
         ? ''
         : '[')
-      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
+      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1248,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\SqlAction;
+use otra\controllers\profiler\RoutesAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
@@ -15,13 +15,13 @@ use function otra\tools\delTree;
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlActionTest extends TestCase
+class RoutesActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
-    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/sqlAction.phtml';
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/routesAction.phtml';
 
   protected $preserveGlobalState = FALSE;
 
@@ -71,13 +71,13 @@ class SqlActionTest extends TestCase
 
     // launching
     ob_start();
-    new SqlAction([
+    new RoutesAction([
       'pattern' => '/profiler/sql',
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'sqlAction',
-      'route' => 'otra_sql',
+      'action' => 'routesAction',
+      'route' => 'otra_routes',
       'js' => false,
       'css' => false
     ]);
@@ -87,7 +87,7 @@ class SqlActionTest extends TestCase
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'routesAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }

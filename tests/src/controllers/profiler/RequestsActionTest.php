@@ -4,24 +4,26 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\SqlAction;
+use otra\controllers\profiler\RequestsAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlActionTest extends TestCase
+class RequestsActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
-    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/sqlAction.phtml';
+    ACTION = 'requests',
+    FULL_ACTION_NAME = self::ACTION . 'Action',
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
 
   protected $preserveGlobalState = FALSE;
 
@@ -68,16 +70,17 @@ class SqlActionTest extends TestCase
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
+    file_put_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt', '');
 
     // launching
     ob_start();
-    new SqlAction([
-      'pattern' => '/profiler/sql',
+    new RequestsAction([
+      'pattern' => '/profiler/' . self::ACTION,
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'sqlAction',
-      'route' => 'otra_sql',
+      'action' => self::FULL_ACTION_NAME,
+      'route' => 'otra_' . self::ACTION,
       'js' => false,
       'css' => false
     ]);
@@ -87,7 +90,7 @@ class SqlActionTest extends TestCase
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }

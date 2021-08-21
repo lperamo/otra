@@ -4,24 +4,32 @@ declare(strict_types=1);
 namespace src\controllers\profiler;
 
 use otra\console\TasksManager;
-use otra\controllers\profiler\SqlAction;
+use otra\controllers\profiler\LogsAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
  * @runTestsInSeparateProcesses
  */
-class SqlActionTest extends TestCase
+class LogsActionTest extends TestCase
 {
   private const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
-    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/sqlAction.phtml';
+    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/logsAction.phtml',
+    LOGS_PATH = BASE_PATH . 'logs/',
+    LOGS_DEV_PATH = self::LOGS_PATH . DEV . '/',
+    LOGS_PROD_PATH = self::LOGS_PATH . PROD . '/',
+    LOG_DEV_TRACE = self::LOGS_DEV_PATH . 'trace.txt',
+    LOG_PROD_CLASS_NOT_FOUND = self::LOGS_PROD_PATH . 'classNotFound.txt',
+    LOG_PROD_CLASSIC_LOG = self::LOGS_PROD_PATH . 'log.txt',
+    LOG_PROD_UNKNOWN_EXCEPTIONS = self::LOGS_PROD_PATH . 'unknownExceptions.txt',
+    LOG_PROD_UNKNOWN_FATAL_ERRORS = self::LOGS_PROD_PATH . 'unknownFatalErrors.txt';
 
   protected $preserveGlobalState = FALSE;
 
@@ -69,15 +77,36 @@ class SqlActionTest extends TestCase
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
 
+    if (!file_exists(self::LOGS_DEV_PATH))
+      mkdir(self::LOGS_DEV_PATH, 0755, true);
+
+    if (!file_exists(self::LOGS_PROD_PATH))
+      mkdir(self::LOGS_PROD_PATH);
+
+    if (!file_exists(self::LOG_DEV_TRACE))
+      touch(self::LOG_DEV_TRACE);
+
+    if (!file_exists(self::LOG_PROD_CLASS_NOT_FOUND))
+      touch(self::LOG_PROD_CLASS_NOT_FOUND);
+
+    if (!file_exists(self::LOG_PROD_CLASSIC_LOG))
+      touch(self::LOG_PROD_CLASSIC_LOG);
+
+    if (!file_exists(self::LOG_PROD_UNKNOWN_EXCEPTIONS))
+      touch(self::LOG_PROD_UNKNOWN_EXCEPTIONS);
+
+    if (!file_exists(self::LOG_PROD_UNKNOWN_FATAL_ERRORS))
+      touch(self::LOG_PROD_UNKNOWN_FATAL_ERRORS);
+
     // launching
     ob_start();
-    new SqlAction([
-      'pattern' => '/profiler/sql',
+    new LogsAction([
+      'pattern' => '/profiler/logs',
       'bundle' => '',
       'module' => 'otra',
       'controller' => 'profiler',
-      'action' => 'sqlAction',
-      'route' => 'otra_sql',
+      'action' => 'logsAction',
+      'route' => 'otra_logs',
       'js' => false,
       'css' => false
     ]);
@@ -87,7 +116,7 @@ class SqlActionTest extends TestCase
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
+      'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );
   }

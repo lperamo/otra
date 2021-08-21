@@ -27,7 +27,7 @@ class GenAssetsTaskTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
-    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 8,
+    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
     ROUTES_PADDING = 25;
 
   // fixes issues like when AllConfig is not loaded while it should be
@@ -79,13 +79,16 @@ class GenAssetsTaskTest extends TestCase
       self::OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER . ' routes to process. Processing the routes ...' . PHP_EOL . PHP_EOL;
 
     $routesToTest = [
-      'otra_exception',
-      'otra_refreshSQLLogs',
-      'otra_clearSQLLogs',
       'otra_404',
+      'otra_clearSQLLogs',
       'otra_css',
+      'otra_exception',
+      'otra_logs',
+      'otra_refreshSQLLogs',
+      'otra_requests',
+      'otra_routes',
       'otra_sql',
-      'otra_template_structure',
+      'otra_templateStructure',
       'HelloWorld'
     ];
 
@@ -97,10 +100,10 @@ class GenAssetsTaskTest extends TestCase
         $outputExpected .= ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]';
       elseif (in_array(
         $route,
-        ['otra_exception', 'otra_refreshSQLLogs', 'otra_clearSQLLogs', 'otra_404']
+        ['otra_404', 'otra_clearSQLLogs', 'otra_exception', 'otra_refreshSQLLogs']
       ))
         $outputExpected .= ' [' . CLI_INFO . 'Nothing to do' . CLI_GRAY . '] =>' . CLI_SUCCESS . ' OK' . END_COLOR;
-      elseif (in_array($route, ['otra_css', 'otra_template_structure']))
+      elseif (in_array($route, ['otra_css', 'otra_logs', 'otra_requests', 'otra_routes', 'otra_templateStructure']))
         $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
           ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO JS' . CLI_GRAY . ']' .
