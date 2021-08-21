@@ -71,7 +71,7 @@ class SqlActionTest extends TestCase
 
     // launching
     ob_start();
-    new SqlAction([
+    $sqlAction = new SqlAction([
       'pattern' => '/profiler/sql',
       'bundle' => '',
       'module' => 'otra',
@@ -84,6 +84,7 @@ class SqlActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(SqlAction::class, $sqlAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,

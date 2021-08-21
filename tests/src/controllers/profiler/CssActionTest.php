@@ -13,7 +13,6 @@ use const otra\cache\php\
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -79,7 +78,7 @@ class CssActionTest extends TestCase
 
     // launching
     ob_start();
-    new CssAction([
+    $cssAction = new CssAction([
       'pattern' => '/profiler/' . self::ACTION,
       'bundle' => '',
       'module' => 'otra',
@@ -92,6 +91,7 @@ class CssActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(CssAction::class, $cssAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,

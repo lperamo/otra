@@ -73,7 +73,7 @@ class TemplateStructureActionTest extends TestCase
 
     // launching
     ob_start();
-    new TemplateStructureAction([
+    $templateStructureAction = new TemplateStructureAction([
       'pattern' => '/profiler/' . self::ACTION,
       'bundle' => '',
       'module' => 'otra',
@@ -86,6 +86,7 @@ class TemplateStructureActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(TemplateStructureAction::class, $templateStructureAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,

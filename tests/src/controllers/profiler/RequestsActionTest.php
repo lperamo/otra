@@ -74,7 +74,7 @@ class RequestsActionTest extends TestCase
 
     // launching
     ob_start();
-    new RequestsAction([
+    $requestsAction = new RequestsAction([
       'pattern' => '/profiler/' . self::ACTION,
       'bundle' => '',
       'module' => 'otra',
@@ -87,6 +87,7 @@ class RequestsActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    self::assertInstanceOf(RequestsAction::class, $requestsAction);
     self::assertEquals(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
