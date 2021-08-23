@@ -16,7 +16,7 @@ if (!function_exists('otra\tools\debug\dump'))
   /**
    * A shortcut to the 'paramDump' function that will use the user configuration.
    *
-   * @param array ...$params
+   * @param mixed ...$params
    */
 
   function dump(... $params) : void
