@@ -54,7 +54,7 @@ const GEN_WATCHER_ARG_VERBOSE = 2,
     CORE_PATH
   ],
 
-  // Those variables have the same name for folders so we rename those for more clarity (PHP 7.3 at time of writing)
+  // Those variables have the same name for folders, so we rename those for more clarity (PHP 7.3 at time of writing)
   IN_CLOSE_NOWRITE_DIR = 1073741840,
   IN_OPEN_DIR = 1073741856,
   IN_CREATE_DIR = 1073742080,
@@ -207,7 +207,7 @@ function updatePHP(string $filename) : void
   // We generate the class mapping...
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
-  // We updates routes configuration if the php file is a routes configuration file
+  // We update routes configuration if the PHP file is a routes configuration file
   if ($filename === 'Routes.php')
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
 }
@@ -274,7 +274,7 @@ function deleteAsset(string $assetName, string $assetExtension)
 // Configuring inotify
 $inotifyInstance = inotify_init();
 
-// this is needed so inotify_read while operate in non blocking mode
+// this is needed so inotify_read while operate in non-blocking mode
 // (we then can do echos when we are listening to events)
 stream_set_blocking($inotifyInstance, false);
 
@@ -330,7 +330,7 @@ foreach($iterator as $entry)
           IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
         )] = $realPath;
 
-      // We avoid to add a watch multiple times on an entry
+      // We avoid adding a watch multiple times on an entry
       $haveBeenWatched = true;
     }
   }
@@ -374,7 +374,11 @@ foreach($iterator as $entry)
           $sassTreeString = SASS_TREE_STRING_INIT;
           // We add the main sass file to the tree
           $sassTree[KEY_ALL_SASS][$realPath] = true;
-          searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $sassTreeString);
+          if (!searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $sassTreeString))
+          {
+            echo CLI_ERROR, 'We cannot create the SASS cache tree if there are errors in your code!', END_COLOR, PHP_EOL;
+            throw new OtraException(code: 1, exit:true);
+          }
         }
       }
     }
@@ -398,7 +402,7 @@ unset(
   $tasksClassMap
 );
 
-// If we are looking for SASS/SCSS resources then we certainly have created a dependency tree so we will now saving this
+// If we are looking for SASS/SCSS resources then we certainly have created a dependency tree, so we will now save this
 // tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
 if (WATCH_FOR_CSS_RESOURCES)
 {
@@ -515,6 +519,28 @@ while (true)
             );
           } else
           {
+            $sassFileKey = array_search($resourceName, $sassTreeKeys);
+
+            // SASS file can be created without passing by the state IN_CREATE !!! (file system weirdness...)
+            // So in this case, we add this file to the SASS tree
+            if ($sassFileKey === false)
+            {
+              $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = dirname($resourceName);
+              $resourcesEntriesToWatch[] = $resourceName;
+              $sassMainResources[$filename] = $resourceName;
+              // We add the new resource to the SASS/SCSS dependency tree
+              $sassTree[KEY_ALL_SASS][$resourceName] = true;
+
+              // and now update the variables as we can now get this file
+              $sassTreeKeys = array_keys($sassTree[KEY_ALL_SASS]);
+              $sassFileKey = count($sassTreeKeys) - 1;
+
+              if ($resourceName[0] !== '_')
+                $sassTree[KEY_FULL_TREE][$sassFileKey] = [];
+
+              saveSassTree($sassTree);
+            }
+
             preg_match_all(REGEX_SASS_IMPORT, file_get_contents($resourceName), $importedCssFound);
             $countImports = 0;
             $imports = [];
@@ -534,9 +560,6 @@ while (true)
 
               $countImports = count($imports);
             }
-
-            var_dump($resourceName);
-            $sassFileKey = array_search($resourceName, $sassTreeKeys);
 
             // browsing the full SASS/SCSS dependency tree to know if the imports number has changed
             foreach ($sassTree[KEY_FULL_TREE] as $importingFile => &$importedFiles)
@@ -615,7 +638,7 @@ while (true)
           $headers
         );
 
-        // // We make sure not to watch this file again and we clean up related generated files
+        // // We make sure not to watch this file again, and we clean up related generated files
         if ($extension === 'scss' || $extension === 'sass')
         {
           unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);

@@ -94,10 +94,12 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
  * @param array  $sassTree
  * @param string $importingFileAbsolutePath
  * @param string $previousImportedCssFound
- * @param string $dotExtension              Extension with the dot as in '.scss'
+ * @param string $dotExtension Extension with the dot as in '.scss'
  * @param string $sassTreeString
  *
  * @throws OtraException
+ *
+ * @return bool Returns false if an errors occurred
  */
 function searchSassLastLeaves(
   array &$sassTree,
@@ -105,11 +107,11 @@ function searchSassLastLeaves(
   string $previousImportedCssFound,
   string $dotExtension,
   string &$sassTreeString
-) : void
+) : bool
 {
   // To prevent a cycles loop in the dependency tree
   if (str_contains($sassTreeString, $previousImportedCssFound))
-    return;
+    return true;
 
   // Moves the cursor in the SASS dependency tree to updates the right section and prepare for the tree for an update
   $sassTree[KEY_ALL_SASS][$previousImportedCssFound] = true;
@@ -142,7 +144,7 @@ function searchSassLastLeaves(
     $sassTreeString = substr($sassTreeString, 0, $lastOpeningBracketPos);
     eval('if (!isset(' . $sassTreeString . ')) ' . $sassTreeString . '=[];');
 
-    return;
+    return true;
   }
 
   $importedCssFound = $importedCssFound[1];
@@ -160,14 +162,19 @@ function searchSassLastLeaves(
         $importedCssFound[0][$matchKey], CLI_ERROR, PHP_EOL, 'as it leads to ',
         returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, ' or to ',
         returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.', END_COLOR, PHP_EOL;
+
+      return false;
     }
 
     updateSassTree($sassTree, $importingFileAbsolutePath, $previousImportedCssFound);
-    searchSassLastLeaves($sassTree, $importingFileAbsolutePath, $newResourceToAnalyze, $dotExtension, $sassTreeString);
+    if (!searchSassLastLeaves($sassTree, $importingFileAbsolutePath, $newResourceToAnalyze, $dotExtension, $sassTreeString))
+      return false;
 
     // Moves back the cursor up in the tree thanks to the previous backup of the cursor state
     $sassTreeString = $oldSassTreeString;
   }
+
+  return true;
 }
 
 /**
@@ -222,6 +229,7 @@ function updateSassTreeAfterEvent(
 {
   if ($importingFile === $sassFileKey)
   {
+    var_dump(count($importedFiles, $countImports));
     if (count($importedFiles) === $countImports)
       return true;
     else
