@@ -229,7 +229,6 @@ function updateSassTreeAfterEvent(
 {
   if ($importingFile === $sassFileKey)
   {
-    var_dump(count($importedFiles, $countImports));
     if (count($importedFiles) === $countImports)
       return true;
     else
