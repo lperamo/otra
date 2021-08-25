@@ -12,8 +12,8 @@
 @use 'sass:map';
 @use 'sass:string';
 
-// loading utility remove function
-@use '../../components/utils/removeNth' as utils;
+// loading utilities
+@use '../../components/utils/utils';
 
 // initializing an array that will be used to determine which values to pass to the components
 $themes : ();
@@ -75,10 +75,6 @@ $processing-theme : '';
       $additionalPropertiesAfter : ' ' + $additionalPropertiesAfter;
     }
 
-    @if ($color == 'audio-player--thumb-border') {
-      @debug ('color', $color, map-get($theme, $color));
-    }
-
     #{$property}: unquote($additionalPropertiesBefore + map-get($theme, $color) + $additionalPropertiesAfter);
   }
 }
@@ -93,7 +89,7 @@ $processing-theme : '';
 /// @param  {string} $additionalPropertiesAfter  [''] Will be put at the end of the value
 ///
 @mixin theme($property, $color, $additionalPropertiesBefore : '', $additionalPropertiesAfter : '') {
-  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
     @include theme-property(map-get($themes, 'light'), $property, $color, $additionalPropertiesBefore, $additionalPropertiesAfter);
   }
 
@@ -172,15 +168,15 @@ $processing-theme : '';
 @mixin mass-theme-properties($theme, $properties-to-theme) {
   $suffix : list.nth($properties-to-theme, 1);
   $themeUsed : list.nth($properties-to-theme, 2);
-
-  // we remove the suffix from the map
-  $properties-to-theme : utils.remove-nth($properties-to-theme, 1);
-  // we remove the themeUsed variable from the map
-  $properties-to-theme : utils.remove-nth($properties-to-theme, 1);
+  $properties-to-theme: utils.from-range($properties-to-theme, 3);
 
   // Checks if there is only one property to theme
-  @if (list.length(list.nth($properties-to-theme, 1)) < 2) {
-    $property-to-theme: $properties-to-theme;
+  @if (type-of(list.nth($properties-to-theme, 1)) != 'list') {
+    $properties-to-theme : append((), $properties-to-theme);
+  }
+
+  // Now we are sure there are at least two properties to theme
+  @each $property-to-theme in $properties-to-theme {
     $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
 
     @include theme-property(
@@ -190,22 +186,6 @@ $processing-theme : '';
       list.nth($property-to-theme, 3), // before
       list.nth($property-to-theme, 4)  // after
     );
-  }
-
-  @else { // Otherwise there are at least two properties to theme
-    @each $property-to-theme in $properties-to-theme {
-      @if (list.length($property-to-theme) > 1) {
-        $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
-
-        @include theme-property(
-          $theme,
-          list.nth($property-to-theme, 1), // property
-          _get-color-code($theme, $suffix, list.nth($property-to-theme, 2), $themeUsed),
-          list.nth($property-to-theme, 3), // before
-          list.nth($property-to-theme, 4)  // after
-        );
-      }
-    }
   }
 }
 
@@ -220,7 +200,7 @@ $processing-theme : '';
 @mixin mass-theme($properties-to-theme, $suffix: '', $themeUsed: false) {
   $properties-to-theme : list.join(($suffix, $themeUsed), $properties-to-theme);
 
-  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
     $processing-theme : 'light' !global;
 
     @include mass-theme-properties(map-get($themes, 'light'), $properties-to-theme);
@@ -242,11 +222,11 @@ $processing-theme : '';
 /// @param {string} $blend-mode ['soft-light']
 ///
 @mixin blend-image($image, $after : '', $blend-mode : 'soft-light') {
-  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
     background : url(unquote($image)) unquote($after);
   }
 
-  @media all and (prefers-color-scheme : dark) {
+  @media (prefers-color-scheme : dark) {
     background            : linear-gradient(#000, #000), url(unquote($image)) unquote($after);
     background-blend-mode : unquote($blend-mode), normal;
   }
@@ -258,7 +238,7 @@ $processing-theme : '';
 /// @access public
 ///
 @mixin global-mass-theme() {
-  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
     $processing-theme : 'light' !global;
 
     @each $rule, $properties in $to-theme {
@@ -300,49 +280,70 @@ $processing-theme : '';
 /// @param {bool}   $suffix    [false] - Are we using a theme?
 ///
 @mixin to-theme($_to-theme, $suffix: '', $themeUsed: true) {
-  $suffixed-to-theme : ();
-  $found : false;
+  $rule : list.nth(map.keys($_to-theme), 1);
+  $properties : list.nth(list.nth($_to-theme, 1), 2);
+  $tempMap: $to-theme;
 
   @each $rule, $properties in $_to-theme {
+    $rule : list.nth(map.keys($_to-theme), 1);
+    $properties : list.nth($_to-theme, 1);
+    $properties : utils.from-range($properties, 2);
+
+    // `break` and `continue` statements do not exist in SASS so we make a for loop that go until a certain length but
+    // we will affect the index to this length to stop the loop when needed!
     $list-length : list.length($to-theme);
-    $found : false;
 
     @if ($list-length > 0) {
       @for $i from 1 through $list-length {
-        $old-rule       : list.nth(map.keys($to-theme), $i);
-        $old-properties : list.nth(list.nth($to-theme, $i), 2);
-        // we remove the suffix from the map
-        $old-properties : utils.remove-nth($old-properties, 1);
-        // we remove the themeUsed variable from the map
-        $old-properties : utils.remove-nth($old-properties, 1);
+        $storedRule : list.nth(map.keys($to-theme), $i);
 
-        @if ($rule == $old-rule) {
-          @if (list.length(list.nth($old-properties, 1)) > 1) {
-            $old-properties : list.join(
-              list.append((), list.nth($old-properties, 1)),
-              list.append((), list.nth($old-properties, 2)),
-              'comma'
-            );
-            $properties : list.join($properties, $old-properties, 'comma');
+        @if ($storedRule == $rule) {
+          $i : $list-length;
+          $storedProperties : list.nth(list.nth($to-theme, $i), 2);
+          $storedAttributes : utils.from-range($storedProperties, 1, 2);
+          $storedCssProperties : utils.from-range($storedProperties, 3);
+
+          @if (list.nth($storedProperties, 1) == $suffix
+          and list.nth($storedProperties, 2) == $themeUsed) {
+            // $storedCssProperties and $properties are not in an explicit list so we need to force it with `append`
+            // and then we put all that into a list
+            $isList : type-of(list.nth($storedCssProperties, 1)) == 'list';
+            $toJoin: ();
+
+            // CASE 1: The two lists ($storedCssProperties and $properties) has more than one set
+            // like ('..', '...'), ('..', '..')
+            @if $isList and type-of(list.nth($properties, 1)) == 'list' {
+              $toJoin: join($storedCssProperties, $properties);
+            }
+
+            // CASE 2: The $storedCssProperties list has more than one set like ('..', '...'), ('..', '..')
+            @else if $isList {
+              $toJoin: append($storedCssProperties, $properties);
+            }
+
+            // CASE 3 : The $storedCssProperties list contains only one set
+            // like ('border-style', 'vertical-menu--element--border-style')
+            @else {
+              $toJoin : append((), join(append((), $storedCssProperties), append((), $properties)))
+            }
+
+            $blockToAppend : ($rule: list.join($storedAttributes, $toJoin));
+            $tempMap: map.merge($tempMap, $blockToAppend);
           }
+        }
 
-          @else {
-            $properties : list.append((), $properties, 'comma');
-            $old-properties : list.append(list.nth($old-properties, 1), list.nth($old-properties, 2), 'comma');
-            $properties : list.append($properties, $old-properties, 'comma');
-          }
-
-          $found : true;
-          $i     : $list-length;
+        @else {
+          $tempMap: map.merge($tempMap, ($rule : ($suffix, $themeUsed, $properties)));
         }
       }
     }
 
-    // prepending the selector suffix before updating the global themes
-    $to-theme : map.set(
-      $to-theme,
-      $rule,
-      list.join(($suffix, $themeUsed), $properties)
-    ) !global;
+    @else {
+      $tempMap: map.merge($tempMap, ($rule : ($suffix, $themeUsed, $properties)));
+    }
+  }
+
+  @if ($tempMap != ()) {
+    $to-theme : $tempMap !global;
   }
 }

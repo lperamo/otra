@@ -82,9 +82,9 @@ $defaults : (
     @at-root summary.accordion#{$suffix} {
       // appearance
       @include theming.to-theme(
-          (#{&} : ('background-image', map.get($options, 'accordion--background-image'))),
-          $suffix,
-          $themeUsed
+        (#{&} : ('background-image', map.get($options, 'accordion--background-image'))),
+        $suffix,
+        $themeUsed
       );
 
       cursor          : pointer;
@@ -104,9 +104,9 @@ $defaults : (
       &::before {
         // appearance
         @include theming.to-theme(
-            (#{&} : ('background-image', map.get($options, 'accordion--arrow--background-image'))),
-            $suffix,
-            $themeUsed
+          (#{&} : ('background-image', map.get($options, 'accordion--arrow--background-image'))),
+          $suffix,
+          $themeUsed
         );
 
         -webkit-background-clip : text;

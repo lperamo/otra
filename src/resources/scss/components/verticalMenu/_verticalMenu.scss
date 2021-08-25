@@ -4,7 +4,7 @@
 /// @author Lionel Péramo
 ////
 
-// loading sass module list
+// loading sass modules
 @use 'sass:map';
 @use 'sass:list';
 
@@ -187,6 +187,7 @@ $defaults : (
   $vertical-menu--element--border-color : map.get($options, 'vertical-menu--element--border-color');
   $vertical-menu--element--border-style : map.get($options, 'vertical-menu--element--border-style');
   $vertical-menu--element--background-image : map.get($options, 'vertical-menu--element--background-image');
+  $vertical-menu--element--color : map.get($options, 'vertical-menu--element--color');
   $vertical-menu--element-active--background-image : map.get($options, 'vertical-menu--element-active--background-image');
   $vertical-menu--element-active--color: map.get($options, 'vertical-menu--element-active--color');
   $vertical-menu--element-focus--background-image : map.get($options, 'vertical-menu--element-focus--background-image');
@@ -243,16 +244,22 @@ $defaults : (
 
       @if ($vertical-menu--element--border != false) {
         @if ($vertical-menu--element--border-style != false) {
-          @include theming.theme(
-            'border-style',
-            $vertical-menu--element--border-style
+          @include theming.to-theme(
+            (
+              #{&} : ('border-style', $vertical-menu--element--border-style)
+            ),
+            $suffix,
+            $themeUsed
           );
         }
 
         @if ($vertical-menu--element--border-color != false) {
-          @include theming.theme(
-            'border-color',
-            $vertical-menu--element--border-color
+          @include theming.to-theme(
+            (
+              #{&} : ('border-color', $vertical-menu--element--border-color)
+            ),
+            $suffix,
+            $themeUsed
           );
         }
 
@@ -275,15 +282,15 @@ $defaults : (
         }
       }
 
-      //@if ($vertical-menu--element--color != false) {
-      //  @include theming.to-theme(
-      //    (
-      //      #{&} : ('color', $vertical-menu--element--color)
-      //    ),
-      //    $suffix,
-      //    $themeUsed
-      //  );
-      //}
+      @if ($vertical-menu--element--color != false) {
+        @include theming.to-theme(
+          (
+            #{&} : ('color', $vertical-menu--element--color)
+          ),
+          $suffix,
+          $themeUsed
+        );
+      }
 
       @if ($padding != false) {
         padding : $padding;
