@@ -1,0 +1,72 @@
+////
+/// @group Utils
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:list';
+@use 'sass:meta';
+
+///
+/// Gets a list of elements from another list from x (first item) to y (last item)
+///
+/// @param {List}   $list
+/// @param {Number} $firstItem
+/// @param {Number} $lastItem
+///
+/// @example
+/// $list: a, b, z, c, d, e, f;
+/// $new-list: from-range($list, 2, 5); // b, z, c, d
+/// $new-list: remove-nth($list, 2, 7); // error
+/// $new-list: remove-nth($list, 2); // b, z, c, d, e, f
+///
+/// @return {List}
+///
+@function from-range($list, $firstItem, $lastItem: null) {
+  $list-length : list.length($list);
+
+  @if $lastItem == null {
+    $lastItem: $list-length;
+  }
+
+  @if meta.type-of($firstItem) != number {
+    @error "$firstItem: #{quote($firstItem)} is not a number for `from-range`.";
+  }
+
+  @if meta.type-of($lastItem) != number {
+    @error "$lastItem: #{quote($lastItem)} is not a number for `from-range`.";
+  }
+
+  @if $firstItem == 0 {
+    @error "List first element 0 must be a non-zero integer for `from-range`.";
+  }
+
+  @if $lastItem == 0 {
+    @error "List last element 0 must be a non-zero integer for `from-range`.";
+  }
+
+  @if abs($firstItem) > list.length($list) {
+    @error "List first element is #{$firstItem} but list is only #{list.length($list)} item long for `from-range`.";
+  }
+
+  @if abs($lastItem) > list.length($list) {
+    @error "List last element is #{$lastItem} but list is only #{list.length($list)} item long for `from-range`.";
+  }
+
+  @if $firstItem > $lastItem {
+    @error "List first element #{$firstItem} must be inferior or equal to the last element #{$lastItem} for `from-range`.";
+  }
+
+  $result : ();
+
+  @if $firstItem == $lastItem {
+    @return list.nth($list, $firstItem);
+  }
+
+  @for $index from $firstItem through $lastItem {
+    $result : list.append($result, list.nth($list, $index));
+  }
+
+  @return $result;
+}
