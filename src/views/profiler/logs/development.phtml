@@ -97,7 +97,7 @@ function showMessageBlock(string $label, string $messageProperty) : string
                   {
                     'a' => showMessageBlock('Ajax', $messageProperty),
                     'f' => showMessageBlock('Path', str_replace(
-                        ['CORE_PATH +', 'BASE_PATH'],
+                        ['CORE_PATH +', 'BASE_PATH +'],
                         [
                           '<span class="requests--parameter--path">CORE_PATH + </span>',
                           '<span class="requests--parameter--path">BASE_PATH + </span>'
