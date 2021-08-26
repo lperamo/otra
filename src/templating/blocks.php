@@ -109,11 +109,17 @@ namespace otra\cache\php
             $startIndex = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX];
             $tmpKey = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
 
+            // this variable is (only) useful in case of raised exceptions
+            $indexOfProtectionFromInfLoop = 0;
+
             // the children blocks will be unset/removed
-            while (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] > $startIndex)
+            while (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] > $startIndex
+              && $indexOfProtectionFromInfLoop < 1500)
             {
               if (!in_array($childrenKey, $indexesToUnset))
                 $indexesToUnset[]= $childrenKey++;
+
+              $indexOfProtectionFromInfLoop++;
             }
 
             // If there is content after the children blocks but before the ending block
