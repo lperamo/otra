@@ -74,10 +74,11 @@ function restoreFieldScopeProtection(string $class, string $field) : ReflectionP
  *
  * @param class-string         $class
  * @param array<string, mixed> $fieldsAndValues
+ * @param Object|null          $objectInstance  Only needed if we need to modify non-static properties
  *
  * @throws ReflectionException
  */
-function setScopeProtectedFields(string $class, array $fieldsAndValues) : void
+function setScopeProtectedFields(string $class, array $fieldsAndValues, object $objectInstance = null) : void
 {
   $class = new ReflectionClass($class);
 
@@ -85,7 +86,12 @@ function setScopeProtectedFields(string $class, array $fieldsAndValues) : void
   {
     $alteredField = $class->getProperty($field);
     $alteredField->setAccessible(true);
-    $alteredField->setValue($value);
+
+    if ($alteredField->isStatic())
+      $alteredField->setValue($value);
+    else
+      $alteredField->setValue($objectInstance, $value);
+
     $alteredField->setAccessible(false);
   }
 }
@@ -107,4 +113,3 @@ function removeMethodScopeProtection(string $class, string $method) : Reflection
 
   return $method;
 }
-
