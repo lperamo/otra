@@ -431,7 +431,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   foreach ($resources[$key] as $resource)
   {
     ob_start();
-    echo $resource, PHP_EOL;
+
     if (!str_contains($resource, 'http'))
     {
       $finalPath = $resourcePath . $resource . '.' . $resourceType;
