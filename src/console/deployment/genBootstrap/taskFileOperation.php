@@ -1465,7 +1465,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .
     'namespace otra\\cache\\php;' .
     ($fileToInclude !== '/var/www/html/perso/otra/src/Router.php'
-      ? 'use \\Exception; use \\stdClass;'
+      ? 'use \\Exception; use \\stdClass; use \\RecursiveDirectoryIterator; use \\RecursiveIteratorIterator; use Phar; use \\PharData;'
       : ''
     ) . $vendorNamespaces .
     (PHP_OPEN_TAG_STRING === mb_substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
