@@ -435,6 +435,17 @@ class Sql
    */
   public function prepare(string $query, array $options = []): \PDOStatement|false
   {
+    if (DEV === $_SERVER[APP_ENV])
+    {
+      $trace = debug_backtrace();
+
+      Logger::logSQLTo(
+        (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
+        (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
+        $query,
+        'sql');
+    }
+
     return call_user_func(self::$currentDBMS . '::prepare', $query, $options);
   }
 }
