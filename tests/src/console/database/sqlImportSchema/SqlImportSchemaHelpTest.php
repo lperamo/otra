@@ -16,7 +16,7 @@ class SqlImportSchemaHelpTest extends TestCase
 {
   private const OTRA_TASK_SQL_IMPORT_SCHEMA = 'sqlImportSchema',
     OTRA_TASK_HELP = 'help';
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

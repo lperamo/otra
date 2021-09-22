@@ -24,7 +24,7 @@ class CheckBooleanArgumentTest extends TestCase
     NO_INTERACTIVE_MODE = 'false',
     PASSED_DEFAULT_VALUE = 'false';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void

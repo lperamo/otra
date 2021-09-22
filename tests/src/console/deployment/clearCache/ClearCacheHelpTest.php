@@ -17,7 +17,7 @@ class ClearCacheHelpTest extends TestCase
   private const OTRA_TASK_CLEAR_CACHE = 'clearCache',
     OTRA_TASK_HELP = 'help';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

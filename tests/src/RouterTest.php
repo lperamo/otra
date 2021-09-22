@@ -18,7 +18,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class RouterTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   private const
     LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
     LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';

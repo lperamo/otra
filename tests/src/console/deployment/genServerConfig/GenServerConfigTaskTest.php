@@ -26,7 +26,7 @@ class GenServerConfigTaskTest extends TestCase
     EXAMPLE_PROD_TEST_CONF_PATH = self::EXAMPLES_PATH . PROD . '/test.conf',
     EXAMPLE_PROD_TEST_CONF_CACHE_PATH = self::EXAMPLES_PATH . PROD . '/test_cache.conf';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void

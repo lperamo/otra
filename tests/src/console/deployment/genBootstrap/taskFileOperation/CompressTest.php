@@ -20,7 +20,7 @@ class CompressTest extends TestCase
     FINAL_COMPRESSED_FILE = self::COMPRESSED_FILE . '.php',
     BACKUP_COMPRESSED_FILE = TEST_PATH . 'examples/deployment/BackupCompressedFile.php';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

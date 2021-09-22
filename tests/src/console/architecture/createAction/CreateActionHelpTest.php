@@ -18,7 +18,7 @@ class CreateActionHelpTest extends TestCase
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

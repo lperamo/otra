@@ -19,7 +19,7 @@ class AnalyzeUseTokenTest extends TestCase
     PHP_EXTENSION = '.php',
     CONST_NAME_DEBUG_LEVEL = '\\DEBUG_LEVEL';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = false;
 
   protected function setUp(): void

@@ -19,7 +19,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
    */
   class ContentToFileTest extends TestCase
   {
-    // fixes issues like when AllConfig is not loaded while it should be
+    // it fixes issues like when AllConfig is not loaded while it should be
     protected $preserveGlobalState = FALSE;
     private const
       RELATIVE_FINAL_FILE_PATH = 'tests/examples/deployment/finalFile.php',

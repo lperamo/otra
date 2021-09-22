@@ -899,7 +899,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * Test with a non existent database.
+   * Test with a non-existent database.
    *
    * @throws ReflectionException
    */

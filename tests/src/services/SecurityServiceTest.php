@@ -42,7 +42,7 @@ class SecurityServiceTest extends TestCase
     SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
     ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

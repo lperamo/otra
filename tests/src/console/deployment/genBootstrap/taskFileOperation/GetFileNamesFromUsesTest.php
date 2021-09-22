@@ -21,7 +21,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   class GetFileNamesFromUsesTest extends TestCase
   {
     private const LEVEL = 1;
-    // fixes issues like when AllConfig is not loaded while it should be
+    // it fixes issues like when AllConfig is not loaded while it should be
     protected $preserveGlobalState = FALSE;
 
     protected function setUp(): void
@@ -99,4 +99,3 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     }
   }
 }
-

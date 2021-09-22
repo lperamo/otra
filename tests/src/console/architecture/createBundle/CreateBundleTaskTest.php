@@ -33,7 +33,7 @@ class CreateBundleTaskTest extends TestCase
     CREATE_BUNDLE_FORCE = 'true',
     OTRA_BINARY = 'otra.php';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void

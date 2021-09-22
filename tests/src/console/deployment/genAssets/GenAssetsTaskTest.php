@@ -30,7 +30,7 @@ class GenAssetsTaskTest extends TestCase
     OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
     ROUTES_PADDING = 25;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

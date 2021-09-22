@@ -61,7 +61,7 @@ class SassToolsTest extends TestCase
       ]
     ];
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
@@ -184,7 +184,7 @@ class SassToolsTest extends TestCase
     // Defining variables - part 1
     $this->searchSassLastLeavesContext();
 
-    // -- the tree must already contains the main sass file... before calling the tool
+    // -- the tree must already contain the main sass file... before calling the tool
     $sassTree = [KEY_ALL_SASS => [self::SCSS_MAIN_PATH => true], 1=>[], 2=>[]];
 
     // -- defining constants and variables - part 2
@@ -237,7 +237,7 @@ class SassToolsTest extends TestCase
     // Defining variables - part 1
     $this->searchSassLastLeavesContext();
 
-    // -- the tree must already contains the main sass file... before calling the tool
+    // -- the tree must already contain the main sass file... before calling the tool
     $sassTree = [KEY_ALL_SASS => [self::SCSS_MAIN_PATH => true], 1=>[], 2=>[]];
 
     // -- defining constants and variables - part 2

@@ -12,7 +12,7 @@ use const otra\cache\php\{APP_ENV,PROD};
  */
 class OtraExceptionCliTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
