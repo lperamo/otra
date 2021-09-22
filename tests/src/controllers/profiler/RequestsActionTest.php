@@ -21,7 +21,7 @@ class RequestsActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'requests',
-    FULL_ACTION_NAME = self::ACTION . 'Action'
+    FULL_ACTION_NAME = self::ACTION . 'Action';
 
   protected $preserveGlobalState = FALSE;
 

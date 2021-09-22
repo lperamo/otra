@@ -66,7 +66,7 @@ define(__NAMESPACE__ . '\\BASE_PATH_LENGTH', strlen(BASE_PATH));
 function phpOrHTMLIntoEval(string &$contentToAdd) : void
 {
   // Beginning of content (+1 to strip the space)
-  $contentToAdd = PHP_OPEN_TAG_STRING === mb_substr($contentToAdd, 0, PHP_OPEN_TAG_LENGTH)
+  $contentToAdd = str_starts_with($contentToAdd, PHP_OPEN_TAG_STRING)
     ? mb_substr($contentToAdd, PHP_OPEN_TAG_LENGTH + 1)
     : PHP_END_TAG_STRING . $contentToAdd;
 
@@ -269,7 +269,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
       $cacheNamespace = 'cache\\php';
 
       // Handles cache/php namespaces and otra namespaces (9 is length of $cacheNamespace)
-      if (mb_substr($class, 0, 9) !== $cacheNamespace)
+      if (!str_starts_with($class, $cacheNamespace))
       {
         // It can be a SwiftMailer class for example.
         if (VERBOSE > 0 &&
@@ -1470,7 +1470,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
       ? 'use \\Exception; use \\stdClass; use \\RecursiveDirectoryIterator; use \\RecursiveIteratorIterator; use Phar; use \\PharData;'
       : ''
     ) . $vendorNamespaces .
-    (PHP_OPEN_TAG_STRING === mb_substr($finalContent, 0, PHP_OPEN_TAG_LENGTH)
+    (str_starts_with($finalContent, PHP_OPEN_TAG_STRING)
       ? preg_replace($patternRemoveUse, '', mb_substr($finalContent, PHP_OPEN_TAG_LENGTH))
       : preg_replace($patternRemoveUse, '', ' ' . PHP_END_TAG_STRING . $finalContent)
     );
