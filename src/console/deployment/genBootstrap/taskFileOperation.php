@@ -23,7 +23,7 @@ const
     (?:(?<!//\\s)extends\s[^\{]{1,}\s{0,})|
     (?:->renderView\s{0,}\([^\),]{1,})
     @mx',
-  // a previous line in first position (we don't include it for now because the templates management is not optimal
+  // a previous line in first position (we don't include it for now because the templates' management is not optimal
   // yet)=> (?:(?<!//\\s)self::layout\(\);\s{0,})|
 
   ANNOTATION_DEBUG_PAD = 80,
@@ -105,7 +105,7 @@ function hasSyntaxErrors(string $file) : bool
  */
 function compressPHPFile(string $fileToCompress, string $outputFile) : void
 {
-  // php_strip_whitespace doesn't not suppress double spaces in string and others. Beware of that rule, the preg_replace
+  // php_strip_whitespace doesn't suppress double spaces in string and others. Beware of that rule, the preg_replace
   // is dangerous !
   // strips HTML comments that are not HTML conditional comments
   file_put_contents(
@@ -185,7 +185,7 @@ function contentToFile(string $content, string $outputFile) : void
     echo PHP_EOL;
 
   echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
-  /* Do not suppress the indented lines. They allow to test namespaces problems. We put the file in another directory
+  /* Do not suppress the indented lines. They allow testing namespaces problems. We put the file in another directory
      in order to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
@@ -355,7 +355,7 @@ function getFileNamesFromUses(
     $chunks = explode(',', $useMatch[0]);
     $isConst = (substr($useMatch[0], 0, STRLEN_LABEL_CONST) === LABEL_CONST);
 
-    if (!$isConst && (substr($useMatch[0], 0, 9) === 'function '))
+    if (!$isConst && (str_starts_with($useMatch[0], 'function ')))
       continue;
 
     $beginString = $originalChunk = '';
@@ -505,7 +505,8 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
           $fileContent
         );
       /* we make an exception for this particular require statement because
-           it is a require made by the prod controller and then it is a template ...(so no need to include it, for now) */
+         it is a `require` made by the prod controller, and then it is a template ...(so no need to include it, for now)
+       */
       elseif ('templateFilename' === trim($pathVariable[0]))
         $isTemplate = true;
       elseif ('require_once CACHE_PATH . \'php/\' . $route . \'.php\';' !== $trimmedMatch
@@ -596,7 +597,7 @@ function getFileInfoFromRequireMatch(string $trimmedMatch, string $filename) : a
   $fileContent = $inclusionMatches[1];
 
   /* Not sure of the safety of this code
-     We checks if the require/include statement is in a function call
+     We check if the require/include statement is in a function call
      by counting the number of parenthesis between the require statement and the semicolon */
   if (0 !== (mb_substr_count($trimmedMatch, ')') + mb_substr_count($trimmedMatch, '(')) % 2 )
     $fileContent = mb_substr($fileContent, 0, -1);
@@ -655,7 +656,7 @@ function processTemplate(string &$finalContent, string &$contentToAdd, string $m
 }
 
 /**
- * Process the return in the PHP content from $contentToAdd and include it directly in the $finalContent.
+ * Process the return inside the PHP content from $contentToAdd and include it directly in the $finalContent.
  *
  * @param string $includingCode    The whole file that contains the $inclusionCode
  * @param string $includedCode     Like "<?php declare(strict_types=1);return [...];?>"
@@ -672,7 +673,7 @@ function processReturn(string &$includingCode, string &$includedCode, string $in
     -(2 + PHP_END_TAG_LENGTH)
   ));
 
-  // We change only the require but we keep the parenthesis and the semicolon
+  // We change only the `require` but we keep the parenthesis and the semicolon
   // (cf. BASE_PATH . config/Routes.php init function)
   preg_match(
     '@^\s*(?>require|include)(?>_once)?\s(?>(?=\\N)([^)]))+(\s*\);)@',
@@ -681,7 +682,7 @@ function processReturn(string &$includingCode, string &$includedCode, string $in
     PREG_OFFSET_CAPTURE
   );
 
-  // We remove the requires like statements before adding the content
+  // We remove the `require`s like statements before adding the content
   $includingCode = substr_replace($includingCode, $includedCode, $inclusionCodePos, $matches[2][1]);
 }
 
@@ -744,7 +745,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 }
 
 /**
- * Retrieves informations about what kind of file inclusion we have, the related code and its position.
+ * Retrieves information about what kind of file inclusion we have, the related code and its position.
  *
  * @param array{
  *   level: int,
@@ -808,7 +809,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
       [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $filename);
 
       /* we make an exception for this particular require statement because
-         it is a require made by the prod controller and then it is a template ...
+         it is a `require` made by the prod controller, and then it is a template ...
          (so no need to include it because html templates management is not totally functional right now) */
       if (!$isTemplate) // if the file to include is not a template
       {
@@ -908,12 +909,12 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
         ];
       }
     } elseif(str_contains($trimmedMatch, OTRA_KEY_EXTENDS))
-    { // Extends block is only tested if the class has not been loaded via an use statement before
+    { // Extends block is only tested if the class has not been loaded via a use statement before
 
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = mb_substr($trimmedMatch, 8);
 
-      // if the class begin by \ then it is a standard class and then we do nothing
+      // if the class begin by \ then it is a standard class, and then we do nothing
       if (NAMESPACE_SEPARATOR === $class[0])
         continue;
 
@@ -1112,7 +1113,7 @@ function assembleFiles(
              *                        redundant PHPDoc but Psalm does not understand otherwise
              */
             // If it is a class from an external library (not from the framework),
-            // we let the inclusion code and we do not add the content to the bootstrap file.
+            // we let the inclusion code, and we do not add the content to the bootstrap file.
             if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
             {
               // It can be a SwiftMailer class for example
@@ -1384,7 +1385,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
 
   echo str_pad('Files to include ', LOADED_DEBUG_PAD, '.'), CLI_SUCCESS, ' [LOADED]', END_COLOR;
 
-  /** We remove all the declare strict types declarations */
+  /** We remove all the `declare(strict_types=1);` declarations */
   $finalContent = str_replace(
     [
       'declare(strict_types=1);',
@@ -1453,6 +1454,8 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
     $parsedConstantString .= $parsedConstant . ',';
   }
 
+  // after that line $parsedConstantString contains something like
+  // use const APP_ENV,BASE_PATH,CACHE_PATH,DIR_SEPARATOR,PROD,BUNDLES_PATH;
   $parsedConstantString = substr($parsedConstantString, 0, -1) . ';';
 
   // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
