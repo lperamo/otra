@@ -71,7 +71,7 @@ function phpOrHTMLIntoEval(string &$contentToAdd) : void
     : PHP_END_TAG_STRING . $contentToAdd;
 
   // Ending of content
-  if (PHP_END_TAG_STRING === mb_substr($contentToAdd, - PHP_END_TAG_LENGTH))
+  if (str_ends_with($contentToAdd, PHP_END_TAG_STRING))
     $contentToAdd = mb_substr($contentToAdd, 0, - PHP_END_TAG_LENGTH);
   else
     $contentToAdd .= PHP_OPEN_TAG_STRING;
