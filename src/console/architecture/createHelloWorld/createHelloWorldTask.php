@@ -164,7 +164,7 @@ namespace otra\console\architecture\createHelloWorld
   echo ERASE_SEQUENCE, 'Stylesheets added', SUCCESS;
 
   echo 'Adding favicons...', PHP_EOL;
-  const HELLO_WORLD_IMAGES_PATH = CORE_PATH . 'resources/img/HelloWorld/';
+  const HELLO_WORLD_IMAGES_PATH = HELLO_WORLD_STARTER_FOLDER . 'img/';
 
   copyFileAndFolders(
     [
