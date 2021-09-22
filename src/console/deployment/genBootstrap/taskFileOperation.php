@@ -268,7 +268,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
     {
       $cacheNamespace = 'cache\\php';
 
-      // Handles cache/php namespaces and otra namespaces (9 is length of $cacheNamespace)
+      // Handles cache/php namespaces and otra namespaces
       if (!str_starts_with($class, $cacheNamespace))
       {
         // It can be a SwiftMailer class for example.
