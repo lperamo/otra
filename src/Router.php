@@ -87,11 +87,15 @@ abstract class Router
 
     /** Preventing redirections from crashing the application */
     if ('cli' !== PHP_SAPI
-      && substr(str_replace(
-        ['\\', BASE_PATH],
-        [DIR_SEPARATOR, ''],
-        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0]['file']
-      ), 0, 9) !== 'web/index')
+      && !str_starts_with(
+        str_replace(
+          ['\\', BASE_PATH],
+          [DIR_SEPARATOR, ''],
+          debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[0]['file']
+        ),
+        'web/index'
+      )
+    )
     {
       // Is it a static page
       if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))

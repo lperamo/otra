@@ -114,7 +114,7 @@ foreach($iterator as $entry)
           $baseName,
           $resourceName
         );
-    } elseif (substr($baseName, 0, 1) !== '_' && WATCH_FOR_CSS_RESOURCES)
+    } elseif (!str_starts_with($baseName, '_') && WATCH_FOR_CSS_RESOURCES)
       generateStylesheetsFiles(
         $baseName,
         $resourcesMainFolder,

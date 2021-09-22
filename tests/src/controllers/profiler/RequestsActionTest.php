@@ -8,9 +8,8 @@ use otra\controllers\profiler\RequestsAction;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT};
 use function otra\tools\delTree;
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
  * @runTestsInSeparateProcesses
@@ -22,8 +21,7 @@ class RequestsActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'requests',
-    FULL_ACTION_NAME = self::ACTION . 'Action',
-    TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
+    FULL_ACTION_NAME = self::ACTION . 'Action';
 
   protected $preserveGlobalState = FALSE;
 
@@ -88,11 +86,5 @@ class RequestsActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(RequestsAction::class, $requestsAction);
-    self::assertEquals(
-      file_get_contents(self::TEST_TEMPLATE),
-      $output,
-      'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
-      CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
-    );
   }
 }
