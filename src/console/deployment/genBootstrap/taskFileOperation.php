@@ -12,7 +12,8 @@ use otra\OtraException;
 use const otra\cache\php\init\CLASSMAP;
 // do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_VIEWS_PATH, CORE_PATH, DIR_SEPARATOR};
-use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\
+{ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\console\showContextByError;
 
 require CONSOLE_PATH . 'tools.php';
@@ -352,7 +353,7 @@ function getFileNamesFromUses(
 
   foreach($useMatches[1] as $useMatch)
   {
-    $chunks = explode(',', $useMatch[0]);
+    $chunks = explode(',', str_replace("\n", '', $useMatch[0]));
     $isConst = str_starts_with($useMatch[0], LABEL_CONST);
 
     if (str_starts_with($useMatch[0], 'function '))
