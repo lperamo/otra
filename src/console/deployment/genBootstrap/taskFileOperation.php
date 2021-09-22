@@ -262,7 +262,7 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
         echo CLI_INFO, 'We will not send the development controller in production.', END_COLOR, PHP_EOL;
         return;
       }
-      // Avoids to consider DevControllerTrait and ProdControllerTrait as external library classes
+      // It avoids considering DevControllerTrait and ProdControllerTrait as external library classes
       $class = 'otra\\' . $class;
     } else
     {
