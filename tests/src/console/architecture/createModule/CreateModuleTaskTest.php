@@ -32,7 +32,7 @@ class CreateModuleTaskTest extends TestCase
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void

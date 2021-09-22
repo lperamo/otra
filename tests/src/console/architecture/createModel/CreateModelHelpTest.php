@@ -29,7 +29,7 @@ class CreateModelHelpTest extends TestCase
     OTRA_ONLY_USEFUL_AND_REQUIRED = 'Only useful (and required) for the ',
     LABEL_PLUS = '   + ';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

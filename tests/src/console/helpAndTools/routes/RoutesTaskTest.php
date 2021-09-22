@@ -39,7 +39,7 @@ class RoutesTaskTest extends TestCase
     ROUTE_HELLO_WORLD = 'HelloWorld';
 
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void

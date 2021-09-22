@@ -52,7 +52,7 @@ class SqlCreateFixturesTaskTest extends TestCase
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES = self::CONFIG_FOLDER_SQL . 'truncate/',
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . 'truncate/';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

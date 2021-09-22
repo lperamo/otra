@@ -12,7 +12,7 @@ use function otra\tools\debug\getCaller;
  */
 class GetCallerTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

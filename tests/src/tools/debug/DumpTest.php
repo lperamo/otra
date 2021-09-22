@@ -25,7 +25,7 @@ class DumpTest extends TestCase
 
   private static string $logsProdPath;
   private static bool $outputFlag = true;
-  // fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
+  // it fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
@@ -112,7 +112,7 @@ class DumpTest extends TestCase
       ++$depth;
       self::increaseExpectedArrayDepth($depth, $output, $reachDepth);
 
-      // If we had stop increasing the array depth...
+      // If we had stopped increasing the array depth...
       if (self::$outputFlag)
       {
         $output .= $spaceLength . ($reachDepth ? '  [0] =>' . PHP_EOL . $spaceLength . '  string(0) ""' : '  ...') . PHP_EOL;

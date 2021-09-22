@@ -21,7 +21,7 @@ class RoutesHelpTest extends TestCase
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void

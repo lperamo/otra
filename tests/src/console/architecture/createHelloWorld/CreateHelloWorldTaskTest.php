@@ -27,7 +27,7 @@ class CreateHelloWorldTaskTest extends TestCase
     OTRA_LABEL_BASE_PATH_PLUS = 'BASE_PATH + ',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void

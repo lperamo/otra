@@ -600,7 +600,7 @@ class SqlTest extends TestCase
    */
   public function testGetDB_AlreadyExistingConnection() : void
   {
-    // Creating the context (having a SQL connection active named 'test')
+    // Creating the context (having an SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
     $sqlInstance = Sql::getDb('test');
 

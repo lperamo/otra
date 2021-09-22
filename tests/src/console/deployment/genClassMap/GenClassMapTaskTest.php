@@ -25,7 +25,7 @@ class GenClassMapTaskTest extends TestCase
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

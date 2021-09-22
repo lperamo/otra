@@ -34,7 +34,7 @@ class CreateControllerTaskTest extends TestCase
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test';
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void

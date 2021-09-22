@@ -22,7 +22,7 @@ class ShowFileTest extends TestCase
     LEVEL_ZERO = 0,
     LEVEL_ONE = 1;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void

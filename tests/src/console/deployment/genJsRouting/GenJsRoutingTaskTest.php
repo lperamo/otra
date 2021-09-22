@@ -27,7 +27,7 @@ class GenJsRoutingTaskTest extends TestCase
     BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
     OTRA_BINARY = 'otra.php';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
