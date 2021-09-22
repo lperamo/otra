@@ -353,9 +353,9 @@ function getFileNamesFromUses(
   foreach($useMatches[1] as $useMatch)
   {
     $chunks = explode(',', $useMatch[0]);
-    $isConst = (substr($useMatch[0], 0, STRLEN_LABEL_CONST) === LABEL_CONST);
+    $isConst = str_starts_with($useMatch[0], LABEL_CONST);
 
-    if (!$isConst && (str_starts_with($useMatch[0], 'function ')))
+    if (str_starts_with($useMatch[0], 'function '))
       continue;
 
     $beginString = $originalChunk = '';
@@ -800,7 +800,6 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
       continue;
 
     $trimmedMatch = trim(preg_replace('@\s{1,}@', ' ', $match[0]));
-
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
