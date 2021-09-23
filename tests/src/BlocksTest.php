@@ -147,4 +147,27 @@ class BlocksTest extends TestCase
       'Testing ' . BACKUP_ANOTHER_LAYOUT . ' and ' . TESTED_ANOTHER_LAYOUT . ' ...'
     );
   }
+
+  /**
+   * Use :
+   * - overridden blocks,
+   * - inline blocks
+   * - parent block call
+   * - empty block placeholders
+   * - replacing block inside a different kind of block (different block name)
+   *
+   * @throws OtraException
+   * @author Lionel Péramo
+   */
+  public function testAnotherLayoutBis():void
+  {
+    define(__NAMESPACE__ . '\\OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayoutBis.phtml');
+    define(__NAMESPACE__ . '\\BACKUP_ANOTHER_LAYOUT', self::BACKUPS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
+    define(__NAMESPACE__ . '\\TESTED_ANOTHER_LAYOUT', self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
+    self::assertEquals(
+      file_get_contents(BACKUP_ANOTHER_LAYOUT),
+      self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false),
+      'Testing ' . BACKUP_ANOTHER_LAYOUT . ' and ' . TESTED_ANOTHER_LAYOUT . ' ...'
+    );
+  }
 }
