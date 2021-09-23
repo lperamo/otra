@@ -26,10 +26,11 @@ class Error404Action extends Controller
 
     foreach ($routes as $route)
     {
-      if (str_contains($route, 'otra'))
+      if (str_contains($route, 'otra')
+        || str_contains(Routes::$allRoutes[$route]['chunks'][Routes::ROUTES_CHUNKS_URL], '{'))
         continue;
 
-      $defaultUrl = Routes::$allRoutes[$route]['chunks'][0];
+      $defaultUrl = Routes::$allRoutes[$route]['chunks'][Routes::ROUTES_CHUNKS_URL];
       break;
     }
 
@@ -39,4 +40,3 @@ class Error404Action extends Controller
     );
   }
 }
-
