@@ -235,10 +235,13 @@ abstract class DumpWeb extends DumpMaster {
       echo $padding;
 
     // showing keys
-    echo (gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
-      ? $paramKey
-      : '\'' . $paramKey . '\''
+    if ($notFirstDepth)
+    {
+      echo(gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
+        ? $paramKey
+        : '\'' . $paramKey . '\''
       ), ' => ';
+    }
 
     // showing values
     switch($paramType)

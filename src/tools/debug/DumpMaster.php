@@ -14,7 +14,8 @@ use const otra\cache\php\CORE_PATH;
  * @author Lionel Péramo
  * @package otra\tools\debug
  */
-abstract class DumpMaster {
+abstract class DumpMaster
+{
   protected const
     // 'How much' constants
     OTRA_DUMP_ARRAY = [128, 512, 3],
