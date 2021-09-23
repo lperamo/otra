@@ -72,7 +72,7 @@ class WorkerManager
   {
     /** @var resource[] $dataRead */
     $dataRead = [];
-    
+
     foreach (self::$workers as $workerKey => &$worker)
     {
       /** @var resource */
@@ -248,22 +248,10 @@ class WorkerManager
 
   public function __destruct()
   {
-    foreach($this->stdinStreams as $stdin)
+    foreach($this->stdinStreams + $this->stdoutStreams + $this->stderrStreams as $stdStream)
     {
-      if (is_resource($stdin))
-        fclose($stdin);
-    }
-
-    foreach($this->stdoutStreams as $stdout)
-    {
-      if (is_resource($stdout))
-        fclose($stdout);
-    }
-
-    foreach($this->stderrStreams as $stderr)
-    {
-      if (is_resource($stderr))
-        fclose($stderr);
+      if (is_resource($stdStream))
+        fclose($stdStream);
     }
 
     foreach($this->processes as $process)

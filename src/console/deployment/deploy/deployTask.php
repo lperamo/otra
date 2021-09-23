@@ -279,9 +279,12 @@ $handleTransfer(
       '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
       ' --include=\'otra/otra/src/templating/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
       ' --include=\'otra/otra/src/services/securityService.php\'' .
+      ' --include=\'otra/otra/src/views/layout.phtml\'' .
+      ' --include=\'otra/otra/src/views/errors/error404.phtml\'' .
       ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
-      '/vendor/',
-      'OTRA templating engine, the translate tool and the production controller' . CLI_SUCCESS . ' ✔' . END_COLOR,
+      'vendor/',
+      'OTRA templating engine, the translate tool, the production controller and the 404 errors pages' .
+      CLI_SUCCESS . ' ✔' . END_COLOR,
       'Sending the OTRA templating engine, the translate tool and the production controller ...'
     )
   ]
