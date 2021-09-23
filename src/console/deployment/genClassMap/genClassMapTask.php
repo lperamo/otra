@@ -67,50 +67,58 @@ if (!empty($folders) && !function_exists(__NAMESPACE__ . '\\iterateCM'))
     int &$processedDir,
     array &$classesThatMayHaveToBeAdded) : array
   {
-    if ($folderHandler = opendir($dir))
+    if (!($folderHandler = opendir($dir)))
     {
-      while (false !== ($entry = readdir($folderHandler)))
-      {
-        // We check that we process interesting things
-        if ('.' === $entry || '..' === $entry)
-          continue;
+      closedir($folderHandler);
 
-        $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;
+      echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
+      throw new OtraException(code: 1, exit: true);
+    }
 
-        // recursively...
-        if (is_dir($entryAbsolutePath))
-          [$classes, $processedDir] = iterateCM(
-            $classes,
-            $entryAbsolutePath,
-            $additionalClassesFilesKeys,
-            $processedDir,
-            $classesThatMayHaveToBeAdded
-          );
+    while (false !== ($entry = readdir($folderHandler)))
+    {
+      // We check that we process interesting things
+      if ('.' === $entry || '..' === $entry)
+        continue;
 
-        // Only php files are interesting
-        $posDot = strrpos($entry, '.');
+      $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;
 
-        if ($posDot === false || '.php' !== substr($entry, $posDot))
-          continue;
-
-        if (in_array(
+      // recursively...
+      if (is_dir($entryAbsolutePath))
+        [$classes, $processedDir] = iterateCM(
+          $classes,
           $entryAbsolutePath,
-          [
-            BASE_PATH . 'config/dev/AllConfig.php',
-            BASE_PATH . 'config/prod/AllConfig.php'
-        ]))
-          continue;
+          $additionalClassesFilesKeys,
+          $processedDir,
+          $classesThatMayHaveToBeAdded
+        );
 
-        $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
-        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+      // Only php files that begin by an uppercase letter are interesting (as classes MUST begin by an uppercase letter)
+      $posDot = strrpos($entry, '.');
 
-        // we calculate the shortest string of path with realpath and str_replace function
-        $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));
-        $className    = substr($entry, 0, $posDot);
+      if ($posDot === false || '.php' !== substr($entry, $posDot) || !ctype_upper($entry[0]))
+        continue;
 
-        if (isset($matches[1][0]) && $matches[1][0] !== '')
+      if (in_array(
+        $entryAbsolutePath,
+        [
+          BASE_PATH . 'config/dev/AllConfig.php',
+          BASE_PATH . 'config/prod/AllConfig.php'
+      ]))
+        continue;
+
+      $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
+      preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+
+      // we calculate the shortest string of path with realpath and str_replace function
+      $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));
+      $className = substr($entry, 0, $posDot);
+
+      if (isset($matches[1]))
+      {
+        foreach($matches[1] as $namespace)
         {
-          $classNamespace = trim($matches[1][0]) . '\\' . $className;
+          $classNamespace = trim($namespace) . '\\' . $className;
 
           if (!isset($classes[$classNamespace]))
             $classes[$classNamespace] = $revisedEntryAbsolutePath;
@@ -120,20 +128,15 @@ if (!empty($folders) && !function_exists(__NAMESPACE__ . '\\iterateCM'))
             $classes[$classNamespace] = $revisedEntryAbsolutePath;
         }
       }
-
-      closedir($folderHandler);
-      ++$processedDir;
-
-      if (VERBOSE === 1)
-        echo "\x0d\033[K", 'Processed directories : ', $processedDir, '...';
-
-      return [$classes, $processedDir, $classesThatMayHaveToBeAdded];
     }
 
     closedir($folderHandler);
+    ++$processedDir;
 
-    echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
-    throw new OtraException(code: 1, exit: true);
+    if (VERBOSE === 1)
+      echo "\x0d\033[K", 'Processed directories : ', $processedDir, '...';
+
+    return [$classes, $processedDir, $classesThatMayHaveToBeAdded];
   }
 
   /**
@@ -176,7 +179,7 @@ if (!empty($folders) && !function_exists(__NAMESPACE__ . '\\iterateCM'))
 
 foreach ($folders as $folder)
 {
-  // if the user wants to launch tasks in an empty project when there are not a class map yet
+  // if the user wants to launch tasks in an empty project when there are not a class map yet,
   // we need to check if the needed folders exist
   if (!file_exists($folder))
     mkdir($folder);
@@ -195,8 +198,8 @@ if (VERBOSE === 1)
 
 $classes = array_merge($classes, $additionalClassesFiles);
 
-// Calculate "production" classes
-// classes from the framework will be integrated in the bootstraps so they do not need to be in the final class map
+// Calculate "production" classes.
+// Classes from the framework will be integrated in the bootstraps, so they do not need to be in the final class map
 $prodClasses = [];
 
 /**
@@ -255,7 +258,7 @@ echo 'Class mapping finished', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 if (VERBOSE !== 1)
   return;
 
-// If we come from the deploy task, this constant may already have been defined.
+// If we come from the `deploy` task, this constant may already have been defined.
 if (!defined(__NAMESPACE__ . '\\FIRST_CLASS_PADDING'))
   define(__NAMESPACE__ . '\\FIRST_CLASS_PADDING', 80);
 
@@ -276,7 +279,7 @@ foreach($classes as $startClassName => $finalClassName)
 
 echo END_COLOR;
 
-/** Shows an help to find classes that may have to be added to the custom configuration in order to complete
+/** Shows a help to find classes that may have to be added to the custom configuration in order to complete
  *  this automatic task */
 if (!empty($classesThatMayHaveToBeAdded))
 {

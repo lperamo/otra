@@ -6,11 +6,10 @@ namespace src\console\deployment\genClassMap;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 use const otra\cache\php\{APP_ENV,BASE_PATH,DEV,TEST_PATH};
 use const otra\cache\php\init\CLASSMAP2;
-use const otra\console\
-{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
-use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
  * @runTestsInSeparateProcesses
