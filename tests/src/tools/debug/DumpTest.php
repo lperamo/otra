@@ -20,7 +20,7 @@ class DumpTest extends TestCase
     OTRA_DEBUG_TEST_VALUE_MAX_CHILDREN = 5,
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
     OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3,
-    LABEL_ARRAY6 = '0 => array (6) ',
+    LABEL_ARRAY6 = 'array (6) ',
     LABEL_ONZE_ZEROS = '0 => string (11) \'00000000000\'';
 
   private static string $logsProdPath;
