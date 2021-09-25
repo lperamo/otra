@@ -193,7 +193,7 @@ abstract class DumpWeb extends DumpMaster {
         $depth
       );
         break;
-      case 'NULL' : echo '<b>null</b>'; break;
+      case 'NULL' : echo '<b> null</b>'; break;
       case 'object' :
         self::dumpObject(
           $param,
@@ -256,7 +256,7 @@ abstract class DumpWeb extends DumpMaster {
       case 'double' :
         echo $param, '</span>', self::OTRA_DUMP_END_TEXT_BLOCK, '<br>';
         break;
-      case 'NULL' : echo '<b>null</b><br>'; break;
+      case 'NULL' : echo '<b> null</b><br>'; break;
       case 'object' :
         self::dumpObject($param, $notFirstDepth, $depth);
         break;

@@ -200,7 +200,7 @@ class DumpCli extends DumpMaster
         $depth
       );
         break;
-      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY; break;
+      case 'NULL' : echo ADD_BOLD, ' null', REMOVE_BOLD_INTENSITY; break;
       case 'object' :
         self::dumpObject(
           $param,
@@ -258,7 +258,7 @@ class DumpCli extends DumpMaster
       case 'double' :
         echo $param, PHP_EOL;
         break;
-      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
+      case 'NULL' : echo ADD_BOLD, ' null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
       case 'object' :
         self::dumpObject($param, $depth);
         break;
