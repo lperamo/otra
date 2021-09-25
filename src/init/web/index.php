@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace otra\web;
 
+use Error;
 use otra\cache\php\{Logger, Router, Routes};
+use Throwable;
 use const otra\cache\php\{APP_ENV,BASE_PATH, CACHE_PATH,CORE_PATH,PROD};
 use const otra\cache\php\init\CLASSMAP;
 
@@ -66,7 +68,7 @@ try
 
   header_remove('Expires');
 
-  error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+  error_reporting(E_ALL);
 
   /** CLASS MAPPING */
   require CACHE_PATH . 'php/init/ProdClassMap.php';
@@ -75,13 +77,10 @@ try
   {
     if (!isset(CLASSMAP[$className]))
     {
-      require_once CORE_PATH . 'Logger.php';
-      Logger::logTo(
-        'Path not found for the class name : ' . $className . PHP_EOL .
-        'Stack trace : ' . PHP_EOL .
-        print_r(debug_backtrace(), true),
-        'classNotFound'
-      );
+      if (!class_exists(Logger::class))
+        require_once CORE_PATH . 'Logger.php';
+
+      Logger::logWithStackTraces('Path not found for the class name : ' . $className, debug_backtrace());
     } else
       require CLASSMAP[$className];
   });
@@ -104,14 +103,17 @@ try
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color: blue;">' .
       ISSUE_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
   elseif (class_exists(Logger::class))
-    Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception');
+    Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception', $issue->getTrace());
   else
     error_log(
-      '[' . date(DATE_ATOM, time()) . ']' . ' Route not launched ! ' .
-      ($error ? 'Fatal error' : 'Exception') . ' : ' . PHP_EOL .
-      ISSUE_TRACE . PHP_EOL .
-      'Stack trace : ' . PHP_EOL .
-      print_r(debug_backtrace(), true),
+      json_encode(
+        [
+          'd' => date(DATE_ATOM, time()),
+          'm' => 'Route not launched ! ' . ($error ? 'Fatal error' : 'Exception') . ' : ' . PHP_EOL . ISSUE_TRACE,
+          's' => Logger::formatStackTracesForLog($issue->getTrace())
+        ],
+        Logger::LOG_JSON_MASK
+      ),
       3,
       ISSUE_LOG_PATH
     );
