@@ -2,6 +2,55 @@
 declare(strict_types=1);
 namespace otra\src\views\profiler;
 
+const
+  TRACE_LABELS = [
+    'd' => 'Date',
+    'c' => 'CLI',
+    'i' => 'IP',
+    'm' => 'Message',
+    's' => 'Stack trace',
+    'u' => 'User Agent'
+  ],
+  QUOTE = '<span class="requests--parameter--string">"</span>',
+  KEY_CONTAINER = '<i class="logs-container--message-container--label">',
+  KEY_CONTAINER_END = '</i>',
+  YES_ICON = '✔',
+  NO_ICON = '✘',
+  YES_ICON_HTML = '<span class="yes-icon">' . YES_ICON . '</span>',
+  NO_ICON_HTML = '<span class="no-icon">' . NO_ICON . '</span>';
+
+/**
+ * Shows an information line in the 'Message' kind of blocks in the logs
+ *
+ * @param string $label
+ * @param string $messageProperty
+ *
+ * @return string
+ */
+function showMessageBlock(string $label, string $messageProperty) : string
+{
+  return '<div>' . KEY_CONTAINER . $label . ' ' . KEY_CONTAINER_END . $messageProperty . '</div>';
+}
+
+/**
+ * Styles the base paths and core paths
+ *
+ * @param string $path
+ *
+ * @return string
+ */
+function beautifyPath(string $path) : string
+{
+  return str_replace(
+    ['CORE_PATH +', 'BASE_PATH +'],
+    [
+      '<span class="requests--parameter--path">CORE_PATH + </span>',
+      '<span class="requests--parameter--path">BASE_PATH + </span>'
+    ],
+    $path
+  );
+}
+
 /**
  * @param array $tabRadioNames
  * @param array $tabNames
@@ -25,4 +74,195 @@ function createTabs(array $tabRadioNames, array $tabNames) : void
     }?>
   </ul>
   <?php
+}
+
+/**
+ * @param string $noLogsMessage
+ */
+function noLogs(string $noLogsMessage)
+{
+  ?><div class="logs-container--item-container"><?= $noLogsMessage ?></div><?php
+}
+
+/**
+ * @param string $logType
+ * @param string $logFile
+ * @param string $noLogsMessage
+ * @param string $openAccordion
+ * @param bool   $classic       Are there classic logs that do not need JSON decoding?
+ */
+function showLogsFull(
+  string $logType,
+  string $logFile,
+  string $noLogsMessage,
+  string $openAccordion = '',
+  bool $classic = false
+)
+{
+  ?>
+  <details class="accordion"<?= $openAccordion ?>>
+    <summary class="accordion"><?= $logType ?></summary>
+    <div class="accordion--block">
+      <?php
+      $traceLogs = file_get_contents($logFile);
+
+      if (!empty($traceLogs))
+      {
+        if (!$classic)
+          showLogs($traceLogs, $noLogsMessage);
+        else
+          echo $traceLogs;
+      }
+      else
+        noLogs($noLogsMessage);
+      ?>
+    </div>
+  </details>
+  <?php
+}
+
+/**
+ * @param array $stackTrace
+ *
+ * @return string
+ */
+function getPrettyStackTrace(array $stackTrace): string
+{
+  if ($stackTrace === [])
+    return 'Empty.';
+
+  $stackTraceInfo = '';
+
+  foreach ($stackTrace as $stackItemKey => $stackItem)
+  {
+    foreach ($stackItem as $stackKey => $stackValue )
+    {
+      if ($stackKey === 'file')
+        $stackTraceInfo .= showMessageBlock('File', beautifyPath($stackValue));
+      elseif ($stackKey === 'line')
+        $stackTraceInfo .= showMessageBlock('Line', (string) $stackValue);
+      elseif ($stackKey === 'function')
+        $stackTraceInfo .= showMessageBlock('Function', $stackValue);
+      elseif ($stackKey === 'args')
+        $stackTraceInfo .= showMessageBlock('Args', print_r($stackValue, true));
+    }
+
+    if (array_key_last($stackTrace) !== $stackItemKey)
+      $stackTraceInfo .= '<hr/>';
+  }
+
+  return $stackTraceInfo;
+}
+
+/**
+ * Converts raw logs in beautiful HTML logs
+ *
+ * @param string $errorsLogs
+ * @param string $noLogsMessage
+ */
+function showLogs(string $errorsLogs, string $noLogsMessage) : void
+{
+  $errorsLogs = json_decode(substr($errorsLogs, 0, -2) . ']', true);
+
+  if (empty($errorsLogs))
+  {
+    noLogs($noLogsMessage);
+    return;
+  }
+
+  foreach ($errorsLogs as $traceProperties)
+  {
+    ?><div class="logs-container--item-container"><?php
+    foreach (TRACE_LABELS as $labelKey => $labelValue)
+    {
+      if (!isset($traceProperties[$labelKey]))
+        continue;
+
+      $tracePropertyValue = $traceProperties[$labelKey];
+
+      // Checks if it was console log or web log
+      switch($labelKey)
+      {
+        case 'c' :
+          $value = $tracePropertyValue === '1'
+            ? YES_ICON_HTML
+            : NO_ICON_HTML;
+          break;
+        case 'd' :
+          // Formats the date if it's a date
+          $value = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
+          break;
+        case 'm':
+          $decodedMessage = json_decode($tracePropertyValue, true);
+          $tracePropertyValue = json_last_error() === JSON_ERROR_NONE ? $decodedMessage : [$tracePropertyValue];
+          $value = '';
+
+          /**
+           * @var int|string $messageKey
+           * @var string     $messageProperty
+           */
+          foreach ($tracePropertyValue as $messageKey => $messageProperty)
+          {
+            // We skip variables for now
+            if ($messageKey === 'v')
+              continue;
+
+            $isString = is_string($messageProperty) && $messageKey !== 'a' && $messageKey !== 'f';
+
+            // We check if the message contains some stack trace
+            // (we process this particular case here, because it is not appropriate for the `match` statement
+            if ($messageKey === 's')
+              $stackTraceInfo = getPrettyStackTrace($messageProperty);
+
+            if ($messageProperty === YES_ICON)
+              $messageProperty = YES_ICON_HTML;
+            elseif ($messageProperty === NO_ICON)
+              $messageProperty = NO_ICON_HTML;
+
+            $value .= match ($messageKey)
+            {
+              'a' => showMessageBlock('Ajax', $messageProperty),
+              'f' => showMessageBlock('Path', beautifyPath($messageProperty)),
+              'p' => showMessageBlock('Pattern', $messageProperty),
+              'r' => showMessageBlock('Route', $messageProperty),
+              's' => $stackTraceInfo,
+              default => ($isString)
+                ? QUOTE . htmlentities($messageProperty) . QUOTE
+                : htmlentities($messageProperty),
+            };
+          }
+          break;
+        case 's':
+          $value = getPrettyStackTrace($tracePropertyValue);
+          break;
+        case 'i':
+          if ($tracePropertyValue === 'l')
+          {
+            $value = 'Localhost';
+            break;
+          }
+        default:
+          $value = $tracePropertyValue;
+      }
+      ?>
+    <div<?php if ($labelKey === 'm') {?> class="message-container"<?php }?>>
+      <?php
+      if ($labelKey === 'm')
+      {?>
+        <i class="logs-container--label">
+          <b><?= TRACE_LABELS[$labelKey] ?></b>
+        </i>
+        <br>
+        <?= $value; ?>
+        <?php
+      } else
+      {?>
+        <i class="logs-container--label"><?= TRACE_LABELS[$labelKey];?></i>
+        <?php echo $value;
+      }
+      ?>
+      </div><?php
+    }?>
+    </div><?php
+  }
 }

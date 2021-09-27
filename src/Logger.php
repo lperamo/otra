@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace otra\cache\php;
 
-use otra\OtraException;
-
 /** Simple logger class
  *
  * @package otra
@@ -119,8 +117,10 @@ abstract class Logger
 
     fclose($filePointer);
 
+    clearstatcache();
     self::logging(
       $logPath,
+      (!file_exists($logPath) || filesize($logPath) === 0 ? '[' : '') .
       json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
     );
   }
@@ -136,11 +136,11 @@ abstract class Logger
   public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {
     $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt';
-
+    clearstatcache();
     self::logging(
       $logPath,
       (
-      (!file_exists($logPath) || ($content = file_get_contents($logPath)) === false || '' === $content) ? '[' : '') .
+      (!file_exists($logPath) || filesize($logPath) === 0) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .
       preg_replace(
         '/\s\s+/',
@@ -153,16 +153,20 @@ abstract class Logger
   /**
    * @param string $message
    * @param string $errorType
+   * @param array  $traces
    */
-  public static function logExceptionOrErrorTo(string $message, string $errorType): void
+  public static function logExceptionOrErrorTo(string $message, string $errorType, array $traces): void
   {
+    clearstatcache();
+    $filePath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
+      ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt';
     $infos = self::logIpTest();
     $infos['m'] = $errorType . ' : ' . $message;
-    $infos['s'] = print_r(debug_backtrace(), true);
+    $infos['s'] = self::formatStackTracesForLog($traces);
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
-        ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
-      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
+      $filePath,
+      (!file_exists($filePath) || filesize($filePath) === 0 ? '[' : '') .
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
     );
   }
 
@@ -172,5 +176,57 @@ abstract class Logger
   public static function lg(string $message) : void
   {
     self::logTo($message, 'trace');
+  }
+
+  /**
+   * @param array $traces
+   *
+   * @return array
+   */
+  public static function formatStackTracesForLog(array $traces) : array
+  {
+    foreach ($traces as &$traceItems)
+    {
+      foreach ($traceItems as $traceKey => &$traceValue)
+      {
+        if ($traceKey === 'file')
+        {
+          $traceValue = str_replace(
+            [
+              BASE_PATH,
+              CORE_PATH
+            ],
+            [
+              'BASE_PATH + ',
+              'CORE_PATH + '
+            ],
+            $traceValue
+          );
+        }
+      }
+    }
+
+    return $traces;
+  }
+
+  /**
+   * We keep this code into a function only to lighten to useful code
+   * (that the code be slow when there is an error/exception is less important)
+   *
+   * @param $message
+   * @param $traces
+   */
+  public static function logWithStackTraces($message, $traces)
+  {
+    Logger::logTo(
+      json_encode(
+        [
+          'm' =>  $message,
+          's' => self::formatStackTracesForLog($traces)
+        ],
+        Logger::LOG_JSON_MASK
+      ),
+      'classNotFound'
+    );
   }
 }
