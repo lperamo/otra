@@ -115,10 +115,6 @@ namespace otra\cache\php
             $indexesToUnset[]= $childrenKey;
         } else
         {
-//
-//          if (self::$blocksStack[$tmpKey + 1][self::OTRA_BLOCKS_KEY_INDEX] >= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX]
-//            && self::$blocksStack[$tmpKey + 1][self::OTRA_BLOCKS_KEY_INDEX] <= $maxIndex)
-//            die('coucou');
           // The block will not be replaced, we can add its content
           // (not only its raw content but also the blocks in it)
           for (
@@ -129,12 +125,6 @@ namespace otra\cache\php
             ++$newActualKey
           )
           {
-            file_put_contents(
-              \otra\cache\php\BASE_PATH . '/tmp/segfault.txt',
-              '*' . $newActualKey . '*' . count(self::$blocksStack) . '*' .
-              self::$blocksStack[$newActualKey][self::OTRA_BLOCKS_KEY_INDEX] . '*' . $maxIndex . '*',
-              FILE_APPEND
-            );
             self::replaceParentBlocks(
               $maxIndex,
               self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX],
