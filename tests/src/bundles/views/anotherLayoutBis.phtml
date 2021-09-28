@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use function otra\cache\php\{block, endblock};
 use const otra\cache\php\CORE_PATH;
+use function otra\cache\php\{block, endblock};
 
 require CORE_PATH . 'templating/blocks.php' ?>
 <body><?php block('body', ''); ?></body>
