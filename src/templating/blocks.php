@@ -54,7 +54,113 @@ namespace otra\cache\php
       $currentBlocksStackIndex = 0;
 
     /**
-     * Assembles all the template blocks to returns the final string.
+     * @param int    $maxIndex             Maximum reachable index in the stack
+     * @param int    $blockKey             Position of the block in the stack
+     * @param array  $indexesToUnset       Index of blocks to unset (index is the depth of the blocks in the template engine)
+     * @param string $content              Content of the actual block
+     * @param array  $block                Actual block
+     * @param bool   $twoLevelsOfRecursion Do we are reaching the second level of recursion?
+     */
+    public static function replaceParentBlocks(
+      int $maxIndex,
+      int $blockKey,
+      array &$indexesToUnset,
+      string &$content,
+      array &$block,
+      bool $twoLevelsOfRecursion = false
+    ): void
+    {
+      // If this block does not have to be replaced and has not already been shown
+      if ((!isset($block[self::OTRA_BLOCKS_KEY_REPLACED_BY])
+          || $block[self::OTRA_BLOCKS_KEY_NAME] === 'root'
+          || $block[self::OTRA_BLOCKS_KEY_NAME] === '')
+        && !in_array($blockKey, $indexesToUnset))
+      {
+        $content .= $block[self::OTRA_BLOCKS_KEY_CONTENT];
+        return ;
+      }
+
+      $prevKey = $tmpKey = $blockKey;
+
+      do
+      {
+        // We add the key to an array of indexes that will not be showed again
+        if (!in_array($tmpKey, $indexesToUnset))
+          $indexesToUnset[]= $tmpKey;
+
+        self::$blocksStack[$prevKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
+        $prevKey = $tmpKey;
+        $replaced = isset(self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]);
+
+        // The block will be replaced, we retrieve the replacing block
+        if ($replaced)
+        {
+          $childrenKey = $tmpKey + 1;
+          $startIndex = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX];
+          $tmpKey = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
+
+          // the children blocks will be unset/removed
+          while (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] > $startIndex
+            && self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] <= $maxIndex)
+          {
+            if (!in_array($childrenKey, $indexesToUnset))
+              $indexesToUnset[] = $childrenKey;
+
+            $childrenKey++;
+          }
+
+          // If there is content after the children blocks but before the ending block
+          if (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_NAME] === $block[self::OTRA_BLOCKS_KEY_NAME]
+            && !in_array($childrenKey, $indexesToUnset))
+            $indexesToUnset[]= $childrenKey;
+        } else
+        {
+//
+//          if (self::$blocksStack[$tmpKey + 1][self::OTRA_BLOCKS_KEY_INDEX] >= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX]
+//            && self::$blocksStack[$tmpKey + 1][self::OTRA_BLOCKS_KEY_INDEX] <= $maxIndex)
+//            die('coucou');
+          // The block will not be replaced, we can add its content
+          // (not only its raw content but also the blocks in it)
+          for (
+            $newActualKey = $tmpKey + 1;
+            !$twoLevelsOfRecursion && self::$blocksStack[$newActualKey][self::OTRA_BLOCKS_KEY_INDEX]
+              >= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX]
+              && self::$blocksStack[$newActualKey][self::OTRA_BLOCKS_KEY_INDEX] <= $maxIndex;
+            ++$newActualKey
+          )
+          {
+            file_put_contents(
+              \otra\cache\php\BASE_PATH . '/tmp/segfault.txt',
+              '*' . $newActualKey . '*' . count(self::$blocksStack) . '*' .
+              self::$blocksStack[$newActualKey][self::OTRA_BLOCKS_KEY_INDEX] . '*' . $maxIndex . '*',
+              FILE_APPEND
+            );
+            self::replaceParentBlocks(
+              $maxIndex,
+              self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX],
+              $indexesToUnset,
+              $content,
+              self::$blocksStack[$tmpKey],
+              true
+            );
+          }
+
+          unset($indexOfProtectionFromInfLoop);
+
+          $content .= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT];
+          self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
+
+          // We add the key to an array of indexes that will not be showed again
+          if (!in_array($tmpKey, $indexesToUnset))
+            $indexesToUnset[]= $tmpKey;
+        }
+      }
+        // The previous block must be replaced, we process the replacing block...
+      while($replaced);
+    }
+
+    /**
+     * Assembles all the template blocks to return the final string.
      *
      * @return string
      */
@@ -63,6 +169,8 @@ namespace otra\cache\php
       $content = '';
       self::$currentBlock[self::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
       array_push(self::$blocksStack, self::$currentBlock);
+      $maxIndex = max(array_column(self::$blocksStack, self::OTRA_BLOCKS_KEY_INDEX));
+
       /** @var int[] $indexesToUnset */
       $indexesToUnset = [];
 
@@ -80,65 +188,7 @@ namespace otra\cache\php
        */
       foreach(self::$blocksStack as $blockKey => $block)
       {
-        // If this block do not have to be replaced and which has not already been shown
-        if ((!isset($block[self::OTRA_BLOCKS_KEY_REPLACED_BY])
-          || $block[self::OTRA_BLOCKS_KEY_NAME] === 'root'
-          || $block[self::OTRA_BLOCKS_KEY_NAME] === '')
-          && !in_array($blockKey, $indexesToUnset))
-        {
-          $content .= $block[self::OTRA_BLOCKS_KEY_CONTENT];
-          continue;
-        }
-
-        $prevKey = $tmpKey = $blockKey;
-
-        do
-        {
-          // We add the key to an array of indexes that will not be showed again
-          if (!in_array($tmpKey, $indexesToUnset))
-            $indexesToUnset[]= $tmpKey;
-
-          self::$blocksStack[$prevKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
-          $prevKey = $tmpKey;
-          $replaced = isset(self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]);
-
-          // The block will be replaced, we retrieve the replacing block
-          if ($replaced)
-          {
-            $childrenKey = $tmpKey + 1;
-            $startIndex = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_INDEX];
-            $tmpKey = self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
-
-            // this variable is (only) useful in case of raised exceptions
-            $indexOfProtectionFromInfLoop = 0;
-
-            // the children blocks will be unset/removed
-            while (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_INDEX] > $startIndex
-              && $indexOfProtectionFromInfLoop < 1500)
-            {
-              if (!in_array($childrenKey, $indexesToUnset))
-                $indexesToUnset[]= $childrenKey++;
-
-              $indexOfProtectionFromInfLoop++;
-            }
-
-            // If there is content after the children blocks but before the ending block
-            if (self::$blocksStack[$childrenKey][self::OTRA_BLOCKS_KEY_NAME] === $block[self::OTRA_BLOCKS_KEY_NAME]
-              && !in_array($childrenKey, $indexesToUnset))
-              $indexesToUnset[]= $childrenKey;
-          } else
-          {
-            // The block will not be replaced, we can add its content
-            $content .= self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT];
-            self::$blocksStack[$tmpKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
-
-            // We add the key to an array of indexes that will not be showed again
-            if (!in_array($tmpKey, $indexesToUnset))
-              $indexesToUnset[]= $tmpKey;
-          }
-        }
-        // The previous block must be replaced, we process the replacing block...
-        while($replaced);
+        self::replaceParentBlocks($maxIndex, $blockKey, $indexesToUnset, $content, $block);
       }
 
       return $content;

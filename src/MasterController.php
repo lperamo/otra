@@ -38,7 +38,7 @@ abstract class MasterController
 
   protected string $controller = '',
     $action = '',
-    $pattern = ''; // path to the action, eg. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
+    $pattern = ''; // path to the action, e.g. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
 
   protected array
     $viewResourcePath = [
@@ -248,7 +248,7 @@ abstract class MasterController
   }
 
   /**
-   * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
+   * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
    *
    * @param array|string $stylesheets The css file to add (Array of string)
    * @param bool         $print       Does the stylesheet must be only used for a print usage ?
@@ -262,7 +262,7 @@ abstract class MasterController
   }
 
   /**
-   * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
+   * Adds dynamically javascript script(s) (not coming from the routes' configuration) to the existing ones.
    * If the keys are string it will add the string to the link.
    *
    * @param array|string $js The javascript file to add (Array of strings)
@@ -281,7 +281,7 @@ abstract class MasterController
    *
    * @return string
    */
-  protected static function processFinalTemplate(string $route, string $templateFilename, array $variables)
+  protected static function processFinalTemplate(string $route, string $templateFilename, array $variables) : string
   {
     extract($variables);
     ob_start();
@@ -318,20 +318,22 @@ abstract class MasterController
 
   /**
    * @param string $file     The file to render
-   * @param bool   $viewPath If true, we adds the usual view path before the $file variable.
+   * @param bool   $viewPath If true, we add the usual view path before the $file variable.
    *
    * @return array{0:string,1:string} [$templateFile, $otraRoute]
    */
   protected function getTemplateFile(string $file, bool $viewPath) : array
   {
-    $otraRoute = str_contains($this->route, 'otra_');
+    if (!str_contains($this->route, 'otra_'))
+      return [
+        ($viewPath ? $this->viewPath : '') . $file,
+        false
+      ];
 
-    if (!$otraRoute)
-      $templateFile = $viewPath ? $this->viewPath . $file : $file;
-    else
-      $templateFile = CORE_VIEWS_PATH . $this->controller . DIR_SEPARATOR . $file;
-
-    return [$templateFile, $otraRoute];
+    return [
+      CORE_VIEWS_PATH . $this->controller . DIR_SEPARATOR . $file,
+      true
+    ];
   }
 
   /**
@@ -379,12 +381,12 @@ abstract class MasterController
 
       if (self::$cacheUsed === 'memory')
         self::$template = self::$rendered[$templateFile];
-      else // otherwise if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
+      else // otherwise, if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
       {
         $cachedFile = self::getCacheFileName($route);
         $cachedFileContent = self::getCachedFileContent($cachedFile);
 
-        // There is no .cache file for this template so we render it and store it in a file
+        // There is no .cache file for this template, so we render it and store it in a file
         if (false === $cachedFileContent)
         {
           // Will be used in 'addResourcesToTemplate' method via 'render' method
@@ -396,7 +398,7 @@ abstract class MasterController
           if (file_put_contents($cachedFile, self::$template) === false && $route !== 'otra_exception')
             throw new OtraException('We cannot create/update the cache for the route \'' . $route . '\'.' .
               PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
-        } else // otherwise we just get it
+        } else // otherwise, we just get it
         {
           self::$template = $cachedFileContent;
           self::$cacheUsed = '.cache file';
