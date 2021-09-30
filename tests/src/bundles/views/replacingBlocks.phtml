@@ -8,10 +8,11 @@ require CORE_PATH . 'templating/blocks.php' ?>
 <body><?php block('body', ''); ?></body>
 <?php
 block('body');
-block('breadcrumbs', 'hi');
 ?>World<?php
 endblock();
 block('body');
+?>test_<?php
 block('breadcrumbs', 'testBreadcrumbs');
+?>_coucou<?php
 endblock();
 ?>

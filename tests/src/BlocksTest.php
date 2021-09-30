@@ -5,7 +5,7 @@ namespace src;
 
 use otra\{Controller, OtraException};
 use phpunit\framework\TestCase;
-use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
+use const otra\cache\php\{APP_ENV, PROD, TEST_PATH};
 
 /**
  * @runTestsInSeparateProcesses
@@ -168,6 +168,18 @@ class BlocksTest extends TestCase
       file_get_contents(BACKUP_ANOTHER_LAYOUT),
       self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false),
       'Testing ' . BACKUP_ANOTHER_LAYOUT . ' and ' . TESTED_ANOTHER_LAYOUT . ' ...'
+    );
+  }
+
+  public function testReplacingBlocks():void
+  {
+    define(__NAMESPACE__ . '\\OTRA_TEST_REPLACING_BLOCKS', 'replacingBlocks.phtml');
+    define(__NAMESPACE__ . '\\BACKUP_REPLACING_BLOCKS', self::BACKUPS_PATH . OTRA_TEST_REPLACING_BLOCKS);
+    define(__NAMESPACE__ . '\\TESTED_REPLACING_BLOCKS', self::LAYOUTS_PATH . OTRA_TEST_REPLACING_BLOCKS);
+    self::assertEquals(
+      file_get_contents(BACKUP_REPLACING_BLOCKS),
+      self::$controller->renderView(TESTED_REPLACING_BLOCKS, [], false, false),
+      'Testing ' . BACKUP_REPLACING_BLOCKS . ' and ' . TESTED_REPLACING_BLOCKS . ' ...'
     );
   }
 }
