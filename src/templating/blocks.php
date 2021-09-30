@@ -58,28 +58,19 @@ namespace otra\cache\php
      * @param int    $maxKey               Maximum key of the stack
      * @param int    $blockKey             Position of the block in the stack
      * @param array  $indexesToUnset       Index of blocks to unset (index is the depth of the blocks in the template engine)
-     * @param string $content              Content of the actual block
-     * @param array  $block                Actual block
      */
-    public static function replaceParentBlocks(
-      int $maxIndex,
-      int $maxKey,
-      int $blockKey,
-      array &$indexesToUnset,
-      string $content,
-      array $block
-    ): string
+    public static function replaceParentBlocks(int $maxIndex, int $maxKey, int $blockKey, array &$indexesToUnset): string
     {
       // should not be shown because it is replaced by another block
       if (in_array($blockKey, $indexesToUnset))
-        return $content;
+        return '';
 
       // If this block does not have to be replaced and has not already been shown
       if (!isset(self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_REPLACED_BY])
         || self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_NAME] === 'root'
         || self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_NAME] === '')
       {
-        return $content . self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_CONTENT];
+        return self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_CONTENT];
       }
 
       $prevKey = $lastKey = $blockKey;
@@ -110,7 +101,6 @@ namespace otra\cache\php
       $lastChildrenKey = $initKey + 1;
 
       // iterates on children of the last replacing block of the same type
-      // TODO one thing is missing here, the recursive loop as replaced elements can be present in the replacing blocks
       while (self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_INDEX]
         >= self::$blocksStack[$lastKey][self::OTRA_BLOCKS_KEY_INDEX]
         && $lastChildrenKey < $maxKey)
@@ -121,15 +111,13 @@ namespace otra\cache\php
           $tmpContent .= self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_CONTENT];
         else
         {
-          $tmpContentBis = '';
+          // Do the same things in recursive loop if there are replaced blocks in the replacing block
           $replacedBlockKeyToProcess = self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
           $tmpContent .= self::replaceParentBlocks(
             $maxIndex,
             $maxKey,
             $replacedBlockKeyToProcess,
-            $indexesToUnset,
-            $tmpContentBis,
-            $block
+            $indexesToUnset
           );
 
           if (!in_array($replacedBlockKeyToProcess, $indexesToUnset))
@@ -144,13 +132,11 @@ namespace otra\cache\php
       $nextKey = $blockKey + 1;
 
       if (self::$blocksStack[$nextKey][self::OTRA_BLOCKS_KEY_INDEX]
-        === self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_INDEX])
+        === self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_INDEX]
+        && isset(self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]))
       {
-        if (isset(self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]))
-        {
-          self::$blocksStack[$nextKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
-          $indexesToUnset[] = $nextKey;
-        }
+        self::$blocksStack[$nextKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
+        $indexesToUnset[] = $nextKey;
       }
 
       // Iterates on all the blocks of the same index...
@@ -163,7 +149,7 @@ namespace otra\cache\php
         ++$nextKey;
       }
 
-      return $content . $tmpContent;
+      return $tmpContent;
     }
 
     /**
@@ -194,9 +180,9 @@ namespace otra\cache\php
        *   replacedBy?:int
        * } $block
        */
-      foreach(self::$blocksStack as $blockKey => $block)
+      foreach(array_keys(self::$blocksStack) as $blockKey)
       {
-        $content = self::replaceParentBlocks($maxIndex, $maxKey, $blockKey, $indexesToUnset, $content, $block);
+        $content .= self::replaceParentBlocks($maxIndex, $maxKey, $blockKey, $indexesToUnset);
       }
 
       return $content;
