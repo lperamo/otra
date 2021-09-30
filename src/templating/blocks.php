@@ -116,7 +116,26 @@ namespace otra\cache\php
         && $lastChildrenKey < $maxKey)
       {
         $indexesToUnset[] = $lastChildrenKey;
-        $tmpContent .= self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_CONTENT];
+
+        if (!isset(self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_REPLACED_BY]))
+          $tmpContent .= self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_CONTENT];
+        else
+        {
+          $tmpContentBis = '';
+          $replacedBlockKeyToProcess = self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_REPLACED_BY];
+          $tmpContent .= self::replaceParentBlocks(
+            $maxIndex,
+            $maxKey,
+            $replacedBlockKeyToProcess,
+            $indexesToUnset,
+            $tmpContentBis,
+            $block
+          );
+
+          if (!in_array($replacedBlockKeyToProcess, $indexesToUnset))
+            $indexesToUnset[] = $replacedBlockKeyToProcess;
+        }
+
         self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_CONTENT] = '';
         $lastChildrenKey++;
       }
