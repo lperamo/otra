@@ -47,6 +47,22 @@ class LogsActionTest extends TestCase
       [self::OTRA_PHP_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
     );
     ob_end_clean();
+
+    foreach([
+      self::LOG_DEV_TRACE,
+      self::LOG_PROD_CLASSIC_LOG,
+      self::LOG_PROD_CLASS_NOT_FOUND,
+      self::LOG_PROD_UNKNOWN_EXCEPTIONS,
+      self::LOG_PROD_UNKNOWN_FATAL_ERRORS
+    ] as $fileToTruncate)
+    {
+      if (file_exists($fileToTruncate))
+      {
+        $filePointer = fopen($fileToTruncate, 'r+');
+        ftruncate($filePointer, 0);
+        fclose($filePointer);
+      }
+    }
   }
 
   /** Cleaning all the files and folders that have been created */
