@@ -58,7 +58,8 @@ class WorkerManagerTest extends TestCase
     $worker = new Worker(
       $command,
       self::SUCCESS_MESSAGE,
-      self::WAITING_MESSAGE ,
+      self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -176,6 +177,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
@@ -268,6 +270,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -305,6 +308,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE,
       self::CUSTOM_TIMEOUT
     );
@@ -345,6 +349,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -353,6 +358,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($workerBis);
@@ -397,6 +403,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -405,6 +412,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE_3,
       self::WAITING_MESSAGE_3,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($workerBis);
@@ -447,6 +455,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -455,6 +464,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE,
       self::TIMEOUT,
       [
@@ -462,12 +472,14 @@ class WorkerManagerTest extends TestCase
           self::COMMAND_SLEEP_2,
           self::SUCCESS_MESSAGE_3,
           self::WAITING_MESSAGE_3,
+          null,
           self::VERBOSE
         ),
         new Worker(
           self::COMMAND,
           self::SUCCESS_MESSAGE_4,
           self::WAITING_MESSAGE_4,
+          null,
           self::VERBOSE
         )
       ]
@@ -531,6 +543,7 @@ class WorkerManagerTest extends TestCase
       self::BAD_COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -539,6 +552,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($workerBis);
@@ -549,7 +563,6 @@ class WorkerManagerTest extends TestCase
 
     // Testing
     $messageStart = self::WHITE;
-    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
       self::WAITING_MESSAGE . PHP_EOL .

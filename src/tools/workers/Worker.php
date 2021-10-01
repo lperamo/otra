@@ -17,17 +17,19 @@ class Worker
   /**
    * Worker constructor.
    *
-   * @param string   $command
-   * @param string   $successMessage
-   * @param string   $waitingMessage
-   * @param int      $verbose
-   * @param int      $timeout
-   * @param Worker[] $subworkers
+   * @param string      $command
+   * @param string      $successMessage
+   * @param string      $waitingMessage
+   * @param string|null $failMessage
+   * @param int         $verbose
+   * @param int         $timeout
+   * @param Worker[]    $subworkers
    */
   public function __construct(
     public string $command,
     public string $successMessage = '',
     public string $waitingMessage = 'Waiting ...',
+    public ?string $failMessage = null,
     public int $verbose = 1,
     public int $timeout = 60,
     public array $subworkers = []
@@ -54,9 +56,12 @@ class Worker
    */
   public function fail(string $stdout, string $stderr, int $exitCode) : string
   {
-    return CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
-      'STDOUT : ' . $stdout . PHP_EOL .
-      'STDERR : ' . $stderr . PHP_EOL .
-      'Exit code : ' . $exitCode;
+    if ($this->failMessage === null)
+      return CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
+        'STDOUT : ' . $stdout . PHP_EOL .
+        'STDERR : ' . $stderr . PHP_EOL .
+        'Exit code : ' . $exitCode;
+
+    return $this->failMessage;
   }
 }
