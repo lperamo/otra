@@ -18,10 +18,16 @@ class WorkerManagerTest extends TestCase
   private const
     COMMAND = 'sleep 0.001',
     COMMAND_SLEEP_2 = 'sleep 2',
+    BAD_COMMAND = 'slept',
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
     SUCCESS_MESSAGE_3 = 'hi how are you?' . PHP_EOL . 'I\'m fine and you?',
     SUCCESS_MESSAGE_4 = 'success message 4' . PHP_EOL . 'end',
+    FAIL_MESSAGE = CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
+      'STDOUT : ' . PHP_EOL .
+      'STDERR : sh: 1: slept: not found' . PHP_EOL .
+      PHP_EOL .
+      'Exit code : 127',
     WAITING_MESSAGE = 'waiting for the result of the first final message ...',
     WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
     WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
@@ -426,6 +432,12 @@ class WorkerManagerTest extends TestCase
     unset($workerManager);
   }
 
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
+   */
   public function testSubworkers() : void
   {
     // Context
@@ -498,6 +510,61 @@ class WorkerManagerTest extends TestCase
       $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
       $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL
+    );
+
+    // Cleaning
+    unset($workerManager);
+  }
+
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
+   */
+  public function testFailures() : void
+  {
+    // Context
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::BAD_COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::VERBOSE
+    );
+    $workerManager->attach($worker);
+
+    $workerBis = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      self::VERBOSE
+    );
+    $workerManager->attach($workerBis);
+
+    // Launching
+    while (0 < count($workerManager::$workers))
+      $workerManager->listen();
+
+    // Testing
+    $messageStart = self::WHITE;
+    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
+
+    $this->expectOutputString(
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::BAD_COMMAND . PHP_EOL .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::FAIL_MESSAGE . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::BAD_COMMAND . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND . PHP_EOL .
+      self::FAIL_MESSAGE . PHP_EOL
     );
 
     // Cleaning

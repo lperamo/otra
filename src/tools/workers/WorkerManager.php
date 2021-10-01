@@ -146,7 +146,12 @@ class WorkerManager
       if ($verbose > 0)
       {
         if ($worker->verbose > 1)
-          $finalMessage .= ' ' . $worker->command;
+        {
+          if ($finalMessage !== '')
+            $finalMessage .= ' ';
+
+          $finalMessage .= $worker->command;
+        }
 
         if (self::$hasPrinted)
         {
@@ -158,8 +163,6 @@ class WorkerManager
           {
             echo self::GO_UP . self::ERASE_TO_END_OF_LINE;
           }
-
-          echo self::$failMessages;
 
           unset($messagesCount);
         }
