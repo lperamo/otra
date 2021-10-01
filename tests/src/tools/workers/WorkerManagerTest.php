@@ -417,7 +417,7 @@ class WorkerManagerTest extends TestCase
       self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       self::WAITING_MESSAGE_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND . PHP_EOL
     );
