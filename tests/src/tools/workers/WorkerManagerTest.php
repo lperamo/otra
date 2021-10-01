@@ -21,9 +21,11 @@ class WorkerManagerTest extends TestCase
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
     SUCCESS_MESSAGE_3 = 'hi how are you?' . PHP_EOL . 'I\'m fine and you?',
+    SUCCESS_MESSAGE_4 = 'success message 4' . PHP_EOL . 'end',
     WAITING_MESSAGE = 'waiting for the result of the first final message ...',
     WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
     WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
+    WAITING_MESSAGE_4 = 'waiting for the result of the fourth final message ...',
     VERBOSE = 2,
     CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
@@ -31,7 +33,9 @@ class WorkerManagerTest extends TestCase
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
     UP_ONE_LINE = "\033[1A",
     CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE,
-    WHITE = "\e[15;2]";
+    WHITE = "\e[15;2]",
+    STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.',
+    TIMEOUT = 60;
 
   // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -136,17 +140,17 @@ class WorkerManagerTest extends TestCase
     self::assertEmpty(
       removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
       ->getValue($workerManager),
-      'Stdin streams must be empty after the Worker Manager destruction.'
+      'Stdin' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
       removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)
         ->getValue($workerManager),
-      'Stdout streams must be empty after the Worker Manager destruction.'
+      'Stdout' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
       removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
         ->getValue($workerManager),
-      'Stderr streams must be empty after the Worker Manager destruction.'
+      'Stderr' . self::STREAMS_DESTRUCT_MESSAGE
     );
   }
 
@@ -369,9 +373,6 @@ class WorkerManagerTest extends TestCase
     );
 
     // Cleaning
-    foreach($workerManager::$workers as $worker)
-      $workerManager->detach($worker);
-
     unset($workerManager);
   }
 
@@ -416,15 +417,90 @@ class WorkerManagerTest extends TestCase
       self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       self::WAITING_MESSAGE_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND . PHP_EOL
     );
 
     // Cleaning
-    foreach($workerManager::$workers as $worker)
-      $workerManager->detach($worker);
+    unset($workerManager);
+  }
 
+  public function testSubworkers() : void
+  {
+    // Context
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::COMMAND_SLEEP_2,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      self::VERBOSE
+    );
+    $workerManager->attach($worker);
+
+    $workerBis = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::VERBOSE,
+      self::TIMEOUT,
+      [
+        new Worker(
+          self::COMMAND_SLEEP_2,
+          self::SUCCESS_MESSAGE_3,
+          self::WAITING_MESSAGE_3,
+          self::VERBOSE
+        ),
+        new Worker(
+          self::COMMAND,
+          self::SUCCESS_MESSAGE_4,
+          self::WAITING_MESSAGE_4,
+          self::VERBOSE
+        )
+      ]
+    );
+    $workerManager->attach($workerBis);
+
+    // Launching
+    while (0 < count($workerManager::$workers))
+      $workerManager->listen();
+
+    // Testing
+    $messageStart = self::WHITE;
+    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
+
+    $this->expectOutputString(
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      self::WAITING_MESSAGE_4 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      self::WAITING_MESSAGE_4 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL
+    );
+
+    // Cleaning
     unset($workerManager);
   }
 }
