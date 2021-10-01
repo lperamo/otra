@@ -188,6 +188,7 @@ if (file_exists(BASE_PATH . $preloadFilename))
     START_COMMAND . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename,
     'Preload file' . CLI_SUCCESS . ' ✔' . END_COLOR,
     'Sending preload file ...',
+    null,
     VERBOSE
   );
 }
