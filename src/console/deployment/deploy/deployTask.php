@@ -360,8 +360,4 @@ $handleTransfer(
 while (0 < count($workerManager::$workers))
   $workerManager->listen();
 
-// Cleaning
-foreach($workerManager::$workers as $worker)
-  $workerManager->detach($worker);
-
 unset($workerManager);
