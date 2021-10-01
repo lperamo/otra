@@ -45,7 +45,7 @@ class WorkerManager
     $hasPrinted = false;
 
   private static int $workersThatHaveBeenAttached = 0;
-
+  private static string $failMessages = '';
   private static array $informations = [];
 
   /**
@@ -87,7 +87,7 @@ class WorkerManager
         }
 
         echo $worker->waitingMessage . PHP_EOL;
-        ++self::$workersThatHaveBeenAttached;
+        self::$workersThatHaveBeenAttached += substr_count($worker->waitingMessage, PHP_EOL) + 1;
       }
 
       ++$workerOrderKey;
@@ -136,7 +136,10 @@ class WorkerManager
       if (0 === $exitCode)
         $finalMessage = $worker->done($stdout);
       elseif (0 < $exitCode)
-        $finalMessage = $worker->fail($stdout, $stderr, $exitCode);
+      {
+        self::$failMessages .= $worker->fail($stdout, $stderr, $exitCode);
+        $finalMessage = '';
+      }
       else // is this really possible?
         throw new RuntimeException();
 
@@ -156,17 +159,27 @@ class WorkerManager
             echo self::GO_UP . self::ERASE_TO_END_OF_LINE;
           }
 
+          echo self::$failMessages;
+
           unset($messagesCount);
         }
 
         self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;
         self::$workersThatHaveBeenAttached = 0;
 
-        // we print the waiting and success messages
+        // we print the waiting messages, the success messages and the fail messages
         foreach (self::$allMessages as $message)
         {
           echo $message . PHP_EOL;
-          ++self::$workersThatHaveBeenAttached;
+          self::$workersThatHaveBeenAttached += substr_count($message, PHP_EOL) + 1;
+        }
+
+        echo self::$failMessages;
+
+        if (self::$failMessages !== '')
+        {
+          echo PHP_EOL;
+          self::$workersThatHaveBeenAttached += substr_count(self::$failMessages, PHP_EOL) + 1;
         }
 
         unset($message);
