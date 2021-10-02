@@ -57,11 +57,7 @@ class LogsActionTest extends TestCase
     ] as $fileToTruncate)
     {
       if (file_exists($fileToTruncate))
-      {
-        $filePointer = fopen($fileToTruncate, 'r+');
-        ftruncate($filePointer, 0);
-        fclose($filePointer);
-      }
+        file_put_contents($fileToTruncate, '');
     }
   }
 

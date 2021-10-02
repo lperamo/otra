@@ -26,10 +26,7 @@ class ClearSQLLogsAction extends Controller
     parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
     $sqlLogFile = BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt';
-    $handle = fopen($sqlLogFile, 'r+');
-    ftruncate($handle, 0);
-    fclose($handle);
-
+    file_put_contents($sqlLogFile, '');
     require CORE_PATH . 'tools/translate.php';
     echo trans('No more stored queries in '), $sqlLogFile, '.';
   }

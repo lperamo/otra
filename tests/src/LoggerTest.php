@@ -73,7 +73,7 @@ class LoggerTest extends TestCase
 
     // cleaning
     if (!OTRA_PROJECT)
-      unlink($logFile);
+      file_put_contents($logFile, '');
   }
 
   /**
@@ -104,7 +104,7 @@ class LoggerTest extends TestCase
     );
 
     // cleaning
-    unlink($absolutePathToLogFilename);
+    file_put_contents($absolutePathToLogFilename, '');
     rmdir($absolutePathToFolder);
   }
 
@@ -138,6 +138,6 @@ class LoggerTest extends TestCase
 
     // cleaning
     if (!OTRA_PROJECT)
-      unlink(TRACE_LOG_FILE);
+      file_put_contents(TRACE_LOG_FILE, '');
   }
 }
