@@ -13,10 +13,8 @@ use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
-use const otra\console\
-{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR, SUCCESS};
+use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR, SUCCESS};
 use function otra\tools\cliCommand;
-use function otra\tools\debug\dump;
 
 const DEPLOY_ARG_MASK = 2,
   DEPLOY_ARG_VERBOSE = 3,
@@ -40,7 +38,8 @@ const DEPLOY_ARG_MASK = 2,
 
   OTRA_CLI_COMMAND_SSH_AND_PORT = 'ssh -p ',
   OTRA_CLI_COMMAND_RECURSIVE_MKDIR = ' mkdir -p ',
-  TIMEOUT = 60;
+  TIMEOUT = 60,
+  PRELOAD_FILENAME = 'preload.php';
 
 // **** Checking the deployment config parameters ****
 if (!isset(AllConfig::$deployment))
@@ -165,94 +164,7 @@ define(
   __NAMESPACE__ . '\\START_COMMAND_RELATIVE_RSYNC',
   'rsync -qzaruhPR --delete -e \'ssh -i ' . $privateSshKey . ' -p ' . $destinationPort
 );
-
-$workerManager = new WorkerManager();
-
 define(__NAMESPACE__ . '\\STRLEN_BASEPATH', strlen(BASE_PATH));
-
-$workersList = [
-  new Worker(
-    START_COMMAND_RELATIVE_RSYNC . '\' cache ' . $server . ':' . $folder,
-    'Cache' . CLI_SUCCESS . ' ✔' . END_COLOR,
-    'Sending cache ...',
-    null,
-    VERBOSE
-  )
-];
-
-$preloadFilename = 'preload.php';
-
-if (file_exists(BASE_PATH . $preloadFilename))
-{
-  $workersList[] = new Worker(
-    START_COMMAND . '\' ' .  $preloadFilename . ' ' . $server . ':' . $folder . $preloadFilename,
-    'Preload file' . CLI_SUCCESS . ' ✔' . END_COLOR,
-    'Sending preload file ...',
-    null,
-    VERBOSE
-  );
-}
-
-$workersList[] = new Worker(
-  START_COMMAND . '\' web/ ' . $server . ':' . $folder . 'web/',
-  'Web folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-  'Sending web folder ...',
-  null,
-  VERBOSE
-);
-
-$workersList[] = new Worker(
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
-  $folder . 'config',
-  'Config folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-  'Creating the config folder ...',
-  null,
-  VERBOSE,
-  TIMEOUT,
-  [
-    new Worker(
-      START_COMMAND . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php',
-      'OTRA constants' . CLI_SUCCESS . ' ✔' . END_COLOR,
-      'Adding the OTRA constants ...',
-      null,
-      VERBOSE
-    )
-  ]
-);
-
-$workersList[] = new Worker(
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
-  $folder . 'vendor',
-  'Vendor folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-  'Creating the vendor folder ...',
-  null,
-  VERBOSE,
-  TIMEOUT,
-  [
-    new Worker(
-      START_COMMAND .
-      '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
-      ' --include=\'otra/otra/src/templating/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
-      ' --include=\'otra/otra/src/services/securityService.php\'' .
-      ' --include=\'otra/otra/src/views/layout.phtml\'' .
-      ' --include=\'otra/otra/src/views/errors/error404.phtml\'' .
-      ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
-      'vendor/',
-      'OTRA templating engine, the translate tool, the production controller and the 404 errors pages' .
-      CLI_SUCCESS . ' ✔' . END_COLOR,
-      'Sending the OTRA templating engine, the translate tool and the production controller ...'
-    )
-  ]
-);
-
-$workersList[] = new Worker(
-  OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
-  $folder . 'bundles',
-  'Bundles folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-  'Creating the bundles folder ...',
-  null,
-  VERBOSE
-);
 
 /**
  * See which files to send and which files to keep
@@ -262,7 +174,7 @@ $workersList[] = new Worker(
  * @return Worker[]
  */
 $seekingToSendFiles = function (string $folderToAnalyze)
-use (&$handleTransfer, &$seekingToSendFiles, &$folder, &$destinationPort, &$server)
+use (&$seekingToSendFiles, &$folder, &$destinationPort, &$server)
 : array
 {
   $bundleFolders = new DirectoryIterator($folderToAnalyze);
@@ -270,42 +182,34 @@ use (&$handleTransfer, &$seekingToSendFiles, &$folder, &$destinationPort, &$serv
 
   foreach ($bundleFolders as $bundleFolder)
   {
-    if ($bundleFolder->isDot() || $bundleFolder->isFile())
-      continue;
-
-    $folderFilename = $bundleFolder->getFilename();
-
-    if (in_array($folderFilename, ['config',  'resources', 'controllers', 'services', 'tasks']))
+    if (
+      $bundleFolder->isDot()
+      || $bundleFolder->isFile()
+      || in_array($bundleFolder->getFilename(), ['config',  'resources', 'controllers', 'services', 'tasks'])
+    )
       continue;
 
     $folderRealPath = $bundleFolder->getRealPath();
     $folderRelativePath = substr($folderRealPath, STRLEN_BASEPATH);
 
-    $newWorkersToChain[] = new Worker(
-      START_COMMAND .
-      '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath,
-      $folderRelativePath . ' folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-      'Sending ' . $folderRelativePath . ' folder ...',
-      null,
-      VERBOSE
-    );
-
-    $newWorkersToChain = array_merge($newWorkersToChain, $seekingToSendFiles($folderRealPath));
+    $newWorkersToChain = [
+      ...$newWorkersToChain,
+      new Worker(
+        START_COMMAND .
+        '\' -m  ' . $folderRealPath . '/ ' . $server . ':' . $folder . $folderRelativePath,
+        $folderRelativePath . ' folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Sending ' . $folderRelativePath . ' folder ...',
+        null,
+        VERBOSE
+      ),
+      ...$seekingToSendFiles($folderRealPath)
+    ];
   }
 
   return $newWorkersToChain;
 };
 
-$workersList = [...$workersList, ...$seekingToSendFiles($mainBundlesFolder)];
-
-$workersList[] =  new Worker(
-  START_COMMAND_RELATIVE_RSYNC . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder,
-  'Log folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
-  'Checking log folder ...',
-  null,
-  VERBOSE
-);
-
+$workerManager = new WorkerManager();
 $workerManager->attach(
   new Worker(
     OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR . $folder,
@@ -314,7 +218,96 @@ $workerManager->attach(
     'The site main folder cannot be created. An error occurred.',
     VERBOSE,
     TIMEOUT,
-    $workersList
+    [
+      // The main folder is created, we can do the rest
+      new Worker(
+        START_COMMAND_RELATIVE_RSYNC . '\' cache ' . $server . ':' . $folder,
+        'Cache' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Sending cache ...',
+        null,
+        VERBOSE
+      ),
+      // if there is a preload configuration file, we send it
+      ...(
+        file_exists(BASE_PATH . PRELOAD_FILENAME)
+        ? [
+          new Worker(
+            START_COMMAND . '\' ' .  PRELOAD_FILENAME . ' ' . $server . ':' . $folder . PRELOAD_FILENAME,
+            'Preload file' . CLI_SUCCESS . ' ✔' . END_COLOR,
+            'Sending preload file ...',
+            null,
+            VERBOSE
+          )
+        ]
+        : []
+      ),
+      new Worker(
+        START_COMMAND . '\' web/ ' . $server . ':' . $folder . 'web/',
+        'Web folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Sending web folder ...',
+        null,
+        VERBOSE
+      ),
+      new Worker(
+        OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+        $folder . 'config',
+        'Config folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Creating the config folder ...',
+        null,
+        VERBOSE,
+        TIMEOUT,
+        [
+          new Worker(
+            START_COMMAND . '\' config/prodConstants.php ' . $server . ':' . $folder . 'config/constants.php',
+            'OTRA constants' . CLI_SUCCESS . ' ✔' . END_COLOR,
+            'Adding the OTRA constants ...',
+            null,
+            VERBOSE
+          )
+        ]
+      ),
+      new Worker(
+        OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+        $folder . 'vendor',
+        'Vendor folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Creating the vendor folder ...',
+        null,
+        VERBOSE,
+        TIMEOUT,
+        [
+          new Worker(
+            START_COMMAND .
+            '\' --delete-excluded -m --include=\'otra/otra/src/entryPoint.php\' --include=\'otra/otra/src/tools/translate.php\'' .
+            ' --include=\'otra/otra/src/templating/blocks.php\' --include=\'otra/otra/src/prod/ProdControllerTrait.php\'' .
+            ' --include=\'otra/otra/src/services/securityService.php\'' .
+            ' --include=\'otra/otra/src/views/layout.phtml\'' .
+            ' --include=\'otra/otra/src/views/errors/error404.phtml\'' .
+            ' --include=\'*/\' --exclude=\'*\' vendor/ ' . $server . ':' . $folder .
+            'vendor/',
+            'OTRA templating engine, the translate tool, the production controller and the 404 errors pages' .
+            CLI_SUCCESS . ' ✔' . END_COLOR,
+            'Sending the OTRA templating engine, the translate tool and the production controller ...'
+          )
+        ]
+      ),
+      new Worker(
+        OTRA_CLI_COMMAND_SSH_AND_PORT . $destinationPort . ' ' . $server . OTRA_CLI_COMMAND_RECURSIVE_MKDIR .
+        $folder . 'bundles',
+        'Bundles folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Creating the bundles folder ...',
+        null,
+        VERBOSE
+      )
+      ,
+      ...$seekingToSendFiles($mainBundlesFolder),
+      new Worker(
+        START_COMMAND_RELATIVE_RSYNC . '\' --include=\'*/\' --exclude=\'*\' logs ' . $server . ':' . $folder,
+        'Log folder' . CLI_SUCCESS . ' ✔' . END_COLOR,
+        'Checking log folder ...',
+        null,
+        VERBOSE
+      )
+    ]
   )
 );
 
