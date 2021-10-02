@@ -15,7 +15,6 @@ use function otra\tools\debug\{dump, paramDump};
 class DumpTest extends TestCase
 {
   private const
-    LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
     OTRA_DEBUG_TEST_VALUE_MAX_CHILDREN = 5,
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
@@ -32,25 +31,10 @@ class DumpTest extends TestCase
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
-    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV];
 
     require TEST_PATH . 'config/AllConfigGood.php';
     require CORE_PATH . 'tools/getSourceFromFile.php';
     require CORE_PATH . 'tools/debug/dump.php';
-
-    if (!file_exists(self::$logsProdPath))
-      mkdir(self::$logsProdPath, 0777, true);
-  }
-
-  public static function tearDownAfterClass(): void
-  {
-    parent::tearDownAfterClass();
-
-    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
-    {
-      require CORE_PATH . 'tools/deleteTree.php';
-      delTree(self::LOG_PATH);
-    }
   }
 
   /**

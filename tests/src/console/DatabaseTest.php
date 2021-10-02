@@ -82,7 +82,10 @@ class DatabaseTest extends TestCase
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
 
-    cleanFileAndFolders([BASE_PATH . 'logs']);
+    foreach(glob(BASE_PATH . 'logs/**/**.txt') as $logFile)
+    {
+      file_put_contents($logFile, '');
+    }
   }
 
   /**

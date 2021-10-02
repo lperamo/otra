@@ -40,8 +40,19 @@ class LoggerTest extends TestCase
 
     if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
     {
-      require CORE_PATH . 'tools/deleteTree.php';
-      delTree(self::LOG_PATH);
+      foreach(glob(BASE_PATH . 'logs/**/**.txt') as $logFile)
+      {
+        file_put_contents($logFile, '');
+      }
+
+      $otraTestsPath = self::LOG_PATH . 'otraTests/';
+      $otraTestsLogFilePath = $otraTestsPath . 'log.txt';
+
+      if (file_exists($otraTestsLogFilePath))
+        unlink($otraTestsLogFilePath);
+
+      if (file_exists($otraTestsPath))
+        rmdir($otraTestsPath);
     }
   }
 
@@ -105,7 +116,6 @@ class LoggerTest extends TestCase
 
     // cleaning
     file_put_contents($absolutePathToLogFilename, '');
-    rmdir($absolutePathToFolder);
   }
 
   /**

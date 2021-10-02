@@ -211,13 +211,7 @@ class SqlTest extends TestCase
     );
 
     if (!OTRA_PROJECT)
-    {
-      unlink($sqlLogPath);
-
-      // only remove the log folder if it is really empty
-      if (empty(array_diff(scandir($devLogFolder), ['..', '.'])))
-        rmdir($devLogFolder);
-    }
+      file_put_contents($sqlLogPath, '');
   }
 
   /**
