@@ -520,9 +520,6 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
         $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
         throw new OtraException(code: 1, exit: true);
       }
-
-      // if the last condition was true => we must not change this line from CORE_PATH . Router.php so we pass to the
-      // next loop iteration!
     }
   }
 
