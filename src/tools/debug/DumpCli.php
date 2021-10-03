@@ -86,7 +86,7 @@ class DumpCli extends DumpMaster
 
     foreach ($param as $paramItemKey => $paramItem)
     {
-      // We show the rest of the variables only if we have not reach the 'maxChildren' limit.
+      // We show the rest of the variables only if we have not reached the 'maxChildren' limit.
       if (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] < $loopIndex
         && AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] !== -1)
       {
@@ -142,7 +142,7 @@ class DumpCli extends DumpMaster
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
-    $visibilityMask = $property->isPublic()
+    $visibilityMask = $isPublicProperty
       | $property->isProtected() << 1
       | $property->isPrivate() << 2;
 

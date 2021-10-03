@@ -3,10 +3,20 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
+use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
 use const otra\cache\php\CORE_CSS_PATH;
 use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
+
+const OTRA_DUMP_INDENT_COLORS = [
+  '#6496c8',
+  '#ff6464',
+  '#64c864',
+  '#64c8c8',
+  '#9600ff'
+];
+define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
 /**
  * Class that handles the dump mechanism, on web and CLI side.
@@ -18,8 +28,29 @@ abstract class DumpWeb extends DumpMaster {
   // Display constants
   private const
     OTRA_DUMP_TEXT_BLOCK = '<span class="otra-dump--value">',
-    OTRA_DUMP_END_TEXT_BLOCK = '</span>',
-    OTRA_DUMP_HELP_CLASS = 'otra-dump--help';
+    ENDING_SPAN = '</span>',
+    OTRA_DUMP_HELP_CLASS = 'otra-dump--help',
+    BR = '<br>',
+    RIGHT_ARROW = ' => ';
+
+  public const OTRA_DUMP_INDENT_STRING = '│ ';
+
+  /**
+   * @param int $depth
+   *
+   * @return string
+   */
+  #[Pure] private static function indentColors(int $depth) : string
+  {
+    $content = '';
+
+    for ($index = 0; $index < $depth; ++$index)
+    {
+      $content .= '<span style="color: ' . OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT] . ';">' . self::OTRA_DUMP_INDENT_STRING . self::ENDING_SPAN;
+    }
+
+    return $content;
+  }
 
   /**
    * Begins a foldable div
@@ -50,27 +81,27 @@ abstract class DumpWeb extends DumpMaster {
     // If we have reach the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
-      echo '<br>', str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), '<b>...</b><br>';
+      echo self::BR, self::indentColors($depth + 1), '<b>...</b><br>';
 
       return;
     }
 
-    echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
+    echo $description, self::ENDING_SPAN;
 
     if ($notFirstDepth)
       self::createFoldable();
     else
-      echo '<br>';
+      echo self::BR;
 
     $loopIndex = 0;
 
     foreach ($param as $paramItemKey => $paramItem)
     {
-      // We show the rest of the variables only if we have not reach the 'maxChildren' limit.
+      // We show the rest of the variables only if we have not reached the 'maxChildren' limit.
       if (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] < $loopIndex
         && AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] !== -1)
       {
-        echo self::OTRA_DUMP_TEXT_BLOCK, '...', self::OTRA_DUMP_END_TEXT_BLOCK, '<br';
+        echo self::OTRA_DUMP_TEXT_BLOCK, '...', self::ENDING_SPAN, '<br';
         break;
       }
 
@@ -92,17 +123,17 @@ abstract class DumpWeb extends DumpMaster {
   private static function dumpObject(mixed $param, bool $notFirstDepth, int $depth) : void
   {
     [$className, $description] = parent::getClassDescription($param);
-    echo $description, self::OTRA_DUMP_END_TEXT_BLOCK;
+    echo $description, self::ENDING_SPAN;
 
     if ($notFirstDepth)
       self::createFoldable();
     else
-      echo '<br>';
+      echo self::BR;
 
     // If we have reach the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
-      echo str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), '<b>...</b><br>';
+      echo self::indentColors($depth + 1), '<b>...</b><br>';
 
       return;
     }
@@ -131,11 +162,11 @@ abstract class DumpWeb extends DumpMaster {
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
-    $visibilityMask = $property->isPublic()
+    $visibilityMask = $isPublicProperty
       | $property->isProtected() << 1
       | $property->isPrivate() << 2;
 
-    echo self::OTRA_DUMP_TEXT_BLOCK, str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1), ' ';
+    echo self::OTRA_DUMP_TEXT_BLOCK, self::indentColors($depth + 1), ' ';
 
     echo '<b class="' . self::OTRA_DUMP_HELP_CLASS . '" title="' .
       self::OTRA_DUMP_VISIBILITIES[$visibilityMask][self::OTRA_DUMP_KEY_VISIBILITY] . '">' .
@@ -158,18 +189,18 @@ abstract class DumpWeb extends DumpMaster {
     switch($propertyType)
     {
       case 'boolean' :
-        echo $propertyType, ' => ', $propertyValue ? 'true' : 'false', $property->getDocComment();
+        echo $propertyType, self::RIGHT_ARROW, $propertyValue ? 'true' : 'false', $property->getDocComment();
         break;
       case 'integer' :
       case 'double' :
-        echo $propertyType, ' => ', $propertyValue,  $property->getDocComment();
+        echo $propertyType, self::RIGHT_ARROW, $propertyValue,  $property->getDocComment();
         break;
       case DumpMaster::OTRA_DUMP_TYPE_STRING :
-        echo $propertyType, ' => ';
+        echo $propertyType, self::RIGHT_ARROW;
         $lengthParam = strlen($propertyValue);
 
         if ($lengthParam > 50)
-          echo '<br>';
+          echo self::BR;
 
         echo "'",
         (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]] === -1
@@ -203,10 +234,10 @@ abstract class DumpWeb extends DumpMaster {
         break;
     }
 
-    echo self::OTRA_DUMP_END_TEXT_BLOCK;
+    echo self::ENDING_SPAN;
 
     if ($propertyType !== DumpMaster::OTRA_DUMP_TYPE_ARRAY)
-      echo '<br>';
+      echo self::BR;
 
     if (!$isPublicProperty)
       restoreFieldScopeProtection($className, $propertyName);
@@ -227,7 +258,7 @@ abstract class DumpWeb extends DumpMaster {
     $padding = '';
 
     if ($notFirstDepth)
-      $padding = str_repeat(self::OTRA_DUMP_INDENT_STRING, $depth + 1);
+      $padding = self::indentColors($depth + 1);
 
     echo self::OTRA_DUMP_TEXT_BLOCK;
 
@@ -240,7 +271,7 @@ abstract class DumpWeb extends DumpMaster {
       echo(gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
         ? $paramKey
         : '\'' . $paramKey . '\''
-      ), ' => ';
+      ), self::RIGHT_ARROW;
     }
 
     // showing values
@@ -250,11 +281,11 @@ abstract class DumpWeb extends DumpMaster {
         self::dumpArray($paramType, $param, $notFirstDepth, $depth);
         break;
       case 'boolean' :
-        echo $paramType, $param ? ' true' : ' false', self::OTRA_DUMP_END_TEXT_BLOCK;
+        echo $paramType, $param ? ' true' : ' false', self::ENDING_SPAN;
         break;
       case 'integer' :
       case 'double' :
-        echo $param, '</span>', self::OTRA_DUMP_END_TEXT_BLOCK, '<br>';
+        echo $param, self::ENDING_SPAN, self::ENDING_SPAN, self::BR;
         break;
       case 'NULL' : echo '<b> null</b><br>'; break;
       case 'object' :
@@ -274,22 +305,22 @@ abstract class DumpWeb extends DumpMaster {
 
         // If the string is too long, we begin it at the next line
         if ($lengthParam > 50)
-          echo '<br>', $padding;
+          echo self::BR, $padding;
 
         echo ' \'', htmlspecialchars($stringToShow), '\'';
 
         if ($lengthParam > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]])
           echo '<b>(cut)</b>';
 
-        echo self::OTRA_DUMP_END_TEXT_BLOCK, '<br>';
+        echo self::ENDING_SPAN, self::BR;
         break;
 
       default:
-        echo $paramType, $param, self::OTRA_DUMP_END_TEXT_BLOCK;
+        echo $paramType, $param, self::ENDING_SPAN;
         break;
     }
 
-    echo self::OTRA_DUMP_END_TEXT_BLOCK;
+    echo self::ENDING_SPAN;
   }
 
   /**
@@ -318,7 +349,7 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * A nice dump function that takes as much parameters as we want to put.
+   * A nice dump function that takes as many parameters as we want to put.
    * Calls the DumpMaster::dump that will use the 'dumpCallback' function.
    *
    * @param mixed $params

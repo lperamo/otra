@@ -77,7 +77,7 @@ abstract class DumpMaster
       ? self::OTRA_DUMP_CONFIGURATION
       : array_merge(self::OTRA_DUMP_CONFIGURATION, AllConfig::$debugConfig);
 
-    // If there is no option, we returns the merged array we just done
+    // If there is no option, we return the merged array we've just done
     if ($options === null)
       return AllConfig::$debugConfig;
 
