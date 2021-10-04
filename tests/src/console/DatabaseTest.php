@@ -9,7 +9,8 @@ use otra\console\database\Database;
 use otra\{OtraException, bdd\Sql, Session};
 use ReflectionException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
-use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use const otra\console\
+{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,
@@ -959,7 +960,12 @@ class DatabaseTest extends TestCase
     // launching task
     Database::importSchema(self::DATABASE_NAME, self::DATABASE_CONNECTION);
     self::assertFileExists(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
-    self::assertFileEquals(self::SCHEMA_FILE_BACKUP, self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
+    self::assertFileEquals(
+      self::SCHEMA_FILE_BACKUP,
+      self::IMPORTED_SCHEMA_ABSOLUTE_PATH,
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::IMPORTED_SCHEMA_ABSOLUTE_PATH . CLI_ERROR . ' against ' .
+      CLI_INFO_HIGHLIGHT . self::SCHEMA_FILE_BACKUP . CLI_ERROR
+    );
   }
 
   /**

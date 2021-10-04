@@ -23,6 +23,8 @@ testDB_table:
       local: fk_id_table2
       foreign: id
       constraint_name: fk_testDB_table2
+      on_delete: cascade
+      on_update: restrict
     testDB_table3:
       local: fk_id_table3
       foreign: id

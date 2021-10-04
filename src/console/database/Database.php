@@ -137,7 +137,7 @@ abstract class Database
     if (!file_exists($folder))
     {
       echo CLI_ERROR, 'The folder ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, self::$folder, CLI_ERROR,
-        ' does not exist.', END_COLOR, PHP_EOL;
+      ' does not exist.', END_COLOR, PHP_EOL;
       throw new OtraException(code: 1, exit: true);
     }
 
@@ -148,7 +148,7 @@ abstract class Database
     if (self::$boolSchema)
       $schemas = [];
 
-    // We scan the bundles directory to retrieve all the bundles name ...
+    // We scan the bundles' directory to retrieve all the bundles name ...
     while (false !== ($actualFile = readdir($folderHandler)))
     {
       // 'config' and 'views' are not bundles ...
@@ -209,7 +209,7 @@ abstract class Database
    * Creates the sql database schema file if it doesn't exist and runs it
    *
    * @param string $databaseName Database name
-   * @param bool   $force        If true, we erase the database before the tables creation.
+   * @param bool   $force        If true, we erase the database before the creation of tables.
    *
    * @throws OtraException
    */
@@ -239,7 +239,7 @@ abstract class Database
     }
 
     echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
-      PHP_EOL;
+    PHP_EOL;
   }
 
   /**
@@ -306,7 +306,7 @@ abstract class Database
       foreach (array_keys($properties['relations']) as $relation)
       {
         $alreadyExists = (in_array($relation, $sortedTables) || $relation === $tableName);
-        /* If there is at least one problem because one foreign key references an non-existent table ...
+        /* If there is at least one problem because one foreign key references a non-existent table ...
            => that's invalid ...we put false */
         $mustAddTableToSortedTables['valid'] = $mustAddTableToSortedTables['valid'] && $alreadyExists;
       }
@@ -372,7 +372,7 @@ abstract class Database
 
     $databaseId = 1; // The database ids begin to 1 by default
 
-    /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but more a temporary id that
+    /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but rather a temporary id that
      * represents the position of the line in the database ! */
     foreach (array_keys($fixturesData) as $fixtureName)
     {
@@ -383,7 +383,7 @@ abstract class Database
 
     $fixtureFolder = self::$pathYmlFixtures . self::$fixturesFileIdentifiers . DIR_SEPARATOR;
 
-    // if the fixtures folder doesn't exist, we create it.
+    // if the fixtures' folder doesn't exist, we create it.
     if (!file_exists($fixtureFolder))
     {
       $exceptionMessage = self::ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH . $fixtureFolder . '\'.';
@@ -403,7 +403,7 @@ abstract class Database
     echo 'Data  ', CLI_SUCCESS, '[YML IDENTIFIERS] ', END_COLOR;
 
     /**
-     * If this table have relations, we store all the data from the related tables in $fixtureMemory array.
+     * If this table has relations, we store all the data from the related tables in $fixtureMemory array.
      */
     if (isset($tableData['relations']))
     {
@@ -466,8 +466,8 @@ abstract class Database
             E_CORE_ERROR
           );
 
-        // If the property refers to an other table, then we search the corresponding foreign key name
-        // (eg. : lpcms_module -> 'module1' => fk_id_module -> 4 )
+        // If the property refers to another table, then we search the corresponding foreign key name
+        // (e.g. : lpcms_module -> 'module1' => fk_id_module -> 4 )
         $theProperties .= '`' .
           ($propertyRefersToAnotherTable
             ? $tableData['relations'][$property]['local']
@@ -538,7 +538,7 @@ abstract class Database
    *
    * @param string $databaseName Database name !
    * @param int    $mask         1 => we truncate the table before inserting the fixtures,
-   *                             2 => we clean the fixtures sql files and THEN we truncate the table before inserting
+   *                             2 => we clean the fixtures sql files, and THEN we truncate the table before inserting
    *                             the fixtures
    *
    * @throws OtraException
@@ -657,7 +657,7 @@ abstract class Database
 
           if (file_exists($createdFile))
             echo 'Fixture file creation aborted : the file ', CLI_WARNING, $databaseName . '_' . $table . '.sql',
-              END_COLOR, 'already exists.', PHP_EOL;
+            END_COLOR, 'already exists.', PHP_EOL;
 
           // Gets the fixture data
           $fixturesData = Yaml::parse(file_get_contents($yamlFile));
@@ -776,7 +776,7 @@ abstract class Database
     Sql::$instance->commit();
 
     echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' dropped', CLI_SUCCESS, ' ✔', END_COLOR,
-      PHP_EOL;
+    PHP_EOL;
 
     return $sqlInstance;
   }
@@ -816,7 +816,7 @@ abstract class Database
 
     $databaseCreationSql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
 
-    // We checks if the YML schema exists
+    // We check if the YML schema exists
     if (!file_exists(self::$schemaFile))
       throw new OtraException(
         'The file \'' . substr(self::$schemaFile, strlen(BASE_PATH)) .
@@ -840,18 +840,18 @@ abstract class Database
 
     // $tableSql contains all the SQL for each table, indexed by table name
     $tableSql = $tablesWithRelations = $sortedTables = [];
-    $constraints = '';
 
     // For each table
     foreach ($schema as $table => &$properties)
     {
+      $hasRelations = false;
       $primaryKeys = [];
       $defaultCharacterSet = '';
       $tableSql[$table] = 'CREATE TABLE `' . $table . '` (' . PHP_EOL;
 
       //**********************
-//        * COLUMNS MANAGEMENT *
-//        **********************
+      //* COLUMNS MANAGEMENT *
+      //**********************
       // For each kind of data (columns, indexes, etc.)
       foreach ($properties as $property => &$attributes)
       {
@@ -875,19 +875,35 @@ abstract class Database
           }
         } elseif ('relations' === $property)
         {
-          foreach ($attributes as $otherTable => &$attribute)
+          $hasRelations = true;
+          foreach ($attributes as $tableKey => $attribute)
           {
-            // Management of 'ON DELETE XXXX'
-            $onDelete = '';
+            if (!isset($attribute['local']))
+              throw new OtraException(
+                'You don\'t have specified a local key for the constraint concerning table ' . $tableKey,
+                E_CORE_ERROR
+              );
 
-            if (isset($attribute['onDelete']))
-              $onDelete = '  ON DELETE ' . strtoupper($attribute['onDelete']);
+            if (!isset($attribute['foreign']))
+              throw new OtraException(
+                'You don\'t have specified a foreign key for the constraint concerning table '  . $tableKey,
+                E_CORE_ERROR
+              );
 
-            $constraints .=
-              'ALTER TABLE ' . $table . ' ADD CONSTRAINT ' . $attribute['constraint_name']
-              . ' FOREIGN KEY(`' . $attribute['local'] . '`)' . PHP_EOL;
-            $constraints .= '  REFERENCES ' . $otherTable . '(`' . $attribute['foreign'] . '`)' . PHP_EOL
-              . $onDelete . ';' . PHP_EOL;
+            // Management of 'ON DELETE XXX' and of 'ON UPDATE XXX'
+            $onModifier = '';
+
+            if (isset($attribute['on_delete']))
+              $onModifier = ' ON DELETE ' . strtoupper($attribute['on_delete']);
+
+            if (isset($attribute['on_update']))
+              $onModifier .= ' ON UPDATE ' . strtoupper($attribute['on_update']);
+
+            // No problems. We can add the relations to the SQL.
+            $tableSql[$table] .=
+              '  CONSTRAINT ' . ($attribute['constraint_name'] ?? $attribute['local'] . '_to_' . $attribute['foreign']) .
+              ' FOREIGN KEY (' . $attribute['local'] . ')' . ' REFERENCES ' . $tableKey . '(' .
+              $attribute['foreign'] . ')' . $onModifier . ',' . PHP_EOL;
           }
         } elseif ('indexes' === $property)
         {
@@ -919,37 +935,9 @@ abstract class Database
       // Cleaning memory...
       unset($primaries, $primaryKey);
 
-      /************************
-       * RELATIONS MANAGEMENT *
-       ************************/
-
-      if ($hasRelations = isset($properties['relations']))
-      {
-        foreach ($properties['relations'] as $tableKey => $relation)
-        {
-          if (!isset($relation['local']))
-            throw new OtraException(
-              'You don\'t have specified a local key for the constraint concerning table ' . $tableKey,
-              E_CORE_ERROR
-            );
-
-          if (!isset($relation['foreign']))
-            throw new OtraException(
-              'You don\'t have specified a foreign key for the constraint concerning table '  . $tableKey,
-              E_CORE_ERROR
-            );
-
-          // No problems. We can add the relations to the SQL.
-          $tableSql[$table] .= ',' . PHP_EOL .
-            '  CONSTRAINT ' . ($relation['constraint_name'] ?? $relation['local'] . '_to_' . $relation['foreign']) .
-            ' FOREIGN KEY (' . $relation['local'] . ')' . ' REFERENCES ' . $tableKey . '(' .
-            $relation['foreign'] . ')';
-        }
-      }
-
       // We add the default character set (UTF8) and the ENGINE define in the framework configuration
       $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor .
-        ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
+          ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
       $tableSql[$table] .= ';';
 
       /**
@@ -995,13 +983,13 @@ abstract class Database
     $databaseCreationSql .= 'DROP TABLE IF EXISTS' . substr($sqlDropSection, 0, -strlen(',' . PHP_EOL)) .
       ';' . PHP_EOL . PHP_EOL . $sqlCreateSection;
 
-    // We generates the file that precise the order in which the tables have to be created / used if needed.
+    // We generate the file that precise the order in which the tables have to be created / used if needed.
     // (asked explicitly by user when overwriting the database or when the file simply doesn't exist)
     if ($storeSortedTables)
     {
       file_put_contents(self::$tablesOrderFile, $tablesOrder);
       echo CLI_BASE, '\'Tables order\' sql file created : ', CLI_INFO_HIGHLIGHT,
-        basename(self::$tablesOrderFile), CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+      basename(self::$tablesOrderFile), CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
     }
 
     // We create the SQL schema file with the generated content.
@@ -1091,7 +1079,7 @@ abstract class Database
    * @param string|null $confToUse (optional)
    *
    * @throws OtraException If the database doesn't exist.
-   * @return bool|Sql Returns a SQL instance.
+   * @return bool|Sql Returns an SQL instance.
    */
   private static function _initImports(?string &$databaseName, ?string &$confToUse) : bool|Sql
   {
@@ -1145,7 +1133,7 @@ abstract class Database
         SELECT `COLUMN_NAME`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
           `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
         FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $databaseName . '\' AND TABLE_NAME = \'' . $table .
-          '\' ORDER BY ORDINAL_POSITION')
+        '\' ORDER BY ORDINAL_POSITION')
       );
 
       // If there are columns ...
@@ -1178,11 +1166,17 @@ abstract class Database
 
       /** @var array<int, array<string, string>> $constraints */
       $constraints = $database->values($database->query(
-        ' SELECT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME, CONSTRAINT_NAME
-          FROM information_schema.KEY_COLUMN_USAGE
-          WHERE TABLE_SCHEMA = \'' . $databaseName . '\' 
-          AND TABLE_NAME = \'' . $table . '\' 
-          AND CONSTRAINT_NAME <> \'PRIMARY\''
+        ' SELECT kcu.REFERENCED_TABLE_NAME,
+            kcu.COLUMN_NAME,
+            kcu.REFERENCED_COLUMN_NAME,
+            kcu.CONSTRAINT_NAME,
+            rc.DELETE_RULE,
+            rc.UPDATE_RULE
+          FROM information_schema.KEY_COLUMN_USAGE AS kcu
+          INNER JOIN information_schema.REFERENTIAL_CONSTRAINTS AS rc ON kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+          WHERE kcu.TABLE_SCHEMA = \'' . $databaseName . '\' 
+          AND kcu.TABLE_NAME = \'' . $table . '\' 
+          AND kcu.CONSTRAINT_NAME <> \'PRIMARY\''
       ));
 
       // if there are constraints for this table
@@ -1202,11 +1196,17 @@ abstract class Database
           $content .= '      foreign: ' . $constraint['REFERENCED_COLUMN_NAME'] . PHP_EOL;
           $content .= '      constraint_name: ' . $constraint['CONSTRAINT_NAME'];
 
+          if ($constraint['DELETE_RULE'] !== 'NO ACTION')
+            $content .= PHP_EOL . '      on_delete: ' . strtolower($constraint['DELETE_RULE']);
+
+          if ($constraint['UPDATE_RULE'] !== 'NO ACTION')
+            $content .= PHP_EOL . '      on_update: ' . strtolower($constraint['UPDATE_RULE']);
+
           $content .= PHP_EOL;
         }
       }
 
-      // avoids to have 2 PHP_EOL at the end of the file (we put only one of it)
+      // Avoids having 2 PHP_EOL at the end of the file (we put only one of it)
       if ($arrayIndex !== array_key_last($tables))
         $content .= PHP_EOL;
     }
@@ -1252,7 +1252,7 @@ abstract class Database
     if (!file_exists(self::$tablesOrderFile))
     {
       echo CLI_WARNING, 'You must create the tables order file (', self::$tablesOrderFile,
-        ') before using this task !', END_COLOR;
+      ') before using this task !', END_COLOR;
       exit(1);
     }
 
@@ -1351,7 +1351,7 @@ abstract class Database
               }
 
               $columnMetaData = $columns[array_search($keyCol, array_column($columns, 'COLUMN_NAME'))];
-              /** We check if the column is a primary key and, if it's the case, we put the name of the actual table
+              /** We check if the column is a primary key and, if it's the case, we put the name of the actual table,
                * and we store the association for later in order to manage the foreign key associations */
               if ('PRI' === $columnMetaData['COLUMN_KEY'])
               {
@@ -1391,7 +1391,7 @@ abstract class Database
       file_put_contents(self::$pathYmlFixtures . $table . '.yml', $content);
 
       echo CLI_BASE, 'File ', CLI_INFO_HIGHLIGHT, $table . '.yml', CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
-        PHP_EOL;
+      PHP_EOL;
     }
   }
 }
