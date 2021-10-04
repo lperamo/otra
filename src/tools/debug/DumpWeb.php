@@ -338,7 +338,11 @@ abstract class DumpWeb extends DumpMaster {
         if ($lengthParam > 50)
           echo self::BR, $padding;
 
-        echo ' \'', htmlspecialchars($stringToShow), '\'';
+        echo ' \'', str_replace(
+          PHP_EOL,
+          PHP_EOL . self::indentColors($depth + 1),
+          htmlspecialchars($stringToShow)
+        ), '\'';
 
         if ($lengthParam > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA]])
           echo '<b>(cut)</b>';
