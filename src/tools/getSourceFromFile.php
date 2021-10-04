@@ -37,10 +37,8 @@ if (!function_exists('otra\tools\getSourceFromFile'))
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . '<i>';
-      $lineContent = nl2br(htmlentities($fileHandler->current()));
-      $sourceContentMiddle = ((string) $index) . ' ' . '</i><span>' . ($lineContent !== '' ? $lineContent : '<br/>') .
-        '</span>';
-
+      $lineContent = str_replace(PHP_EOL, '', htmlentities($fileHandler->current()));
+      $sourceContentMiddle = ((string) $index) . ' ' . '</i><span>' . $lineContent . '<br/></span>';
       $sourceContent .= ($index === $sourceLine)
         ? '<b>' . $sourceContentMiddle . '</b>'
         : $sourceContentMiddle;
