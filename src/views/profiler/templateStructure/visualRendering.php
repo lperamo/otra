@@ -105,6 +105,8 @@ if (!function_exists('otra\templating\showBlocksVisually'))
               htmlentities(BlocksSystem::$blocksStack[$replacingBlocks[$blockKey]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
               '">block ' . $replacingBlocks[$blockKey] . '</a></p>';
 
+          $previousParentKeys = '';
+
           while ($block[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] !== null)
           {
             $block = $block[BlocksSystem::OTRA_BLOCKS_KEY_PARENT];
@@ -112,7 +114,7 @@ if (!function_exists('otra\templating\showBlocksVisually'))
             ?>
             <details class="otra-block--parent--accordion">
               <summary>
-                <a href="#block<?= $parentBlockKey ?>">Parent block : <?= $parentBlockKey ?></a>
+                <a href="#block<?= $parentBlockKey ?>">Parent block : <?= $previousParentKeys . $parentBlockKey ?></a>
               </summary>
               <div class="otra-block--parent">
                 <?php
@@ -121,6 +123,7 @@ if (!function_exists('otra\templating\showBlocksVisually'))
                 ?>
               </div>
             </details><?php
+            $previousParentKeys .= $parentBlockKey . ' => ';
           }
           ?>
         </div><?php
