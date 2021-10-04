@@ -3,18 +3,21 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
+use function otra\services\getRandomNonceForCSP;
 use const otra\cache\php\CORE_CSS_PATH;
 use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
+use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 
 const OTRA_DUMP_INDENT_COLORS = [
-  '#6496c8',
-  '#ff6464',
-  '#64c864',
-  '#64c8c8',
-  '#9600ff'
+  'otra-dump--first',
+  'otra-dump--second',
+  'otra-dump--third',
+  'otra-dump--fourth',
+  'otra-dump--fifth'
 ];
 define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
@@ -34,6 +37,7 @@ abstract class DumpWeb extends DumpMaster {
     RIGHT_ARROW = ' => ';
 
   public const OTRA_DUMP_INDENT_STRING = '│ ';
+  private static bool $cssNotAdded = true;
 
   /**
    * @param int $depth
@@ -46,7 +50,7 @@ abstract class DumpWeb extends DumpMaster {
 
     for ($index = 0; $index < $depth; ++$index)
     {
-      $content .= '<span style="color: ' . OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT] . ';">' . self::OTRA_DUMP_INDENT_STRING . self::ENDING_SPAN;
+      $content .= '<span class="' . OTRA_DUMP_INDENT_COLORS[$index % OTRA_DUMP_INDENT_COLORS_COUNT] . '">' . self::OTRA_DUMP_INDENT_STRING . self::ENDING_SPAN;
     }
 
     return $content;
@@ -250,9 +254,36 @@ abstract class DumpWeb extends DumpMaster {
    * @param bool       $isArray
    *
    * @throws ReflectionException
+   * @throws Exception
    */
   public static function analyseVar(int|string $paramKey, mixed $param, int $depth, bool $isArray = false) : void
   {
+    if (self::$cssNotAdded)
+    {
+      ?><style nonce="<?= getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) ?>">
+        .otra-dump--first {
+          color : #6496c8;
+        }
+
+        .otra-dump--second {
+          color : #ff6464;
+        }
+
+        .otra-dump--third {
+          color: #64c864;
+        }
+
+        .otra-dump-fourth {
+          color: #64c8c8;
+        }
+
+        .otra-dump--fifth {
+          color : #9600ff;
+        }
+      </style><?php
+      self::$cssNotAdded = false;
+    }
+
     $notFirstDepth = ($depth !== -1);
     $paramType = gettype($param);
     $padding = '';
