@@ -343,14 +343,21 @@ abstract class MasterController
    */
   protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
+    // We add the JavaScript just before the ending body tag
+    $contentAndJs = str_replace(
+      '</body',
+      $jsResource . '</body',
+      $content
+    );
+
     // the 'preg_replace' suppress useless spaces
     $content = preg_replace('/>\s+</', '><',
       !self::$ajax
         ? str_replace(
         self::OTRA_LABEL_ENDING_TITLE_TAG,
         self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
-        $content . $jsResource)
-        : $cssResource . $content . $jsResource
+        $contentAndJs)
+        : $cssResource . $contentAndJs
     );
   }
 
