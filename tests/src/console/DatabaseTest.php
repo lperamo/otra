@@ -36,12 +36,15 @@ class DatabaseTest extends TestCase
     DATABASE_FIRST_TABLE_NAME = 'testDB_table',
     SCHEMA_FILE = 'schema.yml',
     TABLES_ORDER_FILE = 'tables_order.yml',
+    SQL_SCHEMA_FORCE_FILE = 'database_schema_force.sql',
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES = self::CONFIG_FOLDER_SQL . 'truncate/',
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . 'truncate/',
+    SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH = self::CONFIG_FOLDER_SQL . self::SQL_SCHEMA_FORCE_FILE,
+    SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::SQL_SCHEMA_FORCE_FILE,
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     CONFIG_FOLDER_YML_FIXTURES = self::CONFIG_FOLDER_YML . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/',
@@ -278,7 +281,9 @@ class DatabaseTest extends TestCase
     $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '.sql';
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
-      self::CONFIG_FOLDER_SQL . $endPath
+      self::CONFIG_FOLDER_SQL . $endPath,
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::CONFIG_FOLDER_SQL_BACKUP . $endPath . CLI_ERROR . ' against ' .
+      CLI_INFO_HIGHLIGHT . self::CONFIG_FOLDER_SQL . $endPath . CLI_ERROR
     );
   }
 
@@ -576,7 +581,8 @@ class DatabaseTest extends TestCase
    */
   public function testExecuteFile_DoesNotExist() : void
   {
-    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->setValue(self::SCHEMA_ABSOLUTE_PATH);
+    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
+      ->setValue(self::SCHEMA_ABSOLUTE_PATH);
 
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('The file "blabla" does not exist !');
@@ -768,7 +774,6 @@ class DatabaseTest extends TestCase
 
   /**
    * @depends testInitBase
-   * @doesNotPerformAssertions
    * @throws OtraException
    * @throws ReflectionException
    */
@@ -790,6 +795,14 @@ class DatabaseTest extends TestCase
 
     // launching the task
     Database::generateSqlSchema(self::DATABASE_NAME, true);
+
+    self::assertFileExists(self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH);
+    self::assertFileEquals(
+      self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP,
+      self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH,
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH . CLI_ERROR .
+        CLI_INFO_HIGHLIGHT . ' against ' . self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP . CLI_ERROR
+    );
   }
 
   /**

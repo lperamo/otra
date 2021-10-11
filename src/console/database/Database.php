@@ -29,7 +29,9 @@ abstract class Database
     ERROR_CLOSE_DIR_FORGOT_CALL = 'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ',
     ERROR_CANNOT_CREATE_THE_FOLDER = 'Cannot create the folder ',
     ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH = 'Cannot remove the folder \'',
-    LABEL_FIXTURES = 'fixtures/';
+    LABEL_FIXTURES = 'fixtures/',
+    INDENTATION = '  ',
+    DOUBLE_INDENTATION = self::INDENTATION . self::INDENTATION;
 
   // Database connection
   private static string
@@ -907,7 +909,22 @@ abstract class Database
           }
         } elseif ('indexes' === $property)
         {
-          echo CLI_WARNING, 'Indexes part not developed at this time!', END_COLOR, PHP_EOL;
+          foreach ($attributes as $indexName => $indexValues)
+          {
+            $tableSql[$table] .= '  ' . (isset($indexValues['category'])
+                ? strtoupper($indexValues['category']) . ' '
+                : ''
+              ) . 'INDEX `' . $indexName . '` (';
+            foreach ($indexValues['columns'] as $columnKey => $column)
+            {
+              $tableSql[$table] .= '`' . $column;
+              $tableSql[$table] .= (array_key_last($indexValues['columns']) !== $columnKey)
+                ? '`,'
+                : '`';
+            }
+
+            $tableSql[$table] .= '),' . PHP_EOL;
+          }
         } elseif ('default_character_set' === $property)
           $defaultCharacterSet = $attributes;
       }
@@ -1166,7 +1183,7 @@ abstract class Database
 
       /** @var array<int, array<string, string>> $constraints */
       $constraints = $database->values($database->query(
-        ' SELECT kcu.REFERENCED_TABLE_NAME,
+        'SELECT kcu.REFERENCED_TABLE_NAME,
             kcu.COLUMN_NAME,
             kcu.REFERENCED_COLUMN_NAME,
             kcu.CONSTRAINT_NAME,
@@ -1179,8 +1196,64 @@ abstract class Database
           AND kcu.CONSTRAINT_NAME <> \'PRIMARY\''
       ));
 
+      $hasConstraints = 0 < count($constraints);
+
+      $constraintsForIndexes = [];
+
+      if ($hasConstraints)
+      {
+        foreach ($constraints as $constraint)
+        {
+          $constraintsForIndexes[]= $constraint['CONSTRAINT_NAME'];
+        }
+
+        unset($constraint);
+      }
+
+      $queryNotIn = '';
+
+      if ($constraintsForIndexes !== [])
+        $queryNotIn = ' AND INDEX_NAME NOT IN (\'' . implode('\',\'', $constraintsForIndexes) . '\', \'PRIMARY\')';
+
+      $indexesResult = $database->values($database->query(
+        'SELECT NON_UNIQUE, INDEX_NAME, COLUMN_NAME
+        FROM INFORMATION_SCHEMA.STATISTICS
+        WHERE TABLE_SCHEMA = \'' . $databaseName . '\'
+        AND TABLE_NAME = \'' . $table . '\'
+        AND INDEX_NAME != \'PRIMARY\'' .
+        $queryNotIn .
+        'ORDER BY INDEX_NAME, SEQ_IN_INDEX;'
+      ));
+
+      if ($indexesResult !== [])
+      {
+        $oldIndexName = '';
+
+        foreach ($indexesResult as $indexResult)
+        {
+          $indexName = $indexResult['INDEX_NAME'];
+
+          // It's another index
+          if ($indexName !== $oldIndexName)
+          {
+            // It's not the beginning of the parsing
+            if ($oldIndexName === '')
+              $content .= self::INDENTATION . 'indexes:' . PHP_EOL;
+
+            $oldIndexName = $indexName;
+            $content .= self::DOUBLE_INDENTATION . $indexName . ':' . PHP_EOL;
+            if ($indexResult['NON_UNIQUE'] === '0')
+              $content .= self::DOUBLE_INDENTATION . self::INDENTATION . 'category: unique' . PHP_EOL;
+            $content .=
+              self::DOUBLE_INDENTATION . self::INDENTATION . 'columns:' . PHP_EOL .
+              self::DOUBLE_INDENTATION . self::DOUBLE_INDENTATION . '- ' . $indexResult['COLUMN_NAME'] . PHP_EOL;
+          } else
+            $content .=  self::DOUBLE_INDENTATION . self::DOUBLE_INDENTATION . '- ' . $indexResult['COLUMN_NAME'] . PHP_EOL;
+        }
+      }
+
       // if there are constraints for this table
-      if (0 < count($constraints))
+      if ($hasConstraints)
       {
         $content .= '  relations:' . PHP_EOL;
 
@@ -1323,7 +1396,8 @@ abstract class Database
             FROM information_schema.KEY_COLUMN_USAGE
             WHERE TABLE_SCHEMA = \'' . $databaseName . '\'
             AND TABLE_NAME = \'' . $table . '\'
-            AND CONSTRAINT_NAME <> \'PRIMARY\''
+            AND CONSTRAINT_NAME <> \'PRIMARY\'
+            AND REFERENCED_TABLE_NAME IS NOT NULL' // to prevent retrieving indexes
           ));
 
           $foreignConstraintsCount = count($constraints);

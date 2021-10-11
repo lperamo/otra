@@ -18,6 +18,19 @@ testDB_table:
     fk_id_table3:
       type: int
       notnull: true
+  indexes:
+    my_index:
+      category: unique
+      columns:
+        - id
+        - titre
+    second_index:
+      columns:
+        - titre
+        - date_creation
+    third_index:
+      columns:
+        - date_creation
   relations:
     testDB_table2:
       local: fk_id_table2
