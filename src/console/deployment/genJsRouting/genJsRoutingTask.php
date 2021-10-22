@@ -11,7 +11,7 @@ namespace otra\console\deployment\genJsRouting;
 
 use otra\config\Routes;
 use const otra\cache\php\BUNDLES_PATH;
-use const otra\console\{CLI_INFO_HIGHLIGHT, CLI_SUCCESS, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+use const otra\console\{CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 
 echo 'Generating JavaScript routing...', PHP_EOL;
 
@@ -26,11 +26,11 @@ unset(
 );
 
 const
-  MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/',
+  MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/js/',
   MAIN_JS_ROUTING = MAIN_RESOURCES_PATH . 'jsRouting.js';
 
 if (!file_exists(MAIN_RESOURCES_PATH))
-  mkdir(MAIN_RESOURCES_PATH);
+  mkdir(MAIN_RESOURCES_PATH, 0777, true);
 
 file_put_contents(
   MAIN_JS_ROUTING,
@@ -39,4 +39,3 @@ file_put_contents(
 );
 
 echo ERASE_SEQUENCE, 'JavaScript routing generated in ', CLI_INFO_HIGHLIGHT, MAIN_JS_ROUTING, END_COLOR, SUCCESS;
-
