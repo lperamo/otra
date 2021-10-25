@@ -11,7 +11,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
-if (!function_exists('otra\tools\copyFileAndFolders'))
+if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
   /**
    * Copy the file or an entire folder to the destination

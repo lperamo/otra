@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace otra\tools;
 
-if (!function_exists('otra\\tools\\delTree'))
+if (!function_exists(__NAMESPACE__ . '\\delTree'))
 {
   /**
    * @author Lionel Péramo
@@ -31,4 +31,3 @@ if (!function_exists('otra\\tools\\delTree'))
     return rmdir($folder);
   }
 }
-

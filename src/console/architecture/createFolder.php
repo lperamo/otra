@@ -14,7 +14,7 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 use function otra\console\promptUser;
 
-if (!function_exists('otra\console\architecture\createFolder'))
+if (!function_exists(__NAMESPACE__ . '\\createFolder'))
 {
   /**
    * @param string $absoluteFolderPath

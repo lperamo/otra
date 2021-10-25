@@ -22,7 +22,7 @@ namespace otra\console
   use const otra\cache\php\SPACE_INDENT;
   use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 
-  if (!function_exists('otra\console\promptUser'))
+  if (!function_exists(__NAMESPACE__ . '\\promptUser'))
   {
     /**
      * Asks the user a question again and again until the answer was correct.

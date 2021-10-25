@@ -11,7 +11,7 @@ namespace otra\tools\debug;
 use otra\config\AllConfig;
 use const otra\cache\php\CORE_PATH;
 
-if (!function_exists('otra\tools\debug\dump'))
+if (!function_exists(__NAMESPACE__ . '\\dump'))
 {
   /**
    * A shortcut to the 'paramDump' function that will use the user configuration.

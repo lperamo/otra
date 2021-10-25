@@ -10,7 +10,7 @@ namespace otra\templating;
 use otra\cache\php\BlocksSystem;
 use const otra\cache\php\CORE_CSS_PATH;
 
-if (!function_exists('otra\templating\showBlocksVisually'))
+if (!function_exists(__NAMESPACE__ . '\\showBlocksVisually'))
 {
   /**
    * @param int|string $key
