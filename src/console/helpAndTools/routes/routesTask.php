@@ -107,7 +107,7 @@ foreach($routes as $route => $details)
     if (!isset($resources['template']))
       echo (checkPHPPath(CACHE_PATH, $route) ? CLI_SUCCESS : CLI_ERROR), '[PHP]', $altColor;
 
-    if (isset($resources['_css'])
+    if (isset($resources['app_css'])
       || isset($resources['bundle_css'])
       || isset($resources['core_css'])
       || isset($resources['module_css']))
@@ -123,11 +123,11 @@ foreach($routes as $route => $details)
       '[PRINT CSS]', $altColor;
     }
 
-    if (isset($resources['_js'])
+    if (isset($resources['app_js'])
       || isset($resources['bundle_js'])
       || isset($resources['core_js'])
       || isset($resources['module_js'])
-      || isset($resources['first_js']))
+    )
     {
       echo (checkResourcePath('js',CACHE_PATH, $shaName)
         ? CLI_SUCCESS

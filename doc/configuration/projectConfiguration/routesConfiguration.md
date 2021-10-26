@@ -31,18 +31,25 @@ The file can be as simple as this one.
 
   * `template` at true, it will tell that it is a static page.<br>
   It allows performance improvement by caching the generated page.
-  
-  * `bundle_css` must be an array that contains all the css file names (without the extension) that are related to the bundle
-  
-  * `bundle_js` must be an array that contains all the js file names (without the extension) that are related to the bundle
 
-  * `_css` must be an array that contains all the css file names (without the extension) that are related to the controller
+  * **Assets - CSS and JS.**\
+    Here `x` can be `css` or `js`. All these parameters are arrays containing `.x` file names.\
+    No need to put their extension.
+
+    * `app_x` for app related files. E.g.:\
+      `'app_js' => ['test']` for `/myProjectPath/bundles/resources/js/test.js`
+    
+    * `bundle_x` for bundle related files. E.g.:\
+    `'bundle_css' => ['test']` for `/myProjectPath/bundles/HelloWorld/resources/css/test.css`
   
-  * `_js` must be an array that contains all the js file names (without the extension) that are related to the controller
-  
-  * `core_css` must be an array that css files from the framework's core
-  
-  * `core_js` must be an array that js files from the framework's core
+    * `core_x` for OTRA/core related files. E.g.:\
+      `'core_css' => ['test']` for `/myProjectPath/vendor/otra/otra/src/resources/css/test.css`
+    
+    * `module_x` for module related files. E.g.:\
+      `'module_js' => ['my/test']` for `/myProjectPath/bundles/HelloWorld/frontend/resources/js/my/test.js`
+
+    * `print_x` for app related files. Same path as module assets. E.g.:\
+      `'print_css' => ['HelloWorld/frontend/test']` for `/myProjectPath/bundles/HelloWorld/frontend/resources/js/my/test.css`
   
   * `bootstrap` must be an array that contains TO COMPLETE
   

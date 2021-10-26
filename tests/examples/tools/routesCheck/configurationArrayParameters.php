@@ -4,7 +4,7 @@ return [
   'HelloWorld' => [
     'chunks' => 'test',
     'resources' => [
-      '_css' => ['pages/HelloWorld/screen'],
+      'module_css' => ['pages/HelloWorld/screen'],
       'print_css' => ['pages/HelloWorld/print'],
       'template' => true
     ]
