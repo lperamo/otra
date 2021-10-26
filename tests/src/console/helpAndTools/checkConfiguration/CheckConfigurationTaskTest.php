@@ -9,14 +9,16 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
 use const otra\console\
-{ADD_BOLD,
+{
+  ADD_BOLD,
   CLI_BASE,
   CLI_ERROR,
   CLI_INFO_HIGHLIGHT,
   CLI_SUCCESS,
   CLI_WARNING,
   END_COLOR,
-  REMOVE_BOLD_INTENSITY};
+  REMOVE_BOLD_INTENSITY
+};
 
 /**
  * @runTestsInSeparateProcesses
@@ -35,13 +37,15 @@ class CheckConfigurationTaskTest extends TestCase
       'session'
     ],
     ROUTE_RESOURCES_ALLOWED_PARAMETERS = [
-      '_css',
+      'app_css',
+      'app_js',
       'bundle_css',
-      'core_css',
-      'print_css',
-      '_js',
       'bundle_js',
+      'core_css',
       'core_js',
+      'module_css',
+      'module_js',
+      'print_css',
       'template'
     ],
     HELLO_WORLD_FOLDER = BUNDLES_PATH . 'HelloWorld/',
@@ -104,7 +108,8 @@ class CheckConfigurationTaskTest extends TestCase
   {
     parent::setUp();
     self::$labelAnalyzingFiles = 'Analyzing the file ' . ADD_BOLD . CLI_BASE . '[BASE_PATH]' .
-      REMOVE_BOLD_INTENSITY . CLI_INFO_HIGHLIGHT . 'bundles/HelloWorld/config/Routes.php' . CLI_BASE . '...' . END_COLOR . PHP_EOL;
+      REMOVE_BOLD_INTENSITY . CLI_INFO_HIGHLIGHT . 'bundles/HelloWorld/config/Routes.php' . CLI_BASE . '...' .
+      END_COLOR . PHP_EOL;
   }
 
   /** Cleaning all the files and folders that have been created */
@@ -562,7 +567,7 @@ class CheckConfigurationTaskTest extends TestCase
     $this->expectOutputString(
       self::LABEL_CHECKING_ROUTES_CONFIG .
       self::$labelAnalyzingFiles .
-      CLI_WARNING . 'Your route resources parameter ' . CLI_INFO_HIGHLIGHT . '_css' . CLI_WARNING .
+      CLI_WARNING . 'Your route resources parameter ' . CLI_INFO_HIGHLIGHT . 'module_css' . CLI_WARNING .
       self::LABEL_MUST_BE_AN_ARRAY . END_COLOR . PHP_EOL .
       CLI_WARNING . self::LABEL_YOU_HAVE . CLI_INFO_HIGHLIGHT . '1' . CLI_WARNING . self::LABEL_WARNING_ERROR_IN_YOUR_ROUTES_CONFIGURATION
     );

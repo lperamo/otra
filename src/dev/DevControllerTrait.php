@@ -56,12 +56,13 @@ trait DevControllerTrait
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
    * @param bool        $ajax      Is this an ajax partial ?
-   * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
+   * @param bool|string $viewPath  If true, we add the usual view path before the $file variable. Otherwise, there is NO
+   *                               path before the `$file` variable allowing us to put an entirely customized absolute
+   *                               path. Affects template files AND assets.
    *
    * @throws OtraException
    * @throws Exception
    * @return string parent::$template Content of the template
-   *
    */
   final public function renderView(
     string $file,
@@ -204,10 +205,12 @@ trait DevControllerTrait
     $unorderedArray = $orderedArray = [];
     $debLink2 = $debLink . '/bundles/';
 
+    // **Reminder** : $viewsResourcePath is like
+    // '/bundles/' . $this->bundle . '/' . $this->module . '/resources/css/'
     $resourcesType = [
+      'app_' . $assetType => $debLink2 . 'resources/' . $assetType . DIR_SEPARATOR,
       'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . DIR_SEPARATOR,
-      'module_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_MODULE] . '/resources/' . $assetType . DIR_SEPARATOR,
-      '_' . $assetType => $debLink . $viewResourcePath[$assetType],
+      'module_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . ($assetType === 'css' ? CORE_CSS_PATH : CORE_JS_PATH)
     ];

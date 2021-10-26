@@ -26,7 +26,7 @@ const
 if (!defined(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME'))
   define(__NAMESPACE__ . '\\UPDATE_CONF_ROUTE_NAME', $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
 
-if (!function_exists('otra\console\deployment\updateConf\writeConfigFile'))
+if (!function_exists(__NAMESPACE__ . '\\writeConfigFile'))
 {
   /**
    * @param string $configFile
@@ -196,7 +196,7 @@ unset($route);
 // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
 // front of them
 /** @var Closure $sortRoutes */
-if (!function_exists('otra\console\deployment\updateConf\sortRoutes'))
+if (!function_exists(__NAMESPACE__ . '\\sortRoutes'))
 {
   $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
   {
@@ -247,7 +247,7 @@ if (!file_exists(OTRA_SECURITY_DEV_FOLDER))
 if (!file_exists(OTRA_SECURITY_PROD_FOLDER))
   mkdir(OTRA_SECURITY_PROD_FOLDER, 0777, true);
 
-if (!function_exists('otra\console\deployment\updateConf\arrayExport'))
+if (!function_exists(__NAMESPACE__ . '\\arrayExport'))
 {
   /**
    * @param array{

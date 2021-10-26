@@ -12,7 +12,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
-if (!function_exists('otra\tools\cleanFileAndFolders'))
+if (!function_exists(__NAMESPACE__ . '\\cleanFileAndFolders'))
 {
   /**
    * Removes all files and folders specified in the array.
@@ -60,4 +60,3 @@ if (!function_exists('otra\tools\cleanFileAndFolders'))
     }
   }
 }
-

@@ -191,7 +191,7 @@ namespace otra\cache\php
 
   /* Light templating engine */
   // those functions can be redeclared if we have an exception later, exception that will also use the block system
-  if (!function_exists('cache\php\block'))
+  if (!function_exists(__NAMESPACE__ . '\\block'))
   {
     /* Little remainder
      * Key is the key of the block stacks array. It is the position of the block in the stack

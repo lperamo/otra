@@ -36,23 +36,27 @@ const
     'session'
   ],
   ROUTE_RESOURCES_ALLOWED_PARAMETERS = [
-    '_css',
+    'app_css',
+    'app_js',
     'bundle_css',
-    'core_css',
-    'print_css',
-    '_js',
     'bundle_js',
+    'core_css',
     'core_js',
+    'module_css',
+    'module_js',
+    'print_css',
     'template'
   ],
   ROUTE_RESOURCES_WITH_ARRAY = [
-    '_css',
+    'app_css',
+    'app_js',
     'bundle_css',
-    'core_css',
-    'print_css',
-    '_js',
     'bundle_js',
-    'core_js'
+    'module_css',
+    'module_js',
+    'core_css',
+    'core_js',
+    'print_css'
   ],
   LABEL_YOUR_ROUTE_CONFIGURATION = 'Your route configuration ',
   LABEL_YOUR_ROUTE_PARAMETER = 'Your route parameter ',

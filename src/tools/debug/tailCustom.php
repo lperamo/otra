@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
-if (!function_exists('otra\tools\debug\tailCustom'))
+if (!function_exists(__NAMESPACE__ . '\\tailCustom'))
 {
   /**
    * Slightly modified version of the original.

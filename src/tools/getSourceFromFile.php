@@ -10,7 +10,7 @@ namespace otra\tools;
 use SplFileObject;
 use const otra\console\{ADD_BOLD, CLI_DUMP_LINE_HIGHLIGHT, CLI_LINE_DUMP, END_COLOR, REMOVE_BOLD_INTENSITY};
 
-if (!function_exists('otra\tools\getSourceFromFile'))
+if (!function_exists(__NAMESPACE__ . '\\getSourceFromFile'))
 {
   /**
    * Returns the portion of a file in a certain range around a specific line.

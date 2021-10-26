@@ -9,7 +9,7 @@ namespace otra\src\views\debugBar;
 
 use otra\config\AllConfig;
 
-if (!function_exists('otra\src\views\debugBar\generateArrows'))
+if (!function_exists(__NAMESPACE__ . '\\generateArrows'))
 {
   /**
    * @param string $inputType

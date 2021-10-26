@@ -8,7 +8,7 @@ use const otra\cache\php\{BASE_PATH, CORE_PATH, OTRA_PROJECT};
 use const otra\console\CLI_ERROR;
 use const otra\console\CLI_INFO;
 
-if (!function_exists('otra\tools\getOtraCommitNumber'))
+if (!function_exists(__NAMESPACE__ . '\\getOtraCommitNumber'))
 {
   /**
    * @param bool  $console Do we have to use console colors?

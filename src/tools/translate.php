@@ -6,7 +6,7 @@ namespace otra\tools;
  * @package otra\tools
  */
 
-if (!function_exists('otra\tools\trans'))
+if (!function_exists(__NAMESPACE__ . '\\trans'))
 {
   // Will be the future translation feature
   function trans(string $text): string

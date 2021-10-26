@@ -7,7 +7,7 @@ use otra\OtraException;
 use function otra\console\promptUser;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, ERASE_SEQUENCE};
 
-if (!function_exists('otra\console\architecture\doWeCreateIt'))
+if (!function_exists(__NAMESPACE__ . '\\doWeCreateIt'))
 {
   /**
    * Checks if we have to show a warning or an error when the folder is missing.

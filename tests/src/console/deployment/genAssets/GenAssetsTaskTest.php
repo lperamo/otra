@@ -9,13 +9,8 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\BASE_PATH;
 use const otra\config\VERSION;
-use const otra\console\CLI_ERROR;
-use const otra\console\CLI_GRAY;
-use const otra\console\CLI_INFO;
-use const otra\console\CLI_INFO_HIGHLIGHT;
-use const otra\console\CLI_SUCCESS;
-use const otra\console\CLI_WARNING;
-use const otra\console\END_COLOR;
+use const otra\console\
+{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
  * @runTestsInSeparateProcesses

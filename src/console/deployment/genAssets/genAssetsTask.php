@@ -201,7 +201,12 @@ if (
           echo status('NO SCREEN CSS', OTRA_CLI_INFO_STRING);
 
         ob_start();
-        loadResource($resources, $chunks, 'print_css', $bundlePath);
+        loadResource(
+          $resources,
+          $chunks,
+          'print_css',
+          $bundlePath . $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
+        );
         $printCss = ob_get_clean();
 
         if ($printCss === '')
@@ -375,7 +380,7 @@ function loadAndSaveResources(
 ) : ?string
 {
   ob_start();
-  loadResource($resources, $routeChunks, '_' . $assetType, $bundlePath);
+  loadResource($resources, $routeChunks, 'app_' . $assetType, 'bundles/');
   loadResource($resources, $routeChunks, 'bundle_' . $assetType, $bundlePath, '');
   loadResource(
     $resources,
@@ -384,8 +389,12 @@ function loadAndSaveResources(
     CORE_PATH,
     ''
   );
-  loadResource($resources, $routeChunks, 'first_' . $assetType, $bundlePath);
-  loadResource($resources, $routeChunks, 'module_' . $assetType, $bundlePath . $routeChunks[2] . DIR_SEPARATOR);
+  loadResource(
+    $resources,
+    $routeChunks,
+    'module_' . $assetType,
+    $bundlePath . $routeChunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
+  );
 
   $allResources = ob_get_clean();
 
@@ -412,7 +421,7 @@ function loadAndSaveResources(
  *
  * @param array   $resources
  * @param array   $chunks
- * @param string  $key first_js, module_css kind of ...
+ * @param string  $key          app_js, module_css kind of ...
  * @param string  $bundlePath
  * @param ?string $resourcePath
  */
@@ -424,9 +433,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     return;
 
   $resourceType = substr(strrchr($key, '_'), 1);
-  $resourcePath = $bundlePath .
-    (null === $resourcePath ? $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR : $resourcePath) .
-    'resources/' . $resourceType . DIR_SEPARATOR;
+  $resourcePath = $bundlePath . ($resourcePath ?? '') . 'resources/' . $resourceType . DIR_SEPARATOR;
 
   foreach ($resources[$key] as $resource)
   {

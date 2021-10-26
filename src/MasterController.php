@@ -196,7 +196,7 @@ abstract class MasterController
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . DIR_SEPARATOR;
     $this->viewResourcePath = [
-      'css' => DIR_SEPARATOR . $mainPath .'resources/css/',
+      'css' => DIR_SEPARATOR . $mainPath . 'resources/css/',
       'js' => DIR_SEPARATOR . $mainPath . 'resources/js/'
     ];
 
@@ -318,7 +318,7 @@ abstract class MasterController
 
   /**
    * @param string $file     The file to render
-   * @param bool   $viewPath If true, we add the usual view path before the $file variable.
+   * @param bool   $viewPath If true, we add the usual view path before the `$file` variable.
    *
    * @return array{0:string,1:string} [$templateFile, $otraRoute]
    */

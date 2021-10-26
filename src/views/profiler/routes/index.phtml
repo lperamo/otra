@@ -64,7 +64,7 @@ block('view');
             ?></span><?php
           } ?>
           <!-- SCREEN CSS -->
-          <?php if (isset($resources['_css'])
+          <?php if (isset($resources['app_css'])
             || isset($resources['bundle_css'])
             || isset($resources['core_css'])
             || isset($resources['module_css'])
@@ -84,11 +84,10 @@ block('view');
             ?></span><?php
           } ?>
           <!-- JS -->
-          <?php if (isset($resources['_js'])
+          <?php if (isset($resources['app_js'])
             || isset($resources['bundle_js'])
             || isset($resources['core_js'])
-            || isset($resources['module_js'])
-            || isset($resources['first_js'])) {?>
+            || isset($resources['module_js'])) {?>
           <span class="routes--block--line--informations-box"><?php
             echo '<span class="routes--block--line--file-status--' .
               (checkResourcePath('js',CACHE_PATH, $shaName) ? LABEL_SUCCESS : LABEL_ERROR),
