@@ -49,7 +49,7 @@ The file can be as simple as this one.
       `'module_js' => ['my/test']` for `/myProjectPath/bundles/HelloWorld/frontend/resources/js/my/test.js`
 
     * `print_css` for print related files. Same path as module assets. E.g.:\
-      `'print_css' => ['HelloWorld/frontend/test']` for `/myProjectPath/bundles/HelloWorld/frontend/resources/js/my/test.css`
+      `'print_css' => ['my/test']` for `/myProjectPath/bundles/HelloWorld/frontend/resources/js/my/test.css`
   
   * `bootstrap` must be an array that contains TO COMPLETE
   
