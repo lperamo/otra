@@ -16,7 +16,7 @@ const
   KEY_MAIN_TO_LEAVES = 1,
   KEY_FULL_TREE = 2,
   // we do not store informations about SASS internals nor commented imports
-  REGEX_SASS_IMPORT = '`^[^/@]{0,}@(?:import|use)\s{0,}\'\\K([^\':]{0,})\'\s{0,}(?:as\s[^;]{0,}\s{0,})?;$`m',
+  REGEX_SASS_IMPORT = '`^[^/@]{0,}@(?:import|use|forward)\s{0,}\'\\K([^\':]{0,})\'\s{0,}(?:as\s[^;]{0,}\s{0,})?;$`m',
   SASS_TREE_STRING_INIT = '$sassTree[' . KEY_FULL_TREE . ']';
 
 /**
