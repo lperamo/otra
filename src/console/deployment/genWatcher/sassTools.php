@@ -187,7 +187,8 @@ function saveSassTree(array $sassTree) : void
 {
   require_once CONSOLE_PATH . '/tools.php';
 
-  define(__NAMESPACE__ . '\\CSS_CACHE_PATH', CACHE_PATH . 'css');
+  if (!defined(__NAMESPACE__ . '\\CSS_CACHE_PATH'))
+    define(__NAMESPACE__ . '\\CSS_CACHE_PATH', CACHE_PATH . 'css');
 
   if (!file_exists(CSS_CACHE_PATH))
     mkdir(CSS_CACHE_PATH);
