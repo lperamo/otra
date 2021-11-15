@@ -6,7 +6,7 @@ namespace otra\tools\debug;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
-use ReflectionClass, ReflectionException, ReflectionProperty;
+use ReflectionException, ReflectionProperty;
 use const otra\cache\php\CORE_CSS_PATH;
 use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 use function otra\services\getRandomNonceForCSP;
@@ -113,8 +113,11 @@ abstract class DumpWeb extends DumpMaster {
       ++$loopIndex;
     }
 
+    // ending foldable behaviour
     if ($notFirstDepth)
-      echo '</div><br>';
+    {
+      ?></div><br><?php
+    }
   }
 
   /**
@@ -147,6 +150,12 @@ abstract class DumpWeb extends DumpMaster {
     foreach ($properties as $variable)
     {
       self::analyseObjectVar($className, $param, $variable, $depth + 1);
+    }
+
+    // ending foldable behaviour
+    if ($notFirstDepth)
+    {
+      ?></div><br><?php
     }
   }
 
