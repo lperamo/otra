@@ -7,10 +7,10 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
 use ReflectionClass, ReflectionException, ReflectionProperty;
-use function otra\services\getRandomNonceForCSP;
 use const otra\cache\php\CORE_CSS_PATH;
-use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
 use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
+use function otra\services\getRandomNonceForCSP;
+use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
 
 const OTRA_DUMP_INDENT_COLORS = [
   'otra-dump--first',
@@ -142,7 +142,9 @@ abstract class DumpWeb extends DumpMaster {
       return;
     }
 
-    foreach ((new ReflectionClass($className))->getProperties() as $variable)
+    [$properties, $param] = self::getPropertiesViaReflection($className, $param);
+
+    foreach ($properties as $variable)
     {
       self::analyseObjectVar($className, $param, $variable, $depth + 1);
     }
@@ -164,6 +166,7 @@ abstract class DumpWeb extends DumpMaster {
     int $depth
   ) : void
   {
+    $reflectionClassName = $className !== 'DateTime' ? $className : FakeDateTime::class;
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
     $visibilityMask = $isPublicProperty
@@ -182,7 +185,7 @@ abstract class DumpWeb extends DumpMaster {
       ':';
 
     if (!$isPublicProperty)
-      $property = removeFieldScopeProtection($className, $propertyName);
+      $property = removeFieldScopeProtection($reflectionClassName, $propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)
@@ -244,7 +247,7 @@ abstract class DumpWeb extends DumpMaster {
       echo self::BR;
 
     if (!$isPublicProperty)
-      restoreFieldScopeProtection($className, $propertyName);
+      restoreFieldScopeProtection($reflectionClassName, $propertyName);
   }
 
   /**

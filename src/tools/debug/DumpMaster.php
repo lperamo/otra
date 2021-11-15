@@ -151,4 +151,25 @@ abstract class DumpMaster
 
     static::dumpCallback($secondTrace['file'], $secondTrace['line'], ob_get_clean());
   }
+
+  /**
+   * @param string $className
+   * @param mixed  $param
+   *
+   * @throws ReflectionException
+   * @return array{0: ReflectionProperty[], 1: mixed} [$properties, $param]
+   */
+  public static function getPropertiesViaReflection(string $className, mixed $param) : array
+  {
+    $properties = (new ReflectionClass($className))->getProperties();
+
+    // We need a fake class as DateTime does not handle reflection :(
+    if ($className === 'DateTime')
+    {
+      $param = new FakeDateTime($param);
+      $properties = (new ReflectionClass(FakeDateTime::class))->getProperties();
+    }
+
+    return [$properties, $param];
+  }
 }

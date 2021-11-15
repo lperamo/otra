@@ -118,7 +118,9 @@ class DumpCli extends DumpMaster
       return;
     }
 
-    foreach ((new ReflectionClass($className))->getProperties() as $variable)
+    [$properties, $param] = self::getPropertiesViaReflection($className, $param);
+
+    foreach ($properties as $variable)
     {
       self::analyseObjectVar($className, $param, $variable, $depth + 1);
     }
