@@ -30,12 +30,12 @@ if (!function_exists(__NAMESPACE__ . '\\getOtraCommitNumber'))
         array_column($installedComposerPackages, 'name')
       )]['source']['reference'];
 
-      return $short ? substr($commitNumber, 0, 7) : $commitNumber;
+      return $short ? substr($commitNumber, 0, 8) : $commitNumber;
     }
 
     require CORE_PATH . 'tools/cli.php';
     return cliCommand(
-      'git rev-parse ' . ($short ? '--short' : '') . ' HEAD',
+      'git rev-parse ' . ($short ? '--short=8' : '') . ' HEAD',
       'Cannot retrieve the actual commit used. Do you have ' .
       ($console ? CLI_INFO . 'git' . CLI_ERROR : 'git') .' installed?'
     )[OTRA_CLI_OUTPUT];

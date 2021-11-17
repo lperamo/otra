@@ -26,7 +26,7 @@ class GetOtraCommitNumberTest extends TestCase
 
     // testing
     self::assertMatchesRegularExpression(
-      '@^\\w{7}$@',
+      '@^\\w{8}$@',
       getOtraCommitNumber(true, true),
       'Testing short version of the commit for the console'
     );
@@ -43,7 +43,7 @@ class GetOtraCommitNumberTest extends TestCase
 
     // testing
     self::assertMatchesRegularExpression(
-      '@^\\w{7}$@',
+      '@^\\w{8}$@',
       getOtraCommitNumber(false, true),
       'Testing short version of the commit for the web'
     );
