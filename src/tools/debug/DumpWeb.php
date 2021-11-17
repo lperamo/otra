@@ -324,11 +324,11 @@ abstract class DumpWeb extends DumpMaster {
         self::dumpArray($paramType, $param, $notFirstDepth, $depth);
         break;
       case 'boolean' :
-        echo $paramType, $param ? ' true' : ' false', self::ENDING_SPAN;
+        echo $paramType, $param ? ' true' : ' false', self::ENDING_SPAN, self::BR;
         break;
       case 'integer' :
       case 'double' :
-        echo $param, self::ENDING_SPAN, self::ENDING_SPAN, self::BR;
+        echo $paramType, ' ', $param, self::ENDING_SPAN, self::ENDING_SPAN, self::BR;
         break;
       case 'NULL' : echo '<b> null</b><br>'; break;
       case 'object' :
@@ -363,7 +363,7 @@ abstract class DumpWeb extends DumpMaster {
         break;
 
       default:
-        echo $paramType, $param, self::ENDING_SPAN;
+        echo $paramType, ' ', $param, self::ENDING_SPAN;
         break;
     }
 
