@@ -105,7 +105,7 @@ namespace otra\bin
     if ('y' === $choice)
     {
       $arguments[TasksManager::TASK_NAME] = $newTask;
-      $launchCallback($tasksClassMap, $arguments, $argc, $taskName);
+      $launchCallback($tasksClassMap, $arguments, $argc, $newTask);
     } else
       TasksManager::showCommands('This command does not exist. ');
   }
