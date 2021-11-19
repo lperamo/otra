@@ -169,13 +169,19 @@ function getPathInformations(string $fullName) : array
 
     if ($resourcesMainFolderPosition === false)
     {
-      echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
-        'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
-      throw new OtraException(code: 1, exit: true);
+      $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'vendor/ecocomposer/ecocomposer');
 
-    }
+      if ($resourcesMainFolderPosition === false)
+      {
+        echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
+          'resources', CLI_ERROR, ',', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT,
+          'vendor/ecocomposer/ecocomposer', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
+        throw new OtraException(code: 1, exit: true);
+      } else
+        $folderType = 'vendor/ecocomposer/ecocomposer/';
 
-    $folderType = 'web/';
+    } else
+      $folderType = 'web/';
   }
 
   $resourcesMainFolder = mb_substr($resourceFolder, 0, $resourcesMainFolderPosition) . $folderType;
