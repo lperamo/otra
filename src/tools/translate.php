@@ -32,6 +32,9 @@ if (!function_exists(__NAMESPACE__ . '\\trans'))
       return in_array($lang, $acceptedLanguages);
     };
 
+    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+      return 'en';
+
     $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
     array_walk($languages, $setLang);
 
