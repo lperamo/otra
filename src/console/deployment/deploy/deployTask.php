@@ -12,6 +12,7 @@ use otra\config\AllConfig;
 use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\workers\{Worker, WorkerManager};
+use function otra\console\deployment\updateConf\updateConf;
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR, SUCCESS};
 use function otra\tools\cliCommand;
@@ -83,6 +84,7 @@ if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
 
   echo 'Launching routes update...', PHP_EOL;
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  updateConf('2');
 
   // bootstraps
   $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping

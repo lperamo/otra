@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\architecture;
 
 use otra\OtraException;
+use function otra\console\deployment\updateConf\updateConf;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
@@ -174,10 +175,10 @@ class ' . $upperActionName . 'Action extends Controller
     );
   } else
   { // If it's not the case, we replace it
-    // First, we create the folder that will hold the routes configuration file
+    // First, we create the folder that will hold the routes' configuration file
     mkdir($routesConfigFolder);
 
-    // Adds a routes config file
+    // Adds a routes' config file
     file_put_contents(
       $routeConfigurationFile,
       PHP_FILE_START .
@@ -190,8 +191,9 @@ class ' . $upperActionName . 'Action extends Controller
   echo 'Route configuration file ', CLI_INFO_HIGHLIGHT, $routeConfigurationFile, CLI_BASE, ' created', CLI_SUCCESS,
     ' ✔', PHP_EOL;
 
-  // We update the routes configuration as we just add one route.
+  // We update the routes' configuration as we just add one route.
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  updateConf('2');
 
   // We update the class mapping since we have one action more.
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))

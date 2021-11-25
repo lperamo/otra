@@ -18,6 +18,7 @@ namespace otra\console\architecture\constants
 namespace otra\console\architecture\createHelloWorld
 {
   use otra\OtraException;
+  use function otra\console\deployment\updateConf\updateConf;
   use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
   use const otra\console\
   {
@@ -63,7 +64,7 @@ namespace otra\console\architecture\createHelloWorld
   const ARCHITECTURE_FOLDER = CONSOLE_PATH . 'architecture/';
   define(__NAMESPACE__ . '\\ACTION_NAME', $argv[ARG_ACTION_NAME]);
 
-  // creates bundles, modules, controllers, actions and their related folders
+  // It creates bundles, modules, controllers, actions and their related folders
   require ARCHITECTURE_FOLDER . 'checkBooleanArgument.php';
   $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
   $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
@@ -178,8 +179,9 @@ namespace otra\console\architecture\createHelloWorld
   );
   echo ERASE_SEQUENCE, 'Favicons added', SUCCESS;
 
-  // We update the routes configuration as we just add one route.
+  // We update the routes' configuration as we just add one route.
   require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  updateConf('7', (string) $argv[ARG_BUNDLE_NAME]);
 
   echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
   require CORE_PATH . 'tools/cli.php';

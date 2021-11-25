@@ -12,7 +12,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use function otra\console\deployment\
-{generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath};
+{generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath, updateConf\updateConf};
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_WARNING, END_COLOR, SUCCESS};
 use const otra\console\deployment\
@@ -49,9 +49,10 @@ if (WATCH_FOR_PHP_FILES)
 
 if (WATCH_FOR_ROUTES)
 {
-  // We updates routes configuration if the php file is a routes configuration file
+  // We update routes configuration if the php file is a routes' configuration file
   echo 'Launching routes update...', PHP_EOL;
   require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  updateConf('2');
   $filesProcessed = true;
 }
 

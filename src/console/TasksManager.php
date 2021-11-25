@@ -5,6 +5,8 @@ namespace otra\console;
 use otra\OtraException;
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_ARG_ROUTE_NAME};
+use function otra\console\deployment\updateConf\updateConf;
 
 /**
  * @author Lionel Péramo
@@ -89,6 +91,12 @@ abstract class TasksManager
     }
 
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
+
+    if ($task === 'updateConf')
+    {
+      $task = 'otra\\console\\deployment\\updateConf\\' . $task;
+      $task($argv[UPDATE_CONF_ARG_MASK] ?? null, $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+    }
   }
 }
 

@@ -92,7 +92,7 @@ class CreateHelloWorldTaskTest extends TestCase
       'Adding stylesheets...' . PHP_EOL . ERASE_SEQUENCE . 'Stylesheets added' . SUCCESS .
       'Adding favicons...' . PHP_EOL . ERASE_SEQUENCE . 'Favicons added' . SUCCESS .
       CLI_WARNING . 'Nothing to put into ' . CLI_INFO_HIGHLIGHT . BUNDLES_PATH . 'config/Config.php' .
-      CLI_WARNING . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
+      CLI_WARNING . ' so we\'ll delete this file if it exists.' . END_COLOR . PHP_EOL .
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'bundles/config/Routes.php' . CLI_BASE .
       self::OTRA_LABEL_UPDATED . SUCCESS .
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'cache/php/security/dev/HelloWorld.php' . CLI_BASE .

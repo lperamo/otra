@@ -36,7 +36,8 @@ use const otra\console\deployment\
   WATCH_FOR_PHP_FILES,
   WATCH_FOR_TS_RESOURCES
 };
-use function otra\console\deployment\{generateJavaScript,generateStylesheetsFiles,getPathInformations,isNotInThePath};
+use function otra\console\deployment\
+{generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath, updateConf\updateConf};
 use function otra\tools\files\returnLegiblePath;
 
 // Initialization
@@ -201,6 +202,8 @@ function debugEvent(
  * Generates class mapping and updates all the configuration files.
  *
  * @param string $filename
+ *
+ * @throws OtraException
  */
 function updatePHP(string $filename) : void
 {
@@ -209,7 +212,10 @@ function updatePHP(string $filename) : void
 
   // We update routes configuration if the PHP file is a routes configuration file
   if ($filename === 'Routes.php')
+  {
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+    updateConf('2');
+  }
 }
 
 /**

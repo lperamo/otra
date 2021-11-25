@@ -6,7 +6,13 @@ namespace src\console\deployment\updateConf;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\
+{CLI_BASE,
+  CLI_GRAY,
+  CLI_INFO,
+  CLI_INFO_HIGHLIGHT,
+  END_COLOR,
+  STRING_PAD_FOR_OPTION_FORMATTING};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
@@ -30,6 +36,14 @@ class UpdateConfHelpTest extends TestCase
       str_pad(self::OTRA_TASK_UPDATE_CONF, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO .
       'Updates the files related to bundles and routes : schemas, routes, securities.' .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
+      '   + ' . str_pad('mask', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . '1 => AllConfig files' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '2 => routes' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '4 => securities' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '8 => schema.yml' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '15 => All (Default)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('route', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
