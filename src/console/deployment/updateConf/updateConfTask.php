@@ -8,7 +8,9 @@ declare(strict_types=1);
 namespace otra\console\deployment\updateConf;
 
 use otra\config\Routes;
+use otra\console\OtraExceptionCli;
 use otra\OtraException;
+use function otra\tools\files\returnLegiblePath;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -17,21 +19,22 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_ALL_CONFIG,
   UPDATE_CONF_MASK_ROUTES,
   UPDATE_CONF_MASK_SCHEMA,
+  UPDATE_CONF_MASK_FIXTURES,
   UPDATE_CONF_MASK_SECURITIES
 };
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
 const
-  CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
-  UPDATE_CONF_ARG_MASK = 2,
-  UPDATE_CONF_ARG_ROUTE_NAME = 3,
-  SINGLE_QUOTE = '\'',
-  BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
-  SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
-  OTRA_LABEL_SECURITY_NONE = "'none'",
-  OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
-  PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
+CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
+UPDATE_CONF_ARG_MASK = 2,
+UPDATE_CONF_ARG_ROUTE_NAME = 3,
+SINGLE_QUOTE = '\'',
+BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
+SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
+OTRA_LABEL_SECURITY_NONE = "'none'",
+OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
+PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
 
 /**
  * @param ?string $mask
@@ -53,6 +56,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   $updateConfRoutes = $updateConfMask & UPDATE_CONF_MASK_ROUTES;
   $updateConfSecurities = $updateConfMask & UPDATE_CONF_MASK_SECURITIES;
   $updateConfSchema = $updateConfMask & UPDATE_CONF_MASK_SCHEMA;
+  $updateConfFixtures = $updateConfMask & UPDATE_CONF_MASK_FIXTURES;
 
   if ($updateConfMask === 0)
   {
@@ -70,7 +74,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
   /** BEGINNING OF THE TASK */
   $folderHandler = opendir(BUNDLES_PATH);
-  $securities = $configs = $routes = $schemas = [];
+  $securities = $configs = $routes = $schemas = $fixtures = [];
 
   // we scan the bundles' directory to retrieve all the bundles name ...
   while (false !== ($filename = readdir($folderHandler)))
@@ -115,14 +119,30 @@ function updateConf(?string $mask = null, ?string $routeName = null)
         $securities = array_merge($securities, $bundleSecurities);
     }
 
-    if ($updateConfSchema)
+    if ($updateConfSchema || $updateConfFixtures)
     {
-      $bundleSchemas = glob($bundleConfigDir . 'data/yml/*schema.yml');
+      $ymlBundlePath = $bundleConfigDir . 'data/yml/';
 
-      if (!empty($bundleSchemas))
-        $schemas = array_merge($schemas, $bundleSchemas);
+      if ($updateConfSchema)
+      {
+        $bundleSchemas = glob($ymlBundlePath . '*schema.yml');
 
-      $moduleSchemas = [];
+        if (!empty($bundleSchemas))
+          $schemas = array_merge($schemas, $bundleSchemas);
+
+        $moduleSchemas = [];
+      }
+
+      if ($updateConfFixtures)
+      {
+        $bundleFixtures = glob($ymlBundlePath . 'fixtures/*.yml');
+
+        if (!empty($bundleFixtures))
+          $fixtures = array_merge($fixtures, $bundleFixtures);
+
+        $moduleFixtures = [];
+      }
+
       $moduleFolderHandler = opendir($bundleDir);
 
       // we scan the bundles' directory to retrieve all the bundles name ...
@@ -138,16 +158,28 @@ function updateConf(?string $mask = null, ?string $routeName = null)
         if (!is_dir($moduleDir))
           continue;
 
-        $moduleSchemas = glob($moduleDir . '/config/data/yml/*schema.yml');
+        if ($updateConfSchema)
+        {
+          $moduleSchemas = glob($moduleDir . '/config/data/yml/*schema.yml');
 
-        if (!empty($moduleSchemas))
-          $schemas = array_merge($schemas, $moduleSchemas);
+          if (!empty($moduleSchemas))
+            $schemas = array_merge($schemas, $moduleSchemas);
+        }
+
+        if ($updateConfFixtures)
+        {
+          $moduleFixtures = glob($moduleDir . '/config/data/yml/fixtures/*.yml');
+
+          if (!empty($moduleFixtures))
+            $fixtures = array_merge($fixtures, $moduleFixtures);
+        }
       }
     }
   }
+
   closedir($folderHandler);
 
-// now we have all the information, we can create the files in 'bundles/config'
+  // now we have all the information, we can create the files in 'bundles/config'
   if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
     mkdir(BUNDLES_MAIN_CONFIG_DIR, 0755);
 
@@ -296,6 +328,33 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     writeConfigFile(BUNDLES_PATH . 'config/schema.yml', $schemaContent, false);
   }
+
+  if ($updateConfFixtures)
+  {
+    $fixtures = array_merge(
+      $fixtures,
+      glob(BUNDLES_PATH . 'config/data/yml/fixtures/*.yml')
+    );
+
+    $fixturesFolder = BUNDLES_PATH . 'config/fixtures/';
+
+    if (!file_exists($fixturesFolder))
+    {
+      if (!mkdir($fixturesFolder))
+      {
+        require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+        echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, returnLegiblePath($fixturesFolder), CLI_ERROR,
+        '.', END_COLOR, PHP_EOL;
+
+        throw new OtraException(code: 1, exit: true);
+      }
+    }
+
+    foreach($fixtures as $fixture)
+    {
+      copy($fixture, BUNDLES_PATH . 'config/fixtures/' . basename($fixture));
+    }
+  }
 }
 
 /**
@@ -310,7 +369,7 @@ function writeConfigFile(string $configFile, string $content, bool $toCompress =
   if (empty($content))
   {
     echo CLI_WARNING, 'Nothing to put into ', CLI_INFO_HIGHLIGHT, $configFile, CLI_WARNING,
-      ' so we\'ll delete this file if it exists.', END_COLOR,
+    ' so we\'ll delete this file if it exists.', END_COLOR,
     PHP_EOL;
 
     if (file_exists($configFile))
@@ -331,7 +390,7 @@ function writeConfigFile(string $configFile, string $content, bool $toCompress =
   }
 
   echo CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, substr($configFile, strlen(BASE_PATH)), CLI_BASE,
-    ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+  ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 }
 
 /**

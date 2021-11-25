@@ -10,7 +10,7 @@ use otra\{OtraException, bdd\Sql, Session};
 use ReflectionException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
 use const otra\console\
-{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,
@@ -123,7 +123,6 @@ class DatabaseTest extends TestCase
 
   /**
    * @throws ReflectionException|OtraException
-   * @depends testGetDirs
    */
   public function testInitBase() : void
   {
@@ -137,23 +136,8 @@ class DatabaseTest extends TestCase
 
     // We test each private static variable that has been set by Database::initBase()
     self::assertEquals(
-      Database::getDirs(),
-      $baseDirs
-    );
-
-    self::assertEquals(
-      $baseDirs[0] . 'config/data/yml/',
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_YML)->getValue()
-    );
-
-    self::assertEquals(
       $ymlPath . self::OTRA_LABEL_FIXTURES_FOLDER,
       removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES)->getValue()
-    );
-
-    self::assertEquals(
-      $baseDirs[0] . 'config/data/sql/',
-      $sqlPath
     );
 
     self::assertEquals(
@@ -173,7 +157,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @depends                  testInitBase
+   * @depends testInitBase
    *
    * @throws OtraException
    * @throws ReflectionException
@@ -212,16 +196,6 @@ class DatabaseTest extends TestCase
         'Testing the field ' . CLI_INFO_HIGHLIGHT . $testKeys[$fieldNameKey] . END_COLOR
       );
     }
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testGetDirs() : void
-  {
-    require self::TEST_CONFIG_GOOD_PATH;
-    $folders = Database::getDirs();
-    self::assertIsArray($folders);
   }
 
   /**
@@ -381,7 +355,10 @@ class DatabaseTest extends TestCase
 
     // Launching the task
     $this->expectException(OtraException::class);
-    $this->expectExceptionMessage('You have to create a database schema file in config/data/' . self::SCHEMA_FILE . ' before using fixtures. Searching for : ');
+    $this->expectExceptionMessage(
+      'You have to create a database schema file in ' . CLI_INFO_HIGHLIGHT . 'config/data/' . self::SCHEMA_FILE .
+      CLI_BASE . ' before using fixtures. Searching for : '
+    );
     Database::createFixtures(self::DATABASE_NAME, 1);
   }
 

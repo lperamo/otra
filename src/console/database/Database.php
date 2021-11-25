@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
 use otra\config\AllConfig;
 use otra\{bdd\Sql, Session, OtraException};
 use PDO;
-use const otra\cache\php\{BASE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, DIR_SEPARATOR};
 use const otra\console\
 {CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
 
@@ -118,10 +118,9 @@ abstract class Database
    */
   public static function initBase() : void
   {
-    self::$baseDirs = self::getDirs();
-    self::$pathYml = self::$baseDirs[0] . 'config/data/yml/';
+    self::$pathYml = BUNDLES_PATH . 'config/data/yml/';
     self::$pathYmlFixtures = self::$pathYml . self::LABEL_FIXTURES;
-    self::$pathSql = self::$baseDirs[0] . 'config/data/sql/';
+    self::$pathSql = BUNDLES_PATH . 'config/data/sql/';
     self::$pathSqlFixtures = self::$pathSql . self::LABEL_FIXTURES;
     self::$schemaFile = self::$pathYml . 'schema.yml';
     self::$tablesOrderFile = self::$pathYml . 'tables_order.yml';
@@ -146,10 +145,6 @@ abstract class Database
     $folderHandler = opendir($folder);
     $folders = [];
 
-    /** @var string[] $schemas Database schemas */
-    if (self::$boolSchema)
-      $schemas = [];
-
     // We scan the bundles' directory to retrieve all the bundles name ...
     while (false !== ($actualFile = readdir($folderHandler)))
     {
@@ -164,14 +159,6 @@ abstract class Database
         continue;
 
       $folders[] = $bundleDir . DIR_SEPARATOR;
-
-      if (self::$boolSchema)
-      {
-        $bundleSchemas = glob($bundleDir . '/config/data/yml/*schema.yml');
-
-        if (!empty($bundleSchemas))
-          $schemas = array_merge($schemas, $bundleSchemas);
-      }
     }
 
     closedir($folderHandler);
@@ -558,8 +545,8 @@ abstract class Database
     // Analyzes the database schema in order to guess the properties types
     if (!file_exists(self::$schemaFile))
       throw new OtraException(
-        'You have to create a database schema file in config/data/schema.yml before using fixtures. Searching for : ' .
-        self::$schemaFile,
+        'You have to create a database schema file in ' . CLI_INFO_HIGHLIGHT . 'config/data/schema.yml' .
+        CLI_BASE . ' before using fixtures. Searching for : ' . CLI_INFO_HIGHLIGHT . self::$schemaFile,
         E_NOTICE
       );
 

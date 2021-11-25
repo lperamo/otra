@@ -43,7 +43,8 @@ class UpdateConfHelpTest extends TestCase
       STRING_PAD_FOR_OPTION_FORMATTING . '2 => routes' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '4 => securities' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '8 => schema.yml' . PHP_EOL .
-      STRING_PAD_FOR_OPTION_FORMATTING . '15 => All (Default)' .
+      STRING_PAD_FOR_OPTION_FORMATTING . '16 => fixtures' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '31 => All (Default)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('route', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
