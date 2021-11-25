@@ -7,10 +7,13 @@ declare(strict_types=1);
 namespace otra\console\database\sqlImportFixtures;
 
 use otra\console\database\Database;
+use otra\Session;
 
 const
   SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME = 2,
   SQL_IMPORT_FIXTURES_ARG_CONFIGURATION = 3;
+
+Session::init();
 
 if (isset($argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]))
 {
