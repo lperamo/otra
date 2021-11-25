@@ -84,7 +84,7 @@ namespace otra\bin
   // if the command exists, runs it
   if (isset($tasksClassMap[$taskName]))
     $launchCallback(...$launchArgs);
-  else // otherwise we'll try to guess if it looks like an existing one
+  else // otherwise, we'll try to guess if it looks like an existing one
   {
      $tasks = array_keys($tasksClassMap);
 

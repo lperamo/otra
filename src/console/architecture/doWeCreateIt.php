@@ -11,12 +11,12 @@ if (!function_exists(__NAMESPACE__ . '\\doWeCreateIt'))
 {
   /**
    * Checks if we have to show a warning or an error when the folder is missing.
-   * Then it asks to the user if we have to create it.
+   * Then it asks the user if we have to create it.
    *
    * @author Lionel Péramo
    *
    * @param bool $interactive  False, no question will be asked but the status messages are shown.
-   * @param bool $consoleForce Determines whether we show an error when something is missing in non interactive mode or
+   * @param bool $consoleForce Determines whether we show an error when something is missing in non-interactive mode or
    *                           not. The false value by default will stop the execution if something does not exist and
    *                           show an error.
    * @param string $folderPath

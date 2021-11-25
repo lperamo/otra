@@ -105,7 +105,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
     // OTRA routes are not secure with CSP and permissions policies for the moment
     if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
-      // Retrieve security instructions from the routes configuration file
+      // Retrieve security instructions from the routes' configuration file
       /** @var array<string,array<string,string>> $policiesFromUserConfig */
       $policiesFromUserConfig = require $routeSecurityFilePath;
 

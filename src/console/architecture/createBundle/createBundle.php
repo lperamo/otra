@@ -16,7 +16,7 @@ const
 
 /**
  * @param bool     $interactive  Do we allow questions to the user?
- * @param bool     $consoleForce Determines whether we show an error when something is missing in non interactive mode
+ * @param bool     $consoleForce Determines whether we show an error when something is missing in non-interactive mode
  *                               or not. The false value by default will stop the execution if something does not exist
  *                               and shows an error.
  * @param string   $bundleName
@@ -51,7 +51,7 @@ function bundleHandling(
 
   while (file_exists(BUNDLES_PATH . $bundleName))
   {
-    // If the file does not exist and we are not in interactive mode, we exit the program.
+    // If the file does not exist and, we are not in interactive mode, we exit the program.
     if (!$interactive)
     {
       echo $errorMessage, PHP_EOL;

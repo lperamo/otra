@@ -93,7 +93,7 @@ const GEN_ASSETS_TEMPLATE = ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE,
   GEN_ASSETS_MANIFEST = (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3,
   GEN_ASSETS_SVG = (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4;
 
-// If we only need the manifest or the SVGs, skips the assets generation loop
+// If we only need the manifest or the SVGs, skips the assets' generation loop
 if (
   !in_array(
     ASSETS_MASK,
@@ -471,7 +471,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     }
 
     echo $content;
-    /** Workaround for google closure compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
+    /** Workaround for Google Closure Compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
      *  feed after source map declaration like
      *  //# sourceMappingURL=modules.js.map
      *  So the last letter is 'p' and not a line feed.

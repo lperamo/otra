@@ -52,6 +52,6 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount,
     throw new OtraException(code: 1, exit: true);
   }
 
-  // And we runs the task if all is correct
+  // And we run the task if all is correct
   TasksManager::execute($tasksClassMap, $taskName, $arguments);
 }

@@ -81,7 +81,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata {
    * HELP AND TASK CLASS MAP GENERATION *
    **************************************/
 
-// temporarily forces to look into the development configuration
+// temporarily forces looking into the development configuration
   $_SERVER[APP_ENV] = DEV;
   $foldersToCheckForTasks = array_unique([CONSOLE_PATH, ...AllConfig::$taskFolders ?? []]);
   $_SERVER[APP_ENV] = PROD;

@@ -210,7 +210,7 @@ function updatePHP(string $filename) : void
   // We generate the class mapping...
   require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
 
-  // We update routes configuration if the PHP file is a routes configuration file
+  // We update routes configuration if the PHP file is a routes' configuration file
   if ($filename === 'Routes.php')
   {
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
@@ -345,7 +345,7 @@ foreach($iterator as $entry)
   if (!$haveBeenWatched && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
   {
     if (
-      // Does the resources path belongs to a valid defined path ? If yes, we process it
+      // Does the resources' path belongs to a valid defined path ? If yes, we process it
       isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath)
       // starters are only meant to be copied, not used
       || str_contains($realPath, 'starters')

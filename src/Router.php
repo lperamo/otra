@@ -105,7 +105,7 @@ abstract class Router
         exit;
       }
 
-      // Otherwise for dynamic pages...
+      // Otherwise, for dynamic pages...
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 

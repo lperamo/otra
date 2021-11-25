@@ -19,7 +19,7 @@ session_start([
 ]);
 define ('BEFORE', microtime(true));
 
-// If it is an asset, we echo it and we stop the work here
+// If it is an asset, we echo it, and we stop the work here
 if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntryPoint.php')
   return true;
 

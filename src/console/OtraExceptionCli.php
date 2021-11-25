@@ -14,7 +14,7 @@ use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
  */
 class OtraExceptionCli extends Exception
 {
-  private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16 and we add 5 to this
+  private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16, and we add 5 to this
     FUNCTION_WIDTH = 49,
     LINE_WIDTH = 9,
     FILE_WIDTH = 85,
@@ -26,7 +26,7 @@ class OtraExceptionCli extends Exception
     BOTTOM_INTERSECTION_SEPARATOR = '┴',
     HORIZONTAL_SEPARATOR = '─';
 
-  private static $typeHeaderSpaces = '';
+  private static string $typeHeaderSpaces = '';
 
   /**
    * @param OtraException $exception

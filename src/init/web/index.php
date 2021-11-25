@@ -17,7 +17,7 @@ require __DIR__ . '/../config/constants.php';
 
 $requestUri = $_SERVER['REQUEST_URI'];
 
-// Otherwise for dynamic pages...
+// Otherwise, for dynamic pages...
 $_SERVER[APP_ENV] = PROD;
 
 try

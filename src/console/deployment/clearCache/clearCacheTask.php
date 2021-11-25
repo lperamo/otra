@@ -167,7 +167,7 @@ if ($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
     return null;
   }
 
-  // Otherwise we clear all the other routes.
+  // Otherwise, we clear all the other routes.
   array_map('unlink', glob(AllConfig::$cachePath . '*.cache'));
   echo 'PHP OTRA internal cache cleared', SUCCESS;
 }

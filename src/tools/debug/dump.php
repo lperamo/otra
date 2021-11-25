@@ -25,7 +25,7 @@ if (!function_exists(__NAMESPACE__ . '\\dump'))
   }
 
   /**
-   * A nice dump function that takes as much parameters as we want to put.
+   * A nice dump function that takes as many parameters as we want to put.
    * The output is conditioned by the options passed in parameters
    *
    * @param ?int[] $options [0 => Affects the amount of array children and object's properties shown

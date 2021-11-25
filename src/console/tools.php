@@ -94,7 +94,7 @@ namespace otra\console
           break;
         }
 
-        // If this distance is less than the next found shortest distance OR if a next shortest word has not yet been found
+        // If this distance is less than the next shortest found distance OR if a next shortest word has not yet been found
         if ($levenshtein <= $shortest || 0 >= $shortest)
         {
           $closest  = $currentWord;
@@ -110,7 +110,7 @@ namespace otra\console
      *
      * @param string $file      Name of the file that contains the error
      * @param int    $errorLine N° of the error
-     * @param int    $context   How much lines for context ?
+     * @param int    $context   How many lines for context ?
      */
     function showContext(string $file, int $errorLine, int $context) : void
     {
@@ -143,7 +143,7 @@ namespace otra\console
      *
      * @param string $file    Name of the file that contains the error
      * @param string $error   Error to analyze
-     * @param int    $context How much lines for context ?
+     * @param int    $context How many lines for context ?
      */
     function showContextByError(string $file, string $error, int $context) : void
     {

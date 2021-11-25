@@ -842,7 +842,7 @@ abstract class Database
       //* COLUMNS MANAGEMENT *
       //**********************
       // For each kind of data (columns, indexes, etc.)
-      foreach ($properties as $property => &$attributes)
+      foreach ($properties as $property => $attributes)
       {
         if ('columns' === $property)
         {

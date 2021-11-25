@@ -20,7 +20,7 @@ if (!function_exists(__NAMESPACE__ . '\\createModule'))
    * @param string $bundleBasePath The path where we put modules
    * @param string $moduleName
    * @param bool   $interactive    Do we allow questions to the user?
-   * @param bool   $consoleForce   Determines whether we show an error when something is missing in non interactive
+   * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive
    *                               mode or not. The false value by default will stop the execution if something does
    *                               not exist and show an error.
    *
@@ -30,7 +30,7 @@ if (!function_exists(__NAMESPACE__ . '\\createModule'))
   {
     $modulePath = $bundleBasePath . $moduleName;
 
-    // If the folder does not exist and we are not in interactive mode, we exit the program.
+    // If the folder does not exist, and we are not in interactive mode, we exit the program.
     createFolder($modulePath, $bundleBasePath, 'module', $interactive, $consoleForce);
 
     mkdir($modulePath . '/controllers', 0755);
@@ -41,7 +41,7 @@ if (!function_exists(__NAMESPACE__ . '\\createModule'))
 
   /**
    * @param bool   $interactive  Do we allow questions to the user?
-   * @param bool   $consoleForce Determines whether we show an error when something is missing in non interactive
+   * @param bool   $consoleForce Determines whether we show an error when something is missing in non-interactive
    *                             mode or not. The false value by default will stop the execution if something does
    *                             not exist and show an error.
    * @param string $bundleName
@@ -66,4 +66,3 @@ if (!function_exists(__NAMESPACE__ . '\\createModule'))
       createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
   }
 }
-

@@ -23,7 +23,7 @@ const
   REQ_DESC = 2,
   REQ_CHECK_TYPE = 3,
 
-  // Checks types
+  // Checking types
   REQ_PACKAGE = 0,
   REQ_PHP_VERSION = 1,
   REQ_PHP_LIB = 2,
@@ -124,4 +124,3 @@ const OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';
 
   // a last line break in addition to space the whole thing.
   echo PHP_EOL;
-

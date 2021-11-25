@@ -38,7 +38,7 @@ define(
 require CORE_PATH . 'tools/cli.php';
 const
   FILES_FORMAT = '\*.' . SOURCE_FORMAT,
-  // `-xtype` checks that it is a file and it follows symbolic links
+  // `-xtype` checks that it is a file, and it follows symbolic links
   // `-print0` for `find` and `-0` for `parallel` allows space and new lines in file names
   // 2>&1 was to prevent PHPUnit from failing ... because it seems this command sends things on wrong std?
   FIND_FILES = 'find ' . BASE_PATH . 'web/ -mindepth 2 -xtype f -name ' . FILES_FORMAT . ' -print0 ';

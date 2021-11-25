@@ -40,10 +40,9 @@ if (MODEL_LOCATION_BUNDLE === $modelLocation)
 
   define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath . MODULE_NAME . DIR_SEPARATOR);
 
-  // We cleans the module name question
+  // We clean the module name question
   echo DOUBLE_ERASE_SEQUENCE, 'Creating all the models for the bundle ', CLI_WARNING, $bundleName, END_COLOR, ' in the module ',
     CLI_WARNING, MODULE_NAME, END_COLOR, ' ...', PHP_EOL;
 }
 
 modelsCreation($modelLocation, $bundleName, $modelName . '.php');
-

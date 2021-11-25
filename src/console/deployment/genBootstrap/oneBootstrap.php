@@ -141,7 +141,7 @@ set_error_handler(function (int $errno, string $message, string $file, int $line
 
 $chunks = $params['chunks'];
 
-// For the moment, as a workaround, we will temporary explicitly add the OtraException file to solve issues.
+// For the moment, as a workaround, we will temporarily explicitly add the OtraException file to solve issues.
 try
 {
   contentToFile(
@@ -168,4 +168,3 @@ if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($temporaryPhpRouteFile))
   return;
 
 compressPHPFile($temporaryPhpRouteFile, $phpRouteFile);
-
