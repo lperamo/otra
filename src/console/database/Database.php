@@ -646,7 +646,7 @@ abstract class Database
 
           if (file_exists($createdFile))
             echo 'Fixture file creation aborted : the file ', CLI_WARNING, $databaseName . '_' . $table . '.sql',
-            END_COLOR, 'already exists.', PHP_EOL;
+            END_COLOR, ' already exists.', PHP_EOL;
 
           // Gets the fixture data
           $fixturesData = Yaml::parse(file_get_contents($yamlFile));
