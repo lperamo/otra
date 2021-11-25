@@ -118,7 +118,7 @@ abstract class Database
    */
   public static function initBase() : void
   {
-    self::$pathYml = BUNDLES_PATH . 'config/data/yml/';
+    self::$pathYml = BUNDLES_PATH . 'config/';
     self::$pathYmlFixtures = self::$pathYml . self::LABEL_FIXTURES;
     self::$pathSql = BUNDLES_PATH . 'config/data/sql/';
     self::$pathSqlFixtures = self::$pathSql . self::LABEL_FIXTURES;
