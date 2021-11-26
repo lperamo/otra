@@ -22,9 +22,9 @@ const OTRA_FILENAME_TRACE = 'trace';
 trait DevControllerTrait
 {
   // Those two static variables are constants in fact, but we have to maintain the naming norm
-  private readonly static int
-    $stylesheetFile = 0,
-    $printStylesheet = 1;
+  private static int
+    $stylesheetFile,
+    $printStylesheet;
   private static bool $debugBarHasBeenAdded = false;
 
   /**
@@ -34,6 +34,8 @@ trait DevControllerTrait
   public function __construct(array $otraParams = [], array $params = [])
   {
     parent::__construct($otraParams, $params);
+    self::$stylesheetFile = 0;
+    self::$printStylesheet = 1;
 
     if (!isset(AllConfig::$debugConfig['autoLaunch']) || AllConfig::$debugConfig['autoLaunch'])
       require CORE_PATH . 'tools/debug/dump.php';
