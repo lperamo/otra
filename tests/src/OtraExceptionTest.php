@@ -5,6 +5,7 @@ namespace src;
 
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};
 use function otra\tools\removeMethodScopeProtection;
@@ -71,13 +72,10 @@ class OtraExceptionTest extends TestCase
    */
   public function testOtraException_WithContext(): void
   {
-    $exception = new OtraException('test');
-
     /* We cannot force the PHP_SAPI constant, so it will launch OtraExceptionCli, but we can work around it.
      * We launch it this way anyway, but we manually set the context after in order to not be overwritten by the
      * OtraExceptionCli class. */
-    $exception->context = ['variables' => []];
-
+    $exception = new OtraException('test', null, '', null, ['variables' => []]);
     self::assertInstanceOf(OtraException::class, $exception);
     removeMethodScopeProtection(OtraException::class, 'errorMessage')
       ->invokeArgs($exception, []);

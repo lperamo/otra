@@ -62,7 +62,7 @@ class OtraException extends Exception
     mixed $code = NULL,
     string $file = '',
     ?int $line = NULL,
-    public readonly array|null $context = [],
+    public array|null $context = [],
     private readonly bool $exit = false
   )
   {
