@@ -82,7 +82,7 @@ foreach($iterator as $entry)
   // Adding watches for resources files if needed
   if (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES)
   {
-    // Does the resources path belongs to a valid defined path ? If yes, we process it
+    // Does the resources' path belongs to a valid defined path ? If yes, we process it
     if (isNotInThePath(
       PATHS_TO_HAVE_RESOURCES,
       $realPath,

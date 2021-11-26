@@ -30,7 +30,7 @@ function returnLegiblePath(string $path, ?string $endColor = END_COLOR) : string
 }
 
 /**
- * We know that we _have_ the value of BASE_PATH in the path so we replace it with 'BASE_PATH' in darker blue plus a
+ * We know that we _have_ the value of BASE_PATH in the path, so we replace it with 'BASE_PATH' in darker blue plus a
  * ' + ' in lighter blue.
  *
  * @param string $path

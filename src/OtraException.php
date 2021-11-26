@@ -63,7 +63,7 @@ class OtraException extends Exception
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
-    private bool $exit = false
+    private readonly bool $exit = false
   )
   {
     parent::__construct();
@@ -200,7 +200,7 @@ class OtraException extends Exception
    *
    * @throws OtraException
    */
-  #[NoReturn] public static function exceptionHandler(Exception|Error|OtraException $exception) : void
+  public static function exceptionHandler(Exception|Error|OtraException $exception) : never
   {
     if (PHP_SAPI === 'cli' && $exception instanceof OtraException)
       exit($exception->getCode());

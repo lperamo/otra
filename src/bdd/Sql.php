@@ -11,6 +11,7 @@ use otra\OtraException;
 use otra\cache\php\Logger;
 use otra\config\AllConfig;
 use PDO;
+use PDOStatement;
 use const otra\cache\php\{APP_ENV,CORE_PATH,DEV};
 
 /**
@@ -53,15 +54,15 @@ class Sql
    *
    * @throws OtraException
    *
-   * @internal param string $dbms     Kind of dbms
-   * @internal param string $connection     Connection used (see AllConfig files)
-   * @internal param bool   $selectDb Does we have to select the default database ? (omits it for PDO connection)
+   * @internal param string $dbms       Kind of dbms
+   * @internal param string $connection Connection used (see AllConfig files)
+   * @internal param bool   $selectDb   Do we have to select the default database ? (omits it for PDO connection)
    */
   public static function getDb(?string $connection = null, bool $haveDatabase = true) : bool|Sql
   {
     /* If the connection is :
      * - specified => active we use it, otherwise => added if exists
-     * - not specified => we use default connection and we adds it
+     * - not specified => we use default connection, and we add it
      */
     if (null !== $connection)
     {
@@ -182,7 +183,7 @@ class Sql
   }
 
   /**
-   * Sends a SQL query !
+   * Sends an SQL query !
    *
    * @param string $query SQL query.
    * The query string should not end with a semicolon. Data inside the query should be properly escaped.
@@ -431,9 +432,9 @@ class Sql
    * @param string $query
    * @param array  $options
    *
-   * @return \PDOStatement|false
+   * @return PDOStatement|false
    */
-  public function prepare(string $query, array $options = []): \PDOStatement|false
+  public function prepare(string $query, array $options = []): PDOStatement|false
   {
     if (DEV === $_SERVER[APP_ENV])
     {

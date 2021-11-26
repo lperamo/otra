@@ -15,7 +15,7 @@ use function otra\console\promptUser;
 
 /**
  * If we do not have the information of the type of this property in schema.yml,
- * we notice the user of that and we stop the script
+ * we notice the user of that, and we stop the script
  *
  * @param string $modelName
  * @param string $columnName
@@ -34,7 +34,7 @@ function checkDataType(string $modelName, string $columnName, ?string $type) : v
 }
 
 /**
- * Analyzes the SQL type of the current column in the schema.yml file and gives PHP type in return
+ * Analyzes the SQL type of the current column in the schema.yml file and gives the PHP type in return
  *
  * @param string $modelName
  * @param string $columnName

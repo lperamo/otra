@@ -35,7 +35,7 @@ else
   echo MODULE_BUNDLE_MESSAGE;
   defineModelPath($modelLocation, $bundlePath, $bundleName);
 
-  // We cleans the module name question
+  // We clean the module name question
   echo DOUBLE_ERASE_SEQUENCE;
 }
 
@@ -54,7 +54,6 @@ while (true === $modelExists || false === $tableExists)
   [$modelExists, $tableExists] = checksModelAndTableExistence($modelFullName, $modelName);
 }
 
-// We cleans the last sentence
+// We clean the last sentence
 echo ERASE_SEQUENCE;
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-

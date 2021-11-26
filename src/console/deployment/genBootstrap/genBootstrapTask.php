@@ -23,7 +23,7 @@ if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid
   throw new OtraException(code: 1, exit: true);
 }
 
-// If we come from the deploy task, those two constants are already defined
+// If we come from the `deploy` task, those two constants are already defined
 const
   GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
   GEN_BOOTSTRAP_ARG_VERBOSE = 3,
@@ -104,7 +104,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
   echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
 }
 
-// In CLI mode, the $_SERVER variable is not set so we set it !
+// In CLI mode, the $_SERVER variable is not set, so we set it !
 $_SERVER[APP_ENV] = PROD;
 
 foreach(array_keys($routes) as $routeKey => $route)
@@ -126,8 +126,8 @@ foreach(array_keys($routes) as $routeKey => $route)
 // Final specific management for routes files
 echo 'Create the specific routes management file... ', PHP_EOL;
 
-// CACHE_PATH will not be found if we do not have dbConnections in AllConfig so we need to explicitly include the
-// configuration. We checks if we do not have already loaded the configuration before.
+// CACHE_PATH will not be found if we do not have dbConnections in AllConfig, so we need to explicitly include the
+// configuration. We check if we do not have already loaded the configuration before.
 define(
   __NAMESPACE__ . '\\PATH_CONSTANTS',
   [

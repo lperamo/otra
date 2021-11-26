@@ -65,7 +65,7 @@ function generateJavaScript(
     return;
   }
 
-  // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
+  // The Google Closure Compiler application cannot overwrite a file, so we have to create a temporary one
   // and remove the dummy file ...
   // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
   if (!file_exists($resourceFolder))
@@ -83,7 +83,7 @@ function generateJavaScript(
   $temporaryTypescriptConfig = BASE_PATH . 'tsconfig_tmp.json';
   $filePointer = fopen($temporaryTypescriptConfig, 'w');
   // The flags for 'json_encode' allows better debugging
-  // (otherwise tsc will say that the bug is on the first line ..and the first line represents ALL the json)
+  // (otherwise tsc will say that the bug is on the first line ...and the first line represents ALL the json)
   fwrite(
     $filePointer,
     json_encode(

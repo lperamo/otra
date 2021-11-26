@@ -22,7 +22,7 @@ const OTRA_FILENAME_TRACE = 'trace';
 trait DevControllerTrait
 {
   // Those two static variables are constants in fact, but we have to maintain the naming norm
-  private static int
+  private readonly static int
     $stylesheetFile = 0,
     $printStylesheet = 1;
   private static bool $debugBarHasBeenAdded = false;

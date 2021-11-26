@@ -22,7 +22,7 @@ trait ProdControllerTrait
    * @param string $file      The file to render
    * @param array  $variables Variables to pass
    * @param bool   $ajax      Is this an ajax partial ?
-   * @param bool   $viewPath  If true, we adds the usual view path before the $file variable.
+   * @param bool   $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
    *
@@ -121,7 +121,7 @@ trait ProdControllerTrait
           '.gz'
         ) . '" async defer></script>';
 
-    // If there are no scripts loaded dynamically (not from the routes configuration)
+    // If there are no scripts loaded dynamically (not from the routes' configuration)
     if (empty(self::$javaScript))
       return $content;
 

@@ -42,7 +42,7 @@ function createAction(string $bundleName, string $moduleName, string $controller
 
   while (file_exists($actionPath))
   {
-    // If the file does not exist and we are not in interactive mode, we exit the program.
+    // If the file does not exist, and we are not in interactive mode, we exit the program.
     if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;

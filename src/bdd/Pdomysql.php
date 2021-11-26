@@ -7,8 +7,7 @@ declare(strict_types=1);
 
 namespace otra\bdd;
 use otra\OtraException;
-use PDO, PDOStatement;
-use PDOException;
+use PDO, PDOStatement, PDOException;
 use const otra\cache\php\PROD;
 
 /**
@@ -309,12 +308,13 @@ abstract class Pdomysql
 
   /**
    * @link https://www.php.net/manual/en/pdo.prepare.php
+   *
    * @param string $query
    * @param array  $options
    *
-   * @return \PDOStatement|false
+   * @return PDOStatement|false
    */
-  public static function prepare(string $query, array $options = []) : \PDOStatement|false
+  public static function prepare(string $query, array $options = []): PDOStatement|false
   {
     return Sql::$currentConn->prepare($query, $options);
   }

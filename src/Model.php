@@ -72,7 +72,7 @@ abstract class Model
       }
 
       $query = substr($query, 0, -1) . ' WHERE `'. $identifier . '`=' . $idValue;
-    } else // we add a entry
+    } else // we add an entry
     {
       unset($computedProperties[$identifier]);
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
@@ -91,4 +91,3 @@ abstract class Model
     return $dbConn->lastInsertedId();
   }
 }
-

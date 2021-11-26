@@ -842,7 +842,7 @@ abstract class Database
       //* COLUMNS MANAGEMENT *
       //**********************
       // For each kind of data (columns, indexes, etc.)
-      foreach ($properties as $property => &$attributes)
+      foreach ($properties as $property => $attributes)
       {
         if ('columns' === $property)
         {
@@ -1229,7 +1229,8 @@ abstract class Database
 
             $oldIndexName = $indexName;
             $content .= self::DOUBLE_INDENTATION . $indexName . ':' . PHP_EOL;
-            if ($indexResult['NON_UNIQUE'] === '0')
+
+            if ($indexResult['NON_UNIQUE'] === 0)
               $content .= self::DOUBLE_INDENTATION . self::INDENTATION . 'category: unique' . PHP_EOL;
             $content .=
               self::DOUBLE_INDENTATION . self::INDENTATION . 'columns:' . PHP_EOL .

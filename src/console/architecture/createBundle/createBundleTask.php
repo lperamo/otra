@@ -40,7 +40,7 @@ namespace otra\console\architecture\createBundle
 
   const ARG_BUNDLE_MASK = 3;
 
-  // $consoleForce determines whether we show an error when something is missing in non interactive mode or not
+  // $consoleForce determines whether we show an error when something is missing in non-interactive mode or not
   // the false value by default will stop the execution if something does not exist and show an error.
   require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
   $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');

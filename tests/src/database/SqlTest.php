@@ -474,7 +474,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertIsString(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
+    self::assertIsInt(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**

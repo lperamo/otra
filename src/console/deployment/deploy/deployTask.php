@@ -149,7 +149,7 @@ if ($genAssetsMode > 0)
 echo PHP_EOL, 'Deploys the files on the server ', CLI_INFO, $server, ':', $destinationPort, END_COLOR, ' in ',
 CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
 
-/* --delete allows to delete things that are no present anymore on the source to keep a really synchronized folder
+/* --delete allows deleting things that are no present anymore on the source to keep a really synchronized folder
  * -P It combines the flags –progress and –partial.
  * The first of these gives you a progress bar for the transfers.
  * The second allows you to resume interrupted transfers.

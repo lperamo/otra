@@ -67,7 +67,7 @@ function launchTaskPosixWay(array $tasksClassMap, array $arguments, string $task
     }
   }
 
-  // And we runs the task if all is correct
+  // And we run the task if all is correct
   TasksManager::execute($tasksClassMap, $taskName, $arguments);
   // @codeCoverageIgnoreEnd
 }
