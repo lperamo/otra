@@ -5,10 +5,9 @@ namespace src;
 
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};
-use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -62,8 +61,7 @@ class OtraExceptionTest extends TestCase
   {
     $exception = new OtraException('test');
     self::assertInstanceOf(OtraException::class, $exception);
-    removeMethodScopeProtection(OtraException::class, 'errorMessage')
-      ->invokeArgs($exception, []);
+    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
   }
 
   /**
@@ -77,7 +75,6 @@ class OtraExceptionTest extends TestCase
      * OtraExceptionCli class. */
     $exception = new OtraException('test', null, '', null, ['variables' => []]);
     self::assertInstanceOf(OtraException::class, $exception);
-    removeMethodScopeProtection(OtraException::class, 'errorMessage')
-      ->invokeArgs($exception, []);
+    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
   }
 }

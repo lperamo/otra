@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace src\tools\workers;
 
+use ReflectionClass;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
 use phpunit\framework\TestCase;
 use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
-use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -78,29 +78,30 @@ class WorkerManagerTest extends TestCase
       'A detached worker must no be present in the Worker Manager afterwards.'
     );
 
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
     // testing processes
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, 'processes')->getValue($workerManager),
+      $reflectedClass->getProperty('processes')->getValue($workerManager),
       'The process related to the detached worker must no be present in the the Worker Manager after that the worker has been detached.'
     );
 
     // testing streams
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
       'Stdin streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
       'Stdout streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
       'Stderr streams must be empty after we detached a worker.'
     );
 
@@ -144,19 +145,17 @@ class WorkerManagerTest extends TestCase
     $workerManager->__destruct();
 
     // testing streams
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
-      ->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
       'Stdin' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)
-        ->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
       'Stdout' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
-        ->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
       'Stderr' . self::STREAMS_DESTRUCT_MESSAGE
     );
   }
@@ -186,13 +185,11 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($worker);
 
     // 1. testing streams
-    $stdinStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
-      ->getValue($workerManager);
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
+    $stdinStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stdinStreams, 'Stdin streams must not be empty after we attached a worker.');
 
-    $stdoutStreams = removeFieldScopeProtection(WorkerManager::class, 'stdoutStreams')
-      ->getValue($workerManager);
-
+    $stdoutStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stdoutStreams, 'Stdout streams must not be empty after we attached a worker.');
 
     foreach ($stdoutStreams as $stdoutStream)
@@ -204,8 +201,7 @@ class WorkerManagerTest extends TestCase
       );
     }
 
-    $stderrStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
-      ->getValue($workerManager);
+    $stderrStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stderrStreams, 'Stderr streams must not be empty after we attached a worker.');
 
     // 2. testing workers
@@ -222,9 +218,8 @@ class WorkerManagerTest extends TestCase
     );
 
     // 3. testing processes
-    $processes = removeFieldScopeProtection(WorkerManager::class, 'processes');
     self::assertNotEmpty(
-      $processes,
+      $reflectedClass->getProperty('processes'),
       'There must be processes when we have attached a worker to the Worker Manager.'
     );
 

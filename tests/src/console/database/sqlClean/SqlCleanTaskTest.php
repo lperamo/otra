@@ -8,11 +8,12 @@ use otra\console\database\Database;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV,CORE_PATH,PROD,TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
-use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, removeFieldScopeProtection};
+use function otra\tools\{cleanFileAndFolders, copyFileAndFolders};
 
 /**
  * @runTestsInSeparateProcesses
@@ -40,8 +41,9 @@ class SqlCleanTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = PROD;
-    removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
-    removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
+    $reflectedClass = (new ReflectionClass(Database::class));
+    $reflectedClass->getProperty('boolSchema')->setValue(false);
+    $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     copyFileAndFolders(
@@ -63,7 +65,7 @@ class SqlCleanTaskTest extends TestCase
     );
 
     // testing
-    $sqlPath = removeFieldScopeProtection(Database::class, 'pathSql')->getValue();
+    $sqlPath = (new ReflectionClass(Database::class))->getProperty('pathSql')->getValue();
     self::assertEquals([], glob($sqlPath . '/*.sql'));
     self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
     self::expectOutputString(CLI_BASE . 'Cleaning done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);

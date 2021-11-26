@@ -9,10 +9,12 @@ use otra\config\AllConfig;
 use otra\console\database\Database;
 use otra\console\TasksManager;
 use phpunit\framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
+use src\console\DatabaseTest;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, PROD, TEST_PATH};
-use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
+use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, setScopeProtectedFields};
 use const otra\console\
 {CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 
@@ -99,8 +101,9 @@ class SqlCreateFixturesTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = PROD;
-    removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
-    removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
+    $reflectedClass = (new ReflectionClass(Database::class));
+    $reflectedClass->getProperty('boolSchema')->setValue(false);
+    $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
     mkdir(BUNDLES_PATH);
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';

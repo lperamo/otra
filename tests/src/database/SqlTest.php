@@ -8,9 +8,9 @@ use PDOStatement;
 use phpunit\framework\TestCase;
 use otra\{bdd\Sql,OtraException};
 use ReflectionException;
+use ReflectionMethod;
 use TypeError;
 use const otra\cache\php\{APP_ENV, BASE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
-use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -736,7 +736,8 @@ class SqlTest extends TestCase
 
     // testing
     Sql::$instance = null;
-    self::assertFalse(removeMethodScopeProtection(Sql::class, 'close')
-      ->invokeArgs(null, [&Sql::$instance]));
+    self::assertFalse(
+      (new ReflectionMethod(Sql::class, 'close'))->invokeArgs(null, [&Sql::$instance])
+    );
   }
 }

@@ -6,11 +6,12 @@ namespace otra\tools\debug;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
+use ReflectionClass;
 use ReflectionException, ReflectionProperty;
 use const otra\cache\php\CORE_CSS_PATH;
 use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 use function otra\services\getRandomNonceForCSP;
-use function otra\tools\{getSourceFromFile,removeFieldScopeProtection,restoreFieldScopeProtection};
+use function otra\tools\getSourceFromFile;
 
 const OTRA_DUMP_INDENT_COLORS = [
   'otra-dump--first',
@@ -194,7 +195,7 @@ abstract class DumpWeb extends DumpMaster {
       ':';
 
     if (!$isPublicProperty)
-      $property = removeFieldScopeProtection($reflectionClassName, $propertyName);
+      $property = (new ReflectionClass($reflectionClassName))->getProperty($propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)
@@ -254,9 +255,6 @@ abstract class DumpWeb extends DumpMaster {
 
     if ($propertyType !== DumpMaster::OTRA_DUMP_TYPE_ARRAY)
       echo self::BR;
-
-    if (!$isPublicProperty)
-      restoreFieldScopeProtection($reflectionClassName, $propertyName);
   }
 
   /**

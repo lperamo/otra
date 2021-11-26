@@ -9,8 +9,9 @@ namespace otra\tools\debug;
 
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
-use ReflectionClass, ReflectionException, ReflectionProperty;
-use function otra\tools\{getSourceFromFileCli,removeFieldScopeProtection,restoreFieldScopeProtection};
+use ReflectionClass;
+use  ReflectionException, ReflectionProperty;
+use function otra\tools\getSourceFromFileCli;
 use const otra\console\
 {
   ADD_BOLD,
@@ -157,7 +158,7 @@ class DumpCli extends DumpMaster
       ':';
 
     if (!$isPublicProperty)
-      $property = removeFieldScopeProtection($className, $propertyName);
+      $property = (new ReflectionClass($className))->getProperty($propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)
@@ -213,9 +214,6 @@ class DumpCli extends DumpMaster
 
     if ($propertyType !== 'array')
       echo PHP_EOL;
-
-    if (!$isPublicProperty)
-      restoreFieldScopeProtection($className, $propertyName);
   }
 
   /**

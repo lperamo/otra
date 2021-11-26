@@ -8,10 +8,11 @@ use otra\console\database\Database;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH,PROD,TEST_PATH};
-use function otra\tools\{copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
+use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses
@@ -86,7 +87,8 @@ class SqlCreateDatabaseTaskTest extends TestCase
     );
 
     // Testing
-    $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '_force.sql';
+    $endPath = (new ReflectionClass(Database::class))->getProperty('databaseFile')->getValue()
+      . '_force.sql';
     define(__NAMESPACE__ . '\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
