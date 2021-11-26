@@ -158,7 +158,7 @@ function handleRewriting() : string
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
     OPENING_BRACKET .
     SPACE_INDENT_2 . 'include snippets/fastcgi-php.conf;' . PHP_EOL .
-    SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;' . PHP_EOL .
+    SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param APP_ENV ' . GEN_SERVER_CONFIG_ENVIRONMENT .';' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param TEST_LOGIN yourLogin;' . PHP_EOL .

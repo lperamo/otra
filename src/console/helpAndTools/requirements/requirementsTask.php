@@ -78,9 +78,9 @@ const
     REQ_PHP_LIB
   ],
   [
-    'PHP Version => 8.0',
-    'PHP version 8.0.x+',
-    'PHP version must be at least 8.0.x.',
+    'PHP Version => 8.1',
+    'PHP version 8.1.x+',
+    'PHP version must be at least 8.1.x.',
     REQ_PHP_VERSION
   ]
 ];

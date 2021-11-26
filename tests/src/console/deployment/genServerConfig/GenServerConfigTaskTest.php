@@ -9,7 +9,7 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, DEV, PROD, TEST_PATH};
-use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
  * @runTestsInSeparateProcesses
@@ -65,8 +65,18 @@ class GenServerConfigTaskTest extends TestCase
       ob_get_clean()
     );
     self::assertFileExists(self::TEST_CONF_PATH);
-    self::assertFileEquals(self::EXAMPLE_DEV_TEST_CONF_PATH, self::TEST_CONF_PATH);
-    self::assertFileEquals(self::EXAMPLE_DEV_TEST_CONF_CACHE_PATH, self::TEST_CONF_CACHE_PATH);
+    self::assertFileEquals(
+      self::EXAMPLE_DEV_TEST_CONF_PATH,
+      self::TEST_CONF_PATH,
+      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
+      self::EXAMPLE_DEV_TEST_CONF_PATH
+    );
+    self::assertFileEquals(
+      self::EXAMPLE_DEV_TEST_CONF_CACHE_PATH,
+      self::TEST_CONF_CACHE_PATH,
+      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_ERROR . ' against ' .
+      CLI_INFO_HIGHLIGHT . self::EXAMPLE_DEV_TEST_CONF_CACHE_PATH
+    );
   }
 
   /**
@@ -94,7 +104,17 @@ class GenServerConfigTaskTest extends TestCase
       ob_get_clean()
     );
     self::assertFileExists(self::TEST_CONF_PATH);
-    self::assertFileEquals(self::EXAMPLE_PROD_TEST_CONF_PATH, self::TEST_CONF_PATH);
-    self::assertFileEquals(self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH, self::TEST_CONF_CACHE_PATH);
+    self::assertFileEquals(
+      self::EXAMPLE_PROD_TEST_CONF_PATH,
+      self::TEST_CONF_PATH,
+      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
+      self::EXAMPLE_PROD_TEST_CONF_PATH
+    );
+    self::assertFileEquals(
+      self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH,
+      self::TEST_CONF_CACHE_PATH,
+      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
+      self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH
+    );
   }
 }
