@@ -569,24 +569,17 @@ abstract class Database
       );
     }
 
-    $folder = opendir(self::$pathYmlFixtures);
-
     if (!file_exists(self::$tablesOrderFile))
-    {
-      closedir($folder);
       throw new OtraException(
         'You must use the database generation task before using the fixtures (no ' .
         substr(self::$tablesOrderFile, strlen(BASE_PATH)) . ' file)',
         E_CORE_WARNING
       );
-    }
 
     if (!file_exists(self::$pathSqlFixtures) && !mkdir(self::$pathSqlFixtures, 0777, true))
-    {
-      closedir($folder);
       throw new OtraException(self::ERROR_CANNOT_CREATE_THE_FOLDER . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
-    }
 
+    $folder = opendir(self::$pathYmlFixtures);
     require CORE_PATH . 'tools/debug/validateYaml.php';
     $schema = validateYaml(file_get_contents(self::$schemaFile), self::$schemaFile);
     $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
