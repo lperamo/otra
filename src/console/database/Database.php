@@ -552,6 +552,14 @@ abstract class Database
       );
 
     // Looks for the fixtures file
+    if (!file_exists(self::$pathYmlFixtures) && !mkdir(self::$pathYmlFixtures))
+    {
+      require CORE_PATH . 'tools/debug/returnLegiblePath.php';
+      echo CLI_ERROR, 'Cannot create the fixtures folder ', CLI_INFO_HIGHLIGHT, self::$pathYmlFixtures, CLI_ERROR, '.',
+        PHP_EOL, END_COLOR;
+      throw new OtraException(code: 1, exit: true);
+    }
+
     if (false === ($folder = opendir(self::$pathYmlFixtures)))
     {
       closedir($folder);
