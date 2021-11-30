@@ -14,9 +14,10 @@ use Symfony\Component\Yaml\{Exception\ParseException,Yaml};
 use otra\config\AllConfig;
 use otra\{bdd\Sql, Session, OtraException};
 use PDO;
-use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\
 {CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
+use function otra\tools\files\returnLegiblePath;
 
 /**
  * @package otra\console
@@ -582,7 +583,9 @@ abstract class Database
       $schema = Yaml::parse(file_get_contents(self::$schemaFile));
     } catch(ParseException $exception)
     {
-      echo CLI_ERROR, $exception->getMessage(), END_COLOR, PHP_EOL;
+      require CORE_PATH . 'tools/files/returnLegiblePath.php';
+      echo CLI_ERROR, 'Problem in ', CLI_INFO_HIGHLIGHT, returnLegiblePath(self::$schemaFile), CLI_ERROR, ' :', PHP_EOL,
+        $exception->getMessage(), END_COLOR, PHP_EOL;
       exit(1);
     }
 
