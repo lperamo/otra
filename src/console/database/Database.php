@@ -579,7 +579,6 @@ abstract class Database
     if (!file_exists(self::$pathSqlFixtures) && !mkdir(self::$pathSqlFixtures, 0777, true))
       throw new OtraException(self::ERROR_CANNOT_CREATE_THE_FOLDER . self::$pathSqlFixtures . ' !', E_CORE_ERROR);
 
-    $folder = opendir(self::$pathYmlFixtures);
     require CORE_PATH . 'tools/debug/validateYaml.php';
     $schema = validateYaml(file_get_contents(self::$schemaFile), self::$schemaFile);
     $tablesOrder = Yaml::parse(file_get_contents(self::$tablesOrderFile));
