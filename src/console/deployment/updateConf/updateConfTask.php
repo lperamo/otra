@@ -8,9 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment\updateConf;
 
 use otra\config\Routes;
-use otra\console\OtraExceptionCli;
 use otra\OtraException;
-use function otra\tools\files\returnLegiblePath;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -22,6 +20,8 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_FIXTURES,
   UPDATE_CONF_MASK_SECURITIES
 };
+use function otra\src\tools\debug\validateYaml;
+use function otra\tools\files\returnLegiblePath;
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
@@ -326,6 +326,9 @@ function updateConf(?string $mask = null, ?string $routeName = null)
       $schemaContent .= file_get_contents($schema);
     }
 
+    require CORE_PATH . 'tools/debug/validateYaml.php';
+    validateYaml($schemaContent, BUNDLES_PATH . 'config/schema.yml');
+
     writeConfigFile(BUNDLES_PATH . 'config/schema.yml', $schemaContent, false);
   }
 
@@ -338,16 +341,13 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     $fixturesFolder = BUNDLES_PATH . 'config/fixtures/';
 
-    if (!file_exists($fixturesFolder))
+    if (!file_exists($fixturesFolder) && !mkdir($fixturesFolder))
     {
-      if (!mkdir($fixturesFolder))
-      {
-        require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
-        echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, returnLegiblePath($fixturesFolder), CLI_ERROR,
+      require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+      echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, returnLegiblePath($fixturesFolder), CLI_ERROR,
         '.', END_COLOR, PHP_EOL;
 
-        throw new OtraException(code: 1, exit: true);
-      }
+      throw new OtraException(code: 1, exit: true);
     }
 
     foreach($fixtures as $fixture)
@@ -390,7 +390,7 @@ function writeConfigFile(string $configFile, string $content, bool $toCompress =
   }
 
   echo CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, substr($configFile, strlen(BASE_PATH)), CLI_BASE,
-  ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
+    ' updated', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
 }
 
 /**
