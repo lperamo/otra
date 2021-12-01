@@ -26,15 +26,15 @@ use function otra\tools\files\returnLegiblePath;
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
 const
-CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
-UPDATE_CONF_ARG_MASK = 2,
-UPDATE_CONF_ARG_ROUTE_NAME = 3,
-SINGLE_QUOTE = '\'',
-BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
-SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
-OTRA_LABEL_SECURITY_NONE = "'none'",
-OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
-PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
+  CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
+  UPDATE_CONF_ARG_MASK = 2,
+  UPDATE_CONF_ARG_ROUTE_NAME = 3,
+  SINGLE_QUOTE = '\'',
+  BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
+  SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
+  OTRA_LABEL_SECURITY_NONE = "'none'",
+  OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
+  PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [';
 
 /**
  * @param ?string $mask
@@ -106,6 +106,28 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
       if (!empty($bundleRoutes))
         $routes = array_merge($routes, $bundleRoutes);
+
+      $moduleFolderHandler = opendir($bundleDir);
+      $moduleRoutes = [];
+
+      // we scan the bundles' directory to retrieve all the bundles name ...
+      while (false !== ($filename = readdir($moduleFolderHandler)))
+      {
+        // 'config', 'tasks' and 'views' are not modules ...
+        if (in_array($filename, ['.', '..', 'config', 'tasks', 'views']))
+          continue;
+
+        $moduleDir = $bundleDir . '/' . $filename;
+
+        // We don't need the files either
+        if (!is_dir($moduleDir))
+          continue;
+
+        $moduleRoutes = glob($moduleDir . '/config/Routes.php');
+
+        if (!empty($moduleRoutes))
+          $routes = array_merge($routes, $moduleRoutes);
+      }
     }
 
     if ($updateConfSecurities)
