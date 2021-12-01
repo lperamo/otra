@@ -19,7 +19,7 @@ abstract class Logger
     SESSION_BROWSER = '_browser',
     REMOTE_ADDR = 'REMOTE_ADDR';
 
-  public const LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK;
+  public const LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
 
   /**
    * Returns the date or also the ip address and the browser if different
