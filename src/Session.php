@@ -12,8 +12,9 @@ use JetBrains\PhpStorm\Pure;
 abstract class Session
 {
   private static string $identifier;
+  private static string $blowfishAlgorithm = '$2a$07$';
 
-  public static function init() : void { self::$identifier = sha1((string)time()); }
+  public static function init() : void { self::$identifier = openssl_random_pseudo_bytes(32); }
 
   /** Puts a value associated with a key into the session
    *
@@ -22,7 +23,7 @@ abstract class Session
    */
   public static function set(string $key, mixed $value) : void
   {
-    $_SESSION[sha1(self::$identifier . $key)] = $value;
+    $_SESSION[crypt($key, self::$blowfishAlgorithm . self::$identifier . '$')] = $value;
   }
 
   /** Puts all the value associated with the keys of the array into the session
@@ -32,7 +33,7 @@ abstract class Session
   public static function sets(array $array) : void
   {
     foreach($array as $sessionKey => $value)
-      $_SESSION[sha1(self::$identifier . $sessionKey)] = $value;
+      $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')] = $value;
   }
 
   /** Retrieves a value from the session via its key
@@ -43,7 +44,37 @@ abstract class Session
    */
   #[Pure] public static function get(string $sessionKey) : mixed
   {
-    return $_SESSION[sha1(self::$identifier . $sessionKey)];
+    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')];
+  }
+
+  public static function getIfExists(string $sessionKey) : mixed
+  {
+    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')] ?? false;
+  }
+
+  /**
+   * If the first key exists, get it and the other keys
+   *
+   * @param array $sessionKeys
+   *
+   * @return array|bool
+   */
+  public static function getArrayIfExists(array $sessionKeys) : array|bool
+  {
+    $firstSessionKey = $sessionKeys[0];
+    $firstCryptedKey = crypt($firstSessionKey, self::$identifier);
+
+    if (!isset($_SESSION[$firstCryptedKey]))
+      return false;
+
+    $result = [$_SESSION[$firstCryptedKey]];
+    array_pop($sessionKeys);
+
+    foreach($sessionKeys as $sessionKey)
+    {
+      $result[] = $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')];
+    }
+
+    return $result;
   }
 }
-
