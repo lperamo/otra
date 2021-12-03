@@ -12,57 +12,82 @@ use JetBrains\PhpStorm\Pure;
 abstract class Session
 {
   private static string $identifier;
-  private static string $blowfishAlgorithm = '$2a$07$';
+  private static string $blowfishAlgorithm;
+  private static array $matches;
 
-  public static function init() : void { self::$identifier = openssl_random_pseudo_bytes(32); }
-
-  /** Puts a value associated with a key into the session
-   *
-   * @param string $key
-   * @param mixed  $value
+  /**
+   * @param int $rounds Number of rounds for the blowfish algorithm that protects the session
    */
-  public static function set(string $key, mixed $value) : void
+  public static function init(int $rounds = 7) : void
   {
-    $_SESSION[crypt($key, self::$blowfishAlgorithm . self::$identifier . '$')] = $value;
+    if (!(isset(self::$identifier) && $_SESSION[self::$identifier]))
+    {
+      self::$identifier = bin2hex(openssl_random_pseudo_bytes(32));
+
+      if ($rounds < 10)
+        $rounds = '0' . $rounds;
+
+      self::$blowfishAlgorithm = '$2a$' . $rounds . '$';
+    }
   }
 
-  /** Puts all the value associated with the keys of the array into the session
+  /**
+   * @param string $sessionKey
+   * @param mixed  $value
+   */
+  public static function set(string $sessionKey, mixed $value) : void
+  {
+    if (!isset(self::$matches[$sessionKey]))
+      self::$matches[$sessionKey] = crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier);
+
+    $_SESSION[self::$matches[$sessionKey]] = $value;
+  }
+
+  /**
+   * Puts all the value associated with the keys of the array into the session
    *
    * @param array $array
    */
   public static function sets(array $array) : void
   {
     foreach($array as $sessionKey => $value)
-      $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')] = $value;
+    {
+      if (!isset(self::$matches[$sessionKey]))
+        self::$matches[$sessionKey] = crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier);
+
+      $_SESSION[self::$matches[$sessionKey]] = $value;
+    }
   }
 
-  /** Retrieves a value from the session via its key
-   *
+  /**
    * @param string $sessionKey
    *
    * @return mixed
    */
   #[Pure] public static function get(string $sessionKey) : mixed
   {
-    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')];
+    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )];
   }
 
   public static function getIfExists(string $sessionKey) : mixed
   {
-    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')] ?? false;
+    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )] ?? false;
   }
 
   /**
-   * If the first key exists, get it and the other keys
+   * If the first key exists, get it and the other keys. Otherwise, returns false.
    *
    * @param array $sessionKeys
    *
+   * @throws OtraException
    * @return array|bool
    */
   public static function getArrayIfExists(array $sessionKeys) : array|bool
   {
-    $firstSessionKey = $sessionKeys[0];
-    $firstCryptedKey = crypt($firstSessionKey, self::$identifier);
+    if (!isset(self::$identifier))
+      throw new OtraException('You must initialize OTRA session before using "getArrayIfExists"');
+
+    $firstCryptedKey = crypt($sessionKeys[0], self::$identifier);
 
     if (!isset($_SESSION[$firstCryptedKey]))
       return false;
@@ -72,9 +97,25 @@ abstract class Session
 
     foreach($sessionKeys as $sessionKey)
     {
-      $result[] = $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier . '$')];
+      $result[] = $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )];
     }
 
     return $result;
+  }
+
+  /**
+   * Cleans OTRA session (but keeps PHP sessions keys that are not related to OTRA)
+   *
+   * @throws OtraException
+   */
+  public static function clean(): void
+  {
+    if (!isset(self::$matches))
+      throw new OtraException('You cannot clean an OTRA session that is not initialized.');
+
+    foreach (self::$matches as $match)
+    {
+      unset($_SESSION[$match]);
+    }
   }
 }
