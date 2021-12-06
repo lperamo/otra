@@ -73,8 +73,8 @@ abstract class Pdomysql
   }
 
   /**
-   * Returns the results
-   * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
+   * Returns the results with FETCH_ASSOC mask.
+   * @link https://www.php.net/manual/fr/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
@@ -83,6 +83,32 @@ abstract class Pdomysql
   public static function fetchAssoc(PDOStatement $statement) : mixed
   {
     return $statement->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Returns the results with FETCH_ASSOC mask.
+   * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return mixed The next result
+   */
+  public static function fetchAllAssoc(PDOStatement $statement) : mixed
+  {
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Returns the results with FETCH_KEY_PAIR mask.
+   * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return mixed The next result
+   */
+  public static function fetchAllByPair(PDOStatement $statement) : mixed
+  {
+    return $statement->fetchAll(PDO::FETCH_KEY_PAIR);
   }
 
   /**

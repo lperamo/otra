@@ -224,6 +224,36 @@ class Sql
     return call_user_func_array(self::$currentDBMS . '::fetchAssoc', $params);
   }
 
+  /**
+   * Returns the results
+   *
+   * @param mixed $params See the driver for more info.
+   *
+   * @return ?array The results
+   */
+  public function fetchAllAssoc(...$params) : ?array
+  {
+    if (isset($_SESSION['bootstrap']))
+      return null;
+
+    return call_user_func_array(self::$currentDBMS . '::fetchAllAssoc', $params);
+  }
+
+  /**
+   * Returns the results
+   *
+   * @param mixed $params See the driver for more info.
+   *
+   * @return ?array The results
+   */
+  public function fetchAllByPair(...$params) : ?array
+  {
+    if (isset($_SESSION['bootstrap']))
+      return null;
+
+    return call_user_func_array(self::$currentDBMS . '::fetchAllByPair', $params);
+  }
+
     /**
    * Returns the results
    *
