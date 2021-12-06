@@ -10,7 +10,10 @@ const
   DEBUG_BAR_PATH = CORE_VIEWS_PATH . 'debugBar/',
   CACHE_PHP_SESSION_PATH = CACHE_PATH . 'php/sessions/';
 
+$sessionId = session_id();
 define('ROUTE', urlencode($this->route));
+define('SESSION_ID', $sessionId);
+define('GET_PARAMETERS', '?route=' . ROUTE . '&session_id=' . SESSION_ID);
 
 require CONSOLE_PATH . 'colors.php';
 require CONSOLE_PATH . 'tools.php';
@@ -19,7 +22,7 @@ require DEBUG_BAR_PATH . 'macros.phtml';
 if (!file_exists(CACHE_PHP_SESSION_PATH))
   mkdir(CACHE_PHP_SESSION_PATH);
 
-$sessionDebugFile = CACHE_PHP_SESSION_PATH . sha1('ca' . ROUTE . VERSION . 'che') . '.php';
+$sessionDebugFile = CACHE_PHP_SESSION_PATH . sha1('ca' . $sessionId . VERSION . 'che') . '.php';
 
 $responseHeaders = [];
 $headers = headers_list();
@@ -68,7 +71,7 @@ generateArrows();
   unset($template);
   require DEBUG_BAR_PATH . 'sass.phtml';
 ?>
-  <a href="<?= SITE_HOST ?>/profiler/sql?route=<?= ROUTE ?>" rel="noopener nofollow noreferrer" target="profiler"
+  <a href="<?= SITE_HOST ?>/profiler/sql<?= GET_PARAMETERS ?>" rel="noopener nofollow noreferrer" target="profiler"
      class="dbg-bar--block" title="Check SQL logs" tabindex="<?= $debugBarTabIndexActualValue++ ?>">SQL</a>
   <?php generateArrows('label', $debugBarTabIndexActualValue) ?>
 </div>

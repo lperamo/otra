@@ -6,7 +6,7 @@ use otra\config\Routes;
 use function otra\cache\php\{block, endblock};
 use const otra\cache\php\CORE_VIEWS_PATH;
 
-/** @var string $route */
+  /** @var string $route */
 require CORE_VIEWS_PATH . 'layout.phtml';
 const
   ROUTE_LOGS = 'otra_logs',
@@ -19,7 +19,8 @@ const
   ICON = 0,
   LABEL = 1;
 
-define('ANALYZED_PAGE', '?route=' . $_GET['route']);
+$sessionId = session_id();
+define('ANALYZED_PAGE', '?route=' . $_GET['route'] . '&session_id=' . $sessionId);
 define('ROUTE', urldecode($_GET['route']));
 define('SITE_HOST', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
 

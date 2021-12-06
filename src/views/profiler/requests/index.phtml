@@ -6,6 +6,9 @@ use const otra\cache\php\{CACHE_PATH, CORE_VIEWS_PATH};
 use const otra\config\VERSION;
 use function otra\cache\php\{block, endblock};
 
+/**
+ * @var string $sessionId
+ */
 require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 
 block('title', 'Profiler - Requests');
@@ -13,7 +16,7 @@ block('view');
 
 require CORE_VIEWS_PATH . 'profiler/macros.phtml';
 require CORE_VIEWS_PATH . 'profiler/requests/macros.phtml';
-$session = require CACHE_PATH . 'php/sessions/' . sha1('ca' . $_GET['route'] . VERSION . 'che') . '.php';
+$session = require CACHE_PATH . 'php/sessions/' . sha1('ca' . $sessionId . VERSION . 'che') . '.php';
 ?>
 <div id="requests-container">
   <?php require CORE_VIEWS_PATH . 'profiler/requests/tabs.phtml'; ?>
