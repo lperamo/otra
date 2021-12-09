@@ -31,7 +31,7 @@ if (!function_exists(__NAMESPACE__ . '\\showTraceLine'))
 
           if (str_contains($traceFile, BASE_PATH))
           {
-            ?><span class="exception-main--color--file-and-line" title="' . $traceFile . '">
+            ?><span class="exception-main--color--file-and-line" title="<?= $traceFile ?>">
             <?= substr($traceFile, BASE_PATH_LENGTH) . ':' . $traceLine ?>
             </span>
             <?php
