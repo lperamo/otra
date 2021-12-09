@@ -364,22 +364,34 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
   if ($updateConfSchema)
   {
+    $mainYamlFile = BUNDLES_PATH . 'config/schema.yml';
     $schemas = array_merge(
       $schemas,
       glob(BUNDLES_PATH . 'config/data/yml/schema.yml')
     );
 
-    $schemaContent = '';
-
-    foreach($schemas as $schema)
+    if (!empty($schemas))
     {
-      $schemaContent .= file_get_contents($schema);
+      $schemaContent = '';
+
+      foreach($schemas as $schema)
+      {
+        $schemaContent .= file_get_contents($schema);
+      }
+
+      require CORE_PATH . 'tools/debug/validateYaml.php';
+      validateYaml($schemaContent, $mainYamlFile);
+
+      writeConfigFile(BUNDLES_PATH . 'config/schema.yml', $schemaContent, false);
+    } else
+    {
+      require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+      echo CLI_WARNING . 'Nothing to put into ', CLI_INFO_HIGHLIGHT, returnLegiblePath($mainYamlFile), CLI_WARNING,
+        ' so we\'ll delete this file if it exists.', END_COLOR, PHP_EOL;
+
+      if (file_exists($mainYamlFile))
+        unlink($mainYamlFile);
     }
-
-    require CORE_PATH . 'tools/debug/validateYaml.php';
-    validateYaml($schemaContent, BUNDLES_PATH . 'config/schema.yml');
-
-    writeConfigFile(BUNDLES_PATH . 'config/schema.yml', $schemaContent, false);
   }
 
   if ($updateConfFixtures)
@@ -395,7 +407,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     {
       require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
       echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, returnLegiblePath($fixturesFolder), CLI_ERROR,
-      '.', END_COLOR, PHP_EOL;
+        '.', END_COLOR, PHP_EOL;
 
       throw new OtraException(code: 1, exit: true);
     }
@@ -418,9 +430,9 @@ function writeConfigFile(string $configFile, string $content, bool $toCompress =
 {
   if (empty($content))
   {
-    echo CLI_WARNING, 'Nothing to put into ', CLI_INFO_HIGHLIGHT, $configFile, CLI_WARNING,
-    ' so we\'ll delete this file if it exists.', END_COLOR,
-    PHP_EOL;
+    require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+    echo CLI_WARNING, 'Nothing to put into ', CLI_INFO_HIGHLIGHT, returnLegiblePath($configFile), CLI_WARNING,
+      ' so we\'ll delete this file if it exists.', END_COLOR, PHP_EOL;
 
     if (file_exists($configFile))
       unlink($configFile);
