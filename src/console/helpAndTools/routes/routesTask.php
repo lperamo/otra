@@ -53,7 +53,7 @@ if (isset($argv[ROUTES_ARG_ROUTE]))
   if (!isset(Routes::$allRoutes[$route]))
   {
     // We try to find a route which the name is similar
-    require CONSOLE_PATH . 'tools.php';
+    require_once CONSOLE_PATH . 'tools.php';
     [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
     // And asks the user whether we find what he wanted or not

@@ -4,9 +4,11 @@ namespace otra\src\views\profiler;
 
 use otra\config\Routes;
 use function otra\cache\php\{block, endblock};
+use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\CORE_VIEWS_PATH;
+use const otra\config\VERSION;
 
-  /** @var string $route */
+/** @var string $route */
 require CORE_VIEWS_PATH . 'layout.phtml';
 const
   ROUTE_LOGS = 'otra_logs',
@@ -23,6 +25,12 @@ $sessionId = session_id();
 define('ANALYZED_PAGE', '?route=' . $_GET['route'] . '&session_id=' . $sessionId);
 define('ROUTE', urldecode($_GET['route']));
 define('SITE_HOST', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+define('SESSION_FILE', CACHE_PATH . 'php/sessions/' . sha1('ca' . $sessionId . VERSION . 'che') . '.php');
+
+$sessionData = [];
+
+if (file_exists(SESSION_FILE))
+  $sessionData = require SESSION_FILE;
 
 /**
  * Adds an HTML menu item to a list

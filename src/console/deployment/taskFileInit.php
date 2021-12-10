@@ -26,7 +26,7 @@ if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
-require CORE_PATH . 'tools/files/returnLegiblePath.php';
+require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
 
 const FILE_TASK_ARG_MASK = 3,
   FILE_TASK_ARG_GCC = 4,

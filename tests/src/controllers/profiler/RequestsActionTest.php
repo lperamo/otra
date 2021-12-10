@@ -6,13 +6,12 @@ namespace src\controllers\profiler;
 use otra\console\TasksManager;
 use otra\controllers\profiler\RequestsAction;
 use otra\OtraException;
+use otra\Session;
 use phpunit\framework\TestCase;
-use function otra\console\convertLongArrayToShort;
+use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\
-{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
 use function otra\tools\delTree;
-use const otra\config\VERSION;
 
 /**
  * @runTestsInSeparateProcesses
@@ -63,7 +62,7 @@ class RequestsActionTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws OtraException|ReflectionException
    */
   public function test() : void
   {
@@ -73,6 +72,7 @@ class RequestsActionTest extends TestCase
     $_GET['route'] = 'HelloWorld';
     $_GET['session_id'] = session_id();
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
+    $_SERVER['REMOTE_ADDR'] = '::1';
     file_put_contents(BASE_PATH . 'logs/' . DEV . '/trace.txt', '');
     $responseHeaders = [];
     $headers = headers_list();
@@ -83,19 +83,16 @@ class RequestsActionTest extends TestCase
       $responseHeaders[array_shift($header)] = trim(implode(':', $header));
     }
 
-    // session id equals '' so no need to include it in the file name
-    file_put_contents(
-      CACHE_PATH . 'php/sessions/' . sha1('ca' . VERSION . 'che') . '.php',
-      '<?php declare(strict_types=1);namespace otra\cache\php\sessions;return ' .
-      convertLongArrayToShort([
-        'GET' => $_GET,
-        'POST' => $_POST,
-        'COOKIE' => $_COOKIE,
-        'SESSION' => [],
-        'requestHeaders' => [],
-        'responseHeaders' => $responseHeaders,
-      ]) . ';' . PHP_EOL
-    );
+    Session::init();
+    Session::sets([
+      'GET' => $_GET,
+      'POST' => $_POST,
+      'COOKIE' => $_COOKIE,
+      'SESSION' => [],
+      'requestHeaders' => [],
+      'responseHeaders' => $responseHeaders,
+    ]);
+    Session::toFile();
 
     // launching
     ob_start();
@@ -109,7 +106,7 @@ class RequestsActionTest extends TestCase
       'js' => false,
       'css' => false
     ]);
-    $output = ob_get_clean();
+    ob_get_clean();
 
     // testing
     self::assertInstanceOf(RequestsAction::class, $requestsAction);

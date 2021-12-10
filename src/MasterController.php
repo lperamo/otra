@@ -11,6 +11,7 @@ use otra\cache\php\BlocksSystem;
 use otra\config\AllConfig;
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
 use function otra\services\getRandomNonceForCSP;
@@ -279,6 +280,7 @@ abstract class MasterController
    * @param string $templateFilename
    * @param array  $variables
    *
+   * @throws OtraException|ReflectionException
    * @return string
    */
   protected static function processFinalTemplate(string $route, string $templateFilename, array $variables) : string
@@ -308,7 +310,8 @@ abstract class MasterController
         require CORE_PATH . 'views/profiler/templateStructure/visualRendering.php';
         ob_clean();
         showBlocksVisually(false);
-        $_SESSION['templateVisualization'] = ob_get_clean();
+        Session::init();
+        Session::set('templateVisualization', ob_get_clean());
       }
     }
 

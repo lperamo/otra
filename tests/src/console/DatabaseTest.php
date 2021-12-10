@@ -819,6 +819,7 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     // Initialize OTRA session
+    $_SERVER['REMOTE_ADDR'] = '::1';
     Session::init();
 
     Database::init(self::DATABASE_CONNECTION);

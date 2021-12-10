@@ -22,12 +22,12 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "ext-openssl": "*",
     "symfony/yaml": "5.2.10"
   },
   "require-dev": {
     "ext-curl": "*",
     "ext-inotify": "*",
-    "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
     "ext-zlib": "*"

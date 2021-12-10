@@ -8,10 +8,9 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
-use const otra\console\
-{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
-use function otra\tools\copyFileAndFolders;
 use const otra\config\VERSION;
+use const otra\console\{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\tools\copyFileAndFolders;
 
 /**
  * @runTestsInSeparateProcesses

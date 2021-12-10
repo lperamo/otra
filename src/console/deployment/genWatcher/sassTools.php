@@ -3,10 +3,11 @@ declare(strict_types=1);
 namespace otra\console\deployment\genWatcher;
 
 use otra\OtraException;
-
+use ReflectionException;
 use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, DATA_EXPORTED_STRING, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 
 use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\getPathInformations;
@@ -181,7 +182,7 @@ function searchSassLastLeaves(
 /**
  * @param array $sassTree Sass tree that is actually in memory that needs to be saved into the cache
  *
- * @throws OtraException
+ * @throws OtraException|ReflectionException
  */
 function saveSassTree(array $sassTree) : void
 {
@@ -197,7 +198,7 @@ function saveSassTree(array $sassTree) : void
     file_put_contents(
       SASS_TREE_CACHE_PATH,
       '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-      convertLongArrayToShort($sassTree) . ';' . PHP_EOL
+      (convertLongArrayToShort($sassTree))[DATA_EXPORTED_STRING] . ';' . PHP_EOL
     )
   )
     echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;

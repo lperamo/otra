@@ -4,31 +4,71 @@ declare(strict_types=1);
  *
  * @author Lionel Péramo */
 namespace otra;
-use JetBrains\PhpStorm\Pure;
+use ReflectionException;
+use const otra\cache\php\{CACHE_PATH, CORE_PATH};
+use const otra\config\VERSION;
+use function otra\console\convertLongArrayToShort;
 
 /**
  * @package otra
  */
 abstract class Session
 {
-  private static string $identifier;
-  private static string $blowfishAlgorithm;
-  private static array $matches;
+  public static string $sessionsCachePath = CACHE_PATH . 'php/sessions/';
+  private static string
+    $sessionId,
+    $identifier,
+    $blowfishAlgorithm,
+    $sessionFile;
+  private static array $matches = [];
+  private const
+    DATA_EXPORTED_STRING = 0,
+    DATA_CLASSES_INFORMATION = 1;
 
   /**
    * @param int $rounds Number of rounds for the blowfish algorithm that protects the session
+   *
+   * @throws OtraException
+   * @throws ReflectionException
    */
   public static function init(int $rounds = 7) : void
   {
-    if (!(isset(self::$identifier) && $_SESSION[self::$identifier]))
+    if ($rounds < 4 || $rounds > 31)
+      throw new OtraException('Rounds must be in the range 4-31');
+
+    self::$sessionId = session_id();
+    self::$sessionFile = self::$sessionsCachePath . sha1('ca' . self::$sessionId . VERSION . 'che') . '.php';
+
+    if ($rounds < 10)
+      $rounds = '0' . $rounds;
+
+    self::$blowfishAlgorithm = '$2y$' . $rounds . '$';
+
+    if (!file_exists(self::$sessionFile))
     {
-      self::$identifier = bin2hex(openssl_random_pseudo_bytes(32));
+      if (!touch(self::$sessionFile))
+        throw new OtraException('Cannot create the session file.');
 
-      if ($rounds < 10)
-        $rounds = '0' . $rounds;
+      // will produce a string of 11 * 2 = 22 characters which is the minimum (?) for the
+      // Blowfish algorithm of the kind $2y$
+      self::$identifier = bin2hex(openssl_random_pseudo_bytes(11));
+      self::toFile();
+    } else
+    {
+      self::$matches = [];
+      $sessionData = require self::$sessionFile;
 
-      self::$blowfishAlgorithm = '$2a$' . $rounds . '$';
+      foreach ($sessionData as $sessionDatumKey => $sessionDatum)
+      {
+        if (str_starts_with($sessionDatumKey, self::$blowfishAlgorithm))
+          self::$matches[] = $sessionDatum;
+      }
+
+      self::$identifier = $sessionData['otra_i'];
+      echo self::$identifier . '<br>';
     }
+
+    echo self::$identifier, PHP_EOL;
   }
 
   /**
@@ -38,9 +78,12 @@ abstract class Session
   public static function set(string $sessionKey, mixed $value) : void
   {
     if (!isset(self::$matches[$sessionKey]))
-      self::$matches[$sessionKey] = crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier);
+      self::$matches[$sessionKey] = [
+        'notHashed' => $value,
+        'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+      ];
 
-    $_SESSION[self::$matches[$sessionKey]] = $value;
+    $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
   }
 
   /**
@@ -53,10 +96,25 @@ abstract class Session
     foreach($array as $sessionKey => $value)
     {
       if (!isset(self::$matches[$sessionKey]))
-        self::$matches[$sessionKey] = crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier);
+        self::$matches[$sessionKey] = [
+          'notHashed' => $value,
+          'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+        ];
 
-      $_SESSION[self::$matches[$sessionKey]] = $value;
+      $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
     }
+  }
+
+  /**
+   * Returns false if it does not exist in the cache...should not occur.
+   *
+   * @param string $sessionKey
+   *
+   * @return mixed
+   */
+  public static function get(string $sessionKey) : mixed
+  {
+    return self::$matches[$sessionKey]['notHashed'];
   }
 
   /**
@@ -64,14 +122,11 @@ abstract class Session
    *
    * @return mixed
    */
-  #[Pure] public static function get(string $sessionKey) : mixed
-  {
-    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )];
-  }
-
   public static function getIfExists(string $sessionKey) : mixed
   {
-    return $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )] ?? false;
+    return isset($_SESSION[$sessionKey])
+      ? self::$matches[$sessionKey]['notHashed']
+      : false;
   }
 
   /**
@@ -87,17 +142,31 @@ abstract class Session
     if (!isset(self::$identifier))
       throw new OtraException('You must initialize OTRA session before using "getArrayIfExists"');
 
-    $firstCryptedKey = crypt($sessionKeys[0], self::$identifier);
+    $firstKey = $sessionKeys[0];
 
-    if (!isset($_SESSION[$firstCryptedKey]))
+    if (!isset($_SESSION[$firstKey]))
       return false;
 
-    $result = [$_SESSION[$firstCryptedKey]];
-    array_pop($sessionKeys);
+    $result = [
+      $firstKey => self::$matches[$firstKey]['notHashed']
+    ];
+    array_shift($sessionKeys);
 
     foreach($sessionKeys as $sessionKey)
     {
-      $result[] = $_SESSION[crypt($sessionKey, self::$blowfishAlgorithm . self::$identifier )];
+      $result[$sessionKey] = self::$matches[$sessionKey]['notHashed'];
+    }
+
+    return $result;
+  }
+
+  public static function getAll(): array
+  {
+    $result = [];
+
+    foreach(self::$matches as $sessionKey => $sessionValueInformation)
+    {
+      $result[$sessionKey] = $sessionValueInformation['notHashed'];
     }
 
     return $result;
@@ -113,9 +182,64 @@ abstract class Session
     if (!isset(self::$matches))
       throw new OtraException('You cannot clean an OTRA session that is not initialized.');
 
-    foreach (self::$matches as $match)
+    foreach (array_keys(self::$matches) as $sessionKey)
     {
-      unset($_SESSION[$match]);
+      unset($_SESSION[$sessionKey], self::$matches[$sessionKey]);
     }
+  }
+
+  /**
+   * @throws ReflectionException
+   */
+  public static function toFile(): void
+  {
+    // Get in memory session data
+    $actualSessionData = [];
+
+    foreach(self::$matches as $sessionKey => $sessionValueInformation)
+    {
+      $actualSessionData[$sessionKey] = $sessionValueInformation['notHashed'];
+    }
+
+    $actualSessionData['otra_i'] = self::$identifier;
+    $actualSessionData['otra_b'] = self::$blowfishAlgorithm;
+
+    require_once CORE_PATH . 'console/colors.php';
+    require_once CORE_PATH . 'console/tools.php';
+
+    $dataInformation = convertLongArrayToShort($actualSessionData);
+    $fileContent = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;';
+    $requires = $useStatements = '';
+
+    foreach($dataInformation[self::DATA_CLASSES_INFORMATION] as $className => $classFile)
+    {
+      $useStatements .= 'use ' . $className . ';';
+
+      // If it's a native PHP class, we do not need a `require` statement
+      if ($classFile !== false)
+        $requires .= 'require ' . $classFile . ';';
+    }
+
+    // Updates the file with the merged version
+    file_put_contents(
+      self::$sessionFile,
+      $fileContent . $useStatements . $requires . 'return ' . $dataInformation[self::DATA_EXPORTED_STRING] . ';' . PHP_EOL
+    );
+
+    if ($_SERVER['REMOTE_ADDR'] === '::1')
+      chmod(self::$sessionFile, 0775);
+  }
+
+  public static function getNativeSessionData(): array
+  {
+    $result = [];
+
+    foreach($_SESSION as $sessionKey => $sessionValue)
+    {
+      if (!in_array($sessionKey, array_values(self::$matches)))
+        $result[$sessionKey] = $sessionValue;
+    }
+
+    return $result;
   }
 }

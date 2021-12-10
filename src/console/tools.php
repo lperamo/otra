@@ -19,8 +19,14 @@ namespace otra\console\constants
 namespace otra\console
 {
   use JetBrains\PhpStorm\ArrayShape;
+  use ReflectionClass;
+  use ReflectionException;
   use const otra\cache\php\SPACE_INDENT;
   use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+
+  const
+    DATA_EXPORTED_STRING = 0,
+    DATA_CLASSES_INFORMATION = 1;
 
   if (!function_exists(__NAMESPACE__ . '\\promptUser'))
   {
@@ -200,14 +206,21 @@ namespace otra\console
     }
 
     /**
+     * Converts an array to a PHP "readable" array that we can put in a file in order to make
+     * $myVar = require myFile.php;
+     * A bit like `var_export` function
+     *
      * @param array $myArray
      *
-     * @return string
+     * @throws ReflectionException
+     * @return array
      */
-    function convertLongArrayToShort(array $myArray) : string
+    function convertLongArrayToShort(array $myArray) : array
     {
+      $foundClasses = [];
+
       if ($myArray === [])
-        return '[]';
+        return ['[]', $foundClasses];
 
       $arrayString = '[';
 
@@ -217,16 +230,23 @@ namespace otra\console
           $newArrayItem = '\'' . addslashes($arrayItem) . '\'';
         elseif (is_bool($arrayItem))
           $newArrayItem = $arrayItem ? 'true' : 'false';
-        else
+        elseif (is_object($arrayItem))
+        {
+          $newArrayItem = '\'' . serialize($arrayItem) . '\'';
+          $classFqcn = get_class($arrayItem);
+          $foundClasses[$classFqcn] = (new ReflectionClass($classFqcn))->getFileName();
+        } elseif (is_array($arrayItem))
+        {
+          $informationData = convertLongArrayToShort($arrayItem);
+          $newArrayItem = $informationData[DATA_EXPORTED_STRING];
+          $foundClasses += $informationData[DATA_CLASSES_INFORMATION];
+        } else
           $newArrayItem = $arrayItem;
 
-        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . (!is_array($arrayItem)
-            ? $newArrayItem
-            : convertLongArrayToShort($arrayItem)
-          ) . ',';
+        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';
       }
 
-      return mb_substr($arrayString, 0, -1) . ']';
+      return [mb_substr($arrayString, 0, -1) . ']', $foundClasses];
     }
   }
 }

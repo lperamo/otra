@@ -28,7 +28,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
 
     // loading files...
     require CORE_PATH . 'tools/cli.php';
-    require CORE_PATH . 'tools/files/returnLegiblePath.php';
+    require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
     require CORE_PATH . 'console/deployment/generateOptimizedJavaScript.php';
 
     // defining constants...
