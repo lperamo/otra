@@ -65,10 +65,7 @@ abstract class Session
       }
 
       self::$identifier = $sessionData['otra_i'];
-      echo self::$identifier . '<br>';
     }
-
-    echo self::$identifier, PHP_EOL;
   }
 
   /**
