@@ -240,7 +240,8 @@ namespace otra\console
           $informationData = convertLongArrayToShort($arrayItem);
           $newArrayItem = $informationData[DATA_EXPORTED_STRING];
           $foundClasses += $informationData[DATA_CLASSES_INFORMATION];
-        } else
+        }
+        else
           $newArrayItem = $arrayItem;
 
         $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';

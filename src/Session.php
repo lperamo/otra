@@ -4,11 +4,11 @@ declare(strict_types=1);
  *
  * @author Lionel Péramo */
 namespace otra;
-use Exception;
 use ReflectionException;
 use const otra\cache\php\{CACHE_PATH, CORE_PATH};
 use const otra\config\VERSION;
 use function otra\console\convertLongArrayToShort;
+use function otra\tools\isSerialized;
 
 /**
  * @package otra
@@ -59,16 +59,11 @@ abstract class Session
       self::$matches = [];
       $sessionData = require self::$sessionFile;
       self::$identifier = $sessionData['otra_i'];
+      require_once CORE_PATH . 'tools/isSerialized.php';
 
       foreach ($sessionData as $sessionDatumKey => $sessionDatum)
       {
-        try
-        {
-          $deserializedDatum = unserialize($sessionDatum);
-        } catch (Exception $exception)
-        {
-          $deserializedDatum = $sessionDatum;
-        }
+        $deserializedDatum = isSerialized($sessionDatum, true) ? unserialize($sessionDatum) : $sessionDatum;
 
         if (!str_starts_with($sessionDatumKey, 'otra_'))
         {

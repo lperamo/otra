@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace src;
 
 use DateTime;
-use Exception;
 use otra\{OtraException, Session};
 use phpunit\framework\TestCase;
 use ReflectionClass;
@@ -12,6 +11,7 @@ use ReflectionException;
 use const otra\cache\php\{APP_ENV, CACHE_PATH, CORE_PATH, PROD, TEST_PATH};
 use const otra\config\VERSION;
 use function otra\console\convertLongArrayToShort;
+use function otra\tools\isSerialized;
 
 /**
  * @author Lionel Péramo
@@ -23,7 +23,7 @@ class SessionTest extends TestCase
     ROUNDS = 4, // 4 is the minimum to make the Blowfish algorithm work
     SESSIONS_CACHE_PATH = CACHE_PATH . 'php/sessions/',
     BLOWFISH_ALGORITHM = '$2y$0' . self::ROUNDS . '$',
-    BAR = 'bar',
+    BAR = 1, // testing via an int instead of a string is important to fully test deserialization
     TEST = 'test',
     TEST2 = 'test2',
     SESSION_FILE_BEGINNING = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;',
@@ -52,7 +52,7 @@ class SessionTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
-    array_map(unlink(...), glob(self::SESSIONS_CACHE_PATH . '*.php'));
+//    array_map(unlink(...), glob(self::SESSIONS_CACHE_PATH . '*.php'));
   }
 
   /**
@@ -408,17 +408,13 @@ class SessionTest extends TestCase
     ];
 
     $dataFromFile = require $sessionsFile;
+    require_once CORE_PATH . 'tools/isSerialized.php';
 
     // Un-serialize objects
     foreach($dataFromFile as &$datum)
     {
-      try
-      {
+      if (isSerialized($datum, true))
         $datum = unserialize($datum);
-      }catch (Exception $exception)
-      {
-        // $datum is probably not serializable then!
-      }
     }
 
     self::assertEquals(
