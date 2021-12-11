@@ -4,6 +4,7 @@ declare(strict_types=1);
  *
  * @author Lionel Péramo */
 namespace otra;
+use Exception;
 use ReflectionException;
 use const otra\cache\php\{CACHE_PATH, CORE_PATH};
 use const otra\config\VERSION;
@@ -57,14 +58,27 @@ abstract class Session
     {
       self::$matches = [];
       $sessionData = require self::$sessionFile;
+      self::$identifier = $sessionData['otra_i'];
 
       foreach ($sessionData as $sessionDatumKey => $sessionDatum)
       {
-        if (str_starts_with($sessionDatumKey, self::$blowfishAlgorithm))
-          self::$matches[] = $sessionDatum;
-      }
+        try
+        {
+          $deserializedDatum = unserialize($sessionDatum);
+        } catch (Exception $exception)
+        {
+          $deserializedDatum = $sessionDatum;
+        }
 
-      self::$identifier = $sessionData['otra_i'];
+        if (!str_starts_with($sessionDatumKey, 'otra_'))
+        {
+          // only objects are serialized in session files, that's why we deserialize then enforce serialization
+          self::$matches[$sessionDatumKey] = [
+            'hashed' => crypt(serialize($deserializedDatum), self::$blowfishAlgorithm . self::$identifier),
+            'notHashed' => $deserializedDatum
+          ];
+        }
+      }
     }
   }
 

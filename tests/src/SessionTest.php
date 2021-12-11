@@ -66,7 +66,9 @@ class SessionTest extends TestCase
     $sessionsFile = self::SESSIONS_CACHE_PATH . sha1('ca' . $sessionId . VERSION . 'che') . '.php';
 
     // launching
+    ob_start();
     Session::init(self::ROUNDS);
+    $output = ob_get_clean();
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
@@ -100,6 +102,9 @@ class SessionTest extends TestCase
 
     // sessions file permissions must be 0775
     self::assertEquals(0775, fileperms($sessionsFile) & 0777);
+
+    // There should be no output
+    self::assertEquals('', $output, 'The function should not output anything.');
   }
 
   /**
@@ -139,7 +144,9 @@ class SessionTest extends TestCase
     chmod($sessionsFile, 0775);
 
     // launching
+    ob_start();
     Session::init(self::ROUNDS);
+    $output = ob_get_clean();
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
@@ -166,6 +173,24 @@ class SessionTest extends TestCase
       $identifier
     );
     self::assertFileExists($sessionsFile);
+
+    $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
+    self::assertEquals(
+      [
+        self::TEST => [
+          'hashed' => crypt(serialize(self::$fooThing), $saltForHash),
+          'notHashed' => self::$fooThing
+        ],
+      self::TEST2 => [
+          'hashed' => crypt(serialize(self::BAR), $saltForHash),
+          'notHashed' => self::BAR
+        ]
+      ],
+      $reflectedClass->getProperty('matches')->getValue()
+    );
+
+    // There should be no output
+    self::assertEquals('', $output, 'The function should not output anything.');
   }
 
   /**
@@ -222,13 +247,11 @@ class SessionTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
+    $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
     self::assertEquals(
       self::TEST,
       array_search(
-        crypt(
-          serialize(self::$fooThing),
-          self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue()
-        ),
+        crypt(serialize(self::$fooThing), $saltForHash),
         $_SESSION
       )
     );
@@ -236,10 +259,7 @@ class SessionTest extends TestCase
     self::assertEquals(
       self::TEST2,
       array_search(
-        crypt(
-          serialize(self::BAR),
-          self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue()
-        ),
+        crypt(serialize(self::BAR), $saltForHash),
         $_SESSION
       )
     );
