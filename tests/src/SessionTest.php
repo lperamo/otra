@@ -52,7 +52,7 @@ class SessionTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
-//    array_map(unlink(...), glob(self::SESSIONS_CACHE_PATH . '*.php'));
+    array_map(unlink(...), glob(self::SESSIONS_CACHE_PATH . '*.php'));
   }
 
   /**
@@ -128,18 +128,9 @@ class SessionTest extends TestCase
     $fileContent = self::SESSION_FILE_BEGINNING;
     $requires = $useStatements = '';
 
-    foreach($dataInformation[self::DATA_CLASSES_INFORMATION] as $className => $classFile)
-    {
-      $useStatements .= 'use ' . $className . ';';
-
-      // If it's a native PHP class, we do not need a `require` statement
-      if ($classFile !== false)
-        $requires .= 'require ' . $classFile . ';';
-    }
-
     file_put_contents(
       $sessionsFile,
-      $fileContent . $useStatements . $requires . 'return ' . $dataInformation[self::DATA_EXPORTED_STRING] . ';' . PHP_EOL
+      $fileContent . $useStatements . $requires . 'return ' . $dataInformation . ';' . PHP_EOL
     );
     chmod($sessionsFile, 0775);
 

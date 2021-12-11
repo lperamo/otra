@@ -95,10 +95,7 @@ class ToolsTest extends TestCase
 
     // testing
     self::assertEquals(
-      [
-        "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
-        []
-      ],
+      "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
       $reducedArray
     );
   }

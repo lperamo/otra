@@ -7,7 +7,7 @@ use ReflectionException;
 use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\CONSOLE_PATH;
 use const otra\console\
-{CLI_ERROR, CLI_INFO_HIGHLIGHT, DATA_EXPORTED_STRING, END_COLOR, ERASE_SEQUENCE, SUCCESS};
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 
 use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\getPathInformations;
@@ -198,7 +198,7 @@ function saveSassTree(array $sassTree) : void
     file_put_contents(
       SASS_TREE_CACHE_PATH,
       '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-      (convertLongArrayToShort($sassTree))[DATA_EXPORTED_STRING] . ';' . PHP_EOL
+      (convertLongArrayToShort($sassTree)) . ';' . PHP_EOL
     )
   )
     echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;

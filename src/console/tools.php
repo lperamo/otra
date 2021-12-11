@@ -24,10 +24,6 @@ namespace otra\console
   use const otra\cache\php\SPACE_INDENT;
   use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 
-  const
-    DATA_EXPORTED_STRING = 0,
-    DATA_CLASSES_INFORMATION = 1;
-
   if (!function_exists(__NAMESPACE__ . '\\promptUser'))
   {
     /**
@@ -213,14 +209,12 @@ namespace otra\console
      * @param array $myArray
      *
      * @throws ReflectionException
-     * @return array
+     * @return string
      */
-    function convertLongArrayToShort(array $myArray) : array
+    function convertLongArrayToShort(array $myArray) : string
     {
-      $foundClasses = [];
-
       if ($myArray === [])
-        return ['[]', $foundClasses];
+        return '[]';
 
       $arrayString = '[';
 
@@ -231,23 +225,16 @@ namespace otra\console
         elseif (is_bool($arrayItem))
           $newArrayItem = $arrayItem ? 'true' : 'false';
         elseif (is_object($arrayItem))
-        {
           $newArrayItem = '\'' . serialize($arrayItem) . '\'';
-          $classFqcn = get_class($arrayItem);
-          $foundClasses[$classFqcn] = (new ReflectionClass($classFqcn))->getFileName();
-        } elseif (is_array($arrayItem))
-        {
-          $informationData = convertLongArrayToShort($arrayItem);
-          $newArrayItem = $informationData[DATA_EXPORTED_STRING];
-          $foundClasses += $informationData[DATA_CLASSES_INFORMATION];
-        }
+        elseif (is_array($arrayItem))
+          $newArrayItem = convertLongArrayToShort($arrayItem);
         else
           $newArrayItem = $arrayItem;
 
         $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';
       }
 
-      return [mb_substr($arrayString, 0, -1) . ']', $foundClasses];
+      return mb_substr($arrayString, 0, -1) . ']';
     }
   }
 }

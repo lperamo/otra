@@ -215,21 +215,11 @@ abstract class Session
 
     $dataInformation = convertLongArrayToShort($actualSessionData);
     $fileContent = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;';
-    $requires = $useStatements = '';
-
-    foreach($dataInformation[self::DATA_CLASSES_INFORMATION] as $className => $classFile)
-    {
-      $useStatements .= 'use ' . $className . ';';
-
-      // If it's a native PHP class, we do not need a `require` statement
-      if ($classFile !== false)
-        $requires .= 'require ' . $classFile . ';';
-    }
 
     // Updates the file with the merged version
     file_put_contents(
       self::$sessionFile,
-      $fileContent . $useStatements . $requires . 'return ' . $dataInformation[self::DATA_EXPORTED_STRING] . ';' . PHP_EOL
+      $fileContent . 'return ' . $dataInformation . ';' . PHP_EOL
     );
 
     if ($_SERVER['REMOTE_ADDR'] === '::1')
