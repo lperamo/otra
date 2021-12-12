@@ -7,9 +7,11 @@ declare(strict_types=1);
 
 namespace otra\console\architecture\init;
 
-use function otra\tools\copyFileAndFolders;
+use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH};
-use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, ERASE_SEQUENCE, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, ERASE_SEQUENCE, END_COLOR};
+use function otra\tools\copyFileAndFolders;
 
 echo 'Initializing the project...', PHP_EOL;
 
@@ -123,6 +125,15 @@ foreach (OTRA_LOG_FILES_PATH as $logFile)
 }
 
 echo ERASE_SEQUENCE, 'Base architecture for the logs added', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
+
+// Check if the sessions' folder exists
+const OTRA_SESSIONS_PATH = CACHE_PATH . 'php/sessions/';
+
+if (!file_exists(OTRA_SESSIONS_PATH) && !mkdir(OTRA_SESSIONS_PATH))
+{
+  echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, OTRA_SESSIONS_PATH, CLI_ERROR, '.', PHP_EOL;
+  throw new OtraException(code: 1, exit: true);
+}
 
 // Checking that the 'init' folder in the cache/php folder exists
 const OTRA_ROUTES_PATH = CACHE_PATH . 'php/otraRoutes/';
