@@ -23,41 +23,45 @@ use function otra\templating\showBlocksVisually;
  */
 abstract class MasterController
 {
-  public static string $path;
-  public ?string $routeSecurityFilePath = null;
   public static array $nonces = [
     'script-src' => [],
     'style-src' => []
   ];
 
-  public static string $cacheUsed = 'Unused';
+  public static string
+    $cacheUsed = 'Unused',
+    $path;
 
-  public string $route,
+  public ?string $routeSecurityFilePath = null;
+  public string
     $bundle = '',
     $module = '',
+    $route,
     $viewPath = DIR_SEPARATOR; // index/index/ for indexController and indexAction
 
-  protected string $controller = '',
+  protected string
     $action = '',
-    $pattern = ''; // path to the action, e.g. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
+    $controller = '',
+    $pattern = '', // path to the action, e.g. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
+    $response;
 
   protected array
+    $params = [],
     $viewResourcePath = [
       'css' => DIR_SEPARATOR, // CSS path for this module
       'js' => DIR_SEPARATOR  // JS path for this module
-    ],
-    $params = [];
+    ];
 
   protected static array
-    $stylesheets = [],
     $javaScript = [],
     /** @var array<string,string> */
-    $rendered = [];
+    $rendered = [],
+    $stylesheets = [];
 
   protected static bool
     $ajax = false,
-    $hasJsToLoad,
-    $hasCssToLoad;
+    $hasCssToLoad,
+    $hasJsToLoad;
 
   protected static string $layout;
 
