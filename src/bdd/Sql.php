@@ -134,7 +134,7 @@ class Sql
           strtolower(substr($driver, 3)) .
             ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
             'host=' . ('' == $port ? $host : $host . ':' . $port) .
-            ';charset=utf8',
+            ';charset=utf8mb4',
           $login,
           $password
         );
@@ -178,7 +178,7 @@ class Sql
   {
     $return = call_user_func_array(self::$currentDBMS . '::selectDb', $params);
     // @codeCoverageIgnoreStart
-    $this->query('SET NAMES UTF8');
+    $this->query('SET NAMES utf8mb4');
 
     return $return;
     // @codeCoverageIgnoreEnd

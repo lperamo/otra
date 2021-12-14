@@ -22,14 +22,14 @@ abstract class Pdomysql
    * Connects to PDO_MySql
    * Putting the charset here IS SUPER IMPORTANT! https://stackoverflow.com/a/12202218/1818095
    *
-   * @param string $dsn      Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1;charset=utf8
+   * @param string $dsn      Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1;charset=utf8mb4
    * @param string $username Username
    * @param string $password Password
    *
    * @return PDO Returns a MySQL link identifier on success, or false on error
    * @throws OtraException
    */
-  public static function connect(string $dsn = '127.0.0.1:3306;charset=utf8', string $username = 'root', string $password = '')
+  public static function connect(string $dsn = '127.0.0.1:3306;charset=utf8mb4', string $username = 'root', string $password = '')
   {
     try
     {

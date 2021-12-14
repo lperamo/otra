@@ -354,7 +354,7 @@ abstract class Database
     $first = true;
     $ymlIdentifiers = $table . ': ' . PHP_EOL;
     $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
-      'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES UTF8;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+      'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES utf8mb4;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
 //    $localMemory This variable stores the identifiers found in this table that are not available in
 //    sorted tables ?
     $localMemory = $values = $properties = [];
@@ -934,9 +934,9 @@ abstract class Database
       // Cleaning memory...
       unset($primaries, $primaryKey);
 
-      // We add the default character set (UTF8) and the ENGINE define in the framework configuration
+      // We add the default character set (utf8mb4) and the ENGINE define in the framework configuration
       $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor .
-          ' DEFAULT CHARACTER SET utf8' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
+          ' DEFAULT CHARACTER SET utf8mb4' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
       $tableSql[$table] .= ';';
 
       /**
