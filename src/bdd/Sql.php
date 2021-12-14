@@ -129,10 +129,12 @@ class Sql
 
       try
       {
+        // Putting the charset in the DNS here IS SUPER IMPORTANT! https://stackoverflow.com/a/12202218/1818095
         $activeConn['conn'] = $activeConn['instance']->connect(
-          strtolower(substr($driver, 3))
-            . ($haveDatabase  ? ':dbname=' . $database . ';' : ':')
-            . 'host=' . ('' == $port ? $host : $host . ':' . $port),
+          strtolower(substr($driver, 3)) .
+            ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
+            'host=' . ('' == $port ? $host : $host . ':' . $port) .
+            ';charset=utf8',
           $login,
           $password
         );
