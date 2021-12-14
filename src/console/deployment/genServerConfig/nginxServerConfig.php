@@ -44,7 +44,8 @@ const
     SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
     SPACE_INDENT . str_pad('server_name', GEN_SERVER_CONFIG_STR_PAD) . GEN_SERVER_CONFIG_SERVER_NAME .
     ';' . PHP_EOL .
-    SPACE_INDENT . str_pad('return', GEN_SERVER_CONFIG_STR_PAD) . '301 https://$server_name$request_uri; #Redirection' . PHP_EOL .
+    SPACE_INDENT . str_pad('return', GEN_SERVER_CONFIG_STR_PAD) .
+    '301 https://$server_name$request_uri; #Redirection' . PHP_EOL .
     '}' . PHP_EOL;
 }
 
@@ -199,7 +200,8 @@ $content = handlesHTTPSRedirection() .
   SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
   SPACE_INDENT . 'more_set_headers \'Server: Welcome on my site!\';' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
+  SPACE_INDENT . '# This header allows you to control whether or not you leak information about your users\' behavior to third parties' .
+  PHP_EOL .
   SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
