@@ -26,9 +26,7 @@ class SessionTest extends TestCase
     BAR = 1, // testing via an int instead of a string is important to fully test deserialization
     TEST = 'test',
     TEST2 = 'test2',
-    SESSION_FILE_BEGINNING = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;',
-    DATA_EXPORTED_STRING = 0,
-    DATA_CLASSES_INFORMATION = 1;
+    SESSION_FILE_BEGINNING = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;';
 
   private static DateTime $fooThing;
   private static array $testAndTest2;
@@ -356,12 +354,14 @@ class SessionTest extends TestCase
     // context
     Session::init(self::ROUNDS);
     Session::sets(self::$testAndTest2);
+    Session::toFile();
+    $reflectedClass = (new ReflectionClass(Session::class));
+    $sessionFile = $reflectedClass->getProperty('sessionFile')->getValue();
 
     // launching
     Session::clean();
 
     // testing
-    $reflectedClass = (new ReflectionClass(Session::class));
     self::assertArrayNotHasKey(
       crypt(self::TEST, self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue()),
       $_SESSION
@@ -369,6 +369,11 @@ class SessionTest extends TestCase
     self::assertEmpty(
       $reflectedClass->getProperty('matches')->getValue()
     );
+    self::assertNull($reflectedClass->getProperty('identifier')->getValue());
+    self::assertNull($reflectedClass->getProperty('blowfishAlgorithm')->getValue());
+    self::assertNull($reflectedClass->getProperty('sessionId')->getValue());
+    self::assertNull($reflectedClass->getProperty('sessionFile')->getValue());
+    self::assertFileDoesNotExist($sessionFile);
   }
 
   /**

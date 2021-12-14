@@ -16,15 +16,12 @@ use function otra\tools\isSerialized;
 abstract class Session
 {
   public static string $sessionsCachePath = CACHE_PATH . 'php/sessions/';
-  private static string
+  private static ?string
     $sessionId,
     $identifier,
     $blowfishAlgorithm,
     $sessionFile;
   private static array $matches = [];
-  private const
-    DATA_EXPORTED_STRING = 0,
-    DATA_CLASSES_INFORMATION = 1;
 
   /**
    * @param int $rounds Number of rounds for the blowfish algorithm that protects the session
@@ -188,10 +185,13 @@ abstract class Session
     if (!isset(self::$matches))
       throw new OtraException('You cannot clean an OTRA session that is not initialized.');
 
+    if (file_exists(self::$sessionFile) && !unlink(self::$sessionFile))
+      throw new OtraException('Cannot remove session file!');
+
+    self::$identifier = self::$blowfishAlgorithm = self::$sessionId = self::$sessionFile = null;
+
     foreach (array_keys(self::$matches) as $sessionKey)
-    {
       unset($_SESSION[$sessionKey], self::$matches[$sessionKey]);
-    }
   }
 
   /**
