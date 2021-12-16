@@ -7,11 +7,10 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\genBootstrap;
 
-use Exception;
 use otra\{OtraException, Router};
 use otra\config\{AllConfig, Routes};
-use const otra\cache\php\init\CLASSMAP;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\init\CLASSMAP;
 use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 
 const
@@ -89,9 +88,9 @@ if (isset($params['session']))
   }
 }
 
-$phpRouteFile = (!str_contains($route, 'otra_'))
-  ? BASE_PATH . 'cache/php/' . $route
-  : BASE_PATH . 'cache/php/otraRoutes/' . $route;
+$phpRouteFile = BASE_PATH . (!str_contains($route, 'otra_'))
+  ? 'cache/php/' . $route
+  : 'cache/php/otraRoutes/' . $route;
 $temporaryPhpRouteFile = $phpRouteFile . '_.php';
 
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
@@ -142,27 +141,17 @@ set_error_handler(function (int $errno, string $message, string $file, int $line
 $chunks = $params['chunks'];
 
 // For the moment, as a workaround, we will temporarily explicitly add the OtraException file to solve issues.
-try
-{
-  contentToFile(
-    fixFiles(
-      $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
-      $route,
-      file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
-      file_get_contents($fileToInclude),
-      VERBOSE,
-      $fileToInclude
-    ),
-    $temporaryPhpRouteFile
-  );
-} catch(Exception $exception)
-{
-  echo (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-    ? '{"success": "exception", "msg":' . json_encode($exception->getMessage()) . '}'
-    : $exception->getMessage();
-
-  return;
-}
+contentToFile(
+  fixFiles(
+    $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
+    $route,
+    file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
+    file_get_contents($fileToInclude),
+    VERBOSE,
+    $fileToInclude
+  ),
+  $temporaryPhpRouteFile
+);
 
 if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($temporaryPhpRouteFile))
   return;

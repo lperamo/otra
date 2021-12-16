@@ -803,6 +803,18 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
     if (str_contains($trimmedMatch, OTRA_LABEL_REQUIRE))
     {
+      if (str_contains($trimmedMatch, 'self::$sessionFile'))
+      {
+        echo CLI_INFO, 'Cannot determine what the dynamic value of ', CLI_INFO_HIGHLIGHT, 'self::$sessionFile',
+          CLI_INFO, ' can be', END_COLOR, PHP_EOL;
+        continue;
+      }
+
+      // If we find 'require myFile.php' in the file 'tools.php' then it is a `require` in a comment so no need to
+      // process it
+      if ($filename === CORE_PATH . 'console/tools.php' && str_contains($trimmedMatch, 'myFile'))
+        continue;
+
       [$tempFile, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, $filename);
 
       /* we make an exception for this particular require statement because
@@ -876,7 +888,11 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
           }
         }
 
-        $tempFile = str_replace(NAMESPACE_SEPARATOR, '/', eval('return ' . $tempFile . ';'));
+        $tempFile = str_replace(
+          NAMESPACE_SEPARATOR,
+          '/',
+          eval('return ' . $tempFile . ';')
+        );
 
         // we must not take care of the bundles/config/Config.php as it is an optional config file.
         if ($tempFile === BUNDLES_PATH . 'config/Config.php')
