@@ -12,6 +12,7 @@ use otra\config\{AllConfig, Routes};
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\cache\php\init\CLASSMAP;
 use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
+use function otra\tools\files\compressPHPFile;
 
 const
   ONE_BOOTSTRAP_ARG_VERBOSE = 1,
@@ -156,4 +157,6 @@ contentToFile(
 if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($temporaryPhpRouteFile))
   return;
 
-compressPHPFile($temporaryPhpRouteFile, $phpRouteFile);
+require CORE_PATH . 'tools/files/compressPhpFile.php';
+compressPHPFile($temporaryPhpRouteFile, $phpRouteFile . '.php');
+unlink($temporaryPhpRouteFile);

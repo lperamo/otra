@@ -13,7 +13,7 @@ use otra\config\{AllConfig,Routes};
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
-use function otra\tools\{cliCommand,guessRoute};
+use function otra\tools\{cliCommand, files\compressPHPFile, guessRoute};
 
 if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
 {
@@ -140,6 +140,8 @@ contentToFile(
 if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
   return;
 
-compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement');
+require CORE_PATH . 'tools/files/compressPhpFile.php';
+compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement.php');
+unlink(ROUTE_MANAGEMENT_TEMPORARY_FILE);
 
 echo PHP_EOL;

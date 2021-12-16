@@ -9,6 +9,7 @@ namespace otra\console\deployment\updateConf;
 
 use otra\config\Routes;
 use otra\OtraException;
+use function otra\tools\files\compressPHPFile;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -26,22 +27,22 @@ use function otra\tools\files\returnLegiblePath;
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
 const
-CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
-UPDATE_CONF_ARG_MASK = 2,
-UPDATE_CONF_ARG_ROUTE_NAME = 3,
-SINGLE_QUOTE = '\'',
-BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
-SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
-OTRA_LABEL_SECURITY_NONE = "'none'",
-OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
-PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [',
-CONFIG_FOLDER = '/config/',
-CONFIG_FILE_PATTERN = '*Config.php',
-SCHEMA_FILE_PATTERN = '*schema.yml',
-FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
-NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
-PATH_CONFIG_FIXTURES = 'config/fixtures/',
-PATH_CONFIG_DATA_YML = 'config/data/yml/';
+  CHUNKS_KEY_LENGTH = 10, // length of the string "chunks'=>["
+  UPDATE_CONF_ARG_MASK = 2,
+  UPDATE_CONF_ARG_ROUTE_NAME = 3,
+  SINGLE_QUOTE = '\'',
+  BUNDLES_MAIN_CONFIG_DIR = BUNDLES_PATH . 'config/',
+  SECURITIES_FOLDER = CACHE_PATH . 'php/security/',
+  OTRA_LABEL_SECURITY_NONE = "'none'",
+  OTRA_LABEL_SECURITY_STRICT_DYNAMIC = "'strict-dynamic'",
+  PHP_FILE_BEGINNING = '<?php declare(strict_types=1);return [',
+  CONFIG_FOLDER = '/config/',
+  CONFIG_FILE_PATTERN = '*Config.php',
+  SCHEMA_FILE_PATTERN = '*schema.yml',
+  FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
+  NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
+  PATH_CONFIG_FIXTURES = 'config/fixtures/',
+  PATH_CONFIG_DATA_YML = 'config/data/yml/';
 
 /**
  * @param ?string $mask
@@ -241,7 +242,31 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     foreach ($configs as $config)
       $configsContent .= file_get_contents($config);
 
-    writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Config.php', $configsContent);
+    $configsContent = str_replace('<?php', '', $configsContent);
+    preg_match_all(
+      '@^\\s*use\\s*([^;]*);\\s*$@mx',
+      $configsContent,
+      $matches,
+      PREG_OFFSET_CAPTURE
+    );
+
+    array_unshift($matches);
+    $useStatements = '';
+    $delta = 0;
+
+    foreach ($matches[0] as $match)
+    {
+      $useStatements .= trim($match[0]);
+      $length = mb_strlen($match[0]);
+      $configsContent = substr_replace($configsContent, '', $match[1] - $delta, $length);
+      $delta += $length;
+    }
+
+    $configsContent = '<?php declare(strict_types=1);namespace bundles\\config;' . $useStatements . $configsContent;
+    define(__NAMESPACE__ . '\\MAIN_CONFIG_FILE', BUNDLES_MAIN_CONFIG_DIR . 'Config.php');
+    writeConfigFile(MAIN_CONFIG_FILE, $configsContent);
+    require CORE_PATH . 'tools/files/compressPhpFile.php';
+    compressPHPFile(MAIN_CONFIG_FILE, MAIN_CONFIG_FILE);
   }
 
   /** ROUTES MANAGEMENT */
@@ -362,6 +387,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     }
   }
 
+  /** SCHEMAS MANAGEMENT */
   if ($updateConfSchema)
   {
     $mainYamlFile = BUNDLES_PATH . 'config/schema.yml';
@@ -394,6 +420,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     }
   }
 
+  /** FIXTURES MANAGEMENT */
   if ($updateConfFixtures)
   {
     $fixtures = array_merge(
