@@ -11,11 +11,11 @@ use FilesystemIterator;
 use otra\OtraException;
 use otra\config\AllConfig;
 use otra\config\Routes;
-use function otra\console\{guessWords,promptUser};
-use function otra\tools\cliCommand;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\CACHE_PHP_INIT_PATH;
+use function otra\console\{guessWords,promptUser};
+use function otra\tools\cliCommand;
 
 if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
 {
@@ -33,6 +33,21 @@ const
 
 define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
 define(__NAMESPACE__ . '\\VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
+
+// We do not do micro bootstraps for 'otra_exception' route.
+if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]) && $argv[GEN_BOOTSTRAP_ARG_ROUTE] === 'otra_exception')
+{
+  echo CLI_WARNING, 'We do not do micro bootstraps for the route ', CLI_INFO_HIGHLIGHT, 'otra_exception',
+  CLI_WARNING, '.', END_COLOR, PHP_EOL;
+  throw new OtraException(code: 1, exit: true);
+}
+
+if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName']))
+{
+  echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
+  ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
+  throw new OtraException(code: 1, exit: true);
+}
 
 // We generate the class mapping file if we need it.
 if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
@@ -52,13 +67,6 @@ if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTR
   return $status;
 }
 
-if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName']))
-{
-  echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
-  ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
-  throw new OtraException(code: 1, exit: true);
-}
-
 require BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'Router.php';
 
@@ -76,7 +84,7 @@ if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
   if (!isset(Routes::$allRoutes[$route]))
   {
     // We try to find a route which the name is similar
-    // (require_once 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
+    // `require_once` 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
     require_once CONSOLE_PATH . 'tools.php';
     [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
@@ -109,9 +117,6 @@ $_SERVER[APP_ENV] = PROD;
 
 foreach(array_keys($routes) as $routeKey => $route)
 {
-  if ('exception' === $route)
-    continue;
-
   if (array_key_first($routes) !== $routeKey)
     echo PHP_EOL;
 

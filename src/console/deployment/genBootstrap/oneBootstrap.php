@@ -10,8 +10,8 @@ namespace otra\console\deployment\genBootstrap;
 use Exception;
 use otra\{OtraException, Router};
 use otra\config\{AllConfig, Routes};
-use const otra\cache\php\init\CLASSMAP;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\init\CLASSMAP;
 use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 
 const
