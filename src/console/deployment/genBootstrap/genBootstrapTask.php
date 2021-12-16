@@ -9,13 +9,11 @@ namespace otra\console\deployment\genBootstrap;
 
 use FilesystemIterator;
 use otra\OtraException;
-use otra\config\AllConfig;
-use otra\config\Routes;
+use otra\config\{AllConfig,Routes};
+use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
-use const otra\bin\CACHE_PHP_INIT_PATH;
-use function otra\console\{guessWords,promptUser};
-use function otra\tools\cliCommand;
+use function otra\tools\{cliCommand,guessRoute};
 
 if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
 {
@@ -79,29 +77,8 @@ if (!file_exists(BOOTSTRAP_PATH))
 // Checks whether we want only one/many CORRECT route(s)
 if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
 {
-  $route = $argv[GEN_BOOTSTRAP_ARG_ROUTE];
-
-  if (!isset(Routes::$allRoutes[$route]))
-  {
-    // We try to find a route which the name is similar
-    // `require_once` 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
-    require_once CONSOLE_PATH . 'tools.php';
-    [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
-
-    // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
-      . ' ! Do you mean ' . CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
-
-    // If our guess is wrong, we apologise and exit !
-    if ('n' === $choice)
-    {
-      echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-      throw new OtraException(code: 1, exit: true);
-    }
-
-    $route = $newRoute;
-  }
-
+  require CORE_PATH . 'tools/guessRoute.php';
+  $route = guessRoute($argv[GEN_BOOTSTRAP_ARG_ROUTE]);
   $routes = [$route => Routes::$allRoutes[$route]];
   echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
 } else

@@ -9,10 +9,18 @@ namespace otra\console\helpAndTools\routes;
 
 use otra\config\Routes;
 use otra\OtraException;
-use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\config\VERSION;
-use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
-use function otra\console\{guessWords,promptUser};
+use const otra\console\
+{
+  CLI_ERROR,
+  CLI_INFO,
+  CLI_INFO_HIGHLIGHT,
+  CLI_SUCCESS,
+  CLI_WARNING,
+  END_COLOR
+};
+use function otra\tools\guessRoute;
 use function otra\src\tools\{checkPHPPath,checkResourcePath};
 
 if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
@@ -47,29 +55,8 @@ $indexLines = 0;
 // Check if we want one or all the routes
 if (isset($argv[ROUTES_ARG_ROUTE]))
 {
-  $route = $argv[ROUTES_ARG_ROUTE];
-
-  // If the route does not exist
-  if (!isset(Routes::$allRoutes[$route]))
-  {
-    // We try to find a route which the name is similar
-    require_once CONSOLE_PATH . 'tools.php';
-    [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
-
-    // And asks the user whether we find what he wanted or not
-    $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
-      . ' ! Do you mean ' . CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
-
-    // If our guess is wrong, we apologise and exit !
-    if ('n' === $choice)
-    {
-      echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;
-      throw new OtraException(code: 1, exit: true);
-    }
-
-    $route = $newRoute;
-  }
-
+  require CORE_PATH . 'tools/guessRoute.php';
+  $route = guessRoute($argv[ROUTES_ARG_ROUTE]);
   $routes = [$route => Routes::$allRoutes[$route]];
 } else
   $routes = Routes::$allRoutes;
