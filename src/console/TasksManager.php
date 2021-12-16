@@ -92,7 +92,7 @@ abstract class TasksManager
 
     require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
 
-    if ($task === 'updateConf')
+    if (isset($task) && $task === 'updateConf')
     {
       $task = 'otra\\console\\deployment\\updateConf\\' . $task;
       $task($argv[UPDATE_CONF_ARG_MASK] ?? null, $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
