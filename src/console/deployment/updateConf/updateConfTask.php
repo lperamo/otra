@@ -297,10 +297,14 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     // Transforms the array in code that returns the array.
     $routesContent = PHP_FILE_BEGINNING;
-    loopForEach($routesContent, $routesArray, true);
-    $routesContent = substr($routesContent, 0, -1) . '];';
 
-    writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent);
+    if (!empty($routesArray))
+    {
+      loopForEach($routesContent, $routesArray, true);
+      $routesContent = substr($routesContent, 0, -1);
+    }
+
+    writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent . '];');
   }
 
   /** SECURITIES MANAGEMENT */
