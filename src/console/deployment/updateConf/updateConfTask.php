@@ -42,7 +42,9 @@ const
   FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
   NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
   PATH_CONFIG_FIXTURES = 'config/fixtures/',
-  PATH_CONFIG_DATA_YML = 'config/data/yml/';
+  PATH_CONFIG_DATA_YML = 'config/data/yml/',
+  VENDOR_FOLDER = BASE_PATH . 'vendor/';
+
 
 /**
  * @param ?string $mask
@@ -81,154 +83,44 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   }
 
   /** BEGINNING OF THE TASK */
-  $folderHandler = opendir(BUNDLES_PATH);
   $securities = $configs = $routes = $schemas = $fixtures = [];
 
   // we scan the bundles' directory to retrieve all the bundles name ...
-  while (false !== ($filename = readdir($folderHandler)))
+  searchFilesInFolder(
+    BUNDLES_PATH,
+    $securities,
+    $configs,
+    $routes,
+    $schemas,
+    $fixtures,
+    $updateConfRouteName,
+    $updateConfAllConfig,
+    $updateConfRoutes,
+    $updateConfSecurities,
+    $updateConfSchema,
+    $updateConfFixtures
+  );
+
+  // we scan vendors if they exist ...(not the case if we work on OTRA itself)
+  $vendorBundles = glob(VENDOR_FOLDER . '*/*/bundles');
+
+  foreach($vendorBundles as $vendorBundlePath)
   {
-    // 'config' and 'views' are not bundles ...
-    if (in_array($filename, ['.', '..', 'config', 'views']))
-      continue;
-
-    $bundleDir = BUNDLES_PATH . $filename;
-
-    // We don't need the files either
-    if (!is_dir($bundleDir))
-      continue;
-
-    // ... and we scan all those bundles to retrieve the config file names.
-    $bundleConfigDir = $bundleDir . CONFIG_FOLDER;
-
-    if ($updateConfAllConfig)
-    {
-      $bundleConfigs = glob($bundleConfigDir . CONFIG_FILE_PATTERN);
-
-      if (!empty($bundleConfigs))
-        $configs = array_merge($configs, $bundleConfigs);
-
-      $moduleFolderHandler = opendir($bundleDir);
-
-      // we scan the bundles' directory to retrieve all the bundles name ...
-      while (false !== ($filename = readdir($moduleFolderHandler)))
-      {
-        // 'config', 'tasks' and 'views' are not modules ...
-        if (in_array($filename, NOT_MODULE_FOLDERS))
-          continue;
-
-        $moduleDir = $bundleDir . '/' . $filename;
-
-        // We don't need the files either
-        if (!is_dir($moduleDir))
-          continue;
-
-        $moduleConfig = glob($moduleDir . CONFIG_FOLDER . CONFIG_FILE_PATTERN);
-
-        if (!empty($moduleConfig))
-          $configs = array_merge($configs, $moduleConfig);
-      }
-    }
-
-    if ($updateConfRoutes)
-    {
-      $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
-
-      if (!empty($bundleRoutes))
-        $routes = array_merge($routes, $bundleRoutes);
-
-      $moduleFolderHandler = opendir($bundleDir);
-      $moduleRoutes = [];
-
-      // we scan the bundles' directory to retrieve all the bundles name ...
-      while (false !== ($filename = readdir($moduleFolderHandler)))
-      {
-        // 'config', 'tasks' and 'views' are not modules ...
-        if (in_array($filename, NOT_MODULE_FOLDERS))
-          continue;
-
-        $moduleDir = $bundleDir . '/' . $filename;
-
-        // We don't need the files either
-        if (!is_dir($moduleDir))
-          continue;
-
-        $moduleRoutes = glob($moduleDir . '/config/Routes.php');
-
-        if (!empty($moduleRoutes))
-          $routes = array_merge($routes, $moduleRoutes);
-      }
-    }
-
-    if ($updateConfSecurities)
-    {
-      $bundleSecurities = glob(
-        $bundleConfigDir . 'security/' . ($updateConfRouteName === null ? '*' : $updateConfRouteName . DIR_SEPARATOR),
-        GLOB_ONLYDIR
-      );
-
-      if (!empty($bundleSecurities))
-        $securities = array_merge($securities, $bundleSecurities);
-    }
-
-    if ($updateConfSchema || $updateConfFixtures)
-    {
-      $ymlBundlePath = $bundleConfigDir . 'data/yml/';
-
-      if ($updateConfSchema)
-      {
-        $bundleSchemas = glob($ymlBundlePath . SCHEMA_FILE_PATTERN);
-
-        if (!empty($bundleSchemas))
-          $schemas = array_merge($schemas, $bundleSchemas);
-
-        $moduleSchemas = [];
-      }
-
-      if ($updateConfFixtures)
-      {
-        $bundleFixtures = glob($ymlBundlePath . FIXTURES_FILES_PATTERN);
-
-        if (!empty($bundleFixtures))
-          $fixtures = array_merge($fixtures, $bundleFixtures);
-
-        $moduleFixtures = [];
-      }
-
-      $moduleFolderHandler = opendir($bundleDir);
-
-      // we scan the bundles' directory to retrieve all the bundles name ...
-      while (false !== ($filename = readdir($moduleFolderHandler)))
-      {
-        // 'config', 'tasks' and 'views' are not modules ...
-        if (in_array($filename, NOT_MODULE_FOLDERS))
-          continue;
-
-        $moduleDir = $bundleDir . '/' . $filename . '/';
-
-        // We don't need the files either
-        if (!is_dir($moduleDir))
-          continue;
-
-        if ($updateConfSchema)
-        {
-          $moduleSchemas = glob($moduleDir . PATH_CONFIG_DATA_YML . SCHEMA_FILE_PATTERN);
-
-          if (!empty($moduleSchemas))
-            $schemas = array_merge($schemas, $moduleSchemas);
-        }
-
-        if ($updateConfFixtures)
-        {
-          $moduleFixtures = glob($moduleDir . PATH_CONFIG_DATA_YML . FIXTURES_FILES_PATTERN);
-
-          if (!empty($moduleFixtures))
-            $fixtures = array_merge($fixtures, $moduleFixtures);
-        }
-      }
-    }
+    searchFilesInFolder(
+      $vendorBundlePath . '/',
+      $securities,
+      $configs,
+      $routes,
+      $schemas,
+      $fixtures,
+      $updateConfRouteName,
+      $updateConfAllConfig,
+      $updateConfRoutes,
+      $updateConfSecurities,
+      $updateConfSchema,
+      $updateConfFixtures
+    );
   }
-
-  closedir($folderHandler);
 
   // now we have all the information, we can create the files in 'bundles/config'
   if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
@@ -448,6 +340,186 @@ function updateConf(?string $mask = null, ?string $routeName = null)
       copy($fixture, BUNDLES_PATH . PATH_CONFIG_FIXTURES . basename($fixture));
     }
   }
+}
+
+/**
+ * @param string  $folderPath
+ * @param array   $securities
+ * @param array   $configs
+ * @param array   $routes
+ * @param array   $schemas
+ * @param array   $fixtures
+ * @param ?string $updateConfRouteName
+ * @param int     $updateConfAllConfig
+ * @param int     $updateConfRoutes
+ * @param int     $updateConfSecurities
+ * @param int     $updateConfSchema
+ * @param int     $updateConfFixtures
+ *
+ * @return void
+ */
+function searchFilesInFolder(
+  string $folderPath,
+  array &$securities,
+  array &$configs,
+  array &$routes,
+  array &$schemas,
+  array &$fixtures,
+  ?string $updateConfRouteName,
+  int $updateConfAllConfig,
+  int $updateConfRoutes,
+  int $updateConfSecurities,
+  int $updateConfSchema,
+  int $updateConfFixtures
+)
+{
+  $folderHandler = opendir($folderPath);
+
+  // we scan the bundles' directory to retrieve all the bundles name ...
+  while (false !== ($filename = readdir($folderHandler)))
+  {
+    // 'config' and 'views' are not bundles ...
+    if (in_array($filename, ['.', '..', 'config', 'views']))
+      continue;
+
+    $actualFolder = $folderPath . $filename;
+
+    // We don't need the files either
+    if (!is_dir($actualFolder))
+      continue;
+
+    // ... and we scan all those bundles to retrieve the config file names.
+    $bundleConfigDir = $actualFolder . CONFIG_FOLDER;
+
+    if ($updateConfAllConfig)
+    {
+      $bundleConfigs = glob($bundleConfigDir . CONFIG_FILE_PATTERN);
+
+      if (!empty($bundleConfigs))
+        $configs = array_merge($configs, $bundleConfigs);
+
+      $moduleFolderHandler = opendir($actualFolder);
+
+      // we scan the bundles' directory to retrieve all the bundles name ...
+      while (false !== ($filename = readdir($moduleFolderHandler)))
+      {
+        // 'config', 'tasks' and 'views' are not modules ...
+        if (in_array($filename, NOT_MODULE_FOLDERS))
+          continue;
+
+        $moduleDir = $actualFolder . '/' . $filename;
+
+        // We don't need the files either
+        if (!is_dir($moduleDir))
+          continue;
+
+        $moduleConfig = glob($moduleDir . CONFIG_FOLDER . CONFIG_FILE_PATTERN);
+
+        if (!empty($moduleConfig))
+          $configs = array_merge($configs, $moduleConfig);
+      }
+    }
+
+    if ($updateConfRoutes)
+    {
+      $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
+
+      if (!empty($bundleRoutes))
+        $routes = array_merge($routes, $bundleRoutes);
+
+      $moduleFolderHandler = opendir($actualFolder);
+      $moduleRoutes = [];
+
+      // we scan the bundles' directory to retrieve all the bundles name ...
+      while (false !== ($filename = readdir($moduleFolderHandler)))
+      {
+        // 'config', 'tasks' and 'views' are not modules ...
+        if (in_array($filename, NOT_MODULE_FOLDERS))
+          continue;
+
+        $moduleDir = $actualFolder . '/' . $filename;
+
+        // We don't need the files either
+        if (!is_dir($moduleDir))
+          continue;
+
+        $moduleRoutes = glob($moduleDir . '/config/Routes.php');
+
+        if (!empty($moduleRoutes))
+          $routes = array_merge($routes, $moduleRoutes);
+      }
+    }
+
+    if ($updateConfSecurities)
+    {
+      $bundleSecurities = glob(
+        $bundleConfigDir . 'security/' . ($updateConfRouteName === null ? '*' : $updateConfRouteName . DIR_SEPARATOR),
+        GLOB_ONLYDIR
+      );
+
+      if (!empty($bundleSecurities))
+        $securities = array_merge($securities, $bundleSecurities);
+    }
+
+    if ($updateConfSchema || $updateConfFixtures)
+    {
+      $ymlBundlePath = $bundleConfigDir . 'data/yml/';
+
+      if ($updateConfSchema)
+      {
+        $bundleSchemas = glob($ymlBundlePath . SCHEMA_FILE_PATTERN);
+
+        if (!empty($bundleSchemas))
+          $schemas = array_merge($schemas, $bundleSchemas);
+
+        $moduleSchemas = [];
+      }
+
+      if ($updateConfFixtures)
+      {
+        $bundleFixtures = glob($ymlBundlePath . FIXTURES_FILES_PATTERN);
+
+        if (!empty($bundleFixtures))
+          $fixtures = array_merge($fixtures, $bundleFixtures);
+
+        $moduleFixtures = [];
+      }
+
+      $moduleFolderHandler = opendir($actualFolder);
+
+      // we scan the bundles' directory to retrieve all the bundles name ...
+      while (false !== ($filename = readdir($moduleFolderHandler)))
+      {
+        // 'config', 'tasks' and 'views' are not modules ...
+        if (in_array($filename, NOT_MODULE_FOLDERS))
+          continue;
+
+        $moduleDir = $actualFolder . '/' . $filename . '/';
+
+        // We don't need the files either
+        if (!is_dir($moduleDir))
+          continue;
+
+        if ($updateConfSchema)
+        {
+          $moduleSchemas = glob($moduleDir . PATH_CONFIG_DATA_YML . SCHEMA_FILE_PATTERN);
+
+          if (!empty($moduleSchemas))
+            $schemas = array_merge($schemas, $moduleSchemas);
+        }
+
+        if ($updateConfFixtures)
+        {
+          $moduleFixtures = glob($moduleDir . PATH_CONFIG_DATA_YML . FIXTURES_FILES_PATTERN);
+
+          if (!empty($moduleFixtures))
+            $fixtures = array_merge($fixtures, $moduleFixtures);
+        }
+      }
+    }
+  }
+
+  closedir($folderHandler);
 }
 
 /**
