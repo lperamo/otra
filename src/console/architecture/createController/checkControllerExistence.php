@@ -14,7 +14,7 @@ namespace otra\console\architecture\createController
 
   /** @var bool $consoleForce */
   /** @var bool $interactive */
-  require CONSOLE_PATH . 'architecture/createController/createController.php';
+  require_once CONSOLE_PATH . 'architecture/createController/createController.php';
 
   // MODULE STEP
   $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);

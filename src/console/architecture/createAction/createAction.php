@@ -8,10 +8,10 @@ declare(strict_types=1);
 namespace otra\console\architecture;
 
 use otra\OtraException;
-use function otra\console\deployment\updateConf\updateConf;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\deployment\updateConf\updateConf;
 use function otra\console\promptUser;
 
 const
@@ -61,7 +61,11 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  define(__NAMESPACE__ . '\\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
+  if (!defined(__NAMESPACE__ . '\\OTRA_ACTION_PATH'))
+    define(
+      __NAMESPACE__ . '\\OTRA_ACTION_PATH',
+      'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName
+    );
   file_put_contents(
     $actionPath,
     '<?php
@@ -123,7 +127,8 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT_2 . "]" . PHP_EOL .
     SPACE_INDENT . "]";
 
-  define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+  if (!defined(__NAMESPACE__ . '\\PHP_FILE_START'))
+     define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
 
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
   if (file_exists($routesConfigFolder))
@@ -192,7 +197,7 @@ class ' . $upperActionName . 'Action extends Controller
     ' ✔', PHP_EOL;
 
   // We update the routes' configuration as we just add one route.
-  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
   updateConf('2');
 
   // We update the class mapping since we have one action more.

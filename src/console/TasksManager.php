@@ -5,8 +5,11 @@ namespace otra\console;
 use otra\OtraException;
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\DIR_SEPARATOR;
+use const otra\console\architecture\constants\
+{ARG_BUNDLE_NAME, ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE, ARG_MODULE_NAME};
 use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_ARG_ROUTE_NAME};
 use function otra\console\deployment\updateConf\updateConf;
+use function otra\console\architecture\createAction\createAction;
 
 /**
  * @author Lionel Péramo
@@ -90,12 +93,17 @@ abstract class TasksManager
       require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
     }
 
-    require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
+    // _once as otherwise we cannot do multiple tasks in a row
+    require_once $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
 
     if (isset($task) && $task === 'updateConf')
     {
       $task = 'otra\\console\\deployment\\updateConf\\' . $task;
       $task($argv[UPDATE_CONF_ARG_MASK] ?? null, $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+    } elseif (isset($task) && $task === 'createAction')
+    {
+      $task = 'otra\\console\\architecture\\createAction\\' . $task;
+      $task($argv);
     }
   }
 }
