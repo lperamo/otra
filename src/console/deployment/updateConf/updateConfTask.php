@@ -42,8 +42,7 @@ const
   FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
   NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
   PATH_CONFIG_FIXTURES = 'config/fixtures/',
-  PATH_CONFIG_DATA_YML = 'config/data/yml/',
-  VENDOR_FOLDER = BASE_PATH . 'vendor/';
+  PATH_CONFIG_DATA_YML = 'config/data/yml/';
 
 
 /**
@@ -100,27 +99,6 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     $updateConfSchema,
     $updateConfFixtures
   );
-
-  // we scan vendors if they exist ...(not the case if we work on OTRA itself)
-  $vendorBundles = glob(VENDOR_FOLDER . '*/*/bundles');
-
-  foreach($vendorBundles as $vendorBundlePath)
-  {
-    searchFilesInFolder(
-      $vendorBundlePath . '/',
-      $securities,
-      $configs,
-      $routes,
-      $schemas,
-      $fixtures,
-      $updateConfRouteName,
-      $updateConfAllConfig,
-      $updateConfRoutes,
-      $updateConfSecurities,
-      $updateConfSchema,
-      $updateConfFixtures
-    );
-  }
 
   // now we have all the information, we can create the files in 'bundles/config'
   if (!file_exists(BUNDLES_MAIN_CONFIG_DIR))
