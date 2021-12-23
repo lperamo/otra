@@ -88,13 +88,14 @@ abstract class Pdomysql
 
   /**
    * Returns the results with FETCH_ASSOC mask.
+   *
    * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
    *
    * @param PDOStatement $statement The query statement
    *
-   * @return mixed The next result
+   * @return array|false The next result
    */
-  public static function fetchAllAssoc(PDOStatement $statement) : mixed
+  public static function fetchAllAssoc(PDOStatement $statement): array|false
   {
     return $statement->fetchAll(PDO::FETCH_ASSOC);
   }
