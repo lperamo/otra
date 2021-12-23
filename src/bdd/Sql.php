@@ -481,4 +481,16 @@ class Sql
 
     return call_user_func(self::$currentDBMS . '::prepare', $query, $options);
   }
+
+  /**
+   * Returns the row count
+   *
+   * @param mixed $params See the driver for more info.
+   *
+   * @return int The row count
+   */
+  public static function rowCount(...$params) : int
+  {
+    return call_user_func_array(self::$currentDBMS . '::rowCount', $params);
+  }
 }

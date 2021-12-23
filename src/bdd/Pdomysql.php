@@ -88,7 +88,6 @@ abstract class Pdomysql
 
   /**
    * Returns the results with FETCH_ASSOC mask.
-   *
    * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
    *
    * @param PDOStatement $statement The query statement
@@ -345,5 +344,18 @@ abstract class Pdomysql
   public static function prepare(string $query, array $options = []): PDOStatement|false
   {
     return Sql::$currentConn->prepare($query, $options);
+  }
+
+  /**
+   * Returns the row count
+   * @link http://php.net/manual/en/pdostatement.rowcount.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return int The row count
+   */
+  public static function rowCount(PDOStatement $statement): int
+  {
+    return $statement->rowCount();
   }
 }
