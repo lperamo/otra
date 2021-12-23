@@ -216,9 +216,9 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return ?array The results
+   * @return array|false|null The results
    */
-  public function fetchAssoc(...$params) : ?array
+  public function fetchAssoc(...$params) : array|false|null
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -231,9 +231,9 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return ?array The results
+   * @return array|false|null The results
    */
-  public function fetchAllAssoc(...$params) : ?array
+  public function fetchAllAssoc(...$params) : array|false|null
   {
     if (isset($_SESSION['bootstrap']))
       return null;
