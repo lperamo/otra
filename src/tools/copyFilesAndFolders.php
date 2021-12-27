@@ -69,14 +69,18 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
     {
       if ($splFileInfo->isDir())
       {
-        $destinationFolder = $destination . $splFileInfo->getFilename();
+        $destinationFolder = $destination . mb_substr($splFileInfo->getPath(), $initialFolderLength) . '/' . $splFileInfo->getFilename();
 
-        if (!file_exists($destinationFolder) && !mkdir($destinationFolder))
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
       } else
       {
         $filePath = $splFileInfo->getRealPath();
-        $destinationFilePath = $destination . substr($filePath, $initialFolderLength);
+        $destinationFilePath = $destination . mb_substr($filePath, $initialFolderLength);
+        $destinationFolder = mb_substr($destinationFilePath, 0, mb_strrpos($destinationFilePath, '/'));
+
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
+          throw new OtraException('Cannot create the folder ' . $destinationFolder);
 
         if (!copy($filePath, $destinationFilePath))
           throw new OtraException(
