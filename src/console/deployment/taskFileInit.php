@@ -118,8 +118,13 @@ function generateStylesheetsFiles(
   $cssPath = realpath($cssFolder) . DIR_SEPARATOR . $generatedCssFile;
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
+  $sassLoadPathString = '';
+
+  foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+    $sassLoadPathString .= ' -I ' . $sassLoadPath;
+
   [, $output] = cliCommand(
-    'sass --update -q ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath,
+    'sass --update -q' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
     null,
     false
   );

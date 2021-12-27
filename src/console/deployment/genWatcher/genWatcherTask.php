@@ -380,6 +380,7 @@ foreach($iterator as $entry)
           $sassTreeString = SASS_TREE_STRING_INIT;
           // We add the main sass file to the tree
           $sassTree[KEY_ALL_SASS][$realPath] = true;
+
           if (!searchSassLastLeaves($sassTree, $realPath, $realPath, '.' . $extension, $sassTreeString))
           {
             echo CLI_ERROR, 'We cannot create the SASS cache tree if there are errors in your code!', END_COLOR, PHP_EOL;

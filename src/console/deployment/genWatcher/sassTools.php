@@ -2,12 +2,13 @@
 declare(strict_types=1);
 namespace otra\console\deployment\genWatcher;
 
+use otra\config\AllConfig;
 use otra\OtraException;
 use ReflectionException;
 use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\CONSOLE_PATH;
 use const otra\console\
-{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
+{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 
 use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\getPathInformations;
@@ -47,13 +48,20 @@ function updateSassTree(array &$sassTree, string $realPath, string $previousImpo
 }
 
 /**
- * @param string $importedSass   SASS/SCSS file to get absolute path from
- * @param string $dotExtension   Extension with the dot as in '.scss'
- * @param string $resourcesPath  Folder of the stylesheet that imports $importedSass
+ * @param string      $importedSass      SASS/SCSS file to get absolute path from
+ * @param string      $dotExtension      Extension with the dot as in '.scss'
+ * @param string      $resourcesPath     Folder of the stylesheet that imports $importedSass
+ * @param bool|string $sassLoadPathCheck Whether we have to use a specific SASS load path or not
  *
- * @return array The absolute path of $importedSass
+ * @return array [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] The import path
+ *               being the absolute path of $importedSass
  */
-function getCssPathFromImport(string $importedSass, string $dotExtension, string $resourcesPath) : array
+function getCssPathFromImport(
+  string $importedSass,
+  string $dotExtension,
+  string $resourcesPath,
+  bool|string $sassLoadPathCheck = false
+) : array
 {
   $lastSlashPosition = strrpos($importedSass, '/');
 
@@ -65,6 +73,11 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
   {
     $importedFileBaseName = $importedSass;
     $importPath = ($resourcesPath[strlen($resourcesPath) -1 ] === '/') ? '' : '/';
+  }
+
+  if ($sassLoadPathCheck !== false)
+  {
+    $resourcesPath = $sassLoadPathCheck;
   }
 
   // $importPath like ../../configuration
@@ -85,6 +98,15 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
   if ($newResourceToAnalyze === false)
     // Does the file exist with '_' at the beginning
     $newResourceToAnalyze = realpath($absoluteImportPathWithDotsAlt);
+
+  // Checks for loadPaths
+  if ($newResourceToAnalyze === false && $sassLoadPathCheck === false)
+  {
+    foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+    {
+      [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] = getCssPathFromImport($importedSass, $dotExtension, $resourcesPath, $sassLoadPath);
+    }
+  }
 
   return [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt];
 }
@@ -159,9 +181,16 @@ function searchSassLastLeaves(
     // If it does not exist in the two previously cases, it is surely a wrongly written import
     if ($newResourceToAnalyze === false)
     {
+      $wrongsImportPath = '';
+
+      foreach($importedCssFound as $importedCss)
+      {
+        $wrongsImportPath .= '- ' . CLI_INFO_HIGHLIGHT . $importedCss . CLI_ERROR . PHP_EOL;
+      }
+
       echo CLI_ERROR, 'In the file ', returnLegiblePath2($previousImportedCssFound),
-        CLI_ERROR, ',', PHP_EOL, 'this import path is wrong ', CLI_INFO_HIGHLIGHT,
-        $importedCssFound[0][$matchKey], CLI_ERROR, PHP_EOL, 'as it leads to ',
+        CLI_ERROR, ',', PHP_EOL, 'this/these import(s) path is/are wrong ', PHP_EOL,
+        $wrongsImportPath, CLI_ERROR, 'as it leads to ',
         returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, ' or to ',
         returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.', END_COLOR, PHP_EOL;
 
