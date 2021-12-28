@@ -71,7 +71,8 @@ foreach($iterator as $entry)
   if (!in_array($extension, RESOURCES_TO_WATCH) || $entry->isDir())
     continue;
 
-  $realPath = $entry->getRealPath();
+  // Avoids to generate JavaScript for the both sides of symbolic links
+  $realPath = $entry->getPathname();
 
   foreach (PATHS_TO_AVOID as $pathToAvoid)
   {
