@@ -268,8 +268,8 @@ function deleteAsset(string $assetName, string $assetExtension)
     $resourcesFolderEndPath
   ] = getPathInformations($assetName);
 
-  $assetPath = $resourcesMainFolder . $assetExtension . '/' . substr($resourcesFolderEndPath,
-      5) . $baseName . '.' . $assetExtension;
+  $assetPath = $resourcesMainFolder . $assetExtension . '/' . substr($resourcesFolderEndPath,5) . $baseName .
+    '.' . $assetExtension;
   unlink($assetPath);
   $assetMap = $assetPath . '.map';
 
@@ -294,7 +294,11 @@ $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SK
 $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
 // SASS/SCSS tree cache to optimize updates
-$sassTree = [0 => [], 1 => [], 2 => []];
+$sassTree = [
+  KEY_ALL_SASS => [],
+  KEY_MAIN_TO_LEAVES => [],
+  KEY_FULL_TREE => []
+];
 // SASS/SCSS resources (that have dependencies) that we have to watch
 $sassMainResources = [];
 $sassTreeDoesNotExist = !file_exists(SASS_TREE_CACHE_PATH);

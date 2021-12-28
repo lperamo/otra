@@ -76,9 +76,7 @@ function getCssPathFromImport(
   }
 
   if ($sassLoadPathCheck !== false)
-  {
     $resourcesPath = $sassLoadPathCheck;
-  }
 
   // $importPath like ../../configuration
   // $importedStylesheetFound like ../../configuration/generic
@@ -190,9 +188,9 @@ function searchSassLastLeaves(
 
       echo CLI_ERROR, 'In the file ', returnLegiblePath2($previousImportedCssFound),
         CLI_ERROR, ',', PHP_EOL, 'this/these import(s) path is/are wrong ', PHP_EOL,
-        $wrongsImportPath, CLI_ERROR, 'as it leads to ',
-        returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, ' or to ',
-        returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.', END_COLOR, PHP_EOL;
+        $wrongsImportPath, CLI_ERROR, 'as it can lead to ', PHP_EOL,
+        '- ', returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, PHP_EOL,
+        '- ', returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, END_COLOR, PHP_EOL;
 
       return false;
     }
