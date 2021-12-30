@@ -10,10 +10,9 @@ namespace otra\console\deployment\clearCache;
 use otra\config\{AllConfig,Routes};
 use otra\OtraException;
 use const otra\bin\CACHE_PHP_INIT_PATH;
-use const otra\cache\php\
-{BASE_PATH, CACHE_PATH, CONSOLE_PATH};
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, CONSOLE_PATH};
 use const otra\config\VERSION;
-use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_WARNING, END_COLOR, SUCCESS};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, SUCCESS};
 use function otra\console\{guessWords, promptUser};
 
 // arguments
@@ -31,16 +30,27 @@ const
   CLEAR_CACHE_MASK_CLASS_MAPPING = 64,
   CLEAR_CACHE_MASK_METADATA = 128,
   CLEAR_CACHE_MASK_SECURITY = 256,
+  CLEAR_CACHE_MASK_ALL = 511,
 
   // paths
   PHP_CACHE_PATH = CACHE_PATH . 'php/',
   RELATIVE_PHP_CACHE_PATH = 'cache/php/',
   RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
 
-$binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? 511);
+$binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? CLEAR_CACHE_MASK_ALL);
+
+if ($binaryMask < 1 || $binaryMask > CLEAR_CACHE_MASK_ALL)
+{
+  echo CLI_ERROR, 'Wrong mask value of ', CLI_INFO_HIGHLIGHT, $binaryMask, CLI_ERROR . '! It must be between ',
+    CLI_INFO_HIGHLIGHT, '1', CLI_ERROR, ' and ', CLI_INFO_HIGHLIGHT, CLEAR_CACHE_MASK_ALL, CLI_ERROR, '.',
+    END_COLOR, PHP_EOL;
+  throw new OtraException(code:1, exit: true);
+}
+
 $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
-require BASE_PATH . 'config/AllConfig.php';
+// '_once' Mandatory for tests :(
+require_once BASE_PATH . 'config/AllConfig.php';
 // Handling route
 if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1
   || ($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2
@@ -174,15 +184,15 @@ if ($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
 
 // If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
 if ((
-    ($binaryMask / CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
-    | ($binaryMask / CLEAR_CACHE_MASK_CLASS_MAPPING)
-    | ($binaryMask / CLEAR_CACHE_MASK_METADATA)
-    | ($binaryMask / CLEAR_CACHE_MASK_SECURITY)
+    ($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
+    | ($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING)
+    | ($binaryMask & CLEAR_CACHE_MASK_METADATA)
+    | ($binaryMask & CLEAR_CACHE_MASK_SECURITY)
   ) & 1)
   checkFolder(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH);
 
 /* **************** PHP BOOTSTRAPS **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
+if ($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS)
 {
   $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
   $removeCachedFiles(PHP_CACHE_PATH . 'otraRoutes/', RELATIVE_PHP_CACHE_PATH . 'otraRoutes/', '.php');
@@ -190,7 +200,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) >> 1)
 }
 
 /* **************** CSS **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_CSS) >> 2)
+if ($binaryMask & CLEAR_CACHE_MASK_CSS)
 {
   define(__NAMESPACE__ . '\\SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
 
@@ -211,7 +221,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3)
 }
 
 /* **************** TEMPLATES **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) >> 4)
+if ($binaryMask & CLEAR_CACHE_MASK_TEMPLATES)
 {
   $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
   echo 'Templates cleared', SUCCESS;
@@ -230,7 +240,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
 }
 
 /* **************** CLASS MAPPING **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
+if ($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING)
 {
   $classMapFile = 'ClassMap.php';
   unlinkFile(
@@ -248,7 +258,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) >> 6)
 }
 
 /* **************** CONSOLE TASKS METADATA **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
+if ($binaryMask & CLEAR_CACHE_MASK_METADATA)
 {
   $taskClassMapFile = 'tasksClassMap.php';
   unlinkFile(
@@ -266,7 +276,7 @@ if (($binaryMask & CLEAR_CACHE_MASK_METADATA) >> 7)
 }
 
 /* **************** SECURITY FILES **************** */
-if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) >> 8)
+if ($binaryMask & CLEAR_CACHE_MASK_SECURITY)
 {
   $arrayToUnlink = array_merge(
     glob(PHP_CACHE_PATH . 'security/dev/*.php'),

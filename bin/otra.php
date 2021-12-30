@@ -46,7 +46,7 @@ namespace otra\bin
 
   // Error handling
   ini_set('display_errors', '1');
-  error_reporting(E_ALL & ~E_DEPRECATED);
+  error_reporting(E_ALL);
   require CORE_PATH . 'OtraException.php';
   set_error_handler([OtraException::class, 'errorHandler']);
   set_exception_handler([OtraException::class, 'exceptionHandler']);

@@ -13,7 +13,8 @@ use const otra\src\console\deployment\updateConf\
   UPDATE_CONF_MASK_SCHEMA,
   UPDATE_CONF_MASK_SECURITIES};
 
-require CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
+// can hang on `init` task, if we put `require`
+require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
 /**
  * @author Lionel Péramo

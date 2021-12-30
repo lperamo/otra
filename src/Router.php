@@ -66,7 +66,7 @@ abstract class Router
       $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
     }
 
-    // If the action class does not exist, then it is maybe a Composer module that require the bundle's name to
+    // If the action class does not exist, then it is maybe a Composer module that needs the bundle's name to
     // differentiate it from the installed version of the module. We use `ob_` like functions to avoid printing error
     // when not finding classes
     ob_start();

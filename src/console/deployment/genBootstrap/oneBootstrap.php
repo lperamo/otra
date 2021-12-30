@@ -9,9 +9,11 @@ namespace otra\console\deployment\genBootstrap;
 
 use otra\{OtraException, Router};
 use otra\config\{AllConfig, Routes};
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
+use const otra\cache\php\
+{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\cache\php\init\CLASSMAP;
-use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
+use const otra\console\
+{CLI_BASE, CLI_ERROR, deployment\clearCache\PHP_CACHE_PATH, END_COLOR};
 use function otra\tools\files\compressPHPFile;
 
 const
@@ -89,9 +91,10 @@ if (isset($params['session']))
   }
 }
 
-$phpRouteFile = BASE_PATH . (!str_contains($route, 'otra_'))
-  ? 'cache/php/' . $route
-  : 'cache/php/otraRoutes/' . $route;
+$phpRouteFile = CACHE_PATH . (!str_contains($route, 'otra_')
+  ? 'php/' . $route
+  : 'php/otraRoutes/' . $route);
+
 $temporaryPhpRouteFile = $phpRouteFile . '_.php';
 
 require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
