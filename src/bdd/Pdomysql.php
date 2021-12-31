@@ -50,19 +50,26 @@ abstract class Pdomysql
 
   /**
    * Sends an SQL query !
+   *
    * @link http://php.net/manual/en/function.mysql-query.php
    *
-   * @param string $query SQL query.
-   *                      The query string should not end with a semicolon. Data inside the query should be properly
-   *                      escaped.
+   * @param string $query   SQL query.
+   *                        The query string should not end with a semicolon. Data inside the query should be properly
+   *                        escaped.
+   *
+   * @param ?int $fetchMode The default fetch mode for the returned PDOStatement. It must be one of the PDO::FETCH_*
+   *                        constants.
+   *                        If this argument is passed to the function, the remaining arguments will be treated as
+   *                        though PDOStatement::setFetchMode() was called on the resultant statement object. The
+   *                        subsequent arguments vary depending on the selected fetch mode.
    *
    * @return PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
    */
-  public static function query(string $query) : PDOStatement
+  public static function query(string $query, ?int $fetchMode = null) : PDOStatement
   {
-    $result = Sql::$currentConn->query($query);
+    $result = Sql::$currentConn->query($query, $fetchMode);
 
     if (false === $result)
     {

@@ -33,6 +33,7 @@ class Sql
     $currentConnectionName;
 
   public static ?Sql $instance;
+  private const QUERY = 0;
 
   private function __construct()
   {
@@ -162,7 +163,7 @@ class Sql
    *
    * @return bool|resource Returns a MySQL link identifier on success, or false on error
    */
-  public static function connect(...$params)
+  public static function connect(mixed ...$params)
   {
     return call_user_func_array([self::$currentDBMS, 'connect'], $params);
   }
@@ -174,7 +175,7 @@ class Sql
    *
    * @return bool True if successful
    */
-  public function selectDb(...$params) : bool
+  public function selectDb(mixed ...$params) : bool
   {
     $return = call_user_func_array(self::$currentDBMS . '::selectDb', $params);
     // @codeCoverageIgnoreStart
@@ -187,12 +188,11 @@ class Sql
   /**
    * Sends an SQL query !
    *
-   * @param string $query SQL query.
-   * The query string should not end with a semicolon. Data inside the query should be properly escaped.
+   * @param mixed $params See the driver for more info.
    *
    * @return null|resource Returns a resource on success, otherwise an exception is raised
    */
-  public function query(string $query)
+  public function query(mixed ...$params)
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -204,11 +204,11 @@ class Sql
       Logger::logSQLTo(
         (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
         (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
-        $query,
+        $params[self::QUERY],
         'sql');
     }
 
-    return call_user_func(self::$currentDBMS . '::query', $query, self::$currentConn);
+    return call_user_func_array(self::$currentDBMS . '::query', $params);
   }
 
   /**
@@ -218,7 +218,7 @@ class Sql
    *
    * @return array|false|null The results
    */
-  public function fetchAssoc(...$params) : array|false|null
+  public function fetchAssoc(mixed ...$params) : array|false|null
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -233,7 +233,7 @@ class Sql
    *
    * @return array|false|null The results
    */
-  public function fetchAllAssoc(...$params) : array|false|null
+  public function fetchAllAssoc(mixed ...$params) : array|false|null
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -248,7 +248,7 @@ class Sql
    *
    * @return ?array The results
    */
-  public function fetchAllByPair(...$params) : ?array
+  public function fetchAllByPair(mixed ...$params) : ?array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -263,7 +263,7 @@ class Sql
    *
    * @return ?array The results
    */
-  public function fetchArray(...$params) : ?array
+  public function fetchArray(mixed ...$params) : ?array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -278,7 +278,7 @@ class Sql
    *
    * @return ?array The results
    */
-  public function getColumnMeta(...$params) : ?array
+  public function getColumnMeta(mixed ...$params) : ?array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -293,7 +293,7 @@ class Sql
    *
    * @return ?object The next result
    */
-  public function fetchObject(...$params) : ?object
+  public function fetchObject(mixed ...$params) : ?object
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -308,7 +308,7 @@ class Sql
    *
    * @return ?array The next result
    */
-  public static function fetchRow(...$params) : ?array
+  public static function fetchRow(mixed ...$params) : ?array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -323,7 +323,7 @@ class Sql
    *
    * @return null|bool|array The results. Returns false if there are no results.
    */
-  public function values(...$params) : null|bool|array
+  public function values(mixed ...$params) : null|bool|array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -338,7 +338,7 @@ class Sql
    *
    * @return null|bool|array The results. Returns false if there are no results.
    */
-  public function valuesOneCol(...$params) : null|bool|array
+  public function valuesOneCol(mixed ...$params) : null|bool|array
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -353,7 +353,7 @@ class Sql
    *
    * @return mixed The result. Returns false if there are no result.
    */
-  public function single(...$params) : mixed
+  public function single(mixed ...$params) : mixed
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -383,7 +383,7 @@ class Sql
    *
    * @return ?bool Returns true on success or false on failure.
    */
-  public function freeResult(...$params) : ?bool
+  public function freeResult(mixed ...$params) : ?bool
   {
     if (isset($_SESSION['bootstrap']))
       return null;
@@ -489,7 +489,7 @@ class Sql
    *
    * @return int The row count
    */
-  public static function rowCount(...$params) : int
+  public static function rowCount(mixed ...$params) : int
   {
     return call_user_func_array(self::$currentDBMS . '::rowCount', $params);
   }
