@@ -365,4 +365,18 @@ abstract class Pdomysql
   {
     return $statement->rowCount();
   }
+
+  /**
+   * Configures a PDO attribute
+   * @link https://www.php.net/manual/fr/pdo.setattribute.php
+   *
+   * @param int   $attribute
+   * @param mixed $value
+   *
+   * @return bool
+   */
+  public static function setAttribute(int $attribute, mixed $value): bool
+  {
+    return Sql::$currentConn->setAttribute($attribute, $value);
+  }
 }

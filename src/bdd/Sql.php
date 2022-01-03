@@ -493,4 +493,16 @@ class Sql
   {
     return call_user_func_array(self::$currentDBMS . '::rowCount', $params);
   }
+
+  /**
+   * Configures a PDO attribute
+   *
+   * @param mixed ...$params
+   *
+   * @return bool
+   */
+  public static function setAttribute(mixed ...$params): bool
+  {
+    return call_user_func_array(self::$currentDBMS . '::setAttribute', $params);
+  }
 }
