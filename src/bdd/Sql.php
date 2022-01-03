@@ -505,4 +505,16 @@ class Sql
   {
     return call_user_func_array(self::$currentDBMS . '::setAttribute', $params);
   }
+
+  /**
+   * Gets a database connection attribute
+   *
+   * @param int $attribute
+   *
+   * @return bool|int|string|array|null
+   */
+  public static function getAttribute(int $attribute): bool|int|string|array|null
+  {
+    return call_user_func(self::$currentDBMS . '::getAttribute', $attribute);
+  }
 }

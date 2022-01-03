@@ -379,4 +379,18 @@ abstract class Pdomysql
   {
     return Sql::$currentConn->setAttribute($attribute, $value);
   }
+
+  /**
+   * Gets a database connection attribute
+   *
+   * @link https://www.php.net/manual/fr/pdo.getattribute.php
+   *
+   * @param int $attribute
+   *
+   * @return bool|int|string|array|null
+   */
+  public static function getAttribute(int $attribute): bool|int|string|array|null
+  {
+    return Sql::$currentConn->getAttribute($attribute);
+  }
 }
