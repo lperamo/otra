@@ -190,9 +190,9 @@ class Sql
    *
    * @param mixed $params See the driver for more info.
    *
-   * @return null|resource Returns a resource on success, otherwise an exception is raised
+   * @return mixed Returns a resource on success, otherwise an exception is raised
    */
-  public function query(mixed ...$params)
+  public function query(mixed ...$params) : mixed
   {
     if (isset($_SESSION['bootstrap']))
       return null;
