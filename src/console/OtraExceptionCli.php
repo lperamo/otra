@@ -14,19 +14,30 @@ use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
  */
 class OtraExceptionCli extends Exception
 {
-  private const TYPE_WIDTH = 21, // the longest type is E_RECOVERABLE_ERROR so 16, and we add 5 to this
-    FUNCTION_WIDTH = 49,
-    LINE_WIDTH = 9,
-    FILE_WIDTH = 85,
-    ARGUMENTS_WIDTH = 51,
+  private const
     KEY_VARIABLES = 'variables',
-    TABLE_WIDTHS = [self::FUNCTION_WIDTH, self::LINE_WIDTH, self::FILE_WIDTH, self::ARGUMENTS_WIDTH],
+    TABLE_WIDTHS = ['function', 'line', 'file', 'arguments'],
+    TOP_START_SEPARATOR = '┌',
     TOP_INTERSECTION_SEPARATOR = '┬',
-    INTERSECTION_OPERATOR = '├',
+    TOP_END_SEPARATOR = '┐',
+    MEDIUM_START_SEPARATOR = '├',
+    VERTICAL_SEPARATOR = '│',
+    INTERSECTION_OPERATOR = '┼',
     BOTTOM_INTERSECTION_SEPARATOR = '┴',
-    HORIZONTAL_SEPARATOR = '─';
+    BOTTOM_END_SEPARATOR = '┘',
+    HORIZONTAL_SEPARATOR = '─',
+    CELL_PADDING = 2,
+    UNKNOWN_LENGTH = 7,
+    LINE_HEADER_LENGTH = 4,
+    NOT_IMPLEMENTED_YET_LENGTH = 19,
+    GET_LONGER_STRING_CALLBACK = 'self::getLongerString';
 
-  private static string $typeHeaderSpaces = '';
+  private static int
+    $typeLongestString,
+    $functionLongestString,
+    $lineLongestString,
+    $fileLongestString,
+    $argumentsLongestString;
 
   /**
    * @param OtraException $exception
@@ -43,8 +54,6 @@ class OtraExceptionCli extends Exception
     // Is the error code a native error code ?
     $exception->scode = OtraException::$codes[$exception->code] ?? 'UNKNOWN';
     $exception->message = preg_replace('/<br\s*\/?>/i', '', $exception->message);
-
-    self::$typeHeaderSpaces = str_repeat(self::HORIZONTAL_SEPARATOR,self::TYPE_WIDTH);
 
     self::showMessage($exception);
   }
@@ -83,8 +92,8 @@ class OtraExceptionCli extends Exception
       elseif (str_contains($exceptionFile, BASE_PATH))
         $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
 
-      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile, END_COLOR,
-        ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
+      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile,
+      END_COLOR, ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
     }
 
     $exceptionBacktraces = $exception->backtraces;
@@ -96,21 +105,98 @@ class OtraExceptionCli extends Exception
     // Preparing table decorations
     $tableEnd = $headersTop = $headersEnd = '';
 
+    $filenames = array_column($exceptionBacktraces, 'file');
+    $formattedFilenames = [];
+    $compositeColoredPath = true;
+
+    foreach ($filenames as &$filename)
+    {
+      $compositeColoredPath = true;
+
+      if ($filename !== '')
+      {
+        $filename = str_replace('\\', DIR_SEPARATOR, $filename);
+
+        if (str_contains($filename, CONSOLE_PATH))
+          $filename = self::returnShortenFilePath('CONSOLE', $filename);
+        elseif (str_contains($filename, CORE_PATH))
+          $filename = self::returnShortenFilePath('CORE', $filename);
+        elseif (str_contains($filename, BASE_PATH))
+          $filename = self::returnShortenFilePath('BASE', $filename);
+        else
+          $compositeColoredPath = false;
+      }
+      else
+        $compositeColoredPath = false;
+
+      $formattedFilenames[] = [
+        'compositeColoredPath' => $compositeColoredPath,
+        'file' => $filename
+      ];
+    }
+
+    $exceptionCodeLen = mb_strlen($exception->scode);
+    self::$typeLongestString = ($exceptionCodeLen > self::UNKNOWN_LENGTH
+        ? $exceptionCodeLen
+        : self::UNKNOWN_LENGTH) + self::CELL_PADDING;
+
+    $functionLen = mb_strlen(array_reduce(
+      array_column($exceptionBacktraces, 'function'),
+      self::GET_LONGER_STRING_CALLBACK,
+      ''
+    ));
+    self::$functionLongestString = ($functionLen > 8 ? $functionLen : 8) + self::CELL_PADDING;
+    $lineCodeLen = mb_strlen(array_reduce(
+      array_column($exceptionBacktraces, 'line'),
+      self::GET_LONGER_STRING_CALLBACK,
+      ''
+    ));
+
+    self::$lineLongestString = ($lineCodeLen > self::LINE_HEADER_LENGTH
+        ? $lineCodeLen
+        : self::LINE_HEADER_LENGTH) + self::CELL_PADDING;
+    self::$fileLongestString = mb_strlen(array_reduce(
+      $filenames,
+      self::GET_LONGER_STRING_CALLBACK,
+      ''
+    ));
+
+    self::$argumentsLongestString = (self::$typeLongestString > self::NOT_IMPLEMENTED_YET_LENGTH
+        ? self::$typeLongestString
+        : self::NOT_IMPLEMENTED_YET_LENGTH) + self::CELL_PADDING;
+
     foreach(self::TABLE_WIDTHS as $headerWidth)
     {
-      $headersTop .= self::TOP_INTERSECTION_SEPARATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
-      $headersEnd .= self::INTERSECTION_OPERATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
-      $tableEnd .= self::BOTTOM_INTERSECTION_SEPARATOR . str_repeat(self::HORIZONTAL_SEPARATOR, $headerWidth);
+      $separatorsLength = self::${$headerWidth . 'LongestString'};
+
+      // adjustments due to color changes (curious that is not dependent of $compositeColoredPath
+      if ($headerWidth === 'file')
+        $separatorsLength -= 21;
+
+      $separators = str_repeat(self::HORIZONTAL_SEPARATOR, $separatorsLength);
+      $headersTop .= self::TOP_INTERSECTION_SEPARATOR . $separators;
+      $headersEnd .= self::INTERSECTION_OPERATOR . $separators;
+      $tableEnd .= self::BOTTOM_INTERSECTION_SEPARATOR . $separators;
     }
+
+    unset($compositeColoredPath);
+
+    $headersTop .= self::TOP_END_SEPARATOR;
+    $headersEnd .= self::VERTICAL_SEPARATOR;
+    $tableEnd .= self::BOTTOM_END_SEPARATOR;
 
     unset($headerWidth);
 
     /******************************
      * Write HEADERS of the table *
      ******************************/
-    $backtracesOutput = CLI_TABLE . '┌' . self::$typeHeaderSpaces . $headersTop . END_COLOR . PHP_EOL .
+    $backtracesOutput = CLI_TABLE . self::TOP_START_SEPARATOR .
+      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) .
+      $headersTop . END_COLOR . PHP_EOL .
       self::consoleHeaders() . PHP_EOL .
-      CLI_TABLE . '├' . self::$typeHeaderSpaces . $headersEnd . END_COLOR . END_COLOR . PHP_EOL;
+      CLI_TABLE . self::MEDIUM_START_SEPARATOR .
+      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) . $headersEnd .
+      END_COLOR . END_COLOR . PHP_EOL;
 
     /*******************************
      * Write the BODY of the table *
@@ -123,52 +209,48 @@ class OtraExceptionCli extends Exception
          $actualTraceIndex++)
     {
       $actualTrace = $exceptionBacktraces[$actualTraceIndex];
-      $actualTraceFile = $actualTrace['file'] ?? '';
 
-      $compositeColoredPath = true;
-
-      if ($actualTraceFile !== '')
-      {
-        $actualTraceFile = str_replace('\\', DIR_SEPARATOR, $actualTraceFile);
-
-        if (str_contains($actualTraceFile, CONSOLE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('CONSOLE', $actualTraceFile);
-        elseif (str_contains($actualTraceFile, CORE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('CORE', $actualTraceFile);
-        elseif (str_contains($actualTraceFile, BASE_PATH))
-          $actualTraceFile = self::returnShortenFilePath('BASE', $actualTraceFile);
-        else
-          $compositeColoredPath = false;
-      } else
-        $compositeColoredPath = false;
-
-      $backtracesOutput .= CLI_TABLE . '| ' . END_COLOR .
-        str_pad(0 === $actualTraceIndex ? $exception->scode : '', self::TYPE_WIDTH - 1) .
-        self::consoleLine($actualTrace, 'function', self::FUNCTION_WIDTH) .
-        self::consoleLine($actualTrace, 'line', self::LINE_WIDTH) .
+      $backtracesOutput .= CLI_TABLE . self::VERTICAL_SEPARATOR . ' ' . END_COLOR .
+        str_pad(
+          0 === $actualTraceIndex ? $exception->scode : '',
+          self::$typeLongestString - 1
+        ) .
+        self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
+        self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
         /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
-        self::consoleLine(
+        (isset($formattedFilenames[$actualTraceIndex])
+        ? self::consoleLine(
           $actualTrace,
           'file',
           // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-          $compositeColoredPath ? self::FILE_WIDTH + 23 : self::FILE_WIDTH,
-          $actualTraceFile
-        ) .
+          self::$fileLongestString +
+          ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
+          $formattedFilenames[$actualTraceIndex]['file']
+        )
+        : self::consoleLine(
+          $actualTrace,
+          'file',
+          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          self::$fileLongestString - 21,
+          ''
+        )) .
         /** ARGUMENTS */
-        CLI_TABLE . '|' . END_COLOR .
-        ' NOT IMPLEMENTED YET' .
+        CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_BASE .
+        ' NOT IMPLEMENTED YET ' . CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR .
         PHP_EOL;
 
       // echo $now['args']; after args has been converted
     }
 
+    $backtracesOutput .= CLI_TABLE . '└' .
+      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) . $tableEnd . END_COLOR . PHP_EOL;
+
     // End of the table
-    echo $backtracesOutput . CLI_TABLE . '└' . self::$typeHeaderSpaces . $tableEnd . END_COLOR . PHP_EOL;
+    echo $backtracesOutput;
   }
 
   /**
    * Returns the text that shows the headers for a unicode table (command line style)
-   *
    *
    * @return string
    */
@@ -178,11 +260,11 @@ class OtraExceptionCli extends Exception
 
     foreach(['Type', 'Function', 'Line', 'File', 'Arguments'] as $value)
     {
-      $output .= CLI_TABLE . '│' . CLI_TABLE_HEADER .
-        str_pad(' ' . $value, constant('self::' . mb_strtoupper($value) . '_WIDTH'));
+      $output .= CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_TABLE_HEADER .
+        str_pad(' ' . $value, ($value === 'File' ? -21 : 0) + self::${lcfirst($value) . 'LongestString'});
     }
 
-    return $output;
+    return $output . CLI_TABLE . self::VERTICAL_SEPARATOR;
   }
 
   /**
@@ -190,7 +272,7 @@ class OtraExceptionCli extends Exception
    *
    * @param array  $rowData          Data of a stack trace line
    * @param string $columnName
-   * @param int    $width
+   * @param int    $padLength
    * @param string $alternateContent
    *
    * @return string
@@ -198,15 +280,23 @@ class OtraExceptionCli extends Exception
   #[Pure] private static function consoleLine(
     array $rowData,
     string $columnName,
-    int $width,
+    int $padLength,
     string $alternateContent = ''
   ) : string
   {
-    return CLI_TABLE . '│' . END_COLOR .
-      str_pad(isset($rowData[$columnName])
+    return CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR . str_pad((isset($rowData[$columnName])
         ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
-        : ' -',
-        $width
-      );
+        : ' -'), $padLength);
+  }
+
+  /**
+   * @param string $firstString
+   * @param string $secondString
+   *
+   * @return string
+   */
+  private static function getLongerString(string $firstString, string $secondString) : string
+  {
+    return (mb_strlen($firstString) > mb_strlen($secondString)) ? $firstString : $secondString;
   }
 }
