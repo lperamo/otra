@@ -10,6 +10,8 @@ use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use const otra\cache\php\CORE_PATH;
+use function otra\tools\files\returnLegiblePath;
 
 if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
@@ -83,9 +85,13 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
 
         if (!copy($filePath, $destinationFilePath))
+        {
+          require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
           throw new OtraException(
-            'Cannot copy the file \'' . $filePath . ' to ' . $destinationFilePath . '\'.'
+            'Cannot copy the file ' . returnLegiblePath($filePath) . ' to ' .
+            returnLegiblePath($destinationFilePath) . '.'
           );
+        }
       }
     }
   }
