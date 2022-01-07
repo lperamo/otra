@@ -7,6 +7,16 @@ namespace otra\console\helpAndTools\hash;
  */
 
 const HASH_ARG_BLOWFISH_ROUNDS = 2;
-$argv[HASH_ARG_BLOWFISH_ROUNDS] = $argv[HASH_ARG_BLOWFISH_ROUNDS] ?? 7;
-$saltChars = array_merge(range('A','Z'), range('a','z'), range(0,9));
-echo '$2y$0', $argv[HASH_ARG_BLOWFISH_ROUNDS], '$', str_repeat((string)$saltChars[array_rand($saltChars)], 22), PHP_EOL;
+
+/**
+ * @param array $argv
+ *
+ * @return void
+ */
+function hash(array $argv) : void
+{
+  $argv[HASH_ARG_BLOWFISH_ROUNDS] = $argv[HASH_ARG_BLOWFISH_ROUNDS] ?? 7;
+  $saltChars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+  echo '$2y$0', $argv[HASH_ARG_BLOWFISH_ROUNDS], '$', str_repeat((string)$saltChars[array_rand($saltChars)], 22),
+  PHP_EOL;
+}

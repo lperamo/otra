@@ -9,7 +9,6 @@ namespace otra\console\deployment\updateConf;
 
 use otra\config\Routes;
 use otra\OtraException;
-use function otra\tools\files\compressPHPFile;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -22,6 +21,7 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_SECURITIES
 };
 use function otra\src\tools\debug\validateYaml;
+use function otra\tools\files\compressPHPFile;
 use function otra\tools\files\returnLegiblePath;
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
@@ -43,7 +43,6 @@ const
   NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
   PATH_CONFIG_FIXTURES = 'config/fixtures/',
   PATH_CONFIG_DATA_YML = 'config/data/yml/';
-
 
 /**
  * @param ?string $mask

@@ -8,11 +8,10 @@ declare(strict_types=1);
 namespace otra\console\deployment\buildDev;
 
 use FilesystemIterator;
+use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use function otra\console\deployment\
-{generateJavaScript, generateStylesheetsFiles, getPathInformations, isNotInThePath, updateConf\updateConf};
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_WARNING, END_COLOR, SUCCESS};
 use const otra\console\deployment\
@@ -26,113 +25,136 @@ use const otra\console\deployment\
   WATCH_FOR_ROUTES,
   WATCH_FOR_TS_RESOURCES
 };
+use function otra\console\deployment\
+{
+  genClassMap\genClassMap,
+  generateJavaScript,
+  generateStylesheetsFiles,
+  getPathInformations,
+  isNotInThePath,
+  updateConf\updateConf
+};
 
 require CORE_PATH . 'console/deployment/taskFileInit.php';
-const BUILD_DEV_ARG_VERBOSE = 2,
-BUILD_DEV_ARG_SCOPE = 5;
+const
+  BUILD_DEV_ARG_VERBOSE = 2,
+  BUILD_DEV_ARG_SCOPE = 5;
 
-// Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
-define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
-
-echo CLI_WARNING, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
-
-$filesProcessed = false;
-
-// Handle PHP files
-if (WATCH_FOR_PHP_FILES)
+/**
+ * @param array $argv
+ *
+ * @throws OtraException
+ * @return void
+ */
+function buildDev(array $argv) : void
 {
-  // We generate the class mapping...
-  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
-  $filesProcessed = true;
-}
+  // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
+  define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
+  define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
 
-if (WATCH_FOR_ROUTES)
-{
-  // We update routes configuration if the php file is a routes' configuration file
-  echo 'Launching routes update...', PHP_EOL;
-  require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
-  updateConf('2');
-  $filesProcessed = true;
-}
+  echo CLI_WARNING, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
 
-require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
+  $filesProcessed = false;
 
-$dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
-
-// SELF_FIRST to have file AND folders in order to detect addition of new files
-$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
-
-/** @var SplFileInfo $entry */
-foreach($iterator as $entry)
-{
-  $extension = $entry->getExtension();
-
-  if (!in_array($extension, RESOURCES_TO_WATCH) || $entry->isDir())
-    continue;
-
-  // Avoids to generate JavaScript for the both sides of symbolic links
-  $realPath = $entry->getPathname();
-
-  foreach (PATHS_TO_AVOID as $pathToAvoid)
+  // Handle PHP files
+  if (WATCH_FOR_PHP_FILES)
   {
-    if (str_contains($realPath, $pathToAvoid))
-      continue 2;
-  }
-
-  // Adding watches for resources files if needed
-  if (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES)
-  {
-    // Does the resources' path belongs to a valid defined path ? If yes, we process it
-    if (isNotInThePath(
-      PATHS_TO_HAVE_RESOURCES,
-      $realPath,
-      (BUILD_DEV_SCOPE === 0 && !str_contains($realPath, CORE_PATH)
-      || BUILD_DEV_SCOPE === 1 && str_contains($realPath, CORE_PATH)
-      || BUILD_DEV_SCOPE === 2)
-    ))
-      continue;
-
+    // We generate the class mapping...
+    // "_once ..." needed to avoid a repeatable function definition check
+    require_once CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+    genClassMap([]);
     $filesProcessed = true;
-    $resourceName = $entry->getPathname();
+  }
 
-    // starters are only meant to be copied, not used
-    if (str_contains($resourceName, 'starters'))
+  if (WATCH_FOR_ROUTES)
+  {
+    // We update routes configuration if the php file is a routes' configuration file
+    echo 'Launching routes update...', PHP_EOL;
+    require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+    updateConf('2');
+    $filesProcessed = true;
+  }
+
+  require CONSOLE_PATH . 'deployment/generateOptimizedJavaScript.php';
+
+  $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
+
+  // SELF_FIRST to have file AND folders in order to detect addition of new files
+  $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
+
+  /** @var SplFileInfo $entry */
+  foreach($iterator as $entry)
+  {
+    $extension = $entry->getExtension();
+
+    if (!in_array($extension, RESOURCES_TO_WATCH) || $entry->isDir())
       continue;
 
-    [$baseName, $resourcesMainFolder, $resourcesFolderEndPath] = getPathInformations($resourceName);
+    // Avoids generating JavaScript for the both sides of symbolic links
+    $realPath = $entry->getPathname();
 
-    if ($extension === 'ts')
+    foreach (PATHS_TO_AVOID as $pathToAvoid)
     {
-      // 6 = length of devJs/
-      $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
+      if (str_contains($realPath, $pathToAvoid))
+        continue 2;
+    }
 
-      if (WATCH_FOR_TS_RESOURCES)
-        generateJavaScript(
-          false,
-          BUILD_DEV_VERBOSE,
-          FILE_TASK_GCC,
-          $resourcesMainFolder,
+    // Adding watches for resources files if needed
+    if (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES)
+    {
+      // Does the resources' path belongs to a valid defined path ? If yes, we process it
+      if (isNotInThePath(
+        PATHS_TO_HAVE_RESOURCES,
+        $realPath,
+        (BUILD_DEV_SCOPE === 0 && !str_contains($realPath, CORE_PATH)
+          || BUILD_DEV_SCOPE === 1 && str_contains($realPath, CORE_PATH)
+          || BUILD_DEV_SCOPE === 2)
+      ))
+        continue;
+
+      $filesProcessed = true;
+      $resourceName = $entry->getPathname();
+
+      // starters are only meant to be copied, not used
+      if (str_contains($resourceName, 'starters'))
+        continue;
+
+      [$baseName, $resourcesMainFolder, $resourcesFolderEndPath] = getPathInformations($resourceName);
+
+      if ($extension === 'ts')
+      {
+        // 6 = length of devJs/
+        $resourcesMainFolder = $resourcesMainFolder . 'js/' . substr($resourcesFolderEndPath, 6);
+
+        if (WATCH_FOR_TS_RESOURCES)
+          generateJavaScript(
+            false,
+            BUILD_DEV_VERBOSE,
+            FILE_TASK_GCC,
+            $resourcesMainFolder,
+            $baseName,
+            $resourceName
+          );
+      }
+      elseif (!str_starts_with($baseName, '_') && WATCH_FOR_CSS_RESOURCES)
+        generateStylesheetsFiles(
           $baseName,
-          $resourceName
+          $resourcesMainFolder,
+          $resourcesFolderEndPath,
+          $resourceName,
+          $extension,
+          BUILD_DEV_VERBOSE > 0
         );
-    } elseif (!str_starts_with($baseName, '_') && WATCH_FOR_CSS_RESOURCES)
-      generateStylesheetsFiles(
-        $baseName,
-        $resourcesMainFolder,
-        $resourcesFolderEndPath,
-        $resourceName,
-        $extension,
-        BUILD_DEV_VERBOSE > 0
-      );
+    }
   }
+
+  unset($dir_iterator, $iterator, $entry, $realPath);
+
+  if ($filesProcessed)
+  {
+    if (BUILD_DEV_VERBOSE === 0)
+      echo CLI_BASE, 'Files have been generated', SUCCESS;
+  }
+  else
+    echo CLI_WARNING, 'No files to process.', END_COLOR, PHP_EOL;
 }
-
-unset($dir_iterator, $iterator, $entry, $realPath);
-
-if ($filesProcessed)
-{
-  if (BUILD_DEV_VERBOSE === 0)
-    echo CLI_BASE, 'Files have been generated', SUCCESS;
-} else
-  echo CLI_WARNING, 'No files to process.', END_COLOR, PHP_EOL;

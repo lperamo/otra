@@ -9,24 +9,31 @@ namespace otra\console\deployment\genSitemap;
 
 use otra\config\AllConfig;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, SPACE_INDENT};
-use const otra\console\{CLI_SUCCESS,END_COLOR};
+use const otra\console\SUCCESS;
 
-$routes = require BUNDLES_PATH . 'config/Routes.php';
-$siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
-  '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+const
+  SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT;
 
-const SPACE_INDENT_2 = SPACE_INDENT . SPACE_INDENT;
-
-foreach ($routes as $route)
+/**
+ * @return void
+ */
+function genSitemap() : void
 {
-  $siteMapContent .= /** @lang text */
-    SPACE_INDENT . '<url>' . PHP_EOL .
-    SPACE_INDENT_2 . '<loc>https://' . AllConfig::$deployment['domainName'] . $route['chunks']['0'] .
-    '</loc>' . PHP_EOL .
-    SPACE_INDENT_2 . '<lastmod>' . date('c') . '</lastmod>' . PHP_EOL .
-    SPACE_INDENT . '</url>';
+  $routes = require BUNDLES_PATH . 'config/Routes.php';
+  $siteMapContent = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL .
+    '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+
+  foreach ($routes as $route)
+  {
+    $siteMapContent .= /** @lang text */
+      SPACE_INDENT . '<url>' . PHP_EOL .
+      SPACE_INDENT_2 . '<loc>https://' . AllConfig::$deployment['domainName'] . $route['chunks']['0'] .
+      '</loc>' . PHP_EOL .
+      SPACE_INDENT_2 . '<lastmod>' . date('c') . '</lastmod>' . PHP_EOL .
+      SPACE_INDENT . '</url>';
+  }
+
+  file_put_contents(BASE_PATH . 'web/sitemap.xml', /** @lang text */ $siteMapContent . PHP_EOL . '</urlset>');
+
+  echo 'Site map created' . SUCCESS;
 }
-
-file_put_contents(BASE_PATH . 'web/sitemap.xml', /** @lang text */ $siteMapContent . PHP_EOL . '</urlset>');
-
-echo 'Site map created' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL;

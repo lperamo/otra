@@ -13,7 +13,8 @@ use function otra\console\architecture\doWeCreateIt;
 
 /** @var bool $interactive */
 /** @var bool $consoleForce */
-require CONSOLE_PATH . 'architecture/createModule/createModule.php';
+// "_once ..." needed to avoid a repeatable function definition check
+require_once CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
 // MODULE STEP
 $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
@@ -29,6 +30,5 @@ if (!file_exists($modulePath))
   if (!defined(__NAMESPACE__ . '\\BUNDLE_BASE_PATH'))
     define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
-  createModule(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
+  createModuleCore(BUNDLE_BASE_PATH, $moduleName, $interactive, $consoleForce);
 }
-

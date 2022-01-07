@@ -11,6 +11,7 @@ use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\console\deployment\updateConf\updateConf;
 use function otra\console\promptUser;
 
@@ -31,7 +32,7 @@ const
  *
  * @throws OtraException
  */
-function createAction(string $bundleName, string $moduleName, string $controllerName,
+function createActionCore(string $bundleName, string $moduleName, string $controllerName,
                       string $controllerPath, string $actionName, bool $interactive, bool $consoleForce) : void
 {
   $upperActionName = ucfirst($actionName);
@@ -204,7 +205,8 @@ class ' . $upperActionName . 'Action extends Controller
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))
     define(__NAMESPACE__ . '\\VERBOSE', 0);
 
-  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+  require_once CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+  genClassMap([]);
 }
 
 /**
@@ -225,9 +227,9 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   {
     while($actionName !== 'n')
     {
-      createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+      createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
       $actionName = promptUser('What is the name of the next action ? (type n to stop)');
     }
   } else
-    createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+    createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
 }

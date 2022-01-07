@@ -7,8 +7,9 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
+use function otra\tools\delTree;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\{BASE_PATH, TEST_PATH};
+use const otra\cache\php\{BASE_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
@@ -25,6 +26,22 @@ class ConvertTaskTest extends TestCase
     TEST_IMAGE_FULL_NAME = self::TEST_IMAGE_BASENAME . '.' . self::TEST_IMAGE_EXTENSION,
     TEST_IMAGE_SOURCE_PATH = self::CONVERT_PATH . self::TEST_IMAGE_FULL_NAME,
     TEST_IMAGE_DEST_PATH = self::CONVERT_PATH . self::TEST_IMAGE_BASENAME . '.' . self::TEST_IMAGE_DEST_EXTENSION;
+
+  /**
+   * @throws OtraException
+   */
+  public static function tearDownAfterClass(): void
+  {
+    parent::tearDownAfterClass();
+    // cleaning
+    if (file_exists(self::TEST_IMAGE_DEST_PATH) && !unlink(self::TEST_IMAGE_DEST_PATH))
+      throw new OtraException('Cannot unlink ' . self::TEST_IMAGE_DEST_PATH);
+
+    require CORE_PATH . 'tools/deleteTree.php';
+
+    if (file_exists(self::CONVERT_PATH))
+      delTree(self::CONVERT_PATH);
+  }
 
   /**
    * @author Lionel Péramo
@@ -63,9 +80,5 @@ class ConvertTaskTest extends TestCase
       self::TEST_IMAGE_DEST_PATH,
       'Testing if ' . CLI_INFO_HIGHLIGHT . self::TEST_IMAGE_DEST_PATH . CLI_ERROR . ' exists'
     );
-
-    // cleaning
-    unlink(self::TEST_IMAGE_DEST_PATH);
-    rmdir(self::CONVERT_PATH);
   }
 }

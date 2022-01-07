@@ -10,10 +10,11 @@ namespace otra\config
 namespace otra\bin
 {
   use otra\{console\TasksManager, OtraException};
-  use function otra\console\{guessWords, launchTask, launchTaskPosixWay, promptUser};
   use const otra\cache\php\init\CLASSMAP;
   use const otra\cache\php\{APP_ENV, CACHE_PATH, CONSOLE_PATH, CORE_PATH, OTRA_PROJECT, PROD};
   use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
+  use function otra\console\{guessWords, launchTask, launchTaskPosixWay, promptUser};
+  use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata;
 
   require __DIR__ . (OTRA_PROJECT
       ? '/../../../..' // long path from vendor
@@ -24,12 +25,13 @@ namespace otra\bin
   require CONSOLE_PATH . 'TasksManager.php';
   require CONSOLE_PATH . 'colors.php';
 
-// We check if the help and task class map is present, if not ... generate it.
-// In fact, we also generate shell completions... for now.
+  // We check if the help and task class map is present, if not ... generate it.
+  // In fact, we also generate shell completions... for now.
   if (!file_exists(CACHE_PHP_INIT_PATH . 'tasksHelp.php'))
   {
     echo 'Some needed files are missing ... We are going to fix that !', PHP_EOL;
     require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+    generateTaskMetadata();
     echo 'Now we can continue as planned.', PHP_EOL;
   }
 
@@ -50,7 +52,8 @@ namespace otra\bin
   require CORE_PATH . 'OtraException.php';
   set_error_handler([OtraException::class, 'errorHandler']);
   set_exception_handler([OtraException::class, 'exceptionHandler']);
-  spl_autoload_register(function (string $className) : void {
+  spl_autoload_register(function (string $className) : void
+  {
     require CLASSMAP[$className];
   });
 
@@ -62,7 +65,6 @@ namespace otra\bin
   }
 
   $arguments = $argv;
-
   $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
   if ($arguments[TasksManager::TASK_NAME][0] === '-')

@@ -23,26 +23,35 @@ namespace otra\console\architecture\createController
   use const otra\console\architecture\constants\{ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE};
   use function otra\console\architecture\checkBooleanArgument;
 
-  if (!file_exists(BUNDLES_PATH))
+  /**
+   * @param array $argv
+   *
+   * @throws OtraException
+   * @return void
+   */
+  function createController(array $argv) : void
   {
-    echo CLI_ERROR, 'There is no ', CLI_INFO_HIGHLIGHT, 'bundles', CLI_ERROR,
-    ' folder to put bundles! Please create this folder or launch ', CLI_INFO_HIGHLIGHT, 'otra init', CLI_ERROR,
-    ' to solve it.', END_COLOR, PHP_EOL;
-    throw new OtraException(code: 1, exit: true);
+    if (!file_exists(BUNDLES_PATH))
+    {
+      echo CLI_ERROR, 'There is no ', CLI_INFO_HIGHLIGHT, 'bundles', CLI_ERROR,
+      ' folder to put bundles! Please create this folder or launch ', CLI_INFO_HIGHLIGHT, 'otra init', CLI_ERROR,
+      ' to solve it.', END_COLOR, PHP_EOL;
+      throw new OtraException(code: 1, exit: true);
+    }
+
+    require CONSOLE_PATH . 'tools.php';
+    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
+    require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
+
+    /** @var string $modulePath */
+    require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
+    require CONSOLE_PATH . 'architecture/createController/createController.php';
+
+    $controllersFolder = $modulePath . '/controllers/';
+    $controllerName = $argv[ARG_CONTROLLER_NAME];
+
+    controllerHandling($interactive, $consoleForce, $controllersFolder, $controllerName);
   }
-
-  require CONSOLE_PATH . 'tools.php';
-  require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-  $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-  $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
-  require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
-
-  /** @var string $modulePath */
-  require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
-  require CONSOLE_PATH . 'architecture/createController/createController.php';
-
-  $controllersFolder = $modulePath . '/controllers/';
-  $controllerName = $argv[ARG_CONTROLLER_NAME];
-
-  controllerHandling($interactive, $consoleForce, $controllersFolder, $controllerName);
 }

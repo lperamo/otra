@@ -10,6 +10,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, PROD, TEST_PATH};
 use const otra\config\VERSION;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata;
 
 /**
  * @runTestsInSeparateProcesses
@@ -96,6 +97,7 @@ class ClearCacheTaskTest extends TestCase
     parent::tearDown();
     ob_start();
     require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
+    generateTaskMetadata();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_CLASS_MAP,

@@ -263,5 +263,4 @@ class CreateModuleTaskTest extends TestCase
     // testing
     self::assertFileExists(self::TEST_MODULE_PATH);
   }
-
 }

@@ -8,5 +8,15 @@ declare(strict_types=1);
 namespace otra\console\database\sqlExecute;
 
 use otra\console\database\Database;
+use otra\OtraException;
 
-Database::executeFile($argv[2], $argv[3] ?? null);
+/**
+ * @param array $argv
+ *
+ * @throws OtraException
+ * @return void
+ */
+function sqlExecute(array $argv): void
+{
+  Database::executeFile($argv[2], $argv[3] ?? null);
+}
