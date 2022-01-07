@@ -167,8 +167,6 @@ abstract class TasksManager
         $otraTask = 'otra\\console\\helpAndTools\\' . $otraTask . '\\' . $otraTask;
         $otraTask();
         break;
-      default:
-        throw new OtraException('Task does not exist!');
     }
   }
 }
