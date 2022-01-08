@@ -169,8 +169,6 @@ abstract class Database
    * Cleans sql and yml files in the case where there are problems that had corrupted files.
    *
    * @param bool $extensive
-   *
-   * @throws OtraException
    */
   public static function clean(bool $extensive = false) : void
   {

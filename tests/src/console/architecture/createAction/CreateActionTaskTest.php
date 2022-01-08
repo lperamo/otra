@@ -45,7 +45,7 @@ class CreateActionTaskTest extends TestCase
     TEST_CONTROLLER_NAME = 'test',
     TEST_ACTION_NAME = 'test';
 
-  private static $taskClassMapPath;
+  private static array $taskClassMapPath;
 
   // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;

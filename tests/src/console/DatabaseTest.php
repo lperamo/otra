@@ -123,7 +123,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException|OtraException
+   * @throws ReflectionException
    */
   public function testInitBase() : void
   {

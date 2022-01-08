@@ -409,7 +409,7 @@ class SessionTest extends TestCase
     // Un-serialize objects
     foreach($dataFromFile as &$datum)
     {
-      if (isSerialized($datum, true))
+      if (isSerialized($datum))
         $datum = unserialize($datum);
     }
 

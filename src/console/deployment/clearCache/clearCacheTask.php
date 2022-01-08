@@ -71,8 +71,6 @@ function clearCache(array $argumentsVector)
      * @param string $cachePath
      * @param string $cacheRelativePath
      * @param string $extension
-     *
-     * @throws OtraException
      */
     $removeCachedFiles = function (
       string $cachePath,
