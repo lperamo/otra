@@ -30,9 +30,9 @@ const
  * @param array $argv
  *
  * @throws OtraException
- * @return int
+ * @return void|int
  */
-function genBootstrap(array $argv): int
+function genBootstrap(array $argv)
 {
   if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
   {
