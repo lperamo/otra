@@ -114,8 +114,6 @@ abstract class Database
    * - output path : $pathSQL
    * - schema file path : $schemaFile
    * - tables order path : $tablesOrderFile
-   *
-   * @throws OtraException
    */
   public static function initBase() : void
   {

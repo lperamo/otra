@@ -65,8 +65,8 @@ class OtraExceptionTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException
    * @author Lionel Péramo
+   * @throws ReflectionException|OtraException
    */
   public function testOtraException_WithContext(): void
   {

@@ -844,7 +844,7 @@ class DatabaseTest extends TestCase
   /**
    * Testing with $database = null
    *
-   * @throws ReflectionException
+   * @throws ReflectionException|OtraException
    */
   public function testInitImports_DatabaseNull() : void
   {
@@ -901,7 +901,7 @@ class DatabaseTest extends TestCase
   /**
    * Test with a non-existent database.
    *
-   * @throws ReflectionException
+   * @throws ReflectionException|OtraException
    */
   public function testInitImports_BadDatabase() : void
   {

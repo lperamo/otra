@@ -128,7 +128,7 @@ function genClassMap(array $argv) : void
           continue;
 
         $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
-        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+        preg_match_all('@^\\s*namespace\\s+([^;{]+)\\s*[;{]@mx', $content, $matches);
 
         // we calculate the shortest string of path with realpath and str_replace function
         $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));

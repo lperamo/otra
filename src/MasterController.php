@@ -434,11 +434,13 @@ abstract class MasterController
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string      $templateFile The file name
-   * @param array       $variables    Variables to pass to the template
-   * @param string      $route
-   * @param array       $viewResourcePath
+   * @param string $templateFile The file name
+   * @param array  $variables    Variables to pass to the template
+   * @param string $route
+   * @param array  $viewResourcePath
    *
+   * @throws OtraException
+   * @throws ReflectionException
    * @return string
    */
   protected static function render(

@@ -154,8 +154,6 @@ function clearCache(array $argv)
   /**
    * @param string $folder
    * @param string $folderShownInTheError
-   *
-   * @throws OtraException
    */
   function checkFolder(string $folder, string $folderShownInTheError) : void
   {
