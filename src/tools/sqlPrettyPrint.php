@@ -20,6 +20,7 @@ const SQL_CLAUSES = [
   'RIGHT OUTER JOIN',
   'LEFT JOIN',
   'INNER JOIN',
+  'JOIN',
   ' ON ',
   'IN ',
   'AND ',
@@ -52,7 +53,7 @@ function sqlReplacements(
 {
   $carriageReturn = $raw ? PHP_EOL : '<br/>';
 
-   return [
+  return [
     '(' . $carriageReturn . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
@@ -60,6 +61,7 @@ function sqlReplacements(
     $carriageReturn . $leftStyleClauseCode . 'INNER OUTER JOIN' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'LEFT JOIN' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'INNER JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'JOIN' . $rightStyleClauseCode,
     $leftStyleClauseCode . ' ON ' . $rightStyleClauseCode,
     $leftStyleClauseCode . 'IN ' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . '  AND ' . $rightStyleClauseCode,
