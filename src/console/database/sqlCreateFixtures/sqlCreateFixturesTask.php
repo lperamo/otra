@@ -15,15 +15,15 @@ const
   SQL_CREATE_FIXTURES_ARG_MASK = 3;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function sqlCreateFixtures(array $argv) : void
+function sqlCreateFixtures(array $argumentsVector) : void
 {
   Database::createFixtures(
-    $argv[SQL_CREATE_FIXTURES_ARG_DATABASE_NAME],
-    isset($argv[SQL_CREATE_FIXTURES_ARG_MASK]) ? (int)$argv[SQL_CREATE_FIXTURES_ARG_MASK] : 0
+    $argumentsVector[SQL_CREATE_FIXTURES_ARG_DATABASE_NAME],
+    isset($argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK]) ? (int)$argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK] : 0
   );
 }

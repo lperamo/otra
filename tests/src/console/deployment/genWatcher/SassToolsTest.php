@@ -6,6 +6,7 @@ namespace src\console\deployment\genWatcher;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
+use ReflectionException;
 use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use const otra\console\deployment\genWatcher\{KEY_ALL_SASS, KEY_FULL_TREE, SASS_TREE_CACHE_PATH, SASS_TREE_STRING_INIT};
@@ -95,7 +96,7 @@ class SassToolsTest extends TestCase
     // -- defining constants and variables - part 2
     define(__NAMESPACE__ . '\\APP_ENV', 'APP_ENV');
     $_SERVER[APP_ENV] = 'prod';
-    $argv = [];
+    $argumentsVector = [];
 
     // -- including needed libraries
     require CONSOLE_PATH . 'deployment/taskFileInit.php';
@@ -150,7 +151,7 @@ class SassToolsTest extends TestCase
   }
 
   /**
-   * @throws OtraException
+   * @throws OtraException|ReflectionException
    */
   public function testSaveSassTree()
   {

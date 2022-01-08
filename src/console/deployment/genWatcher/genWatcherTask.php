@@ -217,20 +217,20 @@ function deleteAsset(string $assetName, string $assetExtension)
 }
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @throws ReflectionException
  * @return void
  */
-function genWatcher(array $argv): void
+function genWatcher(array $argumentsVector): void
 {
   // Initialization
   require CORE_PATH . 'console/deployment/taskFileInit.php';
 
   // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-  define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argv[GEN_WATCHER_ARG_VERBOSE] ?? 1));
-  define('NO_SASS_CACHE', isset($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? intval($argv[GEN_WATCHER_ARG_NO_SASS_CACHE]) : 0);
+  define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argumentsVector[GEN_WATCHER_ARG_VERBOSE] ?? 1));
+  define('NO_SASS_CACHE', isset($argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? intval($argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE]) : 0);
 
   if (NO_SASS_CACHE !== 0 && NO_SASS_CACHE !== 1)
   {
@@ -417,7 +417,7 @@ function genWatcher(array $argv): void
 
   // cleanup variables used to prepare the listening
   unset(
-    $argv,
+    $argumentsVector,
     $dir_iterator,
     $entry,
     $extension,
@@ -428,7 +428,7 @@ function genWatcher(array $argv): void
     $pathToAvoid,
     $realPath,
     // maybe those two variables have to been cleaned in TaskManager instead ?
-    $task,
+    $otraTask,
     $tasksClassMap
   );
 

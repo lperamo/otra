@@ -15,17 +15,17 @@ const
   CONVERT_IMAGES_ARG_KEEP = 5;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function convertImages(array $argv) : void
+function convertImages(array $argumentsVector) : void
 {
   define(
     __NAMESPACE__ . '\\QUALITY',
-    isset($argv[CONVERT_IMAGES_ARG_QUALITY])
-      ? (int) $argv[CONVERT_IMAGES_ARG_QUALITY]
+    isset($argumentsVector[CONVERT_IMAGES_ARG_QUALITY])
+      ? (int) $argumentsVector[CONVERT_IMAGES_ARG_QUALITY]
       : 75
   );
 
@@ -35,11 +35,11 @@ function convertImages(array $argv) : void
     throw new OtraException(code: 1, exit: true);
   }
 
-  define(__NAMESPACE__ . '\\SOURCE_FORMAT', $argv[CONVERT_IMAGES_ARG_SOURCE_FORMAT]);
-  define(__NAMESPACE__ . '\\DESTINATION_FORMAT', $argv[CONVERT_IMAGES_ARG_DESTINATION_FORMAT]);
+  define(__NAMESPACE__ . '\\SOURCE_FORMAT', $argumentsVector[CONVERT_IMAGES_ARG_SOURCE_FORMAT]);
+  define(__NAMESPACE__ . '\\DESTINATION_FORMAT', $argumentsVector[CONVERT_IMAGES_ARG_DESTINATION_FORMAT]);
   define(
     __NAMESPACE__ . '\\KEEP',
-    !(isset($argv[CONVERT_IMAGES_ARG_KEEP]) && $argv[CONVERT_IMAGES_ARG_KEEP] === 'false')
+    !(isset($argumentsVector[CONVERT_IMAGES_ARG_KEEP]) && $argumentsVector[CONVERT_IMAGES_ARG_KEEP] === 'false')
   );
 
   define(__NAMESPACE__ . '\\FILES_FORMAT', '\*.' . SOURCE_FORMAT);

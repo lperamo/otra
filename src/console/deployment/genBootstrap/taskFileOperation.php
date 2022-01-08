@@ -273,7 +273,7 @@ function getFileNamesFromUses(
 ) : array
 {
   preg_match_all(
-    '@^\\s{0,}use\\s{1,}([^;]{0,});\\s{0,}$@mx',
+    '@^\\s*use\\s+([^;]*);\\s*$@mx',
     $contentToAdd,
     $useMatches,
     PREG_OFFSET_CAPTURE
@@ -391,7 +391,7 @@ function getFileNamesFromUses(
 
       // Now that we have retrieved the files to include, we can clean all the use statements
       // We need the modifier m in order to make the ^ work as expected
-      $contentToAdd = preg_replace('@^use [^;]{1,};$@m', '', $contentToAdd, -1, $count);
+      $contentToAdd = preg_replace('@^use [^;]+;$@m', '', $contentToAdd, -1, $count);
     }
   }
 
@@ -727,7 +727,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
     if ('' === $match[0])
       continue;
 
-    $trimmedMatch = trim(preg_replace('@\s{1,}@', ' ', $match[0]));
+    $trimmedMatch = trim(preg_replace('@\s+@', ' ', $match[0]));
     /** WE RETRIEVE THE CONTENT TO PROCESS, NO TRANSFORMATIONS HERE */
 
     /** REQUIRE OR INCLUDE STATEMENT EVALUATION */
@@ -1205,7 +1205,7 @@ function processStaticCalls(
 ) : void
 {
   preg_match_all(
-    '@(\\\\{0,1}(?:\\w{1,}\\\\){0,})((\\w{1,}):{2}\\${0,1}\\w{1,})@',
+    '@(\\\\?(?:\\w+\\\\)*)((\\w+):{2}\\$?\\w+)@',
     $contentToAdd,
     $matches,
     PREG_SET_ORDER | PREG_OFFSET_CAPTURE
@@ -1308,7 +1308,7 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   {
     $finalContent = $content;
     preg_match_all(
-      '@^\\s{0,}use\\s{1,}[^;]{0,};\\s{0,}$@mx',
+      '@^\\s*use\\s+[^;]*;\\s*$@mx',
       $finalContent,
       $useMatches,
       PREG_OFFSET_CAPTURE
@@ -1343,8 +1343,8 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   $finalContent = preg_replace(
     [
       '@\\' . PHP_END_TAG_STRING . '\s*<\?php@', // We stick the php files by removing end and open php tag between files
-      '@^\s*namespace [^;]{1,};\s*$@m', // We suppress namespaces
-      '@\\\\{0,1}(PDO(?:Statement){0,1})@' // We fix PDO and PDOStatement namespaces
+      '@^\s*namespace [^;]+;\s*$@m', // We suppress namespaces
+      '@\\\\?(PDO(?:Statement)?)@' // We fix PDO and PDOStatement namespaces
     ],
     [
       '',

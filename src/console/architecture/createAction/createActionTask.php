@@ -28,14 +28,14 @@ namespace otra\console\architecture\createAction
   /**
    * @throws OtraException
    */
-  function createAction(array $argv)
+  function createAction(array $argumentsVector)
   {
     $consoleForce = false;
 
     require_once CONSOLE_PATH . 'tools.php';
     require_once CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-    $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
     /** @var string $bundleName */
     require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
     /** @var string $moduleName */
@@ -51,7 +51,7 @@ namespace otra\console\architecture\createAction
       $moduleName,
       $controllerName,
       $controllerPath,
-      $argv[ARG_ACTION_NAME]
+      $argumentsVector[ARG_ACTION_NAME]
     );
   }
 

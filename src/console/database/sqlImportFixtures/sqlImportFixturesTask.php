@@ -16,25 +16,25 @@ const
   SQL_IMPORT_FIXTURES_ARG_CONFIGURATION = 3;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws ReflectionException
  * @throws OtraException
  * @return void
  */
-function sqlImportFixtures(array $argv): void
+function sqlImportFixtures(array $argumentsVector): void
 {
   Session::init();
 
-  if (isset($argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]))
+  if (isset($argumentsVector[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]))
   {
-    if (isset($argv[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]))
+    if (isset($argumentsVector[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]))
       Database::importFixtures(
-        $argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME],
-        $argv[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]
+        $argumentsVector[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME],
+        $argumentsVector[SQL_IMPORT_FIXTURES_ARG_CONFIGURATION]
       );
     else
-      Database::importFixtures($argv[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]);
+      Database::importFixtures($argumentsVector[SQL_IMPORT_FIXTURES_ARG_DATABASE_NAME]);
   }
   else
     Database::importFixtures();

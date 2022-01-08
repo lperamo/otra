@@ -26,12 +26,12 @@ use function otra\src\tools\{checkPHPPath,checkResourcePath};
 const ROUTES_ARG_ROUTE = 2;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function routes(array $argv) : void
+function routes(array $argumentsVector) : void
 {
   if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
   {
@@ -62,10 +62,10 @@ function routes(array $argv) : void
   $indexLines = 0;
 
   // Check if we want one or all the routes
-  if (isset($argv[ROUTES_ARG_ROUTE]))
+  if (isset($argumentsVector[ROUTES_ARG_ROUTE]))
   {
     require CORE_PATH . 'tools/guessRoute.php';
-    $route = guessRoute($argv[ROUTES_ARG_ROUTE]);
+    $route = guessRoute($argumentsVector[ROUTES_ARG_ROUTE]);
     $routes = [$route => Routes::$allRoutes[$route]];
   }
   else

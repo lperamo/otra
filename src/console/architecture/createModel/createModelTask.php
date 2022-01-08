@@ -48,13 +48,16 @@ namespace otra\console\architecture\createModel
     FUNCTION_START = SPACE_INDENT . 'public function ';
 
   /**
+   * @param array $argumentsVector
+   *
    * @throws OtraException
+   * @return void
    */
-  function createModel(array $argv) : void
+  function createModel(array $argumentsVector) : void
   {
     // Testing interactive argument
     require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
 
     // Other task arguments
 

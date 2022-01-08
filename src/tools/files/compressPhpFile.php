@@ -54,10 +54,10 @@ function compressPHPFile(string $fileToCompress, string $outputFile) : void
       ],
       preg_replace(
         [
-          '@\s{1,}@m',
+          '@\s+@m',
           '@<!--.*?-->@',
-          '@;\s(class\s[^\s]{0,}) { @',
-          '@(function\s[^\s]{0,}) {\s{0,}@'
+          '@;\s(class\s[^\s]*) { @',
+          '@(function\s[^\s]*) {\s*@'
 
         ],
         [

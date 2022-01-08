@@ -11,12 +11,12 @@ use otra\console\database\Database;
 use otra\OtraException;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function sqlExecute(array $argv): void
+function sqlExecute(array $argumentsVector): void
 {
-  Database::executeFile($argv[2], $argv[3] ?? null);
+  Database::executeFile($argumentsVector[2], $argumentsVector[3] ?? null);
 }

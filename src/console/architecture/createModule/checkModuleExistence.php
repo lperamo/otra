@@ -11,14 +11,17 @@ use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
 use const otra\console\architecture\constants\{ARG_BUNDLE_NAME, ARG_MODULE_NAME};
 use function otra\console\architecture\doWeCreateIt;
 
-/** @var bool $interactive */
-/** @var bool $consoleForce */
+/**
+ * @var bool  $interactive
+ * @var bool  $consoleForce
+ * @var array $argumentsVector
+ */
 // "_once ..." needed to avoid a repeatable function definition check
 require_once CONSOLE_PATH . 'architecture/createModule/createModule.php';
 
 // MODULE STEP
-$bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
-$moduleName = $argv[ARG_MODULE_NAME];
+$bundleName = ucfirst($argumentsVector[ARG_BUNDLE_NAME]);
+$moduleName = $argumentsVector[ARG_MODULE_NAME];
 $moduleRelativePath = 'bundles/' . $bundleName . DIR_SEPARATOR . $moduleName;
 $modulePath = BASE_PATH . $moduleRelativePath;
 

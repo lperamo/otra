@@ -114,8 +114,6 @@ abstract class Database
    * - output path : $pathSQL
    * - schema file path : $schemaFile
    * - tables order path : $tablesOrderFile
-   *
-   * @throws OtraException
    */
   public static function initBase() : void
   {
@@ -171,8 +169,6 @@ abstract class Database
    * Cleans sql and yml files in the case where there are problems that had corrupted files.
    *
    * @param bool $extensive
-   *
-   * @throws OtraException
    */
   public static function clean(bool $extensive = false) : void
   {
@@ -826,7 +822,7 @@ abstract class Database
     $tableSql = $tablesWithRelations = $sortedTables = [];
 
     // For each table
-    foreach ($schema as $table => &$properties)
+    foreach ($schema as $table => $properties)
     {
       $hasRelations = false;
       $primaryKeys = [];

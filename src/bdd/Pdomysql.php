@@ -108,13 +108,14 @@ abstract class Pdomysql
 
   /**
    * Returns the results with FETCH_KEY_PAIR mask.
+   *
    * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
    *
    * @param PDOStatement $statement The query statement
    *
-   * @return mixed The next result
+   * @return array|bool The next result
    */
-  public static function fetchAllByPair(PDOStatement $statement) : mixed
+  public static function fetchAllByPair(PDOStatement $statement): array|bool
   {
     return $statement->fetchAll(PDO::FETCH_KEY_PAIR);
   }

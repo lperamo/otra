@@ -77,11 +77,11 @@ abstract class TasksManager
   /**
    * @param array  $tasksClassMap
    * @param string $otraTask
-   * @param array  $argv
+   * @param array  $argumentsVector
    *
    * @throws OtraException
    */
-  public static function execute(array $tasksClassMap, string $otraTask, array $argv) : void
+  public static function execute(array $tasksClassMap, string $otraTask, array $argumentsVector) : void
   {
     // If the class map does not exist yet, we create it and load it
     if (!file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
@@ -113,7 +113,7 @@ abstract class TasksManager
       case 'createModule':
       case 'init':
         $otraTask = 'otra\\console\\architecture\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argv);
+        $otraTask($argumentsVector);
         break;
       case 'createGlobalConstants':
         $otraTask = 'otra\\console\\architecture\\' . $otraTask . '\\' . $otraTask;
@@ -127,7 +127,7 @@ abstract class TasksManager
       case 'sqlImportFixtures':
       case 'sqlImportSchema':
         $otraTask = 'otra\\console\\database\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argv);
+        $otraTask($argumentsVector);
         break;
       // Deployment
       case 'buildDev':
@@ -140,11 +140,11 @@ abstract class TasksManager
       case 'genSiteMap' :
       case 'genWatcher' :
         $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argv);
+        $otraTask($argumentsVector);
         break;
       case 'updateConf':
         $otraTask = 'otra\\console\\deployment\\updateConf\\' . $otraTask;
-        $otraTask($argv[UPDATE_CONF_ARG_MASK] ?? null, $argv[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
+        $otraTask($argumentsVector[UPDATE_CONF_ARG_MASK] ?? null, $argumentsVector[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
         break;
       case 'genJsRouting':
         $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
@@ -158,7 +158,7 @@ abstract class TasksManager
       case 'routes':
       case 'serve':
         $otraTask = 'otra\\console\\helpAndTools\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argv);
+        $otraTask($argumentsVector);
         break;
       case 'generateTaskMetadata':
       case 'checkConfiguration' :

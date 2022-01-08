@@ -98,10 +98,10 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
   if (!$raw)
   {
     $output = preg_replace(
-      '/(:?\.)[^ (]{1,}/',
+      '/(:?\.)[^ (]+/',
       '<span class="profiler--sql-logs--field">$0</span>',
       preg_replace(
-        '/:[^ )]{1,}/',
+        '/:[^ )]+/',
         '<span style="color: #4b4;">$0</span>',
         $output
       )
@@ -156,10 +156,10 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   if (!$raw)
   {
     $output = preg_replace(
-      '/(:?\.)[^ (]{1,}/',
+      '/(:?\.)[^ (]+/',
       '<span style="color: #44f;">$0</span>',
       preg_replace(
-        '/:[^ )]{1,}/',
+        '/:[^ )]+/',
         '<span style="color: #4b4;">$0</span>',
         $output
       )

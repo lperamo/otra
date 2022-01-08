@@ -44,12 +44,12 @@ const DEPLOY_ARG_MASK = 2,
   PRELOAD_FILENAME = 'preload.php';
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function deployTask(array $argv) : void
+function deployTask(array $argumentsVector) : void
 {
   // **** Checking the deployment config parameters ****
   if (!isset(AllConfig::$deployment))
@@ -78,11 +78,11 @@ function deployTask(array $argv) : void
     throw new OtraException(code: 1, exit: true);
   }
 
-  $deployMask = (isset($argv[DEPLOY_ARG_MASK])) ? (int) $argv[DEPLOY_ARG_MASK] : 0;
-  define(__NAMESPACE__ . '\\VERBOSE', (isset($argv[DEPLOY_ARG_VERBOSE])) ? (int) $argv[DEPLOY_ARG_VERBOSE] : 0);
+  $deployMask = (isset($argumentsVector[DEPLOY_ARG_MASK])) ? (int) $argumentsVector[DEPLOY_ARG_MASK] : 0;
+  define(__NAMESPACE__ . '\\VERBOSE', (isset($argumentsVector[DEPLOY_ARG_VERBOSE])) ? (int) $argumentsVector[DEPLOY_ARG_VERBOSE] : 0);
   define(
     __NAMESPACE__ . '\\DEPLOY_GCC_LEVEL_COMPILATION',
-    isset($argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argv[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
+    isset($argumentsVector[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argumentsVector[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
   );
 
   if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
@@ -96,8 +96,8 @@ function deployTask(array $argv) : void
     updateConf('2');
 
     // bootstraps
-    $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
-    $argv[GEN_BOOTSTRAP_ARG_VERBOSE] = VERBOSE; // if true, print warnings when the task fails
+    $argumentsVector[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
+    $argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE] = VERBOSE; // if true, print warnings when the task fails
     require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
   }
 

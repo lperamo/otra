@@ -60,7 +60,7 @@ abstract class Session
 
       foreach ($sessionData as $sessionDatumKey => $sessionDatum)
       {
-        $deserializedDatum = isSerialized($sessionDatum, true) ? unserialize($sessionDatum) : $sessionDatum;
+        $deserializedDatum = isSerialized($sessionDatum) ? unserialize($sessionDatum) : $sessionDatum;
 
         if (!str_starts_with($sessionDatumKey, 'otra_'))
         {

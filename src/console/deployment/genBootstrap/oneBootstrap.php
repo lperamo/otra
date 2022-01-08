@@ -23,10 +23,10 @@ const
 
   OTRA_KEY_BOOTSTRAP = 'bootstrap',
   OTRA_KEY_DRIVER = 'driver';
-define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', $argv[ONE_BOOTSTRAP_ARG_LINT] === '1');
-define(__NAMESPACE__ . '\\VERBOSE', intval($argv[ONE_BOOTSTRAP_ARG_VERBOSE]));
+define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', $argumentsVector[ONE_BOOTSTRAP_ARG_LINT] === '1');
+define(__NAMESPACE__ . '\\VERBOSE', intval($argumentsVector[ONE_BOOTSTRAP_ARG_VERBOSE]));
 define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
-$route = $argv[ONE_BOOTSTRAP_ARG_ROUTE];
+$route = $argumentsVector[ONE_BOOTSTRAP_ARG_ROUTE];
 require __DIR__ . (OTRA_PROJECT
     ? '/../../../../../../..' // long path from vendor
     : '/../../../..'

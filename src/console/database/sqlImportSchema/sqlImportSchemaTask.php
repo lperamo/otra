@@ -14,22 +14,22 @@ const
   SQL_IMPORT_SCHEMA_ARG_CONFIGURATION = 3;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function sqlImportSchema(array $argv) : void
+function sqlImportSchema(array $argumentsVector) : void
 {
-  if (isset($argv[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]))
+  if (isset($argumentsVector[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]))
   {
-    if (isset($argv[SQL_IMPORT_SCHEMA_ARG_CONFIGURATION]))
+    if (isset($argumentsVector[SQL_IMPORT_SCHEMA_ARG_CONFIGURATION]))
       Database::importSchema(
-        $argv[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME],
-        $argv[SQL_IMPORT_SCHEMA_ARG_CONFIGURATION]
+        $argumentsVector[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME],
+        $argumentsVector[SQL_IMPORT_SCHEMA_ARG_CONFIGURATION]
       );
     else
-      Database::importSchema($argv[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]);
+      Database::importSchema($argumentsVector[SQL_IMPORT_SCHEMA_ARG_DATABASE_NAME]);
   }
   else
     Database::importSchema();

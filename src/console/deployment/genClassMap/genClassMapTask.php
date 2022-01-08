@@ -30,12 +30,12 @@ function generateClassMap(string $classMap, string $filename, string $environmen
 }
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function genClassMap(array $argv) : void
+function genClassMap(array $argumentsVector) : void
 {
   $folders = [
     BASE_PATH . 'bundles',
@@ -48,7 +48,7 @@ function genClassMap(array $argv) : void
 
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))
   {
-    define(__NAMESPACE__ . '\\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
+    define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[2]) ? (int) $argumentsVector[2] : 0);
     define(__NAMESPACE__ . '\\ADDITIONAL_CLASSES_FILES_PATH', BASE_PATH . 'config/AdditionalClassFiles.php');
   }
 
@@ -83,7 +83,7 @@ function genClassMap(array $argv) : void
     function iterateCM(
       array &$classes,
       string $dir,
-      array &$additionalClassesFilesKeys,
+      array $additionalClassesFilesKeys,
       int &$processedDir,
       array &$classesThatMayHaveToBeAdded) : array
     {
@@ -128,7 +128,7 @@ function genClassMap(array $argv) : void
           continue;
 
         $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
-        preg_match_all('@^\\s{0,}namespace\\s{1,}([^;{]{1,})\\s{0,}[;{]@mx', $content, $matches);
+        preg_match_all('@^\\s*namespace\\s+([^;{]+)\\s*[;{]@mx', $content, $matches);
 
         // we calculate the shortest string of path with realpath and str_replace function
         $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));

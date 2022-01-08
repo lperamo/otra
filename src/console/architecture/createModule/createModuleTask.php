@@ -22,23 +22,23 @@ namespace otra\console\architecture\createModule
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
-   * @param array $argv
+   * @param array $argumentsVector
    *
    * @throws OtraException
    * @return void
    */
-  function createModule(array $argv) : void
+  function createModule(array $argumentsVector) : void
   {
     // loading functions, not executing anything
     require CONSOLE_PATH . 'tools.php';
     require_once CONSOLE_PATH . 'architecture/createModule/createModule.php';
     require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
 
-    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-    $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
     require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 
-    $bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
-    moduleHandling($interactive, $consoleForce, $bundleName , $argv[ARG_MODULE_NAME]);
+    $bundleName = ucfirst($argumentsVector[ARG_BUNDLE_NAME]);
+    moduleHandling($interactive, $consoleForce, $bundleName , $argumentsVector[ARG_MODULE_NAME]);
   }
 }

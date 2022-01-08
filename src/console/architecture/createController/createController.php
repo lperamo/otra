@@ -13,7 +13,7 @@ use function otra\console\{architecture\createFolder, promptUser};
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
 /**
- * Create the folders that contains all the controllers folders.
+ * Create the folders that contain all the controllers folders.
  *
  * @param string $controllersFolder
  */

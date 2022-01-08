@@ -15,14 +15,14 @@ const
   CRYPT_ARG_ITERATIONS = 3;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function crypt(array $argv): void
+function crypt(array $argumentsVector): void
 {
-  define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? 20000);
+  define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argumentsVector[CRYPT_ARG_ITERATIONS] ?? 20000);
 
   if (!is_numeric(CRYPT_ITERATIONS))
   {
@@ -35,7 +35,7 @@ function crypt(array $argv): void
   echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($securitySalt), PHP_EOL,
   CLI_INFO_HIGHLIGHT, 'password                   : ', END_COLOR,  hash_pbkdf2(
     'sha256',
-    $argv[CRYPT_ARG_PASSWORD],
+    $argumentsVector[CRYPT_ARG_PASSWORD],
     $securitySalt,
     (int)CRYPT_ITERATIONS,
     20

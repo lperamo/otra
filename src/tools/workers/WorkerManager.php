@@ -62,9 +62,9 @@ class WorkerManager
 
     $workerOrderKey = array_key_first(self::$workers);
 
-    foreach (self::$workers as &$worker)
+    foreach (self::$workers as $worker)
     {
-      // Maybe the worker is not attached yet (surely a subworker)
+      // Maybe the worker is not attached yet (surely a sub-worker)
       if (!isset(self::$workers[$workerOrderKey]))
         continue;
 

@@ -231,8 +231,7 @@ class OtraExceptionCli extends Exception
           $actualTrace,
           'file',
           // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-          self::$fileLongestString - 21,
-          ''
+          self::$fileLongestString - 21
         )) .
         /** ARGUMENTS */
         CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_BASE .
