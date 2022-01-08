@@ -822,7 +822,7 @@ abstract class Database
     $tableSql = $tablesWithRelations = $sortedTables = [];
 
     // For each table
-    foreach ($schema as $table => &$properties)
+    foreach ($schema as $table => $properties)
     {
       $hasRelations = false;
       $primaryKeys = [];

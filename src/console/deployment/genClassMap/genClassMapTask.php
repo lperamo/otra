@@ -83,7 +83,7 @@ function genClassMap(array $argumentsVector) : void
     function iterateCM(
       array &$classes,
       string $dir,
-      array &$additionalClassesFilesKeys,
+      array $additionalClassesFilesKeys,
       int &$processedDir,
       array &$classesThatMayHaveToBeAdded) : array
     {
