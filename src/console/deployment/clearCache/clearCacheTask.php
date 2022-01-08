@@ -38,14 +38,14 @@ const
   RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void|null
  */
-function clearCache(array $argv)
+function clearCache(array $argumentsVector)
 {
-  $binaryMask = (int) ($argv[CLEAR_CACHE_ARG_MASK] ?? CLEAR_CACHE_MASK_ALL);
+  $binaryMask = (int) ($argumentsVector[CLEAR_CACHE_ARG_MASK] ?? CLEAR_CACHE_MASK_ALL);
 
   if ($binaryMask < 1 || $binaryMask > CLEAR_CACHE_MASK_ALL)
   {
@@ -55,7 +55,7 @@ function clearCache(array $argv)
     throw new OtraException(code:1, exit: true);
   }
 
-  $route = $argv[CLEAR_CACHE_ARG_ROUTE] ?? null;
+  $route = $argumentsVector[CLEAR_CACHE_ARG_ROUTE] ?? null;
 
   // '_once' Mandatory for tests :(
   require_once BASE_PATH . 'config/AllConfig.php';

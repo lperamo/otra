@@ -13,12 +13,12 @@ use otra\OtraException;
 const SQL_CLEAN_ARG_CLEANING_LEVEL = 2;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function sqlClean(array $argv) : void
+function sqlClean(array $argumentsVector) : void
 {
-  Database::clean(isset($argv[SQL_CLEAN_ARG_CLEANING_LEVEL]) && '1' === $argv[SQL_CLEAN_ARG_CLEANING_LEVEL]);
+  Database::clean(isset($argumentsVector[SQL_CLEAN_ARG_CLEANING_LEVEL]) && '1' === $argumentsVector[SQL_CLEAN_ARG_CLEANING_LEVEL]);
 }

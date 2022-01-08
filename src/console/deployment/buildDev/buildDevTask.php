@@ -41,16 +41,16 @@ const
   BUILD_DEV_ARG_SCOPE = 5;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function buildDev(array $argv) : void
+function buildDev(array $argumentsVector) : void
 {
   // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
-  define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argv[BUILD_DEV_ARG_VERBOSE] ?? 0));
-  define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argv[BUILD_DEV_ARG_SCOPE] ?? 0));
+  define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argumentsVector[BUILD_DEV_ARG_VERBOSE] ?? 0));
+  define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argumentsVector[BUILD_DEV_ARG_SCOPE] ?? 0));
 
   echo CLI_WARNING, 'The production configuration is used for this task.', END_COLOR, PHP_EOL;
 

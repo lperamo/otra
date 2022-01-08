@@ -24,7 +24,7 @@ class TaskFileInitTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
-    $argv = [];
+    $argumentsVector = [];
     define(__NAMESPACE__ . '\\TEST_ROUTES_PATH', BUNDLES_PATH . 'config/');
 
     if (!file_exists(TEST_ROUTES_PATH))

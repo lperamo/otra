@@ -15,17 +15,17 @@ const
   SQL_CREATE_DATABASE_ARG_FORCE = 3;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function sqlCreateDatabase(array $argv) : void
+function sqlCreateDatabase(array $argumentsVector) : void
 {
   Database::createDatabase(
-    $argv[SQL_CREATE_DATABASE_ARG_DATABASE_NAME],
+    $argumentsVector[SQL_CREATE_DATABASE_ARG_DATABASE_NAME],
     // Forces the value to be a boolean
-    isset($argv[SQL_CREATE_DATABASE_ARG_FORCE])
-    && 'true' === $argv[SQL_CREATE_DATABASE_ARG_FORCE]
+    isset($argumentsVector[SQL_CREATE_DATABASE_ARG_FORCE])
+    && 'true' === $argumentsVector[SQL_CREATE_DATABASE_ARG_FORCE]
   );
 }

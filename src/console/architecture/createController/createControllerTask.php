@@ -24,12 +24,12 @@ namespace otra\console\architecture\createController
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
-   * @param array $argv
+   * @param array $argumentsVector
    *
    * @throws OtraException
    * @return void
    */
-  function createController(array $argv) : void
+  function createController(array $argumentsVector) : void
   {
     if (!file_exists(BUNDLES_PATH))
     {
@@ -41,8 +41,8 @@ namespace otra\console\architecture\createController
 
     require CONSOLE_PATH . 'tools.php';
     require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-    $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
     require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 
     /** @var string $modulePath */
@@ -50,7 +50,7 @@ namespace otra\console\architecture\createController
     require CONSOLE_PATH . 'architecture/createController/createController.php';
 
     $controllersFolder = $modulePath . '/controllers/';
-    $controllerName = $argv[ARG_CONTROLLER_NAME];
+    $controllerName = $argumentsVector[ARG_CONTROLLER_NAME];
 
     controllerHandling($interactive, $consoleForce, $controllersFolder, $controllerName);
   }

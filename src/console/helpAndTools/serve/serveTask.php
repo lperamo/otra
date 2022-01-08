@@ -18,16 +18,16 @@ const
   OTRA_LIVE_HTTPS = 'false';
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function serve(array $argv): void
+function serve(array $argumentsVector): void
 {
   require CORE_PATH . 'tools/cli.php';
-  define(__NAMESPACE__ . '\\OTRA_APP_PORT', $argv[PARAMETER_PORT] ?? 8000);
-  define(__NAMESPACE__ . '\\OTRA_LIVE_APP_ENV', $argv[PARAMETER_ENV] ?? DEV);
+  define(__NAMESPACE__ . '\\OTRA_APP_PORT', $argumentsVector[PARAMETER_PORT] ?? 8000);
+  define(__NAMESPACE__ . '\\OTRA_LIVE_APP_ENV', $argumentsVector[PARAMETER_ENV] ?? DEV);
 
   echo CLI_INFO, 'Launching a PHP web internal server on localhost:', OTRA_APP_PORT, ' in ',
   OTRA_LIVE_APP_ENV === DEV

@@ -11,8 +11,8 @@ use otra\OtraException;
 use const otra\console\{CLI_ERROR,CLI_INFO_HIGHLIGHT,END_COLOR};
 
 /**
- * @param array  $arguments        Must pass $argv
- * @param int    $argumentPosition The index of the $argv array to check
+ * @param array  $arguments        Must pass $argumentsVector
+ * @param int    $argumentPosition The index of the $argumentsVector array to check
  * @param string $argumentName     Like 'interactive' or 'force'
  * @param string $defaultValue
  *

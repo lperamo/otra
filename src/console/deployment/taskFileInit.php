@@ -50,7 +50,7 @@ define(
 // Defines if we want to use Google Closure Compiler or not
 define(
   __NAMESPACE__ . '\\FILE_TASK_GCC',
-  isset($argv[FILE_TASK_ARG_GCC]) && $argv[FILE_TASK_ARG_GCC] === 'true'
+  isset($argumentsVector[FILE_TASK_ARG_GCC]) && $argumentsVector[FILE_TASK_ARG_GCC] === 'true'
 );
 
 define(
@@ -58,16 +58,16 @@ define(
   isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
-$maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argv);
+$maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argumentsVector);
 
 // Check if the binary mask is numeric
-if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
+if ($maskExists && !is_numeric($argumentsVector[FILE_TASK_ARG_MASK]))
 {
   echo CLI_ERROR, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
   throw new OtraException(code: 1, exit: true);
 }
 
-define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
+define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argumentsVector[FILE_TASK_ARG_MASK]) ? intval($argumentsVector[FILE_TASK_ARG_MASK]) : 15);
 
 define(__NAMESPACE__ . '\\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
 define(__NAMESPACE__ . '\\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
@@ -76,7 +76,7 @@ define(
   __NAMESPACE__ . '\\WATCH_FOR_ROUTES',
   (
     $maskExists
-    && ($argv[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES
+    && ($argumentsVector[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES
   )
   || !$maskExists
 );

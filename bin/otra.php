@@ -64,19 +64,19 @@ namespace otra\bin
     throw new OtraException(code: 1, exit: true);
   }
 
-  $arguments = $argv;
+  $argumentsVector = $argv;
   $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
-  if ($arguments[TasksManager::TASK_NAME][0] === '-')
+  if ($argumentsVector[TasksManager::TASK_NAME][0] === '-')
   {
     define(__NAMESPACE__ . '\\POSIX_MODE', true);
     $taskName = getopt('t:')['t'];
-    $launchArgs = [$tasksClassMap, $arguments, $taskName];
+    $launchArgs = [$tasksClassMap, $argumentsVector, $taskName];
   } else
   {
     define(__NAMESPACE__ . '\\POSIX_MODE', false);
-    $taskName = $arguments[TasksManager::TASK_NAME];
-    $launchArgs = [$tasksClassMap, $arguments, $argc, $taskName];
+    $taskName = $argumentsVector[TasksManager::TASK_NAME];
+    $launchArgs = [$tasksClassMap, $argumentsVector, $argc, $taskName];
   }
 
   $launchCallback = POSIX_MODE ? 'launchTaskPosixWay' : 'launchTask';
@@ -106,8 +106,8 @@ namespace otra\bin
 
     if ('y' === $choice)
     {
-      $arguments[TasksManager::TASK_NAME] = $newTask;
-      $launchCallback($tasksClassMap, $arguments, $argc, $newTask);
+      $argumentsVector[TasksManager::TASK_NAME] = $newTask;
+      $launchCallback($tasksClassMap, $argumentsVector, $argc, $newTask);
     } else
       TasksManager::showCommands('This command does not exist. ');
   }

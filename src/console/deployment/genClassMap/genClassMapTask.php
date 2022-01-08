@@ -30,12 +30,12 @@ function generateClassMap(string $classMap, string $filename, string $environmen
 }
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function genClassMap(array $argv) : void
+function genClassMap(array $argumentsVector) : void
 {
   $folders = [
     BASE_PATH . 'bundles',
@@ -48,7 +48,7 @@ function genClassMap(array $argv) : void
 
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))
   {
-    define(__NAMESPACE__ . '\\VERBOSE', isset($argv[2]) ? (int) $argv[2] : 0);
+    define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[2]) ? (int) $argumentsVector[2] : 0);
     define(__NAMESPACE__ . '\\ADDITIONAL_CLASSES_FILES_PATH', BASE_PATH . 'config/AdditionalClassFiles.php');
   }
 

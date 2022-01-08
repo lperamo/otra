@@ -96,7 +96,7 @@ class SassToolsTest extends TestCase
     // -- defining constants and variables - part 2
     define(__NAMESPACE__ . '\\APP_ENV', 'APP_ENV');
     $_SERVER[APP_ENV] = 'prod';
-    $argv = [];
+    $argumentsVector = [];
 
     // -- including needed libraries
     require CONSOLE_PATH . 'deployment/taskFileInit.php';

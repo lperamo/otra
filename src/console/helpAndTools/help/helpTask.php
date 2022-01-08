@@ -17,14 +17,14 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLI
 const HELP_TASK = 2;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function help(array $argv): void
+function help(array $argumentsVector): void
 {
-  $consoleTask = $argv[HELP_TASK];
+  $consoleTask = $argumentsVector[HELP_TASK];
   $tasksClassMap = require CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
   if (!isset($tasksClassMap[$consoleTask]))

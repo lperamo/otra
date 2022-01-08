@@ -27,12 +27,12 @@ const
 
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void|int
  */
-function genBootstrap(array $argv)
+function genBootstrap(array $argumentsVector)
 {
   if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
   {
@@ -40,11 +40,11 @@ function genBootstrap(array $argv)
     throw new OtraException(code: 1, exit: true);
   }
 
-  define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', isset($argv[GEN_BOOTSTRAP_ARG_LINT]) && $argv[GEN_BOOTSTRAP_ARG_LINT] === '1');
-  define(__NAMESPACE__ . '\\VERBOSE', isset($argv[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argv[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
+  define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', isset($argumentsVector[GEN_BOOTSTRAP_ARG_LINT]) && $argumentsVector[GEN_BOOTSTRAP_ARG_LINT] === '1');
+  define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
 
   // We do not do micro bootstraps for 'otra_exception' route.
-  if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]) && $argv[GEN_BOOTSTRAP_ARG_ROUTE] === 'otra_exception')
+  if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]) && $argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] === 'otra_exception')
   {
     echo CLI_WARNING, 'We do not do micro bootstraps for the route ', CLI_INFO_HIGHLIGHT, 'otra_exception',
     CLI_WARNING, '.', END_COLOR, PHP_EOL;
@@ -59,7 +59,7 @@ function genBootstrap(array $argv)
   }
 
   // We generate the class mapping file if we need it.
-  if (!(isset($argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argv[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
+  if (!(isset($argumentsVector[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]) && '0' === $argumentsVector[GEN_BOOTSTRAP_ARG_CLASS_MAPPING]))
   {
     // Generation of the class mapping
     require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -70,7 +70,7 @@ function genBootstrap(array $argv)
 
     [$status, $return] = cliCommand(
       PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . VERBOSE . ' ' . intval(GEN_BOOTSTRAP_LINT) .
-      ' ' . ($argv[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
+      ' ' . ($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
     );
     echo $return;
 
@@ -85,10 +85,10 @@ function genBootstrap(array $argv)
     mkdir(BOOTSTRAP_PATH);
 
 // Checks whether we want only one/many CORRECT route(s)
-  if (isset($argv[GEN_BOOTSTRAP_ARG_ROUTE]))
+  if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]))
   {
     require CORE_PATH . 'tools/guessRoute.php';
-    $route = guessRoute($argv[GEN_BOOTSTRAP_ARG_ROUTE]);
+    $route = guessRoute($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]);
     $routes = [$route => Routes::$allRoutes[$route]];
     echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
   } else

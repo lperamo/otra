@@ -10,10 +10,13 @@ use function otra\console\architecture\doWeCreateIt;
 use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
 use const otra\console\architecture\constants\ARG_BUNDLE_NAME;
 
-/** @var bool $consoleForce */
-/** @var bool $interactive */
+/**
+ * @var bool  $consoleForce
+ * @var bool  $interactive
+ * @var array $argumentsVector
+ */
 
-$bundleName = ucfirst($argv[ARG_BUNDLE_NAME]);
+$bundleName = ucfirst($argumentsVector[ARG_BUNDLE_NAME]);
 $bundlePath = BUNDLES_PATH . $bundleName . DIR_SEPARATOR;
 
 // BUNDLE STEP
@@ -25,4 +28,3 @@ if (!file_exists($bundlePath))
   /** @var int $bundleMask */
   bundleHandling($interactive, $consoleForce, $bundleName, $bundleMask ?? null);
 }
-

@@ -30,12 +30,12 @@ namespace otra\console\architecture\createBundle
   const ARG_BUNDLE_MASK = 3;
 
   /**
-   * @param array $argv
+   * @param array $argumentsVector
    *
    * @throws OtraException
    * @return void
    */
-  function createBundle(array $argv) : void
+  function createBundle(array $argumentsVector) : void
   {
     if (!file_exists(BUNDLES_PATH))
     {
@@ -51,24 +51,24 @@ namespace otra\console\architecture\createBundle
     // $consoleForce determines whether we show an error when something is missing in non-interactive mode or not
     // the false value by default will stop the execution if something does not exist and show an error.
     require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-    $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-    $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
 
     // Checking argument : bundle name
-    if (!isset($argv[ARG_BUNDLE_NAME]))
+    if (!isset($argumentsVector[ARG_BUNDLE_NAME]))
     {
       $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
 
       // We clean the screen
       echo ERASE_SEQUENCE;
     } else
-      $bundleName = $argv[ARG_BUNDLE_NAME];
+      $bundleName = $argumentsVector[ARG_BUNDLE_NAME];
 
     bundleHandling(
       $interactive,
       $consoleForce,
       $bundleName,
-      isset($argv[ARG_BUNDLE_MASK]) ? intval($argv[ARG_BUNDLE_MASK]) : null,
+      isset($argumentsVector[ARG_BUNDLE_MASK]) ? intval($argumentsVector[ARG_BUNDLE_MASK]) : null,
       true
     );
   }

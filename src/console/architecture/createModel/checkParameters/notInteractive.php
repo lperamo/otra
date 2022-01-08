@@ -28,10 +28,10 @@ $checkParameter = function (
   string $message,
   mixed $defaultValue = null,
   bool $exit = true
-) use (&$argv) : mixed
+) use (&$argumentsVector) : mixed
 {
-  if (isset($argv[constant($constantName)]))
-    return $argv[constant($constantName)];
+  if (isset($argumentsVector[constant($constantName)]))
+    return $argumentsVector[constant($constantName)];
 
   echo $exit ? CLI_ERROR : CLI_WARNING, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 

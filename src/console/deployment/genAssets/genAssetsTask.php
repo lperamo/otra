@@ -191,12 +191,12 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 }
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function genAssets(array $argv) : void
+function genAssets(array $argumentsVector) : void
 {
   if (!file_exists(BUNDLES_PATH))
   {
@@ -215,11 +215,11 @@ function genAssets(array $argv) : void
       'WHITESPACE_ONLY',
       'SIMPLE_OPTIMIZATIONS',
       'ADVANCED_OPTIMIZATIONS'
-    ][isset($argv[3]) ? intval($argv[3]) : 1]);
+    ][isset($argumentsVector[3]) ? intval($argumentsVector[3]) : 1]);
 
   $routes = Routes::$allRoutes;
 
-  if (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argv[GEN_ASSETS_ARG_ASSETS_MASK]))
+  if (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]))
   {
     echo CLI_ERROR, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
     '.', END_COLOR;
@@ -228,7 +228,7 @@ function genAssets(array $argv) : void
 
   define(
     __NAMESPACE__ . '\\ASSETS_MASK',
-    (isset($argv[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argv[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
+    (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
   ); // 31 = default to all assets
 
   define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
@@ -246,9 +246,9 @@ function genAssets(array $argv) : void
   )
   {
     // If we ask just for only one route
-    if (isset($argv[GEN_ASSETS_ARG_ROUTE]))
+    if (isset($argumentsVector[GEN_ASSETS_ARG_ROUTE]))
     {
-      $theRoute = $argv[GEN_ASSETS_ARG_ROUTE];
+      $theRoute = $argumentsVector[GEN_ASSETS_ARG_ROUTE];
 
       if (!isset($routes[$theRoute]))
       {

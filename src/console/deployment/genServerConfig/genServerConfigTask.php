@@ -24,26 +24,26 @@ const
   SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
 
 /**
- * @param array $argv
+ * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
  */
-function genServerConfig(array $argv) : void
+function genServerConfig(array $argumentsVector) : void
 {
-  $fileName = $argv[GEN_SERVER_CONFIG_ARG_FILE];
+  $fileName = $argumentsVector[GEN_SERVER_CONFIG_ARG_FILE];
 
   define(
     __NAMESPACE__ . '\\GEN_SERVER_CONFIG_ENVIRONMENT',
-    (isset($argv[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]))
-      ? $argv[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]
+    (isset($argumentsVector[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]))
+      ? $argumentsVector[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]
       : DEV
   );
 
   define(
     __NAMESPACE__ . '\\GEN_SERVER_CONFIG_SERVER_TECHNOLOGY',
-    (isset($argv[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]))
-      ? $argv[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]
+    (isset($argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]))
+      ? $argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]
       : 'nginx'
   );
 
