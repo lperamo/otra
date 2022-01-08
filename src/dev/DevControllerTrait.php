@@ -182,7 +182,7 @@ trait DevControllerTrait
 
     $route = $routes[$route];
 
-    // No resources section so no CSS/JS to load
+    // No 'resources' section so no CSS/JS to load
     if (!isset($route['resources']))
       return '';
 

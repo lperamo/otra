@@ -184,7 +184,7 @@ abstract class Router
         $routeRegexp = '@^' . preg_replace('@{[^}]*}@', '([^/?]*)', $routeUrl) .
           '(?:\?(?:[a-zA-Z]+=\w+)(?:&?(?:[a-zA-Z]+=\w+))*)?$@';
 
-        // The beginning of the route is ok, is the parameters section ok too?
+        // The beginning of the route is ok, is the parameters' section ok too?
         if (preg_match($routeRegexp, $userUrl, $foundParameters, PREG_OFFSET_CAPTURE))
         {
           $patternFound = true;
