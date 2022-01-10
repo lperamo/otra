@@ -35,7 +35,6 @@ use function otra\console\deployment\
   updateConf\updateConf
 };
 
-require CORE_PATH . 'console/deployment/taskFileInit.php';
 const
   BUILD_DEV_ARG_VERBOSE = 2,
   BUILD_DEV_ARG_SCOPE = 5;
@@ -48,6 +47,8 @@ const
  */
 function buildDev(array $argumentsVector) : void
 {
+  require CORE_PATH . 'console/deployment/taskFileInit.php';
+
   // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
   define(__NAMESPACE__ . '\\BUILD_DEV_VERBOSE', (int) ($argumentsVector[BUILD_DEV_ARG_VERBOSE] ?? 0));
   define(__NAMESPACE__ . '\\BUILD_DEV_SCOPE', (int) ($argumentsVector[BUILD_DEV_ARG_SCOPE] ?? 0));
