@@ -137,7 +137,6 @@ abstract class TasksManager
       case 'genBootstrap':
       case 'genClassMap':
       case 'genServerConfig':
-      case 'genSiteMap' :
       case 'genWatcher' :
         $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
         $otraTask($argumentsVector);
@@ -146,6 +145,7 @@ abstract class TasksManager
         $otraTask = 'otra\\console\\deployment\\updateConf\\' . $otraTask;
         $otraTask($argumentsVector[UPDATE_CONF_ARG_MASK] ?? null, $argumentsVector[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
         break;
+      case 'genSiteMap' :
       case 'genJsRouting':
         $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
         $otraTask();
