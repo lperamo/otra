@@ -21,8 +21,7 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_SECURITIES
 };
 use function otra\src\tools\debug\validateYaml;
-use function otra\tools\files\compressPHPFile;
-use function otra\tools\files\returnLegiblePath;
+use function otra\tools\files\{compressPHPFile, returnLegiblePath};
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
@@ -111,7 +110,10 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     foreach ($configs as $config)
       $configsContent .= file_get_contents($config);
 
+    // Removes PHP beginning tag
     $configsContent = str_replace('<?php', '', $configsContent);
+
+    // Searches for use statements
     preg_match_all(
       '@^\\s*use\\s*([^;]*);\\s*$@mx',
       $configsContent,
@@ -120,20 +122,30 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     );
 
     array_unshift($matches);
-    $useStatements = '';
+
+    // Moving the use statements to the top of the file and removes doubloons
+    $useStatements = [];
     $delta = 0;
 
     foreach ($matches[0] as $match)
     {
-      $useStatements .= trim($match[0]);
+      $useStatement = trim($match[0]);
+
+      // We do not already have this use statement
+      if (!in_array($useStatement, $useStatements))
+        $useStatements [] = trim($match[0]);
+
       $length = mb_strlen($match[0]);
       $configsContent = substr_replace($configsContent, '', $match[1] - $delta, $length);
       $delta += $length;
     }
 
-    $configsContent = '<?php declare(strict_types=1);namespace bundles\\config;' . $useStatements . $configsContent;
+    $configsContent = '<?php declare(strict_types=1);namespace bundles\\config;' .
+      implode('', $useStatements) . $configsContent;
     define(__NAMESPACE__ . '\\MAIN_CONFIG_FILE', BUNDLES_MAIN_CONFIG_DIR . 'Config.php');
     writeConfigFile(MAIN_CONFIG_FILE, $configsContent);
+
+    // Compresses the config file
     require CORE_PATH . 'tools/files/compressPhpFile.php';
     compressPHPFile(MAIN_CONFIG_FILE, MAIN_CONFIG_FILE);
   }
