@@ -102,7 +102,12 @@ function getCssPathFromImport(
   {
     foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
     {
-      [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] = getCssPathFromImport($importedSass, $dotExtension, $resourcesPath, $sassLoadPath);
+      [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
+        getCssPathFromImport($importedSass, $dotExtension, $resourcesPath, $sassLoadPath);
+
+      // If we found the good path, we stop looking
+      if ($newResourceToAnalyze !== false)
+        break;
     }
   }
 
@@ -187,7 +192,7 @@ function searchSassLastLeaves(
       }
 
       echo CLI_ERROR, 'In the file ', returnLegiblePath2($previousImportedCssFound),
-        CLI_ERROR, ',', PHP_EOL, 'this/these import(s) path is/are wrong ', PHP_EOL,
+        CLI_ERROR, ',', PHP_EOL, 'at least one of this/these import(s) path is/are wrong ', PHP_EOL,
         $wrongsImportPath, CLI_ERROR, 'as it can lead to ', PHP_EOL,
         '- ', returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, PHP_EOL,
         '- ', returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, END_COLOR, PHP_EOL;
