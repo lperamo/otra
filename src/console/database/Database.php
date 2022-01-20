@@ -220,7 +220,11 @@ abstract class Database
       $instance->freeResult($dbResult);
     } catch(Exception $exception)
     {
-      $instance->rollBack();
+      // Checks if we already commit, otherwise we do not have an active transaction, so we check this to prevent
+      // showing an error about not having active transaction
+      if ($instance->inTransaction())
+        $instance->rollBack();
+
       throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
     }
 
