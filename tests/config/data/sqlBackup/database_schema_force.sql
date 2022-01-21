@@ -22,7 +22,7 @@ CREATE TABLE `testDB_table3` (
 CREATE TABLE `testDB_table` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `titre` VARCHAR(255) NOT NULL,
-  `date_creation` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `date_creation` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT 'the date creation',
   `fk_id_table2` INT NOT NULL,
   `fk_id_table3` INT NOT NULL,
   UNIQUE INDEX `my_index` (`id`,`titre`),

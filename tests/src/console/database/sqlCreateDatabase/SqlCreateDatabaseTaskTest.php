@@ -28,6 +28,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
+    DATABASE_SCHEMA_FORCE_SQL = self::CONFIG_FOLDER_SQL . 'database_schema_force.sql',
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_FILE_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/' . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
@@ -47,6 +48,10 @@ class SqlCreateDatabaseTaskTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
     require(self::TEST_CONFIG_GOOD_PATH);
+
+    // clean up the SQL that force database schema creation if it exists
+    if (file_exists(self::DATABASE_SCHEMA_FORCE_SQL))
+      unlink(self::DATABASE_SCHEMA_FORCE_SQL);
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];

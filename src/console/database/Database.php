@@ -27,6 +27,7 @@ abstract class Database
   private const OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT = 0,
     OTRA_DB_PROPERTY_MODE_TYPE = 1,
     OTRA_DB_PROPERTY_MODE_DEFAULT = 2,
+    OTRA_DB_PROPERTY_MODE_COMMENT = 3,
     ERROR_CLOSE_DIR_FORGOT_CALL = 'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ',
     ERROR_CANNOT_CREATE_THE_FOLDER = 'Cannot create the folder ',
     ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH = 'Cannot remove the folder \'',
@@ -240,6 +241,7 @@ abstract class Database
    *                          0: type
    *                          1: value (default)
    *                          2: type value
+   *                          3: comment
    *
    * @return string $attribute Concerned attribute in uppercase
    */
@@ -248,6 +250,9 @@ abstract class Database
     if (isset(self::$attributeInfos[$attribute]))
     {
       $value = self::$attributeInfos[$attribute];
+
+      if ('comment' === $attribute)
+        return ' COMMENT \'' . $value . '\'';
 
       if ('notnull' === $attribute)
         $attribute = 'not null';
@@ -851,6 +856,7 @@ abstract class Database
               . self::getAttr('default', self::OTRA_DB_PROPERTY_MODE_DEFAULT)
               . self::getAttr('notnull', self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
               . self::getAttr('auto_increment', self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
+              . self::getAttr('comment')
               . ',' . PHP_EOL;
 
             // If the column is a primary key, we add it to the primary keys array

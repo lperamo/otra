@@ -11,6 +11,7 @@ testDB_table:
     date_creation:
       type: timestamp
       notnull: true
+      comment: 'the date creation'
     fk_id_table2:
       type: int
       notnull: true
