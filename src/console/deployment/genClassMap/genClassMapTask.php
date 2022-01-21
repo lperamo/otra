@@ -60,7 +60,7 @@ function genClassMap(array $argumentsVector) : void
   $additionalClassesFilesKeys = array_keys($additionalClassesFiles);
   $classesThatMayHaveToBeAdded = [];
 
-  // Condition mandatory if we not launch genClassMap directly
+  // Condition mandatory if we do not launch genClassMap directly
   if (!function_exists('otra\console\promptUser'))
     require CONSOLE_PATH . 'tools.php';
 
@@ -97,8 +97,8 @@ function genClassMap(array $argumentsVector) : void
 
       while (false !== ($entry = readdir($folderHandler)))
       {
-        // We check that we process interesting things
-        if ('.' === $entry || '..' === $entry)
+        // We check that we process interesting things, especially not starters that are only meant to be copied
+        if ('.' === $entry || '..' === $entry || str_contains($entry, 'starters'))
           continue;
 
         $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;
