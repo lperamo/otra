@@ -12,8 +12,7 @@ use otra\config\{AllConfig, Routes};
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\cache\php\init\CLASSMAP;
-use const otra\console\
-{CLI_BASE, CLI_ERROR, deployment\clearCache\PHP_CACHE_PATH, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 use function otra\tools\files\compressPHPFile;
 
 const
@@ -23,6 +22,11 @@ const
 
   OTRA_KEY_BOOTSTRAP = 'bootstrap',
   OTRA_KEY_DRIVER = 'driver';
+
+/**
+ * @var array $argumentsVector
+ */
+
 define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', $argumentsVector[ONE_BOOTSTRAP_ARG_LINT] === '1');
 define(__NAMESPACE__ . '\\VERBOSE', intval($argumentsVector[ONE_BOOTSTRAP_ARG_VERBOSE]));
 define(__NAMESPACE__ . '\\OTRA_PROJECT', str_contains(__DIR__, 'vendor'));
