@@ -39,7 +39,7 @@ class UpdateConfHelpTest extends TestCase
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('mask', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . '1 => AllConfig files' . PHP_EOL .
+      ') ' . CLI_INFO . '1 => Config.php files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '2 => routes' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '4 => securities' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '8 => schema.yml' . PHP_EOL .

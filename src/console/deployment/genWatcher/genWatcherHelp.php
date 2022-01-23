@@ -18,7 +18,11 @@ return [
       STRING_PAD_FOR_OPTION_FORMATTING .
       '2 => Tells which file has been updated and the most important events that have been triggered.' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . 'Defaults to 1.',
-    'mask' => '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Defaults to 15.',
+    'mask' => '1 => SCSS' . PHP_EOL .
+    STRING_PAD_FOR_OPTION_FORMATTING . '2 => TS' . PHP_EOL .
+    STRING_PAD_FOR_OPTION_FORMATTING . '4 => routes' . PHP_EOL .
+    STRING_PAD_FOR_OPTION_FORMATTING . '8 => PHP (routes, configuration and class mapping)' . PHP_EOL .
+    STRING_PAD_FOR_OPTION_FORMATTING . '15 => ALL. Defaults to 15.',
     'gcc' => 'Should we use Google Closure Compiler for javascript/typescript files?',
     'no SASS cache' => 'Do we have to clean the SASS/SCSS cache first? (Defaults to 0)'
   ],

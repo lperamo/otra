@@ -24,7 +24,7 @@ require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 return [
   'Updates the files related to bundles and routes : schemas, routes, securities.',
   [
-    'mask' => UPDATE_CONF_MASK_ALL_CONFIG . ' => AllConfig files' . PHP_EOL .
+    'mask' => UPDATE_CONF_MASK_ALL_CONFIG . ' => Config.php files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . UPDATE_CONF_MASK_ROUTES . ' => routes' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . UPDATE_CONF_MASK_SECURITIES . ' => securities' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . UPDATE_CONF_MASK_SCHEMA . ' => schema.yml' . PHP_EOL .

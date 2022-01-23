@@ -145,15 +145,22 @@ function debugEvent(
  */
 function updatePHP(string $filename) : void
 {
+  // All those needed files can be launched multiple times by `genWatcher` so "once" is required
   // We generate the class mapping...
-  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+  require_once CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
   genClassMap([]);
 
+  $baseFileName = basename($filename);
+
   // We update routes configuration if the PHP file is a routes' configuration file
-  if (basename($filename) === 'Routes.php')
+  if ($baseFileName === 'Routes.php')
   {
-    require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+    require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
     updateConf('2');
+  } elseif($baseFileName === 'Config.php')
+  {
+    require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+    updateConf('1');
   }
 }
 

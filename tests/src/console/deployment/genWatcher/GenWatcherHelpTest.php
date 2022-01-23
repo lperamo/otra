@@ -44,7 +44,11 @@ class GenWatcherHelpTest extends TestCase
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('mask', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . '1 => SCSS, 2 => TS, ..., 4 => routes, ..., 8 => PHP, 15 => ALL. Defaults to 15.' . PHP_EOL .
+      ') ' . CLI_INFO . '1 => SCSS' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '2 => TS' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '4 => routes' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '8 => PHP (routes, configuration and class mapping)' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '15 => ALL. Defaults to 15.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('gcc', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
