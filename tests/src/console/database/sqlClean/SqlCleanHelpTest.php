@@ -7,10 +7,8 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{APP_ENV, PROD, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
-use const otra\cache\php\APP_ENV;
-use const otra\cache\php\PROD;
-use const otra\cache\php\TEST_PATH;
 
 /**
  * @runTestsInSeparateProcesses
