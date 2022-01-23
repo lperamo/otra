@@ -111,7 +111,7 @@ function createFixture(
     'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES utf8mb4;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
 //    $localMemory This variable stores the identifiers found in this table that are not available in
 //    sorted tables ?
-  $localMemory = $values = $properties = [];
+  $localMemory = $properties = [];
   $theProperties = '';
 
   $databaseId = 1; // The database ids begin to 1 by default
@@ -255,8 +255,6 @@ function createFixture(
 
         $theValues .= $foreignIdValue . ', ';
       }
-
-      $values [] = [$fixtureName => $value];
     }
 
     if ($first)
@@ -297,7 +295,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
    * 1 => we truncate the table before inserting the fixtures,
    * 2 => we clean the fixtures sql files, and THEN we truncate the table before inserting the fixtures
    */
-  $mask = isset($argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK])
+  $cleaningMask = isset($argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK])
     ? (int)$argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK]
     : 0;
 
@@ -346,7 +344,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
   $fixtureFileNameBeginning = Database::$pathSqlFixtures . $databaseName . '_';
 
   // We clean the fixtures sql files whether it's needed
-  if (2 === $mask)
+  if (2 === $cleaningMask)
   {
     array_map('unlink', glob($fixtureFileNameBeginning . '*.sql'));
     echo CLI_BASE, 'Fixtures sql files cleaned', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
@@ -379,7 +377,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
 
   $color = 0;
   $fixturesMemory = [];
-  $weNeedToTruncate = 0 < $mask;
+  $weNeedToTruncate = 0 < $cleaningMask;
   $truncatePath = Database::$pathSql . 'truncate';
 
   if ($weNeedToTruncate && !file_exists($truncatePath) && !mkdir($truncatePath))
