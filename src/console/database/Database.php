@@ -42,13 +42,10 @@ abstract class Database
     $fixturesFileIdentifiers = 'ids',
     $folder = 'bundles/',
     $motor,
-    $pathSql = '',
     $pathYml = '',
-    $pathSqlFixtures,
     $pathYmlFixtures,
     $password,
     $schemaFile,
-    $tablesOrderFile,
     $user;
 
   private static bool
@@ -61,6 +58,11 @@ abstract class Database
     $attributeInfos = [],
     // paths
     $baseDirs = [];
+
+  public static string
+    $pathSql = '',
+    $pathSqlFixtures,
+    $tablesOrderFile;
 
   /** Initializes paths, commands and connections
    *
@@ -164,32 +166,6 @@ abstract class Database
     closedir($folderHandler);
 
     return $folders;
-  }
-
-  /**
-   * Cleans sql and yml files in the case where there are problems that had corrupted files.
-   *
-   * @param bool $extensive
-   */
-  public static function clean(bool $extensive = false) : void
-  {
-    self::initBase();
-
-    if (file_exists(self::$pathSqlFixtures))
-    {
-      array_map('unlink', glob(self::$pathSqlFixtures . '/*.sql'));
-      rmdir(self::$pathSqlFixtures);
-    }
-
-    array_map('unlink', array_merge(
-      glob(self::$pathSql . '/*.sql'),
-      glob(self::$pathSql . 'truncate/*.sql')
-    ));
-
-    if ($extensive && file_exists(self::$tablesOrderFile))
-      unlink(self::$tablesOrderFile);
-
-    echo CLI_BASE, ($extensive) ? 'Full cleaning' : 'Cleaning', ' done', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
   }
 
   /**

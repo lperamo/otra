@@ -201,31 +201,6 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws OtraException
-   * @throws ReflectionException
-   */
-  public function testClean() : void
-  {
-    // Creating the context
-    copyFileAndFolders(
-      [
-        self::CONFIG_FOLDER_YML_BACKUP,
-        self::CONFIG_FOLDER_SQL_BACKUP
-      ],
-      [
-        self::CONFIG_FOLDER_YML,
-        self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    Database::clean();
-    $sqlPath = (new ReflectionClass(Database::class))
-      ->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
-    self::assertEquals([], glob($sqlPath . '/*.sql'));
-    self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
-  }
-
-  /**
    * @throws OtraException If the original YAML schema can't be copied.
    * @throws ReflectionException
    * depends testInit
