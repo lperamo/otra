@@ -8,8 +8,8 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
-use function otra\console\database\sqlExecute\sqlExecute;
 use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
+use function otra\console\database\sqlExecute\sqlExecute;
 
 /**
  * @runTestsInSeparateProcesses

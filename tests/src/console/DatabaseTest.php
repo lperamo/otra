@@ -10,11 +10,10 @@ use otra\{OtraException, bdd\Sql, Session};
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
-use function otra\console\database\sqlCreateFixtures\analyzeFixtures;
-use function otra\console\database\sqlCreateFixtures\createFixture;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
+use function otra\console\database\sqlCreateFixtures\{analyzeFixtures, createFixture};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,
@@ -55,7 +54,6 @@ class DatabaseTest extends TestCase
     OTRA_BINARY = 'otra.php',
     OTRA_LABEL_FIXTURES_FOLDER = 'fixtures/',
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
-    OTRA_VARIABLE_DATABASE_BASE_DIRS = 'baseDirs',
     OTRA_VARIABLE_DATABASE_PATH_SQL = 'pathSql',
     OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES = 'pathSqlFixtures',
     OTRA_VARIABLE_DATABASE_PATH_YML = 'pathYml',
@@ -73,7 +71,6 @@ class DatabaseTest extends TestCase
     parent::setUp();
     $_SERVER[APP_ENV] = PROD;
     $reflectedClass = (new ReflectionClass(Database::class));
-    $reflectedClass->getProperty('boolSchema')->setValue(false);
     $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
   }
 
@@ -131,7 +128,6 @@ class DatabaseTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Database::class));
-    $baseDirs = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_BASE_DIRS)->getValue();
     $ymlPath = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_YML)->getValue();
     $sqlPath = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
 

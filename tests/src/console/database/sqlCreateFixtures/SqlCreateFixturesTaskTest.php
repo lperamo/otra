@@ -125,7 +125,6 @@ class SqlCreateFixturesTaskTest extends TestCase
   {
     // context
     $reflectedClass = (new ReflectionClass(Database::class));
-    $reflectedClass->getProperty('boolSchema')->setValue(false);
     $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
     mkdir(BUNDLES_PATH);
 

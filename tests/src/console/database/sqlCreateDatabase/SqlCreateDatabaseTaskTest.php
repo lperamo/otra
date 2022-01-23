@@ -76,7 +76,6 @@ class SqlCreateDatabaseTaskTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'boolSchema' => false,
         'folder' => 'tests/src/bundles/',
         'pathSql' => self::CONFIG_FOLDER_SQL,
         'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,

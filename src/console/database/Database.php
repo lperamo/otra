@@ -13,10 +13,9 @@ use Exception;
 use Symfony\Component\Yaml\Yaml;
 use otra\config\AllConfig;
 use otra\{bdd\Sql, Session, OtraException};
-use function otra\console\database\sqlExecute\sqlExecute;
-use const otra\cache\php\
-{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
+use function otra\console\database\sqlExecute\sqlExecute;
 
 /**
  * @package otra\console
@@ -29,7 +28,6 @@ abstract class Database
     OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT = 0,
     OTRA_DB_PROPERTY_MODE_TYPE = 1,
     OTRA_DB_PROPERTY_MODE_DEFAULT = 2,
-    OTRA_DB_PROPERTY_MODE_COMMENT = 3,
     LABEL_FIXTURES = 'fixtures/';
 
   public const
@@ -49,14 +47,9 @@ abstract class Database
     $password,
     $user;
 
-  private static bool
-    $boolSchema = false;
-
   private static array
     // just in order to simplify the code
-    $attributeInfos = [],
-    // paths
-    $baseDirs = [];
+    $attributeInfos = [];
 
   public static string
     $fixturesFileIdentifiers = 'ids',

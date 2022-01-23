@@ -10,13 +10,11 @@ use otra\Session;
 use phpunit\framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
-use const otra\cache\php\
-{APP_ENV, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
+use const otra\cache\php\{APP_ENV, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
 use function otra\console\database\sqlImportSchema\sqlImportSchema;
-use function otra\tools\copyFileAndFolders;
-use function otra\tools\setScopeProtectedFields;
+use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses

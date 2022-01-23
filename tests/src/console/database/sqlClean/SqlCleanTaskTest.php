@@ -42,7 +42,6 @@ class SqlCleanTaskTest extends TestCase
     // context
     $_SERVER[APP_ENV] = PROD;
     $reflectedClass = (new ReflectionClass(Database::class));
-    $reflectedClass->getProperty('boolSchema')->setValue(false);
     $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
 
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
