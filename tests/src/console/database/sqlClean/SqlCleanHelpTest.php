@@ -8,6 +8,9 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\cache\php\APP_ENV;
+use const otra\cache\php\PROD;
+use const otra\cache\php\TEST_PATH;
 
 /**
  * @runTestsInSeparateProcesses
@@ -15,6 +18,7 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_CO
 class SqlCleanHelpTest extends TestCase
 {
   private const
+    OTRA_BINARY = 'otra.php',
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
     OTRA_TASK_HELP = 'help';
 
@@ -23,6 +27,11 @@ class SqlCleanHelpTest extends TestCase
    */
   public function testSqlCleanHelp()
   {
+    // context
+    $_SERVER[APP_ENV] = PROD;
+    require TEST_PATH . 'config/AllConfigGood.php';
+
+    // testing
     $this->expectOutputString(
       CLI_BASE .
       str_pad(self::OTRA_TASK_SQL_CLEAN, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
@@ -34,10 +43,11 @@ class SqlCleanHelpTest extends TestCase
       ') ' . CLI_INFO . 'Type 1 in order to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
     );
 
+    // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_HELP,
-      ['otra.php', self::OTRA_TASK_HELP, self::OTRA_TASK_SQL_CLEAN]
+      [self::OTRA_BINARY, self::OTRA_TASK_HELP, self::OTRA_TASK_SQL_CLEAN]
     );
   }
 }
