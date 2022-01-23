@@ -150,7 +150,7 @@ function updatePHP(string $filename) : void
   genClassMap([]);
 
   // We update routes configuration if the PHP file is a routes' configuration file
-  if ($filename === 'Routes.php')
+  if (basename($filename) === 'Routes.php')
   {
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
     updateConf('2');
