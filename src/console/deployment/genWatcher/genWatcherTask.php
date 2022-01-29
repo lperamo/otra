@@ -42,6 +42,7 @@ use function otra\console\deployment\
   genClassMap\genClassMap,
   generateJavaScript,
   generateStylesheetsFiles,
+  genJsRouting\genJsRouting,
   getPathInformations,
   isNotInThePath,
   updateConf\updateConf
@@ -157,6 +158,8 @@ function updatePHP(string $filename) : void
   {
     require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
     updateConf('2');
+    require_once CONSOLE_PATH . 'deployment/genJsRouting/genJsRoutingTask.php';
+    genJsRouting();
   } elseif($baseFileName === 'Config.php')
   {
     require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
