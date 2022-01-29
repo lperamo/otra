@@ -50,9 +50,11 @@ function sqlImportSchema(array $argumentsVector) : void
     $content .= $table . ':' . PHP_EOL;
     /** @var array<int, array<string, ?string>> $columns */
     $columns = $database->values($database->query('
-        SELECT `COLUMN_NAME`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
+        SELECT `COLUMN_NAME`, `COLUMN_COMMENT`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
           `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
-        FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = \'' . $databaseName . '\' AND TABLE_NAME = \'' . $table .
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = \'' . $databaseName . '\'
+         AND TABLE_NAME = \'' . $table .
       '\' ORDER BY ORDINAL_POSITION')
     );
 
@@ -82,6 +84,9 @@ function sqlImportSchema(array $argumentsVector) : void
 
       if ('PRI' === $column['COLUMN_KEY'])
         $content .= '      primary: true' . PHP_EOL;
+
+      if ('' !== $column['COLUMN_COMMENT'])
+        $content .= '      comment: \'' . $column['COLUMN_COMMENT'] . '\'' . PHP_EOL;
     }
 
     /** @var array<int, array<string, string>> $constraints */
