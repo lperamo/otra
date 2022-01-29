@@ -21,10 +21,6 @@ const OTRA_FILENAME_TRACE = 'trace';
  */
 trait DevControllerTrait
 {
-  // Those two static variables are constants in fact, but we have to maintain the naming norm
-  private static int
-    $stylesheetFile,
-    $printStylesheet;
   private static bool $debugBarHasBeenAdded = false;
 
   /**
@@ -34,8 +30,6 @@ trait DevControllerTrait
   public function __construct(array $otraParams = [], array $params = [])
   {
     parent::__construct($otraParams, $params);
-    self::$stylesheetFile = 0;
-    self::$printStylesheet = 1;
 
     if (!isset(AllConfig::$debugConfig['autoLaunch']) || AllConfig::$debugConfig['autoLaunch'])
       require CORE_PATH . 'tools/debug/dump.php';
@@ -125,7 +119,9 @@ trait DevControllerTrait
   {
     return [
       self::addResources('css', $route, $viewResourcePath),
-      self::addResources('js', $route, $viewResourcePath)
+      self::$ajax
+        ? ''
+        : self::addResources('js', $route, $viewResourcePath)
     ];
   }
 
@@ -153,10 +149,10 @@ trait DevControllerTrait
     // suppress useless spaces
     parent::$template = str_replace(
       MasterController::OTRA_LABEL_ENDING_TITLE_TAG,
-      MasterController::OTRA_LABEL_ENDING_TITLE_TAG . self::addDebugCSS(),
+      MasterController::OTRA_LABEL_ENDING_TITLE_TAG . self::addDynamicCSS(),
       str_replace(
         '</body>',
-        self::addDebugJS() . '</body>',
+        self::addDynamicJS() . '</body>',
         parent::$template
       )
     );
@@ -242,7 +238,7 @@ trait DevControllerTrait
             $naturalPriorityIndex,
             $forcedPriorityIndex,
             ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile .
-              ($resourceType !== 'print_css' ? $endLink : '.css" media="print" />')
+            ($resourceType !== 'print_css' ? $endLink : '.css" media="print" />')
           );
         }
       }
@@ -258,7 +254,7 @@ trait DevControllerTrait
     if ($assetType === 'js')
     {
       // $jsResourceKey can be 'async', 'defer' or a numerical array index
-      foreach(self::$javaScript as $jsResourceKey => $javaScript)
+      foreach(self::$javaScripts as $jsResourceKey => $javaScript)
       {
         // If the key don't give info on async and defer then put them automatically
         if (is_int($jsResourceKey))
@@ -270,48 +266,6 @@ trait DevControllerTrait
     }
 
     return $resourceContent;
-  }
-
-  /**
-   * Adds the OTRA CSS for the debug bar.
-   *
-   * @throws Exception
-   * @return string
-   */
-  public static function addDebugCSS() : string
-  {
-    $cssContent = '';
-
-    foreach(self::$stylesheets as $stylesheet)
-    {
-      $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
-        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
-        '.css" media="' . (!(isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet])
-        ? 'screen'
-        : 'print')
-        . '"/>';
-    }
-
-    return $cssContent;
-  }
-
-  /**
-   * Adds the OTRA CSS for the debug bar.
-   *
-   * @throws Exception
-   * @return string
-   */
-  public static function addDebugJS() : string
-  {
-    $jsContent = '';
-
-    foreach(self::$javaScript as $javaScript)
-    {
-      $jsContent .= PHP_EOL . parent::LABEL_SCRIPT_NONCE .
-      getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
-    }
-
-    return $jsContent;
   }
 
   /**

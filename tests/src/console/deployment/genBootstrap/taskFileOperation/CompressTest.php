@@ -16,7 +16,7 @@ class CompressTest extends TestCase
 {
   private const
     FILE_TO_COMPRESS = TEST_PATH . 'examples/deployment/FileToCompress.php',
-    COMPRESSED_FILE = TEST_PATH . 'examples/deployment/CompressedFile',
+    COMPRESSED_FILE = TEST_PATH . 'examples/deployment/CompressedFile.php',
     BACKUP_COMPRESSED_FILE = TEST_PATH . 'examples/deployment/BackupCompressedFile.php';
 
   // It fixes issues like when AllConfig is not loaded while it should be
