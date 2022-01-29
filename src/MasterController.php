@@ -16,6 +16,7 @@ use const otra\cache\php\
 {APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
 use function otra\services\getRandomNonceForCSP;
 use function otra\templating\showBlocksVisually;
+use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 
 /**
  * @author Lionel Péramo
@@ -53,7 +54,7 @@ abstract class MasterController
     ];
 
   protected static array
-    $javaScript = [],
+    $javaScripts = [],
     /** @var array<string,string> */
     $rendered = [],
     $stylesheets = [];
@@ -68,7 +69,13 @@ abstract class MasterController
   /* @var bool|string $template The actual template being processed */
   protected static bool|string|null $template;
 
-  public const OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  // Those two static variables are constants in fact, but we have to maintain the naming norm
+  private static int
+    $stylesheetFile = 0,
+    $printStylesheet = 1;
+
+  public const
+    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -240,25 +247,27 @@ abstract class MasterController
     return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
       ? false
       : preg_replace(
-      [
-        '@(<script.*?nonce=")\w{64}@',
-        '@(<link.*?nonce=")\w{64}@',
-      ],
-      [
-        '${1}' . getRandomNonceForCSP(),
-        '${1}' . getRandomNonceForCSP('style-src')
-      ],
-      file_get_contents($cachedFile)
-    );
+        [
+          '@(<script.*?nonce=")\w{64}@',
+          '@(<link.*?nonce=")\w{64}@',
+        ],
+        [
+          '${1}' . getRandomNonceForCSP(),
+          '${1}' . getRandomNonceForCSP('style-src')
+        ],
+        file_get_contents($cachedFile)
+      );
   }
 
   /**
    * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
    *
-   * @param array|string $stylesheets The css file to add (Array of string)
-   * @param bool         $print       Does the stylesheet must be only used for a print usage ?
+   * @param array $stylesheets The css files to add [0 => File, 1 => Print]
+   *                           Do not put '.css'.
+   *                           /!\ DO NOT fill the second key if it is not needed
+   * @param bool  $print       Does the stylesheet must be only used for a print usage ?
    */
-  protected static function css(array|string $stylesheets = [], bool $print = false) : void
+  protected static function css(array $stylesheets = [], bool $print = false) : void
   {
     array_push(
       self::$stylesheets,
@@ -274,7 +283,7 @@ abstract class MasterController
    */
   protected static function js(array|string $js = []) : void
   {
-    self::$javaScript = array_merge(self::$javaScript, is_array($js) ? $js : [$js]);
+    self::$javaScripts = array_merge(self::$javaScripts, is_array($js) ? $js : [$js]);
   }
 
   /**
@@ -441,6 +450,7 @@ abstract class MasterController
    *
    * @throws OtraException
    * @throws ReflectionException
+   * @throws Exception
    * @return string
    */
   protected static function render(
@@ -451,13 +461,91 @@ abstract class MasterController
   {
     $content = MasterController::processFinalTemplate($route, $templateFile, $variables);
     [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
-    self::addResourcesToTemplate($content, $cssResource, $jsResource);
+
+    if (self::$ajax)
+      $content .= $cssResource . self::addDynamicCSS() . $jsResource ;
+    else
+    {
+      $content = str_replace(
+        self::OTRA_LABEL_ENDING_TITLE_TAG,
+        self::OTRA_LABEL_ENDING_TITLE_TAG . self::addDynamicCSS(),
+        str_replace(
+          '</body>',
+          self::addDynamicJS() . '</body>',
+          $content
+        )
+      );
+      self::addResourcesToTemplate($content, $cssResource, $jsResource);
+    }
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
-    self::$javaScript = self::$stylesheets = [];
+    self::$javaScripts = self::$stylesheets = [];
 
     return $content;
+  }
+
+  /**
+   * Adds extra CSS dynamically (needed for the debug bar for example).
+   *
+   * @throws Exception
+   * @return string
+   */
+  public static function addDynamicCSS() : string
+  {
+    $cssContent = '';
+
+    foreach(self::$stylesheets as $stylesheet)
+    {
+      $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
+        '.css" media="' . (!(isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet])
+          ? 'screen'
+          : 'print')
+        . '"/>';
+    }
+
+    return $cssContent;
+  }
+
+  /**
+   * Adds extra JS dynamically (needed for the debug bar for example).
+   *
+   * @throws Exception
+   * @return string
+   */
+  public static function addDynamicJS() : string
+  {
+    $jsContent = '';
+
+    foreach(self::$javaScripts as $javaScript)
+    {
+      $jsContent .= self::LABEL_SCRIPT_NONCE .
+        getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
+    }
+
+    return $jsContent;
+  }
+
+  /**
+   * Gets AJAX JS
+   *
+   * @throws Exception
+   * @return array
+   */
+  public static function getAjaxJS() : array
+  {
+    $jsContent = [];
+
+    foreach(self::$javaScripts as $javaScript)
+    {
+      $jsContent[] = [
+        'nonce' => getRandomNonceForCSP(),
+        'src' => $javaScript . '.js'
+      ];
+    }
+
+    return $jsContent;
   }
 }
 
