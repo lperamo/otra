@@ -528,6 +528,28 @@ abstract class MasterController
   }
 
   /**
+   * Gets AJAX CSS. Needed because if we put CSS in the body, it will be replaced on some page change.
+   * We then need to put the AJAX CSS to the head as the head is never replaced.
+   *
+   * @throws Exception
+   * @return array
+   */
+  public static function getAjaxCSS() : array
+  {
+    $cssContent = [];
+
+    foreach(self::$stylesheets as $stylesheet)
+    {
+      $cssContent[] = [
+        'nonce' => getRandomNonceForCSP(),
+        'href' => $stylesheet . '.css'
+      ];
+    }
+
+    return $cssContent;
+  }
+
+  /**
    * Gets AJAX JS
    *
    * @throws Exception
