@@ -165,7 +165,7 @@ class Sql
    */
   public static function connect(mixed ...$params)
   {
-    return call_user_func_array([self::$currentDBMS, 'connect'], $params);
+    return ([self::$currentDBMS, 'connect'])(...$params);
   }
 
   /**
@@ -208,7 +208,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func_array(self::$currentDBMS . '::query', $params);
+    return (self::$currentDBMS . '::query')(...$params);
   }
 
   /**
@@ -223,7 +223,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchAssoc', $params);
+    return (self::$currentDBMS . '::fetchAssoc')(...$params);
   }
 
   /**
@@ -238,7 +238,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchAllAssoc', $params);
+    return (self::$currentDBMS . '::fetchAllAssoc')(...$params);
   }
 
   /**
@@ -253,7 +253,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchAllByPair', $params);
+    return (self::$currentDBMS . '::fetchAllByPair')(...$params);
   }
 
     /**
@@ -268,7 +268,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchArray', $params);
+    return (self::$currentDBMS . '::fetchArray')(...$params);
   }
 
   /**
@@ -283,7 +283,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::getColumnMeta', $params);
+    return (self::$currentDBMS . '::getColumnMeta')(...$params);
   }
 
   /**
@@ -298,7 +298,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchObject', $params);
+    return (self::$currentDBMS . '::fetchObject')(...$params);
   }
 
   /**
@@ -313,7 +313,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::fetchRow', $params);
+    return (self::$currentDBMS . '::fetchRow')(...$params);
   }
 
   /**
@@ -328,7 +328,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::values', $params);
+    return (self::$currentDBMS . '::values')(...$params);
   }
 
   /**
@@ -343,7 +343,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::valuesOneCol', $params);
+    return (self::$currentDBMS . '::valuesOneCol')(...$params);
   }
 
   /**
@@ -358,7 +358,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::single', $params);
+    return (self::$currentDBMS . '::single')(...$params);
   }
 
   /**
@@ -371,7 +371,7 @@ class Sql
   private static function close(?bool $instanceToClose = true) : bool
   {
     if (isset(self::$instance))
-      return call_user_func_array(self::$currentDBMS . '::close', [&$instanceToClose]);
+      return (self::$currentDBMS . '::close')(...[&$instanceToClose]);
 
     return false;
   }
@@ -388,7 +388,7 @@ class Sql
     if (isset($_SESSION['bootstrap']))
       return null;
 
-    return call_user_func_array(self::$currentDBMS . '::freeResult', $params);
+    return (self::$currentDBMS . '::freeResult')(...$params);
   }
 
   /**
@@ -400,7 +400,7 @@ class Sql
    */
   public function lastInsertedId(string $sequenceName = null) : string
   {
-    return call_user_func(self::$currentDBMS . '::lastInsertedId', $sequenceName);
+    return (self::$currentDBMS . '::lastInsertedId')($sequenceName);
   }
 
   /**
@@ -410,7 +410,7 @@ class Sql
    */
   public function quote(string $string) : string
   {
-    return call_user_func(self::$currentDBMS . '::quote', $string);
+    return (self::$currentDBMS . '::quote')($string);
   }
 
   /**
@@ -418,7 +418,7 @@ class Sql
    */
   public function beginTransaction() : bool
   {
-    return call_user_func(self::$currentDBMS . '::beginTransaction');
+    return (self::$currentDBMS . '::beginTransaction')();
   }
 
   /**
@@ -426,7 +426,7 @@ class Sql
    */
   public function inTransaction() : bool
   {
-    return call_user_func(self::$currentDBMS . '::inTransaction');
+    return (self::$currentDBMS . '::inTransaction')();
   }
 
   /**
@@ -439,7 +439,7 @@ class Sql
     // (DDL) statement such as DROP TABLE or CREATE TABLE is issued within a transaction. The implicit COMMIT will
     // prevent you from rolling back any other changes within the transaction boundary.
     if (Sql::$instance->inTransaction())
-      return call_user_func(self::$currentDBMS . '::commit');
+      return (self::$currentDBMS . '::commit')();
 
     return true;
   }
@@ -449,7 +449,7 @@ class Sql
    */
   public function rollBack() : bool
   {
-    return call_user_func(self::$currentDBMS . '::rollBack');
+    return (self::$currentDBMS . '::rollBack')();
   }
 
   /**
@@ -457,7 +457,7 @@ class Sql
    */
   public function errorInfo() : array
   {
-    return call_user_func(self::$currentDBMS . '::errorInfo');
+    return (self::$currentDBMS . '::errorInfo')();
   }
 
   /**
@@ -479,7 +479,7 @@ class Sql
         'sql');
     }
 
-    return call_user_func(self::$currentDBMS . '::prepare', $query, $options);
+    return (self::$currentDBMS . '::prepare')($query, $options);
   }
 
   /**
@@ -491,7 +491,7 @@ class Sql
    */
   public static function rowCount(mixed ...$params) : int
   {
-    return call_user_func_array(self::$currentDBMS . '::rowCount', $params);
+    return (self::$currentDBMS . '::rowCount')(...$params);
   }
 
   /**
@@ -503,7 +503,7 @@ class Sql
    */
   public static function setAttribute(mixed ...$params): bool
   {
-    return call_user_func_array(self::$currentDBMS . '::setAttribute', $params);
+    return (self::$currentDBMS . '::setAttribute')(...$params);
   }
 
   /**
@@ -515,6 +515,6 @@ class Sql
    */
   public static function getAttribute(int $attribute): bool|int|string|array|null
   {
-    return call_user_func(self::$currentDBMS . '::getAttribute', $attribute);
+    return (self::$currentDBMS . '::getAttribute')($attribute);
   }
 }
