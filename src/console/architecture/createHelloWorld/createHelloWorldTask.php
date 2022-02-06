@@ -62,12 +62,10 @@ namespace otra\console\architecture\createHelloWorld
   }
 
   /**
-   * @param array $argumentsVector
-   *
    * @throws OtraException
    * @return void
    */
-  function createHelloWorld(array $argumentsVector)
+  function createHelloWorld()
   {
     if (file_exists(BUNDLES_PATH . 'HelloWorld'))
     {
@@ -76,8 +74,8 @@ namespace otra\console\architecture\createHelloWorld
     }
 
     $argumentsVector = [
-      '0' => $argumentsVector[0],
-      '1' => $argumentsVector[1],
+      '0' => 'otra.php',
+      '1' => 'createHelloWorld',
       ARG_BUNDLE_NAME => 'HelloWorld',
       ARG_MODULE_NAME => 'frontend',
       ARG_CONTROLLER_NAME => 'index',

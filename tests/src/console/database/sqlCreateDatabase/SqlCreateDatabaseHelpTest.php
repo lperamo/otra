@@ -18,6 +18,9 @@ class SqlCreateDatabaseHelpTest extends TestCase
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     OTRA_TASK_HELP = 'help';
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws OtraException
    */

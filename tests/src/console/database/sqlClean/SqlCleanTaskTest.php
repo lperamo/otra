@@ -32,6 +32,9 @@ class SqlCleanTaskTest extends TestCase
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/';
 
+    // it fixes issues like when AllConfig is not loaded while it should be
+    protected $preserveGlobalState = FALSE;
+
   /**
    * @throws OtraException
    * @throws ReflectionException

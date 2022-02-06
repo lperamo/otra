@@ -35,12 +35,10 @@ const
   OTRA_ROUTES_PATH = CACHE_PATH . 'php/otraRoutes/';
 
 /**
- * @param array $argumentsVector
- *
  * @throws OtraException
  * @return void
  */
-function init(array $argumentsVector) : void
+function init() : void
 {
   echo 'Initializing the project...', PHP_EOL;
 

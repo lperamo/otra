@@ -34,6 +34,9 @@ class SqlCreateDatabaseTaskTest extends TestCase
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . 'tables_order.yml';
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws ReflectionException
    * @throws OtraException
