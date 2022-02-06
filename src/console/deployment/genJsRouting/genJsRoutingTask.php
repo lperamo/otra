@@ -10,19 +10,29 @@ declare(strict_types=1);
 namespace otra\console\deployment\genJsRouting;
 
 use otra\config\Routes;
+use otra\OtraException;
 use const otra\cache\php\BUNDLES_PATH;
-use const otra\console\{CLI_INFO_HIGHLIGHT, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+use const otra\console\
+{CLI_INFO_HIGHLIGHT, CLI_WARNING, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 
 const
   MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/js/',
   MAIN_JS_ROUTING = MAIN_RESOURCES_PATH . 'jsRouting.js';
 
 /**
+ * @throws OtraException
  * @return void
  */
 function genJsRouting(): void
 {
   echo 'Generating JavaScript routing...', PHP_EOL;
+
+  // Checks if we have routes to generate
+  if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
+  {
+    echo CLI_WARNING, 'You don\'t have any routes to generate.', END_COLOR, PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
 
   // Preparing the routes
   $routes = Routes::$allRoutes;
