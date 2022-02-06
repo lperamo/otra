@@ -4,17 +4,9 @@ namespace otra\console;
 
 use otra\OtraException;
 use function otra\console\deployment\genClassMap\genClassMap;
-use function otra\console\deployment\genClassMap\generateClassMap;
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\{BASE_PATH, CORE_PATH, DIR_SEPARATOR};
-use const otra\console\architecture\constants\
-{ARG_BUNDLE_NAME, ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE, ARG_MODULE_NAME};
 use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_ARG_ROUTE_NAME};
-use function otra\console\architecture\createModule\createModule;
-use function otra\console\deployment\genJsRouting\genJsRouting;
-use function otra\console\deployment\updateConf\updateConf;
-use function otra\console\architecture\createAction\createAction;
-use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata;
 
 /**
  * @author Lionel Péramo
