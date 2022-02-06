@@ -20,6 +20,9 @@ class SqlCleanHelpTest extends TestCase
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
     OTRA_TASK_HELP = 'help';
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws OtraException
    */

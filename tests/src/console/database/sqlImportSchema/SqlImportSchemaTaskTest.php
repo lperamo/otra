@@ -42,6 +42,9 @@ class SqlImportSchemaTaskTest extends TestCase
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . self::TABLES_ORDER_FILE,
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * Loads a main configuration specific to test purposes.
    */

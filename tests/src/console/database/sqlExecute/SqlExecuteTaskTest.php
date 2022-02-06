@@ -25,6 +25,9 @@ class SqlExecuteTaskTest extends TestCase
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE;
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws OtraException
    * @throws ReflectionException

@@ -6,7 +6,7 @@ use otra\OtraException;
 use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\console\deployment\genClassMap\generateClassMap;
 use const otra\bin\CACHE_PHP_INIT_PATH;
-use const otra\cache\php\DIR_SEPARATOR;
+use const otra\cache\php\{BASE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\architecture\constants\
 {ARG_BUNDLE_NAME, ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE, ARG_MODULE_NAME};
 use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_ARG_ROUTE_NAME};
@@ -27,6 +27,7 @@ abstract class TasksManager
     PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
+    TASK_CLASS_MAP_TASK_PARAMETERS = 1,
     TASK_DESCRIPTION = 0,
     TASK_NAME = 1,
     TASK_PARAMETERS = 1,
@@ -100,74 +101,30 @@ abstract class TasksManager
     }
 
     // _once as otherwise we cannot do multiple tasks in a row
-    require_once $tasksClassMap[$otraTask][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $otraTask . 'Task.php';
+    $taskPath = $tasksClassMap[$otraTask][TasksManager::TASK_CLASS_MAP_TASK_PATH];
+    require_once $taskPath . DIR_SEPARATOR . $otraTask . 'Task.php';
 
-    switch($otraTask)
-    {
-      // Architecture
-      case 'createAction':
-      case 'createBundle':
-      case 'createController':
-      case 'createHelloWorld':
-      case 'createModel':
-      case 'createModule':
-      case 'init':
-        $otraTask = 'otra\\console\\architecture\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argumentsVector);
-        break;
-      case 'createGlobalConstants':
-        $otraTask = 'otra\\console\\architecture\\' . $otraTask . '\\' . $otraTask;
-        $otraTask();
-        break;
-      // Database
-      case 'sqlClean':
-      case 'sqlCreateDatabase':
-      case 'sqlCreateFixtures':
-      case 'sqlExecute':
-      case 'sqlImportFixtures':
-      case 'sqlImportSchema':
-        $otraTask = 'otra\\console\\database\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argumentsVector);
-        break;
-      // Deployment
-      case 'buildDev':
-      case 'clearCache':
-      case 'deploy':
-      case 'genAssets':
-      case 'genBootstrap':
-      case 'genClassMap':
-      case 'genServerConfig':
-      case 'genWatcher' :
-        $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argumentsVector);
-        break;
-      case 'updateConf':
-        $otraTask = 'otra\\console\\deployment\\updateConf\\' . $otraTask;
-        $otraTask($argumentsVector[UPDATE_CONF_ARG_MASK] ?? null, $argumentsVector[UPDATE_CONF_ARG_ROUTE_NAME] ?? null);
-        break;
-      case 'genSiteMap' :
-      case 'genJsRouting':
-        $otraTask = 'otra\\console\\deployment\\' . $otraTask . '\\' . $otraTask;
-        $otraTask();
-        break;
-      // Help and tools
-      case 'convertImages' :
-      case 'crypt':
-      case 'hash':
-      case 'help':
-      case 'routes':
-      case 'serve':
-        $otraTask = 'otra\\console\\helpAndTools\\' . $otraTask . '\\' . $otraTask;
-        $otraTask($argumentsVector);
-        break;
-      case 'generateTaskMetadata':
-      case 'checkConfiguration' :
-      case 'requirements' :
-      case 'version' :
-        $otraTask = 'otra\\console\\helpAndTools\\' . $otraTask . '\\' . $otraTask;
-        $otraTask();
-        break;
-    }
+    $otraTaskFull = (str_contains($taskPath, CORE_PATH)
+      ? 'otra\\' . str_replace(
+        [CORE_PATH, '/'],
+        ['', '\\'],
+        $taskPath
+      )
+      : str_replace(
+        [BASE_PATH, '/'],
+        ['', '\\'],
+        $taskPath
+      )) . '\\' . $otraTask;
+
+    if  ($otraTask === 'updateConf')
+      $otraTaskFull(
+        $argumentsVector[UPDATE_CONF_ARG_MASK] ?? null,
+        $argumentsVector[UPDATE_CONF_ARG_ROUTE_NAME] ?? null
+      );
+    else
+      ($tasksClassMap[$otraTask][TasksManager::TASK_CLASS_MAP_TASK_PARAMETERS] === [])
+        ? $otraTaskFull()
+        : $otraTaskFull($argumentsVector);
   }
 }
 
