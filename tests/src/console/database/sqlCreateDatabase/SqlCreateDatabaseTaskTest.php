@@ -29,6 +29,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     DATABASE_SCHEMA_FORCE_SQL = self::CONFIG_FOLDER_SQL . 'database_schema_force.sql',
+    OTRA_BINARY = 'otra.php',
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_FILE_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/' . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
@@ -90,7 +91,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_SQL_CREATE_DATABASE,
-      ['otra.php', self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME, 'true']
+      [self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME, 'true']
     );
 
     // Testing

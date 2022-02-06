@@ -37,6 +37,8 @@ class SqlImportFixturesTaskTest extends TestCase
     OTRA_BINARY = 'otra.php',
     OTRA_LABEL_FIXTURES_FOLDER = 'fixtures/',
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
+    OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
+    OTRA_TASK_SQL_IMPORT_FIXTURES = 'sqlImportFixtures',
     OTRA_VARIABLE_DATABASE_PATH_SQL = 'pathSql',
     OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES = 'pathSqlFixtures',
     OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES = 'pathYmlFixtures',
@@ -108,7 +110,7 @@ class SqlImportFixturesTaskTest extends TestCase
     );
 
     require CONSOLE_PATH . 'database/sqlCreateFixtures/sqlCreateFixturesTask.php';
-    sqlCreateFixtures([self::DATABASE_NAME, 1]);
+    sqlCreateFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_FIXTURES, self::DATABASE_NAME, 1]);
 
     // restores correct content in the variable overwritten by the function call
     (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)
@@ -116,7 +118,7 @@ class SqlImportFixturesTaskTest extends TestCase
 
     // launching the task
     require CONSOLE_PATH . 'database/sqlImportFixtures/sqlImportFixturesTask.php';
-    sqlImportFixtures([self::DATABASE_NAME, self::DATABASE_CONNECTION]);
+    sqlImportFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_IMPORT_FIXTURES, self::DATABASE_NAME, self::DATABASE_CONNECTION]);
 
     foreach (self::TABLES_ORDER as $table)
     {

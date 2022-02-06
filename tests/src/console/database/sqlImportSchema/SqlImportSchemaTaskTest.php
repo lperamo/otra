@@ -32,6 +32,7 @@ class SqlImportSchemaTaskTest extends TestCase
     IMPORTED_SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . 'importedSchema.yml',
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
+    OTRA_TASK_SQL_IMPORT_SCHEMA = 'sqlImportSchema',
     OTRA_VARIABLE_DATABASE_PATH_SQL = 'pathSql',
     OTRA_VARIABLE_DATABASE_SCHEMA_FILE = 'schemaFile',
     OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE = 'tablesOrderFile',
@@ -92,7 +93,7 @@ class SqlImportSchemaTaskTest extends TestCase
 
     // launching task
     require CONSOLE_PATH . 'database/sqlImportSchema/sqlImportSchemaTask.php';
-    sqlImportSchema([self::DATABASE_NAME, self::DATABASE_CONNECTION]);
+    sqlImportSchema([self::OTRA_BINARY, self::OTRA_TASK_SQL_IMPORT_SCHEMA, self::DATABASE_NAME, self::DATABASE_CONNECTION]);
     self::assertFileExists(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
     self::assertFileEquals(
       self::SCHEMA_FILE_BACKUP,
