@@ -124,7 +124,7 @@ function generateStylesheetsFiles(
     $sassLoadPathString .= ' -I ' . $sassLoadPath;
 
   [, $output] = cliCommand(
-    'sass --update -q' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
+    'sass --update ' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
     null,
     false
   );
@@ -140,7 +140,8 @@ function generateStylesheetsFiles(
   if (!TASK_FILE_SOURCE_MAPS && file_exists($sourceMapPath))
     unlink($sourceMapPath);
 
-  return $output;
+  // remove "Compiled [...]" messages from SASS CLI command as OTRA already talks about it
+  return preg_replace('@Compiled .*?.scss to .*?.css\.@','',$output);
 }
 
 /**
