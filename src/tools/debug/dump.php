@@ -6,8 +6,7 @@
 
 declare(strict_types=1);
 
-namespace otra\tools\debug;
-
+//namespace otra\tools\debug;
 use otra\config\AllConfig;
 use const otra\cache\php\CORE_PATH;
 
@@ -35,10 +34,10 @@ if (!function_exists(__NAMESPACE__ . '\\dump'))
    */
   function paramDump(?array $options = [], ... $params) : void
   {
-    if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_FINAL_CLASS'))
+    if (!defined('OTRA_DUMP_FINAL_CLASS'))
     {
-      define(__NAMESPACE__ . '\\OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
-      define(__NAMESPACE__ . '\\OTRA_NAMESPACED_FINAL_CLASS', 'otra\\tools\\debug\\' . OTRA_DUMP_FINAL_CLASS);
+      define('OTRA_DUMP_FINAL_CLASS', 'Dump' . (php_sapi_name() === 'cli' ? 'Cli' : 'Web'));
+      define('OTRA_NAMESPACED_FINAL_CLASS', 'otra\\tools\\debug\\' . OTRA_DUMP_FINAL_CLASS);
     }
 
     require_once CORE_PATH . 'tools/debug/' . OTRA_DUMP_FINAL_CLASS . '.php';
