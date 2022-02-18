@@ -14,11 +14,12 @@ use otra\OtraException;
 use PDO;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
-use function otra\console\database\sqlExecute\sqlExecute;
 use const otra\cache\php\
 {BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\database\sqlExecute\sqlExecute;
 use function otra\src\tools\debug\validateYaml;
+use function otra\tools\files\returnLegiblePath2;
 
 const
   OTRA_BINARY = 'otra.php',
@@ -374,6 +375,14 @@ function sqlCreateFixtures(array $argumentsVector) : void
   }
 
   closedir($folder);
+
+  if ($tablesToCreate === [])
+  {
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
+    echo CLI_ERROR, 'No fixtures files found in ', returnLegiblePath2(Database::$pathYmlFixtures), CLI_ERROR, '!',
+    PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
 
   $color = 0;
   $fixturesMemory = [];
