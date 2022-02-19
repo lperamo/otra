@@ -290,9 +290,6 @@ class SessionTest extends TestCase
     // context
     Session::init(self::ROUNDS);
 
-    // launching
-    Session::set(self::TEST2, self::$fooThing);
-
     // testing
     self::assertEquals(false, Session::getIfExists(self::TEST));
   }
