@@ -10,7 +10,8 @@ use function otra\tools\cliCommand;
 use function otra\tools\files\returnLegiblePath;
 
 const
-  JAVA_COMPILING_PATH = 'java -Xmx32m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH .
+  // Memory here is in MiB (Mebibytes, not Megabytes)
+  JAVA_COMPILING_PATH = 'java -Xmx256m -Djava.util.logging.config.file=logging.properties -jar "' . CONSOLE_PATH .
   'deployment/compiler.jar"',
   PROBLEM_OCCURRED = CLI_ERROR . 'A problem occurred.' . END_COLOR,
   GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
