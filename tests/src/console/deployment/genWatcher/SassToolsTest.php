@@ -18,7 +18,6 @@ use function otra\console\deployment\genWatcher\
   searchSassLastLeaves,
   updateSassTree,
   updateSassTreeAfterEvent};
-use function otra\tools\debug\dump;
 
 /**
  * @runTestsInSeparateProcesses

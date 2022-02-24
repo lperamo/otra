@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
+use const otra\cache\php\{APP_ENV, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY};
-use function otra\tools\{delTree, getSourceFromFileCli};
-use function otra\tools\debug\{dump, paramDump};
+use function otra\tools\getSourceFromFileCli;
 
 /**
  * @runTestsInSeparateProcesses

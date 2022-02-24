@@ -6,7 +6,6 @@
 
 declare(strict_types=1);
 
-//namespace otra\tools\debug;
 use otra\config\AllConfig;
 use const otra\cache\php\CORE_PATH;
 
