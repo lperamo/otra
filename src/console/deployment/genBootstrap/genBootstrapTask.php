@@ -17,14 +17,13 @@ use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\tools\{cliCommand, files\compressPHPFile, guessRoute};
 
 const
-  GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
-  GEN_BOOTSTRAP_ARG_VERBOSE = 3,
-  GEN_BOOTSTRAP_ARG_LINT = 4,
-  GEN_BOOTSTRAP_ARG_ROUTE = 5,
-  OTRA_KEY_DRIVER = 'driver',
-  BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
-  ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
-
+GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
+GEN_BOOTSTRAP_ARG_VERBOSE = 3,
+GEN_BOOTSTRAP_ARG_LINT = 4,
+GEN_BOOTSTRAP_ARG_ROUTE = 5,
+OTRA_KEY_DRIVER = 'driver',
+BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
+ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
 
 /**
  * @param array $argumentsVector
@@ -84,7 +83,7 @@ function genBootstrap(array $argumentsVector)
   if (!file_exists(BOOTSTRAP_PATH))
     mkdir(BOOTSTRAP_PATH);
 
-// Checks whether we want only one/many CORRECT route(s)
+  // Checks whether we want only one/many CORRECT route(s)
   if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]))
   {
     require CORE_PATH . 'tools/guessRoute.php';
@@ -99,24 +98,8 @@ function genBootstrap(array $argumentsVector)
     echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
   }
 
-// In CLI mode, the $_SERVER variable is not set, so we set it !
+  // In CLI mode, the $_SERVER variable is not set, so we set it !
   $_SERVER[APP_ENV] = PROD;
-
-  foreach(array_keys($routes) as $routeKey => $route)
-  {
-    if (array_key_first($routes) !== $routeKey)
-      echo PHP_EOL;
-
-    if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
-      echo CLI_BASE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_INFO
-        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
-    else
-      passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php" ' . VERBOSE . ' ' .
-        intval(GEN_BOOTSTRAP_LINT) . ' ' . $route);
-  }
-
-  // Final specific management for routes files
-  echo 'Create the specific routes management file... ', PHP_EOL;
 
   // CACHE_PATH will not be found if we do not have dbConnections in AllConfig, so we need to explicitly include the
   // configuration. We check if we do not have already loaded the configuration before.
@@ -132,7 +115,29 @@ function genBootstrap(array $argumentsVector)
       'temporaryEnv' => PROD
     ]
   );
+
+  // We load all the libraries needed to generate bootstraps
+  require CONSOLE_PATH . 'deployment/genBootstrap/oneBootstrap.php';
   require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+  require CORE_PATH . 'tools/files/compressPhpFile.php';
+  require CORE_PATH . 'Session.php';
+  require CORE_PATH . 'bdd/Sql.php';
+
+  foreach(array_keys($routes) as $routeKey => $route)
+  {
+    if (array_key_first($routes) !== $routeKey)
+      echo PHP_EOL;
+
+    if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
+      echo CLI_BASE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_INFO
+        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
+    else
+      oneBootstrap($route);
+  }
+
+  // Final specific management for routes files
+  echo 'Create the specific routes management file... ', PHP_EOL;
+
   $fileToInclude = CORE_PATH . 'Router.php';
 
   contentToFile(
@@ -149,7 +154,6 @@ function genBootstrap(array $argumentsVector)
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
     return 1;
 
-  require CORE_PATH . 'tools/files/compressPhpFile.php';
   compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement.php');
   unlink(ROUTE_MANAGEMENT_TEMPORARY_FILE);
 
