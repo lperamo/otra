@@ -785,7 +785,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
           $tempFile .= "'";
 
         /** @var string $tempFile */
-        // Here we handle the namespaces issues (if we were not using namespaces, we would not need this condition
+        // Here we handle the namespaces issues (if we were not using namespaces, we would not need this condition)
         if (preg_match_all(
           '@BASE_PATH|BUNDLES_PATH|CORE_PATH|DIR_SEPARATOR@',
           $tempFile,
@@ -1343,11 +1343,13 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   $finalContent = preg_replace(
     [
       '@\\' . PHP_END_TAG_STRING . '\s*<\?php@', // We stick the php files by removing end and open php tag between files
-      '@^\s*namespace [^;]+;\s*$@m', // We suppress namespaces
+      '@(namespace\s[\w\\\\]+\s+)(\{((?:[^}{]*|(?2))*)\})@', // Only keep blocks like in `namespace thing { my block }`
+      '@\s*namespace [^;]+;\s*@', // We suppress namespaces occurrences in simple cases like  ̀namespace thing;`
       '@\\\\?(PDO(?:Statement)?)@' // We fix PDO and PDOStatement namespaces
     ],
     [
       '',
+      '$3',
       '',
       '\\\\$1'
     ],
