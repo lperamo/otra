@@ -16,7 +16,7 @@ use const otra\console\
 {ADD_BOLD, CLI_ERROR, CLI_INDENT_COLOR_FOURTH, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\console\showContextByError;
 
-require CONSOLE_PATH . 'tools.php';
+require_once CONSOLE_PATH . 'tools.php';
 
 const
   PATTERN = '@\s{0,}
