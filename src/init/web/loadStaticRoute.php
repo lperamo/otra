@@ -13,6 +13,7 @@ use function otra\services\{addCspHeader,addPermissionsPoliciesHeader};
  */
 class MasterController {public static array $nonces = [];}
 require BASE_PATH . 'config/AllConfig.php';
+const OTRA_STATIC = true;
 require CORE_PATH . 'services/securityService.php';
 define(
   __NAMESPACE__ . '\\TMP_SECURITY_ROUTE_PATH',
