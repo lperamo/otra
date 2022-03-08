@@ -24,7 +24,7 @@ if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
   throw new OtraException(code: 1, exit: true);
 }
 
-require BASE_PATH . 'config/Routes.php';
+require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
 require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
 
