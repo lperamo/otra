@@ -196,6 +196,29 @@ class SessionTest extends TestCase
   }
 
   /**
+   * Testing two initializations to prevent a second initialization from resetting values that were previously put in
+   * memory
+   *
+   * @depends testInit
+   * @throws OtraException|ReflectionException
+   */
+  public function testInit_TwoInits() : void
+  {
+    // context
+    Session::init(self::ROUNDS);
+    Session::set(self::TEST, self::TEST);
+
+    // launching
+    Session::init();
+
+    // testing
+    self::assertEquals(
+      self::TEST,
+      Session::get(self::TEST)
+    );
+  }
+
+  /**
    * @depends testInit
    * @throws OtraException|ReflectionException
    */
@@ -223,6 +246,33 @@ class SessionTest extends TestCase
 
   /**
    * @depends testInit
+   * @throws OtraException|ReflectionException
+   */
+  public function testSet_Overwrite() : void
+  {
+    // context
+    Session::init(self::ROUNDS);
+    Session::set(self::TEST, 'test');
+
+    // launching
+    Session::set(self::TEST, self::$fooThing);
+
+    // testing
+    $reflectedClass = (new ReflectionClass(Session::class));
+    self::assertEquals(
+      self::TEST,
+      array_search(
+        crypt(
+          serialize(self::$fooThing),
+          self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue()
+        ),
+        $_SESSION
+      )
+    );
+  }
+
+  /**
+   * @depends testInit
    * @throws OtraException
    * @throws ReflectionException
    */
@@ -230,6 +280,43 @@ class SessionTest extends TestCase
   {
     // context
     Session::init(self::ROUNDS);
+
+    // launching
+    Session::sets(self::$testAndTest2);
+
+    // testing
+    $reflectedClass = (new ReflectionClass(Session::class));
+    $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
+    self::assertEquals(
+      self::TEST,
+      array_search(
+        crypt(serialize(self::$fooThing), $saltForHash),
+        $_SESSION
+      )
+    );
+
+    self::assertEquals(
+      self::TEST2,
+      array_search(
+        crypt(serialize(self::BAR), $saltForHash),
+        $_SESSION
+      )
+    );
+  }
+
+  /**
+   * @depends testInit
+   * @throws OtraException
+   * @throws ReflectionException
+   */
+  public function testSets_Overwrite() : void
+  {
+    // context
+    Session::init(self::ROUNDS);
+    Session::sets([
+      self::TEST => 'test',
+      self::TEST2 => 'test'
+    ]);
 
     // launching
     Session::sets(self::$testAndTest2);

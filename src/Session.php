@@ -16,10 +16,11 @@ use function otra\tools\isSerialized;
 abstract class Session
 {
   public static string $sessionsCachePath = CACHE_PATH . 'php/sessions/';
+  private static bool $initialized = false;
   private static ?string
-    $sessionId,
     $identifier,
     $blowfishAlgorithm,
+    $sessionId,
     $sessionFile;
   private static array $matches = [];
 
@@ -37,6 +38,7 @@ abstract class Session
     self::$sessionId = session_id();
     self::$sessionFile = self::$sessionsCachePath . sha1('ca' . self::$sessionId . VERSION . 'che') . '.php';
 
+    // blowfish algorithm must put leading zeros if the rounds are less than 10
     if ($rounds < 10)
       $rounds = '0' . $rounds;
 
@@ -53,25 +55,31 @@ abstract class Session
       self::toFile();
     } else
     {
-      self::$matches = [];
       $sessionData = require self::$sessionFile;
       self::$identifier = $sessionData['otra_i'];
       require_once CORE_PATH . 'tools/isSerialized.php';
 
-      foreach ($sessionData as $sessionDatumKey => $sessionDatum)
+      if (!self::$initialized)
       {
-        $deserializedDatum = isSerialized($sessionDatum) ? unserialize($sessionDatum) : $sessionDatum;
+        self::$matches = [];
 
-        if (!str_starts_with($sessionDatumKey, 'otra_'))
+        foreach ($sessionData as $sessionDatumKey => $sessionDatum)
         {
-          // only objects are serialized in session files, that's why we deserialize then enforce serialization
-          self::$matches[$sessionDatumKey] = [
-            'hashed' => crypt(serialize($deserializedDatum), self::$blowfishAlgorithm . self::$identifier),
-            'notHashed' => $deserializedDatum
-          ];
+          $deserializedDatum = isSerialized($sessionDatum) ? unserialize($sessionDatum) : $sessionDatum;
+
+          if (!str_starts_with($sessionDatumKey, 'otra_'))
+          {
+            // only objects are serialized in session files, that's why we deserialize then enforce serialization
+            self::$matches[$sessionDatumKey] = [
+              'hashed' => crypt(serialize($deserializedDatum), self::$blowfishAlgorithm . self::$identifier),
+              'notHashed' => $deserializedDatum
+            ];
+          }
         }
       }
     }
+
+    self::$initialized = true;
   }
 
   /**
@@ -80,11 +88,10 @@ abstract class Session
    */
   public static function set(string $sessionKey, mixed $value) : void
   {
-    if (!isset(self::$matches[$sessionKey]))
-      self::$matches[$sessionKey] = [
-        'notHashed' => $value,
-        'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
-      ];
+    self::$matches[$sessionKey] = [
+      'notHashed' => $value,
+      'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+    ];
 
     $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
   }
@@ -98,11 +105,10 @@ abstract class Session
   {
     foreach($array as $sessionKey => $value)
     {
-      if (!isset(self::$matches[$sessionKey]))
-        self::$matches[$sessionKey] = [
-          'notHashed' => $value,
-          'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
-        ];
+      self::$matches[$sessionKey] = [
+        'notHashed' => $value,
+        'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+      ];
 
       $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
     }
