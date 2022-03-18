@@ -10,13 +10,16 @@ namespace otra;
 
 use otra\config\Routes;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, DIR_SEPARATOR, PROD};
+use const otra\cache\php\init\CLASSMAP;
 
 /**
  * @package otra
  */
 abstract class Router
 {
-  private const OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+  private const
+    OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+    OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources',
     OTRA_ROUTE_URL_KEY = 0;
 
@@ -61,9 +64,9 @@ abstract class Router
     else
     {
       if (!isset(Routes::$allRoutes[$route]['core']))
-        $finalAction = 'bundles\\';
+        $finalAction = 'bundles\\' . $bundle . '\\';
 
-      $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
+      $finalAction .= $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
     }
 
     // If the action class does not exist, then it is maybe a Composer module that needs the bundle's name to
@@ -71,8 +74,8 @@ abstract class Router
     // when not finding classes
     ob_start();
 
-    if (!class_exists($finalAction))
-      $finalAction = $bundle . '\\' . $finalAction;
+    if (!in_array($finalAction, array_keys(CLASSMAP)))
+      $finalAction = Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY] . '\\' . $finalAction;
 
     ob_end_clean();
 
