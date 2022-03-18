@@ -70,6 +70,7 @@ class TemplateStructureActionTest extends TestCase
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
+    require TEST_PATH . 'config/AllConfig.php';
 
     // launching
     ob_start();
