@@ -101,9 +101,9 @@ namespace otra\cache\php
       $lastChildrenKey = $initKey + 1;
 
       // iterates on children of the last replacing block of the same type
-      while (self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_INDEX]
-        >= self::$blocksStack[$lastKey][self::OTRA_BLOCKS_KEY_INDEX]
-        && $lastChildrenKey < $maxKey)
+      while ($lastChildrenKey < $maxKey
+        && self::$blocksStack[$lastChildrenKey][self::OTRA_BLOCKS_KEY_INDEX] >=
+        self::$blocksStack[$lastKey][self::OTRA_BLOCKS_KEY_INDEX])
       {
         $indexesToUnset[] = $lastChildrenKey;
 
