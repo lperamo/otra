@@ -324,7 +324,7 @@ abstract class MasterController
         ob_clean();
         showBlocksVisually(false);
         Session::init();
-        Session::set('templateVisualization', ob_get_clean());
+        Session::set('templateVisualization', base64_encode(ob_get_clean()));
       }
     }
 
@@ -366,15 +366,14 @@ abstract class MasterController
       $content
     );
 
-    // the 'preg_replace' suppress useless spaces
-    $content = preg_replace('/>\s+</', '><',
-      !self::$ajax
-        ? str_replace(
+    // adding CSS after the title tag or just before the content if we use AJAX
+    $content = !self::$ajax
+      ? str_replace(
         self::OTRA_LABEL_ENDING_TITLE_TAG,
         self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
-        $contentAndJs)
-        : $cssResource . $contentAndJs
-    );
+        $contentAndJs
+      )
+      : $cssResource . $contentAndJs;
   }
 
   /**
@@ -477,6 +476,9 @@ abstract class MasterController
       );
       self::addResourcesToTemplate($content, $cssResource, $jsResource);
     }
+
+    // the 'preg_replace' suppress useless spaces
+    $content = preg_replace('/>\s+</', '><', $content);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
