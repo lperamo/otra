@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" verbose="true"
          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
-  <coverage pathCoverage="true">
+  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
     <include>
       <directory suffix=".php">../</directory>
       <directory suffix=".php">../bundles/*</directory>

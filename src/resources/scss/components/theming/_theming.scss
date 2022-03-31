@@ -13,7 +13,10 @@
 @use 'sass:string';
 
 // loading utilities
-@use '../../components/utils/utils';
+@use '../../utils/utils';
+
+$font-size: 0.625;
+$font-family : 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif';
 
 // initializing an array that will be used to determine which values to pass to the components
 $themes : ();
@@ -21,61 +24,94 @@ $themes : ();
 // initializing an array that will be passed to the global-mass-theme mixin
 $to-theme: ();
 
+$loaded-components: 'theming';
+
 // Only used for debug purposes
-$processing-theme : '';
+$-processing-theme : '';
 
 ///
 /// Loads a user defined theme in the 'static' variables $themes.
+/// Indicates which modules we use in our main stylesheet.
 ///
+/// @since 2.2
 /// @access public
 /// @param  {map} $_themes
 ///
-@mixin init-themes($_themes) {
+@mixin init-themes($_themes, $modules: null) {
   $themes : map.merge($themes, $_themes) !global;
+
+  @if ($modules != null) {
+    @if (type-of($modules) == 'list') {
+      @each $module in $modules {
+        $loaded-components: list.append($loaded-components, $module) !global;
+      }
+    }
+
+    @else {
+      $loaded-components: list.append($loaded-components, $modules) !global;
+    }
+  }
+}
+
+///
+/// Merges all the themes from the map and returns the final themes map
+///
+/// @since 2.2
+/// @access public
+/// @param {map} $_themes
+///
+@function merge-themes($_themes) {
+  $themes : ();
+
+  @each $_theme in $_themes {
+    $themes : map.deep-merge($_theme, $themes);
+  }
+
+  @return $themes;
 }
 
 ///
 /// Used by the other mixins of this component, this applies a given theme for a given property
 ///
 /// @access public
-/// @param  {map}    $theme                      - The theme 'light' or 'dark'.
-/// @param  {string} $property
-/// @param  {string} $color
-/// @param  {string} $additionalPropertiesBefore [''] Will be put at the beginning of the value
-/// @param  {string} $additionalPropertiesAfter  [''] Will be put at the end of the value
+/// @param  {map}    $-theme                      - The theme 'light' or 'dark'.
+/// @param  {string} $-property
+/// @param  {string} $-color
+/// @param  {string} $-additional-properties-before [''] Will be put at the beginning of the value
+/// @param  {string} $-additional-properties-after  [''] Will be put at the end of the value
 ///
-@mixin theme-property($theme, $property, $color, $additionalPropertiesBefore: '', $additionalPropertiesAfter: '') {
-  $darkenPosition : str-index($additionalPropertiesBefore, 'darken');
-  $lightenPosition : str-index($additionalPropertiesBefore, 'lighten');
+@mixin theme-property($-theme, $-property, $-color, $-additional-properties-before: '', $-additional-properties-after: '') {
+  $-darken-position : str-index($-additional-properties-before, 'darken');
+  $-lighten-position : str-index($-additional-properties-before, 'lighten');
 
-  @if ($darkenPosition != null) { // darken function used
-    $color : darken(map-get($theme, $color), $additionalPropertiesAfter);
-    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $darkenPosition - 1);
+  @if ($-darken-position != null) { // darken function used
+    $-color : darken(map-get($-theme, $-color), $-additional-properties-after);
+    $-additional-properties-before : str-slice($-additional-properties-before, 0, $-darken-position - 1);
 
-    @if ($additionalPropertiesBefore != '') {
-      $additionalPropertiesBefore : $additionalPropertiesBefore + ' ';
+    @if ($-additional-properties-before != '') {
+      $-additional-properties-before : $-additional-properties-before + ' ';
     }
 
-    #{$property}: unquote($additionalPropertiesBefore + $color);
+    #{$-property}: unquote($-additional-properties-before + $-color);
   }
 
-  @else if($lightenPosition != null) { // lighten function used
-    $color : lighten(map-get($theme, $color), $additionalPropertiesAfter);
-    $additionalPropertiesBefore : str-slice($additionalPropertiesBefore, 0, $lightenPosition - 1) + ' ';
+  @else if($-lighten-position != null) { // lighten function used
+    $-color : lighten(map-get($-theme, $-color), $-additional-properties-after);
+    $-additional-properties-before : str-slice($-additional-properties-before, 0, $-lighten-position - 1) + ' ';
 
-    @if ($additionalPropertiesBefore != '') {
-      $additionalPropertiesBefore : $additionalPropertiesBefore + ' ';
+    @if ($-additional-properties-before != '') {
+      $-additional-properties-before : $-additional-properties-before + ' ';
     }
 
-    #{$property}: unquote($additionalPropertiesBefore + $color);
+    #{$-property}: unquote($-additional-properties-before + $-color);
   }
 
   @else {
-    @if ($additionalPropertiesAfter != '') {
-      $additionalPropertiesAfter : ' ' + $additionalPropertiesAfter;
+    @if ($-additional-properties-after != '') {
+      $-additional-properties-after : ' ' + $-additional-properties-after;
     }
 
-    #{$property}: unquote($additionalPropertiesBefore + map-get($theme, $color) + $additionalPropertiesAfter);
+    #{$-property}: unquote($-additional-properties-before + map-get($-theme, $-color) + $-additional-properties-after);
   }
 }
 
@@ -83,18 +119,18 @@ $processing-theme : '';
 /// Launched inside a rule, applies a theme for a given properties
 ///
 /// @access public
-/// @param  {string} $property
-/// @param  {string} $color
-/// @param  {string} $additionalPropertiesBefore [''] Will be put at the beginning of the value
-/// @param  {string} $additionalPropertiesAfter  [''] Will be put at the end of the value
+/// @param  {string} $-property
+/// @param  {string} $-color
+/// @param  {string} $-additional-properties-before [''] Will be put at the beginning of the value
+/// @param  {string} $-additional-properties-after  [''] Will be put at the end of the value
 ///
-@mixin theme($property, $color, $additionalPropertiesBefore : '', $additionalPropertiesAfter : '') {
-  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
-    @include theme-property(map-get($themes, 'light'), $property, $color, $additionalPropertiesBefore, $additionalPropertiesAfter);
+@mixin theme($-property, $-color, $-additional-properties-before : '', $-additional-properties-after : '') {
+  @media (prefers-color-scheme : light) {
+    @include theme-property(map-get($themes, 'light'), $-property, $-color, $-additional-properties-before, $-additional-properties-after);
   }
 
-  @media (prefers-color-scheme : dark) {
-    @include theme-property(map-get($themes, 'dark'), $property, $color, $additionalPropertiesBefore, $additionalPropertiesAfter);
+  @media (prefers-color-scheme : dark), (prefers-color-scheme : no-preference) {
+    @include theme-property(map-get($themes, 'dark'), $-property, $-color, $-additional-properties-before, $-additional-properties-after);
   }
 }
 
@@ -103,88 +139,89 @@ $processing-theme : '';
 /// SASS removes a dimension if the list contains only one element, so we treat this particular case in an if statement
 ///
 /// @access private
-/// @param  {list} $property-to-theme
+/// @param  {list} $-property-to-theme
 ///
-/// @return {list} $property-to-theme
+/// @return {list} $-property-to-theme
 ///
-@function _fill-list-with-empty-strings($property-to-theme) {
-  @if (list.length($property-to-theme) == 2) {
-    $property-to-theme: list.append($property-to-theme, '');
-    $property-to-theme: list.append($property-to-theme, '');
+@function _fill-list-with-empty-strings($-property-to-theme) {
+  @if (list.length($-property-to-theme) == 2) {
+    $-property-to-theme: list.append($-property-to-theme, '');
+    $-property-to-theme: list.append($-property-to-theme, '');
   }
 
-  @else if (list.length($property-to-theme) == 3) {
-    $property-to-theme: list.append($property-to-theme, '');
+  @else if (list.length($-property-to-theme) == 3) {
+    $-property-to-theme: list.append($-property-to-theme, '');
   }
 
-  @return $property-to-theme;
+  @return $-property-to-theme;
 }
 
 ///
 /// Internal function to determine which color code to use (code passed, default component code ...)
 ///
 /// @access private
-/// @param  {map}    $theme  - The theme 'light' or 'dark'.
-/// @param  {string} $suffix - Suffix put after all the selectors
-/// @param  {string} $color
+/// @param  {map}    $-theme  - The theme 'light' or 'dark'.
+/// @param  {string} $-suffix - Suffix put after all the selectors
+/// @param  {string} $-color
 ///
-/// @return {list} $property-to-theme
+/// @return {list} $-property-to-theme
 ///
-@function _get-color-code($theme, $suffix, $color, $themeUsed) {
-  // testing if color code exists in the themes map
-  $suffixed-color : $color + $suffix;
+@function _get-color-code($-theme, $-suffix, $-color, $-theme-used) {
+  // Testing if color code exists in the themes map
+  $-suffixed-color : $-color + $-suffix;
 
   // Is there a color code for the suffix provided with the class?
-  @if ($themeUsed and $suffixed-color != $color and map.get($theme, $suffixed-color) != null) {
-    $color : $suffixed-color;
+  @if ($-theme-used and $-suffixed-color != $-color and map.get($-theme, $-suffixed-color) != null) {
+    $-color : $-suffixed-color;
   }
 
   // Is there a color code without suffix for this component?
-  @else if (not $themeUsed or map.get($theme, $color) == null) {
-    $default-color : 'default--' + $color;
+  @else if (not $-theme-used or map.get($-theme, $-color) == null) {
+    $-default-color : 'default--' + $-color;
 
     // Do we need the default component color code?
-    @if (map.get($theme, $default-color) != null) {
-      $color : $default-color;
+    @if (map.get($-theme, $-default-color) != null) {
+      $-color : $-default-color;
     }
 
     @else {
-      @error "Cannot set the color. Problem can be : - The color '" + $suffixed-color + "' does not exist in your " +
-        $processing-theme +
-        " theme map - you did not use a correct syntax - you wanted to use defaults values but there are no default values for this component - you set `null` for this color";
+      @debug "Cannot set the color.\AProblem can be :\A - The color '" + $-suffixed-color + "' does not exist in your " +
+        $-processing-theme + " theme map\A - you did not use a correct syntax\a - you wanted to use default values but there are no default values for this component\A - you set `null` for this color";
+
+      @error "Stack trace :";
     }
   }
 
-  @return $color;
+  @return $-color;
 }
 
 ///
 /// Launched inside a rule, it sets the theme for an array of properties for a given theme ('light' or 'dark' list)
 ///
 /// @access public
-/// @param  {map}     $theme               - The theme 'light' or 'dark'.
-/// @param  {list}    $properties-to-theme
+/// @param  {map}     $-theme               - The theme 'light' or 'dark'.
+/// @param  {list}    $-properties-to-theme
 ///
-@mixin mass-theme-properties($theme, $properties-to-theme) {
-  $suffix : list.nth($properties-to-theme, 1);
-  $themeUsed : list.nth($properties-to-theme, 2);
-  $properties-to-theme: utils.from-range($properties-to-theme, 3);
+@mixin mass-theme-properties($-theme, $-properties-to-theme) {
+  $-suffix : list.nth($-properties-to-theme, 1);
+  $-theme-used : list.nth($-properties-to-theme, 2);
+  $-properties-to-theme: utils.from-range($-properties-to-theme, 3);
 
   // Checks if there is only one property to theme
-  @if (type-of(list.nth($properties-to-theme, 1)) != 'list') {
-    $properties-to-theme : append((), $properties-to-theme);
+  @if (type-of(list.nth($-properties-to-theme, 1)) != 'list') {
+    $-properties-to-theme : append((), $-properties-to-theme);
   }
 
   // Now we are sure there are at least two properties to theme
-  @each $property-to-theme in $properties-to-theme {
-    $property-to-theme: _fill-list-with-empty-strings($property-to-theme);
+  @each $-property-to-theme in $-properties-to-theme {
+    $-property-to-theme: _fill-list-with-empty-strings($-property-to-theme);
 
     @include theme-property(
-      $theme,
-      list.nth($property-to-theme, 1), // property
-      _get-color-code($theme, $suffix, list.nth($property-to-theme, 2), $themeUsed),
-      list.nth($property-to-theme, 3), // before
-      list.nth($property-to-theme, 4)  // after
+      $-theme,
+      list.nth($-property-to-theme, 1), // property
+      _get-color-code($-theme, $-suffix, list.nth($-property-to-theme, 2), $-theme-used),
+      list.nth($-property-to-theme, 3), // before
+      list.nth($-property-to-theme, 4)  // after
     );
   }
 }
@@ -193,23 +230,23 @@ $processing-theme : '';
 /// Launched inside a rule, sets the both themes ('light' and 'dark') for an array of properties.
 ///
 /// @access public
-/// @param  {list}    $properties-to-theme
-/// @param  {string}  $suffix              ['']    - Suffix put after all the selectors
-/// @param  {bool}    $themeUsed           [false] - Are we using a theme?
+/// @param  {list}    $-properties-to-theme
+/// @param  {string}  $-suffix              ['']    - Suffix put after all the selectors
+/// @param  {bool}    $-theme-used          [false] - Are we using a theme?
 ///
-@mixin mass-theme($properties-to-theme, $suffix: '', $themeUsed: false) {
-  $properties-to-theme : list.join(($suffix, $themeUsed), $properties-to-theme);
+@mixin mass-theme($-properties-to-theme, $-suffix: '', $-theme-used: false) {
+  $-properties-to-theme : list.join(($-suffix, $-theme-used), $-properties-to-theme);
 
-  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
-    $processing-theme : 'light' !global;
+  @media (prefers-color-scheme : light) {
+    $-processing-theme : 'light' !global;
 
-    @include mass-theme-properties(map-get($themes, 'light'), $properties-to-theme);
+    @include mass-theme-properties(map-get($themes, 'light'), $-properties-to-theme);
   }
 
-  @media (prefers-color-scheme : dark) {
-    $processing-theme : 'dark' !global;
+  @media (prefers-color-scheme : dark), (prefers-color-scheme : no-preference) {
+    $-processing-theme : 'dark' !global;
 
-    @include mass-theme-properties(map-get($themes, 'dark'), $properties-to-theme);
+    @include mass-theme-properties(map-get($themes, 'dark'), $-properties-to-theme);
   }
 }
 
@@ -217,18 +254,18 @@ $processing-theme : '';
 /// Uses blend modes to adjust theming on background images.
 ///
 /// @access public
-/// @param {string} $image
-/// @param {string} $after      ['']
-/// @param {string} $blend-mode ['soft-light']
+/// @param {string} $-image
+/// @param {string} $-after      ['']
+/// @param {string} $-blend-mode ['soft-light']
 ///
-@mixin blend-image($image, $after : '', $blend-mode : 'soft-light') {
-  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
-    background : url(unquote($image)) unquote($after);
+@mixin blend-image($-image, $-after : '', $-blend-mode : 'soft-light') {
+  @media (prefers-color-scheme : light) {
+    background : url(unquote($-image)) unquote($-after);
   }
 
-  @media (prefers-color-scheme : dark) {
-    background            : linear-gradient(#000, #000), url(unquote($image)) unquote($after);
-    background-blend-mode : unquote($blend-mode), normal;
+  @media (prefers-color-scheme : dark), (prefers-color-scheme : no-preference) {
+    background            : linear-gradient(#000, #000), url(unquote($-image)) unquote($-after);
+    background-blend-mode : unquote($-blend-mode), normal;
   }
 }
 
@@ -238,29 +275,29 @@ $processing-theme : '';
 /// @access public
 ///
 @mixin global-mass-theme() {
-  @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
-    $processing-theme : 'light' !global;
+  @media (prefers-color-scheme : light) {
+    $-processing-theme : 'light' !global;
 
-    @each $rule, $properties in $to-theme {
-      #{$rule} {
-        @include mass-theme-properties(map-get($themes, 'light'), $properties);
+    @each $-rule, $-properties in $to-theme {
+      #{$-rule} {
+        @include mass-theme-properties(map-get($themes, 'light'), $-properties);
       }
     }
   }
 
-  @media (prefers-color-scheme : dark) {
-    $processing-theme : 'dark' !global;
+  @media (prefers-color-scheme : dark), (prefers-color-scheme : no-preference) {
+    $-processing-theme : 'dark' !global;
 
-    @each $rule, $properties in $to-theme {
-      #{$rule} {
-        @include mass-theme-properties(map-get($themes, 'dark'), $properties);
+    @each $-rule, $-properties in $to-theme {
+      #{$-rule} {
+        @include mass-theme-properties(map-get($themes, 'dark'), $-properties);
       }
     }
   }
 }
 
 ///
-/// Add themes to the 'static' variables $themes.
+/// Add themes to the 'static' variables $-themes.
 ///
 /// @access public
 ///
@@ -276,74 +313,77 @@ $processing-theme : '';
 /// @access public
 ///
 /// @param {map}    $_to_theme
-/// @param {string} $suffix    ['']    - Suffix put after all the selectors
-/// @param {bool}   $suffix    [false] - Are we using a theme?
+/// @param {string} $-suffix    ['']    - Suffix put after all the selectors
+/// @param {bool}   $-suffix    [false] - Are we using a theme?
 ///
-@mixin to-theme($_to-theme, $suffix: '', $themeUsed: true) {
-  $rule : list.nth(map.keys($_to-theme), 1);
-  $properties : list.nth(list.nth($_to-theme, 1), 2);
-  $tempMap: $to-theme;
+@mixin to-theme($_to-theme, $-suffix: '', $-theme-used: true) {
+  $-rule : list.nth(map.keys($_to-theme), 1);
+  $-properties : list.nth(list.nth($_to-theme, 1), 2);
+  $-temp-map: $to-theme;
 
-  @each $rule, $properties in $_to-theme {
-    $rule : list.nth(map.keys($_to-theme), 1);
-    $properties : list.nth($_to-theme, 1);
-    $properties : utils.from-range($properties, 2);
+  @each $-rule, $-properties in $_to-theme {
+    $-rule : list.nth(map.keys($_to-theme), 1);
+    $-properties : list.nth($_to-theme, 1);
+    $-properties : utils.from-range($-properties, 2);
 
     // `break` and `continue` statements do not exist in SASS so we make a for loop that go until a certain length but
     // we will affect the index to this length to stop the loop when needed!
-    $list-length : list.length($to-theme);
+    $-list-length : list.length($to-theme);
 
-    @if ($list-length > 0) {
-      @for $i from 1 through $list-length {
-        $storedRule : list.nth(map.keys($to-theme), $i);
+    @if ($-list-length > 0) {
+      @for $-i from 1 through $-list-length {
+        $-stored-rule : list.nth(map.keys($to-theme), $-i);
 
-        @if ($storedRule == $rule) {
-          $i : $list-length;
-          $storedProperties : list.nth(list.nth($to-theme, $i), 2);
-          $storedAttributes : utils.from-range($storedProperties, 1, 2);
-          $storedCssProperties : utils.from-range($storedProperties, 3);
+        @if (list.length(map.get($to-theme, $-rule)) > 1) {
+          $-i : $-list-length;
+          // A list that contains stored attributes AND stored CSS properties, see below for deeper explanations
+          $-stored-properties : map.get($to-theme, $-rule);
+          // Like the $-suffix and the $-themeUsed variables
+          $-stored-attributes : utils.from-range($-stored-properties, 1, 2);
+          // Like 'border' for the property and 'vertical-menu--element--border-focus' for its value
+          $-stored-css-properties : utils.from-range($-stored-properties, 3);
 
-          @if (list.nth($storedProperties, 1) == $suffix
-          and list.nth($storedProperties, 2) == $themeUsed) {
-            // $storedCssProperties and $properties are not in an explicit list so we need to force it with `append`
+          @if (list.nth($-stored-properties, 1) == $-suffix
+          and list.nth($-stored-properties, 2) == $-theme-used) {
+            // $-stored-css-properties and $-properties are not in an explicit list so we need to force it with `append`
             // and then we put all that into a list
-            $isList : type-of(list.nth($storedCssProperties, 1)) == 'list';
-            $toJoin: ();
+            $-is-list : type-of(list.nth($-stored-css-properties, 1)) == 'list';
+            $-to-join: ();
 
-            // CASE 1: The two lists ($storedCssProperties and $properties) has more than one set
+            // CASE 1: The two lists ($-stored-css-properties and $-properties) has more than one set
             // like ('..', '...'), ('..', '..')
-            @if $isList and type-of(list.nth($properties, 1)) == 'list' {
-              $toJoin: join($storedCssProperties, $properties);
+            @if $-is-list and type-of(list.nth($-properties, 1)) == 'list' {
+              $-to-join: join($-stored-css-properties, $-properties);
             }
 
-            // CASE 2: The $storedCssProperties list has more than one set like ('..', '...'), ('..', '..')
-            @else if $isList {
-              $toJoin: append($storedCssProperties, $properties);
+            // CASE 2: The $-stored-css-properties list has more than one set like ('..', '...'), ('..', '..')
+            @else if $-is-list {
+              $-to-join: append($-stored-css-properties, $-properties);
             }
 
-            // CASE 3 : The $storedCssProperties list contains only one set
+            // CASE 3 : The $-stored-css-properties list contains only one set
             // like ('border-style', 'vertical-menu--element--border-style')
             @else {
-              $toJoin : append((), join(append((), $storedCssProperties), append((), $properties)))
+              $-to-join : append((), join(append((), $-stored-css-properties), append((), $-properties)));
             }
 
-            $blockToAppend : ($rule: list.join($storedAttributes, $toJoin));
-            $tempMap: map.merge($tempMap, $blockToAppend);
+            $-block-to-append : ($-rule: list.join($-stored-attributes, $-to-join));
+            $-temp-map: map.merge($-temp-map, $-block-to-append);
           }
         }
 
         @else {
-          $tempMap: map.merge($tempMap, ($rule : ($suffix, $themeUsed, $properties)));
+          $-temp-map: map.merge($-temp-map, ($-rule : ($-suffix, $-theme-used, $-properties)));
         }
       }
     }
 
     @else {
-      $tempMap: map.merge($tempMap, ($rule : ($suffix, $themeUsed, $properties)));
+      $-temp-map: map.merge($-temp-map, ($-rule : ($-suffix, $-theme-used, $-properties)));
     }
   }
 
-  @if ($tempMap != ()) {
-    $to-theme : $tempMap !global;
+  @if ($-temp-map != ()) {
+    $to-theme : $-temp-map !global;
   }
 }

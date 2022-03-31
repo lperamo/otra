@@ -4,7 +4,7 @@
   <testsuite name="Framework tests - Database tasks">
     <file>./src/console/DatabaseTest.php</file>
   </testsuite>
-  <coverage pathCoverage="true">
+  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
     <include>
       <file>../lib/otra/console/Database.php</file>
     </include>

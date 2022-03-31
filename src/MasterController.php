@@ -141,7 +141,9 @@ abstract class MasterController
       'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              // RFC6585
     ];
 
-  protected const LABEL_SCRIPT_NONCE = '<script nonce="';
+  protected const
+    CSS_MEDIA_SCREEN = 0,
+    LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
    * @param array{
@@ -324,7 +326,7 @@ abstract class MasterController
         ob_clean();
         showBlocksVisually(false);
         Session::init();
-        Session::set('templateVisualization', ob_get_clean());
+        Session::set('templateVisualization', base64_encode(ob_get_clean()));
       }
     }
 
@@ -366,15 +368,14 @@ abstract class MasterController
       $content
     );
 
-    // the 'preg_replace' suppress useless spaces
-    $content = preg_replace('/>\s+</', '><',
-      !self::$ajax
-        ? str_replace(
+    // adding CSS after the title tag or just before the content if we use AJAX
+    $content = !self::$ajax
+      ? str_replace(
         self::OTRA_LABEL_ENDING_TITLE_TAG,
         self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
-        $contentAndJs)
-        : $cssResource . $contentAndJs
-    );
+        $contentAndJs
+      )
+      : $cssResource . $contentAndJs;
   }
 
   /**
@@ -463,7 +464,18 @@ abstract class MasterController
     [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
 
     if (self::$ajax)
-      $content .= $cssResource . self::addDynamicCSS() . $jsResource ;
+    {
+      $titlePosition = mb_strrpos($content, '</title>');
+      $cssContent = $cssResource . self::addDynamicCSS();
+      $tempContent = (false !== $titlePosition)
+        ? substr_replace($content, $cssContent, $titlePosition + 8, 0) // 8 = strlen('</title>')
+        : $cssContent . $content;
+      $bodyPosition = mb_strrpos($tempContent, '</body>');
+
+      $content = (false !== $bodyPosition)
+        ? substr_replace($tempContent, $jsResource, $bodyPosition, 0)
+        : $tempContent . $jsResource;
+    }
     else
     {
       $content = str_replace(
@@ -477,6 +489,9 @@ abstract class MasterController
       );
       self::addResourcesToTemplate($content, $cssResource, $jsResource);
     }
+
+    // the 'preg_replace' suppress useless spaces
+    $content = preg_replace('/>\s+</', '><', $content);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
@@ -538,12 +553,18 @@ abstract class MasterController
   {
     $cssContent = [];
 
-    foreach(self::$stylesheets as $stylesheet)
+    foreach(self::$stylesheets as $stylesheetType => $stylesheets)
     {
-      $cssContent[] = [
-        'nonce' => getRandomNonceForCSP(),
-        'href' => $stylesheet . '.css'
-      ];
+      foreach($stylesheets as $stylesheet)
+      {
+        $cssContent[] = [
+          'href' => $stylesheet . '.css',
+          'nonce' => getRandomNonceForCSP(),
+          'media' => ($stylesheetType === self::CSS_MEDIA_SCREEN)
+            ? 'screen'
+            : 'print'
+        ];
+      }
     }
 
     return $cssContent;

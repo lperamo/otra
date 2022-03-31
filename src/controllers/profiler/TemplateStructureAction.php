@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace otra\controllers\profiler;
 
-use otra\{Controller, OtraException, services\ProfilerService};
+use otra\{Controller, OtraException, services\ProfilerService, Session};
 
 /**
  * Class TemplateStructureAction
@@ -23,6 +23,15 @@ class TemplateStructureAction extends Controller
   {
     parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
-    echo $this->renderView('templateStructure/index.phtml', ['route' => $this->route]);
+    Session::init();
+    $templateVisualization = Session::getIfExists('templateVisualization');
+
+    echo $this->renderView(
+      'templateStructure/index.phtml',
+      [
+        'route' => $this->route,
+        'templateVisualization' => $templateVisualization
+      ]
+    );
   }
 }
