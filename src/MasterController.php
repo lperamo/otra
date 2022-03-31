@@ -141,7 +141,9 @@ abstract class MasterController
       'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              // RFC6585
     ];
 
-  protected const LABEL_SCRIPT_NONCE = '<script nonce="';
+  protected const
+    CSS_MEDIA_SCREEN = 0,
+    LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
    * @param array{
@@ -462,7 +464,18 @@ abstract class MasterController
     [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
 
     if (self::$ajax)
-      $content .= $cssResource . self::addDynamicCSS() . $jsResource ;
+    {
+      $titlePosition = mb_strrpos($content, '</title>');
+      $cssContent = $cssResource . self::addDynamicCSS();
+      $tempContent = (false !== $titlePosition)
+        ? substr_replace($content, $cssContent, $titlePosition + 8, 0) // 8 = strlen('</title>')
+        : $cssContent . $content;
+      $bodyPosition = mb_strrpos($tempContent, '</body>');
+
+      $content = (false !== $bodyPosition)
+        ? substr_replace($tempContent, $jsResource, $bodyPosition, 0)
+        : $tempContent . $jsResource;
+    }
     else
     {
       $content = str_replace(
@@ -540,12 +553,18 @@ abstract class MasterController
   {
     $cssContent = [];
 
-    foreach(self::$stylesheets as $stylesheet)
+    foreach(self::$stylesheets as $stylesheetType => $stylesheets)
     {
-      $cssContent[] = [
-        'nonce' => getRandomNonceForCSP(),
-        'href' => $stylesheet . '.css'
-      ];
+      foreach($stylesheets as $stylesheet)
+      {
+        $cssContent[] = [
+          'href' => $stylesheet . '.css',
+          'nonce' => getRandomNonceForCSP(),
+          'media' => ($stylesheetType === self::CSS_MEDIA_SCREEN)
+            ? 'screen'
+            : 'print'
+        ];
+      }
     }
 
     return $cssContent;

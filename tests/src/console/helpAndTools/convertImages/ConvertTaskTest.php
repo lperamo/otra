@@ -13,6 +13,7 @@ use const otra\cache\php\{BASE_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
+ * To test this, we must have the package `imagemagick` installed
  * @runTestsInSeparateProcesses
  */
 class ConvertTaskTest extends TestCase
