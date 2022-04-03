@@ -21,6 +21,8 @@ const SQL_CLAUSES = [
   'LEFT JOIN',
   'INNER JOIN',
   'JOIN',
+  'GROUP_CONCAT',
+  'SEPARATOR',
   ' ON ',
   'IN ',
   'AND ',
@@ -33,14 +35,18 @@ const SQL_CLAUSES = [
   'OFFSET '
 ];
 
-const LEFT_STYLE_CLAUSE_CODE = '<span style="color:#E44">';
-const RIGHT_STYLE_CLAUSE_CODE = '</span>';
+const
+  LEFT_STYLE_CLAUSE_CODE = '<span style="color:#E44">',
+  LEFT_STYLE_FUNCTION_CODE = '<span style="color:#44E">',
+  RIGHT_STYLE_CLAUSE_CODE = '</span>',
+  CODE_DIV = '</div>';
 
 /**
  * Returns the pretty printed versions of sql clauses
  *
  * @param bool   $raw
  * @param string $leftStyleClauseCode
+ * @param string $leftStyleFunctionCode
  * @param string $rightStyleClauseCode
  *
  * @return string[]
@@ -48,6 +54,7 @@ const RIGHT_STYLE_CLAUSE_CODE = '</span>';
 function sqlReplacements(
   bool $raw,
   string $leftStyleClauseCode = LEFT_STYLE_CLAUSE_CODE,
+  string $leftStyleFunctionCode = LEFT_STYLE_FUNCTION_CODE,
   string $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE
 ) : array
 {
@@ -62,6 +69,8 @@ function sqlReplacements(
     $carriageReturn . $leftStyleClauseCode . 'LEFT JOIN' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'INNER JOIN' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'JOIN' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleFunctionCode . 'GROUP_CONCAT' . $rightStyleClauseCode,
+    $leftStyleFunctionCode . ' SEPARATOR' . $rightStyleClauseCode,
     $leftStyleClauseCode . ' ON ' . $rightStyleClauseCode,
     $leftStyleClauseCode . 'IN ' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . '  AND ' . $rightStyleClauseCode,
@@ -71,7 +80,7 @@ function sqlReplacements(
     $carriageReturn . $leftStyleClauseCode . 'GROUP BY ' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'ORDER BY ' . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'LIMIT ' . $rightStyleClauseCode,
-    $leftStyleClauseCode . 'OFFSET ' . $rightStyleClauseCode
+    $leftStyleClauseCode . ' OFFSET ' . $rightStyleClauseCode
   ];
 }
 
@@ -83,7 +92,7 @@ function sqlReplacements(
  */
 function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
 {
-  $leftStyleClauseCode = $rightStyleClauseCode = $output = '';
+  $leftStyleClauseCode = $leftStyleFunctionCode = $rightStyleClauseCode = $output = '';
 
   // If we want to style the SQL with HTML markup + CSS
   if (!$raw)
@@ -92,6 +101,9 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
     $leftStyleClauseCode = $_SERVER[APP_ENV] === DEV
       ? '<span class="profiler--sql-logs--clause">'
       : LEFT_STYLE_CLAUSE_CODE;
+    $leftStyleFunctionCode = $_SERVER[APP_ENV] === DEV
+      ? '<span class="profiler--sql-logs--function">'
+      : LEFT_STYLE_FUNCTION_CODE;
     $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
@@ -112,11 +124,11 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
 
   $output = str_replace(
     SQL_CLAUSES,
-    sqlReplacements($raw, $leftStyleClauseCode, $rightStyleClauseCode),
+    sqlReplacements($raw, $leftStyleClauseCode, $leftStyleFunctionCode, $rightStyleClauseCode),
     $output
   );
 
-  return $output . (!$raw ? '</div>' : PHP_EOL . PHP_EOL);
+  return $output . (!$raw ? CODE_DIV : PHP_EOL . PHP_EOL);
 }
 
 /**
@@ -128,14 +140,15 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
  */
 function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $replaceParameters = true) : string
 {
-  $leftStyleClauseCode = $rightStyleClauseCode = $output = '';
+  $leftStyleClauseCode = $leftStyleFunctionCode = $rightStyleClauseCode = $output = '';
 
   // If we want to style the SQL with HTML markup + CSS
   if (!$raw)
   {
     $output = '<div>';
-    $leftStyleClauseCode = '<span style="color: #e44;">';
-    $rightStyleClauseCode = '</span>';
+    $leftStyleClauseCode = LEFT_STYLE_CLAUSE_CODE;
+    $leftStyleFunctionCode = LEFT_STYLE_FUNCTION_CODE;
+    $rightStyleClauseCode = RIGHT_STYLE_CLAUSE_CODE;
   }
 
   ob_start();
@@ -170,7 +183,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   $output = str_replace(
     SQL_CLAUSES,
-    sqlReplacements($raw, $leftStyleClauseCode, $rightStyleClauseCode),
+    sqlReplacements($raw, $leftStyleClauseCode, $leftStyleFunctionCode, $rightStyleClauseCode),
     $output
   );
 
@@ -186,7 +199,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
   }
 
   if (!$raw)
-    $output .= '</div>';
+    $output .= CODE_DIV;
 
   return $output;
 }

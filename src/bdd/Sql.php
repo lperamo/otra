@@ -204,7 +204,7 @@ class Sql
       Logger::logSQLTo(
         (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
         (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
-        $params[self::QUERY],
+        str_replace('"', '\\"', $params[self::QUERY]),
         'sql');
     }
 
@@ -475,7 +475,7 @@ class Sql
       Logger::logSQLTo(
         (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
         (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
-        $query,
+        str_replace('"', '\\"', $query),
         'sql');
     }
 

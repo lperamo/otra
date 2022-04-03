@@ -144,6 +144,24 @@
       &--clause {
         @include mixins.glowingRed();
       }
+
+      &--function {
+        @include theming.to-theme(
+          (
+            #{&} : (
+              ('background-image', 'profiler--sql-function--background-image'),
+              ('color', 'profiler--sql-function--color'),
+              ('text-shadow', 'profiler--sql-function--text-shadow')
+            )
+          )
+        );
+
+        // For IE (needed by WebHint)
+        @supports (-webkit-background-clip : text) {
+          -webkit-background-clip : text;
+          -webkit-text-fill-color : transparent;
+        }
+      }
     }
   }
 

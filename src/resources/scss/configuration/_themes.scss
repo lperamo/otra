@@ -66,9 +66,12 @@ $themes: (
     'profiler--sql--logs--selection-color' : #667,
     'profiler--logs--message-container--border-color' : rgb(96 138 255 / 15%),
     // ** profiler - SQL logs - file and sql clauses
+    'profiler--file--background-image' : linear-gradient(90deg, #bb0, #770),
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
-    'profiler--file--background-image' : linear-gradient(90deg, #bb0, #770),
+    'profiler--sql-function--background-image' : linear-gradient(90deg, #bb0, #770),
+    'profiler--sql-function--color' : #55f,
+    'profiler--sql-function--text-shadow' : 0 0 1px #1af,
     // ** profiler - SQL logs - line
     'profiler--line--color' : #882,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
@@ -209,9 +212,12 @@ $themes: (
     'profiler--sql--logs--selection-color' : #667,
     'profiler--logs--message-container--border-color' : #8da2e2,
     // ** profiler - SQL logs -file and sql clauses
+    'profiler--file--background-image' : linear-gradient(90deg, #cc0, #e27),
     'profiler--file--color' : #f55,
     'profiler--file--text-shadow' : 0 0 1px #fa1,
-    'profiler--file--background-image' : linear-gradient(90deg, #cc0, #e27),
+    'profiler--sql-function--background-image' : linear-gradient(90deg, #cc0, #e27),
+    'profiler--sql-function--color' : #55f,
+    'profiler--sql-function--text-shadow' : 0 0 1px #1af,
     // ** profiler - SQL logs -line
     'profiler--line--color' : #dd5,
     'profiler--line--text-shadow' : 0 0 1px #cc3,
