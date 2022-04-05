@@ -19,6 +19,7 @@ abstract class Router
 {
   private const
     OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+    OTRA_ROUTE_METHOD_KEY = 'method',
     OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources',
     OTRA_ROUTE_URL_KEY = 0;
@@ -156,6 +157,11 @@ abstract class Router
     /** @var string $routeName */
     foreach (Routes::$allRoutes as $routeName => $routeData)
     {
+      $routeRequestMethod = $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET'];
+
+      if (!in_array($_SERVER['REQUEST_METHOD'], $routeRequestMethod))
+        continue;
+
       /** @var string $routeUrl */
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];
       $firstBracketPosition = mb_strpos($routeUrl, '{');
