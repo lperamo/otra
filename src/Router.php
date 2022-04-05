@@ -19,10 +19,12 @@ abstract class Router
 {
   private const
     OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+    OTRA_ROUTE_CONTENT_TYPE_KEY = 'content-type',
     OTRA_ROUTE_METHOD_KEY = 'method',
     OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources',
-    OTRA_ROUTE_URL_KEY = 0;
+    OTRA_ROUTE_URL_KEY = 0,
+    OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   public const
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
@@ -149,17 +151,28 @@ abstract class Router
 
     $patternFound = false;
     $interrogationMarkPosition = mb_strpos($userUrl, '?');
-    $userUrlhasGetParameters = $interrogationMarkPosition !== false;
+    $userUrlHasGetParameters = $interrogationMarkPosition !== false;
 
-    if ($userUrlhasGetParameters)
+    if ($userUrlHasGetParameters)
       $userUrlWithoutGetParameters = substr($userUrl, 0, $interrogationMarkPosition);
 
     /** @var string $routeName */
     foreach (Routes::$allRoutes as $routeName => $routeData)
     {
-      $routeRequestMethod = $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET'];
+      if (!in_array(
+        $_SERVER['REQUEST_METHOD'],
+        $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
+      ))
+        continue;
 
-      if (!in_array($_SERVER['REQUEST_METHOD'], $routeRequestMethod))
+      if ($_SERVER['CONTENT_TYPE'] === '')
+        $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
+      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+      if (!str_contains(
+        $_SERVER['CONTENT_TYPE'],
+        $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
+      )
         continue;
 
       /** @var string $routeUrl */
@@ -175,8 +188,8 @@ abstract class Router
         //    the user url does have GET parameters and the portion without GET parameters is equal to the route
         // AND does this user url NOT contain parameters like the route
         if (str_contains($userUrl, $routeUrl)
-          && (!$userUrlhasGetParameters && $routeUrl === $userUrl
-            || $userUrlhasGetParameters && $userUrlWithoutGetParameters === $routeUrl)
+          && (!$userUrlHasGetParameters && $routeUrl === $userUrl
+            || $userUrlHasGetParameters && $userUrlWithoutGetParameters === $routeUrl)
         )
         {
           $patternFound = true;
