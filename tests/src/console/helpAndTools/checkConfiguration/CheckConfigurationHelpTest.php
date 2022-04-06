@@ -17,6 +17,8 @@ use const otra\console\
 
 /**
  * @runTestsInSeparateProcesses
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  */
 class CheckConfigurationHelpTest extends TestCase
 {
@@ -24,8 +26,6 @@ class CheckConfigurationHelpTest extends TestCase
     OTRA_TASK_CHECK_CONFIGURATION = 'checkConfiguration',
     OTRA_TASK_HELP = 'help',
     OTRA_PHP_BINARY = 'otra.php';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
