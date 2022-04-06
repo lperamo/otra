@@ -8,7 +8,8 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\CACHE_PATH;
-use const otra\console\{CLI_BASE, ERASE_SEQUENCE, SUCCESS};
+use const otra\console\
+{CLI_BASE, CLI_SUCCESS, CLI_WARNING, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 
 /**
  * @runTestsInSeparateProcesses
@@ -33,7 +34,10 @@ class ClearSessionTaskTest extends TestCase
 
     // testing
     $this->expectOutputString(
-      CLI_BASE . 'Clearing the session data...' . PHP_EOL . ERASE_SEQUENCE . 'Session data cleared' . SUCCESS
+      CLI_BASE . 'Clearing the session data...' . PHP_EOL . ERASE_SEQUENCE . 'Session data cleared' . CLI_SUCCESS .
+      ' ✔'. CLI_WARNING . PHP_EOL .
+      '/!\ Do not forget to clear session cookies on client side via JavaScript or the browser development tools.' .
+      END_COLOR . PHP_EOL
     );
 
     // launching
