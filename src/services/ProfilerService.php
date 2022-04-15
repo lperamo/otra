@@ -41,7 +41,7 @@ class ProfilerService
 
     /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
-      substr($contents, 0, -1) . ']',
+      '[' . substr($contents, 0, -2) . ']',
       true
     );
 

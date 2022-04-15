@@ -13,6 +13,8 @@ use const otra\cache\php\{APP_ENV, DEV};
 const OTRA_LABEL_SELECT = 'SELECT ';
 
 const SQL_CLAUSES = [
+  'INSERT INTO',
+  'VALUES',
   '(SELECT ',
   OTRA_LABEL_SELECT,
   'FROM ',
@@ -61,6 +63,8 @@ function sqlReplacements(
   $carriageReturn = $raw ? PHP_EOL : '<br/>';
 
   return [
+    $leftStyleClauseCode . 'INSERT INTO' . $rightStyleClauseCode,
+    $carriageReturn . $leftStyleClauseCode . 'VALUES' . $rightStyleClauseCode,
     '(' . $carriageReturn . $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     $leftStyleClauseCode . OTRA_LABEL_SELECT . $rightStyleClauseCode,
     $carriageReturn . $leftStyleClauseCode . 'FROM ' . $rightStyleClauseCode,
