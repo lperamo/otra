@@ -54,7 +54,7 @@ if (!defined(__NAMESPACE__ . '\\BASE_PATH_LENGTH'))
     'file' => BASE_PATH . $fileName,
     'function' => $backtraces[0]['function'] ?? null,
     'line' => $fileLine,
-    'type' => $backtraces[0]['type'],
+    'type' => $backtraces[0]['type'] ?? null,
     'args' => $backtraces[0]['variables'] ?? null
   ]);
 
