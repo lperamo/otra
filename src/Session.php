@@ -65,16 +65,9 @@ abstract class Session
 
         foreach ($sessionData as $sessionDatumKey => $sessionDatum)
         {
-          $deserializedDatum = isSerialized($sessionDatum) ? unserialize($sessionDatum) : $sessionDatum;
-
+          // only objects are serialized in session files, that's why we deserialize then enforce serialization
           if (!str_starts_with($sessionDatumKey, 'otra_'))
-          {
-            // only objects are serialized in session files, that's why we deserialize then enforce serialization
-            self::$matches[$sessionDatumKey] = [
-              'hashed' => crypt(serialize($deserializedDatum), self::$blowfishAlgorithm . self::$identifier),
-              'notHashed' => $deserializedDatum
-            ];
-          }
+            self::set($sessionDatumKey, isSerialized($sessionDatum) ? unserialize($sessionDatum) : $sessionDatum);
         }
       }
     }

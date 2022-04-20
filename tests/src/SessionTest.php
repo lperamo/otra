@@ -164,10 +164,12 @@ class SessionTest extends TestCase
     self::assertFileExists($sessionsFile);
 
     $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
+    $hashedFirstValue = crypt(serialize(self::$fooThing), $saltForHash);
+    $hashedSecondValue = crypt(serialize(self::BAR), $saltForHash);
     self::assertEquals(
       [
         self::TEST => [
-          'hashed' => crypt(serialize(self::$fooThing), $saltForHash),
+          'hashed' => $hashedFirstValue,
           'notHashed' => self::$fooThing
         ],
       self::TEST2 => [
@@ -180,6 +182,14 @@ class SessionTest extends TestCase
 
     // There should be no output
     self::assertEquals('', $output, 'The function should not output anything.');
+    self::assertEquals(
+      $hashedFirstValue,
+      $_SESSION[self::TEST]
+    );
+    self::assertEquals(
+      $hashedSecondValue,
+      $_SESSION[self::TEST2]
+    );
   }
 
   /**
