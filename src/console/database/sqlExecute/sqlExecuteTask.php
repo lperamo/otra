@@ -11,6 +11,8 @@ use Exception;
 use otra\bdd\Sql;
 use otra\console\database\Database;
 use otra\OtraException;
+use const otra\cache\php\CORE_PATH;
+use function otra\tools\files\returnLegiblePath;
 
 const
   ARG_FILE_TO_EXECUTE = 2,
@@ -59,7 +61,10 @@ function sqlExecute(array $argumentsVector): void
   } catch(Exception $exception)
   {
     $instance->rollBack();
-    throw new OtraException('Procedure aborted. ' . $exception->getMessage());
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
+    throw new OtraException(
+      'Procedure aborted in file ' . returnLegiblePath($fileToExecute) . '.' . PHP_EOL . $exception->getMessage()
+    );
   }
 
   $instance->commit();
