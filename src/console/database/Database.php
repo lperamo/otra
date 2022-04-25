@@ -330,7 +330,7 @@ abstract class Database
     echo $msgBeginning, ' does not exist. Creates the file...', PHP_EOL;
     $databaseCreationSql = 'CREATE DATABASE IF NOT EXISTS ';
 
-    $databaseCreationSql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE ' . $databaseName . ';' . PHP_EOL . PHP_EOL;
+    $databaseCreationSql .= $databaseName . ';' . PHP_EOL . PHP_EOL . 'USE `' . $databaseName . '`;' . PHP_EOL . PHP_EOL;
 
     // We check if the YML schema exists
     if (!file_exists(self::$schemaFile))
@@ -560,7 +560,7 @@ abstract class Database
     if (!file_exists($pathAndFile))
     {
       file_put_contents($pathAndFile,
-        'USE ' . $databaseName . ';' . PHP_EOL .
+        'USE `' . $databaseName . '`;' . PHP_EOL .
         'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
         'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
         'SET FOREIGN_KEY_CHECKS = 1;');

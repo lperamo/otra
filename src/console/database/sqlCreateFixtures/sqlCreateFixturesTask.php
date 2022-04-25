@@ -109,7 +109,7 @@ function createFixture(
   $first = true;
   $ymlIdentifiers = $table . ': ' . PHP_EOL;
   $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
-    'USE ' . $databaseName . ';' . PHP_EOL . 'SET NAMES utf8mb4;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
+    'USE `' . $databaseName . '`;' . PHP_EOL . 'SET NAMES utf8mb4;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
 //    $localMemory This variable stores the identifiers found in this table that are not available in
 //    sorted tables ?
   $localMemory = $properties = [];
@@ -177,7 +177,7 @@ function createFixture(
 
   // We ensure us that we use the correct database
   /** @var PDO $dbConfig 'query' method returns PDOStatement but to avoid a PHPStorm warning we said PDO! */
-  $dbConfig = Sql::$instance->query('USE ' . $databaseName);
+  $dbConfig = Sql::$instance->query('USE `' . $databaseName . '`');
   Sql::$instance->freeResult($dbConfig);
 
   // We ensure us that we can make multiple queries in one statement

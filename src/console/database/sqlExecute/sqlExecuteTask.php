@@ -47,7 +47,7 @@ function sqlExecute(array $argumentsVector): void
   if (null !== $databaseName)
   {
     // Selects the database by precaution
-    $dbResult = $instance->query('USE ' . $databaseName);
+    $dbResult = $instance->query('USE `' . $databaseName . '`');
     $instance->freeResult($dbResult);
   }
 

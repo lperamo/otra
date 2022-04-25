@@ -93,7 +93,7 @@ class SqlTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
-    $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
+    $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE `' . self::$databaseName . '`;');
     Sql::$instance->freeResult($dbResult);
     Sql::$instance->commit();
   }
