@@ -27,6 +27,7 @@ class RouterTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
+  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   public static function setUpBeforeClass(): void
   {
@@ -109,6 +110,10 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern(self::ROUTE_URL);
 
@@ -130,6 +135,10 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern_NonExistentRoute_firstCase() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern('/hellow');
 
@@ -151,6 +160,10 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern_NonExistentRoute_secondCase() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern(self::ROUTE_URL . 'test');
 

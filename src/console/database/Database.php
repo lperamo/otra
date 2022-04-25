@@ -559,11 +559,13 @@ abstract class Database
     // If the file that truncates the table doesn't exist yet...creates it.
     if (!file_exists($pathAndFile))
     {
-      file_put_contents($pathAndFile,
+      file_put_contents(
+        $pathAndFile,
         'USE `' . $databaseName . '`;' . PHP_EOL .
         'SET FOREIGN_KEY_CHECKS = 0;' . PHP_EOL .
         'TRUNCATE TABLE ' . $tableName . ';' . PHP_EOL .
-        'SET FOREIGN_KEY_CHECKS = 1;');
+        'SET FOREIGN_KEY_CHECKS = 1;' . PHP_EOL
+      );
       echo CLI_SUCCESS, '[SQL CREATION] ', END_COLOR;
     }
 

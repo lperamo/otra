@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS testDB;
 
-USE testDB;
+USE `testDB`;
 
 DROP TABLE IF EXISTS `testDB_table`,
  `testDB_table3`,

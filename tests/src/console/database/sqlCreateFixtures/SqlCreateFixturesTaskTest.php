@@ -17,6 +17,7 @@ use const otra\console\{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END
 use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
 use function otra\console\database\sqlCreateFixtures\sqlCreateFixtures;
 use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, setScopeProtectedFields};
+use function otra\tools\files\returnLegiblePath;
 
 /**
  * @runTestsInSeparateProcesses
@@ -199,19 +200,30 @@ class SqlCreateFixturesTaskTest extends TestCase
       ob_get_clean()
     );
 
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
     foreach(self::TABLES_ORDER as $table)
     {
       // Fixtures creation files
       self::assertFileExists(self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
       self::assertFileEquals(
         self::CONFIG_FOLDER_SQL_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql',
-        self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+        self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql',
+        'Comparing ' .
+        returnLegiblePath(self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql') .
+        ' against ' .
+        returnLegiblePath(self::CONFIG_FOLDER_SQL_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql')
+      );
 
       // Fixtures tables truncation files
       self::assertFileExists(self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
       self::assertFileEquals(
-        self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql'
-        ,self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql');
+        self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql',
+        self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql',
+        'Comparing ' .
+        returnLegiblePath(self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES . self::DATABASE_NAME . '_' . $table . '.sql') .
+        ' against ' .
+        returnLegiblePath(self::CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP . self::DATABASE_NAME . '_' . $table . '.sql')
+      );
     }
   }
 

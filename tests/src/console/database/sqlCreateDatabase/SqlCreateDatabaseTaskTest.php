@@ -100,7 +100,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
     define(__NAMESPACE__ . '\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
-      SCHEMA_FORCE_PATH
+      SCHEMA_FORCE_PATH,
     );
 
     // cleaning
