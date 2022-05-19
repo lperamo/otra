@@ -58,6 +58,7 @@ try
     ) && Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
 
+  ini_set('session.save_path', CACHE_PATH . 'php/sessions/');
   ini_set('session.cache_limiter', 'private');
   session_name('__Secure-LPSESSID');
   session_start([
