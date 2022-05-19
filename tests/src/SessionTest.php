@@ -376,7 +376,10 @@ class SessionTest extends TestCase
     Session::set(self::TEST, self::$fooThing);
 
     // launching AND testing
-    self::assertEquals(self::$fooThing, Session::getIfExists(self::TEST));
+    self::assertEquals(
+      [true, self::$fooThing],
+      Session::getIfExists(self::TEST)
+    );
   }
 
   /**
@@ -388,7 +391,10 @@ class SessionTest extends TestCase
     Session::init(self::ROUNDS);
 
     // testing
-    self::assertEquals(false, Session::getIfExists(self::TEST));
+    self::assertEquals(
+      [false, null],
+      Session::getIfExists(self::TEST)
+    );
   }
 
   /**
@@ -402,7 +408,7 @@ class SessionTest extends TestCase
 
     // launching AND testing
     self::assertEquals(
-      self::$testAndTest2,
+      [true, self::$testAndTest2],
       Session::getArrayIfExists([self::TEST, self::TEST2])
     );
   }
@@ -418,7 +424,7 @@ class SessionTest extends TestCase
 
     // launching AND testing
     self::assertEquals(
-      false,
+      [false, null],
       Session::getArrayIfExists([self::BAR, self::TEST2])
     );
   }

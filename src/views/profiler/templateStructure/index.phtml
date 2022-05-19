@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace otra\src\views\profiler\templateStructure;
 
+use otra\Session;
 use const otra\cache\php\CORE_VIEWS_PATH;
 use function otra\cache\php\{block, endblock};
 
@@ -13,8 +14,9 @@ require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 block('title', 'Profiler - Template structure');
 block('view');
 
-if ($templateVisualization !== false)
-  echo base64_decode($templateVisualization);
+
+if (!$templateVisualization[Session::SESSION_KEY_EXISTS])
+  echo base64_decode($templateVisualization[Session::SESSION_KEY_VALUE]);
 else
 {
 ?><p class="no-template-in-session">There is no template data in the session right now.</p><?php
