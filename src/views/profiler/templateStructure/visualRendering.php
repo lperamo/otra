@@ -89,23 +89,26 @@ if (!function_exists(__NAMESPACE__ . '\\showBlocksVisually'))
         <div id="block<?= $blockKey ?>" class="otra-block--base">
           <?php
           showBlockTags($blockKey, $block);
-          showCode($block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]);
-          ?>
-          <?php
-          if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
-          {
-            $replacingBlocks[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]] = $blockKey;
-            echo '<p>Replaced by the <a href="#block' . $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] . '" title="' .
-              htmlentities(BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
-              '">block ' . $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] . '</a></p>';
-          }
+        showCode($block[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]);
 
-          if (isset($replacingBlocks[$blockKey]))
-            echo '<p>Replacing the <a href="#block' . $replacingBlocks[$blockKey] . '" title="' .
-              htmlentities(BlocksSystem::$blocksStack[$replacingBlocks[$blockKey]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
-              '">block ' . $replacingBlocks[$blockKey] . '</a></p>';
+        if (isset($block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]))
+        {
+          $replacingBlocks[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]] = $blockKey;
+          $templateEngineError = isset(BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]]);
+          ?><?php if ($templateEngineError) {?><br><span style="color: #f00 !important">Error - </span><?php }?><p>Replaced by the
+          <a href="#block<?= $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] ?>" title="<?=
+          $templateEngineError
+            ? htmlentities(BlocksSystem::$blocksStack[$block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT])
+            : 'Error!' ?>
+            ">block <?= $block[BlocksSystem::OTRA_BLOCKS_KEY_REPLACED_BY] ?></a></p><?php
+        }
 
-          $previousParentKeys = '';
+        if (isset($replacingBlocks[$blockKey]))
+          echo '<p>Replacing the <a href="#block' . $replacingBlocks[$blockKey] . '" title="' .
+            htmlentities(BlocksSystem::$blocksStack[$replacingBlocks[$blockKey]][BlocksSystem::OTRA_BLOCKS_KEY_CONTENT]) .
+            '">block ' . $replacingBlocks[$blockKey] . '</a></p>';
+
+        $previousParentKeys = '';
 
           while ($block[BlocksSystem::OTRA_BLOCKS_KEY_PARENT] !== null)
           {
