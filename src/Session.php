@@ -122,13 +122,13 @@ abstract class Session
   /**
    * @param string $sessionKey
    *
-   * @return mixed
+   * @return array[bool, mixed] [doesItExist, value]
    */
-  public static function getIfExists(string $sessionKey) : mixed
+  public static function getIfExists(string $sessionKey) : array
   {
     return isset($_SESSION[$sessionKey])
-      ? self::$matches[$sessionKey]['notHashed']
-      : false;
+      ? [true, self::$matches[$sessionKey]['notHashed']]
+      : [false, null];
   }
 
   /**
@@ -137,9 +137,9 @@ abstract class Session
    * @param array $sessionKeys
    *
    * @throws OtraException
-   * @return array|bool
+   * @return array[bool, array|bool] [doesItExist, value]
    */
-  public static function getArrayIfExists(array $sessionKeys) : array|bool
+  public static function getArrayIfExists(array $sessionKeys) : array
   {
     if (!isset(self::$identifier))
       throw new OtraException('You must initialize OTRA session before using "getArrayIfExists"');
@@ -147,7 +147,7 @@ abstract class Session
     $firstKey = $sessionKeys[0];
 
     if (!isset($_SESSION[$firstKey]))
-      return false;
+      return [false, null];
 
     $result = [
       $firstKey => self::$matches[$firstKey]['notHashed']
@@ -159,7 +159,7 @@ abstract class Session
       $result[$sessionKey] = self::$matches[$sessionKey]['notHashed'];
     }
 
-    return $result;
+    return [true, $result];
   }
 
   public static function getAll(): array
