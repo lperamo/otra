@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
+use DateTime;
 use otra\config\AllConfig;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use const otra\cache\php\CORE_PATH;
 
 /**
@@ -110,7 +112,7 @@ abstract class DumpMaster
    */
   protected static function getClassDescription(object $param) : array
   {
-    $className = get_class($param);
+    $className = $param::class;
     $reflectedClass = new ReflectionClass($className);
     $classInterfaces = $reflectedClass->getInterfaceNames();
     $parentClass = $reflectedClass->getParentClass();
@@ -164,7 +166,7 @@ abstract class DumpMaster
     $properties = (new ReflectionClass($className))->getProperties();
 
     // We need a fake class as DateTime does not handle reflection :(
-    if ($className === 'DateTime')
+    if ($className ===  DateTime::class )
     {
       $param = new FakeDateTime($param);
       $properties = (new ReflectionClass(FakeDateTime::class))->getProperties();

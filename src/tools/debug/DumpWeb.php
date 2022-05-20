@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
+use DateTime;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use otra\config\AllConfig;
@@ -37,7 +38,7 @@ abstract class DumpWeb extends DumpMaster {
     BR = '<br>',
     RIGHT_ARROW = ' => ';
 
-  public const OTRA_DUMP_INDENT_STRING = '│ ';
+  final public const OTRA_DUMP_INDENT_STRING = '│ ';
   private static bool $cssNotAdded = true;
 
   /**
@@ -176,7 +177,7 @@ abstract class DumpWeb extends DumpMaster {
     int $depth
   ) : void
   {
-    $reflectionClassName = $className !== 'DateTime' ? $className : FakeDateTime::class;
+    $reflectionClassName = $className !== DateTime::class ? $className : FakeDateTime::class;
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
     $visibilityMask = $isPublicProperty

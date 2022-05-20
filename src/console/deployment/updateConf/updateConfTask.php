@@ -165,13 +165,11 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     /** @var Closure $sortRoutes */
     if (!function_exists(__NAMESPACE__ . '\\sortRoutes'))
     {
-      $sortRoutes = function (string $routeA, string $routeB) use ($routesArray) : int
-      {
+      $sortRoutes = fn(string $routeA, string $routeB) : int =>
         /** @var array<string,array<string, array<int|string,string|array>>> $routesArray */
-        return (strlen($routesArray[$routeA]['chunks'][Routes::ROUTES_CHUNKS_URL]) <= strlen($routesArray[$routeB]['chunks'][Routes::ROUTES_CHUNKS_URL]))
+        (strlen($routesArray[$routeA]['chunks'][Routes::ROUTES_CHUNKS_URL]) <= strlen($routesArray[$routeB]['chunks'][Routes::ROUTES_CHUNKS_URL]))
           ? 1
           : -1;
-      };
     }
 
     uksort($routesArray, $sortRoutes);

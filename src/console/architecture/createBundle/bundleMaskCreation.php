@@ -33,5 +33,5 @@ foreach(BUNDLE_FOLDERS as $numericKey => $folder)
     echo ERASE_SEQUENCE;
   }
 
-  $bundleMask += pow(2, $numericKey) * ($answer === 'y' ? 1 : 0);
+  $bundleMask += ($numericKey ** 2) * ($answer === 'y' ? 1 : 0);
 }

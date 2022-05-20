@@ -202,8 +202,8 @@ class Sql
       $trace = debug_backtrace();
 
       Logger::logSQLTo(
-        (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
-        (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
+        $trace[1]['file'] ?? $trace[0]['file'],
+        $trace[1]['line'] ?? $trace[0]['line'],
         str_replace('"', '\\"', $params[self::QUERY]),
         'sql');
     }
@@ -473,8 +473,8 @@ class Sql
       $trace = debug_backtrace();
 
       Logger::logSQLTo(
-        (isset($trace[1]['file'])) ? $trace[1]['file'] : $trace[0]['file'],
-        (isset($trace[1]['line'])) ? $trace[1]['line'] : $trace[0]['line'],
+        $trace[1]['file'] ?? $trace[0]['file'],
+        $trace[1]['line'] ?? $trace[0]['line'],
         str_replace('"', '\\"', $query),
         'sql');
     }

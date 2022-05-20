@@ -73,6 +73,7 @@ function genClassMap(array $argumentsVector) : void
      * @param int                   $processedDir
      * @param array<string, string> $classesThatMayHaveToBeAdded
      *
+     * @throws OtraException
      * @return array{0: string[], 1: int, 2: array<string, string>}
      */
     #[ArrayShape([
@@ -98,7 +99,12 @@ function genClassMap(array $argumentsVector) : void
       while (false !== ($entry = readdir($folderHandler)))
       {
         // We check that we process interesting things, especially not starters that are only meant to be copied
-        if ('.' === $entry || '..' === $entry || str_contains($entry, 'starters'))
+        if ('.' === $entry
+          || '..' === $entry
+          || str_contains($entry, 'phpstan')
+          || str_contains($entry, 'rector')
+          || str_contains($entry, 'starters')
+        )
           continue;
 
         $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;

@@ -23,7 +23,7 @@ class WorkerManager
     ],
     OTRA_KEY_STATUS = 1;
 
-  public const
+  final public const
     GO_UP = "\033[1A",
     ERASE_TO_END_OF_LINE = "\033[K";
 
@@ -247,11 +247,11 @@ class WorkerManager
       if ($elapsedTime < 10)
       {
         $elapsedTime += 1;
-        usleep(100000); // .1s
+        usleep(100_000); // .1s
       } else
       {
         $elapsedTime += 10;
-        usleep(1000000); // 1s
+        usleep(1_000_000); // 1s
       }
 
       // update information about the process

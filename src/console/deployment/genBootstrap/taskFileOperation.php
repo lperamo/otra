@@ -9,6 +9,12 @@ namespace otra\console\deployment\genBootstrap;
 
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
+use PDO;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
+use SplFileObject;
 use const otra\cache\php\init\CLASSMAP;
 // do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_VIEWS_PATH, CORE_PATH, DIR_SEPARATOR};
@@ -207,11 +213,11 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
           !in_array(
             $chunk,
             [
-              'ReflectionClass',
-              'ReflectionException',
-              'ReflectionMethod',
-              'ReflectionProperty',
-              'SplFileObject',
+              ReflectionClass::class,
+              ReflectionException::class,
+              ReflectionMethod::class,
+              ReflectionProperty::class,
+              SplFileObject::class,
               'Error',
               'Exception',
               'JetBrains\PhpStorm\Pure',
@@ -1231,7 +1237,7 @@ function processStaticCalls(
     // no need to include self or parent !!
     // renderController is an edge case present in OtraException.php
     // PDO is a native class, no need to import it !
-    if (in_array($class, ['self', 'parent', 'renderController', 'PDO']))
+    if (in_array($class, ['self', 'parent', 'renderController', PDO::class]))
       continue;
 
     // str_replace to ensure us that the same character is used each time

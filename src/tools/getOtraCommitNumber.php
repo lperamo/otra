@@ -23,7 +23,9 @@ if (!function_exists(__NAMESPACE__ . '\\getOtraCommitNumber'))
     {
       $installedComposerPackages = json_decode(
         file_get_contents(BASE_PATH . 'vendor/composer/installed.json'),
-        true
+        true,
+        512,
+        JSON_THROW_ON_ERROR
       )['packages'];
       $commitNumber = $installedComposerPackages[array_search(
         'otra/otra',

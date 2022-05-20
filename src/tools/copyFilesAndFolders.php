@@ -16,7 +16,7 @@ use function otra\tools\files\returnLegiblePath;
 
 if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
-  function cannotCopy(string $source, string $destination)
+  function cannotCopy(string $source, string $destination): never
   {
     $error = error_get_last();
     require_once CORE_PATH . 'tools/files/returnLegiblePath.php';

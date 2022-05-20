@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment\genAssets;
 
 use FilesystemIterator;
+use JsonException;
 use otra\config\Routes;
 use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
@@ -193,7 +194,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 /**
  * @param array $argumentsVector
  *
- * @throws OtraException
+ * @throws JsonException|OtraException
  * @return void
  */
 function genAssets(array $argumentsVector) : void
@@ -389,7 +390,12 @@ function genAssets(array $argumentsVector) : void
           $jsFileOut = mb_substr($pathAndFile, 0, -1);
           googleClosureCompile(
             0,
-            json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true),
+            json_decode(
+              file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON),
+              true,
+              512,
+              JSON_THROW_ON_ERROR
+            ),
             $pathAndFile,
             $jsFileOut,
             JS_LEVEL_COMPILATION

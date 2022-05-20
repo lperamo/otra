@@ -30,7 +30,8 @@
     "ext-inotify": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
-    "ext-zlib": "*"
+    "ext-zlib": "*",
+    "rector/rector": "^0.12.23"
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",

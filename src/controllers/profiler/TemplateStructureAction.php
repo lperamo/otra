@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace otra\controllers\profiler;
 
+use ReflectionException;
 use otra\{Controller, OtraException, services\ProfilerService, Session};
 
 /**
@@ -17,7 +18,7 @@ class TemplateStructureAction extends Controller
    * @param array $otraParams
    * @param array $params
    *
-   * @throws OtraException
+   * @throws OtraException|ReflectionException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

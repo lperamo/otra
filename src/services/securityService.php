@@ -120,7 +120,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
       else
       {
         $common = array_intersect($finalProcessedPolicies, $customPolicyDirectives);
-        $finalProcessedPolicies = array_merge($finalProcessedPolicies, $customPolicyDirectives);
+        $finalProcessedPolicies = [...$finalProcessedPolicies, ...$customPolicyDirectives];
 
         if (!empty($common))
         {

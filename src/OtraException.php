@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace otra;
 
+use JsonException;
 use otra\console\OtraExceptionCli;
 use otra\config\Routes;
 use Error;
@@ -67,7 +68,7 @@ class OtraException extends Exception
   )
   {
     parent::__construct();
-    $this->code = (null !== $code) ? $code : $this->getCode();
+    $this->code = $code ?? $this->getCode();
 
     // When $otraCliWarning is true then we only need the error code that will be used as exit code
     if ($exit)
@@ -75,7 +76,7 @@ class OtraException extends Exception
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->file = str_replace('\\', DIR_SEPARATOR, (('' == $file) ? $this->getFile() : $file));
-    $this->line = (null === $line) ? $this->getLine() : $line;
+    $this->line = $line ?? $this->getLine();
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
@@ -174,7 +175,7 @@ class OtraException extends Exception
    * @param int        $fileLine
    * @param array|null $context
    *
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   #[NoReturn] public static function errorHandler(
     int $errno,
@@ -186,7 +187,10 @@ class OtraException extends Exception
   {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
-      echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
+      echo '{"success": "exception", "msg":' . json_encode(
+        new OtraException($message),
+        JSON_THROW_ON_ERROR
+        ) . '}';
     else
       new OtraException($message, $errno, $fileName, $fileLine, $context);
 
@@ -198,7 +202,7 @@ class OtraException extends Exception
    *
    * @param Exception|Error|OtraException $exception Can be TypeError, OtraException, maybe something else.
    *
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public static function exceptionHandler(Exception|Error|OtraException $exception) : never
   {
@@ -207,7 +211,10 @@ class OtraException extends Exception
 
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
-      echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';
+      echo '{"success": "exception", "msg":' . json_encode(
+        new OtraException($exception->getMessage()),
+        JSON_THROW_ON_ERROR
+        ) . '}';
     else
     {
       new OtraException(

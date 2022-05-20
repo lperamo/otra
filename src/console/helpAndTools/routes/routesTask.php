@@ -148,9 +148,7 @@ function routes(array $argumentsVector) : void
     echo '[', $shaName, ']', PHP_EOL, END_COLOR;
 
     // We only show a decoration line if it's not the last route
-    end($routes);
-
-    if ($route !== key($routes))
+    if ($route !== array_key_last($routes))
       echo str_repeat('-', WIDTH_LEFT + WIDTH_MIDDLE + WIDTH_RIGHT), PHP_EOL;
 
     ++$indexLines;

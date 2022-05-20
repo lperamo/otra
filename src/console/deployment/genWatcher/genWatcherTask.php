@@ -62,11 +62,11 @@ const
     CORE_PATH
   ],
 
-    // Those variables have the same name for folders, so we rename those for more clarity (PHP 7.3 at time of writing)
-  IN_CLOSE_NOWRITE_DIR = 1073741840,
-  IN_OPEN_DIR = 1073741856,
-  IN_CREATE_DIR = 1073742080,
-  IN_DELETE_DIR = 1073742336;
+    // Those variables have the same name for folders, so we rename those for more clarity (PHP 8.1 at time of writing)
+  IN_CLOSE_NOWRITE_DIR = 1_073_741_840,
+  IN_OPEN_DIR = 1_073_741_856,
+  IN_CREATE_DIR = 1_073_742_080,
+  IN_DELETE_DIR = 1_073_742_336;
 
 /**
  * @param string $header
