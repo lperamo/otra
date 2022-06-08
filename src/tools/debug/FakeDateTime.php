@@ -13,9 +13,10 @@ use DateTime;
  */
 class FakeDateTime
 {
-  private string $date;
-  private string $timezone;
-  private int $timezone_type;
+  private readonly string
+    $date,
+    $timezone;
+  private readonly int $timezone_type;
 
   public function __construct(DateTime $dateTimeInstance)
   {

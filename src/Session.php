@@ -23,7 +23,7 @@ abstract class Session
     $sessionId,
     $sessionFile;
   private static array $matches = [];
-  public const
+  final public const
     SESSION_KEY_EXISTS = 0,
     SESSION_KEY_VALUE = 1;
 

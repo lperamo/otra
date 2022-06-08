@@ -27,10 +27,7 @@ if (!function_exists(__NAMESPACE__ . '\\trans'))
       $language = strtok($language, ';');
     };
 
-    $filterLangs = function (string $lang) use ($acceptedLanguages) : bool
-    {
-      return in_array($lang, $acceptedLanguages);
-    };
+    $filterLangs = fn(string $lang): bool => in_array($lang, $acceptedLanguages);
 
     if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
       return 'en';

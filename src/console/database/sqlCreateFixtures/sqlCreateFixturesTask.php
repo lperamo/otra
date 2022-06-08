@@ -183,7 +183,7 @@ function createFixture(
   // We ensure us that we can make multiple queries in one statement
   try {
     $dbConfig->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
-  } catch(Exception $exception)
+  } catch(Exception)
   {
     // Then the driver does not handle this attribute
   }

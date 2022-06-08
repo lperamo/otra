@@ -13,7 +13,7 @@ use ReflectionObject;
  */
 abstract class Model
 {
-  private string $table;
+  private readonly string $table;
 
   /**
    * @param string $property

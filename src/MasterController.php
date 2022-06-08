@@ -74,7 +74,7 @@ abstract class MasterController
     $stylesheetFile = 0,
     $printStylesheet = 1;
 
-  public const
+  final public const
     OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
     HTTP_CODES =
     [

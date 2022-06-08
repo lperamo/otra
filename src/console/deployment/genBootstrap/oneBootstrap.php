@@ -82,7 +82,7 @@ function oneBootstrap(string $route) : void
         ['/', 'src'],
         Router::get(
           $route,
-          (isset($params[OTRA_KEY_BOOTSTRAP])) ? $params[OTRA_KEY_BOOTSTRAP] : [],
+          $params[OTRA_KEY_BOOTSTRAP] ?? [],
           false
         )
       ) . '.php';
@@ -93,13 +93,13 @@ function oneBootstrap(string $route) : void
         '/',
         Router::get(
           $route,
-          (isset($params[OTRA_KEY_BOOTSTRAP])) ? $params[OTRA_KEY_BOOTSTRAP] : [],
+          $params[OTRA_KEY_BOOTSTRAP] ?? [],
           false
         )
       ) . '.php';
   }
 
-  set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) : void
+  set_error_handler(function (int $errno, string $message, string $file, int $line, ?array $context = null) : never
   {
     throw new OtraException($message, $errno, $file, $line, $context);
   });

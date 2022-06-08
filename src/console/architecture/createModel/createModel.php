@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace otra\console\architecture\createModel;
 
+use DateTime;
 use otra\OtraException;
 use const otra\cache\php\SPACE_INDENT;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, SUCCESS};
@@ -58,7 +59,7 @@ function getDataType(string $modelName, string $columnName, string $type) : stri
     return 'bool';
 
   if (str_contains($type, 'timestamp') || str_contains($type, 'date'))
-    return 'DateTime';
+    return  DateTime::class;
 
   // If we don't know this type !
   echo CLI_ERROR, 'We don\'t know the type ', CLI_WARNING, $type, CLI_ERROR, ' in ', CLI_WARNING, $modelName, CLI_ERROR,
@@ -135,7 +136,7 @@ function writeModelFile(
   // If we use DateTime type then we add a use statement to handle this type.
   $useDateTime = '';
 
-  if (str_contains($functions, 'DateTime'))
+  if (str_contains($functions, DateTime::class))
     $useDateTime = PHP_EOL . 'use \DateTime;' . PHP_EOL;
 
   fwrite($filePointer, '<?php' . PHP_EOL .

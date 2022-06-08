@@ -15,7 +15,7 @@ const HASH_ARG_BLOWFISH_ROUNDS = 2;
  */
 function hash(array $argumentsVector) : void
 {
-  $argumentsVector[HASH_ARG_BLOWFISH_ROUNDS] = $argumentsVector[HASH_ARG_BLOWFISH_ROUNDS] ?? 7;
+  $argumentsVector[HASH_ARG_BLOWFISH_ROUNDS] ??= 7;
   $saltChars = array_merge(range('A','Z'), range('a','z'), range(0,9));
   echo '$2y$0', $argumentsVector[HASH_ARG_BLOWFISH_ROUNDS], '$', str_repeat((string)$saltChars[array_rand($saltChars)], 22),
   PHP_EOL;

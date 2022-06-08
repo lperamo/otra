@@ -35,16 +35,12 @@ function genServerConfig(array $argumentsVector) : void
 
   define(
     __NAMESPACE__ . '\\GEN_SERVER_CONFIG_ENVIRONMENT',
-    (isset($argumentsVector[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]))
-      ? $argumentsVector[GEN_SERVER_CONFIG_ARG_ENVIRONMENT]
-      : DEV
+    $argumentsVector[GEN_SERVER_CONFIG_ARG_ENVIRONMENT] ?? DEV
   );
 
   define(
     __NAMESPACE__ . '\\GEN_SERVER_CONFIG_SERVER_TECHNOLOGY',
-    (isset($argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]))
-      ? $argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY]
-      : 'nginx'
+    $argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY] ?? 'nginx'
   );
 
   if (!isset(AllConfig::$deployment))

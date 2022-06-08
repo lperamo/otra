@@ -11,10 +11,7 @@ namespace otra\console\architecture\createBundle;
 use otra\console\TasksManager;
 use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
-$showMaskOption = static function (string $text) : string
-{
-  return STRING_PAD_FOR_OPTION_FORMATTING . $text;
-};
+$showMaskOption = static fn(string $text) : string => STRING_PAD_FOR_OPTION_FORMATTING . $text;
 
 return [
   'Creates a bundle.',

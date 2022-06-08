@@ -14,8 +14,7 @@ require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 block('title', 'Profiler - Template structure');
 block('view');
 
-
-if (!$templateVisualization[Session::SESSION_KEY_EXISTS])
+if ($templateVisualization[Session::SESSION_KEY_EXISTS] !== false)
   echo base64_decode($templateVisualization[Session::SESSION_KEY_VALUE]);
 else
 {

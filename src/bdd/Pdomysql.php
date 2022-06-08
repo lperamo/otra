@@ -15,7 +15,7 @@ use const otra\cache\php\PROD;
  */
 abstract class Pdomysql
 {
-  private PDO $conn;
+  private readonly PDO $conn;
   private const DEFAULT_MOTOR = 'InnoDB';
 
   /**
