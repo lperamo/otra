@@ -152,7 +152,7 @@ function createFixture(
    */
   if (isset($tableData['relations']))
   {
-    foreach (array_keys($tableData['relations']) as $relation)
+    foreach (array_column($tableData['relations'], 'table') as $relation)
     {
       try
       {
@@ -204,57 +204,82 @@ function createFixture(
     {
       $propertyRefersToAnotherTable = in_array($property, $sortedTables);
 
-      if ($propertyRefersToAnotherTable && !isset($tableData['relations'][$property]))
+      if ($propertyRefersToAnotherTable
+        && !in_array($property, array_column($tableData['relations'], 'table'))
+        // we can reference the same table in case of recursive tables
+        && $property !== $table )
         throw new OtraException(
-          'Either it lacks a relation to the table `' . $table . '` for a `' . $property .
-          '` like property or you have put this property name by error in file `' . $table . '.yml.',
+          'Either it lacks a relation to the table ' . CLI_INFO_HIGHLIGHT . $table . CLI_BASE . ' for a ' .
+          CLI_INFO_HIGHLIGHT . $property . CLI_BASE .
+          ' like property or you have put this property name by error in file ' . CLI_INFO_HIGHLIGHT . $table .
+          '.yml' . CLI_BASE . '.' . END_COLOR,
           E_CORE_ERROR
         );
 
-      // If the property refers to another table, then we search the corresponding foreign key name
-      // (e.g. : lpcms_module -> 'module1' => fk_id_module -> 4 )
-      $theProperties .= '`' .
-        ($propertyRefersToAnotherTable
-          ? $tableData['relations'][$property]['local']
-          : $property) .
-        '`, ';
-
-      $properties [] = $property;
-
-      if (!$propertyRefersToAnotherTable)
+      if ($propertyRefersToAnotherTable && $property === $table)
       {
-        if (is_bool($value))
-          $value = $value ? 1 : 0;
-        elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
-          $value = $localMemory[$value];
-
-        $theValues .= (null === $value)
-          ? 'NULL, '
-          : (is_string($value)
-            ? '\'' . addslashes($value) . '\', '
-            : $value . ', ');
-      } else // If it is a foreign key
+        $theProperties .= '`' . $property . '`, ';
+        $properties [] = $property;
+        // SQL ids begin to 1, not 0
+        $theValues .= (array_search($value, array_keys($fixturesData)) + 1) . ', ';
+      } else
       {
-        // We retrieve the id in the database thanks to the known position of the row that we have stored before
-        $dbConfig = Sql::$instance->query('SET @rownum=0');
-        Sql::$instance->freeResult($dbConfig);
+        if ($propertyRefersToAnotherTable)
+        {
+          $localFieldsFromTheTable = array_column($tableData['relations'], 'local', 'table');
 
-        $dbConfig = Sql::$instance->query(
-          'SELECT
-                x.' . $tableData['relations'][$property]['foreign'] .'
+          foreach($tableData['relations'] as $relationName => $constraintValues)
+          {
+            if ($constraintValues['local'] === $localFieldsFromTheTable[$property])
+              $constraintName = $relationName;
+          }
+        }
+
+        // If the property refers to another table, then we search the corresponding foreign key name
+        // (e.g. : lpcms_module -> 'module1' => fk_id_module -> 4 )
+        $theProperties .= '`' .
+          ($propertyRefersToAnotherTable
+            ? $localFieldsFromTheTable[$property]
+            : $property) .
+          '`, ';
+
+        $properties [] = $property;
+
+        if (!$propertyRefersToAnotherTable)
+        {
+          if (is_bool($value))
+            $value = $value ? 1 : 0;
+          elseif (is_string($value) && 'int' == $tableData['columns'][$property]['type'])
+            $value = $localMemory[$value];
+
+          $theValues .= (null === $value)
+            ? 'NULL, '
+            : (is_string($value)
+              ? '\'' . addslashes($value) . '\', '
+              : $value . ', ');
+        } else // If it is a foreign key
+        {
+          // We retrieve the id in the database thanks to the known position of the row that we have stored before
+          $dbConfig = Sql::$instance->query('SET @rownum=0');
+          Sql::$instance->freeResult($dbConfig);
+
+          $dbConfig = Sql::$instance->query(
+            'SELECT
+                x.' . $tableData['relations'][$constraintName]['foreign'] .'
             FROM
             (SELECT
-                    t.' . $tableData['relations'][$property]['foreign']. ', @rownum:=@rownum + 1 AS position
+                    t.' . $tableData['relations'][$constraintName]['foreign']. ', @rownum:=@rownum + 1 AS position
                 FROM
-                    ' . $property . ' t
+                    ' . $tableData['relations'][$constraintName]['table']  . ' t
             ) x
             WHERE
                 x.position = ' . $fixturesMemory[$property][$value]
-        );
-        $foreignIdValue = Sql::$instance->single($dbConfig);
-        Sql::$instance->freeResult($dbConfig);
+          );
+          $foreignIdValue = Sql::$instance->single($dbConfig);
+          Sql::$instance->freeResult($dbConfig);
 
-        $theValues .= $foreignIdValue . ', ';
+          $theValues .= $foreignIdValue . ', ';
+        }
       }
     }
 

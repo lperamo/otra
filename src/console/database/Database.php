@@ -231,7 +231,7 @@ abstract class Database
 
       // Are the relations of $properties['relations'] all in $sortedTables or are they recursive links (e.g. : parent
       // property) ?
-      foreach (array_keys($properties['relations']) as $relation)
+      foreach (array_column($properties['relations'], 'table') as $relation)
       {
         $alreadyExists = (in_array($relation, $sortedTables) || $relation === $tableName);
         /* If there is at least one problem because one foreign key references a non-existent table ...
@@ -393,17 +393,24 @@ abstract class Database
         } elseif ('relations' === $property)
         {
           $hasRelations = true;
-          foreach ($attributes as $tableKey => $attribute)
+
+          foreach ($attributes as $constraintName => $attribute)
           {
+            if (!isset($attribute['table']))
+              throw new OtraException(
+                'You don\'t have specified a table name for the constraint named ' . $constraintName,
+                E_CORE_ERROR
+              );
+
             if (!isset($attribute['local']))
               throw new OtraException(
-                'You don\'t have specified a local key for the constraint concerning table ' . $tableKey,
+                'You don\'t have specified a local key for the constraint concerning table ' . $attribute['table'],
                 E_CORE_ERROR
               );
 
             if (!isset($attribute['foreign']))
               throw new OtraException(
-                'You don\'t have specified a foreign key for the constraint concerning table '  . $tableKey,
+                'You don\'t have specified a foreign key for the constraint concerning table '  . $attribute['table'],
                 E_CORE_ERROR
               );
 
@@ -418,8 +425,8 @@ abstract class Database
 
             // No problems. We can add the relations to the SQL.
             $tableSql[$table] .=
-              '  CONSTRAINT ' . ($attribute['constraint_name'] ?? $attribute['local'] . '_to_' . $attribute['foreign']) .
-              ' FOREIGN KEY (' . $attribute['local'] . ')' . ' REFERENCES ' . $tableKey . '(' .
+              '  CONSTRAINT ' . ($constraintName ?? $attribute['local'] . '_to_' . $attribute['foreign']) .
+              ' FOREIGN KEY (' . $attribute['local'] . ')' . ' REFERENCES ' . $attribute['table'] . '(' .
               $attribute['foreign'] . ')' . $onModifier . ',' . PHP_EOL;
           }
         } elseif ('indexes' === $property)

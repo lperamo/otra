@@ -174,10 +174,9 @@ function sqlImportSchema(array $argumentsVector) : void
           echo 'There is no REFERENCED_TABLE_NAME on ' .
             ($constraint['CONSTRAINT_NAME'] ?? '/NO CONSTRAINT NAME/') . '.' . PHP_EOL;
 
-        $content .= '    ' . $constraint['REFERENCED_TABLE_NAME'] . ':' . PHP_EOL;
-        $content .= '      local: ' . $constraint['COLUMN_NAME'] . PHP_EOL;
+        $content .= '    ' . $constraint['CONSTRAINT_NAME'] . ':' . PHP_EOL;
         $content .= '      foreign: ' . $constraint['REFERENCED_COLUMN_NAME'] . PHP_EOL;
-        $content .= '      constraint_name: ' . $constraint['CONSTRAINT_NAME'];
+        $content .= '      local: ' . $constraint['COLUMN_NAME'];
 
         if ($constraint['DELETE_RULE'] !== 'NO ACTION')
           $content .= PHP_EOL . '      on_delete: ' . strtolower($constraint['DELETE_RULE']);
@@ -185,6 +184,7 @@ function sqlImportSchema(array $argumentsVector) : void
         if ($constraint['UPDATE_RULE'] !== 'NO ACTION')
           $content .= PHP_EOL . '      on_update: ' . strtolower($constraint['UPDATE_RULE']);
 
+        $content .= PHP_EOL . '      table: ' . $constraint['REFERENCED_TABLE_NAME'];
         $content .= PHP_EOL;
       }
     }
