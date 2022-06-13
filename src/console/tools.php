@@ -228,6 +228,8 @@ namespace otra\console
           $newArrayItem = '\'' . serialize($arrayItem) . '\'';
         elseif (is_array($arrayItem))
           $newArrayItem = convertLongArrayToShort($arrayItem);
+        elseif (is_null($arrayItem))
+          $newArrayItem = 'null';
         else
           $newArrayItem = $arrayItem;
 
