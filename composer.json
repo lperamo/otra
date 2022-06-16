@@ -23,6 +23,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
+    "ext-zend-opcache": "*",
     "symfony/yaml": "5.2.10"
   },
   "require-dev": {
@@ -35,7 +36,6 @@
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",
-    "ext-openssl": "Needed to encrypt passwords securely",
-    "ext-zend-opcache": "Needed to use the preloading feature available since PHP 7.4."
+    "ext-openssl": "Needed to encrypt passwords securely"
   }
 }
