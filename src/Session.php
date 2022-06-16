@@ -5,7 +5,7 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 namespace otra;
 use ReflectionException;
-use const otra\cache\php\{CACHE_PATH, CORE_PATH};
+use const otra\cache\php\{APP_ENV, CACHE_PATH, CORE_PATH, PROD};
 use const otra\config\VERSION;
 use function otra\console\convertLongArrayToShort;
 use function otra\tools\isSerialized;
@@ -191,6 +191,7 @@ abstract class Session
       throw new OtraException('Cannot remove session file!');
 
     self::$identifier = self::$blowfishAlgorithm = self::$sessionId = self::$sessionFile = null;
+    self::$initialized = false;
 
     foreach (array_keys(self::$matches) as $sessionKey)
       unset($_SESSION[$sessionKey], self::$matches[$sessionKey]);
@@ -219,10 +220,22 @@ abstract class Session
     $fileContent = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;';
 
     // Updates the file with the merged version
-    file_put_contents(
-      self::$sessionFile,
-      $fileContent . 'return ' . $dataInformation . ';' . PHP_EOL
-    );
+    if (
+      file_put_contents(
+        self::$sessionFile,
+        $fileContent . 'return ' . $dataInformation . ';' . PHP_EOL
+      ) === false
+    )
+      throw new OtraException(
+        ($_SERVER[APP_ENV] === PROD)
+          ? 'Problem on server side'
+          : 'Cannot write the file ' . self::$sessionFile
+      );
+
+    // Those two lines, especially the call to opcache_invalidate, are there to prevent from using an old version of the
+    // session when we init the session from this file. Do - not - touch - it.
+    clearstatcache(true, self::$sessionFile);
+    opcache_invalidate(self::$sessionFile);
 
     if ($_SERVER['REMOTE_ADDR'] === '::1')
       chmod(self::$sessionFile, 0775);

@@ -8,14 +8,14 @@ AllConfig::$dbConnections = [ // mandatory
     'driver' => 'PDOMySQL',
     'host' => 'localhost',
     'port' => '',
-    'db' => 'testDB', // do not modify this !
+    'db' => 'testDB', // do not modify this!
     'motor' => 'InnoDB'
   ],
   'testOtherDriver' => [ // do not modify this key name
     'driver' => 'OtherDriver',
     'host' => 'localhost',
     'port' => '',
-    'db' => 'testDB', // do not modify this !
+    'db' => 'testDB', // do not modify this!
   ]
 ];
 AllConfig::$debugConfig = [
