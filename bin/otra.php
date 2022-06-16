@@ -38,7 +38,7 @@ namespace otra\bin
   if (exec('whoami') === 'root')
   {
     echo CLI_ERROR,
-      'You should not be root to execute this ! It will probably change the rights of your files and folders.',
+      'You should not be root to execute this! It will probably change the rights of your files and folders.',
       END_COLOR, PHP_EOL;
   }
 

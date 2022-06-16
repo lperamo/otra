@@ -463,7 +463,7 @@ class SessionTest extends TestCase
 
     // testing
     self::assertArrayNotHasKey(
-      crypt(self::TEST, self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue()),
+      self::TEST,
       $_SESSION
     );
     self::assertEmpty(
