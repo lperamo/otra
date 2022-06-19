@@ -10,6 +10,7 @@ namespace otra\tools;
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
 use const otra\console\{CLI_WARNING,END_COLOR};
+use const otra\cache\php\CORE_PATH;
 
 // If we come from the `deploy` task, those functions may already have been defined.
 if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
@@ -41,8 +42,18 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
 
     if ($result === false || $returnCode !== 0)
     {
-      $errorMessage = ($errorMessage ?? 'Problem when loading the command :' . PHP_EOL . CLI_WARNING . $cmd .
-          END_COLOR) . PHP_EOL . 'Shell error code ' . $returnCode . '. ' . $output;
+      $isCli = php_sapi_name() === 'cli';
+
+      if ($isCli && !defined(CLI_WARNING))
+        require_once CORE_PATH . 'console/colors.php';
+
+      $errorMessage = (
+        $errorMessage ?? 'Problem when loading the command :' . PHP_EOL .
+          ($isCli
+            ? CLI_WARNING . $cmd . END_COLOR
+            : $cmd
+          )
+        ) . PHP_EOL . 'Shell error code ' . $returnCode . '. ' . $output;
 
       if ($launchExceptionOnError)
         throw new OtraException($errorMessage);
