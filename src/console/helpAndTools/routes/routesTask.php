@@ -134,7 +134,13 @@ function routes(array $argumentsVector) : void
 
       if (isset($resources['template']))
       {
-        echo (checkResourcePath('tpl',CACHE_PATH, $shaName)
+        echo (checkResourcePath(
+          'tpl',
+          (isset($routeConfig['resources']['noNonces']) && $routeConfig['resources']['noNonces']
+            ? BASE_PATH . 'web/'
+            : CACHE_PATH),
+          $shaName
+        )
           ? CLI_SUCCESS
           : CLI_ERROR),
         '[TEMPLATE]', $altColor;

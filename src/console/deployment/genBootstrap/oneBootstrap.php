@@ -79,7 +79,7 @@ function oneBootstrap(string $route) : void
   {
     $fileToInclude = substr(CORE_PATH,0, -5) . str_replace(
         ['\\', 'otra'],
-        ['/', 'src'],
+        ['/', '/src'],
         Router::get(
           $route,
           $params[OTRA_KEY_BOOTSTRAP] ?? [],

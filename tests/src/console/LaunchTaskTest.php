@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\console;
 
+use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
@@ -15,7 +16,9 @@ use function otra\console\launchTask;
  */
 class LaunchTaskTest extends TestCase
 {
-  private const CONF_FILE_NAME = 'test.conf';
+  private const
+    CONF_FILE_NAME = 'test.conf',
+    OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
@@ -28,6 +31,13 @@ class LaunchTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = PROD;
+    ob_start();
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_CREATE_HELLO_WORLD,
+      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+    );
+    ob_end_clean();
     require CONSOLE_PATH . 'launchTask.php';
 
     // launching

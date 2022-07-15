@@ -220,6 +220,7 @@ function genAssets(array $argumentsVector) : void
 
   $routes = Routes::$allRoutes;
 
+  // Checking the mask parameter
   if (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]))
   {
     echo CLI_ERROR, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
@@ -312,8 +313,8 @@ function genAssets(array $argumentsVector) : void
 
       if (!isset($route['resources']))
       {
-        echo status('Nothing to do', OTRA_CLI_INFO_STRING), ' =>', CLI_SUCCESS, ' OK', END_COLOR, '[',
-        CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
+        echo status('Nothing to do', OTRA_CLI_INFO_STRING),
+          ' =>', CLI_SUCCESS, ' OK', END_COLOR, '[', CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
         continue;
       }
 
@@ -412,15 +413,19 @@ function genAssets(array $argumentsVector) : void
       if (GEN_ASSETS_TEMPLATE)
       {
         if (!isset($resources['template']))
-          echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING);
+          echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING); // no static template
         else
         {
+          $staticTemplateBasePath = (isset($resources['noNonces']) && $resources['noNonces'])
+            ? BASE_PATH . 'web/'
+            : CACHE_PATH;
+
           // Generates the gzipped template files
           passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genAssets/genTemplate.php" "' .
-            CACHE_PATH . '" "' .
+            $staticTemplateBasePath . '" "' .
             $routeName . '" ' .
             $shaName . ' "' .
-            'bundles\\' . Routes::$allRoutes[$routeName]['chunks'][1] . '\\Init::Init"'
+            'bundles\\' . Routes::$allRoutes[$routeName]['chunks'][Routes::ROUTES_CHUNKS_BUNDLE] . '\\Init::Init"'
           );
 
           if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))

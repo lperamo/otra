@@ -177,10 +177,10 @@ function genClassMap(array $argumentsVector) : void
      */
     function convertClassMapToPHPFile(string $classMap, string $environment = DEV) : string
     {
-      $start = '<?php declare(strict_types=1);namespace otra\\cache\\php\\init;use const otra\\cache\\php\\{';
-
-      if ($environment === 'dev')
-        $start .= 'BASE_PATH,CONSOLE_PATH,';
+      $start = '<?php declare(strict_types=1);namespace otra\\cache\\php' .
+        ($environment === DEV
+        ? '\\init;use const otra\\cache\\php\\{BASE_PATH,CONSOLE_PATH,'
+        : ';use const otra\\cache\\php\\{');
 
       // if the class map is empty, then we just return an empty array.
       return $start . 'CORE_PATH};const CLASSMAP=' .

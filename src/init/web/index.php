@@ -51,6 +51,7 @@ try
    *   }
    * }> \cache\php\Routes::$allRoutes
    */
+
   // Is it a static page
   if ('cli' !== PHP_SAPI &&
     isset(
@@ -59,13 +60,26 @@ try
     require BASE_PATH . 'web/loadStaticRoute.php';
 
   ini_set('session.save_path', CACHE_PATH . 'php/sessions/');
+  // Put this "cache_limiter" option also sets the header 'Cache-Control: private, max-age=10800'
   ini_set('session.cache_limiter', 'private');
+  // Prevents from having thousands of session files that dramatically break performance when we use a JMeter test with
+  // thousands of iterations
+  if ($_SERVER['JMETER'] === 'test')
+  {
+    ini_set('session.gc_maxlifetime', 2);
+    session_gc();
+  }
+
   session_name('__Secure-LPSESSID');
   session_start([
     'cookie_secure' => true,
     'cookie_httponly' => true,
     'cookie_samesite' => 'strict'
   ]);
+
+  // Prevents the cache from disturbing the statistics when doing JMeter tests
+  if ($_SERVER['JMETER'] === 'test')
+    header('Cache-Control: no-cache', true);
 
   header_remove('Expires');
 

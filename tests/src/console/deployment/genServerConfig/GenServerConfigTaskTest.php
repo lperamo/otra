@@ -24,7 +24,10 @@ class GenServerConfigTaskTest extends TestCase
     EXAMPLE_DEV_TEST_CONF_PATH = self::EXAMPLES_PATH . DEV . '/test.conf',
     EXAMPLE_DEV_TEST_CONF_CACHE_PATH = self::EXAMPLES_PATH . DEV . '/test_cache.conf',
     EXAMPLE_PROD_TEST_CONF_PATH = self::EXAMPLES_PATH . PROD . '/test.conf',
-    EXAMPLE_PROD_TEST_CONF_CACHE_PATH = self::EXAMPLES_PATH . PROD . '/test_cache.conf';
+    EXAMPLE_PROD_TEST_CONF_CACHE_PATH = self::EXAMPLES_PATH . PROD . '/test_cache.conf',
+    SERVER_TECH = 'nginx',
+    OTRA_BINARY = 'otra.php',
+    OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
   // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
@@ -44,17 +47,53 @@ class GenServerConfigTaskTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
+  public function testNoRoutes() : void
+  {
+    // context
+    $_SERVER[APP_ENV] = PROD;
+
+    // testing
+    $this->expectException(OtraException::class);
+    $this->expectOutputString(CLI_ERROR . 'No routes are defined in the project!' . END_COLOR . PHP_EOL);
+
+    // launching
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_GEN_SERVER_CONFIG,
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
+    );
+  }
+
+  /**
+   * @throws OtraException
+   */
+  private static function createHelloWorld() : void
+  {
+    ob_start();
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_CREATE_HELLO_WORLD,
+      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+    );
+    ob_end_clean();
+  }
+
+  /**
+   * @author Lionel Péramo
+   * @throws OtraException
+   */
   public function testDevNginx() : void
   {
     // context
     $_SERVER[APP_ENV] = PROD;
+    self::createHelloWorld();
 
     // launching
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_SERVER_CONFIG,
-      ['otra.php', self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, DEV, 'nginx']
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, DEV, self::SERVER_TECH]
     );
 
     // testing
@@ -87,13 +126,14 @@ class GenServerConfigTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = PROD;
+    self::createHelloWorld();
 
     // launching
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_SERVER_CONFIG,
-      ['otra.php', self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, 'nginx']
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
     );
 
     // testing

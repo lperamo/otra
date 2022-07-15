@@ -10,8 +10,11 @@ namespace otra\console\deployment\genServerConfig;
 
 use otra\config\AllConfig;
 use otra\OtraException;
-use const otra\cache\php\{CONSOLE_PATH,DEV,SPACE_INDENT};
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+use const otra\cache\php\
+{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DEV, SPACE_INDENT};
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 const
   GEN_SERVER_CONFIG_ARG_FILE = 2,
@@ -45,21 +48,28 @@ function genServerConfig(array $argumentsVector) : void
 
   if (!isset(AllConfig::$deployment))
   {
-    echo CLI_ERROR . 'There is no deployment configuration so we cannot know which server name to use.' . PHP_EOL;
+    echo CLI_ERROR, 'There is no deployment configuration so we cannot know which server name to use.', END_COLOR,
+      PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 
   if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
   {
-    echo CLI_INFO_HIGHLIGHT . GEN_SERVER_CONFIG_DOMAIN_NAME_KEY . CLI_ERROR .
-      ' is not defined in the deployment configuration so we cannot know which server name to use.' . PHP_EOL;
+    echo CLI_INFO_HIGHLIGHT, GEN_SERVER_CONFIG_DOMAIN_NAME_KEY, CLI_ERROR,
+      ' is not defined in the deployment configuration so we cannot know which server name to use.', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 
   if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY]))
   {
-    echo CLI_INFO_HIGHLIGHT . GEN_SERVER_CONFIG_FOLDER_KEY . CLI_ERROR .
-      ' is not defined in the deployment configuration so we cannot know which server name to use.' . PHP_EOL;
+    echo CLI_INFO_HIGHLIGHT, GEN_SERVER_CONFIG_FOLDER_KEY, CLI_ERROR,
+      ' is not defined in the deployment configuration so we cannot know which server name to use.', END_COLOR, PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
+
+  if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
+  {
+    echo CLI_ERROR, 'No routes are defined in the project!', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 
