@@ -67,9 +67,9 @@ function controllerHandling(bool $interactive, bool $consoleForce, string $contr
   {
     while($controllerName !== 'n')
     {
-      createController($controllersFolder, $controllerName, $interactive, $consoleForce);
+      createController($controllersFolder, $controllerName, true, $consoleForce);
       $controllerName = promptUser('What is the name of the next controller ? (type n to stop)');
     }
   } else
-    createController($controllersFolder, $controllerName, $interactive, $consoleForce);
+    createController($controllersFolder, $controllerName, false, $consoleForce);
 }

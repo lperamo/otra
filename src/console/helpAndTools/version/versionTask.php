@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace otra\console\helpAndTools\version;
 
+use JsonException;
+use otra\OtraException;
 use function otra\tools\getOtraCommitNumber;
 use const otra\cache\php\{CORE_PATH, OTRA_VERSION};
 use const otra\console\END_COLOR;
@@ -23,6 +25,10 @@ const
   TOTAL_WIDTH = 39,
   TOTAL_PLUS_END_PADDING = TOTAL_WIDTH + END_PADDING;
 
+/**
+ * @throws JsonException|OtraException
+ * @return void
+ */
 function version() : void
 {
   define(__NAMESPACE__ . '\\END_PADDING_STRING', str_repeat(' ', END_PADDING));

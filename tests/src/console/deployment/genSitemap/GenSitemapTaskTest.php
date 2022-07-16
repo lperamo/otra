@@ -42,12 +42,7 @@ class GenSitemapTaskTest extends TestCase
     $_SERVER[APP_ENV] = PROD;
     require CONSOLE_PATH . 'architecture/createHelloWorld/createHelloWorldTask.php';
     ob_start();
-    createHelloWorld(
-      [
-        'otra.php',
-        'createHelloWorld'
-      ]
-    );
+    createHelloWorld();
     ob_end_clean();
 
     // launching
@@ -65,10 +60,10 @@ class GenSitemapTaskTest extends TestCase
     self::assertMatchesRegularExpression(
       '@<\?xml version="1.0" encoding="UTF-8"\?>
 <urlset xmlns="https://www\.sitemaps\.org/schemas/sitemap/0\.9">
-  <url>
-    <loc>https://otra\.tech/helloworld</loc>
-    <lastmod>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}</lastmod>
-  </url>
+ {2}<url>
+ {4}<loc>https://otra\.tech/helloworld</loc>
+ {4}<lastmod>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}</lastmod>
+ {2}</url>
 </urlset>@',
       file_get_contents(self::SITEMAP_PATH)
     );

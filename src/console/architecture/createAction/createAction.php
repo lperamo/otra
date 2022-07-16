@@ -227,9 +227,9 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   {
     while($actionName !== 'n')
     {
-      createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+      createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, true, $consoleForce);
       $actionName = promptUser('What is the name of the next action ? (type n to stop)');
     }
   } else
-    createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+    createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, false, $consoleForce);
 }

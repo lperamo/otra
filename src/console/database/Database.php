@@ -30,7 +30,7 @@ abstract class Database
     OTRA_DB_PROPERTY_MODE_DEFAULT = 2,
     LABEL_FIXTURES = 'fixtures/';
 
-  public final const
+  final public const
     ERROR_CANNOT_CREATE_THE_FOLDER = 'Cannot create the folder ',
     ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH = 'Cannot remove the folder \'',
     ERROR_CLOSE_DIR_FORGOT_CALL = 'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ',

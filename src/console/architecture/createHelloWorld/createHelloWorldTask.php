@@ -191,7 +191,7 @@ namespace otra\console\architecture\createHelloWorld
 
     // We update the routes' configuration as we just add one route.
     require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
-    updateConf('7', (string) $argumentsVector[ARG_BUNDLE_NAME]);
+    updateConf('7', $argumentsVector[ARG_BUNDLE_NAME]);
 
     echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
     require CORE_PATH . 'tools/cli.php';

@@ -8,6 +8,12 @@ use const otra\cache\php\CONSOLE_PATH;
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
 use function otra\{console\promptUser, console\guessWords};
 
+/**
+ * @param string $route
+ *
+ * @throws OtraException
+ * @return string
+ */
 function guessRoute(string $route) : string
 {
   if (isset(Routes::$allRoutes[$route]))

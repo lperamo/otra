@@ -7,9 +7,10 @@ declare(strict_types=1);
 
 namespace otra\console\helpAndTools\requirements;
 
-use function otra\tools\cliCommand;
+use otra\OtraException;
 use const otra\cache\php\CORE_PATH;
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
+use function otra\tools\cliCommand;
 
 const
   REQUIREMENTS_PADDING = 30,
@@ -83,6 +84,10 @@ const
   ],
   OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';
 
+/**
+ * @throws OtraException
+ * @return void
+ */
 function requirements() : void
 {
   echo ADD_BOLD, CLI_INFO_HIGHLIGHT, '  Requirements', PHP_EOL, '  ------------', REMOVE_BOLD_INTENSITY, PHP_EOL, PHP_EOL;

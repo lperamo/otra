@@ -65,7 +65,7 @@ function unlinkResourceFile(string $folder, string $shaName) : void
  *
  * @return string
  */
-#[Pure] function status(string $status, string $color = 'CLI_SUCCESS') : string
+function status(string $status, string $color = 'CLI_SUCCESS') : string
 {
   return ' [' . constant('otra\\console\\' . $color) . $status . CLI_GRAY. ']';
 }

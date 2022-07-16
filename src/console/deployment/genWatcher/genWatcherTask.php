@@ -206,8 +206,6 @@ function addVerboseInformation(
  *
  * @param string $assetName
  * @param string $assetExtension
- *
- * @throws OtraException
  */
 function deleteAsset(string $assetName, string $assetExtension)
 {

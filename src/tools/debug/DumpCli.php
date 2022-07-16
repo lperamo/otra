@@ -49,7 +49,7 @@ class DumpCli extends DumpMaster
    *
    * @return string
    */
-  #[Pure] private static function indentColors(int $depth) : string
+  private static function indentColors(int $depth) : string
   {
     $content = '';
 

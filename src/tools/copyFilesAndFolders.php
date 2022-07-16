@@ -16,6 +16,9 @@ use function otra\tools\files\returnLegiblePath;
 
 if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
+  /**
+   * @throws OtraException
+   */
   function cannotCopy(string $source, string $destination): never
   {
     $error = error_get_last();

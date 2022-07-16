@@ -171,6 +171,9 @@ class BlocksTest extends TestCase
     );
   }
 
+  /**
+   * @throws OtraException
+   */
   public function testReplacingBlocks():void
   {
     define(__NAMESPACE__ . '\\OTRA_TEST_REPLACING_BLOCKS', 'replacingBlocks.phtml');

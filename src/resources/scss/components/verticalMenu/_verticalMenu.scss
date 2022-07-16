@@ -132,11 +132,11 @@ $defaults : (
 /// @param  {bool}   $themeUsed       - Are we using a theme?
 /// @param  {string} $specificity     - Do we have to add :not(.active) for example to the selector?
 ///
-@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed, $specifity: '') {
+@mixin _handleThemedFeature($property, $value, $suffix, $themeUsed, $specificity: '') {
   @if ($value != false) {
     @include theming.to-theme(
       (
-        #{&} + $specifity : ($property, $value)
+        #{&} + $specificity : ($property, $value)
       ),
       $suffix,
       $themeUsed

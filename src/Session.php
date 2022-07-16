@@ -198,7 +198,8 @@ abstract class Session
   }
 
   /**
-   * @throws ReflectionException
+   * @throws OtraException|ReflectionException
+   * @return void
    */
   public static function toFile(): void
   {
@@ -233,7 +234,7 @@ abstract class Session
       );
 
     // Those two lines, especially the call to opcache_invalidate, are there to prevent from using an old version of the
-    // session when we init the session from this file. Do - not - touch - it.
+    // session when we initialize the session from this file. Do - not - touch - it.
     clearstatcache(true, self::$sessionFile);
     opcache_invalidate(self::$sessionFile);
 

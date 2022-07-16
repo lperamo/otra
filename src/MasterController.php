@@ -415,7 +415,7 @@ abstract class MasterController
         {
           // Will be used in 'addResourcesToTemplate' method via 'render' method
           if ($ajax)
-            self::$ajax = $ajax;
+            self::$ajax = true;
 
           self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
 
@@ -435,7 +435,7 @@ abstract class MasterController
     {
       // Will be used in 'addResourcesToTemplate' method via 'render' method
       if ($ajax)
-        self::$ajax = $ajax;
+        self::$ajax = true;
 
       self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
     }
