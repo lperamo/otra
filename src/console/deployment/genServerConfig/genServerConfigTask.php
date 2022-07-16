@@ -10,9 +10,7 @@ namespace otra\console\deployment\genServerConfig;
 
 use otra\config\AllConfig;
 use otra\OtraException;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use const otra\cache\php\
-{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DEV, SPACE_INDENT};
+use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DEV, SPACE_INDENT};
 use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
@@ -56,7 +54,7 @@ function genServerConfig(array $argumentsVector) : void
   if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
   {
     echo CLI_INFO_HIGHLIGHT, GEN_SERVER_CONFIG_DOMAIN_NAME_KEY, CLI_ERROR,
-      ' is not defined in the deployment configuration so we cannot know which server name to use.', END_COLOR, PHP_EOL;
+      ' is not defined in the deployment configuration so we cannot know which domain name to use.', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 

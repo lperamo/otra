@@ -44,6 +44,80 @@ class GenServerConfigTaskTest extends TestCase
   }
 
   /**
+   * @throws OtraException
+   */
+  private static function createHelloWorld() : void
+  {
+    ob_start();
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_CREATE_HELLO_WORLD,
+      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+    );
+    ob_end_clean();
+  }
+
+  public function testNoDeploymentConfiguration(): void
+  {
+    // context
+    $_SERVER[APP_ENV] = PROD;
+    require TEST_PATH . 'config/AllConfigNoDeploymentConfiguration.php';
+
+    // testing
+    $this->expectException(OtraException::class);
+    $this->expectOutputString(CLI_ERROR .
+      'There is no deployment configuration so we cannot know which server name to use.' . END_COLOR . PHP_EOL
+    );
+
+    // launching
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_GEN_SERVER_CONFIG,
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
+    );
+  }
+
+  public function testNoDomainNameInDeploymentConfiguration(): void
+  {
+    // context
+    $_SERVER[APP_ENV] = PROD;
+    require TEST_PATH . 'config/AllConfigNoDeploymentDomainName.php';
+
+    // testing
+    $this->expectException(OtraException::class);
+    $this->expectOutputString(CLI_INFO_HIGHLIGHT . 'domainName' . CLI_ERROR .
+      ' is not defined in the deployment configuration so we cannot know which domain name to use.' . END_COLOR . PHP_EOL
+    );
+
+    // launching
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_GEN_SERVER_CONFIG,
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
+    );
+  }
+
+  public function testNoFolderKeyInDeploymentConfiguration(): void
+  {
+    // context
+    $_SERVER[APP_ENV] = PROD;
+    require TEST_PATH . 'config/AllConfigNoDeploymentFolder.php';
+
+    // testing
+    $this->expectException(OtraException::class);
+    $this->expectOutputString(CLI_INFO_HIGHLIGHT . 'folder' . CLI_ERROR .
+      ' is not defined in the deployment configuration so we cannot know which server name to use.' . END_COLOR . PHP_EOL
+    );
+
+    // launching
+    TasksManager::execute(
+      require TASK_CLASS_MAP_PATH,
+      self::OTRA_TASK_GEN_SERVER_CONFIG,
+      [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
+    );
+  }
+
+  /**
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -62,20 +136,6 @@ class GenServerConfigTaskTest extends TestCase
       self::OTRA_TASK_GEN_SERVER_CONFIG,
       [self::OTRA_BINARY, self::OTRA_TASK_GEN_SERVER_CONFIG, self::TEST_CONF_PATH, PROD, self::SERVER_TECH]
     );
-  }
-
-  /**
-   * @throws OtraException
-   */
-  private static function createHelloWorld() : void
-  {
-    ob_start();
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-    ob_end_clean();
   }
 
   /**
