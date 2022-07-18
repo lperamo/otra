@@ -269,7 +269,7 @@ abstract class MasterController
    *                           /!\ DO NOT fill the second key if it is not needed
    * @param bool  $print       Does the stylesheet must be only used for a print usage ?
    */
-  protected static function css(array $stylesheets = [], bool $print = false) : void
+  public static function css(array $stylesheets = [], bool $print = false) : void
   {
     array_push(
       self::$stylesheets,
@@ -283,7 +283,7 @@ abstract class MasterController
    *
    * @param array|string $js The javascript file to add (Array of strings)
    */
-  protected static function js(array|string $js = []) : void
+  public static function js(array|string $js = []) : void
   {
     self::$javaScripts = array_merge(self::$javaScripts, is_array($js) ? $js : [$js]);
   }
