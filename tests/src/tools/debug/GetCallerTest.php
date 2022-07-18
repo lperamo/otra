@@ -22,6 +22,6 @@ class GetCallerTest extends TestCase
   {
     require CORE_PATH . 'tools/debug/getCaller.php';
     $testGetCaller = function(){ return getCaller(); };
-    self::assertEquals(__FILE__ . ':' . __LINE__, $testGetCaller());
+    self::assertSame(__FILE__ . ':' . __LINE__, $testGetCaller());
   }
 }

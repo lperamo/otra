@@ -68,8 +68,8 @@ class SqlCleanTaskTest extends TestCase
 
     // testing
     $sqlPath = (new ReflectionClass(Database::class))->getProperty('pathSql')->getValue();
-    self::assertEquals([], glob($sqlPath . '/*.sql'));
-    self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
+    self::assertSame([], glob($sqlPath . '/*.sql'));
+    self::assertSame([], glob($sqlPath . 'truncate/*.sql'));
     self::expectOutputString(CLI_BASE . 'Cleaning done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);
 
     // cleaning

@@ -33,7 +33,7 @@ class PhpOrHTMLIntoEvalTest extends TestCase
     phpOrHTMLIntoEval($contentToAdd);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'declare(strict_types=1);echo \'test\'; ',
       $contentToAdd
     );
@@ -51,7 +51,7 @@ class PhpOrHTMLIntoEvalTest extends TestCase
     phpOrHTMLIntoEval($contentToAdd);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'declare(strict_types=1);echo \'test\';<?php',
       $contentToAdd
     );
@@ -69,7 +69,7 @@ class PhpOrHTMLIntoEvalTest extends TestCase
     phpOrHTMLIntoEval($contentToAdd);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       '?><div></div><?php',
       $contentToAdd
     );

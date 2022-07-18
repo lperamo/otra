@@ -173,7 +173,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals(null, Sql::$instance->query(self::QUERY_SELECT_1));
+    self::assertSame(null, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -201,7 +201,7 @@ class SqlTest extends TestCase
     Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
-    self::assertEquals(
+    self::assertSame(
       $sqlLogContent
         . ($sqlLogContent !== ''
         ? ''
@@ -548,7 +548,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
+    self::assertSame([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -583,7 +583,7 @@ class SqlTest extends TestCase
     $sqlInstance = Sql::getDb();
     $sqlInstance->__destruct();
 
-    self::assertEquals(null, Sql::$currentConn);
+    self::assertSame(null, Sql::$currentConn);
   }
 
   /**
@@ -602,7 +602,7 @@ class SqlTest extends TestCase
     $sqlInstance2 = Sql::getDb('test');
 
     // Testing !
-    self::assertEquals($sqlInstance, $sqlInstance2);
+    self::assertSame($sqlInstance, $sqlInstance2);
   }
 
   /**
@@ -711,10 +711,10 @@ class SqlTest extends TestCase
       Sql::$instance->query('bogus sql');
     } catch (Exception $exception)
     {
-      self::assertEquals(
+      self::assertSame(
       [
         0 => '42000',
-        1 => '1064',
+        1 => 1064,
         2 => 'You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'bogus sql\' at line 1'
       ],
         Sql::$instance->errorInfo()

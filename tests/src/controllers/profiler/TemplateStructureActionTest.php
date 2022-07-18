@@ -89,7 +89,7 @@ class TemplateStructureActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(TemplateStructureAction::class, $templateStructureAction);
-    self::assertEquals(
+    self::assertSame(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .

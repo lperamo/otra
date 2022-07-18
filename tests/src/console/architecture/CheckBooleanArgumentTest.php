@@ -54,7 +54,7 @@ class CheckBooleanArgumentTest extends TestCase
     );
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       false,
       $valid,
       'Checks if the function correctly returns the default value of ' . CLI_INFO_HIGHLIGHT .
@@ -124,7 +124,7 @@ class CheckBooleanArgumentTest extends TestCase
     );
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       true,
       $valid,
       'Checks if the function correctly returns true when we pass the correct value of ' . CLI_INFO_HIGHLIGHT .

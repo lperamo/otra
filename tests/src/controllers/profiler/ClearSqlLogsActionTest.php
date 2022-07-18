@@ -91,7 +91,7 @@ class ClearSqlLogsActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       'No more stored queries in ' . BASE_PATH . 'logs/dev/sql.txt.',
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'ClearSQLLogsAction' . CLI_ERROR . ' page output...'

@@ -26,7 +26,7 @@ class TailCustomTest extends TestCase
    */
   public function testTailCustom() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTail.txt'));
+    self::assertSame('world', tailCustom(BASE_PATH . 'tests/testTail.txt'));
   }
 
   /**
@@ -36,6 +36,6 @@ class TailCustomTest extends TestCase
    */
   public function testTailCustom_NoEndBlankLine() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt'));
+    self::assertSame('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt'));
   }
 }

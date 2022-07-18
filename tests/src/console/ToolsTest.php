@@ -72,7 +72,7 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
       $reducedArray
     );
@@ -94,7 +94,7 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
       $reducedArray
     );

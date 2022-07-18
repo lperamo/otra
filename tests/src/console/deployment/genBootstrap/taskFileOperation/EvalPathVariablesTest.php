@@ -40,11 +40,11 @@ class EvalPathVariablesTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, self::FILENAME, 'echo \'test\'');
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       $backupFileContent,
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );
@@ -64,11 +64,11 @@ class EvalPathVariablesTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, self::FILENAME, 'echo $test;');
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'echo \'value\'',
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );
@@ -98,11 +98,11 @@ class EvalPathVariablesTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, $filename, $trimmedMatch);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'echo \'value\'',
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );
@@ -124,11 +124,11 @@ class EvalPathVariablesTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, $filename, $trimmedMatch);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'require $templateFilename',
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       true,
       $isTemplate
     );

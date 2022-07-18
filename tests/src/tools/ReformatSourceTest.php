@@ -22,7 +22,7 @@ class ReformatSourceTest extends TestCase
   {
     require CORE_PATH . 'tools/reformatSource.php';
 
-    self::assertEquals(
+    self::assertSame(
       '&lt;p&gt;Hi&lt;/p&gt;<br/>&lt;p&gt;Ha&lt;/p&gt;',
       reformatSource('<p>Hi</p><p>Ha</p>')
     );

@@ -157,7 +157,7 @@ class GenServerConfigTaskTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH .
       CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
       'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL,
@@ -197,7 +197,7 @@ class GenServerConfigTaskTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       CLI_BASE . 'Nginx production server configuration generated in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH .
       CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
       'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL,

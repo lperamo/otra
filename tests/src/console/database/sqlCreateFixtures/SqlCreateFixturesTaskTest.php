@@ -182,7 +182,7 @@ class SqlCreateFixturesTaskTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       CLI_BASE . 'Fixtures sql files cleaned'. CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL . PHP_EOL .
       CLI_INFO_HIGHLIGHT . CLI_INFO_HIGHLIGHT . 'testDB.testDB_table2' . END_COLOR . PHP_EOL .
       'Table ' . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR . CLI_SUCCESS . '[TRUNCATED]' . END_COLOR .  PHP_EOL .
@@ -295,7 +295,7 @@ class SqlCreateFixturesTaskTest extends TestCase
     sqlCreateFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_FIXTURES, self::DATABASE_NAME, self::TRUNCATE_ONLY]);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       PHP_EOL . CLI_INFO_HIGHLIGHT . CLI_INFO_HIGHLIGHT . 'testDB.testDB_table2' . END_COLOR . PHP_EOL .
       'Table ' . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR . CLI_SUCCESS . '[TRUNCATED]' . END_COLOR .  PHP_EOL .
       'Data  '. CLI_SUCCESS . '[YML IDENTIFIERS] ' . END_COLOR . CLI_SUCCESS . '[SQL CREATION] ' . END_COLOR .

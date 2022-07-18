@@ -86,7 +86,7 @@ class Error404ActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       file_get_contents(TEST_PATH . 'examples/error404.phtml'),
       $output,
       'Testing 404 error page output...'

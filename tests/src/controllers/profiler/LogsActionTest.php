@@ -126,7 +126,7 @@ class LogsActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(LogsAction::class, $logsAction);
-    self::assertEquals(
+    self::assertSame(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .

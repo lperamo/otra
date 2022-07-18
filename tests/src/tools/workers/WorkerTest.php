@@ -43,22 +43,22 @@ class WorkerTest extends TestCase
     self::assertInstanceOf(Worker::class, $worker);
 
     self::assertIsString($worker->command);
-    self::assertEquals(self::COMMAND, $worker->command);
+    self::assertSame(self::COMMAND, $worker->command);
 
     self::assertIsInt($worker->verbose);
-    self::assertEquals(self::VERBOSE, $worker->verbose);
+    self::assertSame(self::VERBOSE, $worker->verbose);
 
     self::assertIsString($worker->successMessage);
-    self::assertEquals(self::SUCCESS_MESSAGE, $worker->successMessage);
+    self::assertSame(self::SUCCESS_MESSAGE, $worker->successMessage);
 
     self::assertIsString($worker->waitingMessage);
-    self::assertEquals(self::WAITING_MESSAGE, $worker->waitingMessage);
+    self::assertSame(self::WAITING_MESSAGE, $worker->waitingMessage);
 
     self::assertIsString($worker->waitingMessage);
     self::assertNull($worker->failMessage);
 
     self::assertIsInt($worker->timeout);
-    self::assertEquals(self::TIMEOUT, $worker->timeout);
+    self::assertSame(self::TIMEOUT, $worker->timeout);
   }
 
   /**
@@ -80,7 +80,7 @@ class WorkerTest extends TestCase
 
     // testing
     self::assertIsString($string);
-    self::assertEquals('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
+    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
   }
 
   /**
@@ -107,7 +107,7 @@ class WorkerTest extends TestCase
 
     // testing
     self::assertIsString($string);
-    self::assertEquals(
+    self::assertSame(
       CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
@@ -140,6 +140,6 @@ class WorkerTest extends TestCase
 
     // testing
     self::assertIsString($string);
-    self::assertEquals(self::FAIL_MESSAGE, $string);
+    self::assertSame(self::FAIL_MESSAGE, $string);
   }
 }

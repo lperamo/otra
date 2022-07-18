@@ -43,12 +43,12 @@ class ProcessReturnTest extends TestCase
 
     // testing
     $insertedCode = '[\'testKey\'=>\'testValue\']';
-    self::assertEquals(
+    self::assertSame(
       $includingStartCode . $insertedCode . PHP_EOL . ');',
       $includingCode,
       'Testing $includingCode...'
     );
-    self::assertEquals(
+    self::assertSame(
       $insertedCode,
       $includedCode,
       'Testing $includedCode...'

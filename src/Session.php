@@ -85,8 +85,8 @@ abstract class Session
   public static function set(string $sessionKey, mixed $value) : void
   {
     self::$matches[$sessionKey] = [
-      'notHashed' => $value,
-      'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+      'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier),
+      'notHashed' => $value
     ];
 
     $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
@@ -102,8 +102,8 @@ abstract class Session
     foreach($array as $sessionKey => $value)
     {
       self::$matches[$sessionKey] = [
-        'notHashed' => $value,
-        'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier)
+        'hashed' => crypt(serialize($value), self::$blowfishAlgorithm . self::$identifier),
+        'notHashed' => $value
       ];
 
       $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];

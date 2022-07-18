@@ -47,12 +47,12 @@ class GetFileInfoFromRequireMatchTest extends TestCase
     [$fileContent, $isTemplate] = getFileInfoFromRequireMatch($trimmedMatch, self::FILENAME);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       '\'value\'',
       $fileContent
     );
 
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );

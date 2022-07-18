@@ -85,7 +85,7 @@ class RoutesActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(RoutesAction::class, $routesAction);
-    self::assertEquals(
+    self::assertSame(
       file_get_contents(self::TEST_TEMPLATE),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'routesAction' . CLI_ERROR . ' page output with ' .

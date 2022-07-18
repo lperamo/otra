@@ -87,7 +87,7 @@ class SearchForClassTest extends TestCase
 
     // testing
     self::assertFalse($classFound, self::LABEL_TESTING_CLASS_FOUND);
-    self::assertEquals(
+    self::assertSame(
       CLI_WARNING . 'Notice : Please check if you use a class ' . CLI_INFO . self::TEST_CLASS . CLI_WARNING .
       ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.' .
       END_COLOR . PHP_EOL,
@@ -115,7 +115,7 @@ class SearchForClassTest extends TestCase
 
     // testing
     self::assertFalse($classFound, self::LABEL_TESTING_CLASS_FOUND);
-    self::assertEquals(
+    self::assertSame(
       '',
       ob_get_clean(),
       'Testing searchForClass output...'
@@ -139,7 +139,7 @@ class SearchForClassTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       CORE_PATH . 'Controller.php',
       $classFound,
       self::LABEL_TESTING_CLASS_FOUND

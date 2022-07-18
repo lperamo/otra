@@ -57,7 +57,7 @@ class LaunchTaskTest extends TestCase
       'genServerConfig'
     );
 
-    self::assertEquals(
+    self::assertSame(
       CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT .
       self::CONF_FILE_NAME . CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . 'test_cache.conf' .
       CLI_BASE . '.' . PHP_EOL . 'Do not forget to include the cache file in your main server configuration file!' .

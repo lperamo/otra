@@ -69,22 +69,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
       self::LABEL_TESTING_LEVEL
     );
-    self::assertEquals(
+    self::assertSame(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
       self::LABEL_TESTING_CONTENT_TO_ADD
     );
-    self::assertEquals(
+    self::assertSame(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
       self::LABEL_TESTING_FILENAME
     );
-    self::assertEquals(
+    self::assertSame(
       [
         'php' => [
           'require' =>
@@ -99,17 +99,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    self::assertEquals(
+    self::assertSame(
       [$exampleFileAbsolutePath],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
       self::LABEL_TESTING_PARSED_FILES
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
       self::LABEL_TESTING_CLASSES_FROM_FILE
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
       self::LABEL_TESTING_PARSED_CONSTANTS
@@ -140,22 +140,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
       self::LABEL_TESTING_LEVEL
     );
-    self::assertEquals(
+    self::assertSame(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
       self::LABEL_TESTING_CONTENT_TO_ADD
     );
-    self::assertEquals(
+    self::assertSame(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
       self::LABEL_TESTING_FILENAME
     );
-    self::assertEquals(
+    self::assertSame(
       [
         'php' => [
           'require' =>
@@ -170,17 +170,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    self::assertEquals(
+    self::assertSame(
       [$exampleFileAbsolutePath],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
       self::LABEL_TESTING_PARSED_FILES
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
       self::LABEL_TESTING_CLASSES_FROM_FILE
     );
-    self::assertEquals(
+    self::assertSame(
       [self::LABEL_BASE_PATH => BASE_PATH],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
       self::LABEL_TESTING_PARSED_CONSTANTS
@@ -210,37 +210,37 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
       self::LABEL_TESTING_LEVEL
     );
-    self::assertEquals(
+    self::assertSame(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
       self::LABEL_TESTING_CONTENT_TO_ADD
     );
-    self::assertEquals(
+    self::assertSame(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
       self::LABEL_TESTING_FILENAME
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
       self::LABEL_TESTING_PARSED_FILES
     );
-    self::assertEquals(
+    self::assertSame(
       ['otra\Controller'],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
       self::LABEL_TESTING_CLASSES_FROM_FILE
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
       self::LABEL_TESTING_PARSED_CONSTANTS
@@ -271,22 +271,22 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       1,
       $paramsArrayToPassAsReference[self::KEY_LEVEL],
       self::LABEL_TESTING_LEVEL
     );
-    self::assertEquals(
+    self::assertSame(
       $contentToAdd,
       $paramsArrayToPassAsReference[self::KEY_CONTENT_TO_ADD],
       self::LABEL_TESTING_CONTENT_TO_ADD
     );
-    self::assertEquals(
+    self::assertSame(
       self::TEST_FILENAME_PHP,
       $paramsArrayToPassAsReference[self::KEY_FILENAME],
       self::LABEL_TESTING_FILENAME
     );
-    self::assertEquals(
+    self::assertSame(
       [
         'php' => [
           'extends' =>
@@ -298,17 +298,17 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    self::assertEquals(
+    self::assertSame(
       [BASE_PATH .  'src/Controller.php'],
       $paramsArrayToPassAsReference[self::KEY_PARSED_FILES],
       self::LABEL_TESTING_PARSED_FILES
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_CLASSES_FROM_FILE],
       self::LABEL_TESTING_CLASSES_FROM_FILE
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $paramsArrayToPassAsReference[self::KEY_PARSED_CONSTANTS],
       self::LABEL_TESTING_PARSED_CONSTANTS

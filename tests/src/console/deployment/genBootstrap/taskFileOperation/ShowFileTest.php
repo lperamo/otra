@@ -88,11 +88,11 @@ class ShowFileTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, self::FILENAME, 'echo $test;');
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'echo \'value\'',
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );

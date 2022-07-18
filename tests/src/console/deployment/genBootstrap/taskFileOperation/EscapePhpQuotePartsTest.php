@@ -29,7 +29,7 @@ class EscapePhpQuotePartsTest extends TestCase
     escapeQuotesInPhpParts($contentToParse);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       '<?php declare(strict_types=1);echo \\\'test\\\';?>',
       $contentToParse
     );

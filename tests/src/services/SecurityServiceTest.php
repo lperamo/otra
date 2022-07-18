@@ -77,11 +77,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
-    self::assertEquals(
+    self::assertSame(
       array_merge(
         CONTENT_SECURITY_POLICY[DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
@@ -106,11 +106,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
-    self::assertEquals(
+    self::assertSame(
       CONTENT_SECURITY_POLICY[DEV],
       $returnArray[self::DIRECTIVES]
     );
@@ -134,11 +134,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       self::EXPECTED_SECURITY_POLICY_EXAMPLE,
       $returnArray[OTRA_POLICY]
     );
-    self::assertEquals(
+    self::assertSame(
       $cspDevPolicyReworked,
       $returnArray[self::DIRECTIVES]
     );
@@ -160,11 +160,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
       $returnArray[OTRA_POLICY]
     );
-    self::assertEquals(
+    self::assertSame(
       array_merge(
         CONTENT_SECURITY_POLICY[PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_CONTENT_SECURITY_POLICY]
@@ -189,11 +189,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self",
       $returnArray[OTRA_POLICY]
     );
-    self::assertEquals(
+    self::assertSame(
       array_merge(
         PERMISSIONS_POLICY[DEV],
         (require self::ROUTE_SECURITY_DEV_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
@@ -218,11 +218,11 @@ class SecurityServiceTest extends TestCase
 
     // testing
     self::assertIsArray($returnArray);
-    self::assertEquals(
+    self::assertSame(
       "Permissions-Policy: accelerometer=(),ambient-light-sensor=()",
       $returnArray[OTRA_POLICY],
     );
-    self::assertEquals(
+    self::assertSame(
       array_merge(
         PERMISSIONS_POLICY[PROD],
         (require self::ROUTE_SECURITY_PROD_FILE_PATH)[OTRA_KEY_PERMISSIONS_POLICY]
@@ -248,7 +248,7 @@ class SecurityServiceTest extends TestCase
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; script-src 'self' otra.tech ;style-src 'self' ;",
       $headers[0]
     );
@@ -272,7 +272,7 @@ class SecurityServiceTest extends TestCase
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; script-src 'none' ;style-src 'none' ;",
       $headers[0]
     );
@@ -294,7 +294,7 @@ class SecurityServiceTest extends TestCase
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
-    self::assertEquals(
+    self::assertSame(
       "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self",
       $headers[0]
     );
@@ -316,7 +316,7 @@ class SecurityServiceTest extends TestCase
     $headers = xdebug_get_headers();
     self::assertNotEmpty($headers);
     self::assertCount(1, $headers);
-    self::assertEquals("Permissions-Policy: accelerometer=(),ambient-light-sensor=()", $headers[0]);
+    self::assertSame("Permissions-Policy: accelerometer=(),ambient-light-sensor=()", $headers[0]);
   }
 
   /**
@@ -339,7 +339,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: frame-ancestors 'none';script-src 'self' ;",
       $cspPolicy
     );
@@ -365,7 +365,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech ;", $cspPolicy);
+    self::assertSame("Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech ;", $cspPolicy);
   }
 
   /**
@@ -393,7 +393,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';style-src 'strict-dynamic' 'self' 'nonce-" . $nonce . "';", $cspPolicy);
+    self::assertSame("Content-Security-Policy: frame-ancestors 'none';style-src 'strict-dynamic' 'self' 'nonce-" . $nonce . "';", $cspPolicy);
   }
 
   /**
@@ -416,7 +416,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals(self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC, $cspPolicy);
+    self::assertSame(self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC, $cspPolicy);
   }
 
   /**
@@ -444,7 +444,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'self' otra.tech 'nonce-" . $nonce . "';", $cspPolicy);
+    self::assertSame("Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'self' otra.tech 'nonce-" . $nonce . "';", $cspPolicy);
   }
 
   /**
@@ -471,7 +471,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'nonce-" . $nonce . "' 'nonce-" . $nonce2 . "';",
       $cspPolicy
     );
@@ -497,7 +497,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       "Content-Security-Policy: frame-ancestors 'none';script-src 'self' ;",
       $cspPolicy
     );
@@ -522,7 +522,7 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';script-src 'none' ;", $cspPolicy);
+    self::assertSame("Content-Security-Policy: frame-ancestors 'none';script-src 'none' ;", $cspPolicy);
   }
 
   /**
@@ -544,6 +544,6 @@ class SecurityServiceTest extends TestCase
     );
 
     // testing
-    self::assertEquals("Content-Security-Policy: frame-ancestors 'none';style-src 'none' ;", $cspPolicy);
+    self::assertSame("Content-Security-Policy: frame-ancestors 'none';style-src 'none' ;", $cspPolicy);
   }
 }

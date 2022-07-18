@@ -60,9 +60,9 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL .
         CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\thirdTest' . END_COLOR . PHP_EOL
       );
-      static::assertEquals([], $filesToConcat);
-      static::assertEquals([], $parsedConstants);
-      static::assertEquals([], $parsedFiles);
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
     }
 
     /**
@@ -92,9 +92,9 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
 
       // testing
       $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\fourthTest' . END_COLOR . PHP_EOL);
-      static::assertEquals([], $filesToConcat);
-      static::assertEquals([], $parsedConstants);
-      static::assertEquals([], $parsedFiles);
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
     }
 
     /**
@@ -127,9 +127,9 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
         CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL
       );
-      static::assertEquals([], $filesToConcat);
-      static::assertEquals([], $parsedConstants);
-      static::assertEquals([], $parsedFiles);
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
     }
   }
 }

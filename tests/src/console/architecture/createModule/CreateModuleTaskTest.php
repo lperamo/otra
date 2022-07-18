@@ -195,7 +195,7 @@ class CreateModuleTaskTest extends TestCase
 
     // testing
     $bundleNameUcFirst = ucfirst(self::TEST_BUNDLE);
-    self::assertEquals(
+    self::assertSame(
       CLI_BASE . 'Basic folder architecture created for ' . CLI_INFO_HIGHLIGHT . 'bundles/' .
       $bundleNameUcFirst . '/' . self::TEST_MODULE . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL,
       ob_get_clean(),

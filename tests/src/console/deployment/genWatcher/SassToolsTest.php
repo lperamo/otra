@@ -109,7 +109,7 @@ class SassToolsTest extends TestCase
     $prunedArray = createPrunedFullTree(1, self::BIG_TREE[KEY_FULL_TREE][0]);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [2 => []],
       $prunedArray
     );
@@ -132,17 +132,17 @@ class SassToolsTest extends TestCase
       );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       $partialPath . '_' . $fileName,
       $newResourceToAnalyze,
       'Testing $newResourceToAnalyze ...'
     );
-    self::assertEquals(
+    self::assertSame(
       $partialPath . $fileName,
       $absoluteImportPathWithDots,
       'Testing $absoluteImportPathWithDots ...'
     );
-    self::assertEquals(
+    self::assertSame(
       $partialPath . '_' . $fileName,
       $absoluteImportPathWithDotsAlt,
       'Testing $absoluteImportPathWithDotsAlt ...'
@@ -200,7 +200,7 @@ class SassToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [
         0 => [
           self::SCSS_MAIN_PATH => true,
@@ -265,7 +265,7 @@ class SassToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::BIG_TREE,
       $sassTree,
       self::LABEL_TESTING_THE_TREE . PHP_EOL . dump($sassTree)
@@ -281,7 +281,7 @@ class SassToolsTest extends TestCase
     updateSassTree($sassTree, self::SCSS_MAIN_PATH, self::SCSS_MAIN_DEPENDENCY_LVL0_PATH);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::BIG_TREE,
       $sassTree,
       'Testing $sassTree...'
@@ -316,7 +316,7 @@ class SassToolsTest extends TestCase
     }
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [
         0 => [
           self::SCSS_MAIN_PATH => true,

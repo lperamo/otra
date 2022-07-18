@@ -70,19 +70,19 @@ class SessionTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
-    self::assertEquals(
+    self::assertSame(
       self::SESSIONS_CACHE_PATH,
       $reflectedClass->getProperty('sessionsCachePath')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       self::BLOWFISH_ALGORITHM,
       $reflectedClass->getProperty('blowfishAlgorithm')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       $sessionId,
       $reflectedClass->getProperty('sessionId')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       $sessionsFile,
       $reflectedClass->getProperty('sessionFile')->getValue()
     );
@@ -99,10 +99,10 @@ class SessionTest extends TestCase
     );
 
     // sessions file permissions must be 0775
-    self::assertEquals(0775, fileperms($sessionsFile) & 0777);
+    self::assertSame(0775, fileperms($sessionsFile) & 0777);
 
     // There should be no output
-    self::assertEquals('', $output, 'The function should not output anything.');
+    self::assertSame('', $output, 'The function should not output anything.');
   }
 
   /**
@@ -139,19 +139,19 @@ class SessionTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
-    self::assertEquals(
+    self::assertSame(
       self::SESSIONS_CACHE_PATH,
       $reflectedClass->getProperty('sessionsCachePath')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       self::BLOWFISH_ALGORITHM,
       $reflectedClass->getProperty('blowfishAlgorithm')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       $sessionId,
       $reflectedClass->getProperty('sessionId')->getValue()
     );
-    self::assertEquals(
+    self::assertSame(
       $sessionsFile,
       $reflectedClass->getProperty('sessionFile')->getValue()
     );
@@ -166,27 +166,30 @@ class SessionTest extends TestCase
     $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
     $hashedFirstValue = crypt(serialize(self::$fooThing), $saltForHash);
     $hashedSecondValue = crypt(serialize(self::BAR), $saltForHash);
-    self::assertEquals(
+    $testedArray = $reflectedClass->getProperty('matches')->getValue();
+
+    // Testing if we have the same numbers of keys, and same keys names
+    self::assertSame([self::TEST, self::TEST2], array_keys($testedArray));
+    self::assertSame(['hashed', 'notHashed'], array_keys($testedArray[self::TEST]));
+
+    // Testing the values of the array
+    self::assertSame($hashedFirstValue, $testedArray[self::TEST]['hashed']);
+    self::assertEquals(self::$fooThing, $testedArray[self::TEST]['notHashed']);
+    self::assertSame(
       [
-        self::TEST => [
-          'hashed' => $hashedFirstValue,
-          'notHashed' => self::$fooThing
-        ],
-      self::TEST2 => [
-          'hashed' => crypt(serialize(self::BAR), $saltForHash),
-          'notHashed' => self::BAR
-        ]
+        'hashed' => crypt(serialize(self::BAR), $saltForHash),
+        'notHashed' => self::BAR
       ],
-      $reflectedClass->getProperty('matches')->getValue()
+      $testedArray[self::TEST2]
     );
 
     // There should be no output
-    self::assertEquals('', $output, 'The function should not output anything.');
-    self::assertEquals(
+    self::assertSame('', $output, 'The function should not output anything.');
+    self::assertSame(
       $hashedFirstValue,
       $_SESSION[self::TEST]
     );
-    self::assertEquals(
+    self::assertSame(
       $hashedSecondValue,
       $_SESSION[self::TEST2]
     );
@@ -222,7 +225,7 @@ class SessionTest extends TestCase
     Session::init();
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::TEST,
       Session::get(self::TEST)
     );
@@ -242,7 +245,7 @@ class SessionTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
-    self::assertEquals(
+    self::assertSame(
       self::TEST,
       array_search(
         crypt(
@@ -269,7 +272,7 @@ class SessionTest extends TestCase
 
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
-    self::assertEquals(
+    self::assertSame(
       self::TEST,
       array_search(
         crypt(
@@ -297,7 +300,7 @@ class SessionTest extends TestCase
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
     $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
-    self::assertEquals(
+    self::assertSame(
       self::TEST,
       array_search(
         crypt(serialize(self::$fooThing), $saltForHash),
@@ -305,7 +308,7 @@ class SessionTest extends TestCase
       )
     );
 
-    self::assertEquals(
+    self::assertSame(
       self::TEST2,
       array_search(
         crypt(serialize(self::BAR), $saltForHash),
@@ -334,7 +337,7 @@ class SessionTest extends TestCase
     // testing
     $reflectedClass = (new ReflectionClass(Session::class));
     $saltForHash = self::BLOWFISH_ALGORITHM . $reflectedClass->getProperty('identifier')->getValue();
-    self::assertEquals(
+    self::assertSame(
       self::TEST,
       array_search(
         crypt(serialize(self::$fooThing), $saltForHash),
@@ -342,7 +345,7 @@ class SessionTest extends TestCase
       )
     );
 
-    self::assertEquals(
+    self::assertSame(
       self::TEST2,
       array_search(
         crypt(serialize(self::BAR), $saltForHash),
@@ -363,7 +366,7 @@ class SessionTest extends TestCase
     Session::set(self::TEST, self::$fooThing);
 
     // launching AND testing
-    self::assertEquals(self::$fooThing, Session::get(self::TEST));
+    self::assertSame(self::$fooThing, Session::get(self::TEST));
   }
 
   /**
@@ -376,7 +379,7 @@ class SessionTest extends TestCase
     Session::set(self::TEST, self::$fooThing);
 
     // launching AND testing
-    self::assertEquals(
+    self::assertSame(
       [true, self::$fooThing],
       Session::getIfExists(self::TEST)
     );
@@ -391,7 +394,7 @@ class SessionTest extends TestCase
     Session::init(self::ROUNDS);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [false, null],
       Session::getIfExists(self::TEST)
     );
@@ -407,7 +410,7 @@ class SessionTest extends TestCase
     Session::sets(self::$testAndTest2);
 
     // launching AND testing
-    self::assertEquals(
+    self::assertSame(
       [true, self::$testAndTest2],
       Session::getArrayIfExists([self::TEST, self::TEST2])
     );
@@ -423,7 +426,7 @@ class SessionTest extends TestCase
     Session::sets(self::$testAndTest2);
 
     // launching AND testing
-    self::assertEquals(
+    self::assertSame(
       [false, null],
       Session::getArrayIfExists([self::BAR, self::TEST2])
     );
@@ -439,7 +442,7 @@ class SessionTest extends TestCase
     Session::sets(self::$testAndTest2);
 
     // launching AND testing
-    self::assertEquals(
+    self::assertSame(
       self::$testAndTest2,
       Session::getAll()
     );
@@ -496,13 +499,6 @@ class SessionTest extends TestCase
     self::assertFileExists($sessionsFile);
     $reflectedClass = (new ReflectionClass(Session::class));
     $identifier = $reflectedClass->getProperty('identifier')->getValue();
-    $result = [
-      'otra_i' => $identifier,
-      'otra_b' => self::BLOWFISH_ALGORITHM,
-      self::TEST => self::$fooThing,
-      self::TEST2 => self::BAR
-    ];
-
     $dataFromFile = require $sessionsFile;
     require_once CORE_PATH . 'tools/isSerialized.php';
 
@@ -512,13 +508,24 @@ class SessionTest extends TestCase
       if (isSerialized($datum))
         $datum = unserialize($datum);
     }
-
-    self::assertEquals(
-      $result,
-      $dataFromFile
+    // testing that the count of keys is the same, and that the keys' names are the same
+    self::assertSame(
+      [
+        self::TEST,
+        self::TEST2,
+        'otra_i',
+        'otra_b'
+      ],
+      array_keys($dataFromFile)
     );
 
+    // testing the values
+    self::assertEquals(self::$fooThing, $dataFromFile[self::TEST]);
+    self::assertSame(self::BAR, $dataFromFile[self::TEST2]);
+    self::assertSame($identifier, $dataFromFile['otra_i']);
+    self::assertSame(self::BLOWFISH_ALGORITHM, $dataFromFile['otra_b']);
+
     // sessions file permissions must be 0775
-    self::assertEquals(0775, fileperms($sessionsFile) & 0777);
+    self::assertSame(0775, fileperms($sessionsFile) & 0777);
   }
 }

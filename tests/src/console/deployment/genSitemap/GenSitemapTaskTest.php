@@ -52,7 +52,7 @@ class GenSitemapTaskTest extends TestCase
     $output = ob_get_clean();
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       'Site map created' . SUCCESS,
       $output
     );

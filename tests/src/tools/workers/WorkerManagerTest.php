@@ -107,7 +107,7 @@ class WorkerManagerTest extends TestCase
 
     // detachment successful
     self::assertIsArray($status);
-    self::assertEquals(
+    self::assertSame(
       $status[0]
         ? TEST_DETACH_STATUS_WAS_RUNNING
         : TEST_DETACH_STATUS_SUCCESS,
@@ -194,7 +194,7 @@ class WorkerManagerTest extends TestCase
 
     foreach ($stdoutStreams as $stdoutStream)
     {
-      self::assertEquals(
+      self::assertSame(
         TEST_STREAM_NON_BLOCKING_MODE,
         stream_get_meta_data($stdoutStream)['blocked'],
         'We must have a non blocking mode for the streams.'

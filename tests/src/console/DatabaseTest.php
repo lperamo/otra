@@ -132,22 +132,22 @@ class DatabaseTest extends TestCase
     $sqlPath = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
 
     // We test each private static variable that has been set by Database::initBase()
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::OTRA_LABEL_FIXTURES_FOLDER,
       $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES)->getValue()
     );
 
-    self::assertEquals(
+    self::assertSame(
       $sqlPath . self::OTRA_LABEL_FIXTURES_FOLDER,
       $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->getValue()
     );
 
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::SCHEMA_FILE,
       $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->getValue()
     );
 
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::TABLES_ORDER_FILE,
       $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->getValue()
     );
@@ -187,7 +187,7 @@ class DatabaseTest extends TestCase
       if ($testKeys[$fieldNameKey] === 'pathYmlFixtures')
         continue;
 
-      self::assertEquals(
+      self::assertSame(
         $testValues[$fieldNameKey],
         $unprotectedField->getValue(),
         'Testing the field ' . CLI_INFO_HIGHLIGHT . $testKeys[$fieldNameKey] . END_COLOR

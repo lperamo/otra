@@ -46,7 +46,7 @@ class TaskFileInitTest extends TestCase
 
     // testing
     self::assertIsArray($pathInformations);
-    self::assertEquals(
+    self::assertSame(
       [
         TEST_JS_BASE_NAME,
         TEST_RESOURCES_PATH,
