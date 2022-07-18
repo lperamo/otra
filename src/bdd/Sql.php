@@ -396,11 +396,12 @@ class Sql
    *
    * @param string|null $sequenceName
    *
-   * @return string The last inserted id
+   * @return int|string The last inserted id (can be a string for certain DBMSes?)
    */
-  public function lastInsertedId(string $sequenceName = null) : string
+  public function lastInsertedId(string $sequenceName = null) : int|string
   {
-    return (self::$currentDBMS . '::lastInsertedId')($sequenceName);
+    $lastId = (self::$currentDBMS . '::lastInsertedId')($sequenceName);
+    return is_numeric($lastId) ? (int)($lastId) : $lastId;
   }
 
   /**

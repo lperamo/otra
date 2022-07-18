@@ -401,7 +401,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertIsString(Sql::$instance->lastInsertedId());
+    self::assertIsInt(Sql::$instance->lastInsertedId());
   }
 
   /**
