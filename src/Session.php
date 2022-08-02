@@ -129,7 +129,8 @@ abstract class Session
    */
   public static function getIfExists(string $sessionKey) : array
   {
-    return isset($_SESSION[$sessionKey])
+    // We test self::$matches in case the OTRA session file has been remove or altered in any way
+    return isset($_SESSION[$sessionKey], self::$matches[$sessionKey])
       ? [true, self::$matches[$sessionKey]['notHashed']]
       : [false, null];
   }
@@ -149,7 +150,8 @@ abstract class Session
 
     $firstKey = $sessionKeys[0];
 
-    if (!isset($_SESSION[$firstKey]))
+    // We test self::$matches in case the OTRA session file has been remove or altered in any way
+    if (!(isset($_SESSION[$firstKey], self::$matches[$firstKey])))
       return [false, null];
 
     $result = [
