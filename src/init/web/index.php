@@ -79,7 +79,7 @@ try
 
   // Prevents the cache from disturbing the statistics when doing JMeter tests
   if ($_SERVER['JMETER'] === 'test')
-    header('Cache-Control: no-cache', true);
+    header('Cache-Control: no-cache');
 
   header_remove('Expires');
 

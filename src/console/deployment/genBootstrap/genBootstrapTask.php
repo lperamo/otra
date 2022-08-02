@@ -129,8 +129,9 @@ function genBootstrap(array $argumentsVector)
       echo PHP_EOL;
 
     if (isset($routes[$route]['resources']['template']) && $routes[$route]['resources']['template'] === true)
-      echo CLI_BASE, str_pad(str_pad(' ' . $route, 25, ' ', STR_PAD_RIGHT) . CLI_INFO
-        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH), END_COLOR, PHP_EOL;
+      echo CLI_BASE, str_pad(str_pad(' ' . $route, 25) . CLI_INFO
+        . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH),
+        END_COLOR, PHP_EOL;
     else
       oneBootstrap($route);
   }

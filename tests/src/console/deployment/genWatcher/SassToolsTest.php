@@ -289,7 +289,7 @@ class SassToolsTest extends TestCase
   }
 
   /**
-   * Tests when a dependency (so a file beginning by '_' is updated.
+   * Tests when it is a dependency (so a file beginning by '_' is updated).
    *
    * @throws OtraException
    */
