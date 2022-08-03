@@ -68,9 +68,9 @@ function oneBootstrap(string $route) : void
     }
   }
 
-  $phpRouteFile = CACHE_PATH . (!str_contains($route, 'otra_')
-      ? 'php/' . $route
-      : 'php/otraRoutes/' . $route);
+  $phpRouteFile = CACHE_PATH . (str_contains($route, 'otra_')
+      ? 'php/otraRoutes/' . $route
+      : 'php/' . $route);
 
   $temporaryPhpRouteFile = $phpRouteFile . '_.php';
 

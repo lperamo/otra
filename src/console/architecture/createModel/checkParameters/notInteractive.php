@@ -93,7 +93,7 @@ else
   {
     define(__NAMESPACE__ . '\\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
 
-    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
+    $creationMode = (array_key_exists($modelName, SCHEMA_DATA))
       ? CREATION_MODE_ONE_MODEL
       : CREATION_MODE_FROM_NOTHING;
   }

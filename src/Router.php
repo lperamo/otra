@@ -77,7 +77,7 @@ abstract class Router
     // when not finding classes
     ob_start();
 
-    if (!in_array($finalAction, array_keys(CLASSMAP)))
+    if (!array_key_exists($finalAction, CLASSMAP))
       $finalAction = Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY] . '\\' . $finalAction;
 
     ob_end_clean();
@@ -220,7 +220,7 @@ abstract class Router
     {
       header('HTTP/1.0 404 Not Found');
 
-      return in_array('404', array_keys(Routes::$allRoutes)) ? ['404', []] : ['otra_404', []];
+      return array_key_exists('404', Routes::$allRoutes) ? ['404', []] : ['otra_404', []];
     }
 
     // The route is found, do we have parameters to get?

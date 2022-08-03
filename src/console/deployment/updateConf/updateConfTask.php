@@ -103,7 +103,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     mkdir(BUNDLES_MAIN_CONFIG_DIR, 0755);
 
   /** CONFIGS MANAGEMENT */
-  if ($updateConfAllConfig)
+  if ($updateConfAllConfig !== 0)
   {
     $configsContent = '';
 
@@ -151,7 +151,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   }
 
   /** ROUTES MANAGEMENT */
-  if ($updateConfRoutes)
+  if ($updateConfRoutes !== 0)
   {
     $routesArray = [];
 
@@ -187,7 +187,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   }
 
   /** SECURITIES MANAGEMENT */
-  if ($updateConfSecurities)
+  if ($updateConfSecurities !== 0)
   {
     $securitiesArray = [];
 
@@ -271,7 +271,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   }
 
   /** SCHEMAS MANAGEMENT */
-  if ($updateConfSchema)
+  if ($updateConfSchema !== 0)
   {
     $mainYamlFile = BUNDLES_PATH . 'config/schema.yml';
     $schemas = array_merge(
@@ -304,7 +304,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   }
 
   /** FIXTURES MANAGEMENT */
-  if ($updateConfFixtures)
+  if ($updateConfFixtures !== 0)
   {
     $fixtures = array_merge(
       $fixtures,
@@ -358,7 +358,7 @@ function searchFilesInFolder(
   int $updateConfSecurities,
   int $updateConfSchema,
   int $updateConfFixtures
-)
+): void
 {
   $folderHandler = opendir($folderPath);
 
@@ -378,7 +378,7 @@ function searchFilesInFolder(
     // ... and we scan all those bundles to retrieve the config file names.
     $bundleConfigDir = $actualFolder . CONFIG_FOLDER;
 
-    if ($updateConfAllConfig)
+    if ($updateConfAllConfig !== 0)
     {
       $bundleConfigs = glob($bundleConfigDir . CONFIG_FILE_PATTERN);
 
@@ -407,7 +407,7 @@ function searchFilesInFolder(
       }
     }
 
-    if ($updateConfRoutes)
+    if ($updateConfRoutes !== 0)
     {
       $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
 
@@ -437,7 +437,7 @@ function searchFilesInFolder(
       }
     }
 
-    if ($updateConfSecurities)
+    if ($updateConfSecurities !== 0)
     {
       $bundleSecurities = glob(
         $bundleConfigDir . 'security/' . ($updateConfRouteName === null ? '*' : $updateConfRouteName . DIR_SEPARATOR),
@@ -452,7 +452,7 @@ function searchFilesInFolder(
     {
       $ymlBundlePath = $bundleConfigDir . 'data/yml/';
 
-      if ($updateConfSchema)
+      if ($updateConfSchema !== 0)
       {
         $bundleSchemas = glob($ymlBundlePath . SCHEMA_FILE_PATTERN);
 
@@ -487,7 +487,7 @@ function searchFilesInFolder(
         if (!is_dir($moduleDir))
           continue;
 
-        if ($updateConfSchema)
+        if ($updateConfSchema !== 0)
         {
           $moduleSchemas = glob($moduleDir . PATH_CONFIG_DATA_YML . SCHEMA_FILE_PATTERN);
 
@@ -495,7 +495,7 @@ function searchFilesInFolder(
             $schemas = array_merge($schemas, $moduleSchemas);
         }
 
-        if ($updateConfFixtures)
+        if ($updateConfFixtures !== 0)
         {
           $moduleFixtures = glob($moduleDir . PATH_CONFIG_DATA_YML . FIXTURES_FILES_PATTERN);
 

@@ -31,7 +31,7 @@ function googleClosureCompile(
   string $jsFileIn,
   string $jsFileOut,
   string $compilationLevel
-)
+): void
 {
   if ($verbose > 0)
     echo 'Launching Google Closure Compiler...', PHP_EOL;

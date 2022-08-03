@@ -104,7 +104,7 @@ function bundleHandling(
   foreach (BUNDLE_FOLDERS as $numericKey => $folder)
   {
     // Checks if the folder have to be created or not.
-    if (BUNDLE_FOLDERS_MASK & (2 ** $numericKey))
+    if ((BUNDLE_FOLDERS_MASK & (2 ** $numericKey)) !== 0)
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);
       echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, $bundleName, DIR_SEPARATOR, $folder, CLI_BASE, ' created',  CLI_SUCCESS, ' ✔',

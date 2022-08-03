@@ -187,7 +187,7 @@ function handleRewriting() : string
   if (GEN_SERVER_CONFIG_ENVIRONMENT === DEV)
     $rewriteRules .= ucfirst(DEV);
 
-  $rewriteRules .= '.php last;' . PHP_EOL . ENDING_BRACKET .
+  return $rewriteRules . '.php last;' . PHP_EOL . ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
     OPENING_BRACKET .
@@ -198,8 +198,6 @@ function handleRewriting() : string
     SPACE_INDENT_2 . 'fastcgi_param TEST_LOGIN yourLogin;' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param TEST_PASSWORD yourPassword;' . PHP_EOL .
     SPACE_INDENT . '}';
-
-  return $rewriteRules;
 }
 
 $content = handlesHTTPSRedirection() .

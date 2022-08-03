@@ -43,7 +43,7 @@ $modelName = promptUser($modelNameQuestion, 'Bad answer. ' . $modelNameQuestion)
 [$modelFullName, $modelExists, $tableExists] = preparingBidule($modelName);
 
 // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
-while (true === $modelExists || false === $tableExists)
+while ($modelExists || !$tableExists)
 {
   echo DOUBLE_ERASE_SEQUENCE;
   $errorLabel = '';

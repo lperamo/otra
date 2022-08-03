@@ -169,7 +169,7 @@ class ' . $upperActionName . 'Action extends Controller
     );
 
     // removes useless numerical indexes
-    $routesArray = preg_replace('/[0-9]+ => /', '', $routesArray);
+    $routesArray = preg_replace('/\d+ => /', '', $routesArray);
 
     // now we can detect safely some other unwanted line breaks
     $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'',$routesArray);

@@ -419,10 +419,10 @@ function sqlCreateFixtures(array $argumentsVector) : void
 
   foreach ($tablesOrder as $table)
   {
-    echo PHP_EOL, $color % 2 ? CLI_INFO : CLI_INFO_HIGHLIGHT;
+    echo PHP_EOL, $color % 2 !== 0 ? CLI_INFO : CLI_INFO_HIGHLIGHT;
 
     // We truncate the tables
-    if (true === $weNeedToTruncate)
+    if ($weNeedToTruncate)
       Database::truncateTable($databaseName, $table);
 
     for ($tableIndex = 0, $cptTables = count($tablesToCreate[$databaseName]); $tableIndex < $cptTables; $tableIndex += 1)

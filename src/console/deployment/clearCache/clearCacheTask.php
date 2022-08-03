@@ -164,14 +164,14 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** PHP INTERNAL CACHE **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE)
+  if (($binaryMask & CLEAR_CACHE_MASK_PHP_INTERNAL_CACHE) !== 0)
   {
     if (isset($route))
     {
       $cacheFileName = AllConfig::$cachePath . sha1('ca' . $route . VERSION . 'che');
 
       // Is there a cache for this route ? If yes, clears it.
-      if (file_exists($cacheFileName) === true)
+      if (file_exists($cacheFileName))
         unlinkFile($cacheFileName, $cacheFileName);
 
       echo 'The cache for the route ' . $route . ' has been cleared.', PHP_EOL;
@@ -185,16 +185,16 @@ function clearCache(array $argumentsVector)
   }
 
 // If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
-  if ((
+  if (((
       ($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
       | ($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING)
       | ($binaryMask & CLEAR_CACHE_MASK_METADATA)
       | ($binaryMask & CLEAR_CACHE_MASK_SECURITY)
-    ) & 1)
+    ) & 1) !== 0)
     checkFolder(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH);
 
   /* **************** PHP BOOTSTRAPS **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS)
+  if (($binaryMask & CLEAR_CACHE_MASK_PHP_BOOTSTRAPS) !== 0)
   {
     $removeCachedFiles(PHP_CACHE_PATH, RELATIVE_PHP_CACHE_PATH, '.php');
     $removeCachedFiles(PHP_CACHE_PATH . 'otraRoutes/', RELATIVE_PHP_CACHE_PATH . 'otraRoutes/', '.php');
@@ -202,7 +202,7 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** CSS **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_CSS)
+  if (($binaryMask & CLEAR_CACHE_MASK_CSS) !== 0)
   {
     define(__NAMESPACE__ . '\\SASS_TREE_CACHE_PATH', CACHE_PATH . 'css/sassTree.php');
 
@@ -216,21 +216,21 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** JS **************** */
-  if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3)
+  if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3 !== 0)
   {
     $removeCachedFiles(CACHE_PATH . 'js/', 'cache/js', '.gz');
     echo 'JS files cleared', SUCCESS;
   }
 
   /* **************** TEMPLATES **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_TEMPLATES)
+  if (($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) !== 0)
   {
     $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
     echo 'Templates cleared', SUCCESS;
   }
 
   /* **************** ROUTE MANAGEMENT **************** */
-  if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5)
+  if (($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT) >> 5 !== 0)
   {
     $routeManagementFile = 'RouteManagement.php';
     unlinkFile(
@@ -242,7 +242,7 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** CLASS MAPPING **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING)
+  if (($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING) !== 0)
   {
     $classMapFile = 'ClassMap.php';
     unlinkFile(
@@ -260,7 +260,7 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** CONSOLE TASKS METADATA **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_METADATA)
+  if (($binaryMask & CLEAR_CACHE_MASK_METADATA) !== 0)
   {
     $taskClassMapFile = 'tasksClassMap.php';
     unlinkFile(
@@ -278,7 +278,7 @@ function clearCache(array $argumentsVector)
   }
 
   /* **************** SECURITY FILES **************** */
-  if ($binaryMask & CLEAR_CACHE_MASK_SECURITY)
+  if (($binaryMask & CLEAR_CACHE_MASK_SECURITY) !== 0)
   {
     $arrayToUnlink = array_merge(
       glob(PHP_CACHE_PATH . 'security/dev/*.php'),

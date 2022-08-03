@@ -216,7 +216,7 @@ abstract class Logger
    * @param $message
    * @param $traces
    */
-  public static function logWithStackTraces($message, $traces)
+  public static function logWithStackTraces($message, $traces): void
   {
     Logger::logTo(
       json_encode(

@@ -138,13 +138,13 @@ trait DevControllerTrait
     ob_start();
     // send variables to the debug toolbar
     require CORE_VIEWS_PATH . '/debugBar/debugBar.phtml';
-    parent::$template = (!str_contains(parent::$template, 'body'))
-      ? ob_get_clean() . parent::$template
-      : preg_replace(
+    parent::$template = (str_contains(parent::$template, 'body'))
+      ? preg_replace(
         '`(<body[^>]*>)`',
         '$1' . ob_get_clean(),
         parent::$template
-      );
+      )
+      : ob_get_clean() . parent::$template;
 
     // suppress useless spaces
     parent::$template = str_replace(
@@ -284,7 +284,7 @@ trait DevControllerTrait
         $priorityIndex< $maximum;
         ++$priorityIndex )
     {
-      if (in_array($priorityIndex, array_keys($orderedArray)))
+      if (array_key_exists($priorityIndex, $orderedArray))
       {
         $scripts[$priorityIndex] = $orderedArray[$priorityIndex];
         unset($orderedArray[$priorityIndex]);
@@ -311,11 +311,11 @@ trait DevControllerTrait
     array &$orderedArray,
     int &$naturalPriorityIndex,
     int|string $forcedPriorityIndex,
-    string $code)
+    string $code): void
   {
     // A 'substr' is done to remove the '_' before the priority index
     if (is_string($forcedPriorityIndex))
-      $orderedArray[intval(substr($forcedPriorityIndex,1))] = $code;
+      $orderedArray[(int) substr($forcedPriorityIndex,1)] = $code;
     else
       $unorderedArray[$naturalPriorityIndex] = $code;
 

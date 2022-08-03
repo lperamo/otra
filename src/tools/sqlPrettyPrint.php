@@ -132,7 +132,7 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
     $output
   );
 
-  return $output . (!$raw ? CODE_DIV : PHP_EOL . PHP_EOL);
+  return $output . ($raw ? PHP_EOL . PHP_EOL : CODE_DIV);
 }
 
 /**

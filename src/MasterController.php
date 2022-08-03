@@ -369,13 +369,13 @@ abstract class MasterController
     );
 
     // adding CSS after the title tag or just before the content if we use AJAX
-    $content = !self::$ajax
-      ? str_replace(
+    $content = self::$ajax
+      ? $cssResource . $contentAndJs
+      : str_replace(
         self::OTRA_LABEL_ENDING_TITLE_TAG,
         self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
         $contentAndJs
-      )
-      : $cssResource . $contentAndJs;
+      );
   }
 
   /**
@@ -514,9 +514,9 @@ abstract class MasterController
     {
       $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
         getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
-        '.css" media="' . (!(isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet])
-          ? 'screen'
-          : 'print')
+        '.css" media="' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
+          ? 'print'
+          : 'screen')
         . '"/>';
     }
 

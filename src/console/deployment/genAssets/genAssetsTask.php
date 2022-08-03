@@ -216,7 +216,7 @@ function genAssets(array $argumentsVector) : void
       'WHITESPACE_ONLY',
       'SIMPLE_OPTIMIZATIONS',
       'ADVANCED_OPTIMIZATIONS'
-    ][isset($argumentsVector[3]) ? intval($argumentsVector[3]) : 1]);
+    ][isset($argumentsVector[3]) ? (int) $argumentsVector[3] : 1]);
 
   $routes = Routes::$allRoutes;
 
@@ -266,25 +266,25 @@ function genAssets(array $argumentsVector) : void
        ******* specific to the route passed in parameter ******/
       $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
-      if (GEN_ASSETS_TEMPLATE)
+      if (GEN_ASSETS_TEMPLATE !== 0)
         unlinkResourceFile('tpl/', $shaName);
 
-      if (GEN_ASSETS_CSS)
+      if (GEN_ASSETS_CSS !== 0)
         unlinkResourceFile('css/', $shaName);
 
-      if (GEN_ASSETS_JS)
+      if (GEN_ASSETS_JS !== 0)
         unlinkResourceFile('js/', $shaName);
     } else
     {
       echo PHP_EOL, 'Cleaning the resources cache...';
 
-      if (GEN_ASSETS_TEMPLATE)
+      if (GEN_ASSETS_TEMPLATE !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
 
-      if (GEN_ASSETS_CSS)
+      if (GEN_ASSETS_CSS !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'css/*'));
 
-      if (GEN_ASSETS_JS)
+      if (GEN_ASSETS_JS !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
     }
 
@@ -333,7 +333,7 @@ function genAssets(array $argumentsVector) : void
       $noErrors = true;
 
       /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
-      if (GEN_ASSETS_CSS)
+      if (GEN_ASSETS_CSS !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'css'))
         {
@@ -376,7 +376,7 @@ function genAssets(array $argumentsVector) : void
       }
 
       /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
-      if (GEN_ASSETS_JS)
+      if (GEN_ASSETS_JS !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'js'))
         {
@@ -410,7 +410,7 @@ function genAssets(array $argumentsVector) : void
       }
 
       /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
-      if (GEN_ASSETS_TEMPLATE)
+      if (GEN_ASSETS_TEMPLATE !== 0)
       {
         if (!isset($resources['template']))
           echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING); // no static template
@@ -443,7 +443,7 @@ function genAssets(array $argumentsVector) : void
     }
   }
 
-  if (GEN_ASSETS_MANIFEST)
+  if (GEN_ASSETS_MANIFEST !== 0)
   {
     $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
@@ -468,7 +468,7 @@ function genAssets(array $argumentsVector) : void
     }
   }
 
-  if (GEN_ASSETS_SVG)
+  if (GEN_ASSETS_SVG !== 0)
   {
     define(__NAMESPACE__ . '\\FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
     echo 'Checking for uncompressed SVGs in the folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',

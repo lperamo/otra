@@ -161,7 +161,7 @@ namespace otra\cache\php
     {
       $content = '';
       self::$currentBlock[self::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
-      array_push(self::$blocksStack, self::$currentBlock);
+      self::$blocksStack[] = self::$currentBlock;
       $maxIndex = max(array_column(self::$blocksStack, self::OTRA_BLOCKS_KEY_INDEX));
       $maxKey = count(self::$blocksStack);
 
@@ -209,7 +209,7 @@ namespace otra\cache\php
       /** @var array{content:string, index:int, name:string, parent?:array} $currentBlock */
       $currentBlock = &BlocksSystem::$currentBlock;
       $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_CONTENT] .= ob_get_clean();
-      array_push(BlocksSystem::$blocksStack, $currentBlock);
+      BlocksSystem::$blocksStack[] = $currentBlock;
 
       // Preparing the new block
       $currentBlock = [
@@ -312,7 +312,7 @@ namespace otra\cache\php
       )
         BlocksSystem::$blockNames[$currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_NAME]] = count(BlocksSystem::$blocksStack);
 
-      array_push(BlocksSystem::$blocksStack, $currentBlock);
+      BlocksSystem::$blocksStack[] = $currentBlock;
 
       // If the next content is not at the root level maybe it is a block content not explicitly named...
       // so we add 1 to the index

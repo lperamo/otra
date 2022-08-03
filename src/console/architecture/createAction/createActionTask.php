@@ -28,7 +28,7 @@ namespace otra\console\architecture\createAction
   /**
    * @throws OtraException
    */
-  function createAction(array $argumentsVector)
+  function createAction(array $argumentsVector): void
   {
     $consoleForce = false;
 

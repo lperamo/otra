@@ -76,7 +76,7 @@ error_reporting($oldErrorReporting);
 // We generate the file and gzip it
 $tplPath = ARG_CACHE_PATH . 'tpl/';
 
-if (false === file_exists($tplPath))
+if (!file_exists($tplPath))
   mkdir($tplPath, 0755, true);
 
 $pathAndFile = ARG_CACHE_PATH . 'tpl/' . ARG_SHA_NAME;

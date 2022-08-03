@@ -33,7 +33,7 @@ else
 [$modelFullName, $modelExists, $tableExists] = preparingBidule($modelName);
 
 // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
-if (true === $modelExists || false === $tableExists)
+if ($modelExists || !$tableExists)
 {
   $errorLabel = '';
   preparingErrorMessage($modelExists, $tableExists, $bundleName, $errorLabel);

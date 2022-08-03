@@ -475,7 +475,7 @@ abstract class Database
       unset($primaries, $primaryKey);
 
       // We add the default character set (utf8mb4) and the ENGINE define in the framework configuration
-      $tableSql[$table] .= PHP_EOL . ('' == $defaultCharacterSet ? ') ENGINE=' . self::$motor .
+      $tableSql[$table] .= PHP_EOL . ('' === $defaultCharacterSet ? ') ENGINE=' . self::$motor .
           ' DEFAULT CHARACTER SET utf8mb4' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
       $tableSql[$table] .= ';';
 
@@ -494,7 +494,7 @@ abstract class Database
     self::_sortTableByForeignKeys($tablesWithRelations, $sortedTables);
 
     $sqlCreateSection = $sqlDropSection = $tablesOrder = '';
-    $storeSortedTables = ($force || false === file_exists(self::$tablesOrderFile));
+    $storeSortedTables = ($force || !file_exists(self::$tablesOrderFile));
 
     // We use the information on the order in which the tables have to be created / used to create correctly the final
     // SQL schema file.
@@ -550,7 +550,7 @@ abstract class Database
    */
   public static function truncateTable(string $databaseName, string $tableName) : void
   {
-    if (false === self::$init)
+    if (!self::$init)
       self::initBase();
 
     $truncatePath = self::$pathSql . 'truncate/';

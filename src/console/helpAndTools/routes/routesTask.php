@@ -81,7 +81,7 @@ function routes(array $argumentsVector) : void
 
     // Routes and paths management
     $chunks = $details['chunks'];
-    $altColor = ($indexLines % 2) ? CLI_INFO : CLI_INFO_HIGHLIGHT;
+    $altColor = ($indexLines % 2 !== 0) ? CLI_INFO : CLI_INFO_HIGHLIGHT;
     echo $altColor, sprintf('%-' . WIDTH_LEFT . 's', $route),
     str_pad('Url', WIDTH_MIDDLE), ': ' , $chunks[Routes::ROUTES_CHUNKS_URL], PHP_EOL;
 

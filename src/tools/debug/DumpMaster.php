@@ -75,9 +75,9 @@ abstract class DumpMaster
   public static function setDumpConfig(array $options = null) : array
   {
     // We ensure us that there are values set to the dump keys
-    AllConfig::$debugConfig = !isset(AllConfig::$debugConfig)
-      ? self::OTRA_DUMP_CONFIGURATION
-      : array_merge(self::OTRA_DUMP_CONFIGURATION, AllConfig::$debugConfig);
+    AllConfig::$debugConfig = isset(AllConfig::$debugConfig)
+      ? array_merge(self::OTRA_DUMP_CONFIGURATION, AllConfig::$debugConfig)
+      : self::OTRA_DUMP_CONFIGURATION;
 
     // If there is no option, we return the merged array we've just done
     if ($options === null)

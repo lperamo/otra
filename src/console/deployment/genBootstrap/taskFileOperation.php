@@ -809,7 +809,7 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
           // str_replace to ensure us that the same character '/' is used each time
           $constantPattern = '';
 
-          foreach ($parsedConstants as $constantString => $fullyQualifiedConstantName)
+          foreach (array_keys($parsedConstants) as $constantString)
           {
             $constantPattern .= '(?<!\\\\)' . $constantString . '|';
           }

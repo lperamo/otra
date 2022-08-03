@@ -207,7 +207,7 @@ function addVerboseInformation(
  * @param string $assetName
  * @param string $assetExtension
  */
-function deleteAsset(string $assetName, string $assetExtension)
+function deleteAsset(string $assetName, string $assetExtension): void
 {
   [
     $baseName,
@@ -238,7 +238,7 @@ function genWatcher(array $argumentsVector): void
 
   // Reminder : 0 => no debug, 1 => basic logs, 2 => advanced logs with main events showed
   define(__NAMESPACE__ . '\\GEN_WATCHER_VERBOSE', (int) ($argumentsVector[GEN_WATCHER_ARG_VERBOSE] ?? 1));
-  define('NO_SASS_CACHE', isset($argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? intval($argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE]) : 0);
+  define('NO_SASS_CACHE', isset($argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE]) ? (int) $argumentsVector[GEN_WATCHER_ARG_NO_SASS_CACHE] : 0);
 
   if (NO_SASS_CACHE !== 0 && NO_SASS_CACHE !== 1)
   {
@@ -505,8 +505,8 @@ function genWatcher(array $argumentsVector): void
           continue;
 
         // If it is not a folder
-        if (!(($binaryMask & IN_CREATE_DIR) === IN_CREATE_DIR
-          || ($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR))
+        if (($binaryMask & IN_CREATE_DIR) !== IN_CREATE_DIR
+          && ($binaryMask & IN_DELETE_DIR) !== IN_DELETE_DIR)
           // We store the extension without the dot
           $extension = substr($filename, strrpos($filename, '.') + 1);
 

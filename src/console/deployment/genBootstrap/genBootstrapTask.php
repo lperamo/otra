@@ -68,7 +68,7 @@ function genBootstrap(array $argumentsVector)
     require CORE_PATH . 'tools/cli.php';
 
     [$status, $return] = cliCommand(
-      PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . VERBOSE . ' ' . intval(GEN_BOOTSTRAP_LINT) .
+      PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . VERBOSE . ' ' . (int) GEN_BOOTSTRAP_LINT .
       ' ' . ($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
     );
     echo $return;

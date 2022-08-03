@@ -27,7 +27,7 @@ const
  * @param string $realPath
  * @param string $previousImportedCssFound
  */
-function updateSassTree(array &$sassTree, string $realPath, string $previousImportedCssFound)
+function updateSassTree(array &$sassTree, string $realPath, string $previousImportedCssFound): void
 {
   // if the stylesheet IS NOT the main stylesheet then we add it to the tree
   if ($realPath !== $previousImportedCssFound)
@@ -297,7 +297,7 @@ function updateSassTreeAfterEvent(
         $sassTreeString = SASS_TREE_STRING_INIT . '[' . $importingFile . ']';
 
         // if the imported file does not exist, we do not add the file to the tree
-        if (!$addedImport)
+        if ($addedImport === 0)
           break;
 
         $sassTree[KEY_ALL_SASS][$sassTreeKeys[$addedImport]] = true;

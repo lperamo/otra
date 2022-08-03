@@ -68,7 +68,7 @@ namespace otra\console\architecture\createBundle
       $interactive,
       $consoleForce,
       $bundleName,
-      isset($argumentsVector[ARG_BUNDLE_MASK]) ? intval($argumentsVector[ARG_BUNDLE_MASK]) : null,
+      isset($argumentsVector[ARG_BUNDLE_MASK]) ? (int) $argumentsVector[ARG_BUNDLE_MASK] : null,
       true
     );
   }

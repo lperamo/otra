@@ -85,7 +85,7 @@ function deployTask(array $argumentsVector) : void
     isset($argumentsVector[DEPLOY_ARG_GCC_LEVEL_COMPILATION]) ? (int) $argumentsVector[DEPLOY_ARG_GCC_LEVEL_COMPILATION] : 1
   );
 
-  if ($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC)
+  if (($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC) !== 0)
   {
     // We generate the class mapping...
     require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
@@ -105,10 +105,10 @@ function deployTask(array $argumentsVector) : void
 
   $buildDevMode = 0;
 
-  if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1 !== 0)
     $buildDevMode |= BUILD_DEV_MASK_TS;
 
-  if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2 !== 0)
     $buildDevMode |= BUILD_DEV_MASK_SCSS;
 
   if ($buildDevMode > 0)
@@ -126,13 +126,13 @@ function deployTask(array $argumentsVector) : void
 
   $genAssetsMode = 0;
 
-  if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1)
+  if (($deployMask & DEPLOY_MASK_JS_BEFORE_RSYNC) >> 1 !== 0)
     $genAssetsMode |= DEPLOY_MASK_JS_BEFORE_RSYNC;
 
-  if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2)
+  if (($deployMask & DEPLOY_MASK_CSS_BEFORE_RSYNC) >> 2 !== 0)
     $genAssetsMode |= DEPLOY_MASK_CSS_BEFORE_RSYNC;
 
-  if (($deployMask & DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC) >> 3)
+  if (($deployMask & DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC) >> 3 !== 0)
     $genAssetsMode |= DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC | GEN_ASSETS_MASK_TEMPLATE | GEN_ASSETS_MASK_SVG;
 
   if ($genAssetsMode > 0)

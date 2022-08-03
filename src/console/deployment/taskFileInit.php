@@ -67,7 +67,7 @@ if ($maskExists && !is_numeric($argumentsVector[FILE_TASK_ARG_MASK]))
   throw new OtraException(code: 1, exit: true);
 }
 
-define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argumentsVector[FILE_TASK_ARG_MASK]) ? intval($argumentsVector[FILE_TASK_ARG_MASK]) : 15);
+define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argumentsVector[FILE_TASK_ARG_MASK]) ? (int) $argumentsVector[FILE_TASK_ARG_MASK] : 15);
 
 define(__NAMESPACE__ . '\\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
 define(__NAMESPACE__ . '\\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
