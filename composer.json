@@ -32,7 +32,7 @@
     "ext-inotify": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
-    "rector/rector": "^0.12.23"
+    "rector/rector": "^0.13.10"
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",
