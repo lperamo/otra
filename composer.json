@@ -26,7 +26,7 @@
     "ext-openssl": "*",
     "ext-zend-opcache": "*",
     "ext-zlib": "*",
-    "symfony/yaml": "5.2.10"
+    "symfony/yaml": "6.1.*"
   },
   "require-dev": {
     "ext-inotify": "*",
