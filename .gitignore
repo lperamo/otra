@@ -20,6 +20,9 @@
 # reports folder is used to store reports that will be sent to SonarQube instances.
 /reports
 
+# Tests coverage cache
+/tests/.coverage-cache
+
 # NodeJS modules
 /node_modules/
 
