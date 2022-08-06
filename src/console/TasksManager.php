@@ -68,9 +68,6 @@ abstract class TasksManager
   }
 
   /**
-   * @param array  $tasksClassMap
-   * @param string $otraTask
-   * @param array  $argumentsVector
    *
    * @throws OtraException
    */

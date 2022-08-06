@@ -24,8 +24,6 @@ namespace otra\console\architecture\createController
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
-   * @param array $argumentsVector
-   *
    * @throws OtraException
    * @return void
    */

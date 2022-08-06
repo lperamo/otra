@@ -50,6 +50,8 @@ use Rector\Strict\Rector\Ternary\BooleanInTernaryOperatorRuleFixerRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\
 {AddVoidReturnTypeWhereNoReturnRector, ReturnTypeFromReturnNewRector};
 use Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector;
+use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector;
+use Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector;
 use Rector\CodeQuality\Rector\FunctionLike\
 {RemoveAlwaysTrueConditionSetInConstructorRector, SimplifyUselessVariableRector};
 use Rector\CodeQuality\Rector\Include_\AbsolutizeRequireAndIncludePathRector;
@@ -196,6 +198,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AddVoidReturnTypeWhereNoReturnRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#returntypefromreturnnewrector
     $rectorConfig->rule(ReturnTypeFromReturnNewRector::class);
+
+    // Visibility
+    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#explicitpublicclassmethodrector
+    $rectorConfig->rule(ExplicitPublicClassMethodRector::class);
+    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#typedpropertyfromstrictsetuprector
+    $rectorConfig->rule(TypedPropertyFromStrictSetUpRector::class);
+
 
     // define sets of rules
     $rectorConfig->sets([

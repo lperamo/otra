@@ -26,7 +26,6 @@ BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
 ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void|int

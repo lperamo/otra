@@ -17,14 +17,12 @@ use function otra\console\promptUser;
 if (!function_exists(__NAMESPACE__ . '\\createFolder'))
 {
   /**
-   * @param string $absoluteFolderPath
    * @param string $relativeFolderPath Used to recreate the absolute path if the folder already exists.
    * @param string $folderType         Is it a 'controller' folder, 'module' folder ?
    * @param bool   $interactive        Do we allow questions to the user?
    * @param bool $consoleForce         Determines whether we show an error when something is missing in non-interactive
    *                                   mode or not. The false value by default will stop the execution if something does
    *                                   not exist and show an error.
-   *
    * @throws OtraException
    */
   function createFolder(

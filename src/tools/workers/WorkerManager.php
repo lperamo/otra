@@ -48,10 +48,6 @@ class WorkerManager
   private static string $failMessages = '';
   private static array $informations = [];
 
-  /**
-   * @param int $timeout
-   * @param int $verbose
-   */
   public function listen(int $timeout = 200000, int $verbose = 1) : void
   {
     if (!self::$hasPrinted)
@@ -199,9 +195,6 @@ class WorkerManager
     unset($stream);
   }
 
-  /**
-   * @param Worker $worker
-   */
   public function attach(Worker $worker) : void
   {
     $process = proc_open($worker->command, self::DESCRIPTOR_SPEC, $pipes);
@@ -221,7 +214,6 @@ class WorkerManager
   /**
    * Cleaning memory related to a worker.
    *
-   * @param Worker $worker
    *
    * @return array{0: bool, 1: int} [bool running, int status 0 => Success, more => failure, else => abnormal]
    */

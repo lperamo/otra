@@ -25,9 +25,10 @@ define(
 );
 
 /**
- * @param int    $modelLocation
- * @param string $bundlePath
- * @param string $moduleName
+ * @param int    $modelLocation Location of the model to create
+ *                              0 => in the bundle (default) folder
+ *                              1 => in the module folder.
+ * @param string $moduleName    Name of the module in which the model have to be created.
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
@@ -39,9 +40,10 @@ function defineModelPath(int $modelLocation, string $bundlePath, string $moduleN
 }
 
 /**
- * @param int    $modelLocation
- * @param string $bundleName
- * @param string $modelFullName
+ * @param int    $modelLocation Location of the model to create
+ *                              0 => in the bundle (default) folder
+ *                              1 => in the module folder.
+ * @param string $bundleName    The bundle in which the model have to be created
  *
  * @throws OtraException
  */
@@ -52,4 +54,3 @@ function modelsCreation(int $modelLocation, string $bundleName, string $modelFul
     modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
   }
 }
-

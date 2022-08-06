@@ -9,10 +9,6 @@ use const otra\cache\php\DIR_SEPARATOR;
 /**
  * Launch a task if there is a description for it and if the parameters are correctly set.
  *
- * @param array  $tasksClassMap
- * @param array  $arguments
- * @param int    $argumentsCount
- * @param string $taskName
  *
  * @throws OtraException
  */

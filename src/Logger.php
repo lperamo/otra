@@ -54,10 +54,6 @@ abstract class Logger
     return $infos;
   }
 
-  /**
-   * @param string $path
-   * @param string $message
-   */
   public static function logging(string $path, string $message) : void
   {
     if (is_writable($path))
@@ -70,8 +66,6 @@ abstract class Logger
 
   /**
    * Appends a message to the log file at logs/log.txt
-   *
-   * @param string $message
    */
   public static function log(string $message) : void
   {
@@ -85,9 +79,6 @@ abstract class Logger
 
   /**
    * Appends a message to the log file at the specified path appended to __DIR__
-   *
-   * @param string $message
-   * @param string $path
    */
   public static function logToRelativePath(string $message, string $path = '') : void
   {
@@ -101,9 +92,6 @@ abstract class Logger
 
   /**
    * Appends a message to the log file at the specified path into log path
-   *
-   * @param string $message
-   * @param string $logPath
    */
   public static function logTo(string $message, string  $logPath = 'log') : void
   {
@@ -127,11 +115,6 @@ abstract class Logger
 
   /**
    * Logs all sql queries with the file name that launches it and the line number where it occurred.
-   *
-   * @param string $file
-   * @param int    $line
-   * @param string $message
-   * @param string $path
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {
@@ -150,11 +133,6 @@ abstract class Logger
     );
   }
 
-  /**
-   * @param string $message
-   * @param string $errorType
-   * @param array  $traces
-   */
   public static function logExceptionOrErrorTo(string $message, string $errorType, array $traces): void
   {
     clearstatcache();
@@ -170,17 +148,12 @@ abstract class Logger
     );
   }
 
-  /**
-   * @param string $message
-   */
   public static function lg(string $message) : void
   {
     self::logTo($message, 'trace');
   }
 
   /**
-   * @param array $traces
-   *
    * @return array
    */
   public static function formatStackTracesForLog(array $traces) : array

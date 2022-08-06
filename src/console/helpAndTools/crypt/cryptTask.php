@@ -15,7 +15,6 @@ const
   CRYPT_ARG_ITERATIONS = 3;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

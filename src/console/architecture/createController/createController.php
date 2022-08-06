@@ -14,8 +14,6 @@ require CONSOLE_PATH . 'architecture/createFolder.php';
 
 /**
  * Create the folders that contain all the controllers folders.
- *
- * @param string $controllersFolder
  */
 function createControllersFolder(string $controllersFolder) : void
 {
@@ -30,8 +28,6 @@ function createControllersFolder(string $controllersFolder) : void
 /**
  * Creates the folder of the specified controller.
  *
- * @param string $controllersFolder
- * @param string $controllerName
  * @param bool   $interactive       Do we allow questions to the user?
  * @param bool   $consoleForce      Determines whether we show an error when something is missing in non-interactive
  *                                  mode or not. The false value by default will stop the execution if something does
@@ -54,8 +50,6 @@ function createController(string $controllersFolder, string $controllerName, boo
  * @param bool   $consoleForce      Determines whether we show an error when something is missing in non-interactive
  *                                  mode or not. The false value by default will stop the execution if something does
  *                                  not exist and show an error.
- * @param string $controllersFolder
- * @param string $controllerName
  *
  * @throws OtraException
  */

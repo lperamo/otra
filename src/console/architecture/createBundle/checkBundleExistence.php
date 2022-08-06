@@ -11,8 +11,10 @@ use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR};
 use const otra\console\architecture\constants\ARG_BUNDLE_NAME;
 
 /**
- * @var bool  $consoleForce
- * @var bool  $interactive
+ * @var bool  $consoleForce    Determines whether we show an error when something is missing in non-interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
+ * @var bool  $interactive     Do we allow questions to the user?
  * @var array $argumentsVector
  */
 

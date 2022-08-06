@@ -17,9 +17,7 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_S
 use function otra\console\convertArrayFromVarExportToShortVersion;
 
 /**
- * @param string $classMap
- * @param string $filename
- * @param string $environment
+ * @param string $environment DEV or PROD
  */
 function generateClassMap(string $classMap, string $filename, string $environment = DEV): void
 {
@@ -30,7 +28,6 @@ function generateClassMap(string $classMap, string $filename, string $environmen
 }
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void
@@ -68,9 +65,6 @@ function genClassMap(array $argumentsVector) : void
   {
     /**
      * @param string[]              $classes
-     * @param string                $dir
-     * @param array                 $additionalClassesFilesKeys
-     * @param int                   $processedDir
      * @param array<string, string> $classesThatMayHaveToBeAdded
      *
      * @throws OtraException
@@ -83,16 +77,16 @@ function genClassMap(array $argumentsVector) : void
     ])]
     function iterateCM(
       array &$classes,
-      string $dir,
+      string $folder,
       array $additionalClassesFilesKeys,
-      int &$processedDir,
+      int &$processedFolder,
       array &$classesThatMayHaveToBeAdded) : array
     {
-      if (!($folderHandler = opendir($dir)))
+      if (!($folderHandler = opendir($folder)))
       {
         closedir($folderHandler);
 
-        echo CLI_ERROR, 'Problem encountered with the directory : ' . $dir . ' !', END_COLOR;
+        echo CLI_ERROR, 'Problem encountered with the directory : ' . $folder . ' !', END_COLOR;
         throw new OtraException(code: 1, exit: true);
       }
 
@@ -107,15 +101,15 @@ function genClassMap(array $argumentsVector) : void
         )
           continue;
 
-        $entryAbsolutePath = $dir . DIR_SEPARATOR . $entry;
+        $entryAbsolutePath = $folder . DIR_SEPARATOR . $entry;
 
         // recursively...
         if (is_dir($entryAbsolutePath))
-          [$classes, $processedDir] = iterateCM(
+          [$classes, $processedFolder] = iterateCM(
             $classes,
             $entryAbsolutePath,
             $additionalClassesFilesKeys,
-            $processedDir,
+            $processedFolder,
             $classesThatMayHaveToBeAdded
           );
 
@@ -157,12 +151,12 @@ function genClassMap(array $argumentsVector) : void
       }
 
       closedir($folderHandler);
-      ++$processedDir;
+      ++$processedFolder;
 
       if (VERBOSE === 1)
-        echo "\x0d\033[K", 'Processed directories : ', $processedDir, '...';
+        echo "\x0d\033[K", 'Processed directories : ', $processedFolder, '...';
 
-      return [$classes, $processedDir, $classesThatMayHaveToBeAdded];
+      return [$classes, $processedFolder, $classesThatMayHaveToBeAdded];
     }
 
     /**
@@ -170,8 +164,6 @@ function genClassMap(array $argumentsVector) : void
      * We take care of the spaces contained into folders and files names.
      * We also reduce paths using constants.
      *
-     * @param string $classMap
-     * @param string $environment
      *
      * @return string
      */

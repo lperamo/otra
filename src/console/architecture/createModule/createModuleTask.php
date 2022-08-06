@@ -22,7 +22,6 @@ namespace otra\console\architecture\createModule
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
-   * @param array $argumentsVector
    *
    * @throws OtraException
    * @return void

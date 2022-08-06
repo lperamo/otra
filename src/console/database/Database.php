@@ -212,7 +212,6 @@ abstract class Database
    *
    * @param array<string,array> $tablesWithRelations Remaining tables to sort
    * @param string[]            $sortedTables        Final sorted tables array
-   * @param int                 $oldCountArrayToSort
    */
   private static function _sortTableByForeignKeys(
     array $tablesWithRelations,

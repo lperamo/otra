@@ -25,7 +25,6 @@ const
   SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

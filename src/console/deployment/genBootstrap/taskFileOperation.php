@@ -85,21 +85,19 @@ function phpOrHTMLIntoEval(string &$contentToAdd) : void
 }
 
 /**
- * @param string $file
- *
  * @return bool
  */
-function hasSyntaxErrors(string $file) : bool
+function hasSyntaxErrors(string $phpFile) : bool
 {
   // Syntax verification, 2>&1 redirects stderr to stdout
-  exec(PHP_BINARY . ' -l ' . $file . ' 2>&1', $output);
+  exec(PHP_BINARY . ' -l ' . $phpFile . ' 2>&1', $output);
   $output = implode(PHP_EOL, $output);
 
   if (mb_strlen($output) <= 6 || false === mb_strpos($output, 'pars', 7))
     return false;
 
   echo PHP_EOL, CLI_ERROR, $output, PHP_EOL, PHP_EOL;
-  showContextByError($file, $output, 10);
+  showContextByError($phpFile, $output, 10);
 
   return true;
 }
@@ -110,9 +108,6 @@ function hasSyntaxErrors(string $file) : bool
  * If all was ok, retrieves the contents of the temporary file in the real final file.
  * Then it checks namespaces errors.
  * If all was ok, deletes the temporary file.
- *
- * @param string $content
- * @param string $outputFile
  *
  * @throws OtraException
  */
@@ -160,7 +155,6 @@ function contentToFile(string $content, string $outputFile) : void
 /**
  * We analyze the use statement in order to retrieve the name of each class which is included in it.
  *
- * @param int      $level
  * @param array{
  *  php:array{
  *    use ?: string[],
@@ -173,7 +167,6 @@ function contentToFile(string $content, string $outputFile) : void
  *  },
  *  template: array
  * }               $filesToConcat Files to parse after have parsed this one
- * @param string   $class
  * @param string[] $parsedFiles   Remaining files to concatenate
  * @param string   $chunk         Original chunk (useful for the external library class warning)
  */
@@ -251,7 +244,6 @@ function analyzeUseToken(int $level, array &$filesToConcat, string $class, array
  * We then clean the use keywords ...
  * This function only evaluates ONE use statement at a time.
  *
- * @param int       $level
  * @param string    $contentToAdd  Content actually parsed
  * @param array{
  *  php:array{
@@ -408,7 +400,6 @@ function getFileNamesFromUses(
  * We test if we have dynamic variables into the require/include statement, and replace them if they exists
  *
  * @param string $fileContent  Content of the file $filename
- * @param string $filename
  * @param string $trimmedMatch Match (with spaces neither to the left nor to the right) in the file $filename that
  *                             potentially contains dynamic variable to change
  *
@@ -464,10 +455,6 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
 
 /**
  * Shows the file name in the console for debug purposes
- *
- * @param int    $level
- * @param string $fileAbsolutePath
- * @param string $otherText
  */
 function showFile(int $level, string $fileAbsolutePath, string $otherText = ' first file') : void
 {
@@ -483,8 +470,6 @@ function showFile(int $level, string $fileAbsolutePath, string $otherText = ' fi
 /**
  * We escape the single quotes only in the PHP portions of the file that we want to add
  * (This content needs to begin by <?php and finish by ?>)
- *
- * @param string $contentToAdd
  */
 function escapeQuotesInPhpParts(string &$contentToAdd) : void
 {
@@ -515,7 +500,6 @@ function escapeQuotesInPhpParts(string &$contentToAdd) : void
  *
  * @param string $trimmedMatch Match (with spaces neither to the left nor to the right) in the file $filename that
  *                             potentially contains dynamic variable to change
- * @param string $filename
  *
  * @throws OtraException
  * @return array{0: string, 1: bool} [$tempFile, $isTemplate]
@@ -542,10 +526,7 @@ function getFileInfoFromRequireMatch(string $trimmedMatch, string $filename) : a
 /**
  * Process the template content and adds it to the final content.
  *
- * @param string $finalContent
  * @param string $contentToAdd Content actually parsed
- * @param string $match
- * @param int    $posMatch
  *
  * @return string $finalContent
  */
@@ -629,7 +610,6 @@ function processReturn(string &$includingCode, string &$includedCode, string $in
  *
  * @param array  $classesFromFile Already parsed classes
  * @param string $class           Class to analyze/search
- * @param string $contentToAdd
  * @param int    $match           Content extract position where the class was found
  *
  * @return false|string $tempFile
@@ -938,7 +918,6 @@ function getFileInfoFromRequiresAndExtends(array &$parameters) : void
 /**
  * @param int      $increment       Only for debugging purposes.
  * @param int      $level           Only for debugging purposes.
- * @param string   $filename
  * @param string   $contentToAdd    Actual content to be processed
  * @param string[] $parsedFiles     Remaining files to concatenate
  * @param string[] $parsedConstants Constants parsed from 'use' statements
@@ -1184,7 +1163,6 @@ function assembleFiles(
 /**
  * We change things like \blabla\blabla\blabla::trial() by blabla::trial() and we include the related files
  *
- * @param int       $level
  * @param string    $contentToAdd    Content currently parsed
  * @param array{
  *  php:array{
@@ -1278,10 +1256,7 @@ function processStaticCalls(
 /**
  * Merges files and fixes the usage of namespaces and uses into the concatenated content
  *
- * @param string  $bundle
- * @param string  $route
  * @param string  $content       Content to fix
- * @param int     $verbose
  * @param string  $fileToInclude File to merge
  *
  * @throws OtraException

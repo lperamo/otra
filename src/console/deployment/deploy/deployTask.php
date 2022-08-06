@@ -44,7 +44,6 @@ const DEPLOY_ARG_MASK = 2,
   PRELOAD_FILENAME = 'preload.php';
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

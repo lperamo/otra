@@ -19,7 +19,6 @@ const
   ARG_DATABASE_NAME = 3;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException if the file to execute doesn't exist
  * @return void

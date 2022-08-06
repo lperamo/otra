@@ -240,19 +240,17 @@ abstract class Pdomysql
    * @link https://www.php.net/manual/en/pdostatement.getcolumnmeta.php
    *
    * @param PDOStatement $statement The query statement
-   * @param int $column
    *
    * @return false|array The results
    */
-  public static function getColumnMeta(PDOStatement $statement, int $column)
+  public static function getColumnMeta(PDOStatement $statement, int $columnName)
   {
-    return $statement->getColumnMeta($column);
+    return $statement->getColumnMeta($columnName);
   }
 
   /**
    * Closes connection.
    *
-   * @param bool|Sql $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
@@ -282,7 +280,6 @@ abstract class Pdomysql
   /**
    * @link https://www.php.net/manual/en/pdo.quote.php
    *
-   * @param string $string
    *
    * @return string
    */
@@ -344,8 +341,6 @@ abstract class Pdomysql
   /**
    * @link https://www.php.net/manual/en/pdo.prepare.php
    *
-   * @param string $query
-   * @param array  $options
    *
    * @return PDOStatement|false
    */
@@ -371,8 +366,6 @@ abstract class Pdomysql
    * Configures a PDO attribute
    * @link https://www.php.net/manual/fr/pdo.setattribute.php
    *
-   * @param int   $attribute
-   * @param mixed $value
    *
    * @return bool
    */
@@ -386,7 +379,6 @@ abstract class Pdomysql
    *
    * @link https://www.php.net/manual/fr/pdo.getattribute.php
    *
-   * @param int $attribute
    *
    * @return bool|int|string|array|null
    */

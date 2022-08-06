@@ -87,7 +87,7 @@ abstract class DumpMaster
     $oldConfig = AllConfig::$debugConfig ?? self::OTRA_DUMP_CONFIGURATION;
 
     // for each OTRA dump key, we update its value according to the passed parameters
-    foreach (self::OTRA_DUMP_ARRAY as $optionKey => $option)
+    foreach (array_keys(self::OTRA_DUMP_ARRAY) as $optionKey)
     {
       // if the dump key exists in the configuration
       if (isset(AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]]))
@@ -105,7 +105,6 @@ abstract class DumpMaster
   }
 
   /**
-   * @param object $param
    *
    * @throws ReflectionException
    * @return string[]
@@ -155,9 +154,6 @@ abstract class DumpMaster
   }
 
   /**
-   * @param string $className
-   * @param mixed  $param
-   *
    * @throws ReflectionException
    * @return array{0: ReflectionProperty[], 1: mixed} [$properties, $param]
    */

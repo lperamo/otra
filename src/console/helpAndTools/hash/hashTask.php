@@ -9,8 +9,6 @@ namespace otra\console\helpAndTools\hash;
 const HASH_ARG_BLOWFISH_ROUNDS = 2;
 
 /**
- * @param array $argumentsVector
- *
  * @return void
  */
 function hash(array $argumentsVector) : void

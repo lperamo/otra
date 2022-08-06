@@ -64,7 +64,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
     class_alias('otra\cache\php\AllConfig', 'otra\config\AllConfig');
 
   /**
-   * @param string $directive
    *
    * @throws Exception
    * @return string
@@ -82,8 +81,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
    * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
-   * @param string                $route
-   * @param ?string               $routeSecurityFilePath
    * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
    *                                                        from MasterController
    *
@@ -170,10 +167,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
     return [$finalPolicy, $finalProcessedPolicies];
   }
 
-  /**
-   * @param string  $route
-   * @param ?string $routeSecurityFilePath
-   */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
     if (!headers_sent())
@@ -190,10 +183,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
     }
   }
 
-  /**
-   * @param string  $route
-   * @param ?string $routeSecurityFilePath
-   */
   function addPermissionsPoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
   {
     if (!headers_sent())
@@ -208,8 +197,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   /**
    * Handles strict dynamic mode for CSP
    *
-   * @param string $directive
-   * @param string $policy
    * @param array{
    *    'base-uri'?:string,
    *    'form-action'?:string,
@@ -224,7 +211,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    *    'style-src'?:string,
    *    'script-src'?:string
    *  } $cspDirectives
-   * @param string $route
    */
   function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
   {

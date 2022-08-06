@@ -13,8 +13,6 @@ if (!function_exists(__NAMESPACE__ . '\\tailCustom'))
    * Slightly modified version of the original.
    * No verification of the fileDescriptor, we must check that before.
    *
-   * @param string $filepath
-   * @param int    $lines
    *
    * @return string
    * @link    http://stackoverflow.com/a/15025877/995958

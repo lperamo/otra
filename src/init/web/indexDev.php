@@ -43,8 +43,8 @@ spl_autoload_register(function(string $className) : void
 });
 
 use otra\OtraException;
-set_error_handler([OtraException::class, 'errorHandler']);
-set_exception_handler([OtraException::class, 'exceptionHandler']);
+set_error_handler(OtraException::errorHandler(...));
+set_exception_handler(OtraException::exceptionHandler(...));
 
 use otra\Router;
 

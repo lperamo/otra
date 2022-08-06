@@ -46,10 +46,6 @@ const
 /**
  * Returns the pretty printed versions of sql clauses
  *
- * @param bool   $raw
- * @param string $leftStyleClauseCode
- * @param string $leftStyleFunctionCode
- * @param string $rightStyleClauseCode
  *
  * @return string[]
  */

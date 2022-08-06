@@ -19,9 +19,11 @@ const
  * @param bool     $consoleForce Determines whether we show an error when something is missing in non-interactive mode
  *                               or not. The false value by default will stop the execution if something does not exist
  *                               and shows an error.
- * @param string   $bundleName
- * @param int|null $bundleMask
- * @param bool     $bundleTask
+ * @param int|null $bundleMask   0 => nothing (default)
+ *                               1 => config
+ *                               2 => models
+ *                               4 => resources
+ *                               8 => views
  *
  * @throws OtraException
  */

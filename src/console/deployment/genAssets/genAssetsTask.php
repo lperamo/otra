@@ -60,8 +60,6 @@ function unlinkResourceFile(string $folder, string $shaName) : void
 
 /**
  *
- * @param string $status
- * @param string $color
  *
  * @return string
  */
@@ -71,11 +69,7 @@ function status(string $status, string $color = 'CLI_SUCCESS') : string
 }
 
 /**
- * @param array  $resources
- * @param array  $routeChunks
  * @param string $assetType   'css' or 'js'
- * @param string $bundlePath
- * @param string $shaName
  *
  * @return null|string Return the path of the 'macro' resource file
  */
@@ -127,11 +121,7 @@ function loadAndSaveResources(
 /**
  * Loads css or js resources
  *
- * @param array   $resources
- * @param array   $chunks
  * @param string  $key          app_js, module_css kind of ...
- * @param string  $bundlePath
- * @param ?string $resourcePath
  */
 function loadResource(array $resources, array $chunks, string $key, string $bundlePath, ?string $resourcePath = null)
 : void
@@ -192,7 +182,6 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 }
 
 /**
- * @param array $argumentsVector
  *
  * @throws JsonException|OtraException
  * @return void

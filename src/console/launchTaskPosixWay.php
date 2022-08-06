@@ -7,9 +7,6 @@ use otra\OtraException;
 use const otra\cache\php\DIR_SEPARATOR;
 
 /**
- * @param array  $tasksClassMap
- * @param array  $arguments
- * @param string $taskName
  *
  * @throws OtraException
  */

@@ -18,7 +18,6 @@ const
   OTRA_LIVE_HTTPS = 'false';
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

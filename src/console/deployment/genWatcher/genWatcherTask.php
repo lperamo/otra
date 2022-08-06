@@ -69,8 +69,6 @@ const
   IN_DELETE_DIR = 1_073_742_336;
 
 /**
- * @param string $header
- * @param int    $padding
  *
  * @return string
  */
@@ -101,8 +99,6 @@ function nonBlockRead($fileDescriptor) : false|string
 }
 
 /**
- * @param int    $binaryMask
- * @param int    $cookie
  * @param string $filename        Folder or file name
  * @param string $resource        Folder of file watched
  * @param bool   $mustShowHeaders Do we have to show the headers
@@ -140,7 +136,6 @@ function debugEvent(
 /**
  * Generates class mapping and updates all the configuration files.
  *
- * @param string $filename
  *
  * @throws OtraException
  */
@@ -168,14 +163,6 @@ function updatePHP(string $filename) : void
 }
 
 /**
- * @param string $eventsDebug
- * @param string $messageBefore
- * @param string $filename
- * @param string $messageAfter
- * @param int    $binaryMask
- * @param int    $cookie
- * @param string $resourceToWatch
- * @param bool   $headers
  *
  * @return string
  */
@@ -203,9 +190,6 @@ function addVerboseInformation(
 
 /**
  * Deletes an asset and its source map.
- *
- * @param string $assetName
- * @param string $assetExtension
  */
 function deleteAsset(string $assetName, string $assetExtension): void
 {
@@ -225,7 +209,6 @@ function deleteAsset(string $assetName, string $assetExtension): void
 }
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @throws ReflectionException

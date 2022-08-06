@@ -70,8 +70,6 @@ function addingSecurityAdjustments() : string
 }
 
 /**
- * @param string $assetType
- *
  * @return string
  */
 #[Pure] function handleGzippedAsset(string $assetType = 'css'): string

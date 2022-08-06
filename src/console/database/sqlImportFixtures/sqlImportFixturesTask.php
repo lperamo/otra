@@ -21,7 +21,6 @@ const
 /**
  * Creates the database fixtures from a database.
  *
- * @param array $argumentsVector
  *
  * @throws ReflectionException
  * @throws OtraException

@@ -30,8 +30,6 @@ namespace otra\console\architecture\createBundle
   const ARG_BUNDLE_MASK = 3;
 
   /**
-   * @param array $argumentsVector
-   *
    * @throws OtraException
    * @return void
    */

@@ -48,16 +48,11 @@ class OtraException extends Exception
   /**
    * OtraException constructor.
    *
-   * @param string     $message
    * @param ?int|mixed $code
-   * @param string     $file
-   * @param ?int       $line
-   * @param array|null $context
    * @param bool       $exit    True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
    */
-
   public function __construct(
     string $message = 'Error !',
     mixed $code = NULL,
@@ -169,11 +164,6 @@ class OtraException extends Exception
   /**
    * To use with set_error_handler().
    *
-   * @param int        $errno
-   * @param string     $message
-   * @param string     $fileName
-   * @param int        $fileLine
-   * @param array|null $context
    *
    * @throws JsonException|OtraException
    */

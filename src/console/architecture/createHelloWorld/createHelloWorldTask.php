@@ -48,9 +48,6 @@ namespace otra\console\architecture\createHelloWorld
     HELLO_WORLD_STARTER_SCSS_SCREEN = 'screen.scss';
 
   /**
-   * @param string $source
-   * @param string $destination
-   * @param string $message
    *
    * @throws OtraException
    */

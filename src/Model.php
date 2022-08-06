@@ -16,16 +16,10 @@ abstract class Model
   private readonly string $table;
 
   /**
-   * @param string $property
-   *
    * @return mixed
    */
   public function get(string $property) : mixed { return $this->$property; }
 
-  /**
-   * @param string $property
-   * @param mixed $value
-   */
   public function set(string $property, mixed $value) : void { $this->$property = $value; }
 
   /**

@@ -17,7 +17,6 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLI
 const HELP_TASK = 2;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

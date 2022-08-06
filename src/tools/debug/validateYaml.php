@@ -10,9 +10,6 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\tools\files\returnLegiblePath;
 
 /**
- * @param string $yamlContent
- * @param string $yamlFile
- *
  * @throws OtraException
  * @return array
  */

@@ -21,8 +21,7 @@ define(
 );
 
 /**
- * @param string $bundleName
- * @param string $bundlePath
+ * @param string $bundleName The bundle in which the model have to be created
  */
 function bundleModelPreparation(string $bundleName, string $bundlePath) : void
 {
@@ -30,11 +29,6 @@ function bundleModelPreparation(string $bundleName, string $bundlePath) : void
   define('otra\console\architecture\createModel\MODEL_PATH', $bundlePath);
 }
 
-/**
- * @param string $functions
- * @param string $propertiesCode
- * @param string $property
- */
 function addCode(string &$functions, string &$propertiesCode, string $property) : void
 {
   $functions .= PHP_EOL;
@@ -48,12 +42,10 @@ function addCode(string &$functions, string &$propertiesCode, string $property) 
 }
 
 /**
- * @param int    $modelLocation
- * @param string $modelName
- * @param string $modelFullName
- * @param string $propertiesCode
- * @param string $functions
- * @param string $bundleName
+ * @param int    $modelLocation Location of the model to create
+ *                              0 => in the bundle (default) folder
+ *                              1 => in the module folder.
+ * @param string $bundleName    The bundle in which the model have to be created
  */
 function endingTask(
   int $modelLocation,
@@ -67,4 +59,3 @@ function endingTask(
   writeModelFile($modelLocation, $bundleName, MODEL_PATH, $modelName, $modelFullName, $propertiesCode, $functions);
   modelCreationSuccess($bundleName, $modelName);
 }
-

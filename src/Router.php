@@ -250,8 +250,6 @@ abstract class Router
   }
 
   /**
-   * @param string $route
-   * @param array  $params
    *
    * @return string
    */

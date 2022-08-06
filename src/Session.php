@@ -78,10 +78,6 @@ abstract class Session
     self::$initialized = true;
   }
 
-  /**
-   * @param string $sessionKey
-   * @param mixed  $value
-   */
   public static function set(string $sessionKey, mixed $value) : void
   {
     self::$matches[$sessionKey] = [
@@ -94,8 +90,6 @@ abstract class Session
 
   /**
    * Puts all the value associated with the keys of the array into the session
-   *
-   * @param array $array
    */
   public static function sets(array $array) : void
   {
@@ -113,7 +107,6 @@ abstract class Session
   /**
    * Returns false if it does not exist in the cache...should not occur.
    *
-   * @param string $sessionKey
    *
    * @return mixed
    */
@@ -123,8 +116,6 @@ abstract class Session
   }
 
   /**
-   * @param string $sessionKey
-   *
    * @return array[bool, mixed] [doesItExist, value]
    */
   public static function getIfExists(string $sessionKey) : array
@@ -138,7 +129,6 @@ abstract class Session
   /**
    * If the first key exists, get it and the other keys. Otherwise, returns false.
    *
-   * @param array $sessionKeys
    *
    * @throws OtraException
    * @return array[bool, array|bool] [doesItExist, value]
@@ -246,14 +236,6 @@ abstract class Session
 
   public static function getNativeSessionData(): array
   {
-    $result = [];
-
-    foreach($_SESSION as $sessionKey => $sessionValue)
-    {
-      if (!in_array($sessionKey, array_values(self::$matches)))
-        $result[$sessionKey] = $sessionValue;
-    }
-
-    return $result;
+      return [array_filter($_SESSION, fn($sessionValue) => !in_array($sessionKey, self::$matches))];
   }
 }

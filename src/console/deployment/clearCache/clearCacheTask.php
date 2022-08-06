@@ -38,7 +38,6 @@ const
   RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void|null
@@ -132,10 +131,6 @@ function clearCache(array $argumentsVector)
 
   /** @var Closure $removeCachedFiles */
 
-  /**
-   * @param string $file
-   * @param string $fileShownInTheError
-   */
   function unlinkFile(string $file, string $fileShownInTheError) : void
   {
     if (!file_exists($file))
@@ -149,10 +144,6 @@ function clearCache(array $argumentsVector)
     }
   }
 
-  /**
-   * @param string $folder
-   * @param string $folderShownInTheError
-   */
   function checkFolder(string $folder, string $folderShownInTheError) : void
   {
     if (!file_exists($folder))
@@ -184,7 +175,7 @@ function clearCache(array $argumentsVector)
     echo 'PHP OTRA internal cache cleared', SUCCESS;
   }
 
-// If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
+  // If we want to remove route management, class mapping, metadata and security files, we need to check the PHP folder
   if (((
       ($binaryMask & CLEAR_CACHE_MASK_ROUTE_MANAGEMENT)
       | ($binaryMask & CLEAR_CACHE_MASK_CLASS_MAPPING)

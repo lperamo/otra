@@ -29,8 +29,6 @@ namespace otra\console
     /**
      * Asks the user a question again and again until the answer was correct.
      *
-     * @param string $question
-     * @param string $altQuestion
      * @codeCoverageIgnore
      *
      * @return string Answer.
@@ -54,9 +52,7 @@ namespace otra\console
     /**
      * Show a question and let the user answers it.
      *
-     * @param string $question
      * @codeCoverageIgnore
-     *
      * @return string
      */
     function askQuestion(string $question) : string
@@ -69,9 +65,7 @@ namespace otra\console
     /**
      * Loops through words to find the closest word
      *
-     * @param string   $input
      * @param string[] $words
-     *
      * @return array{0:?string,1:int} [$closest, $shortest]
      */
     #[ArrayShape([
@@ -161,7 +155,6 @@ namespace otra\console
      * We take care of the spaces contained into folders and files names.
      * Beware, this function do not cover all the possibles cases. It only works for the usages of this framework.
      *
-     * @param string $code
      *
      * @return string
      */
@@ -184,7 +177,6 @@ namespace otra\console
      * Beware, this function do not cover all the possibles cases. It only works for some usages.
      * This tool is not used by OTRA but is meant to be used in user projects.
      *
-     * @param string $code
      *
      * @return string
      */
@@ -206,7 +198,6 @@ namespace otra\console
      * $myVar = require myFile.php;
      * A bit like `var_export` function
      *
-     * @param array $myArray
      *
      * @throws ReflectionException
      * @return string

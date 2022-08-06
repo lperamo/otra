@@ -39,9 +39,6 @@ class OtraExceptionCli extends Exception
     $fileLongestString,
     $argumentsLongestString;
 
-  /**
-   * @param OtraException $exception
-   */
   public function __construct(OtraException $exception)
   {
     parent::__construct();
@@ -62,7 +59,6 @@ class OtraExceptionCli extends Exception
    * Converts the absolute path into 'BASE_PATH/CORE_PATH/CONSOLE_PATH + path' path like
    *
    * @param string $pathType 'BASE', 'CORE' or 'CONSOLE'
-   * @param string $file
    *
    * @return string
    */
@@ -74,8 +70,6 @@ class OtraExceptionCli extends Exception
 
   /**
    * Shows an exception 'colorful' display for command line commands.
-   *
-   * @param OtraException $exception
    */
   public static function showMessage(OtraException $exception) : void
   {
@@ -265,9 +259,6 @@ class OtraExceptionCli extends Exception
    * Returns the content of a stack trace row in console style.
    *
    * @param array  $rowData          Data of a stack trace line
-   * @param string $columnName
-   * @param int    $padLength
-   * @param string $alternateContent
    *
    * @return string
    */
@@ -284,8 +275,6 @@ class OtraExceptionCli extends Exception
   }
 
   /**
-   * @param string $firstString
-   * @param string $secondString
    *
    * @return string
    */

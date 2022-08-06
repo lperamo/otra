@@ -44,8 +44,6 @@ const
   PATH_CONFIG_DATA_YML = 'config/data/yml/';
 
 /**
- * @param ?string $mask
- * @param ?string $routeName
  *
  * @throws OtraException
  */
@@ -330,18 +328,6 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 }
 
 /**
- * @param string  $folderPath
- * @param array   $securities
- * @param array   $configs
- * @param array   $routes
- * @param array   $schemas
- * @param array   $fixtures
- * @param ?string $updateConfRouteName
- * @param int     $updateConfAllConfig
- * @param int     $updateConfRoutes
- * @param int     $updateConfSecurities
- * @param int     $updateConfSchema
- * @param int     $updateConfFixtures
  *
  * @return void
  */
@@ -511,10 +497,6 @@ function searchFilesInFolder(
 
 /**
  * If the content is empty, we remove the file configuration if it exists otherwise we update the file.
- *
- * @param string $configFile
- * @param string $content
- * @param bool   $toCompress
  */
 function writeConfigFile(string $configFile, string $content, bool $toCompress = true) : void
 {
@@ -547,11 +529,6 @@ function writeConfigFile(string $configFile, string $content, bool $toCompress =
 
 /**
  * We return a string (by altering it not with 'return') that contains an array with a PHP7 array like notation.
- *
- * @param string $content
- * @param array  $array
- * @param bool   $isARouteConfigFile
- * @param string $actualRouteKey
  */
 function loopForEach(
   string &$content,

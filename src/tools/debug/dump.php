@@ -13,11 +13,8 @@ if (!function_exists(__NAMESPACE__ . '\\dump'))
 {
   /**
    * A shortcut to the 'paramDump' function that will use the user configuration.
-   *
-   * @param mixed ...$params
    */
-
-  function dump(... $params) : void
+  function dump(mixed ... $params) : void
   {
     paramDump(null, ...$params);
   }
@@ -29,9 +26,8 @@ if (!function_exists(__NAMESPACE__ . '\\dump'))
    * @param ?int[] $options [0 => Affects the amount of array children and object's properties shown
    *                         1 => Affects the maximum string length shown
    *                         2 => Affects the array and object's depths shown]
-   * @param mixed  ...$params
    */
-  function paramDump(?array $options = [], ... $params) : void
+  function paramDump(?array $options = [], mixed ... $params) : void
   {
     if (!defined('OTRA_DUMP_FINAL_CLASS'))
     {

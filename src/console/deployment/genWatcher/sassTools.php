@@ -22,11 +22,6 @@ const
   REGEX_SASS_IMPORT = '`^[^/@]{0,}@(?:import|use|forward)\s{0,}\'\\K([^\':]{0,})\'\s{0,}(?:as\s[^;]{0,}\s{0,})?;$`m',
   SASS_TREE_STRING_INIT = '$sassTree[' . KEY_FULL_TREE . ']';
 
-/**
- * @param array  $sassTree
- * @param string $realPath
- * @param string $previousImportedCssFound
- */
 function updateSassTree(array &$sassTree, string $realPath, string $previousImportedCssFound): void
 {
   // if the stylesheet IS NOT the main stylesheet then we add it to the tree
@@ -118,11 +113,7 @@ function getCssPathFromImport(
  * We go to the SASS/SCSS dependencies tree (the top having the files without '_') and
  * stores the links between leaves and main stylesheets.
  *
- * @param array  $sassTree
- * @param string $importingFileAbsolutePath
- * @param string $previousImportedCssFound
  * @param string $dotExtension Extension with the dot as in '.scss'
- * @param string $sassTreeString
  *
  * @throws OtraException
  *

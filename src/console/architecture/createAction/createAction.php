@@ -22,13 +22,11 @@ const
 /**
  * Creates the folder of the specified controller.
  *
- * @param string $bundleName
- * @param string $moduleName
- * @param string $controllerName
  * @param string $controllerPath Absolute path to the controller
- * @param string $actionName
- * @param bool   $interactive
- * @param bool   $consoleForce
+ * @param bool   $interactive    Do we allow questions to the user?
+ * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
  *
  * @throws OtraException
  */
@@ -210,13 +208,11 @@ class ' . $upperActionName . 'Action extends Controller
 }
 
 /**
- * @param bool   $interactive
- * @param string $bundleName
- * @param string $moduleName
- * @param string $controllerName
- * @param string $controllerPath
- * @param string $actionName
- * @param bool   $consoleForce
+ * @param bool   $interactive    Do we allow questions to the user?
+ * @param string $controllerPath Absolute path to the controller
+ * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
  *
  * @throws OtraException
  */

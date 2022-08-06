@@ -47,7 +47,6 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param ?string $connection
    * @param bool    $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
    *                           needed in this case.
    *
@@ -364,7 +363,6 @@ class Sql
   /**
    * Close MySQL connection
    *
-   * @param ?bool $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
@@ -405,8 +403,6 @@ class Sql
   }
 
   /**
-   * @param string $string
-   *
    * @return string
    */
   public function quote(string $string) : string
@@ -462,8 +458,6 @@ class Sql
   }
 
   /**
-   * @param string $query
-   * @param array  $options
    *
    * @return PDOStatement|false
    */
@@ -498,7 +492,6 @@ class Sql
   /**
    * Configures a PDO attribute
    *
-   * @param mixed ...$params
    *
    * @return bool
    */
@@ -510,7 +503,6 @@ class Sql
   /**
    * Gets a database connection attribute
    *
-   * @param int $attribute
    *
    * @return bool|int|string|array|null
    */

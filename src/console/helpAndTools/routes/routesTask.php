@@ -26,7 +26,6 @@ use function otra\src\tools\{checkPHPPath,checkResourcePath};
 const ROUTES_ARG_ROUTE = 2;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

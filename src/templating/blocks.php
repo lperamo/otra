@@ -200,7 +200,6 @@ namespace otra\cache\php
     /**
      * Begins a template block.
      *
-     * @param string  $name
      * @param ?string $inline If we just want an inline block then we echo this string and close the block directly.
      */
     function block(string $name, ?string $inline = null): void

@@ -15,7 +15,6 @@ const SQL_CLEAN_ARG_CLEANING_LEVEL = 2;
 /**
  * Cleans sql and yml files in the case where there are problems that had corrupted files.
  *
- * @param array $argumentsVector
  *
  * @return void
  */

@@ -17,12 +17,6 @@ class Worker
   /**
    * Worker constructor.
    *
-   * @param string      $command
-   * @param string      $successMessage
-   * @param string      $waitingMessage
-   * @param string|null $failMessage
-   * @param int         $verbose
-   * @param int         $timeout
    * @param Worker[]    $subworkers
    */
   public function __construct(
@@ -38,8 +32,6 @@ class Worker
   }
 
   /**
-   * @param string $stdout
-   *
    * @return string
    */
   public function done(string $stdout) : string
@@ -48,9 +40,6 @@ class Worker
   }
 
   /**
-   * @param string $stdout
-   * @param string $stderr
-   * @param int    $exitCode
    *
    * @return string
    */

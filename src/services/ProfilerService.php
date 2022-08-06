@@ -30,8 +30,6 @@ class ProfilerService
   }
 
   /**
-   * @param string $file
-   *
    * @return false|string
    */
   public static function getLogs(string $file) : false|string

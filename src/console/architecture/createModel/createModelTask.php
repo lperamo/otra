@@ -48,7 +48,6 @@ namespace otra\console\architecture\createModel
     FUNCTION_START = SPACE_INDENT . 'public function ';
 
   /**
-   * @param array $argumentsVector
    *
    * @throws OtraException
    * @return void

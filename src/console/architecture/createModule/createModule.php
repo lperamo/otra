@@ -16,12 +16,10 @@ require CONSOLE_PATH . 'architecture/createFolder.php';
 
 /**
  * @param string $bundleBasePath The path where we put modules
- * @param string $moduleName
  * @param bool   $interactive    Do we allow questions to the user?
  * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive
  *                               mode or not. The false value by default will stop the execution if something does
  *                               not exist and show an error.
- *
  * @throws OtraException
  */
 function createModuleCore(string $bundleBasePath, string $moduleName, bool $interactive, bool $consoleForce): void
@@ -42,8 +40,7 @@ function createModuleCore(string $bundleBasePath, string $moduleName, bool $inte
  * @param bool   $consoleForce Determines whether we show an error when something is missing in non-interactive
  *                             mode or not. The false value by default will stop the execution if something does
  *                             not exist and show an error.
- * @param string $bundleName
- * @param string $moduleName
+ * @param string $bundleName   The bundle in which the module have to be created
  *
  * @throws OtraException
  */

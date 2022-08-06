@@ -63,8 +63,6 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
   }
 
   /**
-   * @param string $source
-   * @param string $destination
    *
    * @throws OtraException
    */

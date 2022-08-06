@@ -13,7 +13,6 @@ use const otra\cache\php\CORE_CSS_PATH;
 if (!function_exists(__NAMESPACE__ . '\\showBlocksVisually'))
 {
   /**
-   * @param int|string $key
    * @param array{
    *   content: string,
    *   endingBlock: bool,
@@ -55,8 +54,6 @@ if (!function_exists(__NAMESPACE__ . '\\showBlocksVisually'))
 
   /**
    * Shows the template blocks as seen by the OTRA template engine.
-   *
-   * @param bool $page
    */
   function showBlocksVisually(bool $page = true) : void
   {

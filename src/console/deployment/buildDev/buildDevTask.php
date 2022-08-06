@@ -40,7 +40,6 @@ const
   BUILD_DEV_ARG_SCOPE = 5;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

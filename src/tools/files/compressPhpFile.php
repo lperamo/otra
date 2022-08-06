@@ -4,9 +4,6 @@ namespace otra\tools\files;
 
 /**
  * Compress PHP files contents. Beware, it makes some hard compression that can lead to false positives (in strings)
- *
- * @param string $fileToCompress
- * @param string $outputFile
  */
 function compressPHPFile(string $fileToCompress, string $outputFile) : void
 {

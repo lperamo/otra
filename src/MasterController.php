@@ -220,10 +220,8 @@ abstract class MasterController
   /**
    * Encodes the value passed as parameter in order to create a cache file name
    *
-   * @param string $route
    * @param string $path     File's path
    * @param string $suffix   Suffix of the file name
-   * @param string $extension
    *
    * @return string The cache file name version of the file
    */
@@ -291,9 +289,6 @@ abstract class MasterController
   /**
    * Use the template engine to render the final template. Fast if the blocks stack is not used.
    *
-   * @param string $route
-   * @param string $templateFilename
-   * @param array  $variables
    *
    * @throws OtraException|ReflectionException
    * @return string
@@ -379,10 +374,6 @@ abstract class MasterController
   }
 
   /**
-   * @param string $templateFile
-   * @param array  $variables
-   * @param bool   $ajax
-   * @param string $route
    * @param array  $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
@@ -446,8 +437,6 @@ abstract class MasterController
    *
    * @param string $templateFile The file name
    * @param array  $variables    Variables to pass to the template
-   * @param string $route
-   * @param array  $viewResourcePath
    *
    * @throws OtraException
    * @throws ReflectionException

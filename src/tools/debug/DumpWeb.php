@@ -42,8 +42,6 @@ abstract class DumpWeb extends DumpMaster {
   private static bool $cssNotAdded = true;
 
   /**
-   * @param int $depth
-   *
    * @return string
    */
   #[Pure] private static function indentColors(int $depth) : string
@@ -60,8 +58,6 @@ abstract class DumpWeb extends DumpMaster {
 
   /**
    * Begins a foldable div
-   *
-   * @param bool $margin
    */
   public static function createFoldable(bool $margin = false) : void
   {
@@ -73,14 +69,10 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param int|string $paramType
-   * @param mixed      $param
-   * @param bool       $notFirstDepth
-   * @param int        $depth
    *
    * @throws ReflectionException
    */
-  private static function dumpArray(int|string $paramType, mixed $param, bool $notFirstDepth, int $depth) : void
+  private static function dumpArray(int|string $paramType, array $param, bool $notFirstDepth, int $depth) : void
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
@@ -123,9 +115,6 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param mixed $param
-   * @param bool  $notFirstDepth
-   * @param int   $depth
    *
    * @throws ReflectionException
    */
@@ -162,14 +151,9 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param string             $className
-   * @param object             $param
-   * @param ReflectionProperty $property
-   * @param int                $depth
    *
    * @throws ReflectionException
    */
-
   private static function analyseObjectVar(
     string $className,
     object $param,
@@ -259,10 +243,6 @@ abstract class DumpWeb extends DumpMaster {
   }
 
   /**
-   * @param int|string $paramKey
-   * @param mixed      $param
-   * @param int        $depth
-   * @param bool       $isArray
    *
    * @throws ReflectionException
    * @throws Exception
@@ -369,11 +349,6 @@ abstract class DumpWeb extends DumpMaster {
     echo self::ENDING_SPAN;
   }
 
-  /**
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param string $content
-   */
   protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     ?>
@@ -397,10 +372,8 @@ abstract class DumpWeb extends DumpMaster {
   /**
    * A nice dump function that takes as many parameters as we want to put.
    * Calls the DumpMaster::dump that will use the 'dumpCallback' function.
-   *
-   * @param mixed $params
    */
-  public static function dump(... $params) : void
+  public static function dump(mixed ... $params) : void
   {
     parent::dump(... $params);
   }

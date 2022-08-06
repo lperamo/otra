@@ -56,7 +56,6 @@ trait ProdControllerTrait
   }
 
   /**
-   * @param string $route
    *
    * @throws Exception
    * @return string[]
@@ -72,7 +71,6 @@ trait ProdControllerTrait
   /**
    * Returns the pre-generated css and the additional concatenated css
    *
-   * @param string $route
    *
    * @throws Exception
    * @return string The links to the css files or the style markup with the css inside
@@ -102,7 +100,6 @@ trait ProdControllerTrait
 
   /** Returns the pre-generated js and the additional concatenated js
    *
-   * @param string $route
    *
    * @throws Exception
    * @return string The links to the js files or the script markup with the js inside

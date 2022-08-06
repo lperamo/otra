@@ -45,8 +45,6 @@ if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT'))
 class DumpCli extends DumpMaster
 {
   /**
-   * @param int $depth
-   *
    * @return string
    */
   private static function indentColors(int $depth) : string
@@ -63,9 +61,6 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param int|string $paramType
-   * @param array      $param
-   * @param int        $depth
    *
    * @throws ReflectionException
    */
@@ -101,8 +96,6 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param object $param
-   * @param int    $depth
    *
    * @throws ReflectionException
    */
@@ -128,14 +121,9 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param string $className
-   * @param object $param
-   * @param ReflectionProperty $property
-   * @param int $depth
    *
    * @throws ReflectionException
    */
-
   private static function analyseObjectVar(
     string $className,
     object $param,
@@ -217,10 +205,6 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param int|string $paramKey
-   * @param mixed      $param
-   * @param int        $depth
-   * @param bool       $isArray
    *
    * @throws ReflectionException
    */
@@ -292,11 +276,6 @@ class DumpCli extends DumpMaster
     }
   }
 
-  /**
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param string $content
-   */
   protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     echo CLI_TABLE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;

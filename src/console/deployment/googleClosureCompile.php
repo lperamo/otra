@@ -17,11 +17,6 @@ const
   GOOGLE_CLOSURE_COMPILER_VERBOSITY = ['QUIET', 'DEFAULT', 'VERBOSE'];
 
 /**
- * @param int    $verbose
- * @param array  $typescriptConfig
- * @param string $jsFileIn
- * @param string $jsFileOut
- * @param string $compilationLevel
  *
  * @throws OtraException
  */

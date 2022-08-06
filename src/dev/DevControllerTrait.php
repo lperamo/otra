@@ -24,8 +24,8 @@ trait DevControllerTrait
   private static bool $debugBarHasBeenAdded = false;
 
   /**
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css]
+   * @param array $params     [...getParams, ...postParams, etc.]
    */
   public function __construct(array $otraParams = [], array $params = [])
   {
@@ -109,7 +109,6 @@ trait DevControllerTrait
   }
 
   /**
-   * @param string $route
    * @param array{css: string, js:string} $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
@@ -162,7 +161,6 @@ trait DevControllerTrait
    * Adds resources file to the template. Can be 'css' or 'js' resources.
    *
    * @param string $assetType 'css' or 'js'
-   * @param string $route
    * @param array{css: string, js:string} $viewResourcePath
    *
    * @throws Exception
@@ -304,7 +302,6 @@ trait DevControllerTrait
    * @param string[]   &$orderedArray
    * @param int        &$naturalPriorityIndex Used if $forcedPriorityIndex is not a string
    * @param int|string $forcedPriorityIndex  Used only if it is a string
-   * @param string     $code
    */
   private static function updateScriptsArray(
     array &$unorderedArray,

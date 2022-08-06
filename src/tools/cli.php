@@ -23,7 +23,6 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
    *
    * @param string      $cmd Command to pass
    * @param string|null $errorMessage
-   * @param bool        $launchExceptionOnError
    *
    * @throws OtraException
    * @return array{0: int, 1: string} Exit status code, content

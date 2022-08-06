@@ -90,7 +90,6 @@ unset($maskExists);
  *                                       Eg : /var/www/html/myProject/bundles/mybundle/myModule/resources/
  * @param string $resourceName           Full path including base file name and extension
  * @param string $extension              File extension
- * @param bool   $verbose
  *
  * @throws OtraException
  * @return string
@@ -200,8 +199,6 @@ function getPathInformations(string $fullName) : array
 }
 
 /**
- * @param array  $paths
- * @param string $realPath
  * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
  *                           True, if the file belongs to the scope we want to watch. Defaults to true.
  *
@@ -225,7 +222,6 @@ function isNotInThePath(array $paths, string $realPath, bool $checkScope = true)
 /**
  * @param int   $fullBinaryMask The binary masks that contains all the options: CSS, TS, JS, CSS etc...
  * @param bool  $maskExists     Does the mask it
- * @param int   $mask
  *
  * @return bool
  */

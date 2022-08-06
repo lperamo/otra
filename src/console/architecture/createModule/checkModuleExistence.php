@@ -12,8 +12,10 @@ use const otra\console\architecture\constants\{ARG_BUNDLE_NAME, ARG_MODULE_NAME}
 use function otra\console\architecture\doWeCreateIt;
 
 /**
- * @var bool  $interactive
- * @var bool  $consoleForce
+ * @var bool  $interactive     Do we allow questions to the user?
+ * @var bool  $consoleForce    Determines whether we show an error when something is missing in non-interactive mode or
+ *                             not. The false value by default will stop the execution if something does not exist
+ *                             and shows an error.
  * @var array $argumentsVector
  */
 // "_once ..." needed to avoid a repeatable function definition check

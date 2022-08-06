@@ -15,7 +15,6 @@ const
   CONVERT_IMAGES_ARG_KEEP = 5;
 
 /**
- * @param array $argumentsVector
  *
  * @throws OtraException
  * @return void

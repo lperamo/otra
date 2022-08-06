@@ -7,8 +7,6 @@ use const otra\cache\php\DIR_SEPARATOR;
 /**
  * Returns true if the PHP file exists, false otherwise.
  *
- * @param string $basePath
- * @param string $route
  *
  * @return bool
  */
@@ -25,9 +23,6 @@ function checkPHPPath(string $basePath, string $route) : bool
 /**
  * Returns true if the resource file exists, false otherwise.
  *
- * @param string $resourceExtension
- * @param string $basePath
- * @param string $shaName
  *
  * @return bool
  */

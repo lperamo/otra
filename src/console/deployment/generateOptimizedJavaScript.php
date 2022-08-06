@@ -19,12 +19,6 @@ const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 require CONSOLE_PATH . 'deployment/googleClosureCompile.php';
 
 /**
- * @param bool   $watching
- * @param int    $verbose
- * @param bool   $mustLaunchGcc
- * @param string $resourceFolder
- * @param string $baseName
- * @param string $resourceName
  *
  * @throws OtraException
  */

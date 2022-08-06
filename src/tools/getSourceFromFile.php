@@ -15,10 +15,6 @@ if (!function_exists(__NAMESPACE__ . '\\getSourceFromFile'))
   /**
    * Returns the portion of a file in a certain range around a specific line.
    *
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param int    $range
-   * @param int    $padding
    *
    * @return string
    */
@@ -50,10 +46,6 @@ if (!function_exists(__NAMESPACE__ . '\\getSourceFromFile'))
   /**
    * Returns the portion of a file in a certain range around a specific line.
    *
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param int    $range
-   * @param int    $padding
    *
    * @return string
    */
