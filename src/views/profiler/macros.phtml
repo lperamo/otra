@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace otra\src\views\profiler;
 
+use JsonException;
+
 const
   TRACE_LABELS = [
     'd' => 'Date',
@@ -159,10 +161,17 @@ function getPrettyStackTrace(array $stackTrace): string
  *
  * @param string $errorsLogs
  * @param string $noLogsMessage
+ *
+ * @throws JsonException
  */
 function showLogs(string $errorsLogs, string $noLogsMessage) : void
 {
-  $errorsLogs = json_decode(substr($errorsLogs, 0, -2) . ']', true);
+  $errorsLogs = json_decode(
+    substr($errorsLogs, 0, -2) . ']',
+    true,
+    512,
+    JSON_THROW_ON_ERROR
+  );
 
   if (empty($errorsLogs))
   {
@@ -193,7 +202,12 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
           $value = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
           break;
         case 'm':
-          $decodedMessage = json_decode($tracePropertyValue, true);
+          $decodedMessage = json_decode(
+            $tracePropertyValue,
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+          );
           $tracePropertyValue = json_last_error() === JSON_ERROR_NONE ? $decodedMessage : [$tracePropertyValue];
           $value = '';
 

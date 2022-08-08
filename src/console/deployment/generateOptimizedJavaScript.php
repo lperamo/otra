@@ -20,7 +20,7 @@ require CONSOLE_PATH . 'deployment/googleClosureCompile.php';
 
 /**
  *
- * @throws OtraException
+ * @throws JsonException|OtraException
  */
 function generateJavaScript(
   bool $watching,
@@ -49,7 +49,12 @@ function generateJavaScript(
    *   }
    * } $typescriptConfig
    */
-  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
+  $typescriptConfig = json_decode(
+    file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON),
+    true,
+    512,
+    JSON_THROW_ON_ERROR
+  );
 
   if ($typescriptConfig === null)
   {

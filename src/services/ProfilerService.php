@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace otra\services;
 
+use JsonException;
 use otra\OtraException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
 use function otra\tools\{rawSqlPrettyPrint, trans};
@@ -30,6 +31,7 @@ class ProfilerService
   }
 
   /**
+   * @throws JsonException
    * @return false|string
    */
   public static function getLogs(string $file) : false|string
@@ -39,14 +41,17 @@ class ProfilerService
 
     /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
-      '[' . substr($contents, 0, -2) . ']',
-      true
+      substr($contents, 0, -2) . ']',
+      true,
+      512,
+      JSON_THROW_ON_ERROR
     );
 
     require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
     $basePathLength = strlen(BASE_PATH);
     ob_start();
+
     foreach($requests as $request)
     {
       ?>
