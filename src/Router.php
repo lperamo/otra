@@ -87,6 +87,7 @@ abstract class Router
 
     $otraParams['route'] = $route;
     $otraParams['css'] = $otraParams['js'] = false;
+    $otraParams['internalRedirect'] = $internalRedirect;
 
     // Do we have some resources for this route...
     if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]))

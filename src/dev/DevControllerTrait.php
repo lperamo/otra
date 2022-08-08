@@ -24,7 +24,7 @@ trait DevControllerTrait
   private static bool $debugBarHasBeenAdded = false;
 
   /**
-   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css]
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
    * @param array $params     [...getParams, ...postParams, etc.]
    */
   public function __construct(array $otraParams = [], array $params = [])

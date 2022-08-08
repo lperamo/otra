@@ -15,7 +15,7 @@ use otra\{Controller, OtraException, services\ProfilerService, Session};
 class TemplateStructureAction extends Controller
 {
   /**
-   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css]
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
    * @param array $params     [...getParams, ...postParams, etc.]
    *
    * @throws OtraException|ReflectionException
