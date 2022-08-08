@@ -236,6 +236,14 @@ abstract class Session
 
   public static function getNativeSessionData(): array
   {
-      return [array_filter($_SESSION, fn($sessionValue) => !in_array($sessionKey, self::$matches))];
+    $result = [];
+
+    foreach($_SESSION as $sessionKey => $sessionValue)
+    {
+      if (!in_array($sessionKey, array_values(self::$matches)))
+        $result[$sessionKey] = $sessionValue;
+    }
+
+    return $result;
   }
 }
