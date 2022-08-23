@@ -82,7 +82,7 @@ if (!file_exists($tplPath))
 $pathAndFile = ARG_CACHE_PATH . 'tpl/' . ARG_SHA_NAME;
 
 // remove extra spaces
-$content = preg_replace('@\s{2,}@', ' ', $content);
+$content = preg_replace('@\s{2,}(?![^<]*</pre>)@', ' ', $content);
 
 // strips HTML comments that are not HTML conditional comments and write the content
 file_put_contents($pathAndFile, preg_replace('@<!--.*?-->@', '', $content));
