@@ -237,6 +237,7 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
             {
               'a' => showMessageBlock('Ajax', $messageProperty),
               'f' => showMessageBlock('Path', beautifyPath($messageProperty)),
+              'hrc' => showMessageBlock('HTTP response code', (string) $messageProperty),
               'p' => showMessageBlock('Pattern', $messageProperty),
               'r' => showMessageBlock('Route', $messageProperty),
               's' => $stackTraceInfo,

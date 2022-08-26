@@ -38,7 +38,8 @@ trait DevControllerTrait
       json_encode(
         [
           'r' => $this->route,
-          'p' => $this->pattern
+          'p' => $this->pattern,
+          'hrc' => http_response_code()
         ],
         Logger::LOG_JSON_MASK
       ),
