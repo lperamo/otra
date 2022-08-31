@@ -56,9 +56,9 @@ abstract class Router
       'module' => $module
     ] =
       $otraParams = array_combine(
-      ['pattern', 'bundle', 'module', 'controller', 'action'],
-      array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
-    );
+        ['pattern', 'bundle', 'module', 'controller', 'action'],
+        array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
+      );
 
     $finalAction = '';
 
@@ -137,20 +137,66 @@ abstract class Router
   }
 
   /**
-   * Check if the pattern is present among the routes.
+   * Check if the pattern is present among the routes and launch a 404 error page it it does not
    *
-   * @param string $userUrl          The pattern to check
-   *
-   * @return array{0:string,1:string[]} The route and the parameters if they exist, false otherwise
+   * @param string $userUrl The pattern to check
    *
    * @throws OtraException
+   * @return array{0:string,1:string[]} The route and the parameters if they exist, false otherwise
    */
   public static function getByPattern(string $userUrl) : array
+  {
+    [$patternFound, $routeName, $firstBracketPosition, $foundParameters, $routeUrl] = self::doesPatternExist($userUrl);
+
+    // We do not have been able to find a matching route
+    if (!$patternFound)
+    {
+      header('HTTP/1.0 404 Not Found');
+
+      return array_key_exists('404', Routes::$allRoutes) ? ['404', []] : ['otra_404', []];
+    }
+
+    // The route is found, do we have parameters to get?
+    if ($firstBracketPosition === false)
+      return [$routeName, []];
+
+    // We have found parameters so let's get them!
+    array_shift($foundParameters);
+    $params = [];
+
+    // get the parameters names
+    preg_match_all('@{([^}]+)}@', $routeUrl, $routeParameters);
+
+    // remove the global result
+    array_shift($routeParameters);
+
+    // flatten the parameters array
+    $routeParameters = $routeParameters[0];
+
+    // finalizing the parameters array
+    foreach($foundParameters as $foundParameterKey => $foundParameter)
+    {
+      $params[$routeParameters[$foundParameterKey]]= $foundParameter[0];
+    }
+
+    return [$routeName, $params];
+  }
+
+  /**
+   * Check if the pattern is present among the routes.
+   *
+   * @param string $userUrl The pattern to check
+   *
+   * @throws OtraException
+   * @return array{0:bool,1:string,2:int,3:array,4:string} [$patternFound, $routeName, $firstBracketPosition, $foundParameters, $routeUrl]
+   */
+  public static function doesPatternExist(string $userUrl) : array
   {
     if (empty(Routes::$allRoutes))
       throw new OtraException('There are currently no routes.');
 
     $patternFound = false;
+    $foundParameters = [];
     $interrogationMarkPosition = mb_strpos($userUrl, '?');
     $userUrlHasGetParameters = $interrogationMarkPosition !== false;
 
@@ -217,37 +263,10 @@ abstract class Router
     }
 
     // We do not have been able to find a matching route
-    if (!$patternFound)
-    {
-      header('HTTP/1.0 404 Not Found');
-
-      return array_key_exists('404', Routes::$allRoutes) ? ['404', []] : ['otra_404', []];
-    }
-
-    // The route is found, do we have parameters to get?
-    if ($firstBracketPosition === false)
-      return [$routeName, []];
-
-    // We have found parameters so let's get them!
-    array_shift($foundParameters);
-    $params = [];
-
-    // get the parameters names
-    preg_match_all('@{([^}]+)}@', $routeUrl, $routeParameters);
-
-    // remove the global result
-    array_shift($routeParameters);
-
-    // flatten the parameters array
-    $routeParameters = $routeParameters[0];
-
-    // finalizing the parameters array
-    foreach($foundParameters as $foundParameterKey => $foundParameter)
-    {
-      $params[$routeParameters[$foundParameterKey]]= $foundParameter[0];
-    }
-
-    return [$routeName, $params];
+    if ($patternFound)
+      return [true, $routeName, $firstBracketPosition, $foundParameters, $routeUrl];
+    else
+      return [false, null, null, null, null];
   }
 
   /**
@@ -264,5 +283,15 @@ abstract class Router
     }
 
     return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL] . $paramsString;
+  }
+
+  /**
+   * @return string Long route name without parameters with no ending slash
+   */
+  public static function getRouteUrlWithoutParameters(string $routeName) : string
+  {
+    $routeLongName = Routes::$allRoutes[$routeName][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL];
+
+    return mb_substr($routeLongName, 0, strpos($routeLongName, '{') - 1);
   }
 }
