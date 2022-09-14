@@ -133,5 +133,6 @@ try
       ISSUE_LOG_PATH
     );
 
+  header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
   echo 'Server in ' . ($error ? 'great ' : '') . 'trouble. Please come back later !';
 }
