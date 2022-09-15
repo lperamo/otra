@@ -336,10 +336,8 @@ function genWatcher(array $argumentsVector): void
     if (WATCH_FOR_PHP_FILES)
     {
       // Does the PHP path belongs to a valid defined path ? If yes, we process it
-      if (isNotInThePath(PATHS_TO_HAVE_PHP, $realPath))
-        continue;
-
-      if ($extension === 'php' || $isFolder)
+      if (!isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
+        && ($extension === 'php' || $isFolder))
       {
         $phpEntriesToWatch[] = $realPath;
 
