@@ -51,7 +51,7 @@ use otra\Router;
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))
 {
-  header('Content-Type: text/html; charset=utf-8');
+  header('Content-Type: text/html;charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
   Router::get(
