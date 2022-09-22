@@ -48,7 +48,7 @@ const DEPLOY_ARG_MASK = 2,
  * @throws OtraException
  * @return void
  */
-function deployTask(array $argumentsVector) : void
+function deploy(array $argumentsVector) : void
 {
   // **** Checking the deployment config parameters ****
   if (!isset(AllConfig::$deployment))
