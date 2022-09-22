@@ -64,7 +64,7 @@ try
   ini_set('session.cache_limiter', 'private');
   // Prevents from having thousands of session files that dramatically break performance when we use a JMeter test with
   // thousands of iterations
-  if ($_SERVER['JMETER'] === 'test')
+  if (isset($_SERVER['JMETER']) && $_SERVER['JMETER'] === 'test')
   {
     ini_set('session.gc_maxlifetime', 2);
     session_gc();
@@ -78,7 +78,7 @@ try
   ]);
 
   // Prevents the cache from disturbing the statistics when doing JMeter tests
-  if ($_SERVER['JMETER'] === 'test')
+  if (isset($_SERVER['JMETER']) && $_SERVER['JMETER'] === 'test')
     header('Cache-Control: no-cache');
 
   header_remove('Expires');
