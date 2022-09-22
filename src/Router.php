@@ -78,7 +78,11 @@ abstract class Router
     ob_start();
 
     if (!array_key_exists($finalAction, CLASSMAP))
-      $finalAction = Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY] . '\\' . $finalAction;
+      $finalAction = (
+        isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY])
+          ? Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY] . '\\'
+          : ''
+        ) . $finalAction;
 
     ob_end_clean();
 
