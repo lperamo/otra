@@ -59,7 +59,7 @@ try
     ) && Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
 
-  ini_set('session.save_path', CACHE_PATH . 'php/sessions/');
+  ini_set('session.save_path', CACHE_PATH . 'php/sessions');
   // Put this "cache_limiter" option also sets the header 'Cache-Control: private, max-age=10800'
   ini_set('session.cache_limiter', 'private');
   // Prevents from having thousands of session files that dramatically break performance when we use a JMeter test with
