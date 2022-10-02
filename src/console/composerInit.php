@@ -15,6 +15,8 @@ require VENDOR_DIR . 'console/colors.php';
 
 echo CLI_BASE, 'Creating global constants...', PHP_EOL;
 createGlobalConstants();
+// loads the created constants
+require __DIR__ . 'config/constants.php';
 
 require VENDOR_DIR . 'console/helpAndTools/version/versionTask.php';
 require VENDOR_DIR . 'console/architecture/init/initTask.php';
