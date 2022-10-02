@@ -133,7 +133,7 @@ function init() : void
 
   // Check if the sessions' folder exists
 
-  if (!file_exists(OTRA_SESSIONS_PATH) && !mkdir(OTRA_SESSIONS_PATH))
+  if (!file_exists(OTRA_SESSIONS_PATH) && !mkdir(OTRA_SESSIONS_PATH, 0777, true))
   {
     echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, OTRA_SESSIONS_PATH, CLI_ERROR, '.', PHP_EOL;
     throw new OtraException(code: 1, exit: true);
