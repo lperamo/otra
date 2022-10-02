@@ -132,7 +132,6 @@ function init() : void
   echo ERASE_SEQUENCE, 'Base architecture for the logs added', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
 
   // Check if the sessions' folder exists
-
   if (!file_exists(OTRA_SESSIONS_PATH) && !mkdir(OTRA_SESSIONS_PATH, 0777, true))
   {
     echo CLI_ERROR, 'Cannot create the folder ', CLI_INFO_HIGHLIGHT, OTRA_SESSIONS_PATH, CLI_ERROR, '.', PHP_EOL;
