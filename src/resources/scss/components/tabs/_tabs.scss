@@ -1,0 +1,243 @@
+////
+/// @group Tabs
+/// @since 1.2
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:map';
+@use 'sass:meta';
+
+// loading theming component
+@use '../../components/theming/theming';
+
+// loading specific configuration
+@use 'desktop';
+@use 'mobile';
+
+$defaults : (
+  'animate' : true,
+  'background': true,
+  'border' : null,
+  'tabs--background--color': 'tabs--background--color',
+  'tabs--background-hover--color': 'tabs--background-hover--color',
+  'tabs--border--color' : 'tabs--border--color',
+  'tabs--color' : 'tabs--color',
+  'tabs--div--background' : 'tabs--div--background',
+  'tabs--div--box-shadow' : 'tabs--div--box-shadow',
+  'count' : 4,
+  'suffix' : '',
+  'themes' : (
+    'light' : (
+      'default--tabs--background--color' : #ddd,
+      'default--tabs--background-hover--color' : #ddf,
+      'default--tabs--border--color' : #f00,
+      'default--tabs--color' : #000,
+      'default--tabs--div--background' : #eee,
+      'default--tabs--div--box-shadow' : 0 0 3px #000
+    ),
+    'dark' : (
+      'default--tabs--background--color' : #ddd,
+      'default--tabs--background-hover--color' : #ddf,
+      'default--tabs--border--color' : #fff,
+      'default--tabs--color' : #000,
+      'default--tabs--div--background' : #333,
+      'default--tabs--div--box-shadow' : 0 0 3px #000
+    )
+  )
+);
+
+input[type=radio][class^=tabs-radios] {
+  display : none;
+}
+
+ul[class^=tabs] {
+  display         : flex;
+  list-style-type : none;
+  margin          : 0;
+  padding         : 0;
+
+  @at-root li[class^=tabs--item] {
+    display : flex;
+
+    &:not(:last-child) {
+      margin-right : 1rem;
+    }
+
+    @at-root label[class^=tab--item-label] {
+      cursor      : pointer;
+      display     : flex;
+      align-items : center;
+    }
+  }
+}
+
+div.activatable-divs {
+  position : relative;
+
+  @at-root div.activatable-divs--item {
+    transition : opacity .5s;
+    position   : relative;
+  }
+}
+
+///
+/// Main mixin that creates tabs.
+///
+/// @access public
+/// @param  {array} $options ()
+///
+@mixin create($options : ()) {
+  $themeUsed : map.has-key($options, 'themes');
+  $options : map.merge($defaults, $options);
+
+  // extracting variables...
+  $background              : map.get($options, 'background');
+  $background-color        : map.get($options, 'tabs--background--color');
+  $hover--background-color : map.get($options, 'tabs--background-hover--color');
+  $border                  : map.get($options, 'border');
+  $border--color           : map.get($options, 'tabs--border--color');
+  $suffix                  : map.get($options, 'suffix');
+
+  @include theming.add-themes(map-get($options, 'themes'));
+
+  div.activatable-divs {
+    @include theming.to-theme(
+      (
+        #{&} : (
+          ('box-shadow', map.get($options, 'tabs--div--box-shadow')),
+          ('background', map.get($options, 'tabs--div--background'))
+        )
+      ),
+      $suffix,
+      $themeUsed
+    );
+
+    border-radius : map.get($options, 'border-radius');
+    margin-bottom : 4rem;
+    padding       : 2rem;
+  }
+
+  ul[class^=tabs] {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'tabs--color')
+      ),
+      $suffix,
+      $themeUsed
+    );
+
+    flex-wrap : wrap;
+  }
+
+  @if ($background != null) {
+    li.tabs--item {
+      transition : background-color .5s;
+
+      &:not(:hover) {
+        @include theming.to-theme(
+          (
+            '#{&}' : ('background-color', $background-color)
+          ),
+          $suffix,
+          $themeUsed
+        );
+      }
+
+      &:hover {
+        @include theming.to-theme(
+          (
+            '#{&}' : ('background-color', $hover--background-color)
+          ),
+          $suffix,
+          $themeUsed
+        );
+      }
+    }
+  }
+
+  @if ($border != null) {
+    li[class^=tabs--item] {
+      border-style : solid;
+      border-width : 1px;
+      transition   : border-color .5s;
+
+      &:hover {
+        @include theming.to-theme(
+          (
+            #{&} : ('border-color', $border--color)
+          ),
+          $suffix,
+          $themeUsed
+        );
+      }
+    }
+  }
+
+  $mega-selector--hidden : null;
+  $mega-selector--visible : null;
+  $mega-selector--background--hover-color : null;
+
+  input[type=radio].tabs-radios {
+    @for $i from 1 through map.get($options, 'count') {
+      &#{$suffix}:nth-of-type(#{$i}) {
+        @if (($border != null and $border != false) or ($background != null and $background != false)) {
+          &:checked ~ ul.tabs#{$suffix} > li.tabs--item#{$suffix}:nth-child(#{$i}):not(:hover) {
+            @if ($border != null and $border != false) {
+              @include theming.to-theme(
+                (
+                  #{&} : ('border-color', $border--color)
+                ),
+                $suffix,
+                $themeUsed
+              );
+            }
+
+            @if ($background != null and $background != false) {
+              $mega-selector--background--hover-color : if(
+                $mega-selector--background--hover-color == null,
+                &,
+                append($mega-selector--background--hover-color, &)
+              );
+            }
+          }
+        }
+
+        &:checked ~ div.activatable-divs#{$suffix} > div.activatable-divs--item {
+          &:nth-child(#{$i}) {
+            $mega-selector--visible : if($mega-selector--visible == null, &, append($mega-selector--visible, &));
+          }
+
+          &:not(:nth-child(#{$i})) {
+            $mega-selector--hidden : if($mega-selector--hidden == null, &, append($mega-selector--hidden, &));
+          }
+        }
+      }
+    }
+  }
+
+  @if ($mega-selector--background--hover-color != null) {
+    #{$mega-selector--background--hover-color} {
+      @include theming.to-theme(
+        (
+          #{&} : ('background-color', $hover--background-color)
+        ),
+        $suffix,
+        $themeUsed
+      );
+    }
+  }
+
+  #{$mega-selector--hidden} {
+    opacity : 0;
+
+    // those properties are only set to those values to prevent the active tab to have the height of the bigger hidden
+    // tab
+    height   : 0;
+    overflow : hidden;
+  }
+
+  #{$mega-selector--visible} {
+    opacity : 1;
+  }
+}

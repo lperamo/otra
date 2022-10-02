@@ -18,23 +18,24 @@
   },
   "prefer-stable": true,
   "require": {
-    "php": ">=8.0.0",
+    "php": ">=8.1.0",
+    "ext-curl": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "symfony/yaml": "5.2.10"
+    "ext-openssl": "*",
+    "ext-zend-opcache": "*",
+    "ext-zlib": "*",
+    "symfony/yaml": "6.1.*",
+    "ext-pdo": "*"
   },
   "require-dev": {
-    "ext-curl": "*",
     "ext-inotify": "*",
-    "ext-openssl": "*",
-    "ext-pdo": "*",
     "ext-pdo_mysql": "*",
-    "ext-zlib": "*"
+    "rector/rector": "^0.13.10"
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",
-    "ext-openssl": "Needed to encrypt passwords securely",
-    "ext-zend-opcache": "Needed to use the preloading feature available since PHP 7.4."
+    "ext-openssl": "Needed to encrypt passwords securely"
   }
 }

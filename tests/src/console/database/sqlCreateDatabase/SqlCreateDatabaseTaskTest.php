@@ -8,10 +8,11 @@ use otra\console\database\Database;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH,PROD,TEST_PATH};
-use function otra\tools\{copyFileAndFolders, removeFieldScopeProtection, setScopeProtectedFields};
+use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses
@@ -27,10 +28,15 @@ class SqlCreateDatabaseTaskTest extends TestCase
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
+    DATABASE_SCHEMA_FORCE_SQL = self::CONFIG_FOLDER_SQL . 'database_schema_force.sql',
+    OTRA_BINARY = 'otra.php',
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_FILE_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/' . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . 'tables_order.yml';
+
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws ReflectionException
@@ -46,6 +52,10 @@ class SqlCreateDatabaseTaskTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
     require(self::TEST_CONFIG_GOOD_PATH);
+
+    // clean up the SQL that force database schema creation if it exists
+    if (file_exists(self::DATABASE_SCHEMA_FORCE_SQL))
+      unlink(self::DATABASE_SCHEMA_FORCE_SQL);
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -70,7 +80,6 @@ class SqlCreateDatabaseTaskTest extends TestCase
     setScopeProtectedFields(
       Database::class,
       [
-        'boolSchema' => false,
         'folder' => 'tests/src/bundles/',
         'pathSql' => self::CONFIG_FOLDER_SQL,
         'schemaFile' => self::SCHEMA_ABSOLUTE_PATH,
@@ -82,15 +91,16 @@ class SqlCreateDatabaseTaskTest extends TestCase
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_SQL_CREATE_DATABASE,
-      ['otra.php', self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME, 'true']
+      [self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME, 'true']
     );
 
     // Testing
-    $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '_force.sql';
+    $endPath = (new ReflectionClass(Database::class))->getProperty('databaseFile')->getValue()
+      . '_force.sql';
     define(__NAMESPACE__ . '\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
-      SCHEMA_FORCE_PATH
+      SCHEMA_FORCE_PATH,
     );
 
     // cleaning

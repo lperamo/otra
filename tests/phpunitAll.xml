@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" verbose="true"
          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
-  <coverage pathCoverage="true">
+  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
     <include>
       <directory suffix=".php">../</directory>
       <directory suffix=".php">../bundles/*</directory>
@@ -34,6 +34,9 @@
     <testsuite name="Router">
       <file>./src/RouterTest.php</file>
     </testsuite>
+    <testsuite name="Session">
+      <file>./src/SessionTest.php</file>
+    </testsuite>
     <testsuite name="Database console tasks functions">
       <file>./src/console/DatabaseTest.php</file>
     </testsuite>
@@ -47,7 +50,9 @@
       <directory>./src/console/helpAndTools</directory>
     </testsuite>
     <testsuite name="Console tools">
-      <directory>./src/console/ToolsTest.php</directory>
+      <file>./src/console/LaunchTaskTest.php</file>
+      <file>./src/console/LaunchTaskPosixWayTest.php</file>
+      <file>./src/console/ToolsTest.php</file>
     </testsuite>
     <testsuite name="SQL DBAL and the SQL drivers">
       <directory>./src/database</directory>

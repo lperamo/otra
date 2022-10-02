@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace src\console;
 
 use phpunit\framework\TestCase;
+use ReflectionException;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};
 use function otra\console\
@@ -71,12 +72,15 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       '[\'test\'=>[\'test2\'=>\'test3\'],\'test4\'=>5]',
       $reducedArray
     );
   }
 
+  /**
+   * @throws ReflectionException
+   */
   public function testConvertLongArrayToShort():void
   {
     // launching
@@ -90,7 +94,7 @@ class ToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       "['test'=>['test2'=>[0=>'test3']],'test2'=>[0=>3],'test3'=>[],'test4'=>true]",
       $reducedArray
     );

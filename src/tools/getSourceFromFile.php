@@ -10,15 +10,11 @@ namespace otra\tools;
 use SplFileObject;
 use const otra\console\{ADD_BOLD, CLI_DUMP_LINE_HIGHLIGHT, CLI_LINE_DUMP, END_COLOR, REMOVE_BOLD_INTENSITY};
 
-if (!function_exists('otra\tools\getSourceFromFile'))
+if (!function_exists(__NAMESPACE__ . '\\getSourceFromFile'))
 {
   /**
    * Returns the portion of a file in a certain range around a specific line.
    *
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param int    $range
-   * @param int    $padding
    *
    * @return string
    */
@@ -37,10 +33,8 @@ if (!function_exists('otra\tools\getSourceFromFile'))
     {
       $fileHandler->seek($index - 1);
       $sourceContent .= $padding . '<i>';
-      $lineContent = nl2br(htmlentities($fileHandler->current()));
-      $sourceContentMiddle = ((string) $index) . ' ' . '</i><span>' . ($lineContent !== '' ? $lineContent : '<br/>') .
-        '</span>';
-
+      $lineContent = str_replace(PHP_EOL, '', htmlentities($fileHandler->current()));
+      $sourceContentMiddle = ((string) $index) . ' ' . '</i><span>' . $lineContent . '<br/></span>';
       $sourceContent .= ($index === $sourceLine)
         ? '<b>' . $sourceContentMiddle . '</b>'
         : $sourceContentMiddle;
@@ -52,10 +46,6 @@ if (!function_exists('otra\tools\getSourceFromFile'))
   /**
    * Returns the portion of a file in a certain range around a specific line.
    *
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param int    $range
-   * @param int    $padding
    *
    * @return string
    */

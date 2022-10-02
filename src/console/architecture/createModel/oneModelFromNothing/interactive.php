@@ -44,7 +44,7 @@ echo DOUBLE_ERASE_SEQUENCE;
 while (file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName))
 {
   $modelName = promptUser($modelExists, $modelExists);
-  // We update the informations right now in order to deliver precise error messages
+  // We update the information right now in order to deliver precise error messages
   [$modelFullName, $modelExists] = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
   echo DOUBLE_ERASE_SEQUENCE;
 }
@@ -66,4 +66,3 @@ while ('no!more' !== $property)
 }
 
 endingTask($modelLocation, $modelName, $modelFullName, $propertiesCode, $functions, $bundleName);
-

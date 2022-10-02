@@ -9,7 +9,7 @@ use phpunit\framework\TestCase;
 use function otra\tools\delTree;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD};
 use const otra\console\
-{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_TABLE, CLI_WARNING, ERASE_SEQUENCE, END_COLOR, SUCCESS};
+{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
@@ -27,7 +27,7 @@ class CreateHelloWorldTaskTest extends TestCase
     OTRA_LABEL_BASE_PATH_PLUS = 'BASE_PATH + ',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
@@ -91,8 +91,8 @@ class CreateHelloWorldTaskTest extends TestCase
       'bundles/HelloWorld/frontend/views/index/home.phtml' . END_COLOR . self::OTRA_LABEL_CREATED . SUCCESS .
       'Adding stylesheets...' . PHP_EOL . ERASE_SEQUENCE . 'Stylesheets added' . SUCCESS .
       'Adding favicons...' . PHP_EOL . ERASE_SEQUENCE . 'Favicons added' . SUCCESS .
-      CLI_WARNING . 'Nothing to put into ' . CLI_INFO_HIGHLIGHT . BUNDLES_PATH . 'config/Config.php' .
-      CLI_WARNING . ' so we\'ll delete the main file if it exists.' . END_COLOR . PHP_EOL .
+      CLI_TABLE . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT . 'bundles/config/Config.php' . CLI_BASE .
+      ' updated' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL .
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'bundles/config/Routes.php' . CLI_BASE .
       self::OTRA_LABEL_UPDATED . SUCCESS .
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'cache/php/security/dev/HelloWorld.php' . CLI_BASE .
@@ -121,6 +121,7 @@ class CreateHelloWorldTaskTest extends TestCase
     if (!OTRA_PROJECT)
     {
       unlink(BUNDLES_PATH . 'config/Routes.php');
+      array_map(unlink(...), glob(BUNDLES_PATH . 'config/*'));
       rmdir(BUNDLES_PATH . 'config');
     }
   }

@@ -1,28 +1,57 @@
-/bundles
-/cache
-/cert
-/config
-/phpdoc/
-# reports folder is used to store reports that will be sent to SonarQube instances.
-/reports
-/sassdoc
-/vendor
-/web
-!**.gitkeep
-/src/console/closure-compiler.log
-/src/console/shellCompletions/shellCompletions.sh
+# ide things
 /.idea
+
+# output from tests
 **/tests/coverageHtml
 **/tests/coverage.xml
 **/tests/report.xml
 /**/.phpunit.result.cache
-**/css/**/*.css*
+/**/.phpunit.cache/test-results
+
+# SASS cache and generated documentation
 **/scss/.sass-cache/**
-**/js/**/*.js*
+/sassdoc
+
+# TypeScript configuration
 /tsconfig*
-/tmp/
+
+# SonarQube cache
 /.scannerwork/
+# reports folder is used to store reports that will be sent to SonarQube instances.
+/reports
+
+# Tests coverage cache
+/tests/.coverage-cache
+
+# NodeJS modules
 /node_modules/
+
+# ESLint configuration
 /.eslintrc.json
-/logs/**.txt
 /.eslintrc.json.dist
+
+# Generated PHPDoc
+/phpdoc/
+
+# logs
+/logs/**/**.txt
+phpunit-log.txt
+sonar-log.txt
+
+# Packages from Composer
+/vendor
+
+# Google Closure Compiler logs
+/src/console/closure-compiler.log
+
+# OTRA
+/bundles
+/cache
+/cert
+/config
+/tmp/
+/web
+!**.gitkeep
+/src/console/shellCompletions/shellCompletions.sh
+**/css/**/*.css*
+**/js/**/*.js*

@@ -6,10 +6,10 @@ namespace otra\tools;
  * @package otra\tools
  */
 
-if (!function_exists('otra\tools\t'))
+if (!function_exists(__NAMESPACE__ . '\\trans'))
 {
   // Will be the future translation feature
-  function t(string $text): string
+  function trans(string $text): string
   {
     return $text;
   }
@@ -27,10 +27,10 @@ if (!function_exists('otra\tools\t'))
       $language = strtok($language, ';');
     };
 
-    $filterLangs = function (string $lang) use ($acceptedLanguages) : bool
-    {
-      return in_array($lang, $acceptedLanguages);
-    };
+    $filterLangs = fn(string $lang): bool => in_array($lang, $acceptedLanguages);
+
+    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+      return 'en';
 
     $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
     array_walk($languages, $setLang);
@@ -38,4 +38,3 @@ if (!function_exists('otra\tools\t'))
     return array_filter($languages, $filterLangs)[0] ?: 'en';
   }
 }
-

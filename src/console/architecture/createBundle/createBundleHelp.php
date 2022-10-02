@@ -11,15 +11,12 @@ namespace otra\console\architecture\createBundle;
 use otra\console\TasksManager;
 use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
-$showMaskOption = static function (string $text) : string
-{
-  return STRING_PAD_FOR_OPTION_FORMATTING . $text;
-};
+$showMaskOption = static fn(string $text) : string => STRING_PAD_FOR_OPTION_FORMATTING . $text;
 
 return [
   'Creates a bundle.',
   [
-    'bundle name' => 'The name of the bundle!',
+    'bundle-name' => 'The name of the bundle!',
     'mask' => 'In addition to the module, it will create a folder for :' . PHP_EOL .
       $showMaskOption('0 => nothing (default)') . PHP_EOL .
       $showMaskOption('1 => config') . PHP_EOL .

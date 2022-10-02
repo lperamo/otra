@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace src\tools\workers;
 
-use ReflectionException;
 use otra\tools\workers\{Worker};
 use phpunit\framework\TestCase;
-use const otra\cache\php\CORE_PATH;
 use const otra\console\{CLI_ERROR, END_COLOR};
-use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,26 +16,25 @@ class WorkerTest extends TestCase
     COMMAND = 'sleep',
     SUCCESS_MESSAGE = 'hello',
     WAITING_MESSAGE = 'waiting for the final message',
+    FAIL_MESSAGE = 'fail',
     VERBOSE = 0,
     TIMEOUT = 120,
     WHITE = "\e[15;2]";
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
-   * @throws ReflectionException
-   *
    * @author Lionel Péramo
    */
   public function testWorker(): void
   {
     // launching
-    require_once CORE_PATH . 'tools/removeFieldProtection.php';
     $worker = new Worker(
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE,
       self::TIMEOUT
     );
@@ -47,22 +43,22 @@ class WorkerTest extends TestCase
     self::assertInstanceOf(Worker::class, $worker);
 
     self::assertIsString($worker->command);
-    self::assertEquals(self::COMMAND, $worker->command);
+    self::assertSame(self::COMMAND, $worker->command);
 
     self::assertIsInt($worker->verbose);
-    self::assertEquals(self::VERBOSE, $worker->verbose);
+    self::assertSame(self::VERBOSE, $worker->verbose);
 
-    $workerSuccessMessage = removeFieldScopeProtection(Worker::class, 'successMessage')->getValue($worker);
-    self::assertIsString($workerSuccessMessage);
-    self::assertEquals(self::SUCCESS_MESSAGE, $workerSuccessMessage);
+    self::assertIsString($worker->successMessage);
+    self::assertSame(self::SUCCESS_MESSAGE, $worker->successMessage);
 
-    $workerWaitingMessage = removeFieldScopeProtection(Worker::class, 'waitingMessage')->getValue($worker);
-    self::assertIsString($workerWaitingMessage);
-    self::assertEquals(self::WAITING_MESSAGE, $workerWaitingMessage);
+    self::assertIsString($worker->waitingMessage);
+    self::assertSame(self::WAITING_MESSAGE, $worker->waitingMessage);
 
-    $workerTimeout = removeFieldScopeProtection(Worker::class, 'timeout')->getValue($worker);
-    self::assertIsInt($workerTimeout);
-    self::assertEquals(self::TIMEOUT, $workerTimeout);
+    self::assertIsString($worker->waitingMessage);
+    self::assertNull($worker->failMessage);
+
+    self::assertIsInt($worker->timeout);
+    self::assertSame(self::TIMEOUT, $worker->timeout);
   }
 
   /**
@@ -73,13 +69,18 @@ class WorkerTest extends TestCase
   public function testDone(): void
   {
     // launching
-    require_once CORE_PATH . 'tools/removeFieldProtection.php';
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      null,
+      0
+    );
     $string = $worker->done('Worker command done.');
 
     // testing
     self::assertIsString($string);
-    self::assertEquals('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
+    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
   }
 
   /**
@@ -95,17 +96,50 @@ class WorkerTest extends TestCase
     define(__NAMESPACE__ . '\\TEST_STATUS', -1);
 
     // launching
-    $worker = new Worker(self::COMMAND, self::SUCCESS_MESSAGE, self::WAITING_MESSAGE, 0);
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      null,
+      0
+    );
     $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
     self::assertIsString($string);
-    self::assertEquals(
-      CLI_ERROR . 'Fail! The command was : "' . self::COMMAND . '"' . END_COLOR . PHP_EOL .
+    self::assertSame(
+      CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
       'Exit code : ' . TEST_STATUS,
       $string
     );
+  }
+
+  /**
+   * @depends testWorker
+   *
+   * @author Lionel Péramo
+   */
+  public function testFail_customMessage(): void
+  {
+    // context
+    define(__NAMESPACE__ . '\\TEST_STDOUT', 'Worker command failed.');
+    define(__NAMESPACE__ . '\\TEST_STDERR', 'my error.');
+    define(__NAMESPACE__ . '\\TEST_STATUS', -1);
+
+    // launching
+    $worker = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      self::FAIL_MESSAGE,
+      0
+    );
+    $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
+
+    // testing
+    self::assertIsString($string);
+    self::assertSame(self::FAIL_MESSAGE, $string);
   }
 }

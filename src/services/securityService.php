@@ -55,16 +55,15 @@ const
     PROD => []
   ];
 
-if (!function_exists('otra\services\getRandomNonceForCSP'))
+if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
 {
   // We handle the edge case of the blocks.php file that is included via a template and needs MasterController,
   // allowing the block.php file of the template engine system to work in production mode,
   // by creating a class alias. Disabled when passing via the command line tasks.
-  if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
+  if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli' && !defined('otra\\OTRA_STATIC'))
     class_alias('otra\cache\php\AllConfig', 'otra\config\AllConfig');
 
   /**
-   * @param string $directive
    *
    * @throws Exception
    * @return string
@@ -82,8 +81,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
    * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
-   * @param string                $route
-   * @param ?string               $routeSecurityFilePath
    * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
    *                                                        from MasterController
    *
@@ -105,7 +102,7 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
     // OTRA routes are not secure with CSP and permissions policies for the moment
     if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
     {
-      // Retrieve security instructions from the routes configuration file
+      // Retrieve security instructions from the routes' configuration file
       /** @var array<string,array<string,string>> $policiesFromUserConfig */
       $policiesFromUserConfig = require $routeSecurityFilePath;
 
@@ -120,7 +117,7 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
       else
       {
         $common = array_intersect($finalProcessedPolicies, $customPolicyDirectives);
-        $finalProcessedPolicies = array_merge($finalProcessedPolicies, $customPolicyDirectives);
+        $finalProcessedPolicies = [...$finalProcessedPolicies, ...$customPolicyDirectives];
 
         if (!empty($common))
         {
@@ -170,10 +167,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
     return [$finalPolicy, $finalProcessedPolicies];
   }
 
-  /**
-   * @param string  $route
-   * @param ?string $routeSecurityFilePath
-   */
   function addCspHeader(string $route, ?string $routeSecurityFilePath): void
   {
     if (!headers_sent())
@@ -190,10 +183,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
     }
   }
 
-  /**
-   * @param string  $route
-   * @param ?string $routeSecurityFilePath
-   */
   function addPermissionsPoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
   {
     if (!headers_sent())
@@ -208,8 +197,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
   /**
    * Handles strict dynamic mode for CSP
    *
-   * @param string $directive
-   * @param string $policy
    * @param array{
    *    'base-uri'?:string,
    *    'form-action'?:string,
@@ -224,7 +211,6 @@ if (!function_exists('otra\services\getRandomNonceForCSP'))
    *    'style-src'?:string,
    *    'script-src'?:string
    *  } $cspDirectives
-   * @param string $route
    */
   function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
   {

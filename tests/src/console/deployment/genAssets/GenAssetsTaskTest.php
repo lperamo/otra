@@ -9,13 +9,8 @@ use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\BASE_PATH;
 use const otra\config\VERSION;
-use const otra\console\CLI_ERROR;
-use const otra\console\CLI_GRAY;
-use const otra\console\CLI_INFO;
-use const otra\console\CLI_INFO_HIGHLIGHT;
-use const otra\console\CLI_SUCCESS;
-use const otra\console\CLI_WARNING;
-use const otra\console\END_COLOR;
+use const otra\console\
+{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
  * @runTestsInSeparateProcesses
@@ -27,10 +22,10 @@ class GenAssetsTaskTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
-    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 8,
+    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
     ROUTES_PADDING = 25;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -79,13 +74,16 @@ class GenAssetsTaskTest extends TestCase
       self::OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER . ' routes to process. Processing the routes ...' . PHP_EOL . PHP_EOL;
 
     $routesToTest = [
-      'otra_exception',
-      'otra_refreshSQLLogs',
-      'otra_clearSQLLogs',
-      'otra_profiler',
       'otra_404',
+      'otra_clearSQLLogs',
       'otra_css',
-      'otra_template_structure',
+      'otra_exception',
+      'otra_logs',
+      'otra_refreshSQLLogs',
+      'otra_requests',
+      'otra_routes',
+      'otra_sql',
+      'otra_templateStructure',
       'HelloWorld'
     ];
 
@@ -97,13 +95,18 @@ class GenAssetsTaskTest extends TestCase
         $outputExpected .= ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]';
       elseif (in_array(
         $route,
-        ['otra_exception', 'otra_refreshSQLLogs', 'otra_clearSQLLogs', 'otra_profiler', 'otra_404']
+        ['otra_404', 'otra_clearSQLLogs', 'otra_exception', 'otra_refreshSQLLogs']
       ))
         $outputExpected .= ' [' . CLI_INFO . 'Nothing to do' . CLI_GRAY . '] =>' . CLI_SUCCESS . ' OK' . END_COLOR;
-      elseif (in_array($route, ['otra_css', 'otra_template_structure']))
-        $outputExpected .= ' [' . CLI_INFO . 'NO SCREEN CSS' . CLI_GRAY . ']' .
+      elseif (in_array($route, ['otra_css', 'otra_logs', 'otra_requests', 'otra_routes', 'otra_templateStructure']))
+        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
           ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO JS' . CLI_GRAY . ']' .
+          ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
+      elseif ($route === 'otra_sql')
+        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
+          ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
+          ' [' . CLI_SUCCESS . 'JS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
       else
         $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .

@@ -19,42 +19,41 @@ abstract class Logger
     SESSION_BROWSER = '_browser',
     REMOTE_ADDR = 'REMOTE_ADDR';
 
+  final public const LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
+
   /**
    * Returns the date or also the ip address and the browser if different
    *
-   * @return string
+   * @return array
    */
-  private static function logIpTest() : string
+  private static function logIpTest() : array
   {
     if (!isset($_SESSION[self::SESSION_DATE]))
       $_SESSION[self::SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[self::SESSION_BROWSER] = '';
 
-    $infos = '';
+    $infos = [];
     $todayDate = date(DATE_ATOM, time());
 
     if ($todayDate !== $_SESSION[self::SESSION_DATE])
-      $infos .= '[' . ($_SESSION[self::SESSION_DATE] = $todayDate) . '] ';
+      $infos['d'] = $_SESSION[self::SESSION_DATE] = $todayDate;
 
     // if we come from console, adds it to the log
-    $infos .= (PHP_SAPI === 'cli') ? '[OTRA_CONSOLE] ' : '';
+    $infos['c'] = (PHP_SAPI === 'cli') ? '1' : '0';
 
     /** @var array{REMOTE_ADDR?: string, HTTP_USER_AGENT?: string} $_SERVER */
     // remote address ip is not set if we come from the console or if we are in localhost
-    $infos .= (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
-      ? '[' . ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR]) . '] '
-      : '';
+    $infos['i'] = (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
+      ? ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR])
+      : 'l';
 
     // user agent not set if we come from the console
-    if (isset($_SERVER[self::HTTP_USER_AGENT]) && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
-      return $infos . '[' .  ($_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT]) . '] ';
+    if (isset($_SERVER[self::HTTP_USER_AGENT])
+      && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
+      $infos['u'] = $_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT];
 
     return $infos;
   }
 
-  /**
-   * @param string $path
-   * @param string $message
-   */
   public static function logging(string $path, string $message) : void
   {
     if (is_writable($path))
@@ -67,61 +66,64 @@ abstract class Logger
 
   /**
    * Appends a message to the log file at logs/log.txt
-   *
-   * @param string $message
    */
   public static function log(string $message) : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
     self::logging(
       self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
-      self::logIpTest() . $message . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
     );
   }
 
   /**
    * Appends a message to the log file at the specified path appended to __DIR__
-   *
-   * @param string $message
-   * @param string $path
    */
   public static function logToRelativePath(string $message, string $path = '') : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
     self::logging(
       __DIR__ . DIR_SEPARATOR . $path . '.txt',
-      self::logIpTest() . $message . PHP_EOL
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
     );
   }
 
   /**
    * Appends a message to the log file at the specified path into log path
-   *
-   * @param string $message
-   * @param string $path
    */
-  public static function logTo(string $message, string  $path = '') : void
+  public static function logTo(string $message, string  $logPath = 'log') : void
   {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
+    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt';
+    $filePointer = fopen($logPath, 'r+');
+
+    if (!fread($filePointer, 1))
+      fwrite($filePointer, '[');
+
+    fclose($filePointer);
+
+    clearstatcache();
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt',
-      self::logIpTest() . $message . PHP_EOL
+      $logPath,
+      (!file_exists($logPath) || filesize($logPath) === 0 ? '[' : '') .
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
     );
   }
 
   /**
    * Logs all sql queries with the file name that launches it and the line number where it occurred.
-   *
-   * @param string $file
-   * @param int    $line
-   * @param string $message
-   * @param string $path
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {
     $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt';
-
+    clearstatcache();
     self::logging(
       $logPath,
       (
-      (!file_exists($logPath) || ($content = file_get_contents($logPath)) === false || '' === $content) ? '[' : '') .
+      (!file_exists($logPath) || filesize($logPath) === 0) ? '[' : '') .
       '{"file":"' . $file . '","line":' . $line . ',"query":"' .
       preg_replace(
         '/\s\s+/',
@@ -131,25 +133,73 @@ abstract class Logger
     );
   }
 
-  /**
-   * @param string $message
-   * @param string $errorType
-   */
-  public static function logExceptionOrErrorTo(string $message, string $errorType): void
+  public static function logExceptionOrErrorTo(string $message, string $errorType, array $traces): void
   {
+    clearstatcache();
+    $filePath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
+      ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt';
+    $infos = self::logIpTest();
+    $infos['m'] = $errorType . ' : ' . $message;
+    $infos['s'] = self::formatStackTracesForLog($traces);
     self::logging(
-      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
-        ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt',
-      self::logIpTest() . $errorType . ' : ' . $message . PHP_EOL . 'Stack trace : ' . PHP_EOL .
-        print_r(debug_backtrace(), true) . PHP_EOL
+      $filePath,
+      (!file_exists($filePath) || filesize($filePath) === 0 ? '[' : '') .
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
     );
   }
 
-  /**
-   * @param string $message
-   */
   public static function lg(string $message) : void
   {
     self::logTo($message, 'trace');
+  }
+
+  /**
+   * @return array
+   */
+  public static function formatStackTracesForLog(array $traces) : array
+  {
+    foreach ($traces as &$traceItems)
+    {
+      foreach ($traceItems as $traceKey => &$traceValue)
+      {
+        if ($traceKey === 'file')
+        {
+          $traceValue = str_replace(
+            [
+              BASE_PATH,
+              CORE_PATH
+            ],
+            [
+              'BASE_PATH + ',
+              'CORE_PATH + '
+            ],
+            $traceValue
+          );
+        }
+      }
+    }
+
+    return $traces;
+  }
+
+  /**
+   * We keep this code into a function only to lighten to useful code
+   * (that the code be slow when there is an error/exception is less important)
+   *
+   * @param $message
+   * @param $traces
+   */
+  public static function logWithStackTraces($message, $traces): void
+  {
+    Logger::logTo(
+      json_encode(
+        [
+          'm' =>  $message,
+          's' => self::formatStackTracesForLog($traces)
+        ],
+        Logger::LOG_JSON_MASK
+      ),
+      'classNotFound'
+    );
   }
 }

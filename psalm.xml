@@ -9,7 +9,7 @@
   totallyTyped="true"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="https://getpsalm.org/schema/config"
-  xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+  xsi:schemaLocation="https://getpsalm.org/schema/config https://psalm.dev/schema/config"
 >
   <globals>
     <var name="_SERVER"
@@ -23,8 +23,9 @@
   <stubs>
     <file name="cache/php/init/ClassMap.php" preloadClasses="true"/>
     <file name="cache/php/init/RouteManagement.php" preloadClasses="true"/>
+    <file name="../../lib/phpunit.phar" preloadClasses="true"/>
   </stubs>
- 
+
   <projectFiles>
     <directory name="config" />
     <directory name="src" />

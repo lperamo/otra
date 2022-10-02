@@ -23,9 +23,6 @@ class Error404ActionTest extends TestCase
 
   protected $preserveGlobalState = FALSE;
 
-  /**
-   * @throws OtraException
-   */
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
@@ -49,6 +46,9 @@ class Error404ActionTest extends TestCase
     }
   }
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();
@@ -86,7 +86,7 @@ class Error404ActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       file_get_contents(TEST_PATH . 'examples/error404.phtml'),
       $output,
       'Testing 404 error page output...'

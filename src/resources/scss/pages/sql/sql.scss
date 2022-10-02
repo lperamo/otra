@@ -1,0 +1,191 @@
+// loading configuration
+@use '../../configuration/devModeFonts';
+@use '../../configuration/themes' as *;
+
+// loading mixins
+@use '../../partials/debugBar/mixins';
+
+// loading EcoComposer components
+@use '../../components/styledButtons/ripple';
+@use '../../components/theming/theming';
+
+// loading partials
+@use '../../partials/profiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
+@include ripple.create(
+  ('themes': $themes)
+);
+
+#sql-container {
+  // box
+  box-sizing : border-box;
+  overflow   : auto;
+  padding    : 2rem;
+  // the following combination prevent to go outside the screen but taking all the space available in the flex container
+  flex-grow : 1;
+  width     : min-content;
+
+  // text
+  font-size  : 1.6rem;
+  // word-break is not supported by IE!
+  @supports (word-break: break-word) {
+    word-break : break-word;
+  }
+}
+
+.sql-buttons {
+  margin-bottom : 2rem;
+
+  @at-root .sql-buttons--item {
+    margin-right : 2rem;
+  }
+}
+
+// The text styles are here in order that CSS from the project that uses OTRA do not perturb the profiler CSS.
+@at-root .profiler {
+  padding     : 2em;
+
+  // text
+  font-family : devModeFonts.$debug--font;
+  font-size   : 10px;
+  line-height : 2em;
+
+  &--sql- {
+    &logs {
+      &::selection {
+        @include theming.to-theme(
+          (
+            #{&} : ('background', 'profiler--sql--logs--selection-color')
+          )
+        );
+      }
+
+      &--element {
+        // background
+        @include theming.to-theme(
+          (
+            #{&} + ':not(:hover)' : ('background', 'profiler--sql--logs--background-color')
+          )
+        );
+
+        box-shadow : 0 0 2px 0 #aaa;
+
+        // box
+        box-sizing    : border-box;
+        margin-bottom : 5px;
+        padding       : 20px 20px 0;
+        width         : 100%;
+
+        // positioning
+        display         : flex;
+        justify-content : space-between;
+
+        &:hover {
+          @include theming.to-theme(
+            (
+              #{&} : ('background', 'profiler--sql--logs--hover--background-color')
+            )
+          );
+        }
+
+        &--file,
+        &--line {
+          cursor : pointer;
+        }
+
+        &--file {
+          @include mixins.glowingRed();
+
+          word-break : break-all;
+        }
+
+        &--line {
+          @include mixins.glowingYellowGreen();
+        }
+
+        &--left-block {
+          width : calc(100% - 85px);
+        }
+
+        &--ripple {
+          align-self: center;
+        }
+      }
+
+      &--request {
+        // positioning
+        margin-top : 1rem;
+
+        // text
+        font-family : "Courier New", monospace;
+        font-size   : 1.4rem;
+      }
+
+      &--field {
+        @include theming.to-theme(
+          (
+            #{&} : (
+              ('background-image', 'profiler--field--gradient'),
+              ('color', 'profiler--field--color'),
+              ('text-shadow', 'profiler--field--text-shadow')
+            )
+          )
+        );
+
+        // supports directive for IE (needed by WebHint...)
+        @supports (-webkit-background-clip: text) {
+          -webkit-background-clip : text;
+          -webkit-text-fill-color : transparent;
+        }
+      }
+
+      &--clause {
+        @include mixins.glowingRed();
+      }
+
+      &--function {
+        @include theming.to-theme(
+          (
+            #{&} : (
+              ('background-image', 'profiler--sql-function--background-image'),
+              ('color', 'profiler--sql-function--color'),
+              ('text-shadow', 'profiler--sql-function--text-shadow')
+            )
+          )
+        );
+
+        // For IE (needed by WebHint)
+        @supports (-webkit-background-clip : text) {
+          -webkit-background-clip : text;
+          -webkit-text-fill-color : transparent;
+        }
+      }
+    }
+  }
+
+  & > div {
+    font-size: 1.6em;
+  }
+}
+
+.div-error {
+  // background
+  @include theming.to-theme(
+    (
+      #{&} : ('background-color', 'debug-bar--error--background-color')
+    )
+  );
+
+  // box
+  height     : 100%;
+  width      : 100%;
+
+  // positioning
+  position   : absolute;
+  top        : 0;
+}
+
+// applying theme
+@include theming.global-mass-theme();

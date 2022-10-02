@@ -6,6 +6,7 @@ namespace src\console\deployment\genWatcher;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 
+use ReflectionException;
 use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use const otra\console\deployment\genWatcher\{KEY_ALL_SASS, KEY_FULL_TREE, SASS_TREE_CACHE_PATH, SASS_TREE_STRING_INIT};
@@ -17,7 +18,6 @@ use function otra\console\deployment\genWatcher\
   searchSassLastLeaves,
   updateSassTree,
   updateSassTreeAfterEvent};
-use function otra\tools\debug\dump;
 
 /**
  * @runTestsInSeparateProcesses
@@ -61,7 +61,7 @@ class SassToolsTest extends TestCase
       ]
     ];
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
@@ -95,7 +95,7 @@ class SassToolsTest extends TestCase
     // -- defining constants and variables - part 2
     define(__NAMESPACE__ . '\\APP_ENV', 'APP_ENV');
     $_SERVER[APP_ENV] = 'prod';
-    $argv = [];
+    $argumentsVector = [];
 
     // -- including needed libraries
     require CONSOLE_PATH . 'deployment/taskFileInit.php';
@@ -109,7 +109,7 @@ class SassToolsTest extends TestCase
     $prunedArray = createPrunedFullTree(1, self::BIG_TREE[KEY_FULL_TREE][0]);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [2 => []],
       $prunedArray
     );
@@ -132,17 +132,17 @@ class SassToolsTest extends TestCase
       );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       $partialPath . '_' . $fileName,
       $newResourceToAnalyze,
       'Testing $newResourceToAnalyze ...'
     );
-    self::assertEquals(
+    self::assertSame(
       $partialPath . $fileName,
       $absoluteImportPathWithDots,
       'Testing $absoluteImportPathWithDots ...'
     );
-    self::assertEquals(
+    self::assertSame(
       $partialPath . '_' . $fileName,
       $absoluteImportPathWithDotsAlt,
       'Testing $absoluteImportPathWithDotsAlt ...'
@@ -150,7 +150,7 @@ class SassToolsTest extends TestCase
   }
 
   /**
-   * @throws OtraException
+   * @throws OtraException|ReflectionException
    */
   public function testSaveSassTree()
   {
@@ -184,7 +184,7 @@ class SassToolsTest extends TestCase
     // Defining variables - part 1
     $this->searchSassLastLeavesContext();
 
-    // -- the tree must already contains the main sass file... before calling the tool
+    // -- the tree must already contain the main sass file... before calling the tool
     $sassTree = [KEY_ALL_SASS => [self::SCSS_MAIN_PATH => true], 1=>[], 2=>[]];
 
     // -- defining constants and variables - part 2
@@ -200,7 +200,7 @@ class SassToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [
         0 => [
           self::SCSS_MAIN_PATH => true,
@@ -237,7 +237,7 @@ class SassToolsTest extends TestCase
     // Defining variables - part 1
     $this->searchSassLastLeavesContext();
 
-    // -- the tree must already contains the main sass file... before calling the tool
+    // -- the tree must already contain the main sass file... before calling the tool
     $sassTree = [KEY_ALL_SASS => [self::SCSS_MAIN_PATH => true], 1=>[], 2=>[]];
 
     // -- defining constants and variables - part 2
@@ -265,7 +265,7 @@ class SassToolsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::BIG_TREE,
       $sassTree,
       self::LABEL_TESTING_THE_TREE . PHP_EOL . dump($sassTree)
@@ -281,7 +281,7 @@ class SassToolsTest extends TestCase
     updateSassTree($sassTree, self::SCSS_MAIN_PATH, self::SCSS_MAIN_DEPENDENCY_LVL0_PATH);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::BIG_TREE,
       $sassTree,
       'Testing $sassTree...'
@@ -289,7 +289,7 @@ class SassToolsTest extends TestCase
   }
 
   /**
-   * Tests when a dependency (so a file beginning by '_' is updated.
+   * Tests when it is a dependency (so a file beginning by '_' is updated).
    *
    * @throws OtraException
    */
@@ -316,7 +316,7 @@ class SassToolsTest extends TestCase
     }
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [
         0 => [
           self::SCSS_MAIN_PATH => true,

@@ -11,10 +11,12 @@ use otra\cache\php\BlocksSystem;
 use otra\config\AllConfig;
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
 use function otra\services\getRandomNonceForCSP;
 use function otra\templating\showBlocksVisually;
+use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 
 /**
  * @author Lionel Péramo
@@ -22,48 +24,58 @@ use function otra\templating\showBlocksVisually;
  */
 abstract class MasterController
 {
-  public static string $path;
-  public ?string $routeSecurityFilePath = null;
   public static array $nonces = [
     'script-src' => [],
     'style-src' => []
   ];
 
-  public static string $cacheUsed = 'Unused';
+  public static string
+    $cacheUsed = 'Unused',
+    $path;
 
-  public string $route,
+  public ?string $routeSecurityFilePath = null;
+  public string
     $bundle = '',
     $module = '',
+    $route,
     $viewPath = DIR_SEPARATOR; // index/index/ for indexController and indexAction
 
-  protected string $controller = '',
+  protected string
     $action = '',
-    $pattern = ''; // path to the action, eg. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
+    $controller = '',
+    $pattern = '', // path to the action, e.g. "application/bundle/controller/action" => "HelloWorld/frontend/index/Home
+    $response;
 
   protected array
+    $params = [],
     $viewResourcePath = [
       'css' => DIR_SEPARATOR, // CSS path for this module
       'js' => DIR_SEPARATOR  // JS path for this module
-    ],
-    $params = [];
+    ];
 
   protected static array
-    $stylesheets = [],
-    $javaScript = [],
+    $javaScripts = [],
     /** @var array<string,string> */
-    $rendered = [];
+    $rendered = [],
+    $stylesheets = [];
 
   protected static bool
     $ajax = false,
-    $hasJsToLoad,
-    $hasCssToLoad;
+    $hasCssToLoad,
+    $hasJsToLoad;
 
   protected static string $layout;
 
   /* @var bool|string $template The actual template being processed */
   protected static bool|string|null $template;
 
-  public const OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  // Those two static variables are constants in fact, but we have to maintain the naming norm
+  private static int
+    $stylesheetFile = 0,
+    $printStylesheet = 1;
+
+  final public const
+    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -129,7 +141,9 @@ abstract class MasterController
       'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              // RFC6585
     ];
 
-  protected const LABEL_SCRIPT_NONCE = '<script nonce="';
+  protected const
+    CSS_MEDIA_SCREEN = 0,
+    LABEL_SCRIPT_NONCE = '<script nonce="';
 
   /**
    * @param array{
@@ -196,7 +210,7 @@ abstract class MasterController
     // Stores the templates' path of the calling controller
     $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . DIR_SEPARATOR;
     $this->viewResourcePath = [
-      'css' => DIR_SEPARATOR . $mainPath .'resources/css/',
+      'css' => DIR_SEPARATOR . $mainPath . 'resources/css/',
       'js' => DIR_SEPARATOR . $mainPath . 'resources/js/'
     ];
 
@@ -206,10 +220,8 @@ abstract class MasterController
   /**
    * Encodes the value passed as parameter in order to create a cache file name
    *
-   * @param string $route
    * @param string $path     File's path
    * @param string $suffix   Suffix of the file name
-   * @param string $extension
    *
    * @return string The cache file name version of the file
    */
@@ -235,25 +247,27 @@ abstract class MasterController
     return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
       ? false
       : preg_replace(
-      [
-        '@(<script.*?nonce=")\w{64}@',
-        '@(<link.*?nonce=")\w{64}@',
-      ],
-      [
-        '${1}' . getRandomNonceForCSP(),
-        '${1}' . getRandomNonceForCSP('style-src')
-      ],
-      file_get_contents($cachedFile)
-    );
+        [
+          '@(<script.*?nonce=")\w{64}@',
+          '@(<link.*?nonce=")\w{64}@',
+        ],
+        [
+          '${1}' . getRandomNonceForCSP(),
+          '${1}' . getRandomNonceForCSP('style-src')
+        ],
+        file_get_contents($cachedFile)
+      );
   }
 
   /**
-   * Adds dynamically css script(s) (not coming from the routes configuration) to the existing ones.
+   * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
    *
-   * @param array|string $stylesheets The css file to add (Array of string)
-   * @param bool         $print       Does the stylesheet must be only used for a print usage ?
+   * @param array $stylesheets The css files to add [0 => File, 1 => Print]
+   *                           Do not put '.css'.
+   *                           /!\ DO NOT fill the second key if it is not needed
+   * @param bool  $print       Does the stylesheet must be only used for a print usage ?
    */
-  protected static function css(array|string $stylesheets = [], bool $print = false) : void
+  public static function css(array $stylesheets = [], bool $print = false) : void
   {
     array_push(
       self::$stylesheets,
@@ -262,26 +276,24 @@ abstract class MasterController
   }
 
   /**
-   * Adds dynamically javascript script(s) (not coming from the routes configuration) to the existing ones.
+   * Adds dynamically javascript script(s) (not coming from the routes' configuration) to the existing ones.
    * If the keys are string it will add the string to the link.
    *
    * @param array|string $js The javascript file to add (Array of strings)
    */
-  protected static function js(array|string $js = []) : void
+  public static function js(array|string $js = []) : void
   {
-    self::$javaScript = array_merge(self::$javaScript, is_array($js) ? $js : [$js]);
+    self::$javaScripts = array_merge(self::$javaScripts, is_array($js) ? $js : [$js]);
   }
 
   /**
    * Use the template engine to render the final template. Fast if the blocks stack is not used.
    *
-   * @param string $route
-   * @param string $templateFilename
-   * @param array  $variables
    *
+   * @throws OtraException|ReflectionException
    * @return string
    */
-  protected static function processFinalTemplate(string $route, string $templateFilename, array $variables)
+  protected static function processFinalTemplate(string $route, string $templateFilename, array $variables) : string
   {
     extract($variables);
     ob_start();
@@ -305,10 +317,11 @@ abstract class MasterController
       {
         ob_start();
 
-        require CORE_PATH . 'views/heavyProfiler/templateStructure/visualRendering.php';
+        require CORE_PATH . 'views/profiler/templateStructure/visualRendering.php';
         ob_clean();
         showBlocksVisually(false);
-        $_SESSION['templateVisualization'] = ob_get_clean();
+        Session::init();
+        Session::set('templateVisualization', base64_encode(ob_get_clean()));
       }
     }
 
@@ -318,20 +331,22 @@ abstract class MasterController
 
   /**
    * @param string $file     The file to render
-   * @param bool   $viewPath If true, we adds the usual view path before the $file variable.
+   * @param bool   $viewPath If true, we add the usual view path before the `$file` variable.
    *
    * @return array{0:string,1:string} [$templateFile, $otraRoute]
    */
   protected function getTemplateFile(string $file, bool $viewPath) : array
   {
-    $otraRoute = str_contains($this->route, 'otra_');
+    if (!str_contains($this->route, 'otra_'))
+      return [
+        ($viewPath ? $this->viewPath : '') . $file,
+        false
+      ];
 
-    if (!$otraRoute)
-      $templateFile = $viewPath ? $this->viewPath . $file : $file;
-    else
-      $templateFile = CORE_VIEWS_PATH . $this->controller . DIR_SEPARATOR . $file;
-
-    return [$templateFile, $otraRoute];
+    return [
+      CORE_VIEWS_PATH . $this->controller . DIR_SEPARATOR . $file,
+      true
+    ];
   }
 
   /**
@@ -341,22 +356,24 @@ abstract class MasterController
    */
   protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
-    // the 'preg_replace' suppress useless spaces
-    $content = preg_replace('/>\s+</', '><',
-      !self::$ajax
-        ? str_replace(
+    // We add the JavaScript just before the ending body tag
+    $contentAndJs = str_replace(
+      '</body',
+      $jsResource . '</body',
+      $content
+    );
+
+    // adding CSS after the title tag or just before the content if we use AJAX
+    $content = self::$ajax
+      ? $cssResource . $contentAndJs
+      : str_replace(
         self::OTRA_LABEL_ENDING_TITLE_TAG,
         self::OTRA_LABEL_ENDING_TITLE_TAG . $cssResource,
-        $content . $jsResource)
-        : $cssResource . $content . $jsResource
-    );
+        $contentAndJs
+      );
   }
 
   /**
-   * @param string $templateFile
-   * @param array  $variables
-   * @param bool   $ajax
-   * @param string $route
    * @param array  $viewResourcePath Paths to CSS and JS files
    *
    * @throws Exception
@@ -379,24 +396,24 @@ abstract class MasterController
 
       if (self::$cacheUsed === 'memory')
         self::$template = self::$rendered[$templateFile];
-      else // otherwise if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
+      else // otherwise, if we have the file in a .cache file then we serve it, otherwise we build the 'cache file'
       {
         $cachedFile = self::getCacheFileName($route);
         $cachedFileContent = self::getCachedFileContent($cachedFile);
 
-        // There is no .cache file for this template so we render it and store it in a file
+        // There is no .cache file for this template, so we render it and store it in a file
         if (false === $cachedFileContent)
         {
           // Will be used in 'addResourcesToTemplate' method via 'render' method
           if ($ajax)
-            self::$ajax = $ajax;
+            self::$ajax = true;
 
           self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
 
           if (file_put_contents($cachedFile, self::$template) === false && $route !== 'otra_exception')
             throw new OtraException('We cannot create/update the cache for the route \'' . $route . '\'.' .
               PHP_EOL . 'This file is \'' . $cachedFile. '\'.');
-        } else // otherwise we just get it
+        } else // otherwise, we just get it
         {
           self::$template = $cachedFileContent;
           self::$cacheUsed = '.cache file';
@@ -409,7 +426,7 @@ abstract class MasterController
     {
       // Will be used in 'addResourcesToTemplate' method via 'render' method
       if ($ajax)
-        self::$ajax = $ajax;
+        self::$ajax = true;
 
       self::$template = self::render($templateFile, $variables, $route, $viewResourcePath);
     }
@@ -418,11 +435,12 @@ abstract class MasterController
   /**
    * Parses the template file and updates parent::$template
    *
-   * @param string      $templateFile The file name
-   * @param array       $variables    Variables to pass to the template
-   * @param string      $route
-   * @param array       $viewResourcePath
+   * @param string $templateFile The file name
+   * @param array  $variables    Variables to pass to the template
    *
+   * @throws OtraException
+   * @throws ReflectionException
+   * @throws Exception
    * @return string
    */
   protected static function render(
@@ -433,13 +451,133 @@ abstract class MasterController
   {
     $content = MasterController::processFinalTemplate($route, $templateFile, $variables);
     [$cssResource, $jsResource] = static::getTemplateResources($route, $viewResourcePath);
-    self::addResourcesToTemplate($content, $cssResource, $jsResource);
+
+    if (self::$ajax)
+    {
+      $titlePosition = mb_strrpos($content, '</title>');
+      $cssContent = $cssResource . self::addDynamicCSS();
+      $tempContent = (false !== $titlePosition)
+        ? substr_replace($content, $cssContent, $titlePosition + 8, 0) // 8 = strlen('</title>')
+        : $cssContent . $content;
+      $bodyPosition = mb_strrpos($tempContent, '</body>');
+
+      $content = (false !== $bodyPosition)
+        ? substr_replace($tempContent, $jsResource, $bodyPosition, 0)
+        : $tempContent . $jsResource;
+    }
+    else
+    {
+      $content = str_replace(
+        self::OTRA_LABEL_ENDING_TITLE_TAG,
+        self::OTRA_LABEL_ENDING_TITLE_TAG . self::addDynamicCSS(),
+        str_replace(
+          '</body>',
+          self::addDynamicJS() . '</body>',
+          $content
+        )
+      );
+      self::addResourcesToTemplate($content, $cssResource, $jsResource);
+    }
+
+    // the 'preg_replace' suppress useless spaces
+    $content = preg_replace('/>\s+</', '><', $content);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
-    self::$javaScript = self::$stylesheets = [];
+    self::$javaScripts = self::$stylesheets = [];
 
     return $content;
+  }
+
+  /**
+   * Adds extra CSS dynamically (needed for the debug bar for example).
+   *
+   * @throws Exception
+   * @return string
+   */
+  public static function addDynamicCSS() : string
+  {
+    $cssContent = '';
+
+    foreach(self::$stylesheets as $stylesheet)
+    {
+      $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
+        '.css" media="' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
+          ? 'print'
+          : 'screen')
+        . '"/>';
+    }
+
+    return $cssContent;
+  }
+
+  /**
+   * Adds extra JS dynamically (needed for the debug bar for example).
+   *
+   * @throws Exception
+   * @return string
+   */
+  public static function addDynamicJS() : string
+  {
+    $jsContent = '';
+
+    foreach(self::$javaScripts as $javaScript)
+    {
+      $jsContent .= self::LABEL_SCRIPT_NONCE .
+        getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
+    }
+
+    return $jsContent;
+  }
+
+  /**
+   * Gets AJAX CSS. Needed because if we put CSS in the body, it will be replaced on some page change.
+   * We then need to put the AJAX CSS to the head as the head is never replaced.
+   *
+   * @throws Exception
+   * @return array
+   */
+  public static function getAjaxCSS() : array
+  {
+    $cssContent = [];
+
+    foreach(self::$stylesheets as $stylesheetType => $stylesheets)
+    {
+      foreach($stylesheets as $stylesheet)
+      {
+        $cssContent[] = [
+          'href' => $stylesheet . '.css',
+          'nonce' => getRandomNonceForCSP(),
+          'media' => ($stylesheetType === self::CSS_MEDIA_SCREEN)
+            ? 'screen'
+            : 'print'
+        ];
+      }
+    }
+
+    return $cssContent;
+  }
+
+  /**
+   * Gets AJAX JS
+   *
+   * @throws Exception
+   * @return array
+   */
+  public static function getAjaxJS() : array
+  {
+    $jsContent = [];
+
+    foreach(self::$javaScripts as $javaScript)
+    {
+      $jsContent[] = [
+        'nonce' => getRandomNonceForCSP(),
+        'src' => $javaScript . '.js'
+      ];
+    }
+
+    return $jsContent;
   }
 }
 

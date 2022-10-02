@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace src\tools\debug;
 
 use phpunit\framework\TestCase;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
+use const otra\cache\php\{APP_ENV, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY};
-use function otra\tools\{delTree, getSourceFromFileCli};
-use function otra\tools\debug\{dump, paramDump};
+use function otra\tools\getSourceFromFileCli;
 
 /**
  * @runTestsInSeparateProcesses
@@ -15,42 +14,26 @@ use function otra\tools\debug\{dump, paramDump};
 class DumpTest extends TestCase
 {
   private const
-    LOG_PATH = BASE_PATH . 'logs/',
     DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
     OTRA_DEBUG_TEST_VALUE_MAX_CHILDREN = 5,
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
     OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3,
-    LABEL_ARRAY6 = '0 => array (6) ',
+    LABEL_ARRAY6 = 'array (6) ',
     LABEL_ONZE_ZEROS = '0 => string (11) \'00000000000\'';
 
   private static string $logsProdPath;
   private static bool $outputFlag = true;
-  // fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
+  // it fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
-    self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV];
 
     require TEST_PATH . 'config/AllConfigGood.php';
     require CORE_PATH . 'tools/getSourceFromFile.php';
     require CORE_PATH . 'tools/debug/dump.php';
-
-    if (!file_exists(self::$logsProdPath))
-      mkdir(self::$logsProdPath, 0777, true);
-  }
-
-  public static function tearDownAfterClass(): void
-  {
-    parent::tearDownAfterClass();
-
-    if (!OTRA_PROJECT && file_exists(self::LOG_PATH))
-    {
-      require CORE_PATH . 'tools/deleteTree.php';
-      delTree(self::LOG_PATH);
-    }
   }
 
   /**
@@ -112,7 +95,7 @@ class DumpTest extends TestCase
       ++$depth;
       self::increaseExpectedArrayDepth($depth, $output, $reachDepth);
 
-      // If we had stop increasing the array depth...
+      // If we had stopped increasing the array depth...
       if (self::$outputFlag)
       {
         $output .= $spaceLength . ($reachDepth ? '  [0] =>' . PHP_EOL . $spaceLength . '  string(0) ""' : '  ...') . PHP_EOL;

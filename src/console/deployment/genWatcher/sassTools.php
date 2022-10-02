@@ -2,10 +2,13 @@
 declare(strict_types=1);
 namespace otra\console\deployment\genWatcher;
 
+use otra\config\AllConfig;
 use otra\OtraException;
-
+use ReflectionException;
+use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
+use const otra\console\
+{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 
 use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\getPathInformations;
@@ -15,22 +18,17 @@ const
   KEY_ALL_SASS = 0,
   KEY_MAIN_TO_LEAVES = 1,
   KEY_FULL_TREE = 2,
-  // we do not store informations about SASS internals nor commented imports
-  REGEX_SASS_IMPORT = '`^[^/@]{0,}@(?:import|use)\s{0,}\'\\K([^\':]{0,})\'\s{0,}(?:as\s[^;]{0,}\s{0,})?;$`m',
+  // we do not store information about SASS internals nor commented imports
+  REGEX_SASS_IMPORT = '`^[^/@]{0,}@(?:import|use|forward)\s{0,}\'\\K([^\':]{0,})\'\s{0,}(?:as\s[^;]{0,}\s{0,})?;$`m',
   SASS_TREE_STRING_INIT = '$sassTree[' . KEY_FULL_TREE . ']';
 
-/**
- * @param array  $sassTree
- * @param string $realPath
- * @param string $previousImportedCssFound
- */
-function updateSassTree(array &$sassTree, string $realPath, string $previousImportedCssFound)
+function updateSassTree(array &$sassTree, string $realPath, string $previousImportedCssFound): void
 {
   // if the stylesheet IS NOT the main stylesheet then we add it to the tree
   if ($realPath !== $previousImportedCssFound)
   {
     $sassTreeKeys = array_keys($sassTree[KEY_ALL_SASS]);
-    // If we did not already stored the identifier found in the references array that matches this file, we add it to
+    // If we did not already store the identifier found in the references array that matches this file, we add it to
     // the sass tree
     if (!isset($sassTree[KEY_MAIN_TO_LEAVES][array_search($previousImportedCssFound, $sassTreeKeys)])
       || !in_array(
@@ -45,13 +43,20 @@ function updateSassTree(array &$sassTree, string $realPath, string $previousImpo
 }
 
 /**
- * @param string $importedSass   SASS/SCSS file to get absolute path from
- * @param string $dotExtension   Extension with the dot as in '.scss'
- * @param string $resourcesPath  Folder of the stylesheet that imports $importedSass
+ * @param string      $importedSass      SASS/SCSS file to get absolute path from
+ * @param string      $dotExtension      Extension with the dot as in '.scss'
+ * @param string      $resourcesPath     Folder of the stylesheet that imports $importedSass
+ * @param bool|string $sassLoadPathCheck Whether we have to use a specific SASS load path or not
  *
- * @return array The absolute path of $importedSass
+ * @return array [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] The import path
+ *               being the absolute path of $importedSass
  */
-function getCssPathFromImport(string $importedSass, string $dotExtension, string $resourcesPath) : array
+function getCssPathFromImport(
+  string $importedSass,
+  string $dotExtension,
+  string $resourcesPath,
+  bool|string $sassLoadPathCheck = false
+) : array
 {
   $lastSlashPosition = strrpos($importedSass, '/');
 
@@ -65,12 +70,15 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
     $importPath = ($resourcesPath[strlen($resourcesPath) -1 ] === '/') ? '' : '/';
   }
 
+  if ($sassLoadPathCheck !== false)
+    $resourcesPath = $sassLoadPathCheck;
+
   // $importPath like ../../configuration
   // $importedStylesheetFound like ../../configuration/generic
   // $importedFileBaseName like generic.scss
   // $resourcesPath like /var/www/html/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
 
-  // The imported file can have the extension but it is not mandatory
+  // The imported file can have the extension, but it is not mandatory
   if (!str_contains($importedFileBaseName, '.'))
     $importedFileBaseName .= $dotExtension;
 
@@ -84,6 +92,20 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
     // Does the file exist with '_' at the beginning
     $newResourceToAnalyze = realpath($absoluteImportPathWithDotsAlt);
 
+  // Checks for loadPaths
+  if ($newResourceToAnalyze === false && $sassLoadPathCheck === false)
+  {
+    foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+    {
+      [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
+        getCssPathFromImport($importedSass, $dotExtension, $resourcesPath, $sassLoadPath);
+
+      // If we found the good path, we stop looking
+      if ($newResourceToAnalyze !== false)
+        break;
+    }
+  }
+
   return [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt];
 }
 
@@ -91,13 +113,11 @@ function getCssPathFromImport(string $importedSass, string $dotExtension, string
  * We go to the SASS/SCSS dependencies tree (the top having the files without '_') and
  * stores the links between leaves and main stylesheets.
  *
- * @param array  $sassTree
- * @param string $importingFileAbsolutePath
- * @param string $previousImportedCssFound
- * @param string $dotExtension              Extension with the dot as in '.scss'
- * @param string $sassTreeString
+ * @param string $dotExtension Extension with the dot as in '.scss'
  *
  * @throws OtraException
+ *
+ * @return bool Returns false if an errors occurred
  */
 function searchSassLastLeaves(
   array &$sassTree,
@@ -105,18 +125,18 @@ function searchSassLastLeaves(
   string $previousImportedCssFound,
   string $dotExtension,
   string &$sassTreeString
-) : void
+) : bool
 {
   // To prevent a cycles loop in the dependency tree
   if (str_contains($sassTreeString, $previousImportedCssFound))
-    return;
+    return true;
 
-  // Moves the cursor in the SASS dependency tree to updates the right section and prepare for the tree for an update
+  // Moves the cursor in the SASS dependency tree to update the right section and prepare for the tree for an update
   $sassTree[KEY_ALL_SASS][$previousImportedCssFound] = true;
   $sassTreeString .= '[' . array_search($previousImportedCssFound, array_keys($sassTree[KEY_ALL_SASS])) . ']';
   eval($sassTreeString . '=[];');
 
-  // Backups the state of the cursor to be able to restore it when we finish the sub branches.
+  // Backups the state of the cursor to be able to restore it when we finish the sub-branches.
   $oldSassTreeString = $sassTreeString;
 
   [, $resourcesMainFolder, $resourcesFolderEndPath, ] =
@@ -142,7 +162,7 @@ function searchSassLastLeaves(
     $sassTreeString = substr($sassTreeString, 0, $lastOpeningBracketPos);
     eval('if (!isset(' . $sassTreeString . ')) ' . $sassTreeString . '=[];');
 
-    return;
+    return true;
   }
 
   $importedCssFound = $importedCssFound[1];
@@ -152,44 +172,63 @@ function searchSassLastLeaves(
     [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
       getCssPathFromImport($importedStylesheetFound, $dotExtension, $resourcesPath);
 
-    // If does not exist in the two previously cases, it is surely a wrongly written import
+    // If it does not exist in the two previously cases, it is surely a wrongly written import
     if ($newResourceToAnalyze === false)
     {
+      $wrongsImportPath = '';
+
+      foreach($importedCssFound as $importedCss)
+      {
+        $wrongsImportPath .= '- ' . CLI_INFO_HIGHLIGHT . $importedCss . CLI_ERROR . PHP_EOL;
+      }
+
       echo CLI_ERROR, 'In the file ', returnLegiblePath2($previousImportedCssFound),
-        CLI_ERROR, ',', PHP_EOL, 'this import path is wrong ', CLI_INFO_HIGHLIGHT,
-        $importedCssFound[0][$matchKey], CLI_ERROR, PHP_EOL, 'as it leads to ',
-        returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, ' or to ',
-        returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, '.', END_COLOR, PHP_EOL;
+        CLI_ERROR, ',', PHP_EOL, 'at least one of this/these import(s) path is/are wrong ', PHP_EOL,
+        $wrongsImportPath, CLI_ERROR, 'as it can lead to ', PHP_EOL,
+        '- ', returnLegiblePath2($absoluteImportPathWithDots), CLI_ERROR, PHP_EOL,
+        '- ', returnLegiblePath2($absoluteImportPathWithDotsAlt), CLI_ERROR, END_COLOR, PHP_EOL;
+
+      return false;
     }
 
     updateSassTree($sassTree, $importingFileAbsolutePath, $previousImportedCssFound);
-    searchSassLastLeaves($sassTree, $importingFileAbsolutePath, $newResourceToAnalyze, $dotExtension, $sassTreeString);
+    if (!searchSassLastLeaves($sassTree, $importingFileAbsolutePath, $newResourceToAnalyze, $dotExtension, $sassTreeString))
+      return false;
 
     // Moves back the cursor up in the tree thanks to the previous backup of the cursor state
     $sassTreeString = $oldSassTreeString;
   }
+
+  return true;
 }
 
 /**
  * @param array $sassTree Sass tree that is actually in memory that needs to be saved into the cache
  *
- * @throws OtraException
+ * @throws OtraException|ReflectionException
  */
 function saveSassTree(array $sassTree) : void
 {
   require_once CONSOLE_PATH . '/tools.php';
+
+  if (!defined(__NAMESPACE__ . '\\CSS_CACHE_PATH'))
+    define(__NAMESPACE__ . '\\CSS_CACHE_PATH', CACHE_PATH . 'css');
+
+  if (!file_exists(CSS_CACHE_PATH))
+    mkdir(CSS_CACHE_PATH);
+
   if (
     file_put_contents(
       SASS_TREE_CACHE_PATH,
       '<?php declare(strict_types=1);namespace otra\cache\css;return ' .
-      convertLongArrayToShort($sassTree) . ';' . PHP_EOL
+      (convertLongArrayToShort($sassTree)) . ';' . PHP_EOL
     )
   )
     echo ERASE_SEQUENCE, ERASE_SEQUENCE, 'SASS/SCSS dependency tree built and saved', SUCCESS;
   else
   {
     echo CLI_ERROR, 'Something went wrong when saving the tree.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 }
 
@@ -249,7 +288,7 @@ function updateSassTreeAfterEvent(
         $sassTreeString = SASS_TREE_STRING_INIT . '[' . $importingFile . ']';
 
         // if the imported file does not exist, we do not add the file to the tree
-        if (!$addedImport)
+        if ($addedImport === 0)
           break;
 
         $sassTree[KEY_ALL_SASS][$sassTreeKeys[$addedImport]] = true;

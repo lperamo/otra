@@ -17,7 +17,7 @@ class ClearCacheHelpTest extends TestCase
   private const OTRA_TASK_CLEAR_CACHE = 'clearCache',
     OTRA_TASK_HELP = 'help';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -45,7 +45,7 @@ class ClearCacheHelpTest extends TestCase
       STRING_PAD_FOR_OPTION_FORMATTING . '256 => Security files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '511 => All files from the cache (default)' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('route name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      '   + ' . str_pad('route-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . 'If you want to clear cache for only one route. (useful only for bits 2, 4, 8 of the ' .
       CLI_INFO_HIGHLIGHT . 'mask' . CLI_INFO . ' parameter)' . PHP_EOL .

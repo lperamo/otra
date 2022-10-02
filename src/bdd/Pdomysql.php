@@ -7,8 +7,7 @@ declare(strict_types=1);
 
 namespace otra\bdd;
 use otra\OtraException;
-use PDO, PDOStatement;
-use PDOException;
+use PDO, PDOStatement, PDOException;
 use const otra\cache\php\PROD;
 
 /**
@@ -16,24 +15,25 @@ use const otra\cache\php\PROD;
  */
 abstract class Pdomysql
 {
-  private PDO $conn;
+  private readonly PDO $conn;
   private const DEFAULT_MOTOR = 'InnoDB';
 
   /**
    * Connects to PDO_MySql
+   * Putting the charset here IS SUPER IMPORTANT! https://stackoverflow.com/a/12202218/1818095
    *
-   * @param string $dsn      Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1
+   * @param string $dsn      Dsn (Data Source Name) ex: mysql:dbname=testdb;host=127.0.0.1;charset=utf8mb4
    * @param string $username Username
    * @param string $password Password
    *
    * @return PDO Returns a MySQL link identifier on success, or false on error
    * @throws OtraException
    */
-  public static function connect(string $dsn = '127.0.0.1:3306', string $username = 'root', string $password = '')
+  public static function connect(string $dsn = '127.0.0.1:3306;charset=utf8mb4', string $username = 'root', string $password = '')
   {
     try
     {
-      $conn = new PDO($dsn, $username, $password);
+      $connection = new PDO($dsn, $username, $password);
     }catch(PDOException $exception)
     {
       throw new OtraException(
@@ -45,24 +45,31 @@ abstract class Pdomysql
       );
     }
 
-    return $conn;
+    return $connection;
   }
 
   /**
-   * Sends a SQL query !
+   * Sends an SQL query !
    *
-   * @param string $query SQL query.
-   *                      The query string should not end with a semicolon. Data inside the query should be properly
-   *                      escaped.
+   * @link http://php.net/manual/en/function.mysql-query.php
+   *
+   * @param string $query   SQL query.
+   *                        The query string should not end with a semicolon. Data inside the query should be properly
+   *                        escaped.
+   *
+   * @param ?int $fetchMode The default fetch mode for the returned PDOStatement. It must be one of the PDO::FETCH_*
+   *                        constants.
+   *                        If this argument is passed to the function, the remaining arguments will be treated as
+   *                        though PDOStatement::setFetchMode() was called on the resultant statement object. The
+   *                        subsequent arguments vary depending on the selected fetch mode.
    *
    * @return PDOStatement Returns a resource on success, otherwise an exception is raised
    *
    * @throws OtraException
-   * @link http://php.net/manual/en/function.mysql-query.php
    */
-  public static function query(string $query) : PDOStatement
+  public static function query(string $query, ?int $fetchMode = null) : PDOStatement
   {
-    $result = Sql::$currentConn->query($query);
+    $result = Sql::$currentConn->query($query, $fetchMode);
 
     if (false === $result)
     {
@@ -74,12 +81,12 @@ abstract class Pdomysql
   }
 
   /**
-   * Returns the results
+   * Returns the results with FETCH_ASSOC mask.
+   * @link https://www.php.net/manual/fr/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return mixed The next result
-   * @link http://php.net/manual/en/function.mysql-fetch-assoc.php
    */
   public static function fetchAssoc(PDOStatement $statement) : mixed
   {
@@ -87,13 +94,40 @@ abstract class Pdomysql
   }
 
   /**
+   * Returns the results with FETCH_ASSOC mask.
+   * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return array|false The next result
+   */
+  public static function fetchAllAssoc(PDOStatement $statement): array|false
+  {
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Returns the results with FETCH_KEY_PAIR mask.
+   *
+   * @link https://www.php.net/manual/fr/pdostatement.fetchall.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return array|bool The next result
+   */
+  public static function fetchAllByPair(PDOStatement $statement): array|bool
+  {
+    return $statement->fetchAll(PDO::FETCH_KEY_PAIR);
+  }
+
+  /**
    * Fetch a result row as an associative array, a numeric array, or both
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement   The query statement
    * @param int          $fetch_style The type of array that is to be fetched. See the link for the available values. (PDO::FETCH_BOTH by default)
    *
    * @return false|array The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchArray(PDOStatement $statement, int $fetch_style = PDO::FETCH_BOTH)
   {
@@ -102,11 +136,11 @@ abstract class Pdomysql
 
   /**
    * Returns the results
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return false|array The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchRow(PDOStatement $statement)
   {
@@ -115,11 +149,11 @@ abstract class Pdomysql
 
   /**
    * Returns the results as an object (simplified version of the existing one)
+   * @link http://php.net/manual/en/pdostatement.fetch.php
    *
    * @param PDOStatement $statement The query statement
    *
    * @return false|object The next result
-   * @link http://php.net/manual/en/pdostatement.fetch.php
    */
   public static function fetchObject(PDOStatement $statement)
   {
@@ -193,31 +227,30 @@ abstract class Pdomysql
 
   /**
    * Free result memory
+   * @link https://www.php.net/manual/en/pdostatement.closeCursor
    *
    * @param PDOStatement $statement The query statement
    *
    * @return bool Returns true on success or false on failure.
-   * @link http://php.net/manual/en/function.mysql-free-result.php
    */
   public static function freeResult(PDOStatement $statement) : bool { return $statement->closeCursor(); }
 
   /**
    * Returns metadata for a column in a result set
+   * @link https://www.php.net/manual/en/pdostatement.getcolumnmeta.php
    *
    * @param PDOStatement $statement The query statement
-   * @param int $column
    *
    * @return false|array The results
    */
-  public static function getColumnMeta(PDOStatement $statement, int $column)
+  public static function getColumnMeta(PDOStatement $statement, int $columnName)
   {
-    return $statement->getColumnMeta($column);
+    return $statement->getColumnMeta($columnName);
   }
 
   /**
    * Closes connection.
    *
-   * @param bool|Sql $instanceToClose
    *
    * @return bool Returns true on success or false on failure
    */
@@ -238,7 +271,6 @@ abstract class Pdomysql
    *
    * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous
    *                query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
-   * @link http://php.net/manual/fr/function.mysql-insert-id.php
    */
   public static function lastInsertedId(string $sequenceName = null) : string
   {
@@ -246,7 +278,8 @@ abstract class Pdomysql
   }
 
   /**
-   * @param string $string
+   * @link https://www.php.net/manual/en/pdo.quote.php
+   *
    *
    * @return string
    */
@@ -256,14 +289,18 @@ abstract class Pdomysql
   }
 
   /**
- * @return bool
- */
+   * @link https://www.php.net/manual/en/pdo.begintransaction.php
+   *
+   * @return bool
+   */
   public static function beginTransaction() : bool
   {
     return Sql::$currentConn->beginTransaction();
   }
 
   /**
+   * @link https://www.php.net/manual/en/pdo.intransaction.php
+   *
    * @return bool
    */
   public static function inTransaction() : bool
@@ -272,6 +309,8 @@ abstract class Pdomysql
   }
 
   /**
+   * @link https://www.php.net/manual/en/pdo.commit
+   *
    * @return bool
    */
   public static function commit() : bool
@@ -280,6 +319,8 @@ abstract class Pdomysql
   }
 
   /**
+   * @link https://www.php.net/manual/en/pdo.rollback
+   *
    * @return bool
    */
   public static function rollBack() : bool
@@ -288,11 +329,61 @@ abstract class Pdomysql
   }
 
   /**
+   * @link https://www.php.net/manual/en/pdo.errorInfo
+   *
    * @return array
    */
   public static function errorInfo() : array
   {
     return Sql::$currentConn->errorInfo();
   }
-}
 
+  /**
+   * @link https://www.php.net/manual/en/pdo.prepare.php
+   *
+   *
+   * @return PDOStatement|false
+   */
+  public static function prepare(string $query, array $options = []): PDOStatement|false
+  {
+    return Sql::$currentConn->prepare($query, $options);
+  }
+
+  /**
+   * Returns the row count
+   * @link http://php.net/manual/en/pdostatement.rowcount.php
+   *
+   * @param PDOStatement $statement The query statement
+   *
+   * @return int The row count
+   */
+  public static function rowCount(PDOStatement $statement): int
+  {
+    return $statement->rowCount();
+  }
+
+  /**
+   * Configures a PDO attribute
+   * @link https://www.php.net/manual/fr/pdo.setattribute.php
+   *
+   *
+   * @return bool
+   */
+  public static function setAttribute(int $attribute, mixed $value): bool
+  {
+    return Sql::$currentConn->setAttribute($attribute, $value);
+  }
+
+  /**
+   * Gets a database connection attribute
+   *
+   * @link https://www.php.net/manual/fr/pdo.getattribute.php
+   *
+   *
+   * @return bool|int|string|array|null
+   */
+  public static function getAttribute(int $attribute): bool|int|string|array|null
+  {
+    return Sql::$currentConn->getAttribute($attribute);
+  }
+}

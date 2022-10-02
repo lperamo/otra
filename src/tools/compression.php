@@ -19,8 +19,7 @@ namespace otra\tools;
  */
 function gzCompressFile(string $source, string $destination = null, int $level = 9, bool $keep = false) : bool
 {
-  $destination = $destination === null ? $source . '.gz' : $destination;
-
+  $destination ??= $source . '.gz';
   $fp_out = gzopen($destination, 'wb' . ((string) $level));
 
   if ($fp_out === false)
@@ -40,10 +39,9 @@ function gzCompressFile(string $source, string $destination = null, int $level =
   fclose($fp_in);
   gzclose($fp_out);
 
-  // Avoids to keep a file without .gz extension and one with .gz extension for example.
+  // Avoids keeping a file without .gz extension and one with .gz extension for example.
   if (!$keep && $source !== $destination)
     unlink($source);
 
   return true;
 }
-

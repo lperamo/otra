@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace otra\web;
 
+use Error;
 use otra\cache\php\{Logger, Router, Routes};
+use Throwable;
 use const otra\cache\php\{APP_ENV,BASE_PATH, CACHE_PATH,CORE_PATH,PROD};
 use const otra\cache\php\init\CLASSMAP;
 
@@ -15,7 +17,7 @@ require __DIR__ . '/../config/constants.php';
 
 $requestUri = $_SERVER['REQUEST_URI'];
 
-// Otherwise for dynamic pages...
+// Otherwise, for dynamic pages...
 $_SERVER[APP_ENV] = PROD;
 
 try
@@ -25,7 +27,7 @@ try
   $route = Router::getByPattern($requestUri);
   define(__NAMESPACE__ . '\\OTRA_ROUTE', $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME]);
 
-  header('Content-Type: text/html; charset=utf-8');
+  header('Content-Type: text/html;charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
   /** @var array<string,array{
@@ -49,6 +51,7 @@ try
    *   }
    * }> \cache\php\Routes::$allRoutes
    */
+
   // Is it a static page
   if ('cli' !== PHP_SAPI &&
     isset(
@@ -56,7 +59,17 @@ try
     ) && Routes::$allRoutes[OTRA_ROUTE]['resources']['template'] === true)
     require BASE_PATH . 'web/loadStaticRoute.php';
 
+  ini_set('session.save_path', CACHE_PATH . 'php/sessions');
+  // Put this "cache_limiter" option also sets the header 'Cache-Control: private, max-age=10800'
   ini_set('session.cache_limiter', 'private');
+  // Prevents from having thousands of session files that dramatically break performance when we use a JMeter test with
+  // thousands of iterations
+  if (isset($_SERVER['JMETER']) && $_SERVER['JMETER'] === 'test')
+  {
+    ini_set('session.gc_maxlifetime', 2);
+    session_gc();
+  }
+
   session_name('__Secure-LPSESSID');
   session_start([
     'cookie_secure' => true,
@@ -64,9 +77,13 @@ try
     'cookie_samesite' => 'strict'
   ]);
 
+  // Prevents the cache from disturbing the statistics when doing JMeter tests
+  if (isset($_SERVER['JMETER']) && $_SERVER['JMETER'] === 'test')
+    header('Cache-Control: no-cache');
+
   header_remove('Expires');
 
-  error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+  error_reporting(E_ALL);
 
   /** CLASS MAPPING */
   require CACHE_PATH . 'php/init/ProdClassMap.php';
@@ -75,13 +92,10 @@ try
   {
     if (!isset(CLASSMAP[$className]))
     {
-      require_once CORE_PATH . 'Logger.php';
-      Logger::logTo(
-        'Path not found for the class name : ' . $className . PHP_EOL .
-        'Stack trace : ' . PHP_EOL .
-        print_r(debug_backtrace(), true),
-        'classNotFound'
-      );
+      if (!class_exists(Logger::class))
+        require_once CORE_PATH . 'Logger.php';
+
+      Logger::logWithStackTraces('Path not found for the class name : ' . $className, debug_backtrace());
     } else
       require CLASSMAP[$className];
   });
@@ -104,17 +118,21 @@ try
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color: blue;">' .
       ISSUE_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
   elseif (class_exists(Logger::class))
-    Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception');
+    Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception', $issue->getTrace());
   else
     error_log(
-      '[' . date(DATE_ATOM, time()) . ']' . ' Route not launched ! ' .
-      ($error ? 'Fatal error' : 'Exception') . ' : ' . PHP_EOL .
-      ISSUE_TRACE . PHP_EOL .
-      'Stack trace : ' . PHP_EOL .
-      print_r(debug_backtrace(), true),
+      json_encode(
+        [
+          'd' => date(DATE_ATOM, time()),
+          'm' => 'Route not launched ! ' . ($error ? 'Fatal error' : 'Exception') . ' : ' . PHP_EOL . ISSUE_TRACE,
+          's' => Logger::formatStackTracesForLog($issue->getTrace())
+        ],
+        Logger::LOG_JSON_MASK
+      ),
       3,
       ISSUE_LOG_PATH
     );
 
+  header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
   echo 'Server in ' . ($error ? 'great ' : '') . 'trouble. Please come back later !';
 }

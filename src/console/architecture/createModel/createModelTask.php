@@ -22,93 +22,103 @@ namespace otra\console\architecture\createModel
   use const otra\console\architecture\constants\ARG_INTERACTIVE;
   use function otra\console\architecture\checkBooleanArgument;
 
-  // Testing interactive argument
-  require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-  $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-
-  // Other task arguments
-  const ARG_METHOD = 3,
+  const
+    ARG_METHOD = 3,
     ARG_MODEL_LOCATION = 5,
     ARG_MODEL_NAME = 7,
     ARG_MODEL_PROPERTIES = 8,
     ARG_MODEL_PROPERTIES_TYPE = 9,
 
-    // Creation modes
+      // Creation modes
     CREATION_MODE_FROM_NOTHING = 1,
     CREATION_MODE_ONE_MODEL = 2,
     CREATION_MODE_ALL_MODELS = 3,
 
-    // Model locations
+      // Model locations
     MODEL_LOCATION_BUNDLE = 0,
     MODEL_LOCATION_MODULE = 1,
 
-    // Paths
+      // Paths
     DEFAULT_BDD_SCHEMA_NAME = 'schema.yml',
     MODEL_DIRECTORY = 'models/',
     CREATE_MODEL_FOLDER = CONSOLE_PATH . 'architecture/createModel/',
 
-  // String in file name
-  OTRA_NTERACTIVE = 'nteractive.php';
-
-  // Loading common functions
-  require CONSOLE_PATH . 'tools.php';
-  require CREATE_MODEL_FOLDER . 'createModel.php';
+      // String in file name
+    OTRA_NTERACTIVE = 'nteractive.php',
+    FUNCTION_START = SPACE_INDENT . 'public function ';
 
   /**
-   * @var string $modelLocation
-   * @var string $modelName
+   *
+   * @throws OtraException
+   * @return void
    */
-  // Checking parameters...
-  /**
-   * @var string $bundleName
-   * @var string $bundlePath
-   * @var int    $creationMode
-   */
-  define(
-    __NAMESPACE__ . '\\INTERACTIVE_FILE_NAME',
-    ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE
-  );
-  require CREATE_MODEL_FOLDER . 'checkParameters/' . INTERACTIVE_FILE_NAME;
-
-  echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
-
-  // Code creation...
-  const FUNCTION_START = SPACE_INDENT . 'public function ';
-
-  if (CREATION_MODE_FROM_NOTHING === $creationMode)
-    require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . INTERACTIVE_FILE_NAME;
-  else
+  function createModel(array $argumentsVector) : void
   {
-    if (!defined(__NAMESPACE__ . '\\YML_SCHEMA_PATH'))
+    // Testing interactive argument
+    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+
+    // Other task arguments
+
+
+    // Loading common functions
+    require CONSOLE_PATH . 'tools.php';
+    require CREATE_MODEL_FOLDER . 'createModel.php';
+
+    /**
+     * @var string $modelLocation
+     * @var string $modelName
+     */
+    // Checking parameters...
+    /**
+     * @var string $bundleName
+     * @var string $bundlePath
+     * @var int    $creationMode
+     */
+    define(
+      __NAMESPACE__ . '\\INTERACTIVE_FILE_NAME',
+      ($interactive ? 'i' : 'notI') . OTRA_NTERACTIVE
+    );
+    require CREATE_MODEL_FOLDER . 'checkParameters/' . INTERACTIVE_FILE_NAME;
+
+    echo 'We use the ', CLI_INFO_HIGHLIGHT, $bundleName, END_COLOR, ' bundle.', PHP_EOL;
+
+    // Code creation...
+    if (CREATION_MODE_FROM_NOTHING === $creationMode)
+      require CREATE_MODEL_FOLDER . 'oneModelFromNothing/' . INTERACTIVE_FILE_NAME;
+    else
     {
-      define(__NAMESPACE__ . '\\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
-      define(__NAMESPACE__ . '\\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+      if (!defined(__NAMESPACE__ . '\\YML_SCHEMA_PATH'))
+      {
+        define(__NAMESPACE__ . '\\YML_SCHEMA_PATH', 'config/data/yml/schema.yml');
+        define(__NAMESPACE__ . '\\YML_SCHEMA_REAL_PATH', realpath($bundlePath . YML_SCHEMA_PATH));
+      }
+
+      if (!YML_SCHEMA_REAL_PATH)
+      {
+        echo CLI_ERROR, 'The YAML schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
+          DIR_SEPARATOR . YML_SCHEMA_PATH, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
+        throw new OtraException(code: 1, exit: true);
+      }
+
+      if (!defined(__NAMESPACE__ . '\\SCHEMA_DATA'))
+        define(
+          __NAMESPACE__ . '\\SCHEMA_DATA',
+          Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
+        );
+
+      if (SCHEMA_DATA === null)
+      {
+        echo CLI_ERROR, 'The schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
+        YML_SCHEMA_PATH, CLI_ERROR, ' is empty !', END_COLOR, PHP_EOL;
+        throw new OtraException(code: 1, exit: true);
+      }
+
+      require CREATE_MODEL_FOLDER .
+        (CREATION_MODE_ONE_MODEL === $creationMode
+          ? 'oneModelFromYmlSchema/'
+          : 'allModelsFromYmlSchema/'
+        ) . INTERACTIVE_FILE_NAME;
     }
-
-    if (!YML_SCHEMA_REAL_PATH)
-    {
-      echo CLI_ERROR, 'The YAML schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
-        DIR_SEPARATOR . YML_SCHEMA_PATH, CLI_ERROR, ' does not exist.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
-    }
-
-    if (!defined(__NAMESPACE__ . '\\SCHEMA_DATA'))
-      define(
-        __NAMESPACE__ . '\\SCHEMA_DATA',
-        Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH))
-      );
-
-    if (SCHEMA_DATA === null)
-    {
-      echo CLI_ERROR, 'The schema ', CLI_TABLE, 'BASE_PATH + ', CLI_INFO_HIGHLIGHT, 'bundles/', ucfirst($bundleName),
-      YML_SCHEMA_PATH, CLI_ERROR, ' is empty !', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
-    }
-
-    require CREATE_MODEL_FOLDER .
-      (CREATION_MODE_ONE_MODEL === $creationMode
-        ? 'oneModelFromYmlSchema/'
-        : 'allModelsFromYmlSchema/'
-      ) . INTERACTIVE_FILE_NAME;
   }
 }

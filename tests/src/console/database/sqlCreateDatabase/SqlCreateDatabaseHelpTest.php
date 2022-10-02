@@ -18,6 +18,9 @@ class SqlCreateDatabaseHelpTest extends TestCase
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     OTRA_TASK_HELP = 'help';
 
+  // it fixes issues like when AllConfig is not loaded while it should be
+  protected $preserveGlobalState = FALSE;
+
   /**
    * @throws OtraException
    */
@@ -29,7 +32,7 @@ class SqlCreateDatabaseHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Database creation, tables creation.(sql_generate_basic)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      '   + ' . str_pad('database-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'The database name !' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .

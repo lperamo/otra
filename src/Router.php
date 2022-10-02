@@ -10,30 +10,42 @@ namespace otra;
 
 use otra\config\Routes;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, DIR_SEPARATOR, PROD};
+use const otra\cache\php\init\CLASSMAP;
 
 /**
  * @package otra
  */
 abstract class Router
 {
-  private const OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+  private const
+    OTRA_ROUTE_CHUNKS_KEY = 'chunks',
+    OTRA_ROUTE_CONTENT_TYPE_KEY = 'content-type',
+    OTRA_ROUTE_METHOD_KEY = 'method',
+    OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources',
-    OTRA_ROUTE_URL_KEY = 0;
+    OTRA_ROUTE_URL_KEY = 0,
+    OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
 
-  public const
+  final public const
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS = 1;
 
   /**
    * Retrieve the controller's path that we want or launches the route !
    *
-   * @param string 			    $route  The wanted route
-   * @param string[]|string $params Additional params
-   * @param bool 				    $launch True if we have to launch the route or just retrieve the path
+   * @param string 			    $route            The wanted route
+   * @param string[]|string $params           Additional params
+   * @param bool 				    $launch           True if we have to launch the route or just retrieve the path
+   * @param bool            $internalRedirect True if we redirect from a controller/action to another one
    *
    * @return string|Controller Controller's path
    */
-  public static function get(string $route = 'index', array|string $params = [], bool $launch = true)
+  public static function get(
+    string $route = 'index',
+    array|string $params = [],
+    bool $launch = true,
+    bool $internalRedirect = false
+  )
   : string|Controller
   {
     // We ensure that our input array really contains 5 parameters in order to make array_combine works
@@ -44,9 +56,9 @@ abstract class Router
       'module' => $module
     ] =
       $otraParams = array_combine(
-      ['pattern', 'bundle', 'module', 'controller', 'action'],
-      array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
-    );
+        ['pattern', 'bundle', 'module', 'controller', 'action'],
+        array_pad(Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY], 5, null)
+      );
 
     $finalAction = '';
 
@@ -55,16 +67,31 @@ abstract class Router
     else
     {
       if (!isset(Routes::$allRoutes[$route]['core']))
-        $finalAction = 'bundles\\';
+        $finalAction = 'bundles\\' . $bundle . '\\';
 
-      $finalAction .= $bundle . '\\' . $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
+      $finalAction .= $module . '\\controllers\\' . $controller . '\\' . ucfirst($action);
     }
+
+    // If the action class does not exist, then it is maybe a Composer module that needs the bundle's name to
+    // differentiate it from the installed version of the module. We use `ob_` like functions to avoid printing error
+    // when not finding classes
+    ob_start();
+
+    if (!array_key_exists($finalAction, CLASSMAP))
+      $finalAction = (
+        isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY])
+          ? Routes::$allRoutes[$route][self::OTRA_ROUTE_PREFIX_KEY] . '\\'
+          : ''
+        ) . $finalAction;
+
+    ob_end_clean();
 
     if (!$launch)
       return $finalAction;
 
     $otraParams['route'] = $route;
     $otraParams['css'] = $otraParams['js'] = false;
+    $otraParams['internalRedirect'] = $internalRedirect;
 
     // Do we have some resources for this route...
     if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
@@ -87,11 +114,16 @@ abstract class Router
 
     /** Preventing redirections from crashing the application */
     if ('cli' !== PHP_SAPI
-      && substr(str_replace(
-        ['\\', BASE_PATH],
-        [DIR_SEPARATOR, ''],
-        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[0]['file']
-      ), 0, 9) !== 'web/index')
+      && !str_starts_with(
+        str_replace(
+          ['\\', BASE_PATH],
+          [DIR_SEPARATOR, ''],
+          debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[0]['file']
+        ),
+        'web/index'
+      )
+      && !$internalRedirect
+    )
     {
       // Is it a static page
       if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
@@ -101,7 +133,7 @@ abstract class Router
         exit;
       }
 
-      // Otherwise for dynamic pages...
+      // Otherwise, for dynamic pages...
       require_once CACHE_PATH . 'php/' . $route . '.php';
     }
 
@@ -109,75 +141,23 @@ abstract class Router
   }
 
   /**
-   * Check if the pattern is present among the routes.
+   * Check if the pattern is present among the routes and launch a 404 error page it it does not
    *
-   * @param string $userUrl          The pattern to check
-   *
-   * @return array{0:string,1:string[]} The route and the parameters if they exist, false otherwise
+   * @param string $userUrl The pattern to check
    *
    * @throws OtraException
+   * @return array{0:string,1:string[]} The route and the parameters if they exist, false otherwise
    */
   public static function getByPattern(string $userUrl) : array
   {
-    if (empty(Routes::$allRoutes))
-      throw new OtraException('There are currently no routes.');
-
-    $patternFound = false;
-    $interrogationMarkPosition = mb_strpos($userUrl, '?');
-    $userUrlhasGetParameters = $interrogationMarkPosition !== false;
-
-    if ($userUrlhasGetParameters)
-      $userUrlWithoutGetParameters = substr($userUrl, 0, $interrogationMarkPosition);
-
-    /** @var string $routeName */
-    foreach (Routes::$allRoutes as $routeName => $routeData)
-    {
-      /** @var string $routeUrl */
-      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];
-      $firstBracketPosition = mb_strpos($routeUrl, '{');
-
-      // If the route from the configuration does not contain parameters
-      if ($firstBracketPosition === false)
-      {
-        // Is it the route we are looking for? It is the case if:
-        // 1. The route from the configuration is included in the user url AND
-        // 2. the user url does not have GET parameters and is equal to the route OR
-        //    the user url does have GET parameters and the portion without GET parameters is equal to the route
-        // AND does this user url NOT contain parameters like the route
-        if (str_contains($userUrl, $routeUrl)
-          && (!$userUrlhasGetParameters && $routeUrl === $userUrl
-            || $userUrlhasGetParameters && $userUrlWithoutGetParameters === $routeUrl)
-        )
-        {
-          $patternFound = true;
-          break;
-        } else
-          continue;
-      }
-
-      $firstPartUntilParameters = substr($routeUrl, 0, $firstBracketPosition);
-
-      // This is maybe the route (with parameters) we are looking for!
-      if (str_contains($userUrl, $firstPartUntilParameters))
-      {
-        $routeRegexp = '@^' . preg_replace('@{[^}]{0,}}@', '([^/?]{0,})', $routeUrl) .
-          '(?:\?(?:[a-zA-Z]{1,}=\w{1,})(?:&?(?:[a-zA-Z]{1,}=\w{1,})){0,})?$@';
-
-        // The beginning of the route is ok, is the parameters section ok too?
-        if (preg_match($routeRegexp, $userUrl, $foundParameters, PREG_OFFSET_CAPTURE))
-        {
-          $patternFound = true;
-          break;
-        }
-      }
-    }
+    [$patternFound, $routeName, $firstBracketPosition, $foundParameters, $routeUrl] = self::doesPatternExist($userUrl);
 
     // We do not have been able to find a matching route
     if (!$patternFound)
     {
       header('HTTP/1.0 404 Not Found');
 
-      return in_array('404', array_keys(Routes::$allRoutes)) ? ['404', []] : ['otra_404', []];
+      return array_key_exists('404', Routes::$allRoutes) ? ['404', []] : ['otra_404', []];
     }
 
     // The route is found, do we have parameters to get?
@@ -189,7 +169,7 @@ abstract class Router
     $params = [];
 
     // get the parameters names
-    preg_match_all('@{([^}]{1,})}@', $routeUrl, $routeParameters);
+    preg_match_all('@{([^}]+)}@', $routeUrl, $routeParameters);
 
     // remove the global result
     array_shift($routeParameters);
@@ -207,8 +187,93 @@ abstract class Router
   }
 
   /**
-   * @param string $route
-   * @param array  $params
+   * Check if the pattern is present among the routes.
+   *
+   * @param string $userUrl The pattern to check
+   *
+   * @throws OtraException
+   * @return array{0:bool,1:string,2:int,3:array,4:string} [$patternFound, $routeName, $firstBracketPosition, $foundParameters, $routeUrl]
+   */
+  public static function doesPatternExist(string $userUrl) : array
+  {
+    if (empty(Routes::$allRoutes))
+      throw new OtraException('There are currently no routes.');
+
+    $patternFound = false;
+    $foundParameters = [];
+    $interrogationMarkPosition = mb_strpos($userUrl, '?');
+    $userUrlHasGetParameters = $interrogationMarkPosition !== false;
+
+    if ($userUrlHasGetParameters)
+      $userUrlWithoutGetParameters = substr($userUrl, 0, $interrogationMarkPosition);
+
+    /** @var string $routeName */
+    foreach (Routes::$allRoutes as $routeName => $routeData)
+    {
+      if (!in_array(
+        $_SERVER['REQUEST_METHOD'],
+        $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
+      ))
+        continue;
+
+      if ($_SERVER['CONTENT_TYPE'] === '')
+        $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
+      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+      if (!str_contains(
+        $_SERVER['CONTENT_TYPE'],
+        $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
+      )
+        continue;
+
+      /** @var string $routeUrl */
+      $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];
+      $firstBracketPosition = mb_strpos($routeUrl, '{');
+
+      // If the route from the configuration does not contain parameters
+      if ($firstBracketPosition === false)
+      {
+        // Is it the route we are looking for? It is the case if:
+        // 1. The route from the configuration is included in the user url AND
+        // 2. the user url does not have GET parameters and is equal to the route OR
+        //    the user url does have GET parameters and the portion without GET parameters is equal to the route
+        // AND does this user url NOT contain parameters like the route
+        if (str_contains($userUrl, $routeUrl)
+          && (!$userUrlHasGetParameters && $routeUrl === $userUrl
+            || $userUrlHasGetParameters && $userUrlWithoutGetParameters === $routeUrl)
+        )
+        {
+          $patternFound = true;
+          break;
+        } else
+          continue;
+      }
+
+      $firstPartUntilParameters = substr($routeUrl, 0, $firstBracketPosition);
+
+      // This is maybe the route (with parameters) we are looking for!
+      if (str_contains($userUrl, $firstPartUntilParameters))
+      {
+        $routeRegexp = '@^' . preg_replace('@{[^}]*}@', '([^/?]*)', $routeUrl) .
+          '(?:\?(?:[a-zA-Z]+=\w+)(?:&?(?:[a-zA-Z]+=\w+))*)?$@';
+
+        // The beginning of the route is ok, is the parameters' section ok too?
+        if (preg_match($routeRegexp, $userUrl, $foundParameters, PREG_OFFSET_CAPTURE))
+        {
+          $patternFound = true;
+          break;
+        }
+      }
+    }
+
+    // We do not have been able to find a matching route
+    if ($patternFound)
+      return [true, $routeName, $firstBracketPosition, $foundParameters, $routeUrl];
+    else
+      return [false, null, null, null, null];
+  }
+
+  /**
    *
    * @return string
    */
@@ -222,5 +287,15 @@ abstract class Router
     }
 
     return Routes::$allRoutes[$route][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL] . $paramsString;
+  }
+
+  /**
+   * @return string Long route name without parameters with no ending slash
+   */
+  public static function getRouteUrlWithoutParameters(string $routeName) : string
+  {
+    $routeLongName = Routes::$allRoutes[$routeName][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL];
+
+    return mb_substr($routeLongName, 0, strpos($routeLongName, '{') - 1);
   }
 }

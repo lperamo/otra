@@ -10,9 +10,28 @@ use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use const otra\cache\php\CORE_PATH;
+use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\tools\files\returnLegiblePath;
 
-if (!function_exists('otra\tools\copyFileAndFolders'))
+if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
+  /**
+   * @throws OtraException
+   */
+  function cannotCopy(string $source, string $destination): never
+  {
+    $error = error_get_last();
+    require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+    throw new OtraException(
+      'Cannot copy the file ' . returnLegiblePath($source) . ' to ' .
+      returnLegiblePath($destination) . '.' . PHP_EOL . 'Error type ' . CLI_INFO_HIGHLIGHT .
+      $error['type'] . CLI_BASE . ' : ' . $error['message'] . ' at ' . CLI_INFO_HIGHLIGHT . $error['file'] .
+      CLI_BASE . ':' . CLI_INFO_HIGHLIGHT . $error['line'] . END_COLOR . PHP_EOL,
+      $error['type']
+    );
+  }
+
   /**
    * Copy the file or an entire folder to the destination
    *
@@ -38,17 +57,12 @@ if (!function_exists('otra\tools\copyFileAndFolders'))
           mkdir($destinationFolder, 0777, true);
 
         if (!copy($fileOrFolderSrc, $fileOrFolderDest))
-          throw new OtraException(
-            'Cannot copy the file \'' . $fileOrFolderSrc . ' to ' . $fileOrFolderDest . '\'.',
-            E_CORE_ERROR
-          );
+          cannotCopy($fileOrFolderSrc, $fileOrFolderDest);
       }
     }
   }
 
   /**
-   * @param string $source
-   * @param string $destination
    *
    * @throws OtraException
    */
@@ -69,19 +83,21 @@ if (!function_exists('otra\tools\copyFileAndFolders'))
     {
       if ($splFileInfo->isDir())
       {
-        $destinationFolder = $destination . $splFileInfo->getFilename();
+        $destinationFolder = $destination . mb_substr($splFileInfo->getPath(), $initialFolderLength) . '/' . $splFileInfo->getFilename();
 
-        if (!file_exists($destinationFolder) && !mkdir($destinationFolder))
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
       } else
       {
         $filePath = $splFileInfo->getRealPath();
-        $destinationFilePath = $destination . substr($filePath, $initialFolderLength);
+        $destinationFilePath = $destination . mb_substr($filePath, $initialFolderLength);
+        $destinationFolder = mb_substr($destinationFilePath, 0, mb_strrpos($destinationFilePath, '/'));
+
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
+          throw new OtraException('Cannot create the folder ' . $destinationFolder);
 
         if (!copy($filePath, $destinationFilePath))
-          throw new OtraException(
-            'Cannot copy the file \'' . $filePath . ' to ' . $destinationFilePath . '\'.'
-          );
+          cannotCopy($filePath, $destinationFilePath);
       }
     }
   }

@@ -13,19 +13,13 @@ use ReflectionObject;
  */
 abstract class Model
 {
-  private string $table;
+  private readonly string $table;
 
   /**
-   * @param string $property
-   *
    * @return mixed
    */
   public function get(string $property) : mixed { return $this->$property; }
 
-  /**
-   * @param string $property
-   * @param mixed $value
-   */
   public function set(string $property, mixed $value) : void { $this->$property = $value; }
 
   /**
@@ -72,7 +66,7 @@ abstract class Model
       }
 
       $query = substr($query, 0, -1) . ' WHERE `'. $identifier . '`=' . $idValue;
-    } else // we add a entry
+    } else // we add an entry
     {
       unset($computedProperties[$identifier]);
       $query = 'INSERT INTO `'. AllConfig::$dbConnections[$dbName]['db'] . '_' . $this->table . '` (';
@@ -91,4 +85,3 @@ abstract class Model
     return $dbConn->lastInsertedId();
   }
 }
-

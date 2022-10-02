@@ -21,12 +21,12 @@ if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
 {
   echo CLI_ERROR, 'Either you do not have any routes or you have to update your configuration with ', CLI_INFO_HIGHLIGHT,
     'otra updateConf', CLI_ERROR, '.', PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
-require BASE_PATH . 'config/Routes.php';
+require_once BASE_PATH . 'config/Routes.php';
 require CORE_PATH . 'tools/cli.php';
-require CORE_PATH . 'tools/files/returnLegiblePath.php';
+require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
 
 const FILE_TASK_ARG_MASK = 3,
   FILE_TASK_ARG_GCC = 4,
@@ -50,7 +50,7 @@ define(
 // Defines if we want to use Google Closure Compiler or not
 define(
   __NAMESPACE__ . '\\FILE_TASK_GCC',
-  isset($argv[FILE_TASK_ARG_GCC]) && $argv[FILE_TASK_ARG_GCC] === 'true'
+  isset($argumentsVector[FILE_TASK_ARG_GCC]) && $argumentsVector[FILE_TASK_ARG_GCC] === 'true'
 );
 
 define(
@@ -58,16 +58,16 @@ define(
   isset(AllConfig::$cssSourceMaps) && AllConfig::$cssSourceMaps
 );
 
-$maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argv);
+$maskExists = array_key_exists(FILE_TASK_ARG_MASK, $argumentsVector);
 
 // Check if the binary mask is numeric
-if ($maskExists && !is_numeric($argv[FILE_TASK_ARG_MASK]))
+if ($maskExists && !is_numeric($argumentsVector[FILE_TASK_ARG_MASK]))
 {
   echo CLI_ERROR, 'The mask must be numeric ! See the help for more information.', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
-define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argv[FILE_TASK_ARG_MASK]) ? intval($argv[FILE_TASK_ARG_MASK]) : 15);
+define(__NAMESPACE__ . '\\FILE_TASK_NUMERIC_MASK', isset($argumentsVector[FILE_TASK_ARG_MASK]) ? (int) $argumentsVector[FILE_TASK_ARG_MASK] : 15);
 
 define(__NAMESPACE__ . '\\WATCH_FOR_CSS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_SCSS));
 define(__NAMESPACE__ . '\\WATCH_FOR_TS_RESOURCES', isWatched(FILE_TASK_NUMERIC_MASK, $maskExists, TASK_FILE_MASK_TS));
@@ -76,7 +76,7 @@ define(
   __NAMESPACE__ . '\\WATCH_FOR_ROUTES',
   (
     $maskExists
-    && ($argv[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES
+    && ($argumentsVector[FILE_TASK_ARG_MASK] & TASK_FILE_MASK_ROUTES) === TASK_FILE_MASK_ROUTES
   )
   || !$maskExists
 );
@@ -90,7 +90,6 @@ unset($maskExists);
  *                                       Eg : /var/www/html/myProject/bundles/mybundle/myModule/resources/
  * @param string $resourceName           Full path including base file name and extension
  * @param string $extension              File extension
- * @param bool   $verbose
  *
  * @throws OtraException
  * @return string
@@ -118,8 +117,13 @@ function generateStylesheetsFiles(
   $cssPath = realpath($cssFolder) . DIR_SEPARATOR . $generatedCssFile;
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
+  $sassLoadPathString = '';
+
+  foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+    $sassLoadPathString .= ' -I ' . $sassLoadPath;
+
   [, $output] = cliCommand(
-    'sass --update -q ' . (TASK_FILE_SOURCE_MAPS ? '' : '--no-source-map ') . $resourceName . ':' . $cssPath,
+    'sass --update ' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
     null,
     false
   );
@@ -135,13 +139,13 @@ function generateStylesheetsFiles(
   if (!TASK_FILE_SOURCE_MAPS && file_exists($sourceMapPath))
     unlink($sourceMapPath);
 
-  return $output;
+  // remove "Compiled [...]" messages from SASS CLI command as OTRA already talks about it
+  return preg_replace('@Compiled .*?.scss to .*?.css\.@','',$output);
 }
 
 /**
  * @param string $fullName The absolute path to the file
  *
- * @throws OtraException
  * @return array{0:string, 1:string, 2:string, 3:string}
  *  $Basename               : the filename without extension,
  *  $resourcesMainFolder    : full path until 'src/resources', 'module/resources' folder or a 'web/' folder,
@@ -169,13 +173,18 @@ function getPathInformations(string $fullName) : array
 
     if ($resourcesMainFolderPosition === false)
     {
-      echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
-        'resources', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      $resourcesMainFolderPosition = mb_strrpos($resourceFolder, 'vendor/ecocomposer/ecocomposer');
 
-    }
+      if ($resourcesMainFolderPosition === false)
+      {
+        echo CLI_ERROR, 'The resource ', CLI_INFO_HIGHLIGHT, $fullName, CLI_ERROR, ' was not in a ', CLI_INFO_HIGHLIGHT,
+          'resources', CLI_ERROR, ',', CLI_INFO_HIGHLIGHT, 'web', CLI_ERROR, ' or ', CLI_INFO_HIGHLIGHT,
+          'vendor/ecocomposer/ecocomposer', CLI_ERROR, ' folder!', END_COLOR, PHP_EOL;
+      } else
+        $folderType = 'vendor/ecocomposer/ecocomposer/';
 
-    $folderType = 'web/';
+    } else
+      $folderType = 'web/';
   }
 
   $resourcesMainFolder = mb_substr($resourceFolder, 0, $resourcesMainFolderPosition) . $folderType;
@@ -190,8 +199,6 @@ function getPathInformations(string $fullName) : array
 }
 
 /**
- * @param array  $paths
- * @param string $realPath
  * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
  *                           True, if the file belongs to the scope we want to watch. Defaults to true.
  *
@@ -215,7 +222,6 @@ function isNotInThePath(array $paths, string $realPath, bool $checkScope = true)
 /**
  * @param int   $fullBinaryMask The binary masks that contains all the options: CSS, TS, JS, CSS etc...
  * @param bool  $maskExists     Does the mask it
- * @param int   $mask
  *
  * @return bool
  */

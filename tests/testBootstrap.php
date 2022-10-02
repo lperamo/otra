@@ -17,6 +17,8 @@ const
   CACHE_PHP_INIT_PATH = CACHE_PATH . 'php/init/',
   TASK_CLASS_MAP_PATH = CACHE_PHP_INIT_PATH . 'tasksClassMap.php';
 
+error_reporting(E_ALL);
+
 if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
 {
   require CACHE_PHP_INIT_PATH . 'ClassMap.php';

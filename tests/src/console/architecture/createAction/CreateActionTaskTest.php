@@ -19,7 +19,8 @@ define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_
  */
 class CreateActionTaskTest extends TestCase
 {
-  private const TEST_TASK = 'createAction',
+  private const
+    TEST_TASK = 'createAction',
     TEST_BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
     TEST_BUNDLES_CONFIG_FILE_PATH = self::TEST_BUNDLES_CONFIG_PATH . 'Routes.php',
     TEST_BUNDLE_CONFIG_PATH = self::TEST_BUNDLE_PATH . 'config/',
@@ -44,13 +45,16 @@ class CreateActionTaskTest extends TestCase
     TEST_CONTROLLER_NAME = 'test',
     TEST_ACTION_NAME = 'test';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  private static array $taskClassMapPath;
+
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {
     parent::setUp();
     $_SERVER[APP_ENV] = PROD;
+    self::$taskClassMapPath = require TASK_CLASS_MAP_PATH;
   }
 
   protected function tearDown(): void
@@ -78,15 +82,12 @@ class CreateActionTaskTest extends TestCase
    */
   public function testCreateActionTask_NoBundlesFolder() : void
   {
-    // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
-
     // testing exceptions
     self::expectException(OtraException::class);
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -109,11 +110,60 @@ class CreateActionTaskTest extends TestCase
 
   /**
    * @author Lionel Péramo
+   * @depends testCreateActionTask
+   * @doesNotPerformAssertions
+   * @throws OtraException
+   */
+  public function testCreateActionTask_TwoActions() : void
+  {
+    // context
+    mkdir(self::TEST_CONTROLLER_PATH, 0777, true);
+
+    // launching
+    TasksManager::execute(
+      self::$taskClassMapPath,
+      self::TEST_TASK,
+      [
+        self::OTRA_BINARY_NAME,
+        self::TEST_TASK,
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
+      ]
+    );
+    TasksManager::execute(
+      self::$taskClassMapPath,
+      self::TEST_TASK,
+      [
+        self::OTRA_BINARY_NAME,
+        self::TEST_TASK,
+        self::TEST_BUNDLE_NAME,
+        self::TEST_MODULE_NAME,
+        self::TEST_CONTROLLER_NAME,
+        self::TEST_ACTION_NAME . 2,
+        self::CREATE_ACTION_NO_INTERACTIVE_MODE
+      ]
+    );
+
+    // cleaning
+    if (!OTRA_PROJECT)
+    {
+      unlink(self::TEST_BUNDLES_CONFIG_FILE_PATH);
+      rmdir(self::TEST_BUNDLES_CONFIG_PATH);
+
+      unlink(self::TEST_BUNDLE_ROUTES_PATH);
+      rmdir(self::TEST_BUNDLE_CONFIG_PATH);
+    }
+  }
+
+  /**
+   * @author Lionel Péramo
    */
   public function testCreateControllerTask_BundleDoNotExist_noForce() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(BUNDLES_PATH, 0777, true);
 
     // assertions
@@ -123,7 +173,7 @@ class CreateActionTaskTest extends TestCase
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -144,12 +194,11 @@ class CreateActionTaskTest extends TestCase
   public function testCreateControllerTask_BundleDoNotExist_force() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(BUNDLES_PATH, 0777, true);
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -173,8 +222,6 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ModuleDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
-
     if (!file_exists(self::TEST_BUNDLE_PATH))
       mkdir(self::TEST_BUNDLE_PATH, 0777, true);
 
@@ -183,7 +230,7 @@ class CreateActionTaskTest extends TestCase
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -208,7 +255,6 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ControllerDoNotExist() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::TEST_MODULE_PATH, 0777, true);
 
     // testing exceptions
@@ -216,7 +262,7 @@ class CreateActionTaskTest extends TestCase
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -241,7 +287,6 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask_ActionAlreadyExists() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::TEST_CONTROLLER_PATH, 0777, true);
     touch(self::TEST_ACTION_PATH);
 
@@ -250,7 +295,7 @@ class CreateActionTaskTest extends TestCase
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,
@@ -278,12 +323,11 @@ class CreateActionTaskTest extends TestCase
   public function testCreateActionTask() : void
   {
     // context
-    $tasksClassMap = require TASK_CLASS_MAP_PATH;
     mkdir(self::TEST_CONTROLLER_PATH, 0777, true);
 
     // launching
     TasksManager::execute(
-      $tasksClassMap,
+      self::$taskClassMapPath,
       self::TEST_TASK,
       [
         self::OTRA_BINARY_NAME,

@@ -7,15 +7,17 @@ use otra\config\AllConfig;
 use PHPUnit\Framework\TestCase;
 use otra\console\database\Database;
 use otra\{OtraException, bdd\Sql, Session};
+use ReflectionClass;
 use ReflectionException;
-use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,PROD,TEST_PATH};
-use const otra\console\{CLI_INFO_HIGHLIGHT, END_COLOR};
+use ReflectionMethod;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
+use function otra\console\database\sqlCreateFixtures\{analyzeFixtures, createFixture};
 use function otra\tools\
 {cleanFileAndFolders,
   copyFileAndFolders,
-  removeFieldScopeProtection,
   removeFieldsScopeProtection,
-  removeMethodScopeProtection,
   setScopeProtectedFields};
 
 /**
@@ -34,22 +36,24 @@ class DatabaseTest extends TestCase
     DATABASE_FIRST_TABLE_NAME = 'testDB_table',
     SCHEMA_FILE = 'schema.yml',
     TABLES_ORDER_FILE = 'tables_order.yml',
+    SQL_SCHEMA_FORCE_FILE = 'database_schema_force.sql',
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
+    SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH = self::CONFIG_FOLDER_SQL . self::SQL_SCHEMA_FORCE_FILE,
+    SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::SQL_SCHEMA_FORCE_FILE,
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     CONFIG_FOLDER_YML_FIXTURES = self::CONFIG_FOLDER_YML . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/',
     CONFIG_FOLDER_YML_FIXTURES_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
     SCHEMA_FILE_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
-    IMPORTED_SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . 'importedSchema.yml',
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . self::TABLES_ORDER_FILE,
-    TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'],
     INIT_IMPORTS_FUNCTION = '_initImports',
+    OTRA_BINARY = 'otra.php',
     OTRA_LABEL_FIXTURES_FOLDER = 'fixtures/',
-    OTRA_VARIABLE_DATABASE_BASE_DIRS = 'baseDirs',
+    OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     OTRA_VARIABLE_DATABASE_PATH_SQL = 'pathSql',
     OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES = 'pathSqlFixtures',
     OTRA_VARIABLE_DATABASE_PATH_YML = 'pathYml',
@@ -66,8 +70,8 @@ class DatabaseTest extends TestCase
   {
     parent::setUp();
     $_SERVER[APP_ENV] = PROD;
-    removeFieldScopeProtection(Database::class, 'boolSchema')->setValue(false);
-    removeFieldScopeProtection(Database::class, 'folder')->setValue('tests/src/bundles/');
+    $reflectedClass = (new ReflectionClass(Database::class));
+    $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
   }
 
   /**
@@ -79,7 +83,10 @@ class DatabaseTest extends TestCase
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     require CORE_PATH . 'tools/cleanFilesAndFolders.php';
 
-    cleanFileAndFolders([BASE_PATH . 'logs']);
+    foreach(glob(BASE_PATH . 'logs/**/**.txt') as $logFile)
+    {
+      file_put_contents($logFile, '');
+    }
   }
 
   /**
@@ -88,16 +95,7 @@ class DatabaseTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
-    $this->cleanAll();
-  }
 
-  /**
-   * Clean files and the database that are created for tests.
-   *
-   * @throws OtraException
-   */
-  protected function cleanAll() : void
-  {
     cleanFileAndFolders([
       self::CONFIG_FOLDER_SQL,
       self::CONFIG_FOLDER_YML
@@ -121,8 +119,7 @@ class DatabaseTest extends TestCase
   }
 
   /**
-   * @throws ReflectionException|OtraException
-   * @depends testGetDirs
+   * @throws ReflectionException
    */
   public function testInitBase() : void
   {
@@ -130,49 +127,34 @@ class DatabaseTest extends TestCase
     Database::initBase();
 
     // testing
-    $baseDirs = removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_BASE_DIRS)->getValue();
-    $ymlPath = removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_YML)->getValue();
-    $sqlPath = removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
+    $reflectedClass = (new ReflectionClass(Database::class));
+    $ymlPath = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_YML)->getValue();
+    $sqlPath = $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
 
     // We test each private static variable that has been set by Database::initBase()
-    self::assertEquals(
-      Database::getDirs(),
-      $baseDirs
-    );
-
-    self::assertEquals(
-      $baseDirs[0] . 'config/data/yml/',
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_YML)->getValue()
-    );
-
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::OTRA_LABEL_FIXTURES_FOLDER,
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES)->getValue()
+      $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES)->getValue()
     );
 
-    self::assertEquals(
-      $baseDirs[0] . 'config/data/sql/',
-      $sqlPath
-    );
-
-    self::assertEquals(
+    self::assertSame(
       $sqlPath . self::OTRA_LABEL_FIXTURES_FOLDER,
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->getValue()
+      $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->getValue()
     );
 
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::SCHEMA_FILE,
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->getValue()
+      $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->getValue()
     );
 
-    self::assertEquals(
+    self::assertSame(
       $ymlPath . self::TABLES_ORDER_FILE,
-      removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->getValue()
+      $reflectedClass->getProperty(self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->getValue()
     );
   }
 
   /**
-   * @depends                  testInitBase
+   * @depends testInitBase
    *
    * @throws OtraException
    * @throws ReflectionException
@@ -205,83 +187,12 @@ class DatabaseTest extends TestCase
       if ($testKeys[$fieldNameKey] === 'pathYmlFixtures')
         continue;
 
-      self::assertEquals(
+      self::assertSame(
         $testValues[$fieldNameKey],
         $unprotectedField->getValue(),
         'Testing the field ' . CLI_INFO_HIGHLIGHT . $testKeys[$fieldNameKey] . END_COLOR
       );
     }
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testGetDirs() : void
-  {
-    require self::TEST_CONFIG_GOOD_PATH;
-    $folders = Database::getDirs();
-    self::assertIsArray($folders);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   */
-  public function testClean() : void
-  {
-    // Creating the context
-    copyFileAndFolders(
-      [
-        self::CONFIG_FOLDER_YML_BACKUP,
-        self::CONFIG_FOLDER_SQL_BACKUP
-      ],
-      [
-        self::CONFIG_FOLDER_YML,
-        self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    Database::clean();
-    $sqlPath = removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_SQL)->getValue();
-    self::assertEquals([], glob($sqlPath . '/*.sql'));
-    self::assertEquals([], glob($sqlPath . 'truncate/*.sql'));
-  }
-
-  /**
-   * @throws OtraException If the original YAML schema can't be copied.
-   * @throws ReflectionException
-   * depends testInit
-   * depends testDropDatabase
-   */
-  public function testCreateDatabase() : void
-  {
-    // Creating the context
-    copyFileAndFolders(
-      [self::SCHEMA_FILE_BACKUP],
-      [self::SCHEMA_ABSOLUTE_PATH]
-    );
-
-    $this->loadConfig();
-
-    Database::init(self::DATABASE_CONNECTION);
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    // Launching the task
-    Database::createDatabase(self::DATABASE_NAME);
-
-    // Assertions
-    $endPath = removeFieldScopeProtection(Database::class, 'databaseFile')->getValue() . '.sql';
-    self::assertFileEquals(
-      self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
-      self::CONFIG_FOLDER_SQL . $endPath
-    );
   }
 
   public function testGetAttr() : void
@@ -297,7 +208,7 @@ class DatabaseTest extends TestCase
   public function test_SortTableByForeignKeysEmpty() : void
   {
     $sortedTables = [];
-    removeMethodScopeProtection(Database::class, '_sortTableByForeignKeys')
+    (new ReflectionMethod(Database::class, '_sortTableByForeignKeys'))
       ->invokeArgs(null, [[], &$sortedTables]);
   }
 
@@ -338,7 +249,8 @@ class DatabaseTest extends TestCase
       ]
     );
 
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
     // restores correct content in the variable overwritten by the function call
     setScopeProtectedFields(
@@ -351,7 +263,8 @@ class DatabaseTest extends TestCase
     );
 
     $sortedTables = [];
-    Database::createFixture(
+    require CONSOLE_PATH . 'database/sqlCreateFixtures/sqlCreateFixturesTask.php';
+    createFixture(
       self::DATABASE_NAME,
       self::DATABASE_FIRST_TABLE_NAME,
       [],
@@ -360,194 +273,6 @@ class DatabaseTest extends TestCase
       $sortedTables,
       self::CONFIG_FOLDER_SQL_FIXTURES . self::DATABASE_NAME . '_' . self::DATABASE_FIRST_TABLE_NAME . '.sql'
     );
-  }
-
-  /**
-   * @throws OtraException
-   */
-  public function testCreateFixtures_TruncateOnly_NoSchema() : void
-  {
-    // Creating the context
-    copyFileAndFolders(
-      [self::CONFIG_FOLDER_YML_FIXTURES_BACKUP],
-      [self::CONFIG_FOLDER_YML_FIXTURES]
-    );
-
-    // loading test configuration
-    $this->loadConfig();
-
-    // Launching the task
-    $this->expectException(OtraException::class);
-    $this->expectExceptionMessage('You have to create a database schema file in config/data/' . self::SCHEMA_FILE . ' before using fixtures. Searching for : ');
-    Database::createFixtures(self::DATABASE_NAME, 1);
-  }
-
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   *
-   * @depends testInit
-   * @depends testCreateDatabase
-   * @depends testTruncateTable
-   * @depends testCreateFixture
-   * @depends testExecuteFixture
-   * @doesNotPerformAssertions
-   */
-  public function testCreateFixtures_TruncateOnly() : void
-  {
-    // context
-    define(__NAMESPACE__ . '\\VERBOSE', 2);
-    copyFileAndFolders(
-      [
-        self::SCHEMA_FILE_BACKUP,
-        self::CONFIG_FOLDER_YML_BACKUP . self::TABLES_ORDER_FILE,
-        self::CONFIG_FOLDER_YML_FIXTURES_BACKUP
-      ],
-      [
-        self::SCHEMA_ABSOLUTE_PATH,
-        self::TABLES_ORDER_FILE_PATH,
-        self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    $this->loadConfig();
-
-    Database::init(self::DATABASE_CONNECTION);
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    try
-    {
-      Database::createDatabase(self::DATABASE_NAME);
-    } catch (OtraException $exception)
-    {
-      echo 'Schema already exists', PHP_EOL;
-    }
-
-    // restores correct content in the variable overwritten by the function call
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
-        self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    // launching task
-    Database::createFixtures(self::DATABASE_NAME, 1);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   */
-  public function testCreateFixtures_TruncateOnly_NoTablesOrderFile() : void
-  {
-    // context
-    copyFileAndFolders(
-      [
-        self::SCHEMA_FILE_BACKUP,
-        self::CONFIG_FOLDER_YML_FIXTURES_BACKUP
-      ],
-      [
-        self::SCHEMA_ABSOLUTE_PATH,
-        self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    $this->loadConfig();
-
-    Database::init(self::DATABASE_CONNECTION);
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    // assertions
-    $this->expectException(OtraException::class);
-    $this->expectExceptionMessage('You must use the database generation task before using the fixtures (no ' .
-      substr(self::TABLES_ORDER_FILE_PATH, strlen(BASE_PATH)) . ' file)');
-
-    // launching the task
-    Database::createFixtures(self::DATABASE_NAME, 1);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   *
-   * @doesNotPerformAssertions
-   */
-  public function testCreateFixtures_CleanAndTruncate() : void
-  {
-    // context
-    copyFileAndFolders(
-      [
-        self::SCHEMA_FILE_BACKUP,
-        self::CONFIG_FOLDER_YML_BACKUP . self::TABLES_ORDER_FILE,
-        self::CONFIG_FOLDER_YML_FIXTURES_BACKUP
-      ],
-      [
-        self::SCHEMA_ABSOLUTE_PATH,
-        self::TABLES_ORDER_FILE_PATH,
-        self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    $this->loadConfig();
-
-    Database::init(self::DATABASE_CONNECTION);
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    Database::createDatabase(self::DATABASE_NAME);
-
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
-        self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    // testing
-    Database::createFixtures(self::DATABASE_NAME, 2);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   */
-  public function testExecuteFile_DoesNotExist() : void
-  {
-    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->setValue(self::SCHEMA_ABSOLUTE_PATH);
-
-    $this->expectException(OtraException::class);
-    $this->expectExceptionMessage('The file "blabla" does not exist !');
-    Database::executeFile('blabla');
   }
 
   /**
@@ -564,7 +289,8 @@ class DatabaseTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
 
-    removeFieldScopeProtection(Database::class, 'databaseFile');
+    // Removes protection on this field
+    (new ReflectionClass(Database::class))->getProperty('databaseFile');
 
     $this->loadConfig();
 
@@ -579,19 +305,10 @@ class DatabaseTest extends TestCase
     );
 
     // Launching the tasks
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
     Database::truncateTable(self::DATABASE_NAME, self::DATABASE_FIRST_TABLE_NAME);
   }
-
-  /**
-   * @doesNotPerformAssertions
-   */
-  public function testExecuteFile_Exists() : void
-  {
-    echo __DIR__;
-    //    Database::executeFile();
-  }
-
 
   /**
    * @throws OtraException
@@ -626,9 +343,11 @@ class DatabaseTest extends TestCase
         self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
       ]
     );
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
-    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)->setValue(self::CONFIG_FOLDER_SQL_FIXTURES);
+    (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)
+      ->setValue(self::CONFIG_FOLDER_SQL_FIXTURES);
 
     // launching task
 //    Database::createFixture(
@@ -671,7 +390,8 @@ class DatabaseTest extends TestCase
       ]
     );
 
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
     // launching the task
     $sqlInstance = Database::dropDatabase(self::DATABASE_NAME);
@@ -735,7 +455,6 @@ class DatabaseTest extends TestCase
 
   /**
    * @depends testInitBase
-   * @doesNotPerformAssertions
    * @throws OtraException
    * @throws ReflectionException
    */
@@ -757,6 +476,14 @@ class DatabaseTest extends TestCase
 
     // launching the task
     Database::generateSqlSchema(self::DATABASE_NAME, true);
+
+    self::assertFileExists(self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH);
+    self::assertFileEquals(
+      self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP,
+      self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH,
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH . CLI_ERROR .
+        CLI_INFO_HIGHLIGHT . ' against ' . self::SQL_SCHEMA_FORCE_FILE_ABSOLUTE_PATH_BACKUP . CLI_ERROR
+    );
   }
 
   /**
@@ -769,10 +496,10 @@ class DatabaseTest extends TestCase
   {
     // context
     copyFileAndFolders([self::CONFIG_FOLDER_YML_FIXTURES_BACKUP], [self::CONFIG_FOLDER_YML_FIXTURES]);
+    require CONSOLE_PATH . 'database/sqlCreateFixtures/sqlCreateFixturesTask.php';
 
     // launching the task
-    removeMethodScopeProtection(Database::class, '_analyzeFixtures')
-      ->invokeArgs(null, [self::CONFIG_FOLDER_YML_FIXTURES . self::DATABASE_FIRST_TABLE_NAME . '.yml']);
+    analyzeFixtures(self::CONFIG_FOLDER_YML_FIXTURES . self::DATABASE_FIRST_TABLE_NAME . '.yml');
   }
 
   /**
@@ -791,6 +518,7 @@ class DatabaseTest extends TestCase
     $this->loadConfig();
 
     // Initialize OTRA session
+    $_SERVER['REMOTE_ADDR'] = '::1';
     Session::init();
 
     Database::init(self::DATABASE_CONNECTION);
@@ -803,19 +531,20 @@ class DatabaseTest extends TestCase
       ]
     );
 
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
     $confToUse = $database = null;
 
     // launching the task
-    removeMethodScopeProtection(Database::class, self::INIT_IMPORTS_FUNCTION)
+    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
   /**
    * Testing with $database = null
    *
-   * @throws ReflectionException
+   * @throws ReflectionException|OtraException
    */
   public function testInitImports_DatabaseNull() : void
   {
@@ -831,7 +560,7 @@ class DatabaseTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'testDB' does not exist.");
 
-    removeMethodScopeProtection(Database::class, self::INIT_IMPORTS_FUNCTION)
+    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
@@ -860,19 +589,20 @@ class DatabaseTest extends TestCase
       ]
     );
 
-    Database::createDatabase(self::DATABASE_NAME);
+    require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
+    sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
     // launching the task
     $confToUse = self::DATABASE_CONNECTION;
     $database = self::DATABASE_NAME;
-    removeMethodScopeProtection(Database::class, self::INIT_IMPORTS_FUNCTION)
+    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
   /**
-   * Test with a non existent database.
+   * Test with a non-existent database.
    *
-   * @throws ReflectionException
+   * @throws ReflectionException|OtraException
    */
   public function testInitImports_BadDatabase() : void
   {
@@ -890,107 +620,7 @@ class DatabaseTest extends TestCase
     $this->expectExceptionMessage("The database 'noBDD' does not exist.");
 
     // launching task
-    removeMethodScopeProtection(Database::class, self::INIT_IMPORTS_FUNCTION)
+    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
       ->invokeArgs(null, [&$database, &$confToUse]);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   */
-  public function testImportSchema() : void
-  {
-    // context
-    copyFileAndFolders([self::SCHEMA_FILE_BACKUP], [self::SCHEMA_ABSOLUTE_PATH]);
-
-    $this->loadConfig();
-
-    // Initialize OTRA session
-    Session::init();
-
-    Database::init(self::DATABASE_CONNECTION);
-
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL
-      ]
-    );
-
-    Database::createDatabase(self::DATABASE_NAME);
-
-    // we change the path to the schema.yml in order to not overwrite the existing one by precaution
-    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)->setValue(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
-
-    // launching task
-    Database::importSchema(self::DATABASE_NAME, self::DATABASE_CONNECTION);
-    self::assertFileExists(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
-    self::assertFileEquals(self::SCHEMA_FILE_BACKUP, self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
-  }
-
-  /**
-   * @throws OtraException
-   * @throws ReflectionException
-   *
-   * @depends testInit
-   */
-  public function testImportFixtures() : void
-  {
-    //context
-    copyFileAndFolders(
-      [
-        self::CONFIG_FOLDER_YML_BACKUP
-      ],
-      [
-        self::CONFIG_FOLDER_YML
-      ]
-    );
-
-    $this->loadConfig();
-
-    // Initialize OTRA session
-    Session::init();
-    Database::init(self::DATABASE_CONNECTION);
-
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
-        self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    Database::createDatabase(self::DATABASE_NAME);
-
-    // restores correct content in the variable overwritten by the function call
-    setScopeProtectedFields(
-      Database::class,
-      [
-        self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE => self::SCHEMA_ABSOLUTE_PATH,
-        self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE => self::TABLES_ORDER_FILE_PATH,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL => self::CONFIG_FOLDER_SQL,
-        self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES => self::CONFIG_FOLDER_SQL_FIXTURES,
-        self::OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES => self::CONFIG_FOLDER_YML_FIXTURES
-      ]
-    );
-
-    Database::createFixtures(self::DATABASE_NAME, 1);
-
-    // restores correct content in the variable overwritten by the function call
-    removeFieldScopeProtection(Database::class, self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)->setValue(self::TABLES_ORDER_FILE_PATH);
-
-    // launching the task
-    Database::importFixtures(self::DATABASE_NAME, self::DATABASE_CONNECTION);
-
-    foreach (self::TABLES_ORDER as $table)
-    {
-      $ymlFile = self::CONFIG_FOLDER_YML_FIXTURES . $table . '.yml';
-      self::assertFileExists(self::CONFIG_FOLDER_YML_FIXTURES . $table . '.yml');
-      self::assertFileEquals(self::CONFIG_FOLDER_YML_FIXTURES_BACKUP . $table . '.yml', $ymlFile);
-    }
   }
 }

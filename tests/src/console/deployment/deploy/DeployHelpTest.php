@@ -16,9 +16,10 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class DeployHelpTest extends TestCase
 {
-  private const OTRA_TASK_DEPLOY = 'deploy',
+  private const
+    OTRA_TASK_DEPLOY = 'deploy',
     OTRA_TASK_HELP = 'help';
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace otra;
 
+use JsonException;
 use otra\console\OtraExceptionCli;
 use otra\config\Routes;
 use Error;
@@ -47,34 +48,30 @@ class OtraException extends Exception
   /**
    * OtraException constructor.
    *
-   * @param string     $message
-   * @param ?int       $code
-   * @param string     $file
-   * @param int|null   $line
-   * @param array|null $context
-   * @param bool       $isOtraCliWarning True only if we came from a console task that wants to do an exit.
+   * @param ?int|mixed $code
+   * @param bool       $exit    True only if we came from a console task that wants to do an exit.
    *
    * @throws OtraException
    */
-
   public function __construct(
     string $message = 'Error !',
-    ?int $code = NULL,
+    mixed $code = NULL,
     string $file = '',
     ?int $line = NULL,
     public array|null $context = [],
-    private bool $isOtraCliWarning = false)
+    private readonly bool $exit = false
+  )
   {
     parent::__construct();
-    $this->code = (null !== $code) ? $code : $this->getCode();
+    $this->code = $code ?? $this->getCode();
 
     // When $otraCliWarning is true then we only need the error code that will be used as exit code
-    if ($isOtraCliWarning)
+    if ($exit)
       return;
 
     $this->message = str_replace('<br>', PHP_EOL, $message);
     $this->file = str_replace('\\', DIR_SEPARATOR, (('' == $file) ? $this->getFile() : $file));
-    $this->line = (null === $line) ? $this->getLine() : $line;
+    $this->line = $line ?? $this->getLine();
 
     if ('cli' === PHP_SAPI)
       new OtraExceptionCli($this);
@@ -112,7 +109,7 @@ class OtraException extends Exception
       {
         echo CLI_ERROR . 'Error in ' . CLI_INFO_HIGHLIGHT . $this->file . CLI_ERROR . ':' . CLI_INFO_HIGHLIGHT .
           $this->line . CLI_ERROR . ' : ' . $this->message . END_COLOR . PHP_EOL;
-        throw new OtraException('', 1, '', NULL, [], true);
+        throw new OtraException(code: 1, exit: true);
       } else
         return '<span style="color: #e00;">Error in </span><span style="color: #0aa;">' . $this->file .
           '</span>:<span style="color: #0aa;">' . $this->line . '</span><span style="color: #e00;"> : ' . $this->message .
@@ -129,7 +126,7 @@ class OtraException extends Exception
     $traces = $this->getTrace();
     $simplifiedFilePath = mb_substr($this->file, mb_strlen(BASE_PATH));
 
-    // This test avoid trying to render an exception that cannot be rendered by classic ways...
+    // This test avoids trying to render an exception that cannot be rendered by classic ways...
     if (isset($traces[1], $traces[1]['function']) && $traces[1]['function'] === 'renderView')
     {
       if ($_SERVER[APP_ENV] === DEV)
@@ -146,7 +143,7 @@ class OtraException extends Exception
       } else
         echo 'A major problem has occurred. Sorry for the inconvenience. Please contact the site administrator.';
 
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     return $renderController->renderView(
@@ -167,13 +164,8 @@ class OtraException extends Exception
   /**
    * To use with set_error_handler().
    *
-   * @param int        $errno
-   * @param string     $message
-   * @param string     $fileName
-   * @param int        $fileLine
-   * @param array|null $context
    *
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   #[NoReturn] public static function errorHandler(
     int $errno,
@@ -185,7 +177,10 @@ class OtraException extends Exception
   {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
-      echo '{"success": "exception", "msg":' . json_encode(new OtraException($message)) . '}';
+      echo '{"success": "exception", "msg":' . json_encode(
+        new OtraException($message),
+        JSON_THROW_ON_ERROR
+        ) . '}';
     else
       new OtraException($message, $errno, $fileName, $fileLine, $context);
 
@@ -197,16 +192,19 @@ class OtraException extends Exception
    *
    * @param Exception|Error|OtraException $exception Can be TypeError, OtraException, maybe something else.
    *
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
-  #[NoReturn] public static function exceptionHandler(Exception|Error|OtraException $exception) : void
+  public static function exceptionHandler(Exception|Error|OtraException $exception) : never
   {
     if (PHP_SAPI === 'cli' && $exception instanceof OtraException)
       exit($exception->getCode());
 
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
       // json sent if it was an AJAX request
-      echo '{"success": "exception", "msg":' . json_encode(new OtraException($exception->getMessage())) . '}';
+      echo '{"success": "exception", "msg":' . json_encode(
+        new OtraException($exception->getMessage()),
+        JSON_THROW_ON_ERROR
+        ) . '}';
     else
     {
       new OtraException(
@@ -215,7 +213,7 @@ class OtraException extends Exception
         $exception->getFile(),
         $exception->getLine(),
         $exception->getTrace(),
-        $exception->isOtraCliWarning ?? false
+        $exception->exit ?? false
       );
     }
 

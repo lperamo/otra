@@ -6,7 +6,7 @@
 @use '../../components/theming/theming';
 
 // loading partials
-@use '../../partials/heavyProfiler/index';
+@use '../../partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);
@@ -19,10 +19,24 @@
   box-sizing : border-box;
   overflow : auto;
   padding    : 2rem;
-  width      : calc(100% - #{index.$vertical-menu-width});
+  // the following combination prevent to go outside the screen but taking all the space available in the flex container
+  flex-grow : 1;
+  width     : min-content;
 
   // text
   word-break : break-word;
+
+  @at-root .accordion--block {
+    box-shadow    : 0 0 .3rem #444;
+    margin-left  : .1rem;
+    margin-right : .1rem;
+
+    //& ul {
+    //  box-shadow    : 0 0 .3rem #444;
+    //  margin-bottom : 1rem;
+    //  padding       : 1rem;
+    //}
+  }
 
   & li {
     position: relative;
@@ -44,6 +58,10 @@
       // box
       background-image : linear-gradient(45deg, #222, #444, #222);
       border-radius    : .5rem;
+
+      @media all and (prefers-color-scheme : dark) {
+        box-shadow: 0 0 3px #aaa;
+      }
 
       // positioning
       padding  : 1rem;

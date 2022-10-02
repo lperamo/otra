@@ -16,9 +16,7 @@ const BASE_PATH_REPLACEMENT = CLI_INFO . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT;
  * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
  * otherwise returns resource name as is.
  *
- * @param string  $path
  * @param ?string $endColor Must contain '' if we do not want to restore default color
- *
  * @return string
  */
 function returnLegiblePath(string $path, ?string $endColor = END_COLOR) : string
@@ -30,10 +28,9 @@ function returnLegiblePath(string $path, ?string $endColor = END_COLOR) : string
 }
 
 /**
- * We know that we _have_ the value of BASE_PATH in the path so we replace it with 'BASE_PATH' in darker blue plus a
+ * We know that we _have_ the value of BASE_PATH in the path, so we replace it with 'BASE_PATH' in darker blue plus a
  * ' + ' in lighter blue.
  *
- * @param string $path
  *
  * @return string
  */

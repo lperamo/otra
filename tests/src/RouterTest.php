@@ -18,7 +18,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class RouterTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   private const
     LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
     LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';
@@ -27,16 +27,17 @@ class RouterTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
+  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
 
-  /**
-   * @throws OtraException
-   */
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
   }
 
+  /**
+   * @throws OtraException
+   */
   protected function setUp(): void
   {
     parent::setUp();
@@ -97,7 +98,7 @@ class RouterTest extends TestCase
     $route = Router::get(self::ROUTE_NAME, ['test' => 'coucou'], false);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       'bundles\HelloWorld\frontend\controllers\index\HomeAction',
       $route,
       'Testing action path...'
@@ -109,16 +110,20 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern(self::ROUTE_URL);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::ROUTE_NAME,
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
       self::LABEL_TESTING_ROUTE_NAME
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
       self::LABEL_TESTING_ROUTE_PARAMS
@@ -130,16 +135,20 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern_NonExistentRoute_firstCase() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern('/hellow');
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       'otra_404',
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
       self::LABEL_TESTING_ROUTE_NAME
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
       self::LABEL_TESTING_ROUTE_PARAMS
@@ -151,16 +160,20 @@ class RouterTest extends TestCase
    */
   public function testGetByPattern_NonExistentRoute_secondCase() : void
   {
+    // context
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+
     // launching
     $route = Router::getByPattern(self::ROUTE_URL . 'test');
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       'otra_404',
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME],
       self::LABEL_TESTING_ROUTE_NAME
     );
-    self::assertEquals(
+    self::assertSame(
       [],
       $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS],
       self::LABEL_TESTING_ROUTE_PARAMS
@@ -174,7 +187,7 @@ class RouterTest extends TestCase
     $route = Router::getRouteUrl(self::ROUTE_NAME);
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       self::ROUTE_URL,
       $route,
       'Testing route url...'

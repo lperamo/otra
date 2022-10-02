@@ -21,7 +21,7 @@ class GenAssetsHelpTest extends TestCase
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -45,7 +45,7 @@ class GenAssetsHelpTest extends TestCase
       STRING_PAD_FOR_OPTION_FORMATTING . '16 => SVG' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '31 => all (default)' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
-      self::LABEL_PLUS . str_pad('js_level_compilation', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      self::LABEL_PLUS . str_pad('js-level-compilation', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . 'Optimization level for Google Closure Compiler' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '0 for WHITESPACE_ONLY' . PHP_EOL .

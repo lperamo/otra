@@ -8,9 +8,10 @@ declare(strict_types=1);
 
 namespace otra\services;
 
+use JsonException;
 use otra\OtraException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH,DEV};
-use function otra\tools\{rawSqlPrettyPrint,t};
+use function otra\tools\{rawSqlPrettyPrint, trans};
 
 /**
  * @package otra\services
@@ -25,42 +26,43 @@ class ProfilerService
     if (DEV !== $_SERVER[APP_ENV])
     {
       echo 'No hacks.';
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
   }
 
   /**
-   * @param string $file
-   *
+   * @throws JsonException
    * @return false|string
    */
   public static function getLogs(string $file) : false|string
   {
     if (!file_exists($file) || '' === ($contents = file_get_contents($file)))
-      return t('No stored queries in ') . $file . '.';
+      return trans('No stored queries in ') . $file . '.';
 
     /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
-      str_replace(['\\', '},]'], ['\\\\', '}]'], substr($contents, 0, -1) . ']'),
-      true
+      substr($contents, 0, -2) . ']',
+      true,
+      512,
+      JSON_THROW_ON_ERROR
     );
 
     require CORE_PATH . 'tools/sqlPrettyPrint.php';
 
     $basePathLength = strlen(BASE_PATH);
     ob_start();
+
     foreach($requests as $request)
     {
       ?>
       <div class="profiler--sql-logs--element">
         <div class="profiler--sql-logs--element--left-block">
-          <?= t('In file') . ' <span class="profiler--sql-logs--element--file">', substr($request['file'],
-            $basePathLength), '</span> '
-            . t('at line') . '&nbsp;<span class="profiler--sql-logs--element--line">', $request['line'],
+          <?= trans('In file') . ' <span class="profiler--sql-logs--element--file" title="Click to select">', substr($request['file'],
+            $basePathLength), '</span>:<span class="profiler--sql-logs--element--line" title="Click to select">', $request['line'],
           '</span>&nbsp;:',
           rawSqlPrettyPrint($request['query']) ?>
         </div>
-        <button class="profiler--sql-logs--element--ripple ripple"><?= t('Copy') ?></button>
+        <button type="button" class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
       </div>
       <?php
     }

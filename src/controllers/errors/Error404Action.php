@@ -13,8 +13,8 @@ use otra\OtraException;
 class Error404Action extends Controller
 {
   /**
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
+   * @param array $params     [...getParams, ...postParams, etc.]
    *
    * @throws OtraException
    */
@@ -26,10 +26,11 @@ class Error404Action extends Controller
 
     foreach ($routes as $route)
     {
-      if (str_contains($route, 'otra'))
+      if (str_contains($route, 'otra')
+        || str_contains(Routes::$allRoutes[$route]['chunks'][Routes::ROUTES_CHUNKS_URL], '{'))
         continue;
 
-      $defaultUrl = Routes::$allRoutes[$route]['chunks'][0];
+      $defaultUrl = Routes::$allRoutes[$route]['chunks'][Routes::ROUTES_CHUNKS_URL];
       break;
     }
 
@@ -39,4 +40,3 @@ class Error404Action extends Controller
     );
   }
 }
-

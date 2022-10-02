@@ -59,7 +59,7 @@ class CreateModelTaskTest extends TestCase
       self::OTRA_LABEL_BUNDLE. PHP_EOL,
     TEST_BUNDLE_PATH = BASE_PATH . CreateModelTaskTest::BUNDLE_RELATIVE_PATH;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function tearDown() : void

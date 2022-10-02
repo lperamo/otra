@@ -22,6 +22,21 @@ abstract class Routes
     ROUTES_CHUNKS_ACTION = 4;
 
   public static array $allRoutes = [
+    'otra_404' => [
+      'chunks' => ['/404', '', 'otra', 'errors', 'error404Action'],
+      'core' => true
+    ],
+    'otra_clearSQLLogs' => [
+      'chunks' => ['/dbg/clearSQLLogs', '', 'otra', 'profiler', 'clearSQLLogsAction'],
+      'core' => true
+    ],
+    'otra_css' => [
+      'chunks' => ['/profiler/css', '', 'otra', 'profiler', 'cssAction'],
+      'core' => true,
+      'resources' => [
+        'core_css' => ['pages/sassTree/sassTree']
+      ]
+    ],
     'otra_exception' => [
       'chunks' => ['exception'],
       'core' => true,
@@ -30,33 +45,41 @@ abstract class Routes
         'core_js' => ['tools']
       ]
     ],
-
+    'otra_logs' => [
+      'chunks' => ['/profiler/logs', '', 'otra', 'profiler', 'logsAction'],
+      'core' => true,
+      'resources' => [
+        'core_css' => ['pages/logs/logs']
+      ]
+    ],
     'otra_refreshSQLLogs' => [
       'chunks' => ['/dbg/refreshSQLLogs', '', 'otra', 'profiler', 'refreshSQLLogsAction'],
       'core' => true
     ],
-
-    'otra_clearSQLLogs' => [
-      'chunks' => ['/dbg/clearSQLLogs', '', 'otra', 'profiler', 'clearSQLLogsAction'],
-      'core' => true
-    ],
-    'otra_profiler' => [
-      'chunks' => ['/dbg', '', 'otra', 'profiler', 'indexAction'],
-      'core' => true
-    ],
-    'otra_404' => [
-      'chunks' => ['/404', '', 'otra', 'errors', 'error404Action'],
-      'core' => true
-    ],
-    'otra_css' => [
-      'chunks' => ['/profiler/css', '', 'otra', 'heavyProfiler', 'cssAction'],
+    'otra_requests' => [
+      'chunks' => ['/profiler/requests', '', 'otra', 'profiler', 'requestsAction'],
       'core' => true,
       'resources' => [
-        'core_css' => ['pages/sassTree/sassTree']
+        'core_css' => ['pages/requests/requests']
       ]
     ],
-    'otra_template_structure' => [
-      'chunks' => ['/profiler/templateStructure', '', 'otra', 'heavyProfiler', 'templateStructureAction'],
+    'otra_routes' => [
+      'core' => true,
+      'chunks' => ['/profiler/routes', '', 'otra', 'profiler', 'routesAction'],
+      'resources' => [
+        'core_css' => ['pages/routes/routes']
+      ]
+    ],
+    'otra_sql' => [
+      'chunks' => ['/profiler/sql', '', 'otra', 'profiler', 'sqlAction'],
+      'core' => true,
+      'resources' => [
+        'core_css' => ['pages/sql/sql'],
+        'core_js' => ['profiler']
+      ]
+    ],
+    'otra_templateStructure' => [
+      'chunks' => ['/profiler/templateStructure', '', 'otra', 'profiler', 'templateStructureAction'],
       'core' => true,
       'resources' => [
         'core_css' => ['pages/templateStructure/templateStructure']

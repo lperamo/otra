@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\tools;
 
+use JsonException;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\CORE_PATH;
@@ -17,7 +18,7 @@ class GetOtraCommitNumberTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function testShortAndConsole() : void
   {
@@ -26,7 +27,7 @@ class GetOtraCommitNumberTest extends TestCase
 
     // testing
     self::assertMatchesRegularExpression(
-      '@^\\w{7}$@',
+      '@^\\w{8}$@',
       getOtraCommitNumber(true, true),
       'Testing short version of the commit for the console'
     );
@@ -34,7 +35,7 @@ class GetOtraCommitNumberTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function testShortAndWeb() : void
   {
@@ -43,7 +44,7 @@ class GetOtraCommitNumberTest extends TestCase
 
     // testing
     self::assertMatchesRegularExpression(
-      '@^\\w{7}$@',
+      '@^\\w{8}$@',
       getOtraCommitNumber(false, true),
       'Testing short version of the commit for the web'
     );
@@ -51,7 +52,7 @@ class GetOtraCommitNumberTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function testLongAndWeb() : void
   {

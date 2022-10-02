@@ -28,15 +28,15 @@ $checkParameter = function (
   string $message,
   mixed $defaultValue = null,
   bool $exit = true
-) use (&$argv) : mixed
+) use (&$argumentsVector) : mixed
 {
-  if (isset($argv[constant($constantName)]))
-    return $argv[constant($constantName)];
+  if (isset($argumentsVector[constant($constantName)]))
+    return $argumentsVector[constant($constantName)];
 
   echo $exit ? CLI_ERROR : CLI_WARNING, 'You did not specified the ' . $message, END_COLOR, PHP_EOL;
 
   if ($exit)
-    throw new OtraException('', 1, '', NULL, [], true);
+    throw new OtraException(code: 1, exit: true);
 
   return $defaultValue;
 };
@@ -61,7 +61,7 @@ define(
 if (!file_exists(BUNDLES_PATH . ucfirst($bundleName)))
 {
   echo CLI_ERROR, 'The bundle ', CLI_INFO_HIGHLIGHT, $bundleName, CLI_ERROR, ' does not exist !', END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $modelName = $checkParameter(
@@ -93,7 +93,7 @@ else
   {
     define(__NAMESPACE__ . '\\SCHEMA_DATA', Yaml::parse(file_get_contents(YML_SCHEMA_REAL_PATH)));
 
-    $creationMode = (in_array($modelName, array_keys(SCHEMA_DATA)))
+    $creationMode = (array_key_exists($modelName, SCHEMA_DATA))
       ? CREATION_MODE_ONE_MODEL
       : CREATION_MODE_FROM_NOTHING;
   }

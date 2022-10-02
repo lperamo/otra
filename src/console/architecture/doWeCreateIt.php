@@ -7,19 +7,18 @@ use otra\OtraException;
 use function otra\console\promptUser;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, ERASE_SEQUENCE};
 
-if (!function_exists('otra\console\architecture\doWeCreateIt'))
+if (!function_exists(__NAMESPACE__ . '\\doWeCreateIt'))
 {
   /**
    * Checks if we have to show a warning or an error when the folder is missing.
-   * Then it asks to the user if we have to create it.
+   * Then it asks the user if we have to create it.
    *
    * @author Lionel Péramo
    *
    * @param bool $interactive  False, no question will be asked but the status messages are shown.
-   * @param bool $consoleForce Determines whether we show an error when something is missing in non interactive mode or
+   * @param bool $consoleForce Determines whether we show an error when something is missing in non-interactive mode or
    *                           not. The false value by default will stop the execution if something does not exist and
    *                           show an error.
-   * @param string $folderPath
    * @param string $folderType 'bundle', 'module' etc.
    *
    * @throws OtraException
@@ -34,7 +33,7 @@ if (!function_exists('otra\console\architecture\doWeCreateIt'))
     {
       echo CLI_ERROR, 'The ' . $folderType . ' ', CLI_INFO_HIGHLIGHT, $folderPath, CLI_ERROR, ' does not exist.',
         END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     } else
       return;
 
@@ -49,6 +48,6 @@ if (!function_exists('otra\console\architecture\doWeCreateIt'))
     }
 
     if ($answer === 'n')
-      throw new OtraException('', 0, '', null, [], true);
+      throw new OtraException(exit: true);
   }
 }

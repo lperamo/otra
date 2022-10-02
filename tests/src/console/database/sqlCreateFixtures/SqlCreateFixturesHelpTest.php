@@ -17,7 +17,7 @@ class SqlCreateFixturesHelpTest extends TestCase
 {
   private const OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
     OTRA_TASK_HELP = 'help';
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -32,7 +32,7 @@ class SqlCreateFixturesHelpTest extends TestCase
       CLI_GRAY . ': ' . CLI_INFO .
       'Generates fixtures sql files and executes them. (sql_generate_fixtures)' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
-      '   + ' . str_pad('databaseName', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      '   + ' . str_pad('database-name', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::REQUIRED_PARAMETER .
       ') ' . CLI_INFO . 'The database name !' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .

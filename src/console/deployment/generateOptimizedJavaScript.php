@@ -19,14 +19,8 @@ const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
 require CONSOLE_PATH . 'deployment/googleClosureCompile.php';
 
 /**
- * @param bool   $watching
- * @param int    $verbose
- * @param bool   $mustLaunchGcc
- * @param string $resourceFolder
- * @param string $baseName
- * @param string $resourceName
  *
- * @throws OtraException
+ * @throws JsonException|OtraException
  */
 function generateJavaScript(
   bool $watching,
@@ -55,7 +49,12 @@ function generateJavaScript(
    *   }
    * } $typescriptConfig
    */
-  $typescriptConfig = json_decode(file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON), true);
+  $typescriptConfig = json_decode(
+    file_get_contents(BASE_PATH . OTRA_LABEL_TSCONFIG_JSON),
+    true,
+    512,
+    JSON_THROW_ON_ERROR
+  );
 
   if ($typescriptConfig === null)
   {
@@ -65,7 +64,7 @@ function generateJavaScript(
     return;
   }
 
-  // The Google Closure Compiler application cannot overwrite a file so we have to create a temporary one
+  // The Google Closure Compiler application cannot overwrite a file, so we have to create a temporary one
   // and remove the dummy file ...
   // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
   if (!file_exists($resourceFolder))
@@ -83,7 +82,7 @@ function generateJavaScript(
   $temporaryTypescriptConfig = BASE_PATH . 'tsconfig_tmp.json';
   $filePointer = fopen($temporaryTypescriptConfig, 'w');
   // The flags for 'json_encode' allows better debugging
-  // (otherwise tsc will say that the bug is on the first line ..and the first line represents ALL the json)
+  // (otherwise tsc will say that the bug is on the first line ...and the first line represents ALL the json)
   fwrite(
     $filePointer,
     json_encode(
@@ -109,7 +108,7 @@ function generateJavaScript(
       CLI_INFO_HIGHLIGHT, OTRA_LABEL_TSCONFIG_JSON, CLI_WARNING, ' file.', END_COLOR, PHP_EOL, $output;
 
     if (!$watching)
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
 
     return;
   }
@@ -179,7 +178,7 @@ function generateJavaScript(
     if (!rename($generatedJsFile, $serviceWorkerPath))
     {
       echo CLI_ERROR, 'Problem while moving the generated service worker file.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $generatedJsMapFile = $generatedJsFile . '.map';
@@ -188,7 +187,7 @@ function generateJavaScript(
     if (file_exists($generatedJsMapFile) && !rename($generatedJsMapFile, $newJsMapPath))
     {
       echo CLI_ERROR, 'Problem while moving the generated service worker file mapping.', END_COLOR, PHP_EOL;
-      throw new OtraException('', 1, '', null, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     echo 'Service worker files moved to ', CLI_INFO_HIGHLIGHT, returnLegiblePath($serviceWorkerPath),

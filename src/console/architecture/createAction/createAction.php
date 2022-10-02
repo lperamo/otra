@@ -11,6 +11,8 @@ use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
+use function otra\console\deployment\genClassMap\genClassMap;
+use function otra\console\deployment\updateConf\updateConf;
 use function otra\console\promptUser;
 
 const
@@ -20,17 +22,15 @@ const
 /**
  * Creates the folder of the specified controller.
  *
- * @param string $bundleName
- * @param string $moduleName
- * @param string $controllerName
  * @param string $controllerPath Absolute path to the controller
- * @param string $actionName
- * @param bool   $interactive
- * @param bool   $consoleForce
+ * @param bool   $interactive    Do we allow questions to the user?
+ * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
  *
  * @throws OtraException
  */
-function createAction(string $bundleName, string $moduleName, string $controllerName,
+function createActionCore(string $bundleName, string $moduleName, string $controllerName,
                       string $controllerPath, string $actionName, bool $interactive, bool $consoleForce) : void
 {
   $upperActionName = ucfirst($actionName);
@@ -41,17 +41,17 @@ function createAction(string $bundleName, string $moduleName, string $controller
 
   while (file_exists($actionPath))
   {
-    // If the file does not exist and we are not in interactive mode, we exit the program.
+    // If the file does not exist, and we are not in interactive mode, we exit the program.
     if (!$interactive)
     {
       echo $actionAlreadyExistsSentence, PHP_EOL;
-      throw new OtraException('', 1, '', NULL, [], true);
+      throw new OtraException(code: 1, exit: true);
     }
 
     $actionName = promptUser($actionAlreadyExistsSentence . ' Try another file name (type n to stop):');
 
     if ($actionName === 'n')
-      throw new OtraException('', 0, '', NULL, [], true);
+      throw new OtraException(exit: true);
 
     $upperActionName = ucfirst($actionName);
     $actionPath = $controllerPath . $upperActionName . 'Action.php';
@@ -60,7 +60,11 @@ function createAction(string $bundleName, string $moduleName, string $controller
     echo DOUBLE_ERASE_SEQUENCE;
   }
 
-  define(__NAMESPACE__ . '\\OTRA_ACTION_PATH', 'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName);
+  if (!defined(__NAMESPACE__ . '\\OTRA_ACTION_PATH'))
+    define(
+      __NAMESPACE__ . '\\OTRA_ACTION_PATH',
+      'bundles\\' . $bundleName . '\\' . $moduleName . '\\controllers\\' . $controllerName
+    );
   file_put_contents(
     $actionPath,
     '<?php
@@ -122,7 +126,8 @@ class ' . $upperActionName . 'Action extends Controller
     SPACE_INDENT_2 . "]" . PHP_EOL .
     SPACE_INDENT . "]";
 
-  define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+  if (!defined(__NAMESPACE__ . '\\PHP_FILE_START'))
+     define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
 
   // If there already are actions for this bundle, we have to complete the configuration file not replace it
   if (file_exists($routesConfigFolder))
@@ -162,7 +167,7 @@ class ' . $upperActionName . 'Action extends Controller
     );
 
     // removes useless numerical indexes
-    $routesArray = preg_replace('/[0-9]{1,} => /', '', $routesArray);
+    $routesArray = preg_replace('/\d+ => /', '', $routesArray);
 
     // now we can detect safely some other unwanted line breaks
     $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'',$routesArray);
@@ -174,10 +179,10 @@ class ' . $upperActionName . 'Action extends Controller
     );
   } else
   { // If it's not the case, we replace it
-    // First, we create the folder that will hold the routes configuration file
+    // First, we create the folder that will hold the routes' configuration file
     mkdir($routesConfigFolder);
 
-    // Adds a routes config file
+    // Adds a routes' config file
     file_put_contents(
       $routeConfigurationFile,
       PHP_FILE_START .
@@ -190,24 +195,24 @@ class ' . $upperActionName . 'Action extends Controller
   echo 'Route configuration file ', CLI_INFO_HIGHLIGHT, $routeConfigurationFile, CLI_BASE, ' created', CLI_SUCCESS,
     ' ✔', PHP_EOL;
 
-  // We update the routes configuration as we just add one route.
-  require CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  // We update the routes' configuration as we just add one route.
+  require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
+  updateConf('2');
 
   // We update the class mapping since we have one action more.
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))
     define(__NAMESPACE__ . '\\VERBOSE', 0);
 
-  require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+  require_once CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+  genClassMap([]);
 }
 
 /**
- * @param bool   $interactive
- * @param string $bundleName
- * @param string $moduleName
- * @param string $controllerName
- * @param string $controllerPath
- * @param string $actionName
- * @param bool   $consoleForce
+ * @param bool   $interactive    Do we allow questions to the user?
+ * @param string $controllerPath Absolute path to the controller
+ * @param bool   $consoleForce   Determines whether we show an error when something is missing in non-interactive mode
+ *                               or not. The false value by default will stop the execution if something does not exist
+ *                               and shows an error.
  *
  * @throws OtraException
  */
@@ -218,9 +223,9 @@ function actionHandling(bool $interactive, string $bundleName, string $moduleNam
   {
     while($actionName !== 'n')
     {
-      createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+      createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, true, $consoleForce);
       $actionName = promptUser('What is the name of the next action ? (type n to stop)');
     }
   } else
-    createAction($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, $interactive, $consoleForce);
+    createActionCore($bundleName, $moduleName, $controllerName, $controllerPath, $actionName, false, $consoleForce);
 }

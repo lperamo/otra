@@ -11,6 +11,7 @@ use const otra\cache\php\{BASE_PATH,CACHE_PATH,CORE_PATH};
 use const otra\cache\php\init\CLASSMAP;
 
 require __DIR__ . '/../config/constants.php';
+ini_set('session.save_path', CACHE_PATH . 'php/sessions');
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -19,7 +20,7 @@ session_start([
 ]);
 define ('BEFORE', microtime(true));
 
-// If it is an asset, we echo it and we stop the work here
+// If it is an asset, we echo it, and we stop the work here
 if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntryPoint.php')
   return true;
 
@@ -42,15 +43,15 @@ spl_autoload_register(function(string $className) : void
 });
 
 use otra\OtraException;
-set_error_handler([OtraException::class, 'errorHandler']);
-set_exception_handler([OtraException::class, 'exceptionHandler']);
+set_error_handler(OtraException::errorHandler(...));
+set_exception_handler(OtraException::exceptionHandler(...));
 
 use otra\Router;
 
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))
 {
-  header('Content-Type: text/html; charset=utf-8');
+  header('Content-Type: text/html;charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
   Router::get(

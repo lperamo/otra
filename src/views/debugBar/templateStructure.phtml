@@ -13,7 +13,7 @@ if ($cacheEnabled)
   <?php
 } else
 { ?>
-  <a href="<?= SITE_HOST ?>/profiler/templateStructure?route=<?= ROUTE ?>" rel="noopener nofollow noreferrer"
+  <a href="<?= SITE_HOST ?>/profiler/templateStructure<?= GET_PARAMETERS ?>" rel="noopener nofollow noreferrer"
      target="profiler" class="otra--help-cursor dbg-bar--block"
      title="Template structure as viewed by the template motor" tabindex="<?= $debugBarTabIndexActualValue++ ?>">Template</a>
 <?php } ?>

@@ -33,6 +33,7 @@ abstract class AllConfig
       'maxChildren' => 128,
       'maxData' => 512,
       'maxDepth' => 3
-    ];
+    ],
+    $taskFolders = [], // mandatory in order to modify it later if needed
+    $sassLoadPaths = [];
 }
-

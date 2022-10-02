@@ -19,16 +19,16 @@ namespace otra\console\constants
 namespace otra\console
 {
   use JetBrains\PhpStorm\ArrayShape;
+  use ReflectionClass;
+  use ReflectionException;
   use const otra\cache\php\SPACE_INDENT;
   use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
 
-  if (!function_exists('otra\console\promptUser'))
+  if (!function_exists(__NAMESPACE__ . '\\promptUser'))
   {
     /**
      * Asks the user a question again and again until the answer was correct.
      *
-     * @param string $question
-     * @param string $altQuestion
      * @codeCoverageIgnore
      *
      * @return string Answer.
@@ -52,9 +52,7 @@ namespace otra\console
     /**
      * Show a question and let the user answers it.
      *
-     * @param string $question
      * @codeCoverageIgnore
-     *
      * @return string
      */
     function askQuestion(string $question) : string
@@ -67,9 +65,7 @@ namespace otra\console
     /**
      * Loops through words to find the closest word
      *
-     * @param string   $input
      * @param string[] $words
-     *
      * @return array{0:?string,1:int} [$closest, $shortest]
      */
     #[ArrayShape([
@@ -94,7 +90,7 @@ namespace otra\console
           break;
         }
 
-        // If this distance is less than the next found shortest distance OR if a next shortest word has not yet been found
+        // If this distance is less than the next shortest found distance OR if a next shortest word has not yet been found
         if ($levenshtein <= $shortest || 0 >= $shortest)
         {
           $closest  = $currentWord;
@@ -110,7 +106,7 @@ namespace otra\console
      *
      * @param string $file      Name of the file that contains the error
      * @param int    $errorLine N° of the error
-     * @param int    $context   How much lines for context ?
+     * @param int    $context   How many lines for context ?
      */
     function showContext(string $file, int $errorLine, int $context) : void
     {
@@ -143,7 +139,7 @@ namespace otra\console
      *
      * @param string $file    Name of the file that contains the error
      * @param string $error   Error to analyze
-     * @param int    $context How much lines for context ?
+     * @param int    $context How many lines for context ?
      */
     function showContextByError(string $file, string $error, int $context) : void
     {
@@ -159,7 +155,6 @@ namespace otra\console
      * We take care of the spaces contained into folders and files names.
      * Beware, this function do not cover all the possibles cases. It only works for the usages of this framework.
      *
-     * @param string $code
      *
      * @return string
      */
@@ -182,7 +177,6 @@ namespace otra\console
      * Beware, this function do not cover all the possibles cases. It only works for some usages.
      * This tool is not used by OTRA but is meant to be used in user projects.
      *
-     * @param string $code
      *
      * @return string
      */
@@ -200,8 +194,12 @@ namespace otra\console
     }
 
     /**
-     * @param array $myArray
+     * Converts an array to a PHP "readable" array that we can put in a file in order to make
+     * $myVar = require myFile.php;
+     * A bit like `var_export` function
      *
+     *
+     * @throws ReflectionException
      * @return string
      */
     function convertLongArrayToShort(array $myArray) : string
@@ -214,16 +212,19 @@ namespace otra\console
       foreach($myArray as $arrayKey => $arrayItem)
       {
         if (is_string($arrayItem))
-          $newArrayItem = '\'' . $arrayItem . '\'';
+          $newArrayItem = '\'' . addslashes($arrayItem) . '\'';
         elseif (is_bool($arrayItem))
           $newArrayItem = $arrayItem ? 'true' : 'false';
+        elseif (is_object($arrayItem))
+          $newArrayItem = '\'' . serialize($arrayItem) . '\'';
+        elseif (is_array($arrayItem))
+          $newArrayItem = convertLongArrayToShort($arrayItem);
+        elseif (is_null($arrayItem))
+          $newArrayItem = 'null';
         else
           $newArrayItem = $arrayItem;
 
-        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . (!is_array($arrayItem)
-            ? $newArrayItem
-            : convertLongArrayToShort($arrayItem)
-          ) . ',';
+        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';
       }
 
       return mb_substr($arrayString, 0, -1) . ']';

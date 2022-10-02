@@ -16,8 +16,8 @@ class HomeAction extends Controller
   /**
    * HomeAction constructor.
    *
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
+   * @param array $params     [...getParams, ...postParams, etc.]
    *
    * @throws OtraException
    */
@@ -27,4 +27,3 @@ class HomeAction extends Controller
     echo $this->renderView('home.phtml', []);
   }
 }
-

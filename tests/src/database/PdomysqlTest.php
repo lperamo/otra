@@ -9,7 +9,7 @@ use otra\{bdd\Pdomysql, bdd\Sql, OtraException};
 use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 
 /**
- * The majority of the code is already tested by SqlTest.php so we only test the remaining uncovered code.
+ * The majority of the code is already tested by SqlTest.php, so we only test the remaining uncovered code.
  *
  * @runTestsInSeparateProcesses
  */
@@ -39,7 +39,7 @@ class PdomysqlTest extends TestCase
     try
     {
       Sql::getDb()->__destruct();
-    } catch (Exception $e)
+    } catch (Exception $exception)
     {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
@@ -55,7 +55,7 @@ class PdomysqlTest extends TestCase
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
     $dbResult = Sql::$instance->query(
-      'CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';'
+      'CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE `' . self::$databaseName . '`;'
     );
     Sql::$instance->freeResult($dbResult);
     Sql::$instance->commit();

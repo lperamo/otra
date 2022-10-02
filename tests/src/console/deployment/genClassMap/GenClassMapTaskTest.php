@@ -6,11 +6,10 @@ namespace src\console\deployment\genClassMap;
 use otra\console\TasksManager;
 use otra\OtraException;
 use phpunit\framework\TestCase;
+use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
 use const otra\cache\php\{APP_ENV,BASE_PATH,DEV,TEST_PATH};
 use const otra\cache\php\init\CLASSMAP2;
-use const otra\console\
-{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
-use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
  * @runTestsInSeparateProcesses
@@ -25,7 +24,7 @@ class GenClassMapTaskTest extends TestCase
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -40,7 +39,7 @@ class GenClassMapTaskTest extends TestCase
 
     // testing
     $content = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 281);
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 304);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {

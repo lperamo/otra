@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use phpunit\framework\TestCase;
-use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
+use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\escapeQuotesInPhpParts;
 
 /**
@@ -12,7 +12,7 @@ use function otra\console\deployment\genBootstrap\escapeQuotesInPhpParts;
  */
 class EscapePhpQuotePartsTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -29,7 +29,7 @@ class EscapePhpQuotePartsTest extends TestCase
     escapeQuotesInPhpParts($contentToParse);
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       '<?php declare(strict_types=1);echo \\\'test\\\';?>',
       $contentToParse
     );

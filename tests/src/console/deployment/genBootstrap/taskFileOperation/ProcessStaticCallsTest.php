@@ -45,7 +45,7 @@ class ProcessStaticCallsTest extends TestCase
     );
 
     // testing
-    self::assertEquals(
+    self::assertSame(
       [
         'php' => [
           'static' => [
@@ -56,7 +56,7 @@ class ProcessStaticCallsTest extends TestCase
       $filesToConcat,
       'Testing $filesToConcat...'
     );
-    self::assertEquals(
+    self::assertSame(
       'namespace otra;' . PHP_EOL .
       'self::test();' . PHP_EOL .
       'parent::test2();' . PHP_EOL .
@@ -66,13 +66,13 @@ class ProcessStaticCallsTest extends TestCase
       $contentToAdd,
       'Testing $contentToAdd...'
     );
-    self::assertEquals(
+    self::assertSame(
       [CORE_PATH . 'MasterController.php'],
       $parsedFiles,
       'Testing $parsedFiles...'
     );
 
-    self::assertEquals(
+    self::assertSame(
       '',
       ob_get_clean(),
       'Testing output string...'

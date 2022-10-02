@@ -27,41 +27,47 @@ namespace otra\console\architecture\createBundle
   use function otra\console\promptUser;
   use function otra\console\architecture\checkBooleanArgument;
 
-  if (!file_exists(BUNDLES_PATH))
-  {
-    echo CLI_ERROR, 'There is no ', CLI_INFO_HIGHLIGHT, 'bundles', CLI_ERROR,
-      ' folder to put bundles! Please create this folder or launch ', CLI_INFO_HIGHLIGHT, 'otra init', CLI_ERROR,
-      ' to solve it.', END_COLOR, PHP_EOL;
-    throw new OtraException('', 1, '', NULL, [], true);
-  }
-
-  require CONSOLE_PATH . 'tools.php';
-  require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
-
   const ARG_BUNDLE_MASK = 3;
 
-  // $consoleForce determines whether we show an error when something is missing in non interactive mode or not
-  // the false value by default will stop the execution if something does not exist and show an error.
-  require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
-  $interactive = checkBooleanArgument($argv, ARG_INTERACTIVE, 'interactive');
-  $consoleForce = checkBooleanArgument($argv, ARG_FORCE, 'force', 'false');
-
-  // Checking argument : bundle name
-  if (!isset($argv[ARG_BUNDLE_NAME]))
+  /**
+   * @throws OtraException
+   * @return void
+   */
+  function createBundle(array $argumentsVector) : void
   {
-    $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
+    if (!file_exists(BUNDLES_PATH))
+    {
+      echo CLI_ERROR, 'There is no ', CLI_INFO_HIGHLIGHT, 'bundles', CLI_ERROR,
+      ' folder to put bundles! Please create this folder or launch ', CLI_INFO_HIGHLIGHT, 'otra init', CLI_ERROR,
+      ' to solve it.', END_COLOR, PHP_EOL;
+      throw new OtraException(code: 1, exit: true);
+    }
 
-    // We clean the screen
-    echo ERASE_SEQUENCE;
-  } else
-    $bundleName = $argv[ARG_BUNDLE_NAME];
+    require CONSOLE_PATH . 'tools.php';
+    require CONSOLE_PATH . 'architecture/createBundle/createBundle.php';
 
-  bundleHandling(
-    $interactive,
-    $consoleForce,
-    $bundleName,
-    isset($argv[ARG_BUNDLE_MASK]) ? intval($argv[ARG_BUNDLE_MASK]) : null,
-    true
-  );
+    // $consoleForce determines whether we show an error when something is missing in non-interactive mode or not
+    // the false value by default will stop the execution if something does not exist and show an error.
+    require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
+    $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
+    $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
+
+    // Checking argument : bundle name
+    if (!isset($argumentsVector[ARG_BUNDLE_NAME]))
+    {
+      $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');
+
+      // We clean the screen
+      echo ERASE_SEQUENCE;
+    } else
+      $bundleName = $argumentsVector[ARG_BUNDLE_NAME];
+
+    bundleHandling(
+      $interactive,
+      $consoleForce,
+      $bundleName,
+      isset($argumentsVector[ARG_BUNDLE_MASK]) ? (int) $argumentsVector[ARG_BUNDLE_MASK] : null,
+      true
+    );
+  }
 }
-

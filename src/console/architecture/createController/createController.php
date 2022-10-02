@@ -13,9 +13,7 @@ use function otra\console\{architecture\createFolder, promptUser};
 require CONSOLE_PATH . 'architecture/createFolder.php';
 
 /**
- * Create the folders that contains all the controllers folders.
- *
- * @param string $controllersFolder
+ * Create the folders that contain all the controllers folders.
  */
 function createControllersFolder(string $controllersFolder) : void
 {
@@ -30,10 +28,8 @@ function createControllersFolder(string $controllersFolder) : void
 /**
  * Creates the folder of the specified controller.
  *
- * @param string $controllersFolder
- * @param string $controllerName
  * @param bool   $interactive       Do we allow questions to the user?
- * @param bool   $consoleForce      Determines whether we show an error when something is missing in non interactive
+ * @param bool   $consoleForce      Determines whether we show an error when something is missing in non-interactive
  *                                  mode or not. The false value by default will stop the execution if something does
  *                                  not exist and show an error.
  *
@@ -43,7 +39,7 @@ function createController(string $controllersFolder, string $controllerName, boo
 {
   $controllerPath = $controllersFolder . $controllerName;
 
-  // If the folder does not exist and we are not in interactive mode, we exit the program.
+  // If the folder does not exist, and we are not in interactive mode, we exit the program.
   createFolder($controllerPath, $controllersFolder, 'controller', $interactive, $consoleForce);
   echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, substr($controllerPath, strlen(BASE_PATH)), CLI_BASE,
     ' created', CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL;
@@ -51,11 +47,9 @@ function createController(string $controllersFolder, string $controllerName, boo
 
 /**
  * @param bool   $interactive       Do we allow questions to the user?
- * @param bool   $consoleForce      Determines whether we show an error when something is missing in non interactive
+ * @param bool   $consoleForce      Determines whether we show an error when something is missing in non-interactive
  *                                  mode or not. The false value by default will stop the execution if something does
  *                                  not exist and show an error.
- * @param string $controllersFolder
- * @param string $controllerName
  *
  * @throws OtraException
  */
@@ -67,10 +61,9 @@ function controllerHandling(bool $interactive, bool $consoleForce, string $contr
   {
     while($controllerName !== 'n')
     {
-      createController($controllersFolder, $controllerName, $interactive, $consoleForce);
+      createController($controllersFolder, $controllerName, true, $consoleForce);
       $controllerName = promptUser('What is the name of the next controller ? (type n to stop)');
     }
   } else
-    createController($controllersFolder, $controllerName, $interactive, $consoleForce);
+    createController($controllersFolder, $controllerName, false, $consoleForce);
 }
-

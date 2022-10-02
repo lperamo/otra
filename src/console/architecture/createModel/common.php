@@ -20,10 +20,10 @@ define(
 // This variable is used for code creation
 const START_ACCOLADE = PHP_EOL . SPACE_INDENT . '{' . PHP_EOL;
 /**
- * @param int    $modelLocation
- * @param string $modelName
- * @param string $modelFullName
- * @param string $bundleName
+ * @param int    $modelLocation Location of the model to create
+ *                              0 => in the bundle (default) folder
+ *                              1 => in the module folder.
+ * @param string $bundleName    The bundle in which the model have to be created
  *
  * @throws OtraException
  */
@@ -49,4 +49,3 @@ function modelCreation(int $modelLocation, string $modelName,string &$modelFullN
   );
   modelCreationSuccess($bundleName, $modelName, $propertiesTxt);
 }
-

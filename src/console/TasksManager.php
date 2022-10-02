@@ -3,8 +3,10 @@ declare(strict_types=1);
 namespace otra\console;
 
 use otra\OtraException;
+use function otra\console\deployment\genClassMap\genClassMap;
 use const otra\bin\CACHE_PHP_INIT_PATH;
-use const otra\cache\php\DIR_SEPARATOR;
+use const otra\cache\php\{BASE_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_ARG_ROUTE_NAME};
 
 /**
  * @author Lionel Péramo
@@ -12,12 +14,14 @@ use const otra\cache\php\DIR_SEPARATOR;
  */
 abstract class TasksManager
 {
-  public const
+  final public const
     STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
     PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
     TASK_CLASS_MAP_TASK_PATH = 0,
+    TASK_CLASS_MAP_TASK_PARAMETERS = 1,
     TASK_DESCRIPTION = 0,
+    TASK_NAME = 1,
     TASK_PARAMETERS = 1,
     TASK_STATUS = 2,
     TASK_CATEGORY = 3,
@@ -64,28 +68,52 @@ abstract class TasksManager
   }
 
   /**
-   * @param array  $tasksClassMap
-   * @param string $task
-   * @param array  $argv
    *
    * @throws OtraException
    */
-  public static function execute(array $tasksClassMap, string $task, array $argv) : void
+  public static function execute(array $tasksClassMap, string $otraTask, array $argumentsVector) : void
   {
+    // If the class map does not exist yet, we create it and load it
     if (!file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
     {
       echo CLI_WARNING,
         'We cannot use the console if the class mapping files do not exist ! We launch the generation of those files ...',
         END_COLOR, PHP_EOL;
       require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/genClassMapTask.php';
+      genClassMap([]);
 
       // If the task was genClassMap...then we have nothing left to do !
-      if ($task === 'genClassMap')
-        throw new OtraException('', 0, '', NULL, [], true);
+      if ($otraTask === 'genClassMap')
+        throw new OtraException(exit: true);
+
+      require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
     }
 
-    require_once CACHE_PHP_INIT_PATH . 'ClassMap.php';
-    require $tasksClassMap[$task][TasksManager::TASK_CLASS_MAP_TASK_PATH] . DIR_SEPARATOR . $task . 'Task.php';
+    // _once as otherwise we cannot do multiple tasks in a row
+    $taskPath = $tasksClassMap[$otraTask][TasksManager::TASK_CLASS_MAP_TASK_PATH];
+    require_once $taskPath . DIR_SEPARATOR . $otraTask . 'Task.php';
+
+    $otraTaskFull = (str_contains($taskPath, CORE_PATH)
+      ? 'otra\\' . str_replace(
+        [CORE_PATH, '/'],
+        ['', '\\'],
+        $taskPath
+      )
+      : str_replace(
+        [BASE_PATH, '/'],
+        ['', '\\'],
+        $taskPath
+      )) . '\\' . $otraTask;
+
+    if  ($otraTask === 'updateConf')
+      $otraTaskFull(
+        $argumentsVector[UPDATE_CONF_ARG_MASK] ?? null,
+        $argumentsVector[UPDATE_CONF_ARG_ROUTE_NAME] ?? null
+      );
+    else
+      ($tasksClassMap[$otraTask][TasksManager::TASK_CLASS_MAP_TASK_PARAMETERS] === [])
+        ? $otraTaskFull()
+        : $otraTaskFull($argumentsVector);
   }
 }
 

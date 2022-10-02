@@ -20,9 +20,9 @@ use const otra\cache\php\{BASE_PATH, CORE_PATH};
 
 use function otra\tools\files\showTraceLine;
 
-if (!defined('otra\src\views\errors\BASE_PATH_LENGTH'))
+if (!defined(__NAMESPACE__ . '\\BASE_PATH_LENGTH'))
 {
-  define('BASE_PATH_LENGTH', strlen(BASE_PATH));
+  define(__NAMESPACE__ . '\\BASE_PATH_LENGTH', strlen(BASE_PATH));
   require CORE_PATH . 'tools/getSourceFromFile.php';
   require CORE_PATH . 'tools/files/showTraceLine.php';
 }
@@ -54,7 +54,7 @@ if (!defined('otra\src\views\errors\BASE_PATH_LENGTH'))
     'file' => BASE_PATH . $fileName,
     'function' => $backtraces[0]['function'] ?? null,
     'line' => $fileLine,
-    'type' => $backtraces[0]['type'],
+    'type' => $backtraces[0]['type'] ?? null,
     'args' => $backtraces[0]['variables'] ?? null
   ]);
 

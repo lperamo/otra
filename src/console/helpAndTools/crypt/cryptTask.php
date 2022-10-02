@@ -14,21 +14,29 @@ const
   CRYPT_ARG_PASSWORD = 2,
   CRYPT_ARG_ITERATIONS = 3;
 
-define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argv[CRYPT_ARG_ITERATIONS] ?? null);
-
-if (!is_numeric(CRYPT_ITERATIONS))
+/**
+ *
+ * @throws OtraException
+ * @return void
+ */
+function crypt(array $argumentsVector): void
 {
-  echo 'Iterations parameter must be numeric!', PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
-}
+  define(__NAMESPACE__ . '\\CRYPT_ITERATIONS', $argumentsVector[CRYPT_ARG_ITERATIONS] ?? 20000);
 
-$securitySalt = openssl_random_pseudo_bytes(16);
+  if (!is_numeric(CRYPT_ITERATIONS))
+  {
+    echo 'Iterations parameter must be numeric!', PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
 
-echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($securitySalt), PHP_EOL,
+  $securitySalt = openssl_random_pseudo_bytes(16);
+
+  echo CLI_INFO_HIGHLIGHT, 'salt (hexadecimal version) : ', END_COLOR, bin2hex($securitySalt), PHP_EOL,
   CLI_INFO_HIGHLIGHT, 'password                   : ', END_COLOR,  hash_pbkdf2(
     'sha256',
-    $argv[CRYPT_ARG_PASSWORD],
+    $argumentsVector[CRYPT_ARG_PASSWORD],
     $securitySalt,
-  CRYPT_ITERATIONS !== null ? ((int)CRYPT_ITERATIONS) : 20000,
+    (int)CRYPT_ITERATIONS,
     20
   ), PHP_EOL;
+}

@@ -16,7 +16,6 @@
 // loading partials
 @use 'blocks';
 @use 'toggle';
-@use 'profiler';
 
 // initializing components
 @include theming.init-themes($themes);
@@ -132,76 +131,4 @@ $debug-bar--size : 38px;
       box-sizing : border-box;
     }
   }
-}
-
-// Button "Inspect SQL"
-.dbg-bar--btn {
-  // animation
-  transition : box-shadow .2s, color .2s, text-shadow .2s;
-
-  @supports (will-change: box-shadow, color, text-shadow) {
-    will-change: box-shadow, color, text-shadow;
-  }
-
-  @include theming.to-theme(
-    (
-      #{&} : (
-        ('background-image', 'debug-bar--button--background-image'),
-        ('box-shadow', 'debug-bar--button--box-shadow'),
-        ('color', 'debug-bar--button--color'),
-        ('text-shadow', 'debug-bar--button--text-shadow')
-      )
-    )
-  );
-
-  // background
-  border        : none;
-  border-radius : 5px;
-
-  // box
-  height      : auto;
-  padding     : 5px;
-  display     : inline-block;
-  margin-left : 10px;
-
-  // text
-  font-weight : 400;
-
-  // others
-  cursor : pointer;
-
-  &:hover,
-  &:active,
-  &:focus {
-    @include theming.to-theme(
-      (
-        #{&} : (
-          ('color', 'debug-bar--buttons--hover--color'),
-          ('box-shadow', 'debug-bar--buttons--hover--box-shadow'),
-          ('text-shadow', 'debug-bar--buttons--hover--text-shadow')
-        )
-      )
-    );
-  }
-
-  &:focus {
-    outline : none;
-  }
-}
-
-.div-error {
-  // background
-  @include theming.to-theme(
-    (
-      #{&} : ('background-color', 'debug-bar--error--background-color')
-    )
-  );
-
-  // box
-  height     : 100%;
-  width      : 100%;
-
-  // positioning
-  position   : absolute;
-  top        : 0;
 }

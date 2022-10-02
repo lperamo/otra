@@ -9,8 +9,9 @@ namespace otra\tools\debug;
 
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
-use ReflectionClass, ReflectionException, ReflectionProperty;
-use function otra\tools\{getSourceFromFileCli,removeFieldScopeProtection,restoreFieldScopeProtection};
+use ReflectionClass;
+use  ReflectionException, ReflectionProperty;
+use function otra\tools\getSourceFromFileCli;
 use const otra\console\
 {
   ADD_BOLD,
@@ -44,11 +45,9 @@ if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT'))
 class DumpCli extends DumpMaster
 {
   /**
-   * @param int $depth
-   *
    * @return string
    */
-  #[Pure] private static function indentColors(int $depth) : string
+  private static function indentColors(int $depth) : string
   {
     $content = '';
 
@@ -62,9 +61,6 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param int|string $paramType
-   * @param array      $param
-   * @param int        $depth
    *
    * @throws ReflectionException
    */
@@ -86,7 +82,7 @@ class DumpCli extends DumpMaster
 
     foreach ($param as $paramItemKey => $paramItem)
     {
-      // We show the rest of the variables only if we have not reach the 'maxChildren' limit.
+      // We show the rest of the variables only if we have not reached the 'maxChildren' limit.
       if (AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] < $loopIndex
         && AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN]] !== -1)
       {
@@ -100,8 +96,6 @@ class DumpCli extends DumpMaster
   }
 
   /**
-   * @param object $param
-   * @param int    $depth
    *
    * @throws ReflectionException
    */
@@ -118,21 +112,18 @@ class DumpCli extends DumpMaster
       return;
     }
 
-    foreach ((new ReflectionClass($className))->getProperties() as $variable)
+    [$properties, $param] = self::getPropertiesViaReflection($className, $param);
+
+    foreach ($properties as $variable)
     {
       self::analyseObjectVar($className, $param, $variable, $depth + 1);
     }
   }
 
   /**
-   * @param string $className
-   * @param object $param
-   * @param ReflectionProperty $property
-   * @param int $depth
    *
    * @throws ReflectionException
    */
-
   private static function analyseObjectVar(
     string $className,
     object $param,
@@ -142,7 +133,7 @@ class DumpCli extends DumpMaster
   {
     $propertyName = $property->getName();
     $isPublicProperty = $property->isPublic();
-    $visibilityMask = $property->isPublic()
+    $visibilityMask = $isPublicProperty
       | $property->isProtected() << 1
       | $property->isPrivate() << 2;
 
@@ -155,7 +146,7 @@ class DumpCli extends DumpMaster
       ':';
 
     if (!$isPublicProperty)
-      $property = removeFieldScopeProtection($className, $propertyName);
+      $property = (new ReflectionClass($className))->getProperty($propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)
@@ -200,7 +191,7 @@ class DumpCli extends DumpMaster
         $depth
       );
         break;
-      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY; break;
+      case 'NULL' : echo ADD_BOLD, ' null', REMOVE_BOLD_INTENSITY; break;
       case 'object' :
         self::dumpObject(
           $param,
@@ -211,16 +202,9 @@ class DumpCli extends DumpMaster
 
     if ($propertyType !== 'array')
       echo PHP_EOL;
-
-    if (!$isPublicProperty)
-      restoreFieldScopeProtection($className, $propertyName);
   }
 
   /**
-   * @param int|string $paramKey
-   * @param mixed      $param
-   * @param int        $depth
-   * @param bool       $isArray
    *
    * @throws ReflectionException
    */
@@ -237,10 +221,13 @@ class DumpCli extends DumpMaster
       echo $padding;
 
     // showing keys
-    echo (gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
-      ? $paramKey
-      : '\'' . $paramKey . '\''
+    if ($notFirstDepth)
+    {
+      echo (gettype($paramKey) !== DumpMaster::OTRA_DUMP_TYPE_STRING
+        ? $paramKey
+        : '\'' . $paramKey . '\''
       ), ' => ';
+    }
 
     // showing values
     switch($paramType)
@@ -255,7 +242,7 @@ class DumpCli extends DumpMaster
       case 'double' :
         echo $param, PHP_EOL;
         break;
-      case 'NULL' : echo ADD_BOLD, 'null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
+      case 'NULL' : echo ADD_BOLD, ' null', REMOVE_BOLD_INTENSITY, PHP_EOL; break;
       case 'object' :
         self::dumpObject($param, $depth);
         break;
@@ -289,11 +276,6 @@ class DumpCli extends DumpMaster
     }
   }
 
-  /**
-   * @param string $sourceFile
-   * @param int    $sourceLine
-   * @param string $content
-   */
   protected static function dumpCallback(string $sourceFile, int $sourceLine, string $content) : void
   {
     echo CLI_TABLE, 'OTRA DUMP - ', $sourceFile, ':', $sourceLine, END_COLOR, PHP_EOL, PHP_EOL;

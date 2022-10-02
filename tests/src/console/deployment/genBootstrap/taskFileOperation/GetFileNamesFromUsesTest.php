@@ -10,8 +10,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
 {
   use phpunit\framework\TestCase;
   use const otra\cache\php\CONSOLE_PATH;
-  use function otra\console\deployment\genBootstrap\
-  {getFileNamesFromUses};
+  use function otra\console\deployment\genBootstrap\{getFileNamesFromUses};
   use const otra\console\CLI_WARNING;
   use const otra\console\END_COLOR;
 
@@ -21,7 +20,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   class GetFileNamesFromUsesTest extends TestCase
   {
     private const LEVEL = 1;
-    // fixes issues like when AllConfig is not loaded while it should be
+    // it fixes issues like when AllConfig is not loaded while it should be
     protected $preserveGlobalState = FALSE;
 
     protected function setUp(): void
@@ -40,10 +39,10 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
      * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
      */
-    public function testGetFileNamesFromUses() : void
+    public function testClassic() : void
     {
       // context
-      $contentToAdd = PHP_EOL . 'use test\test{firstTest, secondTest, thirdTest};';
+      $contentToAdd = PHP_EOL . 'use test\\test{firstTest, secondTest, thirdTest};';
       $filesToConcat = $parsedConstants = $parsedFiles = [];
 
       // launching
@@ -57,13 +56,13 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
 
       // testing
       $this->expectOutputString(
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\test\firstTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\test\secondTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\test\thirdTest' . END_COLOR . PHP_EOL
+        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
+        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL .
+        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\thirdTest' . END_COLOR . PHP_EOL
       );
-      static::assertEquals([], $filesToConcat);
-      static::assertEquals([], $parsedConstants);
-      static::assertEquals([], $parsedFiles);
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
     }
 
     /**
@@ -76,10 +75,10 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
      * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
      */
-    public function testGetFileNamesFromUses_withoutParentheses() : void
+    public function testWithoutBraces() : void
     {
       // context
-      $contentToAdd = PHP_EOL . 'use test\test\fourthTest;';
+      $contentToAdd = PHP_EOL . 'use test\\test\\fourthTest;';
       $filesToConcat = $parsedConstants = $parsedFiles = [];
 
       // launching
@@ -92,11 +91,45 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       );
 
       // testing
-      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\test\fourthTest' . END_COLOR . PHP_EOL);
-      static::assertEquals([], $filesToConcat);
-      static::assertEquals([], $parsedConstants);
-      static::assertEquals([], $parsedFiles);
+      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\fourthTest' . END_COLOR . PHP_EOL);
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
+    }
+
+    /**
+     * Tests only ONE use statement at a time.
+     *
+     * @author Lionel Péramo
+     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
+     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
+     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
+     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
+     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
+     */
+    public function testWithCarriageReturn() : void
+    {
+      // context
+      $contentToAdd = PHP_EOL . 'use test\\test' . "\n" . '{firstTest,secondTest};';
+      $filesToConcat = $parsedConstants = $parsedFiles = [];
+
+      // launching
+      getFileNamesFromUses(
+        self::LEVEL,
+        $contentToAdd,
+        $filesToConcat,
+        $parsedFiles,
+        $parsedConstants
+      );
+
+      // testing
+      $this->expectOutputString(
+        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
+        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL
+      );
+      static::assertSame([], $filesToConcat);
+      static::assertSame([], $parsedConstants);
+      static::assertSame([], $parsedFiles);
     }
   }
 }
-

@@ -15,4 +15,4 @@ Fixtures generation
 Common errors :
 
 - Try to use the clean task in simple mode then in full mode if there is no changes.
-- For the keys, if we want to refer to an another table id then we have to use the name of the table and not to the name of the property !
+- For the keys, if we want to refer to another table id then we have to use the name of the table and not to the name of the property !

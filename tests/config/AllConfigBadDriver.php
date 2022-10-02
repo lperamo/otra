@@ -8,7 +8,7 @@ AllConfig::$dbConnections = [ // mandatory
     'driver' => 'hello',
     'host' => 'localhost',
     'port' => '',
-    'db' => 'testDB', // do not modify this !
+    'db' => 'testDB', // do not modify this!
     'motor' => 'InnoDB'
   ]
 ];

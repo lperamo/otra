@@ -5,7 +5,7 @@ namespace otra\controllers\profiler;
 
 use otra\{Controller, OtraException, services\ProfilerService};
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
-use function otra\tools\t;
+use function otra\tools\trans;
 
 /**
  * Class ClearSQLLogsAction
@@ -16,8 +16,8 @@ use function otra\tools\t;
 class ClearSQLLogsAction extends Controller
 {
   /**
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
+   * @param array $params     [...getParams, ...postParams, etc.]
    *
    * @throws OtraException
    */
@@ -26,12 +26,8 @@ class ClearSQLLogsAction extends Controller
     parent::__construct($otraParams, $params);
     ProfilerService::securityCheck();
     $sqlLogFile = BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt';
-    $handle = fopen($sqlLogFile, 'r+');
-    ftruncate($handle, 0);
-    fclose($handle);
-
+    file_put_contents($sqlLogFile, '');
     require CORE_PATH . 'tools/translate.php';
-    echo t('No more stored queries in '), $sqlLogFile, '.';
+    echo trans('No more stored queries in '), $sqlLogFile, '.';
   }
 }
-

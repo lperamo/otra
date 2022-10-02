@@ -19,7 +19,7 @@ class AnalyzeUseTokenTest extends TestCase
     PHP_EXTENSION = '.php',
     CONST_NAME_DEBUG_LEVEL = '\\DEBUG_LEVEL';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // It fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = false;
 
   protected function setUp(): void
@@ -53,8 +53,8 @@ class AnalyzeUseTokenTest extends TestCase
 
     // testing
     static::expectOutputString('');
-    static::assertEquals([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
-    static::assertEquals([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
+    static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testIsDevControllerTrait()
@@ -77,8 +77,8 @@ class AnalyzeUseTokenTest extends TestCase
     static::expectOutputString(
       CLI_INFO . 'We will not send the development controller in production.' . END_COLOR . PHP_EOL
     );
-    static::assertEquals([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
-    static::assertEquals([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
+    static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testIsProdControllerTrait()
@@ -100,7 +100,7 @@ class AnalyzeUseTokenTest extends TestCase
     // testing
     $filename = CORE_PATH . 'prod/' . $class . self::PHP_EXTENSION;
     static::expectOutputString('');
-    static::assertEquals([
+    static::assertSame([
       'php' =>
         [
           'use' => [$filename]
@@ -109,7 +109,7 @@ class AnalyzeUseTokenTest extends TestCase
       $filesToConcat,
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    static::assertEquals([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testIsBlockSystem()
@@ -131,8 +131,8 @@ class AnalyzeUseTokenTest extends TestCase
 
     // testing
     static::expectOutputString('');
-    static::assertEquals([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
-    static::assertEquals([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
+    static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testHasSlashAtFirstAndExternalLibraryClass()
@@ -154,7 +154,7 @@ class AnalyzeUseTokenTest extends TestCase
 
     // testing
     static::expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : ' . $class . END_COLOR . PHP_EOL);
-    static::assertEquals([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
-    static::assertEquals([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
+    static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 }

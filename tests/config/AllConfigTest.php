@@ -11,7 +11,7 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, OTRA_PROJECT, PROD};
  */
 class AllConfigTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void

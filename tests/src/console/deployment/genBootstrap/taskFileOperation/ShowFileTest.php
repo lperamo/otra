@@ -7,7 +7,7 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH};
 use const otra\console\{CLI_WARNING, END_COLOR};
-use const otra\console\deployment\genBootstrap\{ANNOTATION_DEBUG_PAD, BASE_PATH_LENGTH};
+use const otra\console\deployment\genBootstrap\{ANNOTATION_DEBUG_PAD};
 use function otra\console\deployment\genBootstrap\{showFile, evalPathVariables};
 
 /**
@@ -22,7 +22,7 @@ class ShowFileTest extends TestCase
     LEVEL_ZERO = 0,
     LEVEL_ONE = 1;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
@@ -88,11 +88,11 @@ class ShowFileTest extends TestCase
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, self::FILENAME, 'echo $test;');
 
     // testing
-    static::assertEquals(
+    static::assertSame(
       'echo \'value\'',
       $fileContent
     );
-    static::assertEquals(
+    static::assertSame(
       false,
       $isTemplate
     );

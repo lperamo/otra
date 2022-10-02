@@ -1,0 +1,52 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\requests;
+
+/**
+ * Creates an HTML table that shows array parameters and their values
+ *
+ * @param array  $parameters Eg: GET, POST, SESSION parameters
+ * @param string $type       Used for labels and descriptions
+ */
+function showParameters(array $parameters, string $type) : void
+{
+  if (!empty($parameters))
+  {
+    ?>
+    <table class="table suffix" aria-label="Table about <?= $type ?>">
+      <thead class="table-header">
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        foreach ($parameters as $parameterName => $parameterValue)
+        {
+          $isString = is_string($parameterValue);
+          $value = '<span>';
+
+          if ($isString)
+            $value .= '<span class="requests--parameter--string">"</span>';
+
+          $value .= htmlentities($parameterValue);
+
+          if ($isString)
+            $value .= '<span class="requests--parameter--string">"</span>';
+
+          $value .= '</span>';
+          ?>
+          <tr>
+            <td data-label="Key"><?= $parameterName ?></td>
+            <td data-label="Value"><?= $value ?></td>
+          </tr>
+          <?php
+        } ?></tbody>
+    </table>
+    <?php
+  } else
+  {
+    ?>No <?= $type ?>.<?php
+  }
+}

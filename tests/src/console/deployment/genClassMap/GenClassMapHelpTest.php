@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\console\architecture\createAction;
+namespace src\console\deployment\genClassMap;
 
 use otra\console\TasksManager;
 use otra\OtraException;
@@ -17,7 +17,7 @@ class GenClassMapHelpTest extends TestCase
   private const OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     OTRA_TASK_HELP = 'help';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

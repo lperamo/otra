@@ -11,6 +11,7 @@ testDB_table:
     date_creation:
       type: timestamp
       notnull: true
+      comment: 'the date creation'
     fk_id_table2:
       type: int
       notnull: true
@@ -18,15 +19,30 @@ testDB_table:
     fk_id_table3:
       type: int
       notnull: true
+  indexes:
+    my_index:
+      category: unique
+      columns:
+        - id
+        - titre
+    second_index:
+      columns:
+        - titre
+        - date_creation
+    third_index:
+      columns:
+        - date_creation
   relations:
-    testDB_table2:
+    fk_testDB_table2:
+      foreign: id
       local: fk_id_table2
+      on_delete: cascade
+      on_update: restrict
+      table: testDB_table2
+    fk_testDB_table3:
       foreign: id
-      constraint_name: fk_testDB_table2
-    testDB_table3:
       local: fk_id_table3
-      foreign: id
-      constraint_name: fk_testDB_table3
+      table: testDB_table3
 
 testDB_table2:
   columns:

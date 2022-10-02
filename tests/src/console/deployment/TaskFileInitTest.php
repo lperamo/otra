@@ -5,7 +5,7 @@ namespace src\console\deployment;
 
 use otra\OtraException;
 use phpunit\framework\TestCase;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, TEST_PATH};
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH, DEV, TEST_PATH};
 use function otra\console\deployment\getPathInformations;
 use function otra\tools\copyFileAndFolders;
 
@@ -24,7 +24,7 @@ class TaskFileInitTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
-    $argv = [];
+    $argumentsVector = [];
     define(__NAMESPACE__ . '\\TEST_ROUTES_PATH', BUNDLES_PATH . 'config/');
 
     if (!file_exists(TEST_ROUTES_PATH))
@@ -46,7 +46,7 @@ class TaskFileInitTest extends TestCase
 
     // testing
     self::assertIsArray($pathInformations);
-    self::assertEquals(
+    self::assertSame(
       [
         TEST_JS_BASE_NAME,
         TEST_RESOURCES_PATH,

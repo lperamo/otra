@@ -13,8 +13,8 @@ use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
 class RefreshSQLLogsAction extends Controller
 {
   /**
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
+   * @param array $params     [...getParams, ...postParams, etc.]
    *
    * @throws OtraException
    */
@@ -26,4 +26,3 @@ class RefreshSQLLogsAction extends Controller
     echo ProfilerService::getLogs(BASE_PATH . 'logs/' . $_SERVER[APP_ENV] . '/sql.txt');
   }
 }
-

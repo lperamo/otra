@@ -22,7 +22,7 @@ trait ProdControllerTrait
    * @param string $file      The file to render
    * @param array  $variables Variables to pass
    * @param bool   $ajax      Is this an ajax partial ?
-   * @param bool   $viewPath  If true, we adds the usual view path before the $file variable.
+   * @param bool   $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
    *
@@ -56,7 +56,6 @@ trait ProdControllerTrait
   }
 
   /**
-   * @param string $route
    *
    * @throws Exception
    * @return string[]
@@ -72,7 +71,6 @@ trait ProdControllerTrait
   /**
    * Returns the pre-generated css and the additional concatenated css
    *
-   * @param string $route
    *
    * @throws Exception
    * @return string The links to the css files or the style markup with the css inside
@@ -102,7 +100,6 @@ trait ProdControllerTrait
 
   /** Returns the pre-generated js and the additional concatenated js
    *
-   * @param string $route
    *
    * @throws Exception
    * @return string The links to the js files or the script markup with the js inside
@@ -121,7 +118,7 @@ trait ProdControllerTrait
           '.gz'
         ) . '" async defer></script>';
 
-    // If there are no scripts loaded dynamically (not from the routes configuration)
+    // If there are no scripts loaded dynamically (not from the routes' configuration)
     if (empty(self::$javaScript))
       return $content;
 

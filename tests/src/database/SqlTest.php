@@ -8,9 +8,9 @@ use PDOStatement;
 use phpunit\framework\TestCase;
 use otra\{bdd\Sql,OtraException};
 use ReflectionException;
+use ReflectionMethod;
 use TypeError;
 use const otra\cache\php\{APP_ENV, BASE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
-use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -93,7 +93,7 @@ class SqlTest extends TestCase
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
-    $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE ' . self::$databaseName . ';');
+    $dbResult = Sql::$instance->query('CREATE DATABASE IF NOT EXISTS `' . self::$databaseName . '`; USE `' . self::$databaseName . '`;');
     Sql::$instance->freeResult($dbResult);
     Sql::$instance->commit();
   }
@@ -173,7 +173,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals(null, Sql::$instance->query(self::QUERY_SELECT_1));
+    self::assertSame(null, Sql::$instance->query(self::QUERY_SELECT_1));
   }
 
   /**
@@ -201,23 +201,17 @@ class SqlTest extends TestCase
     Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
-    self::assertEquals(
+    self::assertSame(
       $sqlLogContent
         . ($sqlLogContent !== ''
         ? ''
         : '[')
-      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1247,"query":"SELECT 1"},',
+      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1248,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
     if (!OTRA_PROJECT)
-    {
-      unlink($sqlLogPath);
-
-      // only remove the log folder if it is really empty
-      if (empty(array_diff(scandir($devLogFolder), ['..', '.'])))
-        rmdir($devLogFolder);
-    }
+      file_put_contents($sqlLogPath, '');
   }
 
   /**
@@ -407,7 +401,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertIsString(Sql::$instance->lastInsertedId());
+    self::assertIsInt(Sql::$instance->lastInsertedId());
   }
 
   /**
@@ -480,7 +474,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertIsString(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
+    self::assertIsInt(Sql::$instance->single(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -554,7 +548,7 @@ class SqlTest extends TestCase
 
     // launching task
     Sql::getDb();
-    self::assertEquals([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
+    self::assertSame([1], Sql::$instance->valuesOneCol(Sql::$instance->query(self::QUERY_SELECT_1)));
   }
 
   /**
@@ -589,7 +583,7 @@ class SqlTest extends TestCase
     $sqlInstance = Sql::getDb();
     $sqlInstance->__destruct();
 
-    self::assertEquals(null, Sql::$currentConn);
+    self::assertSame(null, Sql::$currentConn);
   }
 
   /**
@@ -600,7 +594,7 @@ class SqlTest extends TestCase
    */
   public function testGetDB_AlreadyExistingConnection() : void
   {
-    // Creating the context (having a SQL connection active named 'test')
+    // Creating the context (having an SQL connection active named 'test')
     require self::TEST_CONFIG_GOOD_PATH;
     $sqlInstance = Sql::getDb('test');
 
@@ -608,7 +602,7 @@ class SqlTest extends TestCase
     $sqlInstance2 = Sql::getDb('test');
 
     // Testing !
-    self::assertEquals($sqlInstance, $sqlInstance2);
+    self::assertSame($sqlInstance, $sqlInstance2);
   }
 
   /**
@@ -717,10 +711,10 @@ class SqlTest extends TestCase
       Sql::$instance->query('bogus sql');
     } catch (Exception $exception)
     {
-      self::assertEquals(
+      self::assertSame(
       [
         0 => '42000',
-        1 => '1064',
+        1 => 1064,
         2 => 'You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'bogus sql\' at line 1'
       ],
         Sql::$instance->errorInfo()
@@ -742,7 +736,8 @@ class SqlTest extends TestCase
 
     // testing
     Sql::$instance = null;
-    self::assertFalse(removeMethodScopeProtection(Sql::class, 'close')
-      ->invokeArgs(null, [&Sql::$instance]));
+    self::assertFalse(
+      (new ReflectionMethod(Sql::class, 'close'))->invokeArgs(null, [&Sql::$instance])
+    );
   }
 }

@@ -1,10 +1,46 @@
 <?php
 declare(strict_types=1);
 namespace otra\src\views\debugBar;
-use const otra\cache\php\{CACHE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_VIEWS_PATH};
+use otra\OtraException;
+use otra\Session;
+use const otra\cache\php\{CONSOLE_PATH, CORE_CSS_PATH, CORE_VIEWS_PATH};
 
 const DEBUG_BAR_PATH = CORE_VIEWS_PATH . 'debugBar/';
+
+$sessionId = session_id();
+define('ROUTE', urlencode($this->route));
+define('SESSION_ID', $sessionId);
+define('GET_PARAMETERS', '?route=' . ROUTE . '&session_id=' . SESSION_ID);
+
+require_once CONSOLE_PATH . 'colors.php';
+require_once CONSOLE_PATH . 'tools.php';
 require DEBUG_BAR_PATH . 'macros.phtml';
+
+if (!file_exists(Session::$sessionsCachePath) && !mkdir(Session::$sessionsCachePath))
+  throw new OtraException('Cannot create the folder ' . Session::$sessionsCachePath);
+
+$responseHeaders = [];
+$headers = headers_list();
+
+foreach ($headers as $header)
+{
+  $header = explode(':', $header);
+  $responseHeaders[array_shift($header)] = trim(implode(':', $header));
+}
+
+Session::sets(
+  [
+    'GET' => $_GET,
+    'POST' => $_POST,
+    'COOKIE' => $_COOKIE,
+    'SESSION' => Session::getNativeSessionData(),
+    'requestHeaders' => apache_request_headers(),
+    'responseHeaders' => $responseHeaders,
+  ]
+);
+
+Session::toFile();
+
 $this::css([
   [CORE_CSS_PATH . 'partials/devMode/devMode'],
   [CORE_CSS_PATH . 'partials/devMode/devModePrint', true]
@@ -13,7 +49,6 @@ generateArrows();
 ?>
 <div id="dbg-bar" class="dbg-bar">
   <?php
-  define('ROUTE', urlencode($this->route));
   define(
     'SITE_HOST',
     (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']
@@ -26,12 +61,9 @@ generateArrows();
   }
 
   unset($template);
-
-  if (file_exists(CACHE_PATH . 'css/sassTree.php'))
-    require DEBUG_BAR_PATH . 'sass.phtml';
+  require DEBUG_BAR_PATH . 'sass.phtml';
 ?>
-  <button type="button" id="show-sql" class="dbg-bar--btn" tabindex="<?= $debugBarTabIndexActualValue++ ?>">Inspect SQL</button>
+  <a href="<?= SITE_HOST ?>/profiler/sql<?= GET_PARAMETERS ?>" rel="noopener nofollow noreferrer" target="profiler"
+     class="dbg-bar--block" title="Check SQL logs" tabindex="<?= $debugBarTabIndexActualValue++ ?>">SQL</a>
   <?php generateArrows('label', $debugBarTabIndexActualValue) ?>
 </div>
-<?php $this::js(CORE_JS_PATH . 'debug_bar');
-  $this::js(CORE_JS_PATH . 'lightbox');

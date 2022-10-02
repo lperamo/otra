@@ -3,31 +3,12 @@ declare(strict_types=1);
 namespace otra\tools;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
 use ReflectionProperty;
 
 /**
  * @author Lionel Péramo
  * @package otra\tools
  */
-
-/**
- * Removes protection from a field in order to test it easily and returns it.
- *
- * @param class-string $class
- * @param string       $field
- *
- * @throws ReflectionException
- * @return ReflectionProperty
- */
-function removeFieldScopeProtection(string $class, string $field) : ReflectionProperty
-{
-  $class = new ReflectionClass($class);
-  $alteredField = $class->getProperty($field);
-  $alteredField->setAccessible(true);
-
-  return $alteredField;
-}
 
 /**
  * @param class-string $class
@@ -44,7 +25,6 @@ function removeFieldsScopeProtection(string $class, array $fields) : array
   foreach ($fields as $field)
   {
     $alteredField = $class->getProperty($field);
-    $alteredField->setAccessible(true);
     $unprotectedFields[]= $alteredField;
   }
 
@@ -52,59 +32,25 @@ function removeFieldsScopeProtection(string $class, array $fields) : array
 }
 
 /**
- * Removes protection from a field in order to test it easily and returns it.
- *
- * @param class-string $class
- * @param string       $field
- *
- * @throws ReflectionException
- * @return ReflectionProperty
- */
-function restoreFieldScopeProtection(string $class, string $field) : ReflectionProperty
-{
-  $class = new ReflectionClass($class);
-  $alteredField = $class->getProperty($field);
-  $alteredField->setAccessible(false);
-
-  return $alteredField;
-}
-
-/**
  * Removes temporarily the scope protection of fields to set values.
  *
  * @param class-string         $class
  * @param array<string, mixed> $fieldsAndValues
+ * @param Object|null          $objectInstance  Only needed if we need to modify non-static properties
  *
  * @throws ReflectionException
  */
-function setScopeProtectedFields(string $class, array $fieldsAndValues) : void
+function setScopeProtectedFields(string $class, array $fieldsAndValues, object $objectInstance = null) : void
 {
   $class = new ReflectionClass($class);
 
   foreach ($fieldsAndValues as $field => $value)
   {
     $alteredField = $class->getProperty($field);
-    $alteredField->setAccessible(true);
-    $alteredField->setValue($value);
-    $alteredField->setAccessible(false);
+
+    if ($alteredField->isStatic())
+      $alteredField->setValue($value);
+    else
+      $alteredField->setValue($objectInstance, $value);
   }
 }
-
-/**
- * Removes protection from a method in order to test it easily and returns it.
- *
- * @param class-string $class
- * @param string       $method
- *
- * @return ReflectionMethod
- *
- * @throws ReflectionException
- */
-function removeMethodScopeProtection(string $class, string $method) : ReflectionMethod
-{
-  $method = new ReflectionMethod($class, $method);
-  $method->setAccessible(true);
-
-  return $method;
-}
-

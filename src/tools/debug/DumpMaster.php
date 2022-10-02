@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace otra\tools\debug;
 
+use DateTime;
 use otra\config\AllConfig;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use const otra\cache\php\CORE_PATH;
 
 /**
@@ -14,7 +16,8 @@ use const otra\cache\php\CORE_PATH;
  * @author Lionel Péramo
  * @package otra\tools\debug
  */
-abstract class DumpMaster {
+abstract class DumpMaster
+{
   protected const
     // 'How much' constants
     OTRA_DUMP_ARRAY = [128, 512, 3],
@@ -72,11 +75,11 @@ abstract class DumpMaster {
   public static function setDumpConfig(array $options = null) : array
   {
     // We ensure us that there are values set to the dump keys
-    AllConfig::$debugConfig = !isset(AllConfig::$debugConfig)
-      ? self::OTRA_DUMP_CONFIGURATION
-      : array_merge(self::OTRA_DUMP_CONFIGURATION, AllConfig::$debugConfig);
+    AllConfig::$debugConfig = isset(AllConfig::$debugConfig)
+      ? array_merge(self::OTRA_DUMP_CONFIGURATION, AllConfig::$debugConfig)
+      : self::OTRA_DUMP_CONFIGURATION;
 
-    // If there is no option, we returns the merged array we just done
+    // If there is no option, we return the merged array we've just done
     if ($options === null)
       return AllConfig::$debugConfig;
 
@@ -84,7 +87,7 @@ abstract class DumpMaster {
     $oldConfig = AllConfig::$debugConfig ?? self::OTRA_DUMP_CONFIGURATION;
 
     // for each OTRA dump key, we update its value according to the passed parameters
-    foreach (self::OTRA_DUMP_ARRAY as $optionKey => $option)
+    foreach (array_keys(self::OTRA_DUMP_ARRAY) as $optionKey)
     {
       // if the dump key exists in the configuration
       if (isset(AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[$optionKey]]))
@@ -102,14 +105,13 @@ abstract class DumpMaster {
   }
 
   /**
-   * @param object $param
    *
    * @throws ReflectionException
    * @return string[]
    */
   protected static function getClassDescription(object $param) : array
   {
-    $className = get_class($param);
+    $className = $param::class;
     $reflectedClass = new ReflectionClass($className);
     $classInterfaces = $reflectedClass->getInterfaceNames();
     $parentClass = $reflectedClass->getParentClass();
@@ -149,5 +151,23 @@ abstract class DumpMaster {
     }
 
     static::dumpCallback($secondTrace['file'], $secondTrace['line'], ob_get_clean());
+  }
+
+  /**
+   * @throws ReflectionException
+   * @return array{0: ReflectionProperty[], 1: mixed} [$properties, $param]
+   */
+  public static function getPropertiesViaReflection(string $className, mixed $param) : array
+  {
+    $properties = (new ReflectionClass($className))->getProperties();
+
+    // We need a fake class as DateTime does not handle reflection :(
+    if ($className ===  DateTime::class )
+    {
+      $param = new FakeDateTime($param);
+      $properties = (new ReflectionClass(FakeDateTime::class))->getProperties();
+    }
+
+    return [$properties, $param];
   }
 }

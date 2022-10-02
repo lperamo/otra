@@ -9,10 +9,11 @@ namespace otra\console\deployment\genServerConfig;
 
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\Pure;
+use otra\config\Routes;
 use otra\OtraException;
 use const otra\cache\php\{DEV,SPACE_INDENT};
-use const otra\console\
-{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\config\VERSION;
 
 /** @var string $fileName */
 
@@ -30,7 +31,11 @@ const
   CHECK_HTTP_REFERER_2 = SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL . OTRA_LABEL_RETURN_403_BLOCK_2,
   LABEL_TYPES_2 = SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL,
   GZIP_HEADER_2 = SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL,
-  LABEL_APPLICATION_JSON_3 = SPACE_INDENT_3 . 'application/json map;' . PHP_EOL;
+  LABEL_APPLICATION_JSON_3 = SPACE_INDENT_3 . 'application/json map;' . PHP_EOL,
+  KEY_CORE = 'core',
+  KEY_NO_NONCES = 'noNonces',
+  KEY_RESOURCES = 'resources',
+  KEY_TEMPLATE = 'template';
 
 /**
  * @return string
@@ -44,7 +49,8 @@ const
     SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
     SPACE_INDENT . str_pad('server_name', GEN_SERVER_CONFIG_STR_PAD) . GEN_SERVER_CONFIG_SERVER_NAME .
     ';' . PHP_EOL .
-    SPACE_INDENT . str_pad('return', GEN_SERVER_CONFIG_STR_PAD) . '301 https://$server_name$request_uri; #Redirection' . PHP_EOL .
+    SPACE_INDENT . str_pad('return', GEN_SERVER_CONFIG_STR_PAD) .
+    '301 https://$server_name$request_uri; #Redirection' . PHP_EOL .
     '}' . PHP_EOL;
 }
 
@@ -64,8 +70,6 @@ function addingSecurityAdjustments() : string
 }
 
 /**
- * @param string $assetType
- *
  * @return string
  */
 #[Pure] function handleGzippedAsset(string $assetType = 'css'): string
@@ -149,16 +153,44 @@ function addingSecurityAdjustments() : string
  */
 function handleRewriting() : string
 {
-  return SPACE_INDENT . '# Handles rewriting' . PHP_EOL .
+  $rewriteRules = SPACE_INDENT . '# Handles rewriting' . PHP_EOL .
     SPACE_INDENT . 'location /' . PHP_EOL .
-    OPENING_BRACKET .
-    SPACE_INDENT_2 . 'rewrite ^ /index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? ucfirst(DEV) : '') . '.php last;' . PHP_EOL .
-    ENDING_BRACKET .
+    OPENING_BRACKET;
+
+  $rewriteRules .= SPACE_INDENT_2;
+  $addedRules = false;
+
+  foreach (Routes::$allRoutes as $route => $routeConfig)
+  {
+    if (isset($routeConfig[KEY_CORE]) && $routeConfig[KEY_CORE])
+      continue;
+
+    // If it is a static page without nonces (generated dynamically) then we can deliver directly the (compressed)
+    // template. `substr` is used to remove the first slash.
+    if (isset($routeConfig[KEY_RESOURCES])
+      && isset($routeConfig[KEY_RESOURCES][KEY_TEMPLATE]) && $routeConfig[KEY_RESOURCES][KEY_TEMPLATE]
+      && isset($routeConfig[KEY_RESOURCES][KEY_NO_NONCES]) && $routeConfig[KEY_RESOURCES][KEY_NO_NONCES])
+    {
+      $rewriteRules .= 'rewrite ' . substr($routeConfig['chunks'][Routes::ROUTES_CHUNKS_URL], 1) . ' /static/' .
+        sha1('ca' . $route . VERSION . 'che') . '.gz last;' . PHP_EOL;
+      $addedRules = true;
+    }
+  }
+
+  if ($addedRules)
+    $rewriteRules .= SPACE_INDENT_2;
+
+  $rewriteRules .= 'rewrite ^ /index';
+
+  if (GEN_SERVER_CONFIG_ENVIRONMENT === DEV)
+    $rewriteRules .= ucfirst(DEV);
+
+  return $rewriteRules . '.php last;' . PHP_EOL . ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . 'location ~ \.php' . PHP_EOL .
     OPENING_BRACKET .
     SPACE_INDENT_2 . 'include snippets/fastcgi-php.conf;' . PHP_EOL .
-    SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;' . PHP_EOL .
+    SPACE_INDENT_2 . 'fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;' . PHP_EOL .
     PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param APP_ENV ' . GEN_SERVER_CONFIG_ENVIRONMENT .';' . PHP_EOL .
     SPACE_INDENT_2 . 'fastcgi_param TEST_LOGIN yourLogin;' . PHP_EOL .
@@ -199,7 +231,8 @@ $content = handlesHTTPSRedirection() .
   SPACE_INDENT . 'server_tokens off;' . PHP_EOL .
   SPACE_INDENT . 'more_set_headers \'Server: Welcome on my site!\';' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . '# Sending always referrer if it is secure' . PHP_EOL .
+  SPACE_INDENT . '# This header allows you to control whether or not you leak information about your users\' behavior to third parties' .
+  PHP_EOL .
   SPACE_INDENT . 'add_header Referrer-Policy same-origin always;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
@@ -208,10 +241,20 @@ $content = handlesHTTPSRedirection() .
   AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
   ' localhost;' . PHP_EOL .
   PHP_EOL .
+  SPACE_INDENT . 'if ($uri ~ "^/$")' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'set $invalid_referer "";' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
+  SPACE_INDENT . 'if ($uri ~ "^/(robots.txt|sitemap.xml)$")' . PHP_EOL .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'set $invalid_referer "";' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
+  PHP_EOL .
   SPACE_INDENT . 'if ($invalid_referer)' . PHP_EOL .
-  OPENING_BRACKET .
-  SPACE_INDENT_2 . OTRA_LABEL_RETURN_403 . PHP_EOL .
-  ENDING_BRACKET .
+  SPACE_INDENT . '{' . PHP_EOL .
+  SPACE_INDENT_2 . 'return 403;' . PHP_EOL .
+  SPACE_INDENT . '}' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Forces static compression (for already gzipped files)' . PHP_EOL .
   SPACE_INDENT . 'gzip off;' . PHP_EOL .
@@ -293,7 +336,7 @@ if (file_put_contents($fileName, $content) === false)
 {
   echo CLI_ERROR . 'There was a problem when saving the Nginx configuration in the file ' . CLI_INFO_HIGHLIGHT .
     $fileName . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 $dotPosition = mb_strrpos($fileName, '.');
@@ -315,7 +358,7 @@ if (file_put_contents(
 {
   echo CLI_ERROR . 'There was a problem when saving the Nginx cache configuration in the file ' . CLI_INFO_HIGHLIGHT .
     $cacheHandlingFilename . CLI_ERROR . '.' . END_COLOR . PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 echo CLI_BASE . 'Nginx ' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'development' : 'production') .

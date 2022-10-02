@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+namespace otra\src\views\profiler\logs;
+
+use const otra\cache\php\{BASE_PATH, PROD};
+use function otra\src\views\profiler\showLogsFull;
+const PROD_LOGS_PATH = BASE_PATH . 'logs/' . PROD . '/';
+?>
+<div class="activatable-divs--item" role="tabpanel">
+  <?php
+    showLogsFull(
+      'Classes not found',
+      PROD_LOGS_PATH . 'classNotFound.txt',
+      'No logs about classes not found.'
+    );
+    showLogsFull(
+      'Classic logs',
+      PROD_LOGS_PATH . 'log.txt',
+      'No classic logs.',
+      '',
+      true
+    );
+    showLogsFull(
+      'Unknown exceptions',
+      PROD_LOGS_PATH . 'unknownExceptions.txt',
+      'No unknown exceptions logs.'
+    );
+    showLogsFull(
+      'Unknown fatal errors',
+      PROD_LOGS_PATH . 'unknownFatalErrors.txt',
+      'No unknown fatal errors logs.'
+    );
+  ?>
+</div>

@@ -6,18 +6,18 @@ namespace src;
 use otra\OtraException;
 use phpunit\framework\TestCase;
 use ReflectionException;
+use ReflectionMethod;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};
-use function otra\tools\removeMethodScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
  */
 class OtraExceptionTest extends TestCase
 {
-  private const 
+  private const
     BUNDLES_CONFIG_FOLDER = BUNDLES_PATH . 'config/',
     BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
@@ -61,25 +61,20 @@ class OtraExceptionTest extends TestCase
   {
     $exception = new OtraException('test');
     self::assertInstanceOf(OtraException::class, $exception);
-    removeMethodScopeProtection(OtraException::class, 'errorMessage')
-      ->invokeArgs($exception, []);
+    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
   }
 
   /**
-   * @throws ReflectionException
    * @author Lionel Péramo
+   * @throws ReflectionException|OtraException
    */
   public function testOtraException_WithContext(): void
   {
-    $exception = new OtraException('test');
-
-    /* We cannot force the PHP_SAPI constant so it will launch OtraExceptionCli but we can workaround it.
-     * We launch it this way anyway but we manually set the context after in order to not be overwritten by the
+    /* We cannot force the PHP_SAPI constant, so it will launch OtraExceptionCli, but we can work around it.
+     * We launch it this way anyway, but we manually set the context after in order to not be overwritten by the
      * OtraExceptionCli class. */
-    $exception->context = ['variables' => []];
-
+    $exception = new OtraException('test', null, '', null, ['variables' => []]);
     self::assertInstanceOf(OtraException::class, $exception);
-    removeMethodScopeProtection(OtraException::class, 'errorMessage')
-      ->invokeArgs($exception, []);
+    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
   }
 }

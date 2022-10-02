@@ -22,12 +22,12 @@ class GenJsRoutingTaskTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_JS_ROUTING = 'genJsRouting',
     JS_ROUTING_FILENAME = 'jsRouting.js',
-    MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/',
+    MAIN_RESOURCES_PATH = BUNDLES_PATH . 'resources/js/',
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
     BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
     OTRA_BINARY = 'otra.php';
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**

@@ -33,14 +33,13 @@ else
 [$modelFullName, $modelExists, $tableExists] = preparingBidule($modelName);
 
 // If the model exists, we ask once more until we are satisfied with the user answer (we can't override it as of now)
-if (true === $modelExists || false === $tableExists)
+if ($modelExists || !$tableExists)
 {
   $errorLabel = '';
   preparingErrorMessage($modelExists, $tableExists, $bundleName, $errorLabel);
 
   echo CLI_ERROR, $errorLabel, END_COLOR, PHP_EOL;
-  throw new OtraException('', 1, '', NULL, [], true);
+  throw new OtraException(code: 1, exit: true);
 }
 
 modelCreation($modelLocation, $modelName, $modelFullName, $bundleName);
-

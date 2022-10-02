@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace src\tools\workers;
 
+use ReflectionClass;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
 use phpunit\framework\TestCase;
 use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
-use function otra\tools\removeFieldScopeProtection;
 
 /**
  * @runTestsInSeparateProcesses
@@ -18,12 +18,20 @@ class WorkerManagerTest extends TestCase
   private const
     COMMAND = 'sleep 0.001',
     COMMAND_SLEEP_2 = 'sleep 2',
+    BAD_COMMAND = 'slept',
     SUCCESS_MESSAGE = 'hello',
     SUCCESS_MESSAGE_2 = 'hi',
     SUCCESS_MESSAGE_3 = 'hi how are you?' . PHP_EOL . 'I\'m fine and you?',
+    SUCCESS_MESSAGE_4 = 'success message 4' . PHP_EOL . 'end',
+    FAIL_MESSAGE = CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
+      'STDOUT : ' . PHP_EOL .
+      'STDERR : sh: 1: slept: not found' . PHP_EOL .
+      PHP_EOL .
+      'Exit code : 127',
     WAITING_MESSAGE = 'waiting for the result of the first final message ...',
     WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
     WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
+    WAITING_MESSAGE_4 = 'waiting for the result of the fourth final message ...',
     VERBOSE = 2,
     CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
@@ -31,9 +39,11 @@ class WorkerManagerTest extends TestCase
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
     UP_ONE_LINE = "\033[1A",
     CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE,
-    WHITE = "\e[15;2]";
+    WHITE = "\e[15;2]",
+    STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.',
+    TIMEOUT = 60;
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   /**
@@ -48,7 +58,8 @@ class WorkerManagerTest extends TestCase
     $worker = new Worker(
       $command,
       self::SUCCESS_MESSAGE,
-      self::WAITING_MESSAGE ,
+      self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -67,35 +78,36 @@ class WorkerManagerTest extends TestCase
       'A detached worker must no be present in the Worker Manager afterwards.'
     );
 
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
     // testing processes
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, 'processes')->getValue($workerManager),
+      $reflectedClass->getProperty('processes')->getValue($workerManager),
       'The process related to the detached worker must no be present in the the Worker Manager after that the worker has been detached.'
     );
 
     // testing streams
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
       'Stdin streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
       'Stdout streams must be empty after we detached a worker.'
     );
 
     self::assertArrayNotHasKey(
       $foundKey,
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
       'Stderr streams must be empty after we detached a worker.'
     );
 
     // detachment successful
     self::assertIsArray($status);
-    self::assertEquals(
+    self::assertSame(
       $status[0]
         ? TEST_DETACH_STATUS_WAS_RUNNING
         : TEST_DETACH_STATUS_SUCCESS,
@@ -133,20 +145,18 @@ class WorkerManagerTest extends TestCase
     $workerManager->__destruct();
 
     // testing streams
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
-      ->getValue($workerManager),
-      'Stdin streams must be empty after the Worker Manager destruction.'
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager),
+      'Stdin' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDOUT_STREAMS)
-        ->getValue($workerManager),
-      'Stdout streams must be empty after the Worker Manager destruction.'
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager),
+      'Stdout' . self::STREAMS_DESTRUCT_MESSAGE
     );
     self::assertEmpty(
-      removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
-        ->getValue($workerManager),
-      'Stderr streams must be empty after the Worker Manager destruction.'
+      $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager),
+      'Stderr' . self::STREAMS_DESTRUCT_MESSAGE
     );
   }
 
@@ -166,6 +176,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
@@ -174,26 +185,23 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($worker);
 
     // 1. testing streams
-    $stdinStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDIN_STREAMS)
-      ->getValue($workerManager);
+    $reflectedClass = new ReflectionClass(WorkerManager::class);
+    $stdinStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stdinStreams, 'Stdin streams must not be empty after we attached a worker.');
 
-    $stdoutStreams = removeFieldScopeProtection(WorkerManager::class, 'stdoutStreams')
-      ->getValue($workerManager);
-
+    $stdoutStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stdoutStreams, 'Stdout streams must not be empty after we attached a worker.');
 
     foreach ($stdoutStreams as $stdoutStream)
     {
-      self::assertEquals(
+      self::assertSame(
         TEST_STREAM_NON_BLOCKING_MODE,
         stream_get_meta_data($stdoutStream)['blocked'],
         'We must have a non blocking mode for the streams.'
       );
     }
 
-    $stderrStreams = removeFieldScopeProtection(WorkerManager::class, self::OTRA_FIELD_STDERR_STREAMS)
-      ->getValue($workerManager);
+    $stderrStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager);
     self::assertNotEmpty($stderrStreams, 'Stderr streams must not be empty after we attached a worker.');
 
     // 2. testing workers
@@ -210,9 +218,8 @@ class WorkerManagerTest extends TestCase
     );
 
     // 3. testing processes
-    $processes = removeFieldScopeProtection(WorkerManager::class, 'processes');
     self::assertNotEmpty(
-      $processes,
+      $reflectedClass->getProperty('processes'),
       'There must be processes when we have attached a worker to the Worker Manager.'
     );
 
@@ -258,6 +265,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -295,6 +303,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE,
       self::CUSTOM_TIMEOUT
     );
@@ -335,6 +344,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -343,6 +353,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($workerBis);
@@ -369,9 +380,6 @@ class WorkerManagerTest extends TestCase
     );
 
     // Cleaning
-    foreach($workerManager::$workers as $worker)
-      $workerManager->detach($worker);
-
     unset($workerManager);
   }
 
@@ -390,6 +398,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND_SLEEP_2,
       self::SUCCESS_MESSAGE_2,
       self::WAITING_MESSAGE_2,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($worker);
@@ -398,6 +407,7 @@ class WorkerManagerTest extends TestCase
       self::COMMAND,
       self::SUCCESS_MESSAGE_3,
       self::WAITING_MESSAGE_3,
+      null,
       self::VERBOSE
     );
     $workerManager->attach($workerBis);
@@ -416,15 +426,156 @@ class WorkerManagerTest extends TestCase
       self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       self::WAITING_MESSAGE_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
       $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
       $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND . PHP_EOL
     );
 
     // Cleaning
-    foreach($workerManager::$workers as $worker)
-      $workerManager->detach($worker);
+    unset($workerManager);
+  }
 
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
+   */
+  public function testSubworkers() : void
+  {
+    // Context
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::COMMAND_SLEEP_2,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      null,
+      self::VERBOSE
+    );
+    $workerManager->attach($worker);
+
+    $workerBis = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      null,
+      self::VERBOSE,
+      self::TIMEOUT,
+      [
+        new Worker(
+          self::COMMAND_SLEEP_2,
+          self::SUCCESS_MESSAGE_3,
+          self::WAITING_MESSAGE_3,
+          null,
+          self::VERBOSE
+        ),
+        new Worker(
+          self::COMMAND,
+          self::SUCCESS_MESSAGE_4,
+          self::WAITING_MESSAGE_4,
+          null,
+          self::VERBOSE
+        )
+      ]
+    );
+    $workerManager->attach($workerBis);
+
+    // Launching
+    while (0 < count($workerManager::$workers))
+      $workerManager->listen();
+
+    // Testing
+    $messageStart = self::WHITE;
+    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
+
+    $this->expectOutputString(
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      self::WAITING_MESSAGE_4 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      self::WAITING_MESSAGE_4 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WAITING_MESSAGE_3 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE .
+
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL
+    );
+
+    // Cleaning
+    unset($workerManager);
+  }
+
+  /**
+   * @depends testConstruct
+   * @depends testDestruct
+   * @depends testAttach
+   * @depends testDetach
+   */
+  public function testFailures() : void
+  {
+    // Context
+    $workerManager = new WorkerManager();
+
+    $worker = new Worker(
+      self::BAD_COMMAND,
+      self::SUCCESS_MESSAGE,
+      self::WAITING_MESSAGE,
+      null,
+      self::VERBOSE
+    );
+    $workerManager->attach($worker);
+
+    $workerBis = new Worker(
+      self::COMMAND,
+      self::SUCCESS_MESSAGE_2,
+      self::WAITING_MESSAGE_2,
+      null,
+      self::VERBOSE
+    );
+    $workerManager->attach($workerBis);
+
+    // Launching
+    while (0 < count($workerManager::$workers))
+      $workerManager->listen();
+
+    // Testing
+    $messageStart = self::WHITE;
+
+    $this->expectOutputString(
+      self::WAITING_MESSAGE . PHP_EOL .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::BAD_COMMAND . PHP_EOL .
+      self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::FAIL_MESSAGE . PHP_EOL .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
+
+      self::BAD_COMMAND . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND . PHP_EOL .
+      self::FAIL_MESSAGE . PHP_EOL
+    );
+
+    // Cleaning
     unset($workerManager);
   }
 }

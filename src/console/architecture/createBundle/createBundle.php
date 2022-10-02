@@ -16,12 +16,14 @@ const
 
 /**
  * @param bool     $interactive  Do we allow questions to the user?
- * @param bool     $consoleForce Determines whether we show an error when something is missing in non interactive mode
+ * @param bool     $consoleForce Determines whether we show an error when something is missing in non-interactive mode
  *                               or not. The false value by default will stop the execution if something does not exist
  *                               and shows an error.
- * @param string   $bundleName
- * @param int|null $bundleMask
- * @param bool     $bundleTask
+ * @param int|null $bundleMask   0 => nothing (default)
+ *                               1 => config
+ *                               2 => models
+ *                               4 => resources
+ *                               8 => views
  *
  * @throws OtraException
  */
@@ -46,12 +48,12 @@ function bundleHandling(
         ' does not exist.'),
       END_COLOR, PHP_EOL;
 
-    throw new OtraException('', 1, '', null, [], true);
+    throw new OtraException(code: 1, exit: true);
   }
 
   while (file_exists(BUNDLES_PATH . $bundleName))
   {
-    // If the file does not exist and we are not in interactive mode, we exit the program.
+    // If the file does not exist and, we are not in interactive mode, we exit the program.
     if (!$interactive)
     {
       echo $errorMessage, PHP_EOL;
@@ -62,7 +64,7 @@ function bundleHandling(
     $bundleName = promptUser($errorMessage . ' Try another folder name (type n to stop):');
 
     if ($bundleName === 'n')
-      throw new OtraException('', 0, '', null, [], true);
+      throw new OtraException(exit: true);
 
     $bundleName = ucfirst($bundleName);
 
@@ -89,7 +91,7 @@ function bundleHandling(
       require CONSOLE_PATH . 'architecture/createBundle/bundleMaskCreation.php';
     }
   } else
-    $bundleMask = $bundleMask ?? 15;
+    $bundleMask ??= 15;
 
   define(__NAMESPACE__ . '\\BUNDLE_BASE_PATH', BUNDLES_PATH . $bundleName . DIR_SEPARATOR);
 
@@ -104,7 +106,7 @@ function bundleHandling(
   foreach (BUNDLE_FOLDERS as $numericKey => $folder)
   {
     // Checks if the folder have to be created or not.
-    if (BUNDLE_FOLDERS_MASK & pow(2, $numericKey))
+    if ((BUNDLE_FOLDERS_MASK & (2 ** $numericKey)) !== 0)
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);
       echo CLI_BASE, 'Folder ', CLI_INFO_HIGHLIGHT, $bundleName, DIR_SEPARATOR, $folder, CLI_BASE, ' created',  CLI_SUCCESS, ' ✔',
@@ -112,4 +114,3 @@ function bundleHandling(
     }
   }
 }
-

@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+use const otra\cache\php\CORE_PATH;
+use function otra\cache\php\{block, endblock};
+
+require CORE_PATH . 'templating/blocks.php' ?>
+<body><?php block('body', ''); ?></body>
+<?php
+block('body');
+?>World<?php
+endblock();
+block('body');
+?>test_<?php
+block('breadcrumbs', 'testBreadcrumbs');
+?>_coucou<?php
+endblock();
+
+block('breadcrumbs', 'oh yeah');
+?>

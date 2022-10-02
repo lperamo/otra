@@ -8,9 +8,9 @@ use otra\OtraException;
 use phpunit\framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
-use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
-use function otra\tools\copyFileAndFolders;
 use const otra\config\VERSION;
+use const otra\console\{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\tools\copyFileAndFolders;
 
 /**
  * @runTestsInSeparateProcesses
@@ -26,16 +26,19 @@ class RoutesTaskTest extends TestCase
     OTRA_MAIN_BUNDLES_ROUTES_CONFIG = BUNDLES_PATH . 'config/Routes.php',
     PHP_STATUS = '[PHP]',
     LABEL_NO_OTHER_RESOURCES = ' No other resources. ',
-    ROUTE_OTRA_REFRESH_LOGS = 'otra_refreshSQLLogs',
-    ROUTE_OTRA_CLEAR_SQL_LOGS = 'otra_clearSQLLogs',
-    ROUTE_OTRA_PROFILER = 'otra_profiler',
     ROUTE_OTRA_404 = 'otra_404',
+    ROUTE_OTRA_CLEAR_SQL_LOGS = 'otra_clearSQLLogs',
     ROUTE_OTRA_CSS = 'otra_css',
-    ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_template_structure',
+    ROUTE_OTRA_LOGS = 'otra_logs',
+    ROUTE_OTRA_REFRESH_LOGS = 'otra_refreshSQLLogs',
+    ROUTE_OTRA_REQUESTS = 'otra_requests',
+    ROUTE_OTRA_ROUTES = 'otra_routes',
+    ROUTE_OTRA_SQL = 'otra_sql',
+    ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_templateStructure',
     ROUTE_HELLO_WORLD = 'HelloWorld';
 
 
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void
@@ -139,11 +142,11 @@ class RoutesTaskTest extends TestCase
     $this->expectOutputString(
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        self::ROUTE_OTRA_REFRESH_LOGS,
-        '/dbg/refreshSQLLogs',
-        '/otra/profilerController/refreshSQLLogsAction',
+        self::ROUTE_OTRA_404,
+        '/404',
+        '/otra/errorsController/error404Action',
         self::PHP_STATUS,
-        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_REFRESH_LOGS),
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_404),
         true
       ) .
       self::showRouteInformations(
@@ -157,46 +160,79 @@ class RoutesTaskTest extends TestCase
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
-        self::ROUTE_OTRA_PROFILER,
-        '/dbg',
-        '/otra/profilerController/indexAction',
-        self::PHP_STATUS,
-        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_PROFILER),
-        true
-      ) .
-      self::showRouteInformations(
-        CLI_INFO,
-        self::ROUTE_OTRA_404,
-        '/404',
-        '/otra/errorsController/error404Action',
-        self::PHP_STATUS,
-        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_404),
-        true
-      ) .
-      self::showRouteInformations(
-        CLI_INFO_HIGHLIGHT,
         self::ROUTE_OTRA_CSS,
         '/profiler/css',
-        '/otra/heavyProfilerController/cssAction',
+        '/otra/profilerController/cssAction',
         self::PHP_STATUS,
+        CLI_SUCCESS . '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_ERROR . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT .
         self::getShaRoute(self::ROUTE_OTRA_CSS),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO,
-        self::ROUTE_OTRA_TEMPLATE_STRUCTURE,
-        '/profiler/templateStructure',
-        '/otra/heavyProfilerController/templateStructureAction',
+        self::ROUTE_OTRA_LOGS,
+        '/profiler/logs',
+        '/otra/profilerController/logsAction',
         self::PHP_STATUS,
-        self::getShaRoute(self::ROUTE_OTRA_TEMPLATE_STRUCTURE),
+        CLI_SUCCESS . '[SCREEN CSS]' . CLI_INFO . CLI_ERROR . '[PRINT CSS]' . CLI_INFO .
+        self::getShaRoute(self::ROUTE_OTRA_LOGS),
         true
       ) .
       self::showRouteInformations(
         CLI_INFO_HIGHLIGHT,
+        self::ROUTE_OTRA_REFRESH_LOGS,
+        '/dbg/refreshSQLLogs',
+        '/otra/profilerController/refreshSQLLogsAction',
+        self::PHP_STATUS,
+        self::LABEL_NO_OTHER_RESOURCES . self::getShaRoute(self::ROUTE_OTRA_REFRESH_LOGS),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO,
+        self::ROUTE_OTRA_REQUESTS,
+        '/profiler/requests',
+        '/otra/profilerController/requestsAction',
+        self::PHP_STATUS,
+        CLI_SUCCESS. '[SCREEN CSS]' . CLI_INFO . CLI_ERROR . '[PRINT CSS]' . CLI_INFO .
+        self::getShaRoute(self::ROUTE_OTRA_REQUESTS),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO_HIGHLIGHT,
+        self::ROUTE_OTRA_ROUTES,
+        '/profiler/routes',
+        '/otra/profilerController/routesAction',
+        self::PHP_STATUS,
+        CLI_SUCCESS. '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_ERROR . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT .
+        self::getShaRoute(self::ROUTE_OTRA_ROUTES),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO,
+        self::ROUTE_OTRA_SQL,
+        '/profiler/sql',
+        '/otra/profilerController/sqlAction',
+        self::PHP_STATUS,
+        CLI_SUCCESS. '[SCREEN CSS]' . CLI_INFO . CLI_ERROR . '[PRINT CSS]' . CLI_INFO . CLI_SUCCESS . '[JS]' .
+        CLI_INFO . self::getShaRoute(self::ROUTE_OTRA_SQL),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO_HIGHLIGHT,
+        self::ROUTE_OTRA_TEMPLATE_STRUCTURE,
+        '/profiler/templateStructure',
+        '/otra/profilerController/templateStructureAction',
+        self::PHP_STATUS,
+        CLI_SUCCESS. '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_ERROR . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT .
+        self::getShaRoute(self::ROUTE_OTRA_TEMPLATE_STRUCTURE),
+        true
+      ) .
+      self::showRouteInformations(
+        CLI_INFO,
         self::ROUTE_HELLO_WORLD,
         '/helloworld',
         'HelloWorld/frontend/indexController/HomeAction',
-        '[SCREEN CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS . '[PRINT CSS]' . CLI_INFO_HIGHLIGHT . CLI_SUCCESS .
+        '[SCREEN CSS]' . CLI_INFO . CLI_SUCCESS . '[PRINT CSS]' . CLI_INFO . CLI_SUCCESS .
           '[TEMPLATE]',
         self::getShaRoute(self::ROUTE_HELLO_WORLD),
         false

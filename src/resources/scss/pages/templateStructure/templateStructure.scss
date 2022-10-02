@@ -1,15 +1,31 @@
 // loading configuration
 @use 'colors';
+@use '../../configuration/devModeFonts';
+@use '../../configuration/themes' as *;
+
+// loading EcoComposer components
+@use '../../components/theming/theming';
 
 // loading partials
-@use '../../partials/heavyProfiler/index';
+@use '../../partials/profiler/index';
+
+// configuring components
+@include theming.init-themes($themes);
 
 $padding : 1rem;
+
+.no-template-in-session {
+  font-family : devModeFonts.$debug--font;
+  font-size   : 16px;
+  padding     : 0 1rem;
+}
 
 .template-structure--container {
   padding-left  : .5rem;
   padding-right : .5rem;
-  width : calc(100% - #{index.$vertical-menu-width} - #{$padding} * 2);
+  // the following combination prevent to go outside the screen but taking all the space available in the flex container
+  flex-grow : 1;
+  width     : min-content;
 }
 
 .otra--template-rendering--title {
@@ -151,3 +167,6 @@ $padding : 1rem;
     }
   }
 }
+
+// applying theme
+@include theming.global-mass-theme();

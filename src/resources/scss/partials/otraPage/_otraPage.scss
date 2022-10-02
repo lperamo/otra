@@ -24,7 +24,10 @@ body {
 
   // appearance
   background-repeat     : no-repeat;
-  background-attachment : fixed;
+  // background-attachment is not supported by Safari!
+  @supports (background-attachment : fixed) {
+    background-attachment : fixed;
+  }
 
   // box
   margin  : 0;
@@ -37,15 +40,19 @@ body {
   @include theming.to-theme(
     (
       #{&} : (
-        ('background-image', 'exception--title--background-image'),
-        ('text-shadow', 'exception--title--text-shadow')
+        ('background-image', 'otra--title--background-image'),
+        ('text-shadow', 'otra--title--text-shadow')
       )
     )
   );
 
   // appearance
+  // background-attachment is not supported by Safari!
+  @supports (background-attachment : fixed) {
+    background-attachment : fixed;
+  }
+
   background-repeat     : no-repeat;
-  background-attachment : fixed;
   box-shadow            : 0 0 3px #000f70;
 
   // positioning

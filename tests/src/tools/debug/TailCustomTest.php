@@ -12,7 +12,7 @@ use function otra\tools\debug\tailCustom;
  */
 class TailCustomTest extends TestCase
 {
-  // fixes issues like when AllConfig is not loaded while it should be
+  // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
@@ -26,7 +26,7 @@ class TailCustomTest extends TestCase
    */
   public function testTailCustom() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTail.txt'));
+    self::assertSame('world', tailCustom(BASE_PATH . 'tests/testTail.txt'));
   }
 
   /**
@@ -36,6 +36,6 @@ class TailCustomTest extends TestCase
    */
   public function testTailCustom_NoEndBlankLine() : void
   {
-    self::assertEquals('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt'));
+    self::assertSame('world', tailCustom(BASE_PATH . 'tests/testTailNoEndBlankLine.txt'));
   }
 }

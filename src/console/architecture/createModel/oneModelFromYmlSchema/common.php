@@ -14,15 +14,16 @@ use const otra\console\architecture\createModel\
 {CREATE_MODEL_FOLDER, DEFAULT_BDD_SCHEMA_NAME, MODEL_DIRECTORY, MODEL_LOCATION_MODULE, MODEL_PATH, SCHEMA_DATA};
 
 
-/** @var string $bundleName */
+/** @var string $bundleName The bundle in which the model have to be created */
 /** @var string $modelName */
 require CREATE_MODEL_FOLDER . 'common.php';
 const MODEL_CREATED_FROM_YAML_SCHEMA = 'We will create one model from ' . CLI_INFO_HIGHLIGHT . DEFAULT_BDD_SCHEMA_NAME . END_COLOR . '.' . PHP_EOL;
 
 /**
- * @param int    $modelLocation
- * @param string $bundlePath
- * @param string $moduleName
+ * @param int $modelLocation Location of the model to create
+ *                           0 => in the bundle (default) folder
+ *                           1 => in the module folder.
+ * @param string $moduleName Name of the module in which the model have to be created.
  */
 function defineModelPath(int $modelLocation, string $bundlePath, string $moduleName) : void
 {
@@ -31,8 +32,6 @@ function defineModelPath(int $modelLocation, string $bundlePath, string $moduleN
 }
 
 /**
- * @param string $modelName
- *
  * @return array{0:string, 1:bool, 2:bool}
  */
 function preparingBidule(string $modelName) : array
@@ -47,8 +46,6 @@ function preparingBidule(string $modelName) : array
 }
 
 /**
- * @param string $modelFullName
- * @param string $modelName
  *
  * @return array{0:bool, 1:bool} $modelExists, $tableExists
  */
@@ -64,12 +61,6 @@ function checksModelAndTableExistence(string $modelFullName, string $modelName) 
   ];
 }
 
-/**
- * @param bool   $modelExists
- * @param bool   $tableExists
- * @param string $modelName
- * @param string $errorLabel
- */
 function preparingErrorMessage(bool $modelExists, bool $tableExists, string $modelName, string &$errorLabel) : void
 {
   if ($modelExists)
@@ -78,4 +69,3 @@ function preparingErrorMessage(bool $modelExists, bool $tableExists, string $mod
   if (!$tableExists)
     $errorLabel .= 'The schema does not contains this table ' . $modelName . ' (maybe ... check the case).';
 }
-

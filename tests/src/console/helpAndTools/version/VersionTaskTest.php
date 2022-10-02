@@ -70,7 +70,7 @@ class VersionTaskTest extends TestCase
     $this->expectOutputRegex(
       '@^' .
       preg_quote($contentBeginning, '@') .
-      '\\w{7}' .
+      '\\w{8}' .
       preg_quote($contentEnding, '@') .
       '$@'
     );
