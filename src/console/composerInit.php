@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace src\console;
 
 use Exception;
+use const otra\cache\php\CACHE_PATH;
 use const otra\console\{CLI_BASE, CLI_ERROR, END_COLOR};
 use function otra\console\architecture\createGlobalConstants\createGlobalConstants;
 use function otra\console\architecture\init\init;
@@ -19,6 +20,8 @@ createGlobalConstants();
 error_reporting(E_ALL ^ E_WARNING);
 require __DIR__ . '/../../../../../config/constants.php';
 error_reporting(E_ALL);
+define('otra\\bin\\CACHE_PHP_INIT_PATH', CACHE_PATH . 'php/init/');
+
 require VENDOR_DIR . 'console/helpAndTools/version/versionTask.php';
 require VENDOR_DIR . 'console/architecture/init/initTask.php';
 require VENDOR_DIR . 'console/deployment/buildDev/buildDevTask.php';
