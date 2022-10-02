@@ -11,13 +11,14 @@ use function otra\console\helpAndTools\version\version;
 
 const VENDOR_DIR = 'vendor/otra/otra/src/';
 require VENDOR_DIR . 'console/architecture/createGlobalConstants/createGlobalConstantsTask.php';
+
+echo CLI_BASE, 'Creating global constants...', PHP_EOL;
+createGlobalConstants();
+
 require VENDOR_DIR . 'console/helpAndTools/version/versionTask.php';
 require VENDOR_DIR . 'console/architecture/init/initTask.php';
 require VENDOR_DIR . 'console/deployment/buildDev/buildTask.php';
 require VENDOR_DIR . 'console/colors.php';
-
-echo CLI_BASE, 'Creating global constants...', PHP_EOL;
-createGlobalConstants();
 
 try
 {
