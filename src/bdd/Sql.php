@@ -129,7 +129,8 @@ class Sql
 
       try
       {
-        // Putting the charset in the DNS here IS SUPER IMPORTANT! https://stackoverflow.com/a/12202218/1818095
+        // Putting the charset in the DNS here IS SUPER IMPORTANT for security!
+        // https://stackoverflow.com/a/12202218/1818095
         $activeConn['conn'] = $activeConn['instance']->connect(
           strtolower(substr($driver, 3)) .
             ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
