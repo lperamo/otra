@@ -142,6 +142,6 @@ class SqlMigrationGenerateTaskTest extends TestCase
     );
 
     self::assertDirectoryExists(self::MIGRATIONS_FOLDER);
-    self::assertFileExists(self::MIGRATIONS_FOLDER  . 'version0.php');
+    self::assertFileExists(self::MIGRATIONS_VERSION_ZERO);
   }
 }
