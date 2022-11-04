@@ -1,4 +1,4 @@
-#!usr/bin/php -ddisplay_errors=E_ALL
+#!/usr/bin/php -ddisplay_errors=E_ALL
 <?php
 declare(strict_types=1);
 namespace otra\config
