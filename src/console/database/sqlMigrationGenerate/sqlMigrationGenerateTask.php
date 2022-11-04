@@ -10,12 +10,14 @@ use otra\bdd\Sql;
 use otra\console\database\Database;
 use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, CORE_PATH};
-use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR, SUCCESS};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_SUCCESS, END_COLOR, SUCCESS};
 use function otra\tools\files\returnLegiblePath;
 
 const
   SQL_MIGRATION_GENERATE_ARG_DATABASE_CONNECTION = 2,
-  MIGRATIONS_FOLDER = BASE_PATH . 'migrations/';
+  MIGRATIONS_FOLDER = BASE_PATH . 'migrations/',
+  MIGRATION_VERSION_LABEL_PART_LENGTH = 7, // 'version' from the left
+  MIGRATION_EXTENSION_LABEL_PART_LENGTH = -4; // '.php' from the right
 
 /**
  * Creates a new blank migration file
@@ -25,10 +27,6 @@ const
  */
 function sqlMigrationGenerate(array $argumentsVector) : void
 {
-//  if (!property_exists(AllConfig::class, 'dbConnections'))
-//  {
-//    echo CLI_ERROR, 'No database connections are found!', END_COLOR, PHP_EOL;
-//  }
   $databaseConnection = $argumentsVector[SQL_MIGRATION_GENERATE_ARG_DATABASE_CONNECTION] ?? null;
 
   if (!Database::$init)
@@ -42,20 +40,11 @@ function sqlMigrationGenerate(array $argumentsVector) : void
       version INT UNSIGNED,
       executed_at BIGINT UNSIGNED,
       execution_time INT 
-  )'
+    )'
   );
   $database->freeResult($queryCreateMigrationTable);
-  $queryGetLastVersion = $database->query(
-    'SELECT version
-    FROM otra_migration_versions
-    ORDER BY version
-    DESC LIMIT 1'
-  );
-  $lastVersion = $database->single($queryGetLastVersion);
-  $database->freeResult($queryGetLastVersion);
 
-  if ($lastVersion === false)
-    $lastVersion = 0;
+  require CORE_PATH . 'tools/files/returnLegiblePath.php';
 
   // We check the existence of migrations folder, and we create it if needed
   if (!file_exists(MIGRATIONS_FOLDER))
@@ -66,20 +55,29 @@ function sqlMigrationGenerate(array $argumentsVector) : void
       throw new OtraException(code: 1, exit: true);
     }
 
-    echo 'Migrations folder created', CLI_SUCCESS, ' ✔', CLI_BASE, PHP_EOL;
-  }
-
-  define (__NAMESPACE__ . '\\NEW_VERSION_FILE', MIGRATIONS_FOLDER . 'version' . $lastVersion . '.php');
-
-  require CORE_PATH . 'tools/files/returnLegiblePath.php';
-
-  if (file_exists(NEW_VERSION_FILE))
+    echo 'Migrations folder ', returnLegiblePath(MIGRATIONS_FOLDER), ' created', CLI_SUCCESS, ' ✔', CLI_BASE,
+      PHP_EOL;
+    $newVersion = 0;
+  } else
   {
-    echo CLI_ERROR . 'The new migration file ', CLI_INFO_HIGHLIGHT, returnLegiblePath(NEW_VERSION_FILE), CLI_ERROR,
-    ' cannot be created as it already exists!', PHP_EOL;
-    throw new OtraException(code: 1, exit: true);
+    $files = scandir(MIGRATIONS_FOLDER);
+
+    if (count($files) > 2) // 2 to skip `.` and `..` folders
+    {
+      $lastFile = array_pop($files);
+      $newVersion = (int) substr(
+        $lastFile,
+        MIGRATION_VERSION_LABEL_PART_LENGTH,
+        MIGRATION_EXTENSION_LABEL_PART_LENGTH
+      ) + 1;
+    }
+    else
+      $newVersion = 0;
+
+    unset($files);
   }
 
+  define (__NAMESPACE__ . '\\NEW_VERSION_FILE', MIGRATIONS_FOLDER . 'version' . $newVersion . '.php');
   file_put_contents(
     NEW_VERSION_FILE,
     <<<CODE
@@ -88,7 +86,7 @@ declare(strict_types=1);
 namespace otra\migrations;
 
 return [
-  'version' => $lastVersion,
+  'version' => $newVersion,
   'description' => '',
   'up' => function()
   {
@@ -102,5 +100,5 @@ return [
 CODE
  );
 
-  echo 'The new blank migration file ', CLI_INFO_HIGHLIGHT, returnLegiblePath(NEW_VERSION_FILE), CLI_BASE, ' has been generated', SUCCESS;
+  echo 'The new blank migration file ', returnLegiblePath(NEW_VERSION_FILE), CLI_BASE, ' has been generated', SUCCESS;
 }
