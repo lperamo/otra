@@ -26,7 +26,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
     DATABASE_NAME = 'testDB',
     DATABASE_MIGRATION_TABLE = 'otra_migration_versions',
     OTRA_BINARY = 'otra.php',
-    OTRA_TASK_SQL_MIGRATION_GENERATE = 'sqlMigrationGenerate',
+    OTRA_TESTED_TASK = 'sqlMigrationGenerate',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     MIGRATIONS_FOLDER = BASE_PATH . 'migrations/',
     MIGRATIONS_VERSION_ZERO = self::MIGRATIONS_FOLDER  . 'version0.php',
@@ -107,7 +107,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
 
     // launching task
     require CONSOLE_PATH . 'database/sqlMigrationGenerate/sqlMigrationGenerateTask.php';
-    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TASK_SQL_MIGRATION_GENERATE, self::DATABASE_CONNECTION]);
+    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TESTED_TASK, self::DATABASE_CONNECTION]);
 
     self::expectOutputString(
       CLI_BASE . 'We generate the migrations table if it does not exist.' . PHP_EOL .
@@ -136,7 +136,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
 
     // launching task
     require CONSOLE_PATH . 'database/sqlMigrationGenerate/sqlMigrationGenerateTask.php';
-    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TASK_SQL_MIGRATION_GENERATE, self::DATABASE_CONNECTION]);
+    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TESTED_TASK, self::DATABASE_CONNECTION]);
 
     // testing
     self::expectOutputString(
@@ -165,7 +165,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
 
     // launching task
     require CONSOLE_PATH . 'database/sqlMigrationGenerate/sqlMigrationGenerateTask.php';
-    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TASK_SQL_MIGRATION_GENERATE, self::DATABASE_CONNECTION]);
+    sqlMigrationGenerate([self::OTRA_BINARY, self::OTRA_TESTED_TASK, self::DATABASE_CONNECTION]);
 
     // testing
     self::expectOutputString(
