@@ -35,7 +35,7 @@ class RoutesHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRoutesHelp()
+  public function testRoutesHelp(): void
   {
     // context
     require TEST_PATH . 'tools.php';

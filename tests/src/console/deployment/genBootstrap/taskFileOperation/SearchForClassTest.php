@@ -31,7 +31,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testAlreadyParsed()
+  public function testAlreadyParsed(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -51,7 +51,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNoNamespace()
+  public function testNoNamespace(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -71,7 +71,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNotInClassMap_Verbose()
+  public function testNotInClassMap_Verbose(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -99,7 +99,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNotInClassMap_NotVerbose()
+  public function testNotInClassMap_NotVerbose(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 0);
@@ -125,7 +125,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testIsInClassMap()
+  public function testIsInClassMap(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);

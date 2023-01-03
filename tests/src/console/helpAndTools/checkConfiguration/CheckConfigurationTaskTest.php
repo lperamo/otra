@@ -77,7 +77,7 @@ class CheckConfigurationTaskTest extends TestCase
    *
    * @param array<int,array{0:string,1:string} $resourcePaths Folder or file paths to tests with file_exists.
    */
-  private static function checkAndCreate(array $resourcePaths)
+  private static function checkAndCreate(array $resourcePaths): void
   {
     foreach($resourcePaths as $resourcePath)
     {

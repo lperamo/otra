@@ -18,7 +18,7 @@ class ProcessReturnTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testCaseRoutesMainConfig()
+  public function testCaseRoutesMainConfig(): void
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';

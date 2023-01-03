@@ -20,7 +20,7 @@ if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
  */
 class CreateModelTaskTest extends TestCase
 {
-  public const 
+  final public const
     BUNDLE_NAME = 'test',
     BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . DIR_SEPARATOR;
 
@@ -50,7 +50,7 @@ class CreateModelTaskTest extends TestCase
     OTRA_LABEL_A_MODEL_IN_THE_BUNDLE = 'A model in the bundle ',
     OTRA_LABEL_THE_MODEL = 'The model ',
     OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE = ' has been created in the bundle ',
-    OTRA_LABEL_YAML_SCHEMA_WARNING = CLI_WARNING . 
+    OTRA_LABEL_YAML_SCHEMA_WARNING = CLI_WARNING .
       'The YAML schema does not exist so we will create a model from the console parameters.' . END_COLOR . PHP_EOL,
     OTRA_LIBRARY_COPY_FILES_AND_FOLDERS = CORE_PATH . 'tools/copyFilesAndFolders.php',
     OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE = CLI_WARNING .

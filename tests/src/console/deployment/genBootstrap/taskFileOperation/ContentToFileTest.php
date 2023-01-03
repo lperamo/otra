@@ -48,7 +48,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @author Lionel Péramo
      * @throws OtraException
      */
-    public function testContentToFile_allGood()
+    public function testContentToFile_allGood(): void
     {
       // context
       define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
@@ -72,7 +72,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @author Lionel Péramo
      * @throws OtraException
      */
-    public function testContentToFile_hasSyntaxErrors()
+    public function testContentToFile_hasSyntaxErrors(): void
     {
       // context
       define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 0);

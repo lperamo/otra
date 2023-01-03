@@ -11,11 +11,11 @@ echo 'comment';
 class FileToCompress {
   public string $test = 'hello';
   public string $test2 = 'ho';
-  public function hello()
+  public function hello(): void
   {
     if($this->test === 'hello' || $this->test == 'hello' && $this->test2 == 'ho')
       echo $this->test ?? 'hello';
   }
-  public static function test(){}
+  public static function test(): void{}
 }
 (new FileToCompress())->hello();

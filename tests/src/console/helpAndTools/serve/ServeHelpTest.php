@@ -24,7 +24,7 @@ class ServeHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testServeHelp()
+  public function testServeHelp(): void
   {
     // context
     require TEST_PATH . 'tools.php';

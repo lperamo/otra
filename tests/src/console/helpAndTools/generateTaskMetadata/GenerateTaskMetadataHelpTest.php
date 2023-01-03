@@ -21,7 +21,7 @@ class GenerateTaskMetadataHelpTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testGenerateTaskMetadataHelp()
+  public function testGenerateTaskMetadataHelp(): void
   {
     $this->expectOutputString(
       CLI_BASE .

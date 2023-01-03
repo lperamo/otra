@@ -18,6 +18,8 @@ typeset -a OTRA_COMMANDS=(
   'sqlExecute'
   'sqlImportFixtures'
   'sqlImportSchema'
+  'sqlMigrationExecute'
+  'sqlMigrationGenerate'
   'buildDev'
   'clearCache'
   'deploy'
@@ -62,6 +64,8 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DATABASE} sqlExecute                  : ${CYA}Executes the sql script${ECO}"
   "${CAT_DATABASE} sqlImportFixtures           : ${CYA}Import the fixtures from database into [38;2;190;190;100mconfig/data/yml/fixtures[38;2;100;150;200m.${ECO}"
   "${CAT_DATABASE} sqlImportSchema             : ${CYA}Creates the database schema from your database. (importSchema)${ECO}"
+  "${CAT_DATABASE} sqlMigrationExecute         : ${CYA}Execute a single migration version up or down manually.${ECO}"
+  "${CAT_DATABASE} sqlMigrationGenerate        : ${CYA}Creates a new blank database migration file${ECO}"
   "${CAT_DEPLOYMENT} buildDev                    : ${CYA}Compiles the typescripts, sass and php configuration files (modulo the binary mask).${ECO}"
   "${CAT_DEPLOYMENT} clearCache                  : ${CYA}Clears whatever cache you want to clear.${ECO}"
   "${CAT_DEPLOYMENT} deploy                      : ${CYA}Deploy the site. [38;2;190;190;100m[Currently only works for unix systems !][0m${ECO}"

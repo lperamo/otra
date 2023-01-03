@@ -29,8 +29,8 @@ class CreateControllerTaskTest extends TestCase
     OTRA_LABEL_BUNDLES_MAIN_FOLDER_NAME = 'bundles/',
     OTRA_BINARY_NAME = 'otra.php',
     CREATE_BUNDLE_FORCE = 'true';
-  
-  public const
+
+  final public const
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test';

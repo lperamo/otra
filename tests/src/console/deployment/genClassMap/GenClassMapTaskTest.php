@@ -39,7 +39,7 @@ class GenClassMapTaskTest extends TestCase
 
     // testing
     $content = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 304);
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 348);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {

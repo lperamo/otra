@@ -333,24 +333,22 @@ function genWatcher(array $argumentsVector): void
     }
 
     // Adding watches for PHP files if needed
-    if (WATCH_FOR_PHP_FILES)
+    // Does the PHP path belongs to a valid defined path ? If yes, we process it
+    if (WATCH_FOR_PHP_FILES
+      && !isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
+      && ($extension === 'php' || $isFolder))
     {
-      // Does the PHP path belongs to a valid defined path ? If yes, we process it
-      if (!isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
-        && ($extension === 'php' || $isFolder))
-      {
-        $phpEntriesToWatch[] = $realPath;
+      $phpEntriesToWatch[] = $realPath;
 
-        if ($isFolder)
-          $foldersWatchedIds[inotify_add_watch(
-            $inotifyInstance,
-            $realPath,
-            IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-          )] = $realPath;
+      if ($isFolder)
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $realPath,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $realPath;
 
-        // We avoid adding a watch multiple times on an entry
-        $haveBeenWatched = true;
-      }
+      // We avoid adding a watch multiple times on an entry
+      $haveBeenWatched = true;
     }
 
     // Adding watches for resources files if needed

@@ -51,7 +51,7 @@ class WorkerManagerTest extends TestCase
    *
    * @throws ReflectionException
    */
-  public static function experimentDetach(string $command) {
+  public static function experimentDetach(string $command): void {
     // context
     $workerManager = new WorkerManager();
 

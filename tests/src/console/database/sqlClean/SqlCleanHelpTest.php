@@ -26,7 +26,7 @@ class SqlCleanHelpTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testSqlCleanHelp()
+  public function testSqlCleanHelp(): void
   {
     // context
     $_SERVER[APP_ENV] = PROD;

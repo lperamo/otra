@@ -22,7 +22,7 @@ class VersionHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testVersionHelp()
+  public function testVersionHelp(): void
   {
     $this->expectOutputString(
       CLI_BASE .

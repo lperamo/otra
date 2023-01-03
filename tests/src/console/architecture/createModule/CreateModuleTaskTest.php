@@ -28,7 +28,7 @@ class CreateModuleTaskTest extends TestCase
     OTRA_BINARY_NAME = 'otra.php',
     CREATE_BUNDLE_FORCE = 'true';
 
-  public const
+  final public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
 

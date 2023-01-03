@@ -24,7 +24,7 @@ class HasSyntaxErrorsTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testError()
+  public function testError(): void
   {
     // launching
     $hasSyntaxErrors = hasSyntaxErrors(TEST_PATH . 'examples/deployment/withSyntaxErrors.php');
@@ -36,7 +36,7 @@ class HasSyntaxErrorsTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNoErrors()
+  public function testNoErrors(): void
   {
     // launching
     $hasSyntaxErrors = hasSyntaxErrors(TEST_PATH . 'examples/deployment/noSyntaxErrors.php');

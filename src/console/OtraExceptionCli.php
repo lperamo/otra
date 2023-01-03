@@ -30,7 +30,7 @@ class OtraExceptionCli extends Exception
     UNKNOWN_LENGTH = 7,
     LINE_HEADER_LENGTH = 4,
     NOT_IMPLEMENTED_YET_LENGTH = 19,
-    GET_LONGER_STRING_CALLBACK = 'self::getLongerString';
+    GET_LONGER_STRING_CALLBACK = self::class . '::getLongerString';
 
   private static int
     $typeLongestString,

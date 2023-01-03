@@ -34,7 +34,7 @@ class AnalyzeUseTokenTest extends TestCase
    * @Depends ShowFileTest::testVerbose_LevelZero()
    * @Depends ShowFileTest::testNoVerbose()
    */
-  public function testRouterAlwaysIncluded()
+  public function testRouterAlwaysIncluded(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -57,7 +57,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsDevControllerTrait()
+  public function testIsDevControllerTrait(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -81,7 +81,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsProdControllerTrait()
+  public function testIsProdControllerTrait(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -112,7 +112,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsBlockSystem()
+  public function testIsBlockSystem(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -135,7 +135,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testHasSlashAtFirstAndExternalLibraryClass()
+  public function testHasSlashAtFirstAndExternalLibraryClass(): void
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);

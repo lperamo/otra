@@ -19,7 +19,7 @@ if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
  */
 class CreateBundleTaskTest extends TestCase
 {
-  public const TEST_BUNDLE_NAME = 'test';
+  final public const TEST_BUNDLE_NAME = 'test';
   private const
     TEST_TASK = 'createBundle',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,

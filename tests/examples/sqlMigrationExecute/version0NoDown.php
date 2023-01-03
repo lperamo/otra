@@ -4,5 +4,5 @@ namespace otra\migrations;
 
 return [
   'version' => 0,
-  'up' => function() {}
+  'up' => function(): void {}
 ];

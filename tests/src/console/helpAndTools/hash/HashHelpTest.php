@@ -21,7 +21,7 @@ class HashHelpTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testHashHelp()
+  public function testHashHelp(): void
   {
     $this->expectOutputString(
       CLI_BASE .

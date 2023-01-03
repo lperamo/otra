@@ -42,7 +42,7 @@ class SqlTest extends TestCase
 
     try {
       Sql::getDb()->__destruct();
-    } catch (Exception $exception) {
+    } catch (Exception) {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
   }
@@ -206,7 +206,7 @@ class SqlTest extends TestCase
         . ($sqlLogContent !== ''
         ? ''
         : '[')
-      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1248,"query":"SELECT 1"},',
+      . '{"file":"phar:///var/www/html/lib/phpunit/phpunit/Framework/TestCase.php","line":1267,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
@@ -709,7 +709,7 @@ class SqlTest extends TestCase
 
     try {
       Sql::$instance->query('bogus sql');
-    } catch (Exception $exception)
+    } catch (Exception)
     {
       self::assertSame(
       [

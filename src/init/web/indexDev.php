@@ -26,7 +26,7 @@ if (isset($_ENV['OTRA_LIVE_APP_ENV']) && require CORE_PATH . 'internalServerEntr
 
 ini_set('display_errors', '1');
 ini_set('html_errors', '1');
-error_reporting(-1 & ~E_DEPRECATED);
+error_reporting(-1);
 
 /** CLASS MAPPING */
 require CACHE_PATH . 'php/init/ClassMap.php';

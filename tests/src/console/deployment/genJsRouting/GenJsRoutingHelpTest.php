@@ -26,7 +26,7 @@ class GenJsRoutingHelpTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function test()
+  public function test(): void
   {
     $this->expectOutputString(
       CLI_BASE .

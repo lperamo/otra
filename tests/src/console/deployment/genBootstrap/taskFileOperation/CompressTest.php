@@ -47,7 +47,7 @@ class CompressTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testCompressPHPFile()
+  public function testCompressPHPFile(): void
   {
     // launching
     compressPHPFile(self::FILE_TO_COMPRESS, self::COMPRESSED_FILE);

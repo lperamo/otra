@@ -67,7 +67,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
     if (file_exists(self::MIGRATIONS_FOLDER))
       delTree(self::MIGRATIONS_FOLDER);
 
-    self::$database = self::$database ?? Sql::getDb(self::DATABASE_CONNECTION, false);
+    self::$database ??= Sql::getDb(self::DATABASE_CONNECTION, false);
     self::$database->query('DROP DATABASE IF EXISTS testDB;');
   }
 

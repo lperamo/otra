@@ -14,7 +14,7 @@ use function otra\console\architecture\checkBooleanArgument;
  */
 class CheckBooleanArgumentTest extends TestCase
 {
-  public const TEST_BUNDLE = 'test';
+  final public const TEST_BUNDLE = 'test';
   private const
     TEST_TASK = 'createBundle',
     OTRA_BINARY = 'otra.php',

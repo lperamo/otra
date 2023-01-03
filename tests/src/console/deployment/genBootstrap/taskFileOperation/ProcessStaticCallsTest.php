@@ -20,7 +20,7 @@ class ProcessStaticCallsTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testAllGood()
+  public function testAllGood(): void
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';

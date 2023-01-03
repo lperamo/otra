@@ -23,7 +23,7 @@ if (file_exists(CACHE_PHP_INIT_PATH . 'ClassMap.php'))
 {
   require CACHE_PHP_INIT_PATH . 'ClassMap.php';
 
-  spl_autoload_register(function (string $className)
+  spl_autoload_register(function (string $className): void
   {
     if (!isset(CLASSMAP[$className]))
     {

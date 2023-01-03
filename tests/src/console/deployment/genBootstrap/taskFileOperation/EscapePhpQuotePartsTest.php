@@ -18,7 +18,7 @@ class EscapePhpQuotePartsTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testEscapeQuotesInPhpParts()
+  public function testEscapeQuotesInPhpParts(): void
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';

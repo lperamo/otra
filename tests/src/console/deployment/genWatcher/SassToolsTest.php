@@ -86,7 +86,7 @@ class SassToolsTest extends TestCase
     }
   }
 
-  private function searchSassLastLeavesContext()
+  private function searchSassLastLeavesContext(): void
   {
     // -- preparing the architecture
     mkdir(self::BUNDLES_CONFIG_PATH, 0777, true);
@@ -102,7 +102,7 @@ class SassToolsTest extends TestCase
   }
 
 
-  public function testCreatePrunedFullTree()
+  public function testCreatePrunedFullTree(): void
   {
     // launching
     // 0 equals to array_search(self::SCSS_MAIN_PATH, $sassTreeKeys)
@@ -115,7 +115,7 @@ class SassToolsTest extends TestCase
     );
   }
 
-  public function testGetCssPathFromImport()
+  public function testGetCssPathFromImport(): void
   {
     // context
     $partialPath = CORE_PATH . 'resources/scss/pages/templateStructure/';
@@ -152,7 +152,7 @@ class SassToolsTest extends TestCase
   /**
    * @throws OtraException|ReflectionException
    */
-  public function testSaveSassTree()
+  public function testSaveSassTree(): void
   {
     // context
     // If there is already a cache for the sass tree, we remove it to be sure it will not interfere with our test
@@ -272,7 +272,7 @@ class SassToolsTest extends TestCase
     );
   }
 
-  public function testUpdateSassTree()
+  public function testUpdateSassTree(): void
   {
     // context
     $sassTree = self::BIG_TREE;
@@ -293,7 +293,7 @@ class SassToolsTest extends TestCase
    *
    * @throws OtraException
    */
-  public function testUpdateSassTreeAfterEvent()
+  public function testUpdateSassTreeAfterEvent(): void
   {
     // context
     $this->searchSassLastLeavesContext();

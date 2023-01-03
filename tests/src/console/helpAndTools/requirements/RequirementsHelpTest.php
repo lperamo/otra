@@ -22,7 +22,7 @@ class RequirementsHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRequirementsHelp()
+  public function testRequirementsHelp(): void
   {
     $this->expectOutputString(
       CLI_BASE .

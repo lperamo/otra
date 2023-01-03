@@ -49,7 +49,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRequire_NoParsedConstants()
+  public function testRequire_NoParsedConstants(): void
   {
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
@@ -120,7 +120,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRequire_WithParsedConstants()
+  public function testRequire_WithParsedConstants(): void
   {
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
@@ -191,7 +191,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testExtends_AlreadyParsed()
+  public function testExtends_AlreadyParsed(): void
   {
     // context
     $contentToAdd = 'class TestExtendsController extends otra\Controller';
@@ -251,7 +251,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testExtends_NotAlreadyParsed()
+  public function testExtends_NotAlreadyParsed(): void
   {
     // context
     $exampleFileAbsolutePath = TEST_PATH . 'examples/deployment/TestExtendsController.php';

@@ -24,7 +24,7 @@ class SqlCreateDatabaseHelpTest extends TestCase
   /**
    * @throws OtraException
    */
-  public function testSqlCreateDatabaseHelp()
+  public function testSqlCreateDatabaseHelp(): void
   {
     $this->expectOutputString(
       CLI_BASE .
