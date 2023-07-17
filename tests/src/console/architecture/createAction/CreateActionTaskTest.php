@@ -5,7 +5,7 @@ namespace src\console\architecture\createAction;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, PROD, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;

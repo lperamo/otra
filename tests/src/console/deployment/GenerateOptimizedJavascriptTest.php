@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,CORE_PATH,DEV,TEST_PATH};
 use const otra\console\{CLI_BASE, SUCCESS};
 use function otra\console\deployment\generateJavaScript;

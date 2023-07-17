@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genWatcher;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 use ReflectionException;
 use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};

@@ -5,7 +5,7 @@ namespace src\console\deployment\genServerConfig;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, DEV, PROD, TEST_PATH};

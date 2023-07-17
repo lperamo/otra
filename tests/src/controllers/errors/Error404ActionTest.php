@@ -6,7 +6,7 @@ namespace src\controllers\errors;
 use otra\console\TasksManager;
 use otra\controllers\errors\Error404Action;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;

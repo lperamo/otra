@@ -7,7 +7,7 @@ use bundles\HelloWorld\frontend\controllers\index\HomeAction;
 use otra\console\TasksManager;
 use otra\OtraException;
 use otra\Router;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 /**

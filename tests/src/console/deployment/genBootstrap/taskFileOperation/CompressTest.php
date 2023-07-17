@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use function otra\tools\files\compressPHPFile;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use function otra\tools\copyFileAndFolders;

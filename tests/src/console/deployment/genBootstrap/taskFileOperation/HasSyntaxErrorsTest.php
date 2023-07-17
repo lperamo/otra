@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
 use function otra\console\deployment\genBootstrap\hasSyntaxErrors;
 

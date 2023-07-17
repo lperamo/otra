@@ -6,7 +6,7 @@ namespace src\tools\workers;
 use ReflectionClass;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 

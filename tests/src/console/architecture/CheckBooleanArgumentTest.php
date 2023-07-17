@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\architecture;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CONSOLE_PATH;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\architecture\checkBooleanArgument;

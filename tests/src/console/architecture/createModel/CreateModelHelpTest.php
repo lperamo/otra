@@ -5,7 +5,7 @@ namespace src\console\architecture\createModel;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\
 {
   CLI_BASE,

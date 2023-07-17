@@ -5,7 +5,7 @@ namespace src\console\database\sqlExecute;
 
 use otra\console\database\Database;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};

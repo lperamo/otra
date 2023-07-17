@@ -5,7 +5,7 @@ namespace src\tools;
 
 use JsonException;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CORE_PATH;
 use function otra\tools\getOtraCommitNumber;
 

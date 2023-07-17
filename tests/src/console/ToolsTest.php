@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\console;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};

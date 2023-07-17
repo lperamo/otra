@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\clearSession;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\CACHE_PATH;
 use const otra\console\

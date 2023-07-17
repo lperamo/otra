@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src;
 
 use otra\cache\php\Logger;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, PROD};
 use function otra\tools\debug\tailCustom;
 use function otra\tools\delTree;

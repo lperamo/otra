@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\database;
 
 use Exception;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use otra\{bdd\Pdomysql, bdd\Sql, OtraException};
 use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 

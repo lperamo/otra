@@ -5,7 +5,7 @@ namespace src\database;
 
 use Exception;
 use PDOStatement;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use otra\{bdd\Sql,OtraException};
 use ReflectionException;
 use ReflectionMethod;

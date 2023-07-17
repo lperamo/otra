@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\tools\workers;
 
 use otra\tools\workers\{Worker};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_ERROR, END_COLOR};
 
 /**

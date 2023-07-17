@@ -43,6 +43,7 @@ function sqlImportSchema(array $argumentsVector) : void
   $tables = $database->valuesOneCol($database->query(
     'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'' . $databaseName . '\''
   ));
+  sort($tables);
 
   foreach ($tables as $arrayIndex => $table)
   {

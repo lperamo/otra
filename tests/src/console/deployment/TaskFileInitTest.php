@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH, DEV, TEST_PATH};
 use function otra\console\deployment\getPathInformations;
 use function otra\tools\copyFileAndFolders;

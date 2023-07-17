@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\requirements;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
