@@ -7,7 +7,7 @@ use otra\console\TasksManager;
 use otra\controllers\profiler\RequestsAction;
 use otra\OtraException;
 use otra\Session;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};

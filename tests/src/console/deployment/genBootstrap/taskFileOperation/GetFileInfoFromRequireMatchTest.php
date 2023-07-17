@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequireMatch;
 use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\phpOrHTMLIntoEval;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console;
 
 use otra\{console\OtraExceptionCli, OtraException};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,PROD};
 
 /**

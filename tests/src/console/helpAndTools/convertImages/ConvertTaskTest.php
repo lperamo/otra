@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\convertImages;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 use function otra\tools\delTree;
 use const otra\bin\TASK_CLASS_MAP_PATH;

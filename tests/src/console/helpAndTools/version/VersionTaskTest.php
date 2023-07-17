@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\version;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{CORE_PATH, OTRA_VERSION};
 use const otra\console\END_COLOR;

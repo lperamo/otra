@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="TestBootstrap.php" verbose="true" colors="true" processIsolation="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" colors="true"
+         processIsolation="true"
+         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
     <testsuite name="Framework tests - SQL">
         <file>./src/lib/otra/database/SqlTest.php</file>
     </testsuite>

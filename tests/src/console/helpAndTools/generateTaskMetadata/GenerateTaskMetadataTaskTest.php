@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\generateTaskMetadata;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
 use const otra\console\
 {CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};

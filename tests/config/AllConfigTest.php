@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace otra\config;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, OTRA_PROJECT, PROD};
 
 /**

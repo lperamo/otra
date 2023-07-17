@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};

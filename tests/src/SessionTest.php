@@ -5,7 +5,7 @@ namespace src;
 
 use DateTime;
 use otra\{OtraException, Session};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use const otra\cache\php\{APP_ENV, CACHE_PATH, CORE_PATH, PROD, TEST_PATH};

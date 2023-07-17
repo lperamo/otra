@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genSitemap;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, CONSOLE_PATH, PROD, TEST_PATH};
 

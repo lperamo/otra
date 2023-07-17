@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\tools\debug;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY};
 use function otra\tools\getSourceFromFileCli;

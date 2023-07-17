@@ -7,7 +7,7 @@ use otra\bdd\Sql;
 use otra\config\AllConfig;
 use otra\console\database\Database;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_SUCCESS, SUCCESS};

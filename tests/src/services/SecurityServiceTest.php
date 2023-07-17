@@ -5,7 +5,7 @@ namespace src\services;
 
 use otra\config\AllConfig;
 use Exception;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, CORE_PATH, DEV, DIR_SEPARATOR, PROD, TEST_PATH};
 use const otra\services\
 {

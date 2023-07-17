@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\{analyzeUseToken};
