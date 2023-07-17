@@ -87,7 +87,7 @@ class SqlActionTest extends TestCase
     self::assertInstanceOf(SqlAction::class, $sqlAction);
     self::assertSame(
       file_get_contents(self::TEST_TEMPLATE),
-      $output,
+      $output . PHP_EOL,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

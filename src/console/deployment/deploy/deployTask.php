@@ -155,7 +155,7 @@ function deploy(array $argumentsVector) : void
   ] = AllConfig::$deployment;
 
   echo PHP_EOL, 'Deploys the files on the server ', CLI_INFO, $server, ':', $destinationPort, END_COLOR, ' in ',
-  CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
+    CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
 
   /* --delete allows deleting things that are no present anymore on the source to keep a really synchronized folder
    * -P It combines the flags –progress and –partial.

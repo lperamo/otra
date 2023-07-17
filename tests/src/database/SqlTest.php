@@ -89,7 +89,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    */
   private function createDatabaseForTest() : void {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
@@ -431,6 +431,7 @@ class SqlTest extends TestCase
   public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL() : void
   {
     self::markTestIncomplete('We have to create more drivers classes to be able to test this condition');
+
     // loading the test configuration
     require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 

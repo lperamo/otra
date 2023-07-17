@@ -51,7 +51,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
       [self::SCHEMA_FILE_BACKUP],
       [self::SCHEMA_ABSOLUTE_PATH]
     );
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     // clean up the SQL that force database schema creation if it exists
     if (file_exists(self::DATABASE_SCHEMA_FORCE_SQL))

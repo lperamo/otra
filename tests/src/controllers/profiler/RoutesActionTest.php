@@ -87,7 +87,7 @@ class RoutesActionTest extends TestCase
     self::assertInstanceOf(RoutesAction::class, $routesAction);
     self::assertSame(
       file_get_contents(self::TEST_TEMPLATE),
-      $output,
+      $output . PHP_EOL,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'routesAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

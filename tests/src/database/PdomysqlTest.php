@@ -50,7 +50,7 @@ class PdomysqlTest extends TestCase
    */
   private function createDatabaseForTest() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();

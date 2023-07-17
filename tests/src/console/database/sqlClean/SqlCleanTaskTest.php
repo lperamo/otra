@@ -80,7 +80,7 @@ class SqlCleanTaskTest extends TestCase
       self::CONFIG_FOLDER_YML
     ]);
 
-    require_once(self::TEST_CONFIG_GOOD_PATH);
+    require_once self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::DATABASE_NAME . '`;');

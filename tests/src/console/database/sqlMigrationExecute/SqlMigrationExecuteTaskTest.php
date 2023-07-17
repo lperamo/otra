@@ -78,7 +78,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
    */
   private function loadConfig() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
     self::$database = Sql::getDb(self::DATABASE_CONNECTION, false);

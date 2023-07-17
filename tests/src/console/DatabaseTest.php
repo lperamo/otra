@@ -101,7 +101,7 @@ class DatabaseTest extends TestCase
       self::CONFIG_FOLDER_YML
     ]);
 
-    require_once(self::TEST_CONFIG_GOOD_PATH);
+    require_once self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::DATABASE_NAME . '`;');
@@ -112,7 +112,7 @@ class DatabaseTest extends TestCase
    */
   private function loadConfig() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
