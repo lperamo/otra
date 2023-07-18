@@ -42,6 +42,8 @@ testDB_table:
     fk_testDB_table3:
       foreign: id
       local: fk_id_table3
+      on_delete: restrict
+      on_update: restrict
       table: testDB_table3
 
 testDB_table2:

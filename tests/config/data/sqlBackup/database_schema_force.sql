@@ -29,6 +29,6 @@ CREATE TABLE `testDB_table` (
   INDEX `second_index` (`titre`,`date_creation`),
   INDEX `third_index` (`date_creation`),
   CONSTRAINT fk_testDB_table2 FOREIGN KEY (fk_id_table2) REFERENCES testDB_table2(id) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT fk_testDB_table3 FOREIGN KEY (fk_id_table3) REFERENCES testDB_table3(id),
+  CONSTRAINT fk_testDB_table3 FOREIGN KEY (fk_id_table3) REFERENCES testDB_table3(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   PRIMARY KEY(`id`, `fk_id_table2`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4;
