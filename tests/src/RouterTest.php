@@ -14,15 +14,15 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  * /!\ Beware the bundle HelloWorld will be erased in cleaning phase !
  *
  * @author Lionel Péramo
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RouterTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
   private const
     LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
     LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';
-  protected $preserveGlobalState = FALSE;
   protected const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',

@@ -8,13 +8,12 @@ use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
 use function otra\console\deployment\genBootstrap\hasSyntaxErrors;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class HasSyntaxErrorsTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();

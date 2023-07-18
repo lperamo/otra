@@ -14,6 +14,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CssActionTest extends TestCase
@@ -26,8 +28,6 @@ class CssActionTest extends TestCase
     FULL_ACTION_NAME = self::ACTION . 'Action',
     SASS_TREE_CACHE_PATH = CACHE_PATH . 'css/sassTree.php',
     TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

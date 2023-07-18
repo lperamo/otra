@@ -16,6 +16,8 @@ use function otra\tools\
 {copyFileAndFolders, files\returnLegiblePath, setScopeProtectedFields};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlCreateDatabaseTaskTest extends TestCase
@@ -35,9 +37,6 @@ class SqlCreateDatabaseTaskTest extends TestCase
     SCHEMA_FILE_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/' . self::SCHEMA_FILE,
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . 'tables_order.yml';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws ReflectionException

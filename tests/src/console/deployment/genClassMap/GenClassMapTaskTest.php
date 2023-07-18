@@ -13,6 +13,8 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_S
 use function otra\tools\files\returnLegiblePath2;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenClassMapTaskTest extends TestCase
@@ -25,9 +27,6 @@ class GenClassMapTaskTest extends TestCase
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/',
     PROCESSED_DIRECTORIES = "\x0d\033[K" . 'Processed directories : ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @param string $classMapFile

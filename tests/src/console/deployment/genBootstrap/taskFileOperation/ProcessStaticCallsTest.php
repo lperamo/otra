@@ -8,14 +8,13 @@ use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
 use function otra\console\deployment\genBootstrap\processStaticCalls;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ProcessStaticCallsTest extends TestCase
 {
   private const LEVEL = 1;
-
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

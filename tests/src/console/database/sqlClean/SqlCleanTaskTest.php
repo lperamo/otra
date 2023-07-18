@@ -16,6 +16,8 @@ use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
 use function otra\tools\{cleanFileAndFolders, copyFileAndFolders};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlCleanTaskTest extends TestCase
@@ -31,9 +33,6 @@ class SqlCleanTaskTest extends TestCase
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     CONFIG_FOLDER_YML_BACKUP = self::CONFIG_BACKUP_FOLDER . 'ymlBackup/';
-
-    // it fixes issues like when AllConfig is not loaded while it should be
-    protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

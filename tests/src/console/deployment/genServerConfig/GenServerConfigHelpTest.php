@@ -11,6 +11,8 @@ use const otra\cache\php\{DEV, PROD};
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenServerConfigHelpTest extends TestCase
@@ -19,9 +21,6 @@ class GenServerConfigHelpTest extends TestCase
     OTRA_TASK_GEN_SERVER_CONFIG = 'genServerConfig',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

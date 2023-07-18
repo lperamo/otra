@@ -13,6 +13,8 @@ use const otra\console\
 {CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenAssetsTaskTest extends TestCase
@@ -24,9 +26,6 @@ class GenAssetsTaskTest extends TestCase
     OTRA_TASK_INIT = 'init',
     OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
     ROUTES_PADDING = 25;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

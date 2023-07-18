@@ -11,16 +11,16 @@ use const otra\console\
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenWatcherHelpTest extends TestCase
 {
-  private const OTRA_TASK_GEN_WATCHER = 'genWatcher',
+  private const
+    OTRA_TASK_GEN_WATCHER = 'genWatcher',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

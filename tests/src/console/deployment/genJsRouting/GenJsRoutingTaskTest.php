@@ -13,6 +13,8 @@ use const otra\console\
 use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_PATH};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenJsRoutingTaskTest extends TestCase
@@ -26,9 +28,6 @@ class GenJsRoutingTaskTest extends TestCase
     MAIN_JS_ROUTING = self::MAIN_RESOURCES_PATH . self::JS_ROUTING_FILENAME,
     BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
     OTRA_BINARY = 'otra.php';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

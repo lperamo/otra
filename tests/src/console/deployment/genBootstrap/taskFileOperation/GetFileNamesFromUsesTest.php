@@ -15,13 +15,13 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   use const otra\console\END_COLOR;
 
   /**
+   * It fixes issues like when AllConfig is not loaded while it should be
+   * @preserveGlobalState disabled
    * @runTestsInSeparateProcesses
    */
   class GetFileNamesFromUsesTest extends TestCase
   {
     private const LEVEL = 1;
-    // it fixes issues like when AllConfig is not loaded while it should be
-    protected $preserveGlobalState = FALSE;
 
     protected function setUp(): void
     {

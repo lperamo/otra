@@ -13,6 +13,8 @@ use function otra\tools\delTree;
 use function otra\tools\files\returnLegiblePath;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateActionTaskTest extends TestCase
@@ -46,9 +48,6 @@ class CreateActionTaskTest extends TestCase
     TEST_ACTION_NAME = 'test';
 
   private static array $taskClassMapPath;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

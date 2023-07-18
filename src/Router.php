@@ -216,15 +216,25 @@ abstract class Router
       ))
         continue;
 
-      if ($_SERVER['CONTENT_TYPE'] === '')
-        $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+      if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
+      {
+        if ($_SERVER['CONTENT_TYPE'] === '')
+          $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
 
-      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
-      if (!str_contains(
-        $_SERVER['CONTENT_TYPE'],
-        $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
-      )
-        continue;
+        // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+        if (!str_contains(
+          $_SERVER['CONTENT_TYPE'],
+          $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
+        )
+          continue;
+      } else
+      {
+        if (!in_array(
+          $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'],
+          $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
+        ))
+          continue;
+      }
 
       /** @var string $routeUrl */
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];

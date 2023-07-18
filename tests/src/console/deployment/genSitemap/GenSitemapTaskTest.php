@@ -13,15 +13,13 @@ use function otra\console\deployment\genSitemap\genSitemap;
 use const otra\console\SUCCESS;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenSitemapTaskTest extends TestCase
 {
-  private const
-    SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
+  private const SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
 
   public static function tearDownAfterClass(): void
   {

@@ -116,7 +116,7 @@ function addingSecurityAdjustments() : string
     ENDING_BRACKET .
     PHP_EOL .
     SPACE_INDENT . '# Handling images and fonts' . PHP_EOL .
-    SPACE_INDENT . 'location ~ /.*\.(ico|jpe?g|png|svg|webp|woff2)$' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /.*\.(avif|ico|jpe?g|png|svg|webp|woff2)$' . PHP_EOL .
     OPENING_BRACKET .
     SPACE_INDENT_2 .
     '# Workaround, Firefox does not send referrer for favicons so we send always the images when Firefox is used' .

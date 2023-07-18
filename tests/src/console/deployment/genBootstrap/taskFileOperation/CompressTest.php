@@ -10,6 +10,8 @@ use const otra\cache\php\{CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use function otra\tools\copyFileAndFolders;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CompressTest extends TestCase
@@ -18,9 +20,6 @@ class CompressTest extends TestCase
     FILE_TO_COMPRESS = TEST_PATH . 'examples/deployment/FileToCompress.php',
     COMPRESSED_FILE = TEST_PATH . 'examples/deployment/CompressedFile.php',
     BACKUP_COMPRESSED_FILE = TEST_PATH . 'examples/deployment/BackupCompressedFile.php';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

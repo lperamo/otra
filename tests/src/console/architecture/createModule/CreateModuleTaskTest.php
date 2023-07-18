@@ -13,6 +13,8 @@ use const otra\console\
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModuleTaskTest extends TestCase
@@ -28,9 +30,6 @@ class CreateModuleTaskTest extends TestCase
   final public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {

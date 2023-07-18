@@ -10,6 +10,8 @@ use const otra\console\{CLI_ERROR, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\evalPathVariables;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class EvalPathVariablesTest extends TestCase
@@ -18,8 +20,6 @@ class EvalPathVariablesTest extends TestCase
   private const
     FILENAME = 'filename.php',
     CONSTANT_PATH_CONSTANTS = 'otra\\console\\deployment\\genBootstrap\\PATH_CONSTANTS';
-
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

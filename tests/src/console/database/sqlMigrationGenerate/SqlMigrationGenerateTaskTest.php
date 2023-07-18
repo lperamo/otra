@@ -17,6 +17,8 @@ use function otra\tools\delTree;
 use function otra\tools\files\returnLegiblePath;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlMigrationGenerateTaskTest extends TestCase
@@ -33,9 +35,6 @@ class SqlMigrationGenerateTaskTest extends TestCase
     MIGRATIONS_VERSION_ONE = self::MIGRATIONS_FOLDER  . 'version1.php';
 
   private static $database;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

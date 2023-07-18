@@ -12,6 +12,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenAssetsHelpTest extends TestCase
@@ -20,9 +22,6 @@ class GenAssetsHelpTest extends TestCase
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

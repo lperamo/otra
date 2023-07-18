@@ -21,6 +21,8 @@ use const otra\console\
 };
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CheckConfigurationTaskTest extends TestCase
@@ -66,8 +68,6 @@ class CheckConfigurationTaskTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php';
 
   private static string $labelAnalyzingFiles = '';
-
-  protected $preserveGlobalState = FALSE;
 
   /** @var array<int,array{0:string,1:string} Folder or file paths that will have to be clean */
   public static array $resourcesToClean = [];

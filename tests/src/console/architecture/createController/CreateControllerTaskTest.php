@@ -12,6 +12,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateControllerTaskTest extends TestCase
@@ -31,8 +33,6 @@ class CreateControllerTaskTest extends TestCase
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test';
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {

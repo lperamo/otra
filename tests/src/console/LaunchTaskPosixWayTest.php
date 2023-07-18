@@ -11,13 +11,12 @@ use const otra\console\{ CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTaskPosixWay;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LaunchTaskPosixWayTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    * @throws OtraException

@@ -14,6 +14,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class TemplateStructureActionTest extends TestCase
@@ -25,8 +27,6 @@ class TemplateStructureActionTest extends TestCase
     ACTION = 'templateStructure',
     FULL_ACTION_NAME = self::ACTION . 'Action',
     TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

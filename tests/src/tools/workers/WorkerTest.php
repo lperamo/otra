@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_ERROR, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class WorkerTest extends TestCase
@@ -20,9 +22,6 @@ class WorkerTest extends TestCase
     VERBOSE = 0,
     TIMEOUT = 120,
     WHITE = "\e[15;2]";
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

@@ -8,13 +8,12 @@ use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\processReturn;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ProcessReturnTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    */

@@ -13,6 +13,8 @@ use const otra\console\
 use function otra\tools\{copyFileAndFolders,delTree};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModelTaskTest extends TestCase
@@ -55,9 +57,6 @@ class CreateModelTaskTest extends TestCase
       self::OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . CreateModelTaskTest::BUNDLE_NAME . END_COLOR .
       self::OTRA_LABEL_BUNDLE. PHP_EOL,
     TEST_BUNDLE_PATH = BASE_PATH . CreateModelTaskTest::BUNDLE_RELATIVE_PATH;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown() : void
   {
