@@ -176,8 +176,8 @@ class DatabaseTest extends TestCase
     $testValues = [
       self::DATABASE_NAME,
       'InnoDB',
-      '3c>*v(U;Rhoq77[}',
-      'root',
+      $_SERVER['TEST_PASSWORD'],
+      $_SERVER['TEST_LOGIN'],
       self::CONFIG_FOLDER_YML_FIXTURES,
       true
     ];
@@ -279,7 +279,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    * @depends testInitBase
-   * @depends testCreateDatabase
+   * @depends src\console\database\sqlCreateDatabase\SqlCreateDatabaseTaskTest::testSqlCreateDatabaseTask
    * @doesNotPerformAssertions
    */
   public function testTruncateTable() : void
