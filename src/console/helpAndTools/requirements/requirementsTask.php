@@ -87,6 +87,13 @@ const
       'PHP version 8.2.x+',
       'PHP version must be at least 8.2.x.',
       REQ_PHP_VERSION
+    ],
+    [
+      'parallel',
+      '\'parallel\' tool',
+      CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO .
+      ' Needed to use the OTRA task `convertImages` as we use this to speed up the process',
+      REQ_PACKAGE
     ]
   ],
   OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';

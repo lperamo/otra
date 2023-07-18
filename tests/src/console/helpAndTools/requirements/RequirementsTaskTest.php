@@ -78,6 +78,10 @@ class RequirementsTaskTest extends TestCase
         'PHP version 7.4.x+',
         'PHP version must be at least 7.4.x.'
       ) .
+      $this->showRequirement(
+        '\'parallel\' tool',
+        preg_quote(CLI_INFO_HIGHLIGHT) . '[Optional]' . preg_quote(CLI_INFO) .' Needed to use the OTRA task `convertImages` as we use this to speed up the process'
+      ) .
       '\s@'
     );
 
