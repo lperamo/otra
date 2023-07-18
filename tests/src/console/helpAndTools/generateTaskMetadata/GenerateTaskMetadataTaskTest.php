@@ -49,9 +49,17 @@ class GenerateTaskMetadataTaskTest extends TestCase
 
     $expectedFile = self::METADATA_EXAMPLES_PATH . self::TASKS_CLASSMAP_FILENAME;
     self::assertFileExists(TASK_CLASS_MAP_PATH);
-    self::assertFileEquals(
-      $expectedFile,
-      TASK_CLASS_MAP_PATH,
+
+    $expectedClassMap = require $expectedFile;
+    $actualClassMap = require TASK_CLASS_MAP_PATH;
+
+    // We sort the arrays by key to prevent give false negative because of the order
+    ksort($expectedClassMap);
+    ksort($actualClassMap);
+
+    self::assertSame(
+      $expectedClassMap,
+      $actualClassMap,
       'Checking task classmap. ' . CLI_INFO_HIGHLIGHT . $expectedFile . CLI_ERROR . ' vs ' .
       CLI_INFO_HIGHLIGHT . TASK_CLASS_MAP_PATH . CLI_ERROR
     );

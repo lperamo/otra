@@ -7,6 +7,7 @@ use otra\console\TasksManager;
 use otra\controllers\errors\Error404Action;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
+use function otra\tools\files\returnLegiblePath2;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;
@@ -52,6 +53,7 @@ class Error404ActionTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
@@ -88,8 +90,8 @@ class Error404ActionTest extends TestCase
     // testing
     self::assertSame(
       file_get_contents(TEST_PATH . 'examples/error404.phtml'),
-      $output,
-      'Testing 404 error page output...'
+      $output . PHP_EOL,
+      'Testing 404 error page output against ' . returnLegiblePath2(TEST_PATH . 'examples/error404.phtml')
     );
   }
 }

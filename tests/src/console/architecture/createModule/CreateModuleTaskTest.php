@@ -12,9 +12,6 @@ use const otra\console\
 {CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\delTree;
 
-if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
-  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -264,3 +261,6 @@ class CreateModuleTaskTest extends TestCase
     self::assertFileExists(self::TEST_MODULE_PATH);
   }
 }
+
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));

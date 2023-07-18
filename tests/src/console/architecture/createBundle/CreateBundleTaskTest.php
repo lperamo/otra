@@ -11,9 +11,6 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
-  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -201,3 +198,6 @@ class CreateBundleTaskTest extends TestCase
     $this->testAll();
   }
 }
+
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));

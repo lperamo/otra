@@ -10,7 +10,7 @@ use otra\Session;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
-use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
+use const otra\cache\php\{CONSOLE_PATH, CORE_PATH, TEST_PATH};
 use function otra\console\database\sqlCreateDatabase\sqlCreateDatabase;
 use function otra\console\database\sqlCreateFixtures\sqlCreateFixtures;
 use function otra\console\database\sqlImportFixtures\sqlImportFixtures;
@@ -47,6 +47,7 @@ class SqlImportFixturesTaskTest extends TestCase
     TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'],
     TABLES_ORDER_FILE = 'tables_order.yml',
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . self::TABLES_ORDER_FILE,
+    TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
 
   /**
@@ -54,6 +55,7 @@ class SqlImportFixturesTaskTest extends TestCase
    */
   private function loadConfig() : void
   {
+    require self::TEST_CONFIG_PATH;
     require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
@@ -64,11 +66,12 @@ class SqlImportFixturesTaskTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * @depends testInit
+   * @depends src\console\DatabaseTest::testInit
    */
   public function test() : void
   {
     //context
+    require CORE_PATH . 'tools/copyFilesAndFolders.php';
     copyFileAndFolders(
       [
         self::CONFIG_FOLDER_YML_BACKUP

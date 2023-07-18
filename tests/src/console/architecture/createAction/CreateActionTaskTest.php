@@ -12,9 +12,6 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 use function otra\tools\files\returnLegiblePath;
 
-define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
-define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -378,3 +375,6 @@ class CreateActionTaskTest extends TestCase
     }
   }
 }
+
+define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
+define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');

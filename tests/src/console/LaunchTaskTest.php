@@ -18,10 +18,22 @@ class LaunchTaskTest extends TestCase
 {
   private const
     CONF_FILE_NAME = 'test.conf',
+    CACHE_CONF_FILE_NAME = 'test_cache.conf',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
   // fixes isolation related issues
   protected $preserveGlobalState = FALSE;
+
+  protected function tearDown(): void
+  {
+    parent::tearDown();
+
+    if (file_exists(self::CONF_FILE_NAME))
+      unlink(self::CONF_FILE_NAME);
+
+    if (file_exists(self::CACHE_CONF_FILE_NAME))
+      unlink(self::CACHE_CONF_FILE_NAME);
+  }
 
   /**
    * @author Lionel Péramo

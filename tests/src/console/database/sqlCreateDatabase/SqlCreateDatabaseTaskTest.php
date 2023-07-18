@@ -12,7 +12,8 @@ use ReflectionClass;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH,PROD,TEST_PATH};
-use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
+use function otra\tools\
+{copyFileAndFolders, files\returnLegiblePath, setScopeProtectedFields};
 
 /**
  * @runTestsInSeparateProcesses
@@ -52,6 +53,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
       [self::SCHEMA_ABSOLUTE_PATH]
     );
     require self::TEST_CONFIG_GOOD_PATH;
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
 
     // clean up the SQL that force database schema creation if it exists
     if (file_exists(self::DATABASE_SCHEMA_FORCE_SQL))
@@ -101,6 +103,8 @@ class SqlCreateDatabaseTaskTest extends TestCase
     self::assertFileEquals(
       self::CONFIG_FOLDER_SQL_BACKUP . $endPath,
       SCHEMA_FORCE_PATH,
+      'Comparing ' . returnLegiblePath(SCHEMA_FORCE_PATH) . ' against (expected) ' .
+      returnLegiblePath(self::CONFIG_FOLDER_SQL_BACKUP . $endPath)
     );
 
     // cleaning

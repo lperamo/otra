@@ -231,11 +231,11 @@ class SqlCreateFixturesTaskTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * @depends testInit
-   * @depends testCreateDatabase
-   * @depends testTruncateTable
-   * @depends testCreateFixture
-   * @depends testExecuteFixture
+   * @depends src\console\DatabaseTest::testInit
+   * @depends src\console\database\sqlCreateDatabase\SqlCreateDatabaseTaskTest::testSqlCreateDatabaseTask
+   * @depends src\console\DatabaseTest::testTruncateTable
+   * @depends src\console\DatabaseTest::testCreateFixture
+   * @depends src\console\DatabaseTest::testExecuteFixture
    */
   public function testCreateFixtures_TruncateOnly() : void
   {
@@ -291,7 +291,7 @@ class SqlCreateFixturesTaskTest extends TestCase
 
     // launching task
     ob_start();
-    require CONSOLE_PATH . 'sqlCreateFixtures/sqlCreateFixturesTask.php';
+    require CONSOLE_PATH . 'database/sqlCreateFixtures/sqlCreateFixturesTask.php';
     sqlCreateFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_FIXTURES, self::DATABASE_NAME, self::TRUNCATE_ONLY]);
 
     // testing

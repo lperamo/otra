@@ -5,7 +5,9 @@ namespace src;
 
 use otra\{Controller, OtraException};
 use PHPUnit\Framework\TestCase;
-use const otra\cache\php\{APP_ENV, PROD, TEST_PATH};
+use function otra\tools\files\returnLegiblePath2;
+use const otra\cache\php\
+{APP_ENV, CORE_PATH, PROD, TEST_PATH};
 
 /**
  * @runTestsInSeparateProcesses
@@ -15,13 +17,16 @@ class BlocksTest extends TestCase
   private static Controller $controller;
   private const
     LAYOUTS_PATH = TEST_PATH . 'src/bundles/views/',
-    BACKUPS_PATH = self::LAYOUTS_PATH . 'backups/';
+    BACKUPS_PATH = self::LAYOUTS_PATH . 'backups/',
+    LABEL_COMPARING_THE_RENDERED_VIEW = 'Comparing the rendered view ',
+    LABEL_AGAINST = ' against ';
 
   protected function setUp(): void
   {
     parent::setUp();
     $_SERVER[APP_ENV] = PROD;
     $_SERVER['REQUEST_URI'] = '';
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
 
     self::$controller = new Controller(
       [
@@ -48,7 +53,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\SIMPLE_LAYOUT', 'simpleLayout.phtml');
     self::assertSame(
       file_get_contents(self::BACKUPS_PATH . SIMPLE_LAYOUT),
-      self::$controller->renderView(self::LAYOUTS_PATH . SIMPLE_LAYOUT, [], false, false)
+      self::$controller->renderView(self::LAYOUTS_PATH . SIMPLE_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(self::LAYOUTS_PATH . SIMPLE_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(self::BACKUPS_PATH . SIMPLE_LAYOUT)
     );
   }
 
@@ -63,7 +70,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\ADVANCED_LAYOUT', 'advancedLayout.phtml');
     self::assertSame(
       file_get_contents(self::BACKUPS_PATH . ADVANCED_LAYOUT),
-      self::$controller->renderView(self::LAYOUTS_PATH . ADVANCED_LAYOUT, [], false, false)
+      self::$controller->renderView(self::LAYOUTS_PATH . ADVANCED_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(self::LAYOUTS_PATH . ADVANCED_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(self::BACKUPS_PATH . ADVANCED_LAYOUT)
     );
   }
 
@@ -81,7 +90,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\COMPLEX_LAYOUT', 'complexLayout.phtml');
     self::assertSame(
       file_get_contents(self::BACKUPS_PATH . COMPLEX_LAYOUT),
-      self::$controller->renderView(self::LAYOUTS_PATH . COMPLEX_LAYOUT, [], false, false)
+      self::$controller->renderView(self::LAYOUTS_PATH . COMPLEX_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(self::LAYOUTS_PATH . COMPLEX_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(self::BACKUPS_PATH . COMPLEX_LAYOUT)
     );
   }
 
@@ -101,7 +112,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\COMPLETE_LAYOUT', 'completeLayout.phtml');
     self::assertSame(
       file_get_contents(self::BACKUPS_PATH . COMPLETE_LAYOUT),
-      self::$controller->renderView(self::LAYOUTS_PATH . COMPLETE_LAYOUT, [], false, false)
+      self::$controller->renderView(self::LAYOUTS_PATH . COMPLETE_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(self::LAYOUTS_PATH . COMPLETE_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(self::BACKUPS_PATH . COMPLETE_LAYOUT)
     );
   }
 
@@ -121,7 +134,10 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\EVEN_MORE_COMPLETE_LAYOUT', 'evenMoreCompleteLayout.phtml');
     self::assertSame(
       file_get_contents(self::BACKUPS_PATH . EVEN_MORE_COMPLETE_LAYOUT),
-      self::$controller->renderView(self::LAYOUTS_PATH . EVEN_MORE_COMPLETE_LAYOUT, [], false, false)
+      self::$controller->renderView(self::LAYOUTS_PATH . EVEN_MORE_COMPLETE_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW .
+      returnLegiblePath2(self::LAYOUTS_PATH . EVEN_MORE_COMPLETE_LAYOUT) . self::LABEL_AGAINST .
+      returnLegiblePath2(self::BACKUPS_PATH . EVEN_MORE_COMPLETE_LAYOUT)
     );
   }
 
@@ -141,10 +157,12 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\OTRA_TEST_ANOTHER_LAYOUT', 'anotherLayout.phtml');
     define(__NAMESPACE__ . '\\BACKUP_ANOTHER_LAYOUT', self::BACKUPS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
     define(__NAMESPACE__ . '\\TESTED_ANOTHER_LAYOUT', self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
+
     self::assertSame(
       file_get_contents(BACKUP_ANOTHER_LAYOUT),
-      self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false),
-      'Testing ' . BACKUP_ANOTHER_LAYOUT . ' and ' . TESTED_ANOTHER_LAYOUT . ' ...'
+      self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(TESTED_ANOTHER_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(BACKUP_ANOTHER_LAYOUT)
     );
   }
 
@@ -166,8 +184,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\TESTED_ANOTHER_LAYOUT', self::LAYOUTS_PATH . OTRA_TEST_ANOTHER_LAYOUT);
     self::assertSame(
       file_get_contents(BACKUP_ANOTHER_LAYOUT),
-      self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false),
-      'Testing ' . BACKUP_ANOTHER_LAYOUT . ' and ' . TESTED_ANOTHER_LAYOUT . ' ...'
+      self::$controller->renderView(TESTED_ANOTHER_LAYOUT, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(TESTED_ANOTHER_LAYOUT) .
+      self::LABEL_AGAINST . returnLegiblePath2(BACKUP_ANOTHER_LAYOUT)
     );
   }
 
@@ -181,8 +200,9 @@ class BlocksTest extends TestCase
     define(__NAMESPACE__ . '\\TESTED_REPLACING_BLOCKS', self::LAYOUTS_PATH . OTRA_TEST_REPLACING_BLOCKS);
     self::assertSame(
       file_get_contents(BACKUP_REPLACING_BLOCKS),
-      self::$controller->renderView(TESTED_REPLACING_BLOCKS, [], false, false),
-      'Testing ' . BACKUP_REPLACING_BLOCKS . ' and ' . TESTED_REPLACING_BLOCKS . ' ...'
+      self::$controller->renderView(TESTED_REPLACING_BLOCKS, [], false, false) . PHP_EOL,
+      self::LABEL_COMPARING_THE_RENDERED_VIEW . returnLegiblePath2(TESTED_REPLACING_BLOCKS) .
+      self::LABEL_AGAINST . returnLegiblePath2(BACKUP_REPLACING_BLOCKS)
     );
   }
 }

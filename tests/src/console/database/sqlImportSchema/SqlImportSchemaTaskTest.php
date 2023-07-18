@@ -98,8 +98,8 @@ class SqlImportSchemaTaskTest extends TestCase
     self::assertFileEquals(
       self::SCHEMA_FILE_BACKUP,
       self::IMPORTED_SCHEMA_ABSOLUTE_PATH,
-      'Comparing ' . CLI_INFO_HIGHLIGHT . self::IMPORTED_SCHEMA_ABSOLUTE_PATH . CLI_ERROR . ' against ' .
-      CLI_INFO_HIGHLIGHT . self::SCHEMA_FILE_BACKUP . CLI_ERROR
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::IMPORTED_SCHEMA_ABSOLUTE_PATH . CLI_ERROR .
+      ' against (expected) ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_FILE_BACKUP . CLI_ERROR
     );
   }
 }
