@@ -32,7 +32,7 @@ class Sql
     $currentDBMS = '',
     $currentConnectionName;
 
-  public static ?Sql $instance;
+  public static ?Sql $instance = null;
   private const QUERY = 0;
 
   private function __construct()
@@ -146,7 +146,7 @@ class Sql
       {
         throw new OtraException($exception->getMessage());
       }
-    }else
+    } else
       throw new OtraException(
         'This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' .
         implode(', ', self::$dbmsCollection),

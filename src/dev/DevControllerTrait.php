@@ -181,6 +181,17 @@ trait DevControllerTrait
     if (!isset($route['resources']))
       return '';
 
+    $resources = $route['resources'];
+
+    if (
+      !isset($resources['app_' . $assetType])
+      && !isset($resources['bundle_' . $assetType])
+      && !isset($resources['core_' . $assetType])
+      && !isset($resources['module_' . $assetType])
+      && !($assetType === 'css' && isset($resources['print_css']))
+    )
+      return '';
+
     $resourceContent = '';
     $chunks = $route['chunks'];
 
@@ -188,25 +199,29 @@ trait DevControllerTrait
     if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
       $chunks[Routes::ROUTES_CHUNKS_BUNDLE] = $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
 
-    $resources = $route['resources'];
-    $debLink = PHP_EOL . ($assetType === 'js'
-        ? '<script nonce="<<<TO_REPLACE>>>" src="'
-        : '<link rel="stylesheet" nonce="<<<TO_REPLACE>>>" href="'
-      );
+    $debLink = PHP_EOL;
 
-    $endLink = ($assetType === 'js')
-      ? '.js" ></script>'
-      : '.css" />';
+    if ($assetType === 'js')
+    {
+      $debLink .= '<script nonce="<<<TO_REPLACE>>>" src="';
+      $endLink = '.js"';
+      $endLink2 = '></script>';
+    } else
+    {
+      $debLink .= '<link rel="stylesheet" nonce="<<<TO_REPLACE>>>" href="';
+      $endLink = '.css" />';
+      $endLink2 = '';
+    }
 
     $naturalPriorityIndex = 0;
-    $unorderedArray = $orderedArray = [];
     $debLink2 = $debLink . '/bundles/';
 
     // **Reminder** : $viewsResourcePath is like
     // '/bundles/' . $this->bundle . '/' . $this->module . '/resources/css/'
     $resourcesType = [
       'app_' . $assetType => $debLink2 . 'resources/' . $assetType . DIR_SEPARATOR,
-      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType . DIR_SEPARATOR,
+      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType .
+        DIR_SEPARATOR,
       'module_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'core_' . $assetType => $debLink . ($assetType === 'css' ? CORE_CSS_PATH : CORE_JS_PATH)
@@ -218,7 +233,7 @@ trait DevControllerTrait
       if (isset($resources[$resourceType]))
       {
         // We add a link to the CSS/JS array for each file we found
-        foreach($resources[$resourceType] as $forcedPriorityIndex => $resourceFile)
+        foreach($resources[$resourceType] as $resourceFile => $resourceFileData)
         {
           $resourceTypeInfoActual = str_replace(
             '<<<TO_REPLACE>>>',
@@ -230,20 +245,25 @@ trait DevControllerTrait
             $resourceTypeInfo
           );
 
-          // Fills $orderedArray and/or $unorderedArray
-          self::updateScriptsArray(
-            $unorderedArray,
-            $orderedArray,
-            $naturalPriorityIndex,
-            $forcedPriorityIndex,
+          // Normalizes the data structure
+          if (!is_array($resourceFileData))
+          {
+            $resourceFile = $resourceFileData;
+            $resourceFileData = ['order' => $naturalPriorityIndex];
+          }
+
+          // Stores the data in a resources array
+          $resourcesArray[$resourceFileData['order'] ?? $naturalPriorityIndex] =
             ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile .
-            ($resourceType !== 'print_css' ? $endLink : '.css" media="print" />')
-          );
+            ($resourceType !== 'print_css'
+              ? $endLink . (isset($resourceFileData['module']) ? ' type="module"': '') . $endLink2
+              : '.css" media="print" />'
+            );
         }
       }
-    }
 
-    $resourcesArray = self::calculateArray($unorderedArray, $orderedArray);
+      ++$naturalPriorityIndex;
+    }
 
     foreach ($resourcesArray as $resourceHtml)
     {
@@ -259,64 +279,11 @@ trait DevControllerTrait
         if (is_int($jsResourceKey))
           $jsResourceKey = '';
 
-        $resourceContent .= PHP_EOL . '<script src="' . $javaScript . '.js" nonce="' . getRandomNonceForCSP() . '" ' .
-          $jsResourceKey . '></script>';
+        $resourceContent .= PHP_EOL . '<script type="module" src="' . $javaScript . '.js" nonce="' .
+          getRandomNonceForCSP() . '" ' . $jsResourceKey . '></script>';
       }
     }
 
     return $resourceContent;
-  }
-
-  /**
-   * Uses calculations in order to put scripts in correct order that has been specified in the routes' configuration file
-   *
-   * @param string[] $unorderedArray Unordered array of files
-   * @param string[] $orderedArray   Ordered array of files
-   *
-   * @return string[] $scripts Final array
-   */
-  private static function calculateArray(array $unorderedArray, array $orderedArray) : array
-  {
-    $scripts = [];
-
-    for($priorityIndex = 0, $maximum = count($unorderedArray) + count($orderedArray);
-        $priorityIndex< $maximum;
-        ++$priorityIndex )
-    {
-      if (array_key_exists($priorityIndex, $orderedArray))
-      {
-        $scripts[$priorityIndex] = $orderedArray[$priorityIndex];
-        unset($orderedArray[$priorityIndex]);
-      } else
-        $scripts[$priorityIndex] = array_shift($unorderedArray);
-    }
-
-    return $scripts;
-  }
-
-  /**
-   * Updates the CSS or JS scripts array in order to allow scripts generation order calculations.
-   * If we put things like '_js' => ['_5'=>'users']
-   * then the $key will be 5 and not the key that follows natural order.
-   *
-   * @param string[]   &$unorderedArray
-   * @param string[]   &$orderedArray
-   * @param int        &$naturalPriorityIndex Used if $forcedPriorityIndex is not a string
-   * @param int|string $forcedPriorityIndex  Used only if it is a string
-   */
-  private static function updateScriptsArray(
-    array &$unorderedArray,
-    array &$orderedArray,
-    int &$naturalPriorityIndex,
-    int|string $forcedPriorityIndex,
-    string $code): void
-  {
-    // A 'substr' is done to remove the '_' before the priority index
-    if (is_string($forcedPriorityIndex))
-      $orderedArray[(int) substr($forcedPriorityIndex,1)] = $code;
-    else
-      $unorderedArray[$naturalPriorityIndex] = $code;
-
-    ++$naturalPriorityIndex;
   }
 }
