@@ -24,7 +24,7 @@ abstract class Router
     OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources',
     OTRA_ROUTE_URL_KEY = 0,
-    OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
+    OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   final public const
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,

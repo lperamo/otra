@@ -11,7 +11,7 @@ use const otra\cache\php\{BASE_PATH,CACHE_PATH,CORE_PATH};
 use const otra\cache\php\init\CLASSMAP;
 
 require __DIR__ . '/../config/constants.php';
-ini_set('session.save_path', CACHE_PATH . 'php/sessions');
+ini_set('session.save_path', CACHE_PATH . 'php/sessions/');
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,
@@ -51,7 +51,7 @@ use otra\Router;
 // If the pattern is in the routes, launch the associated route
 if ($route = Router::getByPattern($_SERVER['REQUEST_URI']))
 {
-  header('Content-Type: text/html;charset=utf-8');
+  header('Content-Type: text/html; charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
   Router::get(

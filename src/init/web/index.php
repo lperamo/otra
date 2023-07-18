@@ -27,7 +27,7 @@ try
   $route = Router::getByPattern($requestUri);
   define(__NAMESPACE__ . '\\OTRA_ROUTE', $route[Router::OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME]);
 
-  header('Content-Type: text/html;charset=utf-8');
+  header('Content-Type: text/html; charset=utf-8');
   header('Vary: Accept-Encoding,Accept-Language');
 
   /** @var array<string,array{

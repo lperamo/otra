@@ -27,7 +27,7 @@ class RouterTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
-  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
+  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   public static function setUpBeforeClass(): void
   {
