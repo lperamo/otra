@@ -25,7 +25,7 @@ function removeFieldsScopeProtection(string $class, array $fields) : array
   foreach ($fields as $field)
   {
     $alteredField = $class->getProperty($field);
-    $unprotectedFields[]= $alteredField;
+    $unprotectedFields[$field]= $alteredField;
   }
 
   return $unprotectedFields;
