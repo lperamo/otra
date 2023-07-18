@@ -27,7 +27,9 @@ abstract class AllConfig
     $version = '1.0.0-alpha.2.6.0',
     $defaultConn = ''; // mandatory in order to modify it later if needed
   public static array
-    $dbConnections = [], // mandatory in order to modify it later if needed
-    $debugConfig = [], // mandatory in order to modify it later if needed
-    $sassLoadPaths = [];
+      $dbConnections = [], // mandatory in order to modify it later if needed
+      $debugConfig = [], // mandatory in order to modify it later if needed
+      $sassLoadPaths = [],
+      $sassBinary = '/usr/bin/sass', // mandatory in order to modify it later if needed
+      $typeScriptBinary = '/usr/bin/tsc'; // mandatory in order to modify it later if needed
 }

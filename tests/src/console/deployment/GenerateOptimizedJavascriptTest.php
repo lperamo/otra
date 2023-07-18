@@ -38,7 +38,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
     define(__NAMESPACE__ . '\\TEST_TS_RESOURCE_NAME', TEST_RESOURCES_PATH . 'devJs/' . TEST_JS_BASE_NAME . '.ts');
     define(__NAMESPACE__ . '\\TEST_JS_RESOURCE_NAME', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '.js');
     define(__NAMESPACE__ . '\\TEST_JS_MAP_RESOURCE_NAME', TEST_JS_RESOURCE_NAME . '.map');
-    define(__NAMESPACE__ . '\\TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . TEST_JS_BASE_NAME . '_viaTypescript.js');
+    define(__NAMESPACE__ . '\\TEST_TEMPORARY_JS_FILE', TEST_JS_RESOURCE_FOLDER . 'tmp/' . TEST_JS_BASE_NAME . '.js');
 
     // testing
     self::expectOutputString(
