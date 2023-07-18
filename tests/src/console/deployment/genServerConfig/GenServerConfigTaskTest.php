@@ -138,6 +138,7 @@ class GenServerConfigTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -178,6 +179,7 @@ class GenServerConfigTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

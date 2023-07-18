@@ -18,6 +18,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
   /**
    * Tests the JS generation without GCC
    *
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

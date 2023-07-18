@@ -71,6 +71,7 @@ class ClearSqlLogsActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

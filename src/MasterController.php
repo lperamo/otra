@@ -9,14 +9,15 @@ namespace otra;
 
 use otra\cache\php\BlocksSystem;
 use otra\config\AllConfig;
+use otra\templating\HtmlMinifier;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use const otra\cache\php\
-{APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
+  {APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
+use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 use function otra\services\getRandomNonceForCSP;
 use function otra\templating\showBlocksVisually;
-use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 
 /**
  * @author Lionel Péramo
@@ -75,6 +76,12 @@ abstract class MasterController
     $printStylesheet = 1;
 
   final public const
+    INLINE_TAGS =
+    [
+      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
+      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
+      'time', 'title', 'var', 'video'
+    ],
     OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
     HTTP_CODES =
     [
@@ -143,7 +150,11 @@ abstract class MasterController
 
   protected const
     CSS_MEDIA_SCREEN = 0,
-    LABEL_SCRIPT_NONCE = '<script nonce="';
+    LABEL_SCRIPT_NONCE = '<script nonce=';
+
+  private const
+    PRESERVED_TAGS_PATTERN = '@^<(code|pre|script)(?:\s[^>]*)?>(.*?)</\1>@is',
+    MISSING_SPACE_PATTERN = '@(</(?:pre|code|script)>)(<(?:pre|code|script))@i';
 
   /**
    * @param array{
@@ -288,7 +299,6 @@ abstract class MasterController
 
   /**
    * Use the template engine to render the final template. Fast if the blocks stack is not used.
-   *
    *
    * @throws OtraException|ReflectionException
    * @return string
@@ -479,8 +489,7 @@ abstract class MasterController
       self::addResourcesToTemplate($content, $cssResource, $jsResource);
     }
 
-    // the 'preg_replace' suppress useless spaces
-    $content = preg_replace('/>\s+</', '><', $content);
+    $content = HtmlMinifier::minifyHTML($content);
 
     // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
     // css and js imported in the layout)
@@ -501,12 +510,12 @@ abstract class MasterController
 
     foreach(self::$stylesheets as $stylesheet)
     {
-      $cssContent .= PHP_EOL . '<link rel="stylesheet" nonce="' .
-        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . '" href="' . $stylesheet[self::$stylesheetFile] .
-        '.css" media="' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
+      $cssContent .= PHP_EOL . '<link rel=stylesheet nonce=' .
+        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . ' href="' . $stylesheet[self::$stylesheetFile] .
+        '.css" media=' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
           ? 'print'
           : 'screen')
-        . '"/>';
+        . '/>';
     }
 
     return $cssContent;
@@ -525,7 +534,7 @@ abstract class MasterController
     foreach(self::$javaScripts as $javaScript)
     {
       $jsContent .= self::LABEL_SCRIPT_NONCE .
-        getRandomNonceForCSP() . '" src="' . $javaScript . '.js" ></script>';
+        getRandomNonceForCSP() . ' src="' . $javaScript . '.js" ></script>';
     }
 
     return $jsContent;

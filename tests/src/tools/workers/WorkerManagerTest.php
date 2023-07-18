@@ -239,6 +239,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
+   * @medium
    * @depends testConstruct
    * @depends testDestruct
    * @depends testAttach
@@ -290,6 +291,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
+   * @medium
    * @depends testConstruct
    * @depends testDestruct
    * @depends testAttach
@@ -328,6 +330,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
+   * @medium
    * @depends testConstruct
    * @depends testDestruct
    * @depends testAttach
@@ -383,6 +386,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
+   * @medium
    * @depends testConstruct
    * @depends testDestruct
    * @depends testAttach
@@ -435,6 +439,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
+   * @medium
    * @depends testConstruct
    * @depends testDestruct
    * @depends testAttach

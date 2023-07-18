@@ -9,17 +9,14 @@ use Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector;
 use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\CodeQuality\Rector\ClassMethod\InlineArrayReturnAssignRector;
 use Rector\CodeQuality\Rector\ClassMethod\OptionalParametersAfterRequiredRector;
-use Rector\CodeQuality\Rector\Do_\DoWhileBreakFalseToIfElseRector;
-use Rector\CodeQuality\Rector\For_\{ForRepeatedCountToOwnVariableRector, ForToForeachRector};
+use Rector\CodeQuality\Rector\For_\ForRepeatedCountToOwnVariableRector;
 use Rector\CodeQuality\Rector\Foreach_\
 {ForeachItemsAssignToEmptyArrayToAssignRector,
   ForeachToInArrayRector,
-  SimplifyForeachToArrayFilterRector,
   SimplifyForeachToCoalescingRector,
   UnusedForeachValueToArrayKeysRector};
 use Rector\CodeQuality\Rector\FuncCall\
-{AddPregQuoteDelimiterRector,
-  ArrayKeysAndInArrayToArrayKeyExistsRector,
+{
   ArrayMergeOfNonArraysToSimpleArrayRector,
   ChangeArrayPushToArrayAssignRector,
   CompactToVariablesRector,
@@ -52,11 +49,9 @@ use Rector\TypeDeclaration\Rector\ClassMethod\
 use Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector;
 use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector;
 use Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector;
-use Rector\CodeQuality\Rector\FunctionLike\
-{RemoveAlwaysTrueConditionSetInConstructorRector, SimplifyUselessVariableRector};
+use Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector;
 use Rector\CodeQuality\Rector\Include_\AbsolutizeRequireAndIncludePathRector;
 use Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector;
-use Rector\CodeQuality\Rector\PropertyFetch\ExplicitMethodCallOverMagicGetSetRector;
 use Rector\CodeQuality\Rector\Switch_\SingularSwitchToIfRector;
 use Rector\CodeQuality\Rector\Ternary\
 {
@@ -69,7 +64,6 @@ use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector;
 use Rector\Php56\Rector\FunctionLike\AddDefaultValueForUndefinedVariableRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
-use Rector\Php80\Rector\FunctionLike\UnionTypesRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Set\ValueObject\LevelSetList;
 
@@ -84,12 +78,8 @@ return static function (RectorConfig $rectorConfig): void {
     // Code quality rules
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#absolutizerequireandincludepathrector
     $rectorConfig->rule(AbsolutizeRequireAndIncludePathRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#addpregquotedelimiterrector
-    $rectorConfig->rule(AddPregQuoteDelimiterRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#arraykeyexiststernarythenvaluetocoalescingrector
     $rectorConfig->rule(ArrayKeyExistsTernaryThenValueToCoalescingRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#arraykeysandinarraytoarraykeyexistsrector
-    $rectorConfig->rule(ArrayKeysAndInArrayToArrayKeyExistsRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#arraymergeofnonarraystosimplearrayrector
     $rectorConfig->rule(ArrayMergeOfNonArraysToSimpleArrayRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#booleannotidenticaltonotidenticalrector
@@ -106,16 +96,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(CompactToVariablesRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#consecutivenullcomparereturnstonullcoalescequeuerector
     $rectorConfig->rule(ConsecutiveNullCompareReturnsToNullCoalesceQueueRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#dowhilebreakfalsetoifelserector
-    $rectorConfig->rule(DoWhileBreakFalseToIfElseRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#explicitboolcomparerector
     $rectorConfig->rule(ExplicitBoolCompareRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#explicitmethodcallovermagicgetsetrector
-    $rectorConfig->rule(ExplicitMethodCallOverMagicGetSetRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#forrepeatedcounttoownvariablerector
     $rectorConfig->rule(ForRepeatedCountToOwnVariableRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#fortoforeachrector
-    $rectorConfig->rule(ForToForeachRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#foreachitemsassigntoemptyarraytoassignrector
     $rectorConfig->rule(ForeachItemsAssignToEmptyArrayToAssignRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#foreachtoinarrayrector
@@ -130,8 +114,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(IntvalToTypeCastRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#optionalparametersafterrequiredrector
     $rectorConfig->rule(OptionalParametersAfterRequiredRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removealwaystrueconditionsetinconstructorrector
-    $rectorConfig->rule(RemoveAlwaysTrueConditionSetInConstructorRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removesolevaluesprintfrector
     $rectorConfig->rule(RemoveSoleValueSprintfRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#replacemultiplebooleannotrector
@@ -150,8 +132,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(SimplifyDeMorganBinaryRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#simplifyemptyarraycheckrector
     $rectorConfig->rule(SimplifyEmptyArrayCheckRector::class);
-    // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#simplifyforeachtoarrayfilterrector
-    $rectorConfig->rule(SimplifyForeachToArrayFilterRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#simplifyforeachtocoalescingrector
     $rectorConfig->rule(SimplifyForeachToCoalescingRector::class);
     // https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#simplifyfuncgetargscountrector
@@ -232,8 +212,7 @@ return static function (RectorConfig $rectorConfig): void {
         NullToStrictStringFuncCallArgRector::class,
 
         // Rector does not understand the way my controllers are made
-        RemoveParentCallWithoutParentRector::class,
-        UnionTypesRector::class
+        RemoveParentCallWithoutParentRector::class
       ]
     );
 };

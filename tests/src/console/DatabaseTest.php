@@ -173,18 +173,19 @@ class DatabaseTest extends TestCase
       Database::class,
       $testKeys
     );
+
     $testValues = [
-      self::DATABASE_NAME,
-      'InnoDB',
-      $_SERVER['TEST_PASSWORD'],
-      $_SERVER['TEST_LOGIN'],
-      self::CONFIG_FOLDER_YML_FIXTURES,
-      true
+      'base' => self::DATABASE_NAME,
+      'motor' => 'InnoDB',
+      'password' => $_SERVER['TEST_PASSWORD'],
+      'user' => $_SERVER['TEST_LOGIN'],
+      'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES,
+      'init' => true
     ];
 
     foreach ($unprotectedFields as $fieldNameKey => $unprotectedField)
     {
-      if ($testKeys[$fieldNameKey] === 'pathYmlFixtures')
+      if ($fieldNameKey === 'pathYmlFixtures')
         continue;
 
       self::assertSame(

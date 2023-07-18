@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace otra\src\views\profiler\requests;
 /** @var array $sessionData Session that was logged in a file in `cache/php/sessions` folder */
 ?>
-<div class="activatable-divs--item">
+<div class=activatable-divs--item>
   <p>
-    This will not contain <em>CSP</em>, <em>Feature-Policies</em> and some headers that will be added after. This
-    is <strong><em>not</em></strong> perfect.
+    This will not contain <em class=doc-paragraph--emphasis>CSP</em>, <em class=doc-paragraph--emphasis>Feature-Policies</em> and some headers that will be added after. This
+    is <strong><em class=doc-paragraph--emphasis>not</em></strong> perfect.
   </p>
   <?php showParameters($sessionData['responseHeaders'], 'response headers'); ?>
 </div>

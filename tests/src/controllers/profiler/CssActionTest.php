@@ -63,6 +63,7 @@ class CssActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -92,9 +93,11 @@ class CssActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(CssAction::class, $cssAction);
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
-      $output .PHP_EOL,
+      ob_get_clean(),
+      $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

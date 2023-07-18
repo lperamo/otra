@@ -64,6 +64,7 @@ class Error404ActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -87,10 +88,13 @@ class Error404ActionTest extends TestCase
     ]);
     $output = ob_get_clean();
 
+    ob_start();
+    require TEST_PATH . 'examples/error404.phtml';
+
     // testing
     self::assertSame(
-      file_get_contents(TEST_PATH . 'examples/error404.phtml'),
-      $output . PHP_EOL,
+      ob_get_clean(),
+      $output,
       'Testing 404 error page output against ' . returnLegiblePath2(TEST_PATH . 'examples/error404.phtml')
     );
   }

@@ -32,7 +32,7 @@ if (!function_exists(__NAMESPACE__ . '\\generateArrows'))
       if ($inputType === 'radio')
       {
         ?>
-        <input type="radio" id="dbg-bar--toggle-<?= $position ?>" name="dbg-bar--position"
+        <input type=radio id="dbg-bar--toggle-<?= $position ?>" name="dbg-bar--position"
                class="dbg-bar--toggle-direction dbg-bar--toggle-<?= $position ?>"<?php
         if ($debugBarPosition === $position)
           echo ' checked';

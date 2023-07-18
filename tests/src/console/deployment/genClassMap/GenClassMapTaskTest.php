@@ -73,6 +73,7 @@ class GenClassMapTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -85,7 +86,7 @@ class GenClassMapTaskTest extends TestCase
 
     // testing
     $expectedContent = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 453); // 348 without tests
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 448); // 343 without tests
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
@@ -139,7 +140,7 @@ class GenClassMapTaskTest extends TestCase
     sort($expectedLines);
 
     // Compares the two lines arrays
-    self::assertSame($expectedLines, $generatedLines);
+    self::assertSame($expectedLines, $generatedLines, 'From examples/genClassMap/ClassMap2.php');
 
     // testing
     $this->testingClassMap(

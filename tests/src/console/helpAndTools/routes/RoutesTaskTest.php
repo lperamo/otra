@@ -93,6 +93,7 @@ class RoutesTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    *
    * @author Lionel Péramo

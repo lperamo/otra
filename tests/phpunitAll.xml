@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" enforceTimeLimit="true"
          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
-  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
+  <source>
     <include>
-      <directory suffix=".php">../</directory>
-      <directory suffix=".php">../bundles/*</directory>
-      <directory suffix=".php">../src/</directory>
-      <directory suffix=".php">../web/</directory>
+      <directory>../</directory>
+      <directory>../bundles/*</directory>
+      <directory>../src/</directory>
+      <directory>../web/</directory>
     </include>
     <exclude>
       <directory>./</directory>
@@ -20,6 +20,8 @@
       <directory>./tests</directory>
       <directory>./vendor</directory>
     </exclude>
+  </source>
+  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
     <report>
       <clover outputFile="./coverage.xml"/>
     </report>
@@ -32,8 +34,9 @@
 
       <directory>./src/database</directory>
     </testsuite>
-    <testsuite name="Block templating system">
-      <file>src/BlocksTest.php</file>
+    <testsuite name="Templating system">
+      <file>src/templating/BlocksTest.php</file>
+      <file>src/templating/HtmlMinifierTest.php</file>
     </testsuite>
     <testsuite name="Controllers">
       <directory>src/controllers</directory>

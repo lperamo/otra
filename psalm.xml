@@ -3,6 +3,8 @@
 <psalm
   errorLevel="1"
   allowPhpStormGenerics="true"
+  findUnusedBaselineEntry="true"
+  findUnusedCode="true"
   findUnusedVariablesAndParams="true"
   strictBinaryOperands="true"
   allowStringToStandInForClass="true"
@@ -22,7 +24,7 @@
   <!-- Workaround because Psalm does not find those classes! -->
   <stubs>
     <file name="cache/php/init/ClassMap.php" preloadClasses="true"/>
-    <file name="cache/php/init/RouteManagement.php" preloadClasses="true"/>
+<!--    <file name="cache/php/init/RouteManagement.php" preloadClasses="true"/>-->
     <file name="../../lib/phpunit.phar" preloadClasses="true"/>
   </stubs>
 
@@ -30,7 +32,7 @@
     <directory name="config" />
     <directory name="src" />
     <file name="config/constants.php"/>
-    <file name="cache/php/init/RouteManagement.php"/>
+<!--    <file name="cache/php/init/RouteManagement.php"/>-->
     <directory name="web"/>
     <!-- Those three files can reproduce the problem with Psalm. -->
     <!--        <file name="src/OtraException.php"/>-->

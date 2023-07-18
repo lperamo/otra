@@ -52,6 +52,7 @@ class RouterTest extends TestCase
 
   /**
    * we use "Depends" and not "depends" (note the uppercase letter) as it does not work with "depends"
+   * @medium
    * @Depends src\console\architecture\HelloWorldTest::testCreateHelloWorld
    * @throws OtraException
    */
@@ -92,6 +93,10 @@ class RouterTest extends TestCase
     );
   }
 
+  /**
+   * @medium
+   * @return void
+   */
   public function testGet_DoNotLaunch() : void
   {
     // launching
@@ -106,6 +111,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern() : void
@@ -131,6 +137,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern_NonExistentRoute_firstCase() : void
@@ -156,6 +163,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern_NonExistentRoute_secondCase() : void
@@ -181,6 +189,10 @@ class RouterTest extends TestCase
   }
 
 
+  /**
+   * @medium
+   * @return void
+   */
   public function testGetRouteUrl() : void
   {
     // launching

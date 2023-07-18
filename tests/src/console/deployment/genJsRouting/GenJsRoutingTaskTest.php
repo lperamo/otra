@@ -30,6 +30,7 @@ class GenJsRoutingTaskTest extends TestCase
     OTRA_BINARY = 'otra.php';
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

@@ -212,7 +212,7 @@ class SqlTest extends TestCase
         ? ''
         : '[')
       . '{"file":"' .  $_SERVER['HOME'] .
-      '/.config/composer/vendor/phpunit/phpunit/src/Framework/TestCase.php","line":1040,"query":"SELECT 1"},',
+      '/.config/composer/vendor/phpunit/phpunit/src/Framework/TestCase.php","line":1065,"query":"SELECT 1"},',
       file_get_contents($sqlLogPath)
     );
 
