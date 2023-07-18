@@ -11,6 +11,8 @@ use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class WorkerManagerTest extends TestCase
@@ -42,9 +44,6 @@ class WorkerManagerTest extends TestCase
     WHITE = "\e[15;2]",
     STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.',
     TIMEOUT = 60;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @param string $command

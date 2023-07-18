@@ -9,6 +9,8 @@ use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, E
 use function otra\tools\getSourceFromFileCli;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class DumpTest extends TestCase
@@ -23,8 +25,6 @@ class DumpTest extends TestCase
 
   private static string $logsProdPath;
   private static bool $outputFlag = true;
-  // it fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {

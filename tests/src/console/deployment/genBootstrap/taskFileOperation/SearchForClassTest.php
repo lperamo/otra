@@ -10,6 +10,8 @@ use const otra\cache\php\{CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SearchForClassTest extends TestCase
@@ -18,9 +20,6 @@ class SearchForClassTest extends TestCase
     TEST_CLASS = 'Controller',
     LABEL_TESTING_CLASS_FOUND = 'Testing $classFound...',
     CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE';
-
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

@@ -13,6 +13,8 @@ use function otra\tools\delTree;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LogsActionTest extends TestCase
@@ -30,8 +32,6 @@ class LogsActionTest extends TestCase
     LOG_PROD_CLASSIC_LOG = self::LOGS_PROD_PATH . 'log.txt',
     LOG_PROD_UNKNOWN_EXCEPTIONS = self::LOGS_PROD_PATH . 'unknownExceptions.txt',
     LOG_PROD_UNKNOWN_FATAL_ERRORS = self::LOGS_PROD_PATH . 'unknownFatalErrors.txt';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

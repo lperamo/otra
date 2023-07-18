@@ -11,14 +11,14 @@ use const otra\console\
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateGlobalConstantsHelpTest extends TestCase
 {
   private const OTRA_TASK_CREATE_GLOBAL_CONSTANTS = 'createGlobalConstants',
     OTRA_TASK_HELP = 'help';
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

@@ -8,13 +8,12 @@ use const otra\cache\php\CORE_PATH;
 use function otra\tools\reformatSource;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ReformatSourceTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    */

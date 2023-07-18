@@ -14,6 +14,8 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RequestsActionTest extends TestCase
@@ -24,8 +26,6 @@ class RequestsActionTest extends TestCase
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'requests',
     FULL_ACTION_NAME = self::ACTION . 'Action';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

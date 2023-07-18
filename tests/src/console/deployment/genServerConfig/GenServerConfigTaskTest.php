@@ -12,6 +12,8 @@ use const otra\cache\php\
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenServerConfigTaskTest extends TestCase
@@ -28,9 +30,6 @@ class GenServerConfigTaskTest extends TestCase
     SERVER_TECH = 'nginx',
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {

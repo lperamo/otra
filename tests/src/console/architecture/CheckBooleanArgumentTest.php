@@ -10,6 +10,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\architecture\checkBooleanArgument;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CheckBooleanArgumentTest extends TestCase
@@ -23,9 +25,6 @@ class CheckBooleanArgumentTest extends TestCase
     ARGUMENT_NAME = 'force',
     NO_INTERACTIVE_MODE = 'false',
     PASSED_DEFAULT_VALUE = 'false';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

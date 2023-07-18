@@ -21,6 +21,8 @@ use function otra\tools\
   setScopeProtectedFields};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  *
  * @author Lionel Péramo
@@ -60,8 +62,6 @@ class DatabaseTest extends TestCase
     OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES = 'pathYmlFixtures',
     OTRA_VARIABLE_DATABASE_SCHEMA_FILE = 'schemaFile',
     OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE = 'tablesOrderFile';
-
-  protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
 
   /**
    * @throws ReflectionException

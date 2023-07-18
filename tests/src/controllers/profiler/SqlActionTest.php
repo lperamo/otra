@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlActionTest extends TestCase
@@ -22,8 +24,6 @@ class SqlActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     TEST_TEMPLATE = TEST_PATH . 'examples/profiler/sqlAction.phtml';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

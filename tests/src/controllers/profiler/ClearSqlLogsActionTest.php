@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ClearSqlLogsActionTest extends TestCase
@@ -23,8 +25,6 @@ class ClearSqlLogsActionTest extends TestCase
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     LOGS_DEV_PATH = BASE_PATH . 'logs/' . 'dev/',
     DEV_SQL_LOG = self::LOGS_DEV_PATH . 'sql.txt';
-
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {

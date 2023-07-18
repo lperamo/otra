@@ -10,15 +10,15 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_CO
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenClassMapHelpTest extends TestCase
 {
-  private const OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
+  private const
+    OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     OTRA_TASK_HELP = 'help';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

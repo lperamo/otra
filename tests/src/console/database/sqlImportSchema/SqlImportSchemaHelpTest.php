@@ -10,14 +10,15 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_CO
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlImportSchemaHelpTest extends TestCase
 {
-  private const OTRA_TASK_SQL_IMPORT_SCHEMA = 'sqlImportSchema',
+  private const
+    OTRA_TASK_SQL_IMPORT_SCHEMA = 'sqlImportSchema',
     OTRA_TASK_HELP = 'help';
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

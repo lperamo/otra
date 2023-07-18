@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, EN
 use function otra\tools\copyFileAndFolders;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RoutesTaskTest extends TestCase
@@ -36,10 +38,6 @@ class RoutesTaskTest extends TestCase
     ROUTE_OTRA_SQL = 'otra_sql',
     ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_templateStructure',
     ROUTE_HELLO_WORLD = 'HelloWorld';
-
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void
   {

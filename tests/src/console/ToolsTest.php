@@ -11,13 +11,12 @@ use function otra\console\
 {convertArrayFromVarExportToShortVersion, convertLongArrayToShort, showContext, showContextByError};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ToolsTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();

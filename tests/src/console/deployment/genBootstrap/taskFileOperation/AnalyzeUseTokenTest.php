@@ -9,6 +9,8 @@ use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\{analyzeUseToken};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class AnalyzeUseTokenTest extends TestCase
@@ -18,9 +20,6 @@ class AnalyzeUseTokenTest extends TestCase
     LABEL_TESTING_PARSED_FILES = 'Testing $parsedFiles variable...',
     PHP_EXTENSION = '.php',
     CONST_NAME_DEBUG_LEVEL = '\\DEBUG_LEVEL';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = false;
 
   protected function setUp(): void
   {

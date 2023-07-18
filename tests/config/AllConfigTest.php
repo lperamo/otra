@@ -7,13 +7,12 @@ use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, OTRA_PROJECT, PROD};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class AllConfigTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();

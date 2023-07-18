@@ -8,13 +8,12 @@ use const otra\cache\php\CORE_PATH;
 use function otra\tools\debug\getCaller;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GetCallerTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
    * Lionel Péramo
    */

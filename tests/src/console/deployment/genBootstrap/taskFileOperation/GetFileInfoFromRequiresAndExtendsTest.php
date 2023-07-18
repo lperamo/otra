@@ -9,6 +9,8 @@ use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequiresAndExtends;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GetFileInfoFromRequiresAndExtendsTest extends TestCase
@@ -35,9 +37,6 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
   self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP . self::LABEL_SLASH . ';' . PHP_EOL,
     TEST_FILENAME_PHP = 'test_filename.php',
     TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP = 'tests/examples/deployment/testRequire.php';
-
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

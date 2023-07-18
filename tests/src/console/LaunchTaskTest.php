@@ -12,6 +12,8 @@ use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTask;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LaunchTaskTest extends TestCase
@@ -20,9 +22,6 @@ class LaunchTaskTest extends TestCase
     CONF_FILE_NAME = 'test.conf',
     CACHE_CONF_FILE_NAME = 'test_cache.conf',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
-
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {

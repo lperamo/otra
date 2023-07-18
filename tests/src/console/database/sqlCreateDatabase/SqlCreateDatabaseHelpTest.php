@@ -10,6 +10,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlCreateDatabaseHelpTest extends TestCase
@@ -17,9 +19,6 @@ class SqlCreateDatabaseHelpTest extends TestCase
   private const
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     OTRA_TASK_HELP = 'help';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

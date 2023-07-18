@@ -12,6 +12,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tests\tools\taskParameter;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RoutesHelpTest extends TestCase
@@ -20,9 +22,6 @@ class RoutesHelpTest extends TestCase
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void
   {

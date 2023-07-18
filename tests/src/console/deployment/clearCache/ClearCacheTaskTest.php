@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ClearCacheTaskTest extends TestCase
@@ -74,9 +76,6 @@ class ClearCacheTaskTest extends TestCase
     $testRouteCss,
     $testRouteJs,
     $testRouteTemplate;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

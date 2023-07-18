@@ -15,12 +15,12 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   use function otra\console\deployment\genBootstrap\contentToFile;
 
   /**
+   * It fixes issues like when AllConfig is not loaded while it should be
+   * @preserveGlobalState disabled
    * @runTestsInSeparateProcesses
    */
   class ContentToFileTest extends TestCase
   {
-    // it fixes issues like when AllConfig is not loaded while it should be
-    protected $preserveGlobalState = FALSE;
     private const
       RELATIVE_FINAL_FILE_PATH = 'tests/examples/deployment/finalFile.php',
       FINAL_FILE_PATH = BASE_PATH . self::RELATIVE_FINAL_FILE_PATH,
