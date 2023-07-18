@@ -7,9 +7,10 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
 use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
-use const otra\cache\php\{APP_ENV,BASE_PATH,DEV,TEST_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, DEV, TEST_PATH};
 use const otra\cache\php\init\CLASSMAP2;
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\tools\files\returnLegiblePath2;
 
 /**
  * @runTestsInSeparateProcesses
@@ -22,10 +23,55 @@ class GenClassMapTaskTest extends TestCase
     CLASS_MAP_PATH = CACHE_PHP_INIT_PATH . self::CLASS_MAP_FILENAME,
     PROD_CLASS_MAP_PATH = CACHE_PHP_INIT_PATH . self::PROD_CLASS_MAP_FILENAME,
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
-    EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/';
+    EXAMPLES_CLASS_MAP_PATH = TEST_PATH . 'examples/genClassMap/',
+    PROCESSED_DIRECTORIES = "\x0d\033[K" . 'Processed directories : ';
 
   // it fixes issues like when AllConfig is not loaded while it should be
   protected $preserveGlobalState = FALSE;
+
+  /**
+   * @param string $classMapFile
+   *
+   * @return array{string:string}
+   */
+  private function getClassMap(string $classMapFile) : array
+  {
+    $newNamespace = 'temporaryNamespace';
+
+    // Evaluate the code with the new namespace
+    eval(
+      str_replace(
+        [
+          '<?php ',
+          'namespace otra\cache\php\init;'
+        ],
+        [
+          '',
+          'namespace ' . $newNamespace . ';'
+        ],
+        file_get_contents($classMapFile)
+      )
+    );
+
+    // Retrieve the class map with the new namespace
+    return constant($newNamespace . '\CLASSMAP');
+  }
+
+  private function testingClassMap(string $expectedClassMapPath, string $actualClassMapPath, string $environment)
+  {
+    self::assertFileExists($actualClassMapPath);
+    $expectedClassMap = $this->getClassMap($expectedClassMapPath);
+    $actualClassMap = $this->getClassMap($actualClassMapPath);
+    sort($expectedClassMap);
+    sort($actualClassMap);
+    self::assertSame(
+      $expectedClassMap,
+      $actualClassMap,
+      $environment . ' class mapping test. Here we compare ' . CLI_INFO_HIGHLIGHT .
+      returnLegiblePath2($expectedClassMapPath) . CLI_ERROR . ' and ' . CLI_INFO_HIGHLIGHT .
+      returnLegiblePath2($actualClassMapPath) . CLI_ERROR . '.' . END_COLOR
+    );
+  }
 
   /**
    * @author Lionel Péramo
@@ -35,38 +81,43 @@ class GenClassMapTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
     define(__NAMESPACE__ . '\\FIRST_CLASS_PADDING', 80);
 
     // testing
-    $content = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 348);
+    $expectedContent = '';
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 453); // 348 without tests
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
-      $content .= "\x0d\033[K" . 'Processed directories : ' . $currentFolder . '...';
+      $expectedContent .= self::PROCESSED_DIRECTORIES . $currentFolder . '...';
     }
 
-    $content .= "\x0d\033[K" . 'Processed directories : ' . ($currentFolder - 1) . '.' . PHP_EOL .
+    $expectedContent .= self::PROCESSED_DIRECTORIES . ($currentFolder - 1) . '.' . PHP_EOL .
+      END_COLOR . PHP_EOL .
       'Class mapping finished' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL .
       CLI_WARNING . 'BASE_PATH = ' . BASE_PATH . PHP_EOL .
-      CLI_INFO . 'Class path' . CLI_INFO_HIGHLIGHT . ' => ' . CLI_INFO . 'Related file path' . PHP_EOL . PHP_EOL;
+      CLI_INFO . 'Class path' . CLI_INFO_HIGHLIGHT . ' => ' . CLI_INFO . 'Related file path' . PHP_EOL;
 
     require TEST_PATH . 'examples/genClassMap/ClassMap2.php';
 
-    foreach(CLASSMAP2 as $class => $classFile)
+    foreach (CLASSMAP2 as $class => $classFile)
     {
-      $content .= CLI_INFO . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_INFO_HIGHLIGHT . ' => ';
-      $content .= (str_contains($classFile, BASE_PATH)
-        // for classes inside the BASE_PATH
-        ? CLI_BASE . '[BASE_PATH]' . CLI_INFO . substr($classFile, strlen(BASE_PATH))
-        // for classes outside the BASE_PATH
-        : CLI_INFO . $classFile) .
-        // and we pass to the next line !
-      PHP_EOL;
+      $line = CLI_INFO . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_INFO_HIGHLIGHT . ' => ';
+      $line .= (str_contains($classFile, BASE_PATH)
+          // for classes inside the BASE_PATH
+          ? CLI_BASE . '[BASE_PATH]' . CLI_INFO . substr($classFile, strlen(BASE_PATH))
+          // for classes outside the BASE_PATH
+          : CLI_INFO . $classFile);
+      $expectedContent .= $line . PHP_EOL;
     }
 
-    // testing
-    $this->expectOutputString($content . END_COLOR);
+    $expectedContent .= 'You may have to add these classes in order to make your project work.' . PHP_EOL .
+      'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.' . PHP_EOL . PHP_EOL .
+      str_pad('Class ' . CLI_WARNING . 'otra\config\AllConfig' . END_COLOR . ' ', FIRST_CLASS_PADDING,
+        '.') . ' => possibly related file ' . CLI_WARNING . 'tests/config/AllConfig.php' . END_COLOR . PHP_EOL;
+
+    ob_start();
 
     // launching
     TasksManager::execute(
@@ -75,25 +126,32 @@ class GenClassMapTaskTest extends TestCase
       ['otra.php', self::OTRA_TASK_GEN_CLASS_MAP, 1]
     );
 
+    $generatedOutput = ob_get_clean();
+
+    // Cleans and divides the generated output and expected output in lines
+    $generatedLines = explode(PHP_EOL, trim($generatedOutput));
+    $expectedLines = explode(PHP_EOL, trim($expectedContent));
+
+    // Adds an extra empty line at the beginning of the expected lines
+    array_unshift($expectedLines, '');
+
+    // Sort the two lines arrays to ignore the order
+    sort($generatedLines);
+    sort($expectedLines);
+
+    // Compares the two lines arrays
+    self::assertSame($expectedLines, $generatedLines);
+
     // testing
-    // development class map assertions
-    self::assertFileExists(self::CLASS_MAP_PATH);
-    self::assertFileEquals(
+    $this->testingClassMap(
       self::EXAMPLES_CLASS_MAP_PATH . self::CLASS_MAP_FILENAME,
       self::CLASS_MAP_PATH,
-      'Development class mapping test. Here we compare ' . CLI_INFO_HIGHLIGHT . self::EXAMPLES_CLASS_MAP_PATH .
-      self::CLASS_MAP_FILENAME . CLI_ERROR . ' and ' . CLI_INFO_HIGHLIGHT . self::CLASS_MAP_PATH . CLI_ERROR . '.' .
-      END_COLOR
+      'Development'
     );
-
-    // production class map assertions
-    self::assertFileExists(self::PROD_CLASS_MAP_PATH);
-    self::assertFileEquals(
+    $this->testingClassMap(
       self::EXAMPLES_CLASS_MAP_PATH . self::PROD_CLASS_MAP_FILENAME,
       self::PROD_CLASS_MAP_PATH,
-      'Production class mapping test. Here we compare ' .CLI_INFO_HIGHLIGHT . self::EXAMPLES_CLASS_MAP_PATH .
-      self::PROD_CLASS_MAP_FILENAME . CLI_ERROR . ' and ' . CLI_INFO_HIGHLIGHT . self::PROD_CLASS_MAP_PATH . CLI_ERROR .
-      '.' . END_COLOR
+      'Production'
     );
   }
 }

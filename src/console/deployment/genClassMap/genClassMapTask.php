@@ -38,6 +38,7 @@ function genClassMap(array $argumentsVector) : void
     BASE_PATH . 'bundles',
     BASE_PATH . 'config',
     BASE_PATH . 'src',
+    BASE_PATH . 'tests',
     BASE_PATH . 'vendor'
   ];
   $classes = [];
