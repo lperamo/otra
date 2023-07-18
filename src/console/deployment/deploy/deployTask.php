@@ -231,7 +231,7 @@ function deploy(array $argumentsVector) : void
       [
         // The main folder is created, we can do the rest
         new Worker(
-          START_COMMAND_RELATIVE_RSYNC . '\' cache ' . $server . ':' . $folder,
+          START_COMMAND_RELATIVE_RSYNC . '\' cache --exclude=sessions' . $server . ':' . $folder,
           'Cache' . CLI_SUCCESS . ' ✔' . END_COLOR,
           'Sending cache ...',
           null,
