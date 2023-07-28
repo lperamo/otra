@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--  findUnusedCode="true"-->
 <psalm
-  errorLevel="1"
+  errorLevel="8"
   allowPhpStormGenerics="true"
   findUnusedBaselineEntry="true"
   findUnusedCode="true"

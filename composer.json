@@ -24,6 +24,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
+    "ext-ssh2": "*",
     "ext-zend-opcache": "*",
     "ext-zlib": "*",
     "symfony/yaml": "6.1.*",

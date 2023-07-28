@@ -62,4 +62,51 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
 
     return [$returnCode, $output];
   }
+
+  /**
+   * Executes a command with specified environment variables and returns the exit status, stdout, and stderr.
+   *
+   * The command is run in a separate process, and its stdout and stderr are captured.
+   *
+   * @param string                $command              The command to execute.
+   * @param array<string, string> $environmentVariables An associative array of environment variables to set for the
+   *                                                    command.
+   *
+   * @return array<int, mixed> Returns an array where:
+   *                           - the first element is the exit status of the command (or false if the command could not
+   *                             be executed),
+   *                           - the second element is the output of the command,
+   *                           - the third element is the error output of the command.
+   */
+  function runCommandWithEnvironment(string $command, array $environmentVariables): array
+  {
+    $process = proc_open(
+      $command,
+      [
+        0 => ['pipe', 'r'],  // stdin is a pipe that the child will read from
+        1 => ['pipe', 'w'],  // stdout is a pipe that the child will write to
+        2 => ['pipe', 'w'] // stderr is a pipe that the child will write to
+      ],
+      $pipes,
+      null,
+      [
+        ...$_ENV,
+        ...$environmentVariables
+      ]
+    );
+
+    if (is_resource($process))
+    {
+      $stdout = stream_get_contents($pipes[1]);
+      $stderr = stream_get_contents($pipes[2]);
+
+      fclose($pipes[0]);
+      fclose($pipes[1]);
+      fclose($pipes[2]);
+
+      return [proc_close($process), $stdout, $stderr];
+    }
+
+    return [false, '', ''];
+  }
 }
