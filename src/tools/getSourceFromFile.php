@@ -15,7 +15,6 @@ if (!function_exists(__NAMESPACE__ . '\\getSourceFromFile'))
   /**
    * Returns the portion of a file in a certain range around a specific line.
    *
-   *
    * @return string
    */
   function getSourceFromFile(string $sourceFile, int $sourceLine, int $padding = 0, int $range = 5) : string

@@ -15,6 +15,7 @@ const
   CONVERT_IMAGES_ARG_KEEP = 5;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void

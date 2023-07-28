@@ -59,8 +59,6 @@ function unlinkResourceFile(string $folder, string $shaName) : void
 }
 
 /**
- *
- *
  * @return string
  */
 function status(string $status, string $color = 'CLI_SUCCESS') : string
@@ -182,6 +180,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 }
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws JsonException|OtraException
  * @return void

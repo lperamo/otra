@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\controllers\profiler;
 
+use JsonException;
 use otra\console\TasksManager;
 use otra\controllers\profiler\SqlAction;
 use otra\OtraException;
@@ -60,7 +61,7 @@ class SqlActionTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function test() : void
   {

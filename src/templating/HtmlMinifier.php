@@ -282,14 +282,14 @@ class HtmlMinifier
             }
 
             // searching closing tag
+            self::$lastState = self::$state;
+
             if (self::$htmlCode[self::$index + 1] === '/')
             {
-              self::$lastState = self::$state;
               self::$state = self::STATE_CLOSING_TAG;
               self::$actualMarkupContent = '<';
             } elseif (self::$htmlCode[self::$index + 1] !== '!') // it is not a comment
             {
-              self::$lastState = self::$state;
               self::$state = self::STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND;
               self::$actualMarkupContent = '<';
             } elseif (self::$htmlCode[self::$index + 2] === '-' && self::$htmlCode[self::$index + 3] === '-')
@@ -297,7 +297,6 @@ class HtmlMinifier
               // We are at the beginning of an HTML comment.
               // Check the next two characters to see if they are '--'.
               // If they are, this is the start of a comment.
-              self::$lastState = self::$state;
               self::$state = self::STATE_INSIDE_COMMENT;
 
               if (!self::$configuration['comments'])
@@ -309,13 +308,11 @@ class HtmlMinifier
             elseif (strtolower(substr(self::$htmlCode, self::$index + 2, 3)) === 'doc')
             {
               // We are at the beginning of a DOCTYPE declaration.
-              self::$lastState = self::$state;
               self::$state = self::STATE_INSIDE_DOCTYPE;
               self::$actualMarkupContent .= self::$character;
             } else
             {
               // We are at the beginning of a CDATA section.
-              self::$lastState = self::$state;
               self::$state = self::STATE_INSIDE_CDATA;
               self::$actualMarkupContent .= self::$character;
             }

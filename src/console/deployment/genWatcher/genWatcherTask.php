@@ -9,6 +9,7 @@ namespace otra\console\deployment\genWatcher;
 
 use FilesystemIterator;
 use JetBrains\PhpStorm\Pure;
+use JsonException;
 use otra\config\AllConfig;
 use otra\OtraException;
 use RecursiveDirectoryIterator;
@@ -69,7 +70,6 @@ const
   IN_DELETE_DIR = 1_073_742_336;
 
 /**
- *
  * @return string
  */
 #[Pure] function debugHeader(string $header, int $padding) : string
@@ -163,7 +163,6 @@ function updatePHP(string $filename) : void
 }
 
 /**
- *
  * @return string
  */
 function addVerboseInformation(
@@ -209,9 +208,9 @@ function deleteAsset(string $assetName, string $assetExtension): void
 }
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
- * @throws OtraException
- * @throws ReflectionException
+ * @throws JsonException|OtraException|ReflectionException
  * @return void
  */
 function genWatcher(array $argumentsVector): void
@@ -424,7 +423,7 @@ function genWatcher(array $argumentsVector): void
     $mainResourceFilename,
     $pathToAvoid,
     $realPath,
-    // maybe those two variables have to been cleaned in TaskManager instead ?
+    // maybe those two variables have to be cleaned in TaskManager instead ?
     $otraTask,
     $tasksClassMap
   );

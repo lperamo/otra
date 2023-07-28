@@ -34,7 +34,6 @@ function checkDataType(string $modelName, string $columnName, ?string $columnTyp
 /**
  * Analyzes the SQL type of the current column in the schema.yml file and gives the PHP type in return
  *
- *
  * @throws OtraException
  * @return string
  */
@@ -170,7 +169,6 @@ function getModelLocation() : int
 
 /**
  * Asks the user for the module name
- *
  *
  * @return string
  */

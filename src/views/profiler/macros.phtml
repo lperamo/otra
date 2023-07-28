@@ -91,7 +91,9 @@ function noLogs(string $noLogsMessage)
  * @param string $logFile
  * @param string $noLogsMessage
  * @param string $openAccordion
- * @param bool   $classic       Are there classic logs that do not need JSON decoding?
+ * @param bool   $classic Are there classic logs that do not need JSON decoding?
+ *
+ * @throws JsonException
  */
 function showLogsFull(
   string $logType,
@@ -226,7 +228,7 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
             // We check if the message contains some stack trace
             // (we process this particular case here, because it is not appropriate for the `match` statement
             if ($messageKey === 's')
-              $stackTraceInfo = getPrettyStackTrace($messageProperty);
+              $stackTraceInfo = getPrettyStackTrace([$messageProperty]);
 
             if ($messageProperty === YES_ICON)
               $messageProperty = YES_ICON_HTML;
@@ -237,7 +239,7 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
             {
               'a' => showMessageBlock('Ajax', $messageProperty),
               'f' => showMessageBlock('Path', beautifyPath($messageProperty)),
-              'hrc' => showMessageBlock('HTTP response code', (string) $messageProperty),
+              'hrc' => showMessageBlock('HTTP response code', $messageProperty),
               'p' => showMessageBlock('Pattern', $messageProperty),
               'r' => showMessageBlock('Route', $messageProperty),
               's' => $stackTraceInfo,

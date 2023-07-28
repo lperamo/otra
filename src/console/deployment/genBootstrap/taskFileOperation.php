@@ -659,7 +659,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 }
 
 /**
- * Retrieves information about what kind of file inclusion we have, the related code and its position.
+ * Retrieves information about what kind of file inclusion we have (include, require), the related code and its position.
  *
  * @param array{
  *   level: int,
@@ -692,7 +692,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
  *
  * @throws OtraException
  */
-function getFileInfoFromRequiresAndExtends(array &$parameters) : void
+function getDependenciesFileInfo(array &$parameters) : void
 {
 //  list($level, $contentToAdd, $filename, $filesToConcat, &$parsedFiles, $classesFromFile, &$parsedConstants) = $parameters;
   [
@@ -967,7 +967,7 @@ function assembleFiles(
     'parsedConstants' => $parsedConstants
   ];
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
-  getFileInfoFromRequiresAndExtends(
+  getDependenciesFileInfo(
     $toPassAsReference
   );
 

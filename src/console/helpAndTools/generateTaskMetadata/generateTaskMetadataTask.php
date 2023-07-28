@@ -18,7 +18,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata
   use RecursiveDirectoryIterator;
   use RecursiveIteratorIterator;
   use SplFileInfo;
-  use function otra\console\convertArrayFromVarExportToShortVersion;
+  use function otra\console\shortenVarExportArray;
   use function otra\console\deployment\genClassMap\genClassMap;
   use const otra\bin\CACHE_PHP_INIT_PATH;
   use const otra\cache\php\init\CLASSMAP;
@@ -138,12 +138,12 @@ namespace otra\console\helpAndTools\generateTaskMetadata
 
     // Generate the tasks descriptions in a cached file.
     $helpFileFinalContent = PHP_INIT_FILE_BEGINNING . var_export($helpFileContent, true);
-    $helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';' . PHP_EOL;
+    $helpFileFinalContent = shortenVarExportArray($helpFileFinalContent) . ';' . PHP_EOL;
 
     file_put_contents(CACHE_PHP_INIT_PATH . 'tasksHelp.php', $helpFileFinalContent);
 
     // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
-    $taskClassMap = convertArrayFromVarExportToShortVersion(
+    $taskClassMap = shortenVarExportArray(
       PHP_INIT_FILE_BEGINNING . var_export($taskClassMap, true) . ';'
     );
 

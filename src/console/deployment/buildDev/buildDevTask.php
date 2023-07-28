@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment\buildDev;
 
 use FilesystemIterator;
+use JsonException;
 use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -40,8 +41,9 @@ const
   BUILD_DEV_ARG_SCOPE = 5;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
- * @throws OtraException
+ * @throws JsonException|OtraException
  * @return void
  */
 function buildDev(array $argumentsVector) : void

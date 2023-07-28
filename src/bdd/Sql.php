@@ -98,7 +98,7 @@ class Sql
       'db' => $database,
       'driver' => $driver,
       'port' => $port,
-      'host' => $host,
+      'host' => $hostName,
       'login' => $login,
       'password' => $password
     ] = AllConfig::$dbConnections[$connection];
@@ -117,8 +117,8 @@ class Sql
 
       [
         'db' => $database,
-        'port' => $port,
-        'host' => $host,
+        'port' => $databasePort,
+        'host' => $hostName,
         'login' => $login,
         'password' => $password
       ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn];
@@ -134,7 +134,7 @@ class Sql
         $activeConn['conn'] = $activeConn['instance']->connect(
           strtolower(substr($driver, 3)) .
             ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
-            'host=' . ('' == $port ? $host : $host . ':' . $port) .
+            'host=' . ('' == $databasePort ? $hostName : $hostName . ':' . $databasePort) .
             ';charset=utf8mb4',
           $login,
           $password

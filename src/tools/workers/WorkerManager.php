@@ -67,7 +67,7 @@ class WorkerManager
     $hasPrinted = false;
   private int
     $runningWorkersCount = 0,
-    $initialWorkersAndSubWorkersCount = 0,
+    $startWorkersAndSubWorkersCount = 0,
     $workersAndSubWorkersCount = 0,
     $numWorkerMessagesDisplayed = 0;
   private array $failMessages = [
@@ -126,7 +126,7 @@ class WorkerManager
    */
   public function listen(int $timeout = 200000, bool $verbose = false) : void
   {
-    $this->initialWorkersAndSubWorkersCount = $this->workersAndSubWorkersCount;
+    $this->startWorkersAndSubWorkersCount = $this->workersAndSubWorkersCount;
 
     if (!$verbose)
     {
@@ -249,7 +249,7 @@ class WorkerManager
         } else
         {
           $percentDone = round(
-            100 - ($this->workersAndSubWorkersCount / $this->initialWorkersAndSubWorkersCount) * 100
+            100 - ($this->workersAndSubWorkersCount / $this->startWorkersAndSubWorkersCount) * 100
           );
 
           // Calculate the number of filled characters

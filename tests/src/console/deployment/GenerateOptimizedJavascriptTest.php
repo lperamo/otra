@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace src\console\deployment;
 
+use JsonException;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,CORE_PATH,DEV,TEST_PATH};
@@ -20,7 +21,7 @@ class GenerateOptimizedJavascriptTest extends TestCase
    *
    * @medium
    * @author Lionel Péramo
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function testGenerateOptimizedJavascript() : void
   {

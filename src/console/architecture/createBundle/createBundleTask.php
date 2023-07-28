@@ -30,6 +30,8 @@ namespace otra\console\architecture\createBundle
   const ARG_BUNDLE_MASK = 3;
 
   /**
+   * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
+   *
    * @throws OtraException
    * @return void
    */

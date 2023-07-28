@@ -22,6 +22,8 @@ const
 /**
  * Creates a new blank migration file
  *
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
+ *
  * @throws OtraException
  * @return void
  */

@@ -20,6 +20,7 @@ const
 /**
  * Creates the sql database schema file if it doesn't exist and runs it
  *
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void

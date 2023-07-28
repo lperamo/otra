@@ -37,7 +37,7 @@ class CreateActionTaskTest extends TestCase
     TEST_CONTROLLER_PATH = self::TEST_MODULE_PATH . 'controllers/' . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
     TEST_ACTION_PATH = self::TEST_CONTROLLER_PATH . TEST_ACTION_FULL,
     TEST_VIEWS_PATH = self::TEST_MODULE_PATH . 'views/',
-    TEST_VIEWS_SUBFOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
+    TEST_VIEWS_SUB_FOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
     EXPECTED_ACTION_FILE = TEST_PATH . 'examples/createAction/Action.php',
     EXPECTED_ROUTES_FILE = TEST_PATH . 'examples/createAction/Routes.php';
 
@@ -350,8 +350,8 @@ class CreateActionTaskTest extends TestCase
       returnLegiblePath(self::EXPECTED_ACTION_FILE)
     );
     self::assertFileExists(self::TEST_VIEWS_PATH);
-    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH);
-    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION_NAME . '.phtml');
+    self::assertFileExists(self::TEST_VIEWS_SUB_FOLDER_PATH);
+    self::assertFileExists(self::TEST_VIEWS_SUB_FOLDER_PATH . self::TEST_ACTION_NAME . '.phtml');
 
     self::assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
 

@@ -86,7 +86,7 @@ class GenClassMapTaskTest extends TestCase
 
     // testing
     $expectedContent = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 448); // 343 without tests
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 454); // 343 without tests
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {
@@ -103,13 +103,13 @@ class GenClassMapTaskTest extends TestCase
 
     foreach (CLASSMAP2 as $class => $classFile)
     {
-      $line = CLI_INFO . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_INFO_HIGHLIGHT . ' => ';
-      $line .= (str_contains($classFile, BASE_PATH)
+      $classMappingLine = CLI_INFO . str_pad($class, FIRST_CLASS_PADDING, '.') . CLI_INFO_HIGHLIGHT . ' => ';
+      $classMappingLine .= (str_contains($classFile, BASE_PATH)
           // for classes inside the BASE_PATH
           ? CLI_BASE . '[BASE_PATH]' . CLI_INFO . substr($classFile, strlen(BASE_PATH))
           // for classes outside the BASE_PATH
           : CLI_INFO . $classFile);
-      $expectedContent .= $line . PHP_EOL;
+      $expectedContent .= $classMappingLine . PHP_EOL;
     }
 
     $expectedContent .= 'You may have to add these classes in order to make your project work.' . PHP_EOL .

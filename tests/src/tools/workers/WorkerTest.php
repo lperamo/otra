@@ -34,7 +34,7 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      self::VERBOSE,
+      self::VERBOSE > 0,
       self::TIMEOUT
     );
 
@@ -44,8 +44,8 @@ class WorkerTest extends TestCase
     self::assertIsString($worker->command);
     self::assertSame(self::COMMAND, $worker->command);
 
-    self::assertIsInt($worker->verbose);
-    self::assertSame(self::VERBOSE, $worker->verbose);
+    self::assertIsBool($worker->verbose);
+    self::assertSame(self::VERBOSE > 0, $worker->verbose);
 
     self::assertIsString($worker->successMessage);
     self::assertSame(self::SUCCESS_MESSAGE, $worker->successMessage);

@@ -5,6 +5,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
+use function otra\console\deployment\genBootstrap\getDependenciesFileInfo;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequiresAndExtends;
 
@@ -65,7 +66,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -136,7 +137,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -206,7 +207,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -267,7 +268,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(

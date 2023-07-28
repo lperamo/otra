@@ -141,7 +141,7 @@ abstract class Router
   }
 
   /**
-   * Check if the pattern is present among the routes and launch a 404 error page it it does not
+   * Check if the pattern is present among the routes and launch a 404 error page if it does not
    *
    * @param string $userUrl The pattern to check
    *
@@ -227,14 +227,11 @@ abstract class Router
           $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
         )
           continue;
-      } else
-      {
-        if (!in_array(
-          $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'],
-          $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
-        ))
-          continue;
-      }
+      } elseif (!in_array(
+        $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'],
+        $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
+      ))
+        continue;
 
       /** @var string $routeUrl */
       $routeUrl = $routeData[self::OTRA_ROUTE_CHUNKS_KEY][self::OTRA_ROUTE_URL_KEY];

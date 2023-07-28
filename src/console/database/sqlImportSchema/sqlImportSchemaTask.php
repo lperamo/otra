@@ -17,6 +17,7 @@ const
 /**
  * Creates the database schema from a database.
  *
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException If we cannot create the folder that will contain the schema
  * @return void

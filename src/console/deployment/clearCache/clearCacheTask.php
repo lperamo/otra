@@ -38,6 +38,7 @@ const
   RELATIVE_PHP_INIT_CACHE_PATH = RELATIVE_PHP_CACHE_PATH . 'init/';
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void|null
@@ -70,6 +71,8 @@ function clearCache(array $argumentsVector)
      * @param string $cachePath
      * @param string $cacheRelativePath
      * @param string $extension
+     *
+     * @throws OtraException
      */
     $removeCachedFiles = function (
       string $cachePath,
@@ -129,7 +132,12 @@ function clearCache(array $argumentsVector)
     }
   }
 
-  /** @var Closure $removeCachedFiles */
+  /**
+   * @param string $file
+   * @param string $fileShownInTheError
+   *
+   * @throws OtraException
+   */
 
   function unlinkFile(string $file, string $fileShownInTheError) : void
   {
@@ -144,6 +152,13 @@ function clearCache(array $argumentsVector)
     }
   }
 
+  /**
+   * @param string $folder
+   * @param string $folderShownInTheError
+   *
+   * @throws OtraException
+   * @return void
+   */
   function checkFolder(string $folder, string $folderShownInTheError) : void
   {
     if (!file_exists($folder))

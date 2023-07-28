@@ -27,6 +27,8 @@ const
 /**
  * Executes a single migration version up or down manually.
  *
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
+ *
  * @throws OtraException
  * @return void
  */
@@ -123,7 +125,7 @@ function sqlMigrationExecute(array $argumentsVector) : void
   if ($queries['transaction'])
     $database->commit();
 
-  $executionTime = round((microtime(true) - $executionTime) * 1000, 0);
+  $executionTime = round((microtime(true) - $executionTime) * 1000);
 
   echo CLI_INFO, $showableQueries, CLI_BASE, CLI_INFO_HIGHLIGHT, $affectedRows, CLI_BASE, ' row',
     ($affectedRows > 1

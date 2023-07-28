@@ -24,6 +24,8 @@ namespace otra\console\architecture\createController
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
+   * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
+   *
    * @throws OtraException
    * @return void
    */

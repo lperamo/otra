@@ -14,7 +14,7 @@ use otra\OtraException;
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
-use function otra\console\convertArrayFromVarExportToShortVersion;
+use function otra\console\shortenVarExportArray;
 
 /**
  * @param string $environment DEV or PROD
@@ -28,6 +28,7 @@ function generateClassMap(string $classMap, string $filename, string $environmen
 }
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void
@@ -165,7 +166,6 @@ function genClassMap(array $argumentsVector) : void
      * We take care of the spaces contained into folders and files names.
      * We also reduce paths using constants.
      *
-     *
      * @return string
      */
     function convertClassMapToPHPFile(string $classMap, string $environment = DEV) : string
@@ -179,7 +179,7 @@ function genClassMap(array $argumentsVector) : void
       return $start . 'CORE_PATH};const CLASSMAP=' .
         (($classMap === 'array (' . PHP_EOL . ')')
           ? '[];'
-          : convertArrayFromVarExportToShortVersion(str_replace(
+          : shortenVarExportArray(str_replace(
             [
               '\'' . CONSOLE_PATH,
               '\'' . CORE_PATH,

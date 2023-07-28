@@ -11,6 +11,8 @@ use JsonException;
 use otra\config\AllConfig;
 use otra\OtraException;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\src\console\deployment\googleClosureCompile;
@@ -124,18 +126,18 @@ function generateJavaScript(
 
   if (!$jsFileExists)
   {
-    // Maybe TypeScript compiler has created more that one file so it has recreated an architecture.
+    // Maybe TypeScript compiler has created more than one file, so it has recreated an architecture.
     // So we search where it puts our generated file
-    $folder = new \RecursiveDirectoryIterator($tmpResourceFolder);
-    $iterator = new \RecursiveIteratorIterator($folder);
+    $folder = new RecursiveDirectoryIterator($tmpResourceFolder);
+    $iterator = new RecursiveIteratorIterator($folder);
     $compiledFileLocation = false;
     $filenameToSearch = $baseName . '.js';
 
-    foreach ($iterator as $file)
+    foreach ($iterator as $currentFile)
     {
-      if ($file->getFilename() == $filenameToSearch)
+      if ($currentFile->getFilename() == $filenameToSearch)
       {
-        $compiledFileLocation = $file->getPathname();
+        $compiledFileLocation = $currentFile->getPathname();
         break;
       }
     }

@@ -214,7 +214,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    */
   function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
   {
-    // If the directive (eg. 'script-src') is not there, then we only use the defaults
+    // If the directive (e.g. 'script-src') is not there, then we only use the defaults
     if (!isset($cspDirectives[$directive]))
       $policy .= $directive . ' ' . CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]][$directive] . ' ';
     elseif ($cspDirectives[$directive] !== '')

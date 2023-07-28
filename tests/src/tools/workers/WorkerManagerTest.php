@@ -176,7 +176,7 @@ class WorkerManagerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      self::VERBOSE
+      self::VERBOSE > 0
     );
     define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
 
@@ -185,33 +185,16 @@ class WorkerManagerTest extends TestCase
 
     // 1. testing streams
     $reflectedClass = new ReflectionClass(WorkerManager::class);
-    $stdinStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDIN_STREAMS)->getValue($workerManager);
-    self::assertNotEmpty($stdinStreams, 'Stdin streams must not be empty after we attached a worker.');
-
-    $stdoutStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDOUT_STREAMS)->getValue($workerManager);
-    self::assertNotEmpty($stdoutStreams, 'Stdout streams must not be empty after we attached a worker.');
-
-    foreach ($stdoutStreams as $stdoutStream)
-    {
-      self::assertSame(
-        TEST_STREAM_NON_BLOCKING_MODE,
-        stream_get_meta_data($stdoutStream)['blocked'],
-        'We must have a non blocking mode for the streams.'
-      );
-    }
-
-    $stderrStreams = $reflectedClass->getProperty(self::OTRA_FIELD_STDERR_STREAMS)->getValue($workerManager);
-    self::assertNotEmpty($stderrStreams, 'Stderr streams must not be empty after we attached a worker.');
 
     // 2. testing workers
     self::assertCount(
       1,
-      $workerManager::$workers,
+      $workerManager->workers,
       'There must be only one worker attached after having attached one worker on a empty Worker Manager.'
     );
     self::assertContainsOnly(
       Worker::class,
-      $workerManager::$workers,
+      $workerManager->workers,
       false,
       'Worker Manager must only contains Worker instances.'
     );

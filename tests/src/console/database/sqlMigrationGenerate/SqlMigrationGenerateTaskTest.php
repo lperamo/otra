@@ -34,7 +34,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
     MIGRATIONS_VERSION_ZERO = self::MIGRATIONS_FOLDER  . 'version0.php',
     MIGRATIONS_VERSION_ONE = self::MIGRATIONS_FOLDER  . 'version1.php';
 
-  private static $database;
+  private static ?Sql $database;
 
   protected function setUp(): void
   {

@@ -79,6 +79,7 @@ class LogsActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -126,9 +127,11 @@ class LogsActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(LogsAction::class, $logsAction);
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
-      $output . PHP_EOL,
+      ob_get_clean(),
+      $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

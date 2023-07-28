@@ -55,3 +55,4 @@ sonar-log.txt
 /src/console/shellCompletions/shellCompletions.sh
 **/css/**/*.css*
 **/js/**/*.js*
+/tests/src/bundles/HelloWorld/config/data

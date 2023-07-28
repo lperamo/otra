@@ -21,6 +21,7 @@ const
 /**
  * Creates the database fixtures from a database.
  *
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws ReflectionException
  * @throws OtraException

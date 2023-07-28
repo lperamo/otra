@@ -6,27 +6,34 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 namespace otra\config;
 
+use const otra\cache\php\BUNDLES_PATH;
 use const otra\cache\php\CACHE_PATH;
+use const otra\cache\php\COMPILE_MODE_MODIFY;
 
 define('otra\\cache\\php\\CACHE_TIME', 300); // 5 minutes(5*60)
+define('otra\\cache\\php\\COMPILE_MODE_MODIFY', 0);
+define('otra\\cache\\php\\COMPILE_MODE_SAVE', 1);
 
 /**
  * @package config
  */
 abstract class AllConfig
 {
-  public static int $verbose = 1;
+  public static int
+    $verbose = 1;
+//    $compileMode = COMPILE_MODE_MODIFY;
   public static bool
-    $cache = false,
-    $cssSourceMaps = false;
+    $debug = true,
+    $cache = false;
   public static string
     /* In order to not make new AllConfig::foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
-    case (if we not use AllConfig::foo it will not load AllConfig even if it's in the use statement so the "defines"
-     aren't accessible ) */
+    case
+    (if we not use AllConfig::foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
+    accessible ) */
     $cachePath = CACHE_PATH,
     $defaultConn = '', // mandatory in order to modify it later if needed
-    $sassBinary = '/home/lionel/.nvm/versions/node/v19.8.0/bin/sass',  // mandatory in order to modify it later if needed
-    $typeScriptBinary = '/home/lionel/.nvm/versions/node/v19.7.0/bin/tsc';  // mandatory in order to modify it later if needed
+    $sassBinary = '/your/path/to/sass',  // mandatory in order to modify it later if needed
+    $typeScriptBinary = '/your/path/to/tsc';  // mandatory in order to modify it later if needed
   public static array
     $dbConnections = [],// mandatory in order to modify it later if needed
     $debugConfig = [
