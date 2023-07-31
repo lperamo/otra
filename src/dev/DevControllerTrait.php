@@ -5,6 +5,7 @@ namespace otra;
 use otra\config\{AllConfig, Routes};
 use Exception;
 use otra\cache\php\Logger;
+use otra\templating\HtmlMinifier;
 use function otra\tools\getOtraCommitNumber;
 use const otra\cache\php\
 {BASE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
@@ -138,15 +139,16 @@ trait DevControllerTrait
     ob_start();
     // send variables to the debug toolbar
     require CORE_VIEWS_PATH . '/debugBar/debugBar.phtml';
+    $minifiedDebugBar = HtmlMinifier::minifyHTML(ob_get_clean());
+
     parent::$template = (str_contains(parent::$template, 'body'))
       ? preg_replace(
         '`(<body[^>]*>)`',
-        '$1' . ob_get_clean(),
+        '$1' . $minifiedDebugBar,
         parent::$template
       )
-      : ob_get_clean() . parent::$template;
+      : $minifiedDebugBar . parent::$template;
 
-    // suppress useless spaces
     parent::$template = str_replace(
       MasterController::OTRA_LABEL_ENDING_TITLE_TAG,
       MasterController::OTRA_LABEL_ENDING_TITLE_TAG . self::addDynamicCSS(),

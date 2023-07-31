@@ -26,6 +26,7 @@ const
     OTRA_KEY_PERMISSIONS_POLICY => 'Permissions-Policy: ',
     OTRA_KEY_CONTENT_SECURITY_POLICY => 'Content-Security-Policy: '
   ],
+  OTRA_ROUTES_PREFIX = 'otra',
   CSP_ARRAY = [
     'base-uri' => OTRA_LABEL_SECURITY_SELF,
     'form-action' => OTRA_LABEL_SECURITY_SELF,
@@ -38,7 +39,7 @@ const
     'child-src' => OTRA_LABEL_SECURITY_SELF,
     'manifest-src' => OTRA_LABEL_SECURITY_SELF,
     OTRA_KEY_STYLE_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF,
-    OTRA_KEY_SCRIPT_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_SELF
+    OTRA_KEY_SCRIPT_SRC_DIRECTIVE => OTRA_LABEL_SECURITY_STRICT_DYNAMIC
   ],
   CONTENT_SECURITY_POLICY = [
     DEV => CSP_ARRAY,
@@ -49,7 +50,6 @@ const
   PERMISSIONS_POLICY = [
     DEV =>
       [
-        'interest-cohort' => '', // To avoid tracking from Google Floc
         'sync-xhr' => ''
       ],
     PROD => []
@@ -66,12 +66,11 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   /**
    *
    * @throws Exception
-   * @return string
    */
-  function getRandomNonceForCSP(string $directive = OTRA_KEY_SCRIPT_SRC_DIRECTIVE) : string
+  function getRandomNonceForCSP() : string
   {
     $nonce = bin2hex(random_bytes(32));
-    MasterController::$nonces[$directive][] = $nonce;
+    MasterController::$nonces[OTRA_KEY_SCRIPT_SRC_DIRECTIVE][] = $nonce;
 
     return $nonce;
   }
@@ -81,26 +80,26 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
    * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
+   * @param string                $route
+   * @param ?string               $routeSecurityFilePath
    * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
-   *                                                        from MasterController
+   *                                                       from MasterController
    *
-   * @return array{0: string, 1: array<string, string>}
+   * @return array{0: string, 1: array<string, string>}|string The string is the policy that will be included in
+   * the HTTP headers, the array is the array of policies needed to handle the `strict-dynamic` rules for the CSP
+   * policies
    */
-  #[ArrayShape([
-    'string',
-    'array'
-  ])]
   function createPolicy(
     string $policy,
     string $route,
     ?string $routeSecurityFilePath,
     array $defaultPolicyDirectives
-  ) : array
+  ) : array|string
   {
     $finalProcessedPolicies = $defaultPolicyDirectives;
 
     // OTRA routes are not secure with CSP and permissions policies for the moment
-    if (!str_contains($route, 'otra') && $routeSecurityFilePath !== null)
+    if (!str_contains($route, OTRA_ROUTES_PREFIX) && $routeSecurityFilePath !== null)
     {
       // Retrieve security instructions from the routes' configuration file
       /** @var array<string,array<string,string>> $policiesFromUserConfig */
@@ -137,7 +136,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
     foreach ($finalProcessedPolicies as $directive => $value)
     {
       // script-src directive of the Content Security Policy receives a special treatment
-      if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE || $directive === OTRA_KEY_STYLE_SRC_DIRECTIVE)
+      if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE)
         continue;
 
       $finalPolicy .= $directive . $policySeparator . $value;
@@ -148,7 +147,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
         $finalPolicy .= '; ';
     }
 
-    if($policy === OTRA_KEY_PERMISSIONS_POLICY)
+    if ($policy === OTRA_KEY_PERMISSIONS_POLICY)
     {
       $finalPolicy = str_replace(
         [
@@ -161,7 +160,8 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
         ],
         $finalPolicy
       );
-      $finalPolicy = substr($finalPolicy, 0, -1);
+
+      return substr($finalPolicy, 0, -1);
     }
 
     return [$finalPolicy, $finalProcessedPolicies];
@@ -177,8 +177,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
         $routeSecurityFilePath,
         CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]]
       );
-      handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
-      handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives, $route);
+      handleStrictDynamic($policy, $cspDirectives[OTRA_KEY_SCRIPT_SRC_DIRECTIVE], $route);
       header($policy);
     }
   }
@@ -191,62 +190,51 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
         $route,
         $routeSecurityFilePath,
         PERMISSIONS_POLICY[$_SERVER[APP_ENV]]
-      )[OTRA_POLICY]);
+      ));
   }
 
   /**
    * Handles strict dynamic mode for CSP
    *
-   * @param array{
-   *    'base-uri'?:string,
-   *    'form-action'?:string,
-   *    'frame-ancestors'?:string,
-   *    'default-src'?:string,
-   *    'font-src'?:string,
-   *    'img-src'?:string,
-   *    'object-src'?:string,
-   *    'connect-src'?:string,
-   *    'child-src'?:string,
-   *    'manifest-src'?:string,
-   *    'style-src'?:string,
-   *    'script-src'?:string
-   *  } $cspDirectives
+   * @param string $policy
+   * @param ?string $cspScriptSrcDirectives Content Security Policy 'script-src' directive
+   * @param string $route                   Route to get the right security configuration file
    */
-  function handleStrictDynamic(string $directive, string &$policy, array $cspDirectives, string $route) : void
+  function handleStrictDynamic(string &$policy, ?string $cspScriptSrcDirectives, string $route) : void
   {
     // If the directive (e.g. 'script-src') is not there, then we only use the defaults
-    if (!isset($cspDirectives[$directive]))
-      $policy .= $directive . ' ' . CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]][$directive] . ' ';
-    elseif ($cspDirectives[$directive] !== '')
-      $policy .= $directive . ' ' . $cspDirectives[$directive] . ' ';
+    if (!isset($cspScriptSrcDirectives))
+      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' . CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]][OTRA_KEY_SCRIPT_SRC_DIRECTIVE] . ' ';
+    elseif ($cspScriptSrcDirectives !== '')
+      $policy .= OTRA_KEY_SCRIPT_SRC_DIRECTIVE . ' ' . $cspScriptSrcDirectives . ' ';
     else
       return;
 
     // if a value is set for 'script-src' but do not have the 'strict-dynamic' mode enabled
     if (!str_contains($policy, OTRA_LABEL_SECURITY_STRICT_DYNAMIC)
-      && !empty(MasterController::$nonces[$directive]) // if it has nonces
+      && !empty(MasterController::$nonces[OTRA_KEY_SCRIPT_SRC_DIRECTIVE]) // if it has nonces
       && (
         (isset(AllConfig::$debug) && AllConfig::$debug) // is debug mode active ?
         || $route === 'otra_exception'
       )
     )
     {
-      // we insert 'strict-dynamic' in the 'script-src' or 'style-src' policy (depends on $directive).
+      // we insert 'strict-dynamic' in the 'script-src' or 'style-src' policy (depends on OTRA_KEY_SCRIPT_SRC_DIRECTIVE).
       $policy = substr_replace(
         $policy,
         ' ' . OTRA_LABEL_SECURITY_STRICT_DYNAMIC,
-        mb_strpos($policy, $directive) + strlen($directive),
+        mb_strpos($policy, OTRA_KEY_SCRIPT_SRC_DIRECTIVE) + strlen(OTRA_KEY_SCRIPT_SRC_DIRECTIVE),
         0
       );
     }
 
     if (!empty(MasterController::$nonces))
     {
-      foreach (MasterController::$nonces[$directive] as $nonceKey => $nonce)
+      foreach (MasterController::$nonces[OTRA_KEY_SCRIPT_SRC_DIRECTIVE] as $nonceKey => $nonce)
       {
         $policy .= '\'nonce-' . $nonce . '\'';
 
-        if (array_key_last(MasterController::$nonces[$directive]) !== $nonceKey)
+        if (array_key_last(MasterController::$nonces[OTRA_KEY_SCRIPT_SRC_DIRECTIVE]) !== $nonceKey)
           $policy .= ' ';
       }
     }

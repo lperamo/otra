@@ -119,6 +119,8 @@ class HtmlMinifier
    */
   public static function minifyHTML(string $htmlCode, array $configuration = []) : string
   {
+//    print_r (htmlentities($htmlCode));
+//    return '';
     // reinitializing variables to prevent side effects on multiple uses
     self::$minifiedHtml = self::$actualTags =  [];
     self::$actualTag =

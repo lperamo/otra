@@ -80,14 +80,13 @@ trait ProdControllerTrait
     // If we have CSS files to load, then we load them
     if (self::$hasCssToLoad)
     {
-      $startLink = '<link rel=stylesheet nonce=';
-      $midLink = ' href="';
-      $content = $startLink . getRandomNonceForCSP('style-src') . $midLink .
+      $startLink = '<link rel=stylesheet ';
+      $content = $startLink . ' href="' .
         parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" media=screen />';
       $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.gz');
 
       if (file_exists(substr(BASE_PATH, 0, -1) . $printCssPath))
-        $content .= $startLink . getRandomNonceForCSP('style-src') . $midLink . $printCssPath .
+        $content .= $startLink . ' href="' . $printCssPath .
           '" media=print />';
 
       return $content;

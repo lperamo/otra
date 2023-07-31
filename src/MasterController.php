@@ -152,10 +152,6 @@ abstract class MasterController
     CSS_MEDIA_SCREEN = 0,
     LABEL_SCRIPT_NONCE = '<script nonce=';
 
-  private const
-    PRESERVED_TAGS_PATTERN = '@^<(code|pre|script)(?:\s[^>]*)?>(.*?)</\1>@is',
-    MISSING_SPACE_PATTERN = '@(</(?:pre|code|script)>)(<(?:pre|code|script))@i';
-
   /**
    * @param array{
    *  pattern?: string,
@@ -258,14 +254,8 @@ abstract class MasterController
     return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
       ? false
       : preg_replace(
-        [
-          '@(<script.*?nonce=")\w{64}@',
-          '@(<link.*?nonce=")\w{64}@',
-        ],
-        [
-          '${1}' . getRandomNonceForCSP(),
-          '${1}' . getRandomNonceForCSP('style-src')
-        ],
+        '@(<script.*?nonce=")\w{64}@',
+        '${1}' . getRandomNonceForCSP(),
         file_get_contents($cachedFile)
       );
   }
@@ -510,12 +500,11 @@ abstract class MasterController
 
     foreach(self::$stylesheets as $stylesheet)
     {
-      $cssContent .= PHP_EOL . '<link rel=stylesheet nonce=' .
-        getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) . ' href="' . $stylesheet[self::$stylesheetFile] .
+      $cssContent .= PHP_EOL . '<link rel=stylesheet href="' . $stylesheet[self::$stylesheetFile] .
         '.css" media=' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
           ? 'print'
           : 'screen')
-        . '/>';
+        . ' />';
     }
 
     return $cssContent;
