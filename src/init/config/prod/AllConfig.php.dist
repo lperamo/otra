@@ -28,8 +28,7 @@ abstract class AllConfig
     accessible ) */
     $cachePath = CACHE_PATH,
     $defaultConn = '',  // mandatory in order to modify it later if needed
-    $sassBinary = '/your/path/to/sass',  // mandatory in order to modify it later if needed
-    $typeScriptBinary = '/your/path/to/tsc';  // mandatory in order to modify it later if needed
+    $nodeBinariesPath = '/your/path/to/nodeBinFolder';  // mandatory in order to modify it later if needed
   public static array
       $dbConnections = [], // mandatory in order to modify it later if needed
       $debugConfig = [], // mandatory in order to modify it later if needed

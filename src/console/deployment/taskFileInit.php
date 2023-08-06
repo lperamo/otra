@@ -14,7 +14,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
-use function otra\tools\cliCommand;
+use function otra\tools\runCommandWithEnvironment;
 use function otra\tools\files\returnLegiblePath;
 
 if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
@@ -122,8 +122,13 @@ function generateStylesheetsFiles(
   foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
     $sassLoadPathString .= ' -I ' . $sassLoadPath;
 
-  [, $output] = cliCommand(
-    AllConfig::$sassBinary . ' -scompressed --update ' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
+  [, $output] = runCommandWithEnvironment(
+    AllConfig::$nodeBinariesPath . 'sass' . ' -scompressed --update ' . $sassLoadPathString .
+    (TASK_FILE_SOURCE_MAPS
+      ? ' '
+      : ' --no-source-map '
+    ) . $resourceName . ':' . $cssPath,
+    ['PATH' => getenv('PATH')],
     null,
     false
   );

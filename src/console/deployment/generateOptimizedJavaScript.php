@@ -16,7 +16,7 @@ use RecursiveIteratorIterator;
 use const otra\cache\php\{BASE_PATH,CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\src\console\deployment\googleClosureCompile;
-use function otra\tools\{cliCommand, cleanFileAndFolders};
+use function otra\tools\{cleanFileAndFolders, runCommandWithEnvironment};
 use function otra\tools\files\returnLegiblePath;
 
 const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
@@ -49,7 +49,6 @@ function generateJavaScript(
    *     noResolve?: bool,
    *     pretty?: bool,
    *     removeComments?: bool,
-   *     noImplicitUseStrict?: bool,
    *     watch?: bool
    *   }
    * } $typescriptConfig
@@ -112,9 +111,10 @@ function generateJavaScript(
 
   /* Launches typescript compilation on the file with project json configuration
      and launches Google Closure Compiler on the output just after */
-  $typescriptBinary = AllConfig::$typeScriptBinary ?: '/usr/bin/tsc';
-  [, $output] = cliCommand(
+  $typescriptBinary = AllConfig::$nodeBinariesPath . 'tsc' ?: '/usr/bin/tsc';
+  [, $output] = runCommandWithEnvironment(
     $typescriptBinary . ' --pretty -p ' . $temporaryTypescriptConfig,
+    ['PATH' => getenv('PATH') . PATH_SEPARATOR . AllConfig::$nodeBinariesPath],
     null,
     !$watching
   );
