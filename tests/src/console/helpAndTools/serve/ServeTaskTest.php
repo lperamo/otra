@@ -26,7 +26,7 @@ class ServeTaskTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage(
       'Problem when loading the command :' . PHP_EOL .
-      CLI_WARNING . 'OTRA_LIVE_APP_ENV=dev OTRA_LIVE_HTTPS=false php -d variables_order=EGPCS -S localhost:-50 -t /var/www/html/perso/otra/web web/indexDev.php 2>&1' . END_COLOR . PHP_EOL .
+      CLI_WARNING . 'OTRA_LIVE_APP_ENV=dev OTRA_LIVE_HTTPS=false php -d variables_order=EGPCS -S localhost:-50 -t /media/data/web/perso/otra/web web/indexDev.php 2>&1' . END_COLOR . PHP_EOL .
       'Shell error code 1. Invalid address: localhost:-50'
     );
 

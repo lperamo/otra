@@ -62,6 +62,7 @@ class TemplateStructureActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException|ReflectionException
    */
@@ -71,7 +72,9 @@ class TemplateStructureActionTest extends TestCase
     require CORE_PATH . 'templating/blocks.php';
     $_GET['route'] = 'HelloWorld';
     $_SERVER['HTTP_HOST'] = 'https://dev.otra-framework.tech';
-    require TEST_PATH . 'config/AllConfig.php';
+    $_SERVER['LOGIN'] = 'https://dev.otra-framework.tech';
+    $_SERVER['PASSWORD'] = 'https://dev.otra-framework.tech';
+    require TEST_PATH . 'config/AllConfigGood.php';
 
     // launching
     ob_start();
@@ -88,10 +91,12 @@ class TemplateStructureActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertInstanceOf(TemplateStructureAction::class, $templateStructureAction);
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
-      $output . PHP_EOL,
+      ob_get_clean(),
+      $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

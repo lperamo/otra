@@ -76,7 +76,7 @@ function getCssPathFromImport(
   // $importPath like ../../configuration
   // $importedStylesheetFound like ../../configuration/generic
   // $importedFileBaseName like generic.scss
-  // $resourcesPath like /var/www/html/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
+  // $resourcesPath like /media/data/web/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
 
   // The imported file can have the extension, but it is not mandatory
   if (!str_contains($importedFileBaseName, '.'))

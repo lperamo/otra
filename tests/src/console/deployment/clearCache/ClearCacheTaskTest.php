@@ -94,6 +94,7 @@ class ClearCacheTaskTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
+
     ob_start();
     require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
     generateTaskMetadata();
@@ -148,6 +149,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -174,6 +176,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -201,6 +204,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -247,6 +251,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -293,6 +298,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -339,6 +345,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -385,6 +392,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -431,6 +439,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -477,6 +486,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -523,6 +533,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -569,6 +580,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -615,6 +627,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -661,6 +674,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

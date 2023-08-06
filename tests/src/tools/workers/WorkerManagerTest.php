@@ -7,8 +7,7 @@ use ReflectionClass;
 use ReflectionException;
 use otra\tools\workers\{Worker,WorkerManager};
 use PHPUnit\Framework\TestCase;
-use const otra\console\
-{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE};
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -34,13 +33,12 @@ class WorkerManagerTest extends TestCase
     WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
     WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
     WAITING_MESSAGE_4 = 'waiting for the result of the fourth final message ...',
-    VERBOSE = 2,
+    VERBOSE = true,
     CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
     OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
     UP_ONE_LINE = "\033[1A",
-    CLEAR_PREVIOUS_LINE = self::UP_ONE_LINE . WorkerManager::ERASE_TO_END_OF_LINE,
     WHITE = "\e[15;2]",
     STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.',
     TIMEOUT = 60;
@@ -67,13 +65,13 @@ class WorkerManagerTest extends TestCase
     define(__NAMESPACE__ . '\\TEST_DETACH_STATUS_WAS_RUNNING', true);
 
     // launching
-    $foundKey = array_search($worker, $workerManager::$workers, true);
+    $foundKey = array_search($worker, $workerManager->workers, true);
     $status = $workerManager->detach($worker);
 
     // testing workers
     self::assertArrayNotHasKey(
       $foundKey,
-      $workerManager::$workers,
+      $workerManager->workers,
       'A detached worker must no be present in the Worker Manager afterwards.'
     );
 
@@ -163,8 +161,6 @@ class WorkerManagerTest extends TestCase
    * @depends testConstruct
    * @depends testDestruct
    *
-   * @throws ReflectionException
-   *
    * @author Lionel Péramo
    */
   public function testAttach() : void
@@ -176,7 +172,7 @@ class WorkerManagerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      self::VERBOSE > 0
+      self::VERBOSE
     );
     define(__NAMESPACE__ . '\\TEST_STREAM_NON_BLOCKING_MODE', false);
 
@@ -254,20 +250,15 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($worker);
 
     // Launching
-    $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
     $this->expectOutputString(
       self::WAITING_MESSAGE . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE .
-      self::WHITE . self::SUCCESS_MESSAGE . ' ' . $worker->command .
+      ERASE_SEQUENCE .
+      self::WHITE . self::SUCCESS_MESSAGE .
       PHP_EOL
     );
-
-    // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
-    // we ensure that there is no remaining working processes
-    if (count(WorkerManager::$workers) > 0)
-      $workerManager->detach($worker);
 
     // Cleaning
     unset($workerManager);
@@ -275,10 +266,7 @@ class WorkerManagerTest extends TestCase
 
   /**
    * @medium
-   * @depends testConstruct
-   * @depends testDestruct
-   * @depends testAttach
-   * @depends testDetach
+   * @depends testListen_OneWorker
    */
   public function testListen_OneWorkerTooBig() : void
   {
@@ -293,20 +281,18 @@ class WorkerManagerTest extends TestCase
     );
     $workerManager = new WorkerManager();
     $workerManager->attach($worker);
+
     // Launching
-    $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
-    $this->expectOutputString(
-      self::WAITING_MESSAGE_2 . PHP_EOL .
-      CLI_ERROR . 'The process that launched ' . CLI_INFO_HIGHLIGHT . self::COMMAND_SLEEP_2 . CLI_ERROR .
-      ' was hanging during ' . self::CUSTOM_TIMEOUT . ' second. We will kill the process.' . END_COLOR . PHP_EOL
+    $this->expectOutputRegex(
+      '@' .
+      preg_quote(self::WAITING_MESSAGE_2 . PHP_EOL . CLI_ERROR . 'The process that launched ' . CLI_INFO_HIGHLIGHT . self::COMMAND_SLEEP_2 . CLI_ERROR, '@') .
+      ' was hanging during [1-3]\.?[0-9]{0,15} seconds?\. We will kill the process\.' .
+      preg_quote(END_COLOR, '@') .
+      '\s@'
     );
-
-    // normally, the worker once terminated has been detached in the listen() method but in case there was an exception
-    // we ensure that there is no remaining working processes
-    if (count(WorkerManager::$workers) > 0)
-      $workerManager->detach($worker);
 
     // Cleaning
     unset($workerManager);
@@ -314,11 +300,7 @@ class WorkerManagerTest extends TestCase
 
   /**
    * @medium
-   * @depends testConstruct
-   * @depends testDestruct
-   * @depends testAttach
-   * @depends testDetach
-   * @depends testDetachLongProcess
+   * @depends testListen_OneWorker
    */
   public function testListen_SomeWorkers() : void
   {
@@ -344,24 +326,20 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($workerBis);
 
     // Launching
-    while (0 < count($workerManager::$workers))
-      $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
     $messageStart = self::WHITE;
-    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
 
     $this->expectOutputString(
       self::WAITING_MESSAGE . PHP_EOL .
+      self::UP_ONE_LINE . "\r" . WorkerManager::ERASE_TO_END_OF_LINE .
+      $messageStart . self::SUCCESS_MESSAGE . PHP_EOL .
       self::WAITING_MESSAGE_2 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE .
-      self::CLEAR_PREVIOUS_LINE .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      self::WAITING_MESSAGE_2 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE .
-      self::CLEAR_PREVIOUS_LINE .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL
+      self::UP_ONE_LINE . "\r" . WorkerManager::ERASE_TO_END_OF_LINE .
+      self::UP_ONE_LINE . "\r" . WorkerManager::ERASE_TO_END_OF_LINE  .
+      $messageStart . self::SUCCESS_MESSAGE . PHP_EOL .
+      $messageStart . self::SUCCESS_MESSAGE_2 . PHP_EOL
     );
 
     // Cleaning
@@ -370,10 +348,7 @@ class WorkerManagerTest extends TestCase
 
   /**
    * @medium
-   * @depends testConstruct
-   * @depends testDestruct
-   * @depends testAttach
-   * @depends testDetach
+   * @depends testListen_OneWorker
    */
   public function testListen_orderedOutput() : void
   {
@@ -399,22 +374,21 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($workerBis);
 
     // Launching
-    while (0 < count($workerManager::$workers))
-      $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
-    $messageStart = self::WHITE;
-    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
-
     $this->expectOutputString(
       self::WAITING_MESSAGE_2 . PHP_EOL .
       self::WAITING_MESSAGE_3 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-      self::WAITING_MESSAGE_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_3 . $firstMessageEnd .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND . PHP_EOL
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE_3 . PHP_EOL .
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WHITE . self::SUCCESS_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE_3 . PHP_EOL
     );
 
     // Cleaning
@@ -423,12 +397,9 @@ class WorkerManagerTest extends TestCase
 
   /**
    * @medium
-   * @depends testConstruct
-   * @depends testDestruct
-   * @depends testAttach
-   * @depends testDetach
+   * @depends testListen_OneWorker
    */
-  public function testSubworkers() : void
+  public function testSubWorkers() : void
   {
     // Context
     $workerManager = new WorkerManager();
@@ -469,41 +440,45 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($workerBis);
 
     // Launching
-    while (0 < count($workerManager::$workers))
-      $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
-    $messageStart = self::WHITE;
-    $firstMessageEnd = ' ' . self::COMMAND . PHP_EOL;
-
     $this->expectOutputString(
       self::WAITING_MESSAGE_2 . PHP_EOL .
       self::WAITING_MESSAGE . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-
-      self::WAITING_MESSAGE_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE . PHP_EOL .
       self::WAITING_MESSAGE_3 . PHP_EOL .
       self::WAITING_MESSAGE_4 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WAITING_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE . PHP_EOL .
       self::WAITING_MESSAGE_3 . PHP_EOL .
-      self::WAITING_MESSAGE_4 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
+      self::WHITE .
+      self::SUCCESS_MESSAGE_4 . PHP_EOL .
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WHITE . self::SUCCESS_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE . PHP_EOL .
       self::WAITING_MESSAGE_3 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-      self::CLEAR_PREVIOUS_LINE .
-
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE . $firstMessageEnd .
-      $messageStart . self::SUCCESS_MESSAGE_3 . ' ' . self::COMMAND_SLEEP_2 . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_4 . ' ' . self::COMMAND . PHP_EOL
+      self::WHITE . self::SUCCESS_MESSAGE_4 . PHP_EOL .
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::WHITE . self::SUCCESS_MESSAGE_2 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE_3 . PHP_EOL .
+      self::WHITE . self::SUCCESS_MESSAGE_4 . PHP_EOL
     );
 
     // Cleaning
@@ -511,10 +486,7 @@ class WorkerManagerTest extends TestCase
   }
 
   /**
-   * @depends testConstruct
-   * @depends testDestruct
-   * @depends testAttach
-   * @depends testDetach
+   * @adepends testListen_OneWorker
    */
   public function testFailures() : void
   {
@@ -540,26 +512,30 @@ class WorkerManagerTest extends TestCase
     $workerManager->attach($workerBis);
 
     // Launching
-    while (0 < count($workerManager::$workers))
-      $workerManager->listen();
+    $workerManager->listen(self::VERBOSE);
 
     // Testing
     $messageStart = self::WHITE;
 
     $this->expectOutputString(
       self::WAITING_MESSAGE . PHP_EOL .
-      self::WAITING_MESSAGE_2 . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::FAIL_MESSAGE . ' '.
+      self::BAD_COMMAND . PHP_EOL .
+      self::FAIL_MESSAGE . ' ' .
       self::BAD_COMMAND . PHP_EOL .
       self::WAITING_MESSAGE_2 . PHP_EOL .
-      self::FAIL_MESSAGE . PHP_EOL .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-      self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE . self::CLEAR_PREVIOUS_LINE .
-
+      self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::UP_ONE_LINE . "\r" .
+      WorkerManager::ERASE_TO_END_OF_LINE . self::FAIL_MESSAGE . ' ' .
       self::BAD_COMMAND . PHP_EOL .
-      $messageStart . self::SUCCESS_MESSAGE_2 . ' ' . self::COMMAND . PHP_EOL .
-      self::FAIL_MESSAGE . PHP_EOL
+      $messageStart . self::SUCCESS_MESSAGE_2 . PHP_EOL .
+      self::FAIL_MESSAGE . ' ' . self::BAD_COMMAND . PHP_EOL
     );
 
     // Cleaning

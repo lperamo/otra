@@ -93,7 +93,7 @@ class RoutesTaskTest extends TestCase
   }
 
   /**
-   * @medium
+   * @large
    * @throws OtraException
    *
    * @author Lionel Péramo
@@ -121,14 +121,6 @@ class RoutesTaskTest extends TestCase
       $tasksClassMap,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
       [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-    TasksManager::execute(
-      $tasksClassMap,
-      self::OTRA_TASK_BUILD_DEV,
-      [
-        self::OTRA_CONSOLE_FILENAME,
-        'genBootstrap'
-      ]
     );
     TasksManager::execute(
       $tasksClassMap,

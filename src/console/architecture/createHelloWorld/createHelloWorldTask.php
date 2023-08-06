@@ -18,6 +18,7 @@ namespace otra\console\architecture\constants
 namespace otra\console\architecture\createHelloWorld
 {
   use otra\OtraException;
+  use function otra\console\deployment\buildDev\buildDev;
   use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
   use const otra\console\
   {
@@ -35,7 +36,7 @@ namespace otra\console\architecture\createHelloWorld
   use function otra\console\architecture\{actionHandling, checkBooleanArgument};
   use function otra\console\deployment\genClassMap\genClassMap;
   use function otra\console\deployment\updateConf\updateConf;
-  use function otra\tools\{cliCommand,copyFileAndFolders};
+  use function otra\tools\copyFileAndFolders;
 
   const
     ARG_ACTION_NAME = 5,
@@ -192,12 +193,9 @@ namespace otra\console\architecture\createHelloWorld
 
     echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
     require CORE_PATH . 'tools/cli.php';
-    [,$output] = cliCommand(
-      'php ' . BASE_PATH . 'bin/otra.php buildDev 0 1',
-      CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
-    );
-
-    echo $output, PHP_EOL, CLI_BASE, 'CSS assets built', SUCCESS;
+    require CONSOLE_PATH . 'deployment/buildDev/buildDevTask.php';
+    buildDev(['bin/otra.php', 'buildDev', 0, 1]);
+    echo CLI_BASE, 'CSS assets built', SUCCESS;
 
     /* We update the class mapping since we have one action more.
      * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the

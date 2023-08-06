@@ -56,8 +56,8 @@ class WorkerTest extends TestCase
     self::assertIsString($worker->waitingMessage);
     self::assertNull($worker->failMessage);
 
-    self::assertIsInt($worker->timeout);
-    self::assertSame(self::TIMEOUT, $worker->timeout);
+    self::assertIsFloat($worker->timeout);
+    self::assertSame((float)self::TIMEOUT, $worker->timeout);
   }
 
   /**
@@ -73,13 +73,12 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      0
+      false
     );
-    $string = $worker->done('Worker command done.');
+    $worker->done('Worker command done.');
 
     // testing
-    self::assertIsString($string);
-    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
+    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $worker->successFinalMessage);
   }
 
   /**
@@ -100,18 +99,17 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      0
+      false
     );
-    $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
+    $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
-    self::assertIsString($string);
     self::assertSame(
       CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
       'Exit code : ' . TEST_STATUS,
-      $string
+      $worker->failFinalMessage
     );
   }
 
@@ -133,12 +131,11 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       self::FAIL_MESSAGE,
-      0
+      false
     );
-    $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
+    $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
-    self::assertIsString($string);
-    self::assertSame(self::FAIL_MESSAGE, $string);
+    self::assertSame(self::FAIL_MESSAGE, $worker->failFinalMessage);
   }
 }

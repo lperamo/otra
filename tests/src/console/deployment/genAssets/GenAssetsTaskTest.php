@@ -25,7 +25,8 @@ class GenAssetsTaskTest extends TestCase
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
     OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
-    ROUTES_PADDING = 25;
+    ROUTES_PADDING = 25,
+    LABEL_SCREEN_CSS = 'SCREEN CSS';
 
   /**
    * @author Lionel Péramo
@@ -99,17 +100,17 @@ class GenAssetsTaskTest extends TestCase
       ))
         $outputExpected .= ' [' . CLI_INFO . 'Nothing to do' . CLI_GRAY . '] =>' . CLI_SUCCESS . ' OK' . END_COLOR;
       elseif (in_array($route, ['otra_css', 'otra_logs', 'otra_requests', 'otra_routes', 'otra_templateStructure']))
-        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
+        $outputExpected .= ' [' . CLI_SUCCESS . self::LABEL_SCREEN_CSS . CLI_GRAY . ']' .
           ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO JS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
       elseif ($route === 'otra_sql')
-        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
+        $outputExpected .= ' [' . CLI_SUCCESS . self::LABEL_SCREEN_CSS . CLI_GRAY . ']' .
           ' [' . CLI_ERROR . 'NO PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_SUCCESS . 'JS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;
       else
-        $outputExpected .= ' [' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . ']' .
+        $outputExpected .= ' [' . CLI_SUCCESS . self::LABEL_SCREEN_CSS . CLI_GRAY . ']' .
           ' [' . CLI_SUCCESS . 'PRINT CSS' . CLI_GRAY . ']' .
           ' [' . CLI_INFO . 'NO JS' . CLI_GRAY . ']' .
           ' [' . CLI_SUCCESS . 'TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR;

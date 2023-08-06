@@ -109,6 +109,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @depends testCreateActionTask
    * @doesNotPerformAssertions
@@ -188,6 +189,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -317,6 +319,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

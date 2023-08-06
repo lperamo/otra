@@ -49,7 +49,12 @@ class SecurityServiceTest extends TestCase
     CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';",
     DOT_PHP = '.php',
     DIRECTIVES = 1,
-    EXPECTED_SECURITY_POLICY_EXAMPLE = "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; ",
+    EXPECTED_SECURITY_POLICY_EXAMPLE = "Content-Security-Policy: base-uri " . self::OTRA_LABEL_SECURITY_SELF .
+      "; form-action " . self::OTRA_LABEL_SECURITY_SELF . "; frame-ancestors " . self::OTRA_LABEL_SECURITY_NONE .
+      "; default-src " . self::OTRA_LABEL_SECURITY_NONE . "; font-src " . self::OTRA_LABEL_SECURITY_SELF . "; img-src " .
+      self::OTRA_LABEL_SECURITY_SELF . "; object-src " . self::OTRA_LABEL_SECURITY_SELF . "; connect-src " .
+      self::OTRA_LABEL_SECURITY_SELF . "; child-src " . self::OTRA_LABEL_SECURITY_SELF . "; manifest-src " .
+      self::OTRA_LABEL_SECURITY_SELF . "; style-src " . self::OTRA_LABEL_SECURITY_SELF . "; ",
     OTRA_KEY_CONTENT_SECURITY_POLICY = 'csp',
     OTRA_KEY_SCRIPT_SRC_DIRECTIVE = 'script-src',
     OTRA_KEY_STYLE_SRC_DIRECTIVE = 'style-src',
@@ -165,7 +170,7 @@ class SecurityServiceTest extends TestCase
         [
           PROD,
           self::ROUTE_SECURITY_PROD_FILE_PATH,
-          "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; ",
+          'Content-Security-Policy: base-uri ' . self::OTRA_LABEL_SECURITY_SELF . '; form-action ' . self::OTRA_LABEL_SECURITY_SELF . '; frame-ancestors ' . self::OTRA_LABEL_SECURITY_NONE . '; default-src ' . self::OTRA_LABEL_SECURITY_NONE . '; font-src ' . self::OTRA_LABEL_SECURITY_SELF . '; img-src ' . self::OTRA_LABEL_SECURITY_SELF . '; object-src ' . self::OTRA_LABEL_SECURITY_SELF . '; connect-src ' . self::OTRA_LABEL_SECURITY_NONE . '; child-src ' . self::OTRA_LABEL_SECURITY_SELF . '; manifest-src ' . self::OTRA_LABEL_SECURITY_SELF . '; style-src ' . self::OTRA_LABEL_SECURITY_NONE . "; ",
           array_merge(
             self::CONTENT_SECURITY_POLICY[PROD],
             (require self::ROUTE_SECURITY_PROD_FILE_PATH)[self::OTRA_KEY_CONTENT_SECURITY_POLICY]
@@ -221,7 +226,7 @@ class SecurityServiceTest extends TestCase
         [
           DEV,
           self::ROUTE_SECURITY_DEV_FILE_PATH,
-          "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self"
+          "Permissions-Policy: sync-xhr=(),accelerometer=self"
         ],
       'Production - Permissions Policy' =>
         [
@@ -272,11 +277,11 @@ class SecurityServiceTest extends TestCase
       DEV => [
         DEV,
         self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; script-src 'self' otra.tech ;style-src 'self' ;"],
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; style-src 'self'; script-src 'self' otra.tech ;"],
       PROD => [
         PROD,
         self::ROUTE_SECURITY_PROD_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; script-src 'none' ;style-src 'none' ;"
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; style-src 'none'; script-src 'none' ;"
       ],
     ];
   }

@@ -60,6 +60,7 @@ class SqlActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws JsonException|OtraException
    */
@@ -85,10 +86,12 @@ class SqlActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertInstanceOf(SqlAction::class, $sqlAction);
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
-      $output . PHP_EOL,
+      ob_get_clean(),
+      $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

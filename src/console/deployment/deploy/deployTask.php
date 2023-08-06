@@ -193,7 +193,6 @@ function deploy(array $argumentsVector) : void
   define(__NAMESPACE__ . '\\STRLEN_BASEPATH', strlen(BASE_PATH));
   define(__NAMESPACE__ . '\\WORKERS_VERBOSITY', VERBOSE > 0);
 
-
   /**
    * See which files to send and which files to keep
    *
@@ -420,7 +419,7 @@ function deploy(array $argumentsVector) : void
     );
 
     // Launching the workers
-    $workerManager->listen(200000, WORKERS_VERBOSITY);
+    $workerManager->listen(WORKERS_VERBOSITY);
   } finally
   {
     // Cleanup when the script finishes executing

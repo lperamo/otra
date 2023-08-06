@@ -135,33 +135,31 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
 
     foreach ($finalProcessedPolicies as $directive => $value)
     {
-      // script-src directive of the Content Security Policy receives a special treatment
+      // script-src directive of the Content Security Policy receives a special treatment related to `strict-dynamic`
+      // rule
       if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE)
         continue;
 
-      $finalPolicy .= $directive . $policySeparator . $value;
-
-      if ($policy === OTRA_KEY_PERMISSIONS_POLICY)
-        $finalPolicy .= '),';
-      else
-        $finalPolicy .= '; ';
+      $finalPolicy .= $directive . $policySeparator . $value . ($policy === OTRA_KEY_PERMISSIONS_POLICY ? '),' : '; ');
     }
 
     if ($policy === OTRA_KEY_PERMISSIONS_POLICY)
     {
-      $finalPolicy = str_replace(
-        [
-          OTRA_LABEL_SECURITY_SELF,
-          '(self)'
-        ],
-        [
-          'self',
-          'self'
-        ],
-        $finalPolicy
+      return substr(
+        str_replace(
+          [
+            OTRA_LABEL_SECURITY_SELF,
+            '(self)'
+          ],
+          [
+            'self',
+            'self'
+          ],
+          $finalPolicy
+        ),
+        0,
+        -1
       );
-
-      return substr($finalPolicy, 0, -1);
     }
 
     return [$finalPolicy, $finalProcessedPolicies];
@@ -196,9 +194,9 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   /**
    * Handles strict dynamic mode for CSP
    *
-   * @param string $policy
+   * @param string  $policy
    * @param ?string $cspScriptSrcDirectives Content Security Policy 'script-src' directive
-   * @param string $route                   Route to get the right security configuration file
+   * @param string  $route                  Route to get the right security configuration file
    */
   function handleStrictDynamic(string &$policy, ?string $cspScriptSrcDirectives, string $route) : void
   {
