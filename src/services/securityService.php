@@ -67,7 +67,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    *
    * @throws Exception
    */
-  function getRandomNonceForCSP(string $directive) : string
+  function getRandomNonceForCSP(?string $directive = OTRA_KEY_SCRIPT_SRC_DIRECTIVE) : string
   {
     $nonce = bin2hex(random_bytes(32));
     MasterController::$nonces[$directive][] = $nonce;
