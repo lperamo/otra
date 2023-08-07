@@ -276,52 +276,90 @@ class HtmlMinifier
             }
           } elseif (self::$character === '<') // The actual character is not a whitespace
           {
+            $position = self::$index + 1;
 
-            if (self::$actualMarkupContent !== '')
-            {
-              self::$minifiedHtml[] = self::$actualMarkupContent;
-              self::$actualMarkupContent = '';
-            }
+            // If the next character is a space or the end of the string, it's not the start of a tag.
+            if ($position >= $htmlLength || ctype_space(self::$htmlCode[$position]))
+              $isValidTagStart = false;
+            else
+              // Check if the next character is valid for the start of a tag (letter, digit, -, _).
+              $isValidTagStart = ctype_alpha(self::$htmlCode[$position])
+                || self::$htmlCode[$position] === '-'
+                || self::$htmlCode[$position] === '_'
+                || self::$htmlCode[$position] === '/'
+                || self::$htmlCode[$position] === '!';
 
-            // searching closing tag
-            self::$lastState = self::$state;
+            if ($isValidTagStart)
+            {
+              if (self::$actualMarkupContent !== '')
+              {
+                self::$minifiedHtml[] = self::$actualMarkupContent;
+                self::$actualMarkupContent = '';
+              }
 
-            if (self::$htmlCode[self::$index + 1] === '/')
-            {
-              self::$state = self::STATE_CLOSING_TAG;
-              self::$actualMarkupContent = '<';
-            } elseif (self::$htmlCode[self::$index + 1] !== '!') // it is not a comment
-            {
-              self::$state = self::STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND;
-              self::$actualMarkupContent = '<';
-            } elseif (self::$htmlCode[self::$index + 2] === '-' && self::$htmlCode[self::$index + 3] === '-')
-            {
-              // We are at the beginning of an HTML comment.
-              // Check the next two characters to see if they are '--'.
-              // If they are, this is the start of a comment.
-              self::$state = self::STATE_INSIDE_COMMENT;
+              // searching closing tag
+              self::$lastState = self::$state;
 
-              if (!self::$configuration['comments'])
-                self::$actualMarkupContent .= '<';
-            }
-            // If the next two characters are not '--', this is not a comment.
-            // It could be a DOCTYPE declaration or a CDATA section.
-            // We need to decide how we want to handle these cases.
-            elseif (strtolower(substr(self::$htmlCode, self::$index + 2, 3)) === 'doc')
-            {
-              // We are at the beginning of a DOCTYPE declaration.
-              self::$state = self::STATE_INSIDE_DOCTYPE;
-              self::$actualMarkupContent .= self::$character;
+              if (self::$htmlCode[self::$index + 1] === '/')
+              {
+                self::$state = self::STATE_CLOSING_TAG;
+                self::$actualMarkupContent = '<';
+              } elseif (self::$htmlCode[self::$index + 1] !== '!') // it is not a comment
+              {
+                self::$state = self::STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND;
+                self::$actualMarkupContent = '<';
+              } elseif (self::$htmlCode[self::$index + 2] === '-' && self::$htmlCode[self::$index + 3] === '-')
+              {
+                // We are at the beginning of an HTML comment.
+                // Check the next two characters to see if they are '--'.
+                // If they are, this is the start of a comment.
+                self::$state = self::STATE_INSIDE_COMMENT;
+
+                if (!self::$configuration['comments'])
+                  self::$actualMarkupContent .= '<';
+              }
+              // If the next two characters are not '--', this is not a comment.
+              // It could be a DOCTYPE declaration or a CDATA section.
+              // We need to decide how we want to handle these cases.
+              elseif (strtolower(substr(self::$htmlCode, self::$index + 2, 3)) === 'doc')
+              {
+                // We are at the beginning of a DOCTYPE declaration.
+                self::$state = self::STATE_INSIDE_DOCTYPE;
+                self::$actualMarkupContent .= self::$character;
+              } else
+              {
+                // We are at the beginning of a CDATA section.
+                self::$state = self::STATE_INSIDE_CDATA;
+                self::$actualMarkupContent .= self::$character;
+              }
             } else
-            {
-              // We are at the beginning of a CDATA section.
-              self::$state = self::STATE_INSIDE_CDATA;
-              self::$actualMarkupContent .= self::$character;
-            }
+              self::$actualMarkupContent.= self::$character;
           } elseif (self::$character === '>')
           {
-            self::exitingTag();
-            self::$minifiedHtml[] = '>';
+            $position = self::$index - 1;
+            $isEndOfValidTag = false;
+
+            // Ignore white spaces
+            while ($position >= 0)
+            {
+              $character = self::$htmlCode[$position];
+
+              if ($character === '<')
+              {
+                $isEndOfValidTag = true;
+                break;
+              } elseif ($character === '>')
+                break;
+
+              --$position;
+            }
+
+            if ($isEndOfValidTag)
+            {
+              self::exitingTag();
+              self::$minifiedHtml[] = '>';
+            } else
+              self::$actualMarkupContent.= self::$character;
           } else
             self::$actualMarkupContent.= self::$character;
           break;

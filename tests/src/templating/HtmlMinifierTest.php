@@ -138,6 +138,16 @@ HTMLCODE],
           ]
         ],
       'new lines' => ['<meta charset=UTF-8> <meta>', '<meta charset="UTF-8"/>' . PHP_EOL . '<meta/>'],
+      'inferior in content' =>
+        [
+          '<button type=button><</button>',
+          '<button type=button><</button>'
+        ],
+      'superior in content' =>
+      [
+        '<button type=button>></button>',
+        '<button type=button>></button>'
+      ],
       'big test' =>
         [
           <<<'HTMLCODE'
