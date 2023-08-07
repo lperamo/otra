@@ -251,7 +251,7 @@ abstract class DumpWeb extends DumpMaster {
   {
     if (self::$cssNotAdded)
     {
-      ?><style>
+      ?><style nonce="<?= getRandomNonceForCSP(OTRA_KEY_STYLE_SRC_DIRECTIVE) ?>">
         .otra-dump--first {
           color : #6496c8;
         }

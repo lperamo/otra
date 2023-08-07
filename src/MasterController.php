@@ -254,8 +254,14 @@ abstract class MasterController
     return (!file_exists($cachedFile) || filemtime($cachedFile) + CACHE_TIME <= time())
       ? false
       : preg_replace(
-        '@(<script.*?nonce=")\w{64}@',
-        '${1}' . getRandomNonceForCSP(),
+        [
+          '@(<script.*?nonce=")\w{64}@',
+          '@(<link.*?nonce=")\w{64}@',
+        ],
+        [
+          '${1}' . getRandomNonceForCSP(),
+          '${1}' . getRandomNonceForCSP('style-src')
+        ],
         file_get_contents($cachedFile)
       );
   }

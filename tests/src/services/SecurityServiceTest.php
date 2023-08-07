@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace src\services;
 
 use JetBrains\PhpStorm\ArrayShape;
-use otra\config\AllConfig;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, CORE_PATH, DEV, DIR_SEPARATOR, PROD, TEST_PATH};
@@ -12,13 +11,11 @@ use const otra\services\
 {
   OTRA_KEY_CONTENT_SECURITY_POLICY,
   OTRA_KEY_PERMISSIONS_POLICY,
-  OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
-  OTRA_KEY_STYLE_SRC_DIRECTIVE,
   OTRA_POLICY,
   PERMISSIONS_POLICY
 };
 use function otra\services\
-  {addCspHeader,addPermissionsPoliciesHeader,createPolicy,getRandomNonceForCSP,handleStrictDynamic};
+{addCspHeader, addNonces, addPermissionsPoliciesHeader, createPolicy, getRandomNonceForCSP, handleStrictDynamic};
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -66,7 +63,6 @@ class SecurityServiceTest extends TestCase
     TEST_SECURITY_PROD_PATH = self::TEST_SECURITY_PATH . PROD . DIR_SEPARATOR,
     ROUTE_SECURITY_DEV_BASE_PATH = self::TEST_SECURITY_DEV_PATH . self::ROUTE,
     ROUTE_SECURITY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . self::DOT_PHP,
-    ROUTE_SECURITY_EMPTY_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'Empty' . self::DOT_PHP,
     ROUTE_SECURITY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
     SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
@@ -82,7 +78,7 @@ class SecurityServiceTest extends TestCase
   {
     $_SERVER[APP_ENV] = PROD;
     require self::SECURITY_SERVICE;
-    $nonce = getRandomNonceForCSP();
+    $nonce = getRandomNonceForCSP(self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE);
 
     self::assertIsString($nonce);
     self::assertMatchesRegularExpression('@\w{64}@', $nonce);
@@ -277,11 +273,11 @@ class SecurityServiceTest extends TestCase
       DEV => [
         DEV,
         self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; style-src 'self'; script-src 'self' otra.tech ;"],
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; style-src 'self'; script-src 'self' otra.tech;style-src 'self';"],
       PROD => [
         PROD,
         self::ROUTE_SECURITY_PROD_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; style-src 'none'; script-src 'none' ;"
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; style-src 'none'; script-src 'none';style-src 'none';"
       ],
     ];
   }
@@ -346,8 +342,6 @@ class SecurityServiceTest extends TestCase
    * @param string  $environment
    * @param string  $routeSecurityFilePath
    * @param string  $expectedPolicy
-   * @param ?bool   $hasFirstNonce
-   * @param ?bool   $hasSecondNonce
    *
    * @throws Exception
    * @return void
@@ -355,9 +349,7 @@ class SecurityServiceTest extends TestCase
   public function testHandleStrictDynamic(
     string $environment,
     string $routeSecurityFilePath,
-    string $expectedPolicy,
-    bool $hasFirstNonce = false,
-    bool $hasSecondNonce = false
+    string $expectedPolicy
   ): void
   {
     // context
@@ -365,25 +357,21 @@ class SecurityServiceTest extends TestCase
     $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
-    if ($hasFirstNonce)
-      $firstNonce = getRandomNonceForCSP();
-
-    if ($hasSecondNonce)
-      $secondNonce = getRandomNonceForCSP();
-
     // launching
     handleStrictDynamic(
+      self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
       $cspPolicy,
-      (require $routeSecurityFilePath)[OTRA_KEY_CONTENT_SECURITY_POLICY][OTRA_KEY_SCRIPT_SRC_DIRECTIVE],
-      self::ROUTE
+      (require $routeSecurityFilePath)[OTRA_KEY_CONTENT_SECURITY_POLICY]
+    );
+    handleStrictDynamic(
+      self::OTRA_KEY_STYLE_SRC_DIRECTIVE,
+      $cspPolicy,
+      (require $routeSecurityFilePath)[OTRA_KEY_CONTENT_SECURITY_POLICY]
     );
 
     // testing
     self::assertSame(
-      $expectedPolicy .
-        (!$hasFirstNonce ? '' : $firstNonce .
-          (!$hasSecondNonce ? "';" : "' 'nonce-" . $secondNonce . "';")
-        ),
+      $expectedPolicy,
       $cspPolicy
     );
   }
@@ -392,77 +380,111 @@ class SecurityServiceTest extends TestCase
    * When we say without script-src for example, we mean in the user configuration not in the final configuration.
    * @return array<string, array<string, string, string, string, ?bool, ?string, ?bool>>
    */
+
   #[ArrayShape(
     [
-      'Development - Without script-src' => "array",
-      'Development - With script-src, no strict-dynamic, no nonces' => "array",
-      'Development - With empty script-src, no strict-dynamic, no nonces' => "array",
-      'Development - With empty script-src, no strict-dynamic, nonces' => "array",
-      'Development - With empty script-src, strict-dynamic, 2 nonces' => "array",
-      'Production - Without script-src, no nonces' => "array",
-      'Production - With script-src, no strict-dynamic, no nonces' => "array",
-    ]
-  )]
-  public static function handleStrictDynamicDataProvider(): array
+      'Development - With script-src, no strict-dynamic' => "array",
+      'Development - With empty script-src, no strict-dynamic' => "array",
+      'Development - With empty script-src, strict-dynamic' => "array",
+      'Production - Without script-src' => "array",
+      'Production - With script-src, no strict-dynamic' => "array"
+    ])] public static function handleStrictDynamicDataProvider(): array
   {
     return [
-      // If we do not have the related directive, then we put the default value from MasterController.
-      // Beware, here we only test 'script-src'.
-      'Development - Without script-src' =>
-      [
-        DEV,
-        self::ROUTE_SECURITY_EMPTY_DEV_FILE_PATH,
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' ;"
-      ],
-      // If we do not have a defined policy, we put the default directives for this policy.
-      // Beware, here we only test 'script-src'.
-      'Development - With script-src, no strict-dynamic, no nonces' =>
+      'Development - With script-src, no strict-dynamic' =>
       [
         DEV,
         self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech ;"
+        "Content-Security-Policy: frame-ancestors 'none';script-src 'self' otra.tech;style-src 'self';"
       ],
-      // If we have an empty policy, we simply remove that directive.
-      // Beware, here we only test 'script-src'.
-      'Development - With empty script-src, no strict-dynamic, no nonces' =>
+      'Development - With empty script-src, no strict-dynamic' =>
       [
         DEV,
         self::ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH,
-        self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC
+        self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC . "style-src 'self';"
       ],
-      // If we have nonces with a script-src policy that does not contain 'strict-dynamic' mode, we must throw an exception.
-      // Beware, here we only test 'script-src'.
-      'Development - With empty script-src, no strict-dynamic, nonces' =>
-      [
-        DEV,
-        self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'self' otra.tech 'nonce-",
-        true
-      ],
-      // If we have an empty policy, we simply remove that directive.
-      // Beware, here we only test 'script-src'.
-      'Development - With empty script-src, strict-dynamic, 2 nonces' =>
+      'Development - With empty script-src, strict-dynamic' =>
       [
         DEV,
         self::ROUTE_SECURITY_DEV_BASE_PATH . 'StrictDynamic.php',
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' 'nonce-",
-        true,
-        true
+        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic';style-src 'self';"
       ],
-      // If we do not have the related directive, then we put the default value from MasterController.
-      // Beware, here we only test 'script-src'.
-      'Production - Without script-src, no nonces' =>
+      'Production - Without script-src' =>
       [
         PROD,
         self::ROUTE_SECURITY_EMPTY_PROD_FILE_PATH,
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic' ;"
+        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic';style-src 'self';"
       ],
-      // Beware, here we only test 'script-src'.
-      'Production - With script-src, no strict-dynamic, no nonces' =>
+      'Production - With script-src, no strict-dynamic' =>
       [
         PROD,
         self::ROUTE_SECURITY_PROD_FILE_PATH,
-        "Content-Security-Policy: frame-ancestors 'none';script-src 'none' ;"
+        "Content-Security-Policy: frame-ancestors 'none';script-src 'none';style-src 'none';"
+      ]
+    ];
+  }
+
+  /**
+   * @dataProvider addNoncesDataProvider
+   *
+   * @param string   $expectedPolicy
+   * @param int|null $nonces
+   *
+   * @throws Exception
+   * @return void
+   */
+  public function testAddNonces(string $expectedPolicy, ?int $nonces = 0): void
+  {
+    // context
+    $_SERVER[APP_ENV] = DEV;
+    require self::SECURITY_SERVICE;
+
+    if ($nonces > 0)
+    {
+      getRandomNonceForCSP(self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE);
+      getRandomNonceForCSP(self::OTRA_KEY_STYLE_SRC_DIRECTIVE);
+
+      if ($nonces > 1)
+      {
+        getRandomNonceForCSP(self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE);
+      }
+    }
+
+    $policy = "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic'; style-src 'self';";
+
+    // launching
+    addNonces($policy);
+
+    // testing
+    self::assertMatchesRegularExpression($expectedPolicy, $policy);
+  }
+
+  /**
+   * @return array<string, array{0:string, 1?:int}>
+   */
+  #[ArrayShape(
+    [
+      'no nonces' => "string[]",
+      'one nonce' => "array",
+      'two nonces' => "array"
+    ]
+  )] public static function addNoncesDataProvider(): array
+  {
+    return
+    [
+      'no nonces' =>
+      [
+        "@Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic';@"
+      ],
+      'one nonce' =>
+      [
+        "@Content-Security-Policy: frame-ancestors 'none';script-src 'nonce-[a-fA-F0-9]{64}' 'strict-dynamic'; style-src 'nonce-[a-fA-F0-9]{64}' 'self';@",
+        1
+      ],
+      'two nonces' =>
+      [
+        "@Content-Security-Policy: frame-ancestors 'none';script-src 'nonce-[a-fA-F0-9]{64}' 'nonce-[a-fA-F0-9]{64}' 'strict-dynamic'; style-src 'nonce-[a-fA-F0-9]{64}' 'self';@",
+        2
       ]
     ];
   }
