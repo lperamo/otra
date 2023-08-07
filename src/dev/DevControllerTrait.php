@@ -163,7 +163,7 @@ trait DevControllerTrait
   /**
    * Adds resources file to the template. Can be 'css' or 'js' resources.
    *
-   * @param string $assetType 'css' or 'js'
+   * @param string $assetType                               'css' or 'js'
    * @param array{css: string, js:string} $viewResourcePath
    *
    * @throws Exception
@@ -194,7 +194,6 @@ trait DevControllerTrait
     )
       return '';
 
-    $resourceContent = '';
     $chunks = $route['chunks'];
 
     // Bundle and module information do not exist on exceptions
@@ -217,6 +216,7 @@ trait DevControllerTrait
 
     $naturalPriorityIndex = 0;
     $debLink2 = $debLink . '/bundles/';
+    $resourcesArray = [];
 
     // **Reminder** : $viewsResourcePath is like
     // '/bundles/' . $this->bundle . '/' . $this->module . '/resources/css/'
@@ -256,21 +256,18 @@ trait DevControllerTrait
 
           // Stores the data in a resources array
           $resourcesArray[$resourceFileData['order'] ?? $naturalPriorityIndex] =
-            ($resourceTypeInfoActual ?? $resourceTypeInfo) . $resourceFile .
+            $resourceTypeInfoActual . $resourceFile .
             ($resourceType !== 'print_css'
               ? $endLink . (isset($resourceFileData['module']) ? ' type="module"': '') . $endLink2
               : '.css" media="print" />'
             );
+
+          ++$naturalPriorityIndex;
         }
       }
-
-      ++$naturalPriorityIndex;
     }
 
-    foreach ($resourcesArray as $resourceHtml)
-    {
-      $resourceContent .= $resourceHtml;
-    }
+    $resourceContent = implode('', $resourcesArray);
 
     if ($assetType === 'js')
     {
