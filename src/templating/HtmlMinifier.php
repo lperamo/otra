@@ -372,31 +372,31 @@ class HtmlMinifier
           break;
 
         case self::STATE_IN_HTML_ATTRIBUTE_VALUE:
-            if (self::$character === '"' || self::$character === "'")
+         if (self::$character === self::$quote)
+          {
+            self::$lastState = self::$state;
+            self::$state = self::STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES;
+
+            if (self::$attributeValueBuffer === self::$character)
             {
-              self::$lastState = self::$state;
-              self::$state = self::STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES;
+              // removes the first quote AND the equal sign as the value is empty
+              self::$actualMarkupContent = substr(self::$actualMarkupContent, 0,-1);
+            } elseif (strpbrk(self::$attributeValueBuffer, ' =<>') !== false)
+              // If there is one of the forbidden special characters in the attribute value, we need the quotes.
+              // Otherwise, skips them.
+              self::$actualMarkupContent .= self::$attributeValueBuffer . self::$character;
+            else
+            {
+              self::$actualMarkupContent .= substr(
+                self::$attributeValueBuffer,
+                1,
+                strlen(self::$attributeValueBuffer) - 1
+              );
+            }
 
-              if (self::$attributeValueBuffer === self::$character)
-              {
-                // removes the first quote AND the equal sign as the value is empty
-                self::$actualMarkupContent = substr(self::$actualMarkupContent, 0,-1);
-              } elseif (strpbrk(self::$attributeValueBuffer, ' =<>') !== false)
-                // If there is one of the forbidden special characters in the attribute value, we need the quotes.
-                // Otherwise, skips them.
-                self::$actualMarkupContent .= self::$attributeValueBuffer . self::$character;
-              else
-              {
-                self::$actualMarkupContent .= substr(
-                  self::$attributeValueBuffer,
-                  1,
-                  strlen(self::$attributeValueBuffer) - 1
-                );
-              }
-
-              self::$attributeValueBuffer = '';
-            } else
-              self::$attributeValueBuffer .= self::$character;
+            self::$attributeValueBuffer = '';
+          } else
+            self::$attributeValueBuffer .= self::$character;
 
           break;
 
