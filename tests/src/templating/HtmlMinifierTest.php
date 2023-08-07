@@ -79,6 +79,11 @@ HTMLCODE],
         '<p data-value="test=hello" data-test="test>hello" data-note="test<hello">',
         '<p data-value="test=hello" data-test="test>hello" data-note="test<hello">'
       ],
+      'quotes in attribute values' =>
+        [
+          '<p title="The \'test\'">test</p>',
+          '<p title="The \'test\'">test</p>'
+        ],
       // aggressive minification
       'outside HTML comments' => ['', '<!-- comment -->'],
       'outside HTML comments (with no comments minification)' =>
