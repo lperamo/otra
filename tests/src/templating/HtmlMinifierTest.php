@@ -67,6 +67,15 @@ HTMLCODE,<<<'HTMLCODE'
 <textarea>
   test </textarea>
 HTMLCODE],
+      'preformatted markup with markup inside' =>
+        [<<<'HTMLCODE'
+<pre><span>test</span>
+<span>div</span></pre>
+HTMLCODE,
+         <<<'HTMLCODE'
+<pre><span>test</span>
+<span>div</span></pre>
+HTMLCODE],
       'auto closed tags' => ['<meta>', '<meta/>'],
       'auto closed tags with attributes' => ['<meta data-value=test>', '<meta data-value=test/>'],
       'tags with normal attributes' => ['<p id=test class="super cool"></p>', '<p id = "test" class="super cool"></p>'],

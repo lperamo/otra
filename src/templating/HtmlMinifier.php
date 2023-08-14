@@ -85,7 +85,7 @@ class HtmlMinifier
   {
     $lastTagStartBracketPosition = self::getLastTagStartBracketPosition();
 
-    if (// if we find a self closing tag (e.g., `/>`)
+    if (// if we find a self-closing tag (e.g., `/>`)
       self::$htmlCode[self::$index - 1] === '/'
       // or end of tag (e.g., `</`)
       || str_contains(substr(self::$htmlCode, $lastTagStartBracketPosition, self::$index - $lastTagStartBracketPosition), '/')
@@ -119,8 +119,6 @@ class HtmlMinifier
    */
   public static function minifyHTML(string $htmlCode, array $configuration = []) : string
   {
-//    print_r (htmlentities($htmlCode));
-//    return '';
     // reinitializing variables to prevent side effects on multiple uses
     self::$minifiedHtml = self::$actualTags =  [];
     self::$actualTag =
@@ -473,17 +471,37 @@ class HtmlMinifier
         case self::STATE_INSIDE_PRESERVED_TAG_CONTENT:
           if (self::$character === '<' && self::$htmlCode[self::$index + 1] === '/')
           {
-            if (self::$actualMarkupContent !== '')
+            self::$actualMarkupContent .= '</';
+            self::$index += 2;
+            self::$character = $htmlCode[self::$index];
+
+            while (ctype_space(self::$character))
             {
-              self::$minifiedHtml[] = self::$actualMarkupContent;
-              self::$actualMarkupContent = '';
+              self::$actualMarkupContent .= self::$character;
+              ++self::$index;
+              self::$character = $htmlCode[self::$index];
             }
 
-            self::$lastState = self::$state;
-            self::$state = self::STATE_CLOSING_TAG;
+            if (substr(self::$htmlCode, self::$index, strlen(self::$actualTag)) === self::$actualTag)
+            {
+              if (self::$actualMarkupContent !== '')
+              {
+                self::$minifiedHtml[] = self::$actualMarkupContent;
+                self::$actualMarkupContent = '';
+              }
+
+              // We move out from a tag, and we set the parent tag as the new actual tag
+              // We fix the tag type accordingly
+              array_pop(self::$actualTags);
+
+              self::$actualTag = self::getPreviousActualTag(array_key_last(self::$actualTags));
+              self::$tagType = self::setTagType();
+              self::$lastState = self::$state;
+              self::$state = self::STATE_CLOSING_TAG;
+            }
           }
 
-          self::$actualMarkupContent.= self::$character;
+          self::$actualMarkupContent .= self::$character;
 
           if (self::$character === '>' && self::$lastState === self::STATE_CLOSING_TAG)
           {
