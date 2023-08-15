@@ -19,21 +19,21 @@ trait ProdControllerTrait
   /**
    * Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
-   * @param string $file      The file to render
-   * @param array  $variables Variables to pass
-   * @param bool   $ajax      Is this an ajax partial ?
-   * @param bool   $viewPath  If true, we add the usual view path before the $file variable.
+   * @param string      $file      The file to render
+   * @param array       $variables Variables to pass
+   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
    *
-   * @return string
    * @throws OtraException
+   * @return string
    */
   final public function renderView(
     string $file,
     array $variables = [],
     bool $ajax = false,
-    bool $viewPath = true
+    bool|string $viewPath = true
   ) : string
   {
     [$templateFile, ] = $this->getTemplateFile($file, $viewPath);
