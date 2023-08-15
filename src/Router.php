@@ -302,7 +302,10 @@ abstract class Router
   public static function getRouteUrlWithoutParameters(string $routeName) : string
   {
     $routeLongName = Routes::$allRoutes[$routeName][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL];
+    $bracketPosition = strpos($routeLongName, '{');
 
-    return mb_substr($routeLongName, 0, strpos($routeLongName, '{') - 1);
+    return $bracketPosition !== false
+      ? mb_substr($routeLongName, 0, $bracketPosition - 1)
+      : $routeLongName;
   }
 }
