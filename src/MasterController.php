@@ -215,7 +215,8 @@ abstract class MasterController
     $this->params = $params;
     $mainPath = 'bundles/' . $this->bundle . DIR_SEPARATOR . $this->module . DIR_SEPARATOR;
     // Stores the templates' path of the calling controller
-    $this->viewPath = BASE_PATH . $mainPath . 'views/' . $this->controller . DIR_SEPARATOR;
+    $this->viewPath = BASE_PATH . $mainPath . 'views/' . str_replace('\\','/', $this->controller) .
+      DIR_SEPARATOR;
     $this->viewResourcePath = [
       'css' => DIR_SEPARATOR . $mainPath . 'resources/css/',
       'js' => DIR_SEPARATOR . $mainPath . 'resources/js/'
@@ -336,16 +337,17 @@ abstract class MasterController
   }
 
   /**
-   * @param string $file     The file to render
-   * @param bool   $viewPath If true, we add the usual view path before the `$file` variable.
+   * @param string      $file     The file to render
+   * @param bool|string $viewPath If true (default), we add the usual view path before `$file` otherwise,
+   *                              we add `$viewPath` before `$file`
    *
    * @return array{0:string,1:string} [$templateFile, $otraRoute]
    */
-  protected function getTemplateFile(string $file, bool $viewPath) : array
+  protected function getTemplateFile(string $file, bool|string $viewPath) : array
   {
     if (!str_contains($this->route, 'otra_'))
       return [
-        ($viewPath ? $this->viewPath : '') . $file,
+        ($viewPath === true ? $this->viewPath : $viewPath) . $file,
         false
       ];
 

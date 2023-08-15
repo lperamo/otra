@@ -66,7 +66,7 @@ trait DevControllerTrait
     string $file,
     array $variables = [],
     bool $ajax = false,
-    bool $viewPath = true) : string
+    bool|string $viewPath = true) : string
   {
     [$templateFile, $otraRoute] = $this->getTemplateFile($file, $viewPath);
 
