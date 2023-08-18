@@ -21,3 +21,6 @@ $externalConfigFile = BUNDLES_PATH . 'config/Config.php';
 
 if (file_exists($externalConfigFile))
   require $externalConfigFile;
+
+if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
+  class_alias('otra\\cache\\php\\Router', 'otra\\Router');
