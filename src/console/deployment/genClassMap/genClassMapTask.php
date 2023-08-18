@@ -19,7 +19,7 @@ use function otra\console\shortenVarExportArray;
 /**
  * @param string $environment DEV or PROD
  */
-function generateClassMap(string $classMap, string $filename, string $environment = DEV): void
+function generateClassMap(string $classMap, string $filename, string $environment = DEV) : void
 {
   $filePointer = fopen(CACHE_PHP_INIT_PATH . $filename, 'w');
   $contentToWrite = convertClassMapToPHPFile($classMap, $environment) . PHP_EOL;
@@ -35,21 +35,22 @@ function generateClassMap(string $classMap, string $filename, string $environmen
  */
 function genClassMap(array $argumentsVector) : void
 {
+  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
+  {
+    define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[2]) ? (int) $argumentsVector[2] : 0);
+    define(__NAMESPACE__ . '\\ADDITIONAL_CLASSES_FILES_PATH', BASE_PATH . 'config/AdditionalClassFiles.php');
+    define(__NAMESPACE__ . '\\SOURCE_FOLDER', 'src');
+  }
+
   $folders = [
     BASE_PATH . 'bundles',
     BASE_PATH . 'config',
-    BASE_PATH . 'src',
+    BASE_PATH . SOURCE_FOLDER,
     BASE_PATH . 'tests',
     BASE_PATH . 'vendor'
   ];
   $classes = [];
   $processedDir = 0;
-
-  if (!defined(__NAMESPACE__ . '\\VERBOSE'))
-  {
-    define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[2]) ? (int) $argumentsVector[2] : 0);
-    define(__NAMESPACE__ . '\\ADDITIONAL_CLASSES_FILES_PATH', BASE_PATH . 'config/AdditionalClassFiles.php');
-  }
 
   $additionalClassesFiles = [];
 
@@ -84,10 +85,10 @@ function genClassMap(array $argumentsVector) : void
       int &$processedFolder,
       array &$classesThatMayHaveToBeAdded) : array
     {
-      if (!($folderHandler = opendir($folder)))
-      {
-        closedir($folderHandler);
+      $folderHandler = opendir($folder);
 
+      if (!$folderHandler)
+      {
         echo CLI_ERROR, 'Problem encountered with the directory : ' . $folder . ' !', END_COLOR;
         throw new OtraException(code: 1, exit: true);
       }
@@ -118,7 +119,9 @@ function genClassMap(array $argumentsVector) : void
         // Only php files that begin by an uppercase letter are interesting (as classes MUST begin by an uppercase letter)
         $posDot = strrpos($entry, '.');
 
-        if ($posDot === false || '.php' !== substr($entry, $posDot) || !ctype_upper($entry[0]))
+        if ($posDot === false
+          || '.php' !== substr($entry, $posDot)
+          || !ctype_upper($entry[0]))
           continue;
 
         if (in_array(
@@ -129,27 +132,32 @@ function genClassMap(array $argumentsVector) : void
           ]))
           continue;
 
-        $content = file_get_contents(str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath)));
+        $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));
+        $content = file_get_contents($revisedEntryAbsolutePath);
         preg_match_all('@^\\s*namespace\\s+([^;{]+)\\s*[;{]@mx', $content, $matches);
 
+        if (!isset($matches[1]))
+          continue;
+
         // we calculate the shortest string of path with realpath and str_replace function
-        $revisedEntryAbsolutePath = str_replace('\\', DIR_SEPARATOR, realpath($entryAbsolutePath));
         $className = substr($entry, 0, $posDot);
 
-        if (isset($matches[1]))
+        foreach($matches[1] as $namespace)
         {
-          foreach($matches[1] as $namespace)
-          {
-            $classNamespace = trim($namespace) . '\\' . $className;
+          $classNamespace = trim($namespace) . '\\' . $className;
 
-            if (!isset($classes[$classNamespace]))
-              $classes[$classNamespace] = $revisedEntryAbsolutePath;
-            elseif (!in_array($classNamespace, $additionalClassesFilesKeys))
-              $classesThatMayHaveToBeAdded[$classNamespace] = str_replace(BASE_PATH, '', $revisedEntryAbsolutePath);
-            else
-              $classes[$classNamespace] = $revisedEntryAbsolutePath;
-          }
+          if (!isset($classes[$classNamespace]))
+            $classes[$classNamespace] = $revisedEntryAbsolutePath;
+          elseif (!in_array($classNamespace, $additionalClassesFilesKeys))
+            $classesThatMayHaveToBeAdded[$classNamespace] = str_replace(
+              BASE_PATH,
+              '',
+              $revisedEntryAbsolutePath
+            );
+          else
+            $classes[$classNamespace] = $revisedEntryAbsolutePath;
         }
+
       }
 
       closedir($folderHandler);
@@ -221,7 +229,11 @@ function genClassMap(array $argumentsVector) : void
   // Classes from the framework will be integrated in the bootstraps, so they do not need to be in the final class map
   $prodClasses = [];
 
+  $basePathLength = mb_strlen(BASE_PATH);
+
   /**
+   * Loop through all classes to filter the ones needed for production.
+   *
    * @var string $classNamespace
    * @var string  $class
    */
@@ -230,18 +242,26 @@ function genClassMap(array $argumentsVector) : void
     // We only let external libraries
     if (str_contains($class, BASE_PATH))
     {
-      $tmpClass = mb_substr($class, mb_strlen(BASE_PATH));
+      // Get the relative path of the class from the BASE_PATH.
+      $tmpClass = mb_substr($class, $basePathLength);
+
+      // // Find the first directory after BASE_PATH in the class's path.
       $firstFolderAfterBasePath = mb_substr($tmpClass, 0, mb_strpos($tmpClass, '/'));
 
+      // Check if the folder matches SOURCE_FOLDER or 'web', while making sure
+      // it's not a subset of SOURCE_FOLDER.
+      // Also, specifically exclude the DumpMaster class since it's dynamically loaded
+      // and therefore not integrated into the final bootstrap.
       if (
-        (in_array($firstFolderAfterBasePath, ['src', 'web']) && !str_contains($tmpClass, 'src'))
-        // temporary fix for DumpMaster class as it is not integrated in the final bootstrap because this class is
-        // dynamically loaded
-        || (str_contains($tmpClass, 'DumpMaster')))
-        $prodClasses[$classNamespace] = $class;
+        (!($firstFolderAfterBasePath === SOURCE_FOLDER || $firstFolderAfterBasePath === 'web')
+          || str_contains($tmpClass, SOURCE_FOLDER))
+        && !(str_contains($tmpClass, 'DumpMaster'))
+      )
+        continue;
     }
-    else
-      $prodClasses[$classNamespace]= $class;
+
+    // If all the conditions above are met, the class is deemed a production class.
+    $prodClasses[$classNamespace]= $class;
   }
 
   $classMap = var_export($classes, true);
