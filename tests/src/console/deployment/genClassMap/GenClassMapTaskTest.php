@@ -6,8 +6,10 @@ namespace src\console\deployment\genClassMap;
 use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
+use function otra\console\deployment\genClassMap\genClassMap;
 use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
-use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, DEV, TEST_PATH};
+use const otra\cache\php\
+{APP_ENV, BASE_PATH, CONSOLE_PATH, CORE_PATH, DEV, TEST_PATH};
 use const otra\cache\php\init\CLASSMAP2;
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use function otra\tools\files\returnLegiblePath2;
@@ -120,11 +122,8 @@ class GenClassMapTaskTest extends TestCase
     ob_start();
 
     // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_GEN_CLASS_MAP,
-      ['otra.php', self::OTRA_TASK_GEN_CLASS_MAP, 1]
-    );
+    require CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
+    genClassMap(['bin/otra.php', self::OTRA_TASK_GEN_CLASS_MAP, 1]);
 
     $generatedOutput = ob_get_clean();
 
