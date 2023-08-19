@@ -16,7 +16,7 @@ if (!function_exists(__NAMESPACE__ . '\\returnLegiblePath'))
 
   /**
    * We do _not_ know that we have BASE_PATH in the path.
-   * Returns BASE_PATH the/path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
+   * Returns the path with BASE_PATH in light blue whether the resource is contained in the BASE_PATH
    * otherwise returns resource name as is.
    *
    * @param ?string $endColor Must contain '' if we do not want to restore default color

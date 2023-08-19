@@ -67,6 +67,7 @@ HTMLCODE,<<<'HTMLCODE'
 <textarea>
   test </textarea>
 HTMLCODE],
+      'SVG (XML syntax so cannot remove the slash)' => ['<svg><use />', '<svg><use />'],
       'preformatted markup with markup inside' =>
         [<<<'HTMLCODE'
 <pre><span>test</span>
@@ -77,7 +78,7 @@ HTMLCODE,
 <span>div</span></pre>
 HTMLCODE],
       'auto closed tags' => ['<meta>', '<meta/>'],
-      'auto closed tags with attributes' => ['<meta data-value=test>', '<meta data-value=test/>'],
+      'auto closed tags with attributes' => ['<meta data-v=a>', '<meta data-v=a/>'],
       'tags with normal attributes' => ['<p id=test class="super cool"></p>', '<p id = "test" class="super cool"></p>'],
       'tags with attribute with an hyphen' => ['<p data-value=refresh></p>', '<p data-value="refresh"></p>'],
       'tags with attribute value containing a slash' => ['<link href=/favicon.png>', '<link href="/favicon.png">'],
