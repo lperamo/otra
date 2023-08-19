@@ -14,7 +14,7 @@ class HtmlMinifier
       'img', 'input', 'kbd', 'label', 'q', 'samp', 'select', 'small', 'span', 'strong', 'sub', 'sup',
       'textarea', 'time', 'var', 'video'
     ],
-    PRESERVED_TAGS = ['code', 'pre', 'script', 'textarea'],
+    PRESERVED_TAGS = ['code', 'pre', 'script', 'svg', 'textarea'],
     STATE_CLOSING_TAG = 'CLOSING_TAG',
     STATE_IN_HTML_ATTRIBUTE_VALUE = 'IN HTML ATTRIBUTE VALUE',
     STATE_INSIDE_CDATA = 'INSIDE_CDATA',
@@ -159,7 +159,7 @@ class HtmlMinifier
         case self::STATE_INSIDE_TAG_TAG_NAME:
           if (!ctype_space(self::$character))
           {
-            // we do not add '/' in auto-closing tags
+            // we do not add '/' in auto-closing tags if it is not XML (SVG files for example)
             if (self::$character === '/')
             {
               self::$lastState = self::$state;
