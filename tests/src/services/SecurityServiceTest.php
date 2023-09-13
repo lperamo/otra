@@ -15,7 +15,13 @@ use const otra\services\
   PERMISSIONS_POLICY
 };
 use function otra\services\
-{addCspHeader, addNonces, addPermissionsPoliciesHeader, createPolicy, getRandomNonceForCSP, handleStrictDynamic};
+{addCspHeader,
+  addNonces,
+  addPermissionsPoliciesHeader,
+  createPolicy,
+  getRandomNonceForCSP,
+  getRoutePolicies,
+  handleStrictDynamic};
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -66,7 +72,8 @@ class SecurityServiceTest extends TestCase
     ROUTE_SECURITY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . self::DOT_PHP,
     ROUTE_SECURITY_EMPTY_PROD_FILE_PATH = self::TEST_SECURITY_PROD_PATH . self::ROUTE . 'Empty' . self::DOT_PHP,
     SECURITY_SERVICE = CORE_PATH . 'services/securityService.php',
-    ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php';
+    ROUTE_SECURITY_EMPTY_STRING_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'EmptyString.php',
+    ROUTE_SECURITY_STYLE_SRC_DEV_FILE_PATH = self::ROUTE_SECURITY_DEV_BASE_PATH . 'StyleSrc.php';
 
   /**
    * Use of blocks without override
@@ -106,10 +113,11 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
+    $customPolicyDirectives = getRoutePolicies(self::ROUTE, $securityFilePath);
     $returnArray = createPolicy(
       self::OTRA_KEY_CONTENT_SECURITY_POLICY,
-      self::ROUTE,
-      $securityFilePath,
+      $customPolicyDirectives[0],
+      $customPolicyDirectives[1][self::OTRA_KEY_CONTENT_SECURITY_POLICY],
       self::CONTENT_SECURITY_POLICY[$environment]
     );
 
@@ -195,10 +203,11 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
+    [$otraRoute, $customPolicyDirectives] = getRoutePolicies(self::ROUTE, $securityFilePath);
     $returnValue = createPolicy(
       OTRA_KEY_PERMISSIONS_POLICY,
-      self::ROUTE,
-      $securityFilePath,
+      $otraRoute,
+      $customPolicyDirectives[OTRA_KEY_PERMISSIONS_POLICY],
       PERMISSIONS_POLICY[$environment]
     );
 
@@ -273,11 +282,11 @@ class SecurityServiceTest extends TestCase
       DEV => [
         DEV,
         self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; style-src 'self'; script-src 'self' otra.tech;style-src 'self';"],
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'self'; child-src 'self'; manifest-src 'self'; style-src 'self'; script-src 'self' otra.tech;"],
       PROD => [
         PROD,
         self::ROUTE_SECURITY_PROD_FILE_PATH,
-        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; style-src 'none'; script-src 'none';style-src 'none';"
+        "Content-Security-Policy: base-uri 'self'; form-action 'self'; frame-ancestors 'none'; default-src 'none'; font-src 'self'; img-src 'self'; object-src 'self'; connect-src 'none'; child-src 'self'; manifest-src 'self'; style-src 'none'; script-src 'none';"
       ],
     ];
   }
@@ -342,6 +351,7 @@ class SecurityServiceTest extends TestCase
    * @param string  $environment
    * @param string  $routeSecurityFilePath
    * @param string  $expectedPolicy
+   * @param string $baseCspPolicy
    *
    * @throws Exception
    * @return void
@@ -349,31 +359,28 @@ class SecurityServiceTest extends TestCase
   public function testHandleStrictDynamic(
     string $environment,
     string $routeSecurityFilePath,
-    string $expectedPolicy
+    string $expectedPolicy,
+    string $baseCspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC
   ): void
   {
     // context
     $_SERVER[APP_ENV] = $environment;
-    $cspPolicy = self::CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC;
     require self::SECURITY_SERVICE;
 
     // launching
     handleStrictDynamic(
       self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE,
-      $cspPolicy,
+      $baseCspPolicy,
       (require $routeSecurityFilePath)[OTRA_KEY_CONTENT_SECURITY_POLICY]
     );
     handleStrictDynamic(
       self::OTRA_KEY_STYLE_SRC_DIRECTIVE,
-      $cspPolicy,
+      $baseCspPolicy,
       (require $routeSecurityFilePath)[OTRA_KEY_CONTENT_SECURITY_POLICY]
     );
 
     // testing
-    self::assertSame(
-      $expectedPolicy,
-      $cspPolicy
-    );
+    self::assertSame($expectedPolicy, $baseCspPolicy);
   }
 
   /**
@@ -386,6 +393,7 @@ class SecurityServiceTest extends TestCase
       'Development - With script-src, no strict-dynamic' => "array",
       'Development - With empty script-src, no strict-dynamic' => "array",
       'Development - With empty script-src, strict-dynamic' => "array",
+      'Development - With style-src, no strict-dynamic' => "array",
       'Production - Without script-src' => "array",
       'Production - With script-src, no strict-dynamic' => "array"
     ])] public static function handleStrictDynamicDataProvider(): array
@@ -408,6 +416,12 @@ class SecurityServiceTest extends TestCase
         DEV,
         self::ROUTE_SECURITY_DEV_BASE_PATH . 'StrictDynamic.php',
         "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic';style-src 'self';"
+      ],
+      'Development - With style-src, no strict-dynamic' =>
+      [
+        DEV,
+        self::ROUTE_SECURITY_STYLE_SRC_DEV_FILE_PATH,
+        "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic';style-src 'self' otra.tech;"
       ],
       'Production - Without script-src' =>
       [
