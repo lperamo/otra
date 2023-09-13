@@ -76,41 +76,55 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
+   * @param string $route
+   * @param string $routeSecurityFilePath
+   *
+   * @return array{bool, array<string, array<string, string>>}
+   */
+  function getRoutePolicies(string $route, string $routeSecurityFilePath) : array
+  {
+    if (str_contains($route, OTRA_ROUTES_PREFIX))
+      return [true, []];
+
+    // Retrieve security instructions from the routes' configuration file
+    /** @var array<string,array<string,string>> $policiesFromUserConfig */
+    $policiesFromUserConfig = require $routeSecurityFilePath;
+
+    // Forces the policies to be an empty array for the rest of the algorithm
+    if (!isset($policiesFromUserConfig[OTRA_KEY_CONTENT_SECURITY_POLICY]))
+      $policiesFromUserConfig[OTRA_KEY_CONTENT_SECURITY_POLICY] = [];
+
+    if (!isset($policiesFromUserConfig[OTRA_KEY_PERMISSIONS_POLICY]))
+      $policiesFromUserConfig[OTRA_KEY_PERMISSIONS_POLICY] = [];
+
+    return [false, $policiesFromUserConfig];
+  }
+
+  /**
    * Generates the security policy that will be added to the HTTP header.
    * We do not keep script-src and style-src directives that will be handled in handleStrictDynamic function.
    *
-   * @param string                $policy                  Can be 'csp' or 'permissionsPolicy'
-   * @param string                $route
-   * @param ?string               $routeSecurityFilePath
-   * @param array<string, string> $defaultPolicyDirectives The default policy directives (csp or permissions policy)
-   *                                                       from MasterController
+   * @param string                             $policyType              Can be 'csp' or 'permissionsPolicy'
+   * @param bool                               $isOtraRoute             Is the route prefixed by OTRA_ROUTES_PREFIX?
+   * @param array<string,array<string,string>> $customPolicyDirectives
+   * @param array<string, string>              $defaultPolicyDirectives The default policy directives (csp or permissions policy)
+   *                                                                    from MasterController
    *
    * @return array{0: string, 1: array<string, string>}|string The string is the policy that will be included in
    * the HTTP headers, the array is the array of policies needed to handle the `strict-dynamic` rules for the CSP
    * policies
    */
   function createPolicy(
-    string $policy,
-    string $route,
-    ?string $routeSecurityFilePath,
+    string $policyType,
+    bool $isOtraRoute,
+    array $customPolicyDirectives,
     array $defaultPolicyDirectives
   ) : array|string
   {
     $finalProcessedPolicies = $defaultPolicyDirectives;
 
-    // OTRA routes are not secure with CSP and permissions policies for the moment
-    if (!str_contains($route, OTRA_ROUTES_PREFIX) && $routeSecurityFilePath !== null)
+    if (!$isOtraRoute)
     {
-      // Retrieve security instructions from the routes' configuration file
-      /** @var array<string,array<string,string>> $policiesFromUserConfig */
-      $policiesFromUserConfig = require $routeSecurityFilePath;
-
-      // Forces the policies to be an empty array for the rest of the algorithm
-      if (!isset($policiesFromUserConfig[$policy]))
-        $policiesFromUserConfig[$policy] = [];
-
-      $customPolicyDirectives = $policiesFromUserConfig[$policy];
-
       if (empty($finalProcessedPolicies))
         $finalProcessedPolicies = $customPolicyDirectives;
       else
@@ -129,9 +143,8 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
       }
     }
 
-    $finalPolicy = OTRA_POLICIES[$policy];
-
-    $policySeparator = ($policy === OTRA_KEY_CONTENT_SECURITY_POLICY) ? ' ' : '=(';
+    $finalPolicy = OTRA_POLICIES[$policyType];
+    $policySeparator = ($policyType === OTRA_KEY_CONTENT_SECURITY_POLICY) ? ' ' : '=(';
 
     foreach ($finalProcessedPolicies as $directive => $value)
     {
@@ -140,10 +153,10 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
       if ($directive === OTRA_KEY_SCRIPT_SRC_DIRECTIVE)
         continue;
 
-      $finalPolicy .= $directive . $policySeparator . $value . ($policy === OTRA_KEY_PERMISSIONS_POLICY ? '),' : '; ');
+      $finalPolicy .= $directive . $policySeparator . $value . ($policyType === OTRA_KEY_PERMISSIONS_POLICY ? '),' : '; ');
     }
 
-    if ($policy === OTRA_KEY_PERMISSIONS_POLICY)
+    if ($policyType === OTRA_KEY_PERMISSIONS_POLICY)
     {
       return substr(
         str_replace(
@@ -169,14 +182,14 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   {
     if (!headers_sent())
     {
+      [$isOtraRoute, $customPolicyDirectives] = getRoutePolicies($route, $routeSecurityFilePath);
       [$policy, $cspDirectives] = createPolicy(
         OTRA_KEY_CONTENT_SECURITY_POLICY,
-        $route,
-        $routeSecurityFilePath,
+        $isOtraRoute,
+        $customPolicyDirectives[OTRA_KEY_CONTENT_SECURITY_POLICY],
         CONTENT_SECURITY_POLICY[$_SERVER[APP_ENV]]
       );
       handleStrictDynamic(OTRA_KEY_SCRIPT_SRC_DIRECTIVE, $policy, $cspDirectives);
-      handleStrictDynamic(OTRA_KEY_STYLE_SRC_DIRECTIVE, $policy, $cspDirectives);
       addNonces($policy);
       header($policy);
     }
@@ -185,12 +198,15 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   function addPermissionsPoliciesHeader(string $route, ?string $routeSecurityFilePath) : void
   {
     if (!headers_sent())
+    {
+      [$isOtraRoute, $customPolicyDirectives] = getRoutePolicies($route, $routeSecurityFilePath);
       header(createPolicy(
         OTRA_KEY_PERMISSIONS_POLICY,
-        $route,
-        $routeSecurityFilePath,
+        $isOtraRoute,
+        $customPolicyDirectives[OTRA_KEY_PERMISSIONS_POLICY],
         PERMISSIONS_POLICY[$_SERVER[APP_ENV]]
       ));
+    }
   }
 
   function addNonces(string &$policy) : void
