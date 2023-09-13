@@ -7,8 +7,11 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\updateConf;
 
+use FilesystemIterator;
 use otra\config\Routes;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -138,7 +141,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
       $delta += $length;
     }
 
-    $configsContent = '<?php declare(strict_types=1);namespace bundles\\config;' .
+    $configsContent = '<?php declare(strict_types=1);namespace otra\\cache\\php;' .
       implode('', $useStatements) . $configsContent;
     define(__NAMESPACE__ . '\\MAIN_CONFIG_FILE', BUNDLES_MAIN_CONFIG_DIR . 'Config.php');
     writeConfigFile(MAIN_CONFIG_FILE, $configsContent);
@@ -151,12 +154,27 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   /** ROUTES MANAGEMENT */
   if ($updateConfRoutes !== 0)
   {
-    $routesArray = [];
+    $routesArray = $routesFunctions = [];
 
     foreach($routes as $route)
-      $routesArray = array_merge($routesArray, require $route);
+    {
+      require $route;
 
-    unset($route);
+      $routesFunctions[] = substr(
+        str_replace(
+          [BASE_PATH, '/', '.php'],
+          ['', '\\', ''],
+          $route
+        ),
+        0,
+        -6
+      ) . '\\getRoutes';
+    }
+
+    foreach($routesFunctions as $routeFunction)
+      $routesArray = array_merge($routesArray, call_user_func($routeFunction));
+
+    unset($route, $routeFunction);
 
     // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
     // front of them
@@ -351,8 +369,8 @@ function searchFilesInFolder(
   // we scan the bundles' directory to retrieve all the bundles name ...
   while (false !== ($filename = readdir($folderHandler)))
   {
-    // 'config' and 'views' are not bundles ...
-    if (in_array($filename, ['.', '..', 'config', 'views']))
+    // 'config', 'resources', 'tasks' and 'views' are not bundles ...
+    if (in_array($filename, ['.', '..', 'config', 'repositories', 'resources', 'tasks', 'views']))
       continue;
 
     $actualFolder = $folderPath . $filename;
@@ -395,7 +413,13 @@ function searchFilesInFolder(
 
     if ($updateConfRoutes !== 0)
     {
-      $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
+      foreach (new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator($bundleConfigDir, FilesystemIterator::SKIP_DOTS)
+        ) as $file)
+      {
+        if ($file->isFile() && str_ends_with($file->getFilename(), 'Routes.php'))
+          $bundleRoutes[] = $file->getPathname();
+      }
 
       if (!empty($bundleRoutes))
         $routes = array_merge($routes, $bundleRoutes);

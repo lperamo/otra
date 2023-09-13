@@ -345,6 +345,12 @@ class SecurityServiceTest extends TestCase
         null,
         "Permissions-Policy: sync-xhr=()"
       ],
+      DEV . ' and null for securityPath' => [
+        DEV,
+        self::ROUTE,
+        null,
+        "Permissions-Policy: sync-xhr=()"
+      ],
       PROD => [
         PROD,
         self::ROUTE,

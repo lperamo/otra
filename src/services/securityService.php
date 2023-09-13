@@ -83,7 +83,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
    */
   function getRoutePolicies(string $route, ?string $routeSecurityFilePath) : array
   {
-    if (str_contains($route, OTRA_ROUTES_PREFIX))
+    if (str_contains($route, OTRA_ROUTES_PREFIX) || $routeSecurityFilePath === null)
       return [
         true,
         [
