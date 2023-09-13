@@ -231,7 +231,11 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
         }
 
         // Adds nonces to the related directive
-        $policy = str_replace($directive, $directive . $nonceStr, $policy);
+        $policy = preg_replace(
+          '/' .  $directive . '( |;)/',
+          $directive . $nonceStr . '$1',
+          $policy
+        );
       }
     }
   }

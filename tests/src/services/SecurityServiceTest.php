@@ -479,7 +479,7 @@ class SecurityServiceTest extends TestCase
       }
     }
 
-    $policy = "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic'; style-src 'self';";
+    $policy = "Content-Security-Policy: frame-ancestors 'none';script-src 'strict-dynamic'; style-src 'self'; style-src-attr 'self';";
 
     // launching
     addNonces($policy);
@@ -512,7 +512,7 @@ class SecurityServiceTest extends TestCase
       ],
       'two nonces' =>
       [
-        "@Content-Security-Policy: frame-ancestors 'none';script-src 'nonce-[a-fA-F0-9]{64}' 'nonce-[a-fA-F0-9]{64}' 'strict-dynamic'; style-src 'nonce-[a-fA-F0-9]{64}' 'self';@",
+        "@Content-Security-Policy: frame-ancestors 'none';script-src 'nonce-[a-fA-F0-9]{64}' 'nonce-[a-fA-F0-9]{64}' 'strict-dynamic'; style-src 'nonce-[a-fA-F0-9]{64}' 'self'; style-src-attr 'self';@",
         2
       ]
     ];
