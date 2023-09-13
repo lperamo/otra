@@ -293,17 +293,18 @@ class SecurityServiceTest extends TestCase
 
   /**
    * @depends testCreatePermissionsPolicy
-   * @dataProvider
+   * @dataProvider addPermissionPoliciesHeaderDataProvider
    *
-   * @param string $environment
-   * @param string $routeSecurityFilePath
-   * @param string $expectedHeader
+   * @param string  $environment
+   * @param ?string $routeSecurityFilePath
+   * @param string  $expectedHeader
    *
    * @return void
    */
   public function testAddPermissionPoliciesHeader(
     string $environment,
-    string $routeSecurityFilePath,
+    string $route,
+    ?string $routeSecurityFilePath,
     string $expectedHeader
   ): void
   {
@@ -312,7 +313,7 @@ class SecurityServiceTest extends TestCase
     require self::SECURITY_SERVICE;
 
     // launching
-    addPermissionsPoliciesHeader(self::ROUTE, $routeSecurityFilePath);
+    addPermissionsPoliciesHeader($route, $routeSecurityFilePath);
 
     // testing
     $headers = xdebug_get_headers();
@@ -334,11 +335,19 @@ class SecurityServiceTest extends TestCase
     return [
       DEV => [
         DEV,
+        self::ROUTE,
         self::ROUTE_SECURITY_DEV_FILE_PATH,
-        "Permissions-Policy: interest-cohort=(),sync-xhr=(),accelerometer=self"
+        "Permissions-Policy: sync-xhr=(),accelerometer=self"
+      ],
+      DEV . ' OTRA route and null for securityPath' => [
+        DEV,
+        'otra_logs',
+        null,
+        "Permissions-Policy: sync-xhr=()"
       ],
       PROD => [
         PROD,
+        self::ROUTE,
         self::ROUTE_SECURITY_PROD_FILE_PATH,
         "Permissions-Policy: accelerometer=(),ambient-light-sensor=()"
       ]

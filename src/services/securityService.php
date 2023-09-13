@@ -77,14 +77,20 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
 
   /**
    * @param string $route
-   * @param string $routeSecurityFilePath
+   * @param ?string $routeSecurityFilePath
    *
    * @return array{bool, array<string, array<string, string>>}
    */
-  function getRoutePolicies(string $route, string $routeSecurityFilePath) : array
+  function getRoutePolicies(string $route, ?string $routeSecurityFilePath) : array
   {
     if (str_contains($route, OTRA_ROUTES_PREFIX))
-      return [true, []];
+      return [
+        true,
+        [
+          OTRA_KEY_CONTENT_SECURITY_POLICY => [],
+          OTRA_KEY_PERMISSIONS_POLICY => []
+        ]
+      ];
 
     // Retrieve security instructions from the routes' configuration file
     /** @var array<string,array<string,string>> $policiesFromUserConfig */
