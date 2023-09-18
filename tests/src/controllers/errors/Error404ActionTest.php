@@ -64,15 +64,17 @@ class Error404ActionTest extends TestCase
   }
 
   /**
+   * @dataProvider dataProvider
    * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testError404Action() : void
+  public function testError404Action(?string $ipAddress, string $expectedOutput) : void
   {
     // context
     $_SERVER['HTTP_HOST'] = 'dev.otra-framework.tech';
     $_SERVER['REQUEST_URI'] = '/';
+    $_SERVER['REMOTE_ADDR'] = $ipAddress;
 
     // launching
     ob_start();
@@ -89,13 +91,24 @@ class Error404ActionTest extends TestCase
     $output = ob_get_clean();
 
     ob_start();
-    require TEST_PATH . 'examples/error404.phtml';
+    require $expectedOutput;
 
     // testing
     self::assertSame(
       ob_get_clean(),
       $output,
-      'Testing 404 error page output against ' . returnLegiblePath2(TEST_PATH . 'examples/error404.phtml')
+      'Testing 404 error page output against ' . returnLegiblePath2($expectedOutput)
     );
+  }
+
+  /**
+   * @return array<string, array{0: null|string, 1: string}>
+   */
+  public static function dataProvider(): array
+  {
+    return [
+      'local' => ['::1', TEST_PATH . 'examples/error404/local.phtml'],
+      'online' => [null, TEST_PATH . 'examples/error404/online.phtml']
+    ];
   }
 }

@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace otra\web;
 
 use const otra\cache\php\{BASE_PATH,CACHE_PATH,CORE_PATH};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\CLASSMAP;
 
 require __DIR__ . '/../config/constants.php';
 ini_set('session.save_path', CACHE_PATH . 'php/sessions/');

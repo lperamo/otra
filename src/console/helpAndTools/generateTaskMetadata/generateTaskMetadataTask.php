@@ -83,7 +83,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata
     }
 
     // loading the class map if not defined
-    if (!defined('otra\\cache\\php\\init\\CLASSMAP'))
+    if (!defined('otra\\cache\\php\\CLASSMAP'))
       require CLASS_MAP_PATH;
 
     spl_autoload_register(function (string $className): void {
