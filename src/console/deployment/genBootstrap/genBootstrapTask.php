@@ -146,7 +146,8 @@ function genBootstrap(array $argumentsVector)
       $route,
       file_get_contents($fileToInclude) . PHP_END_TAG_STRING,
       VERBOSE,
-      $fileToInclude
+      $fileToInclude,
+      true
     ),
     ROUTE_MANAGEMENT_TEMPORARY_FILE
   );

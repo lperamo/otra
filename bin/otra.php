@@ -10,7 +10,7 @@ namespace otra\config
 namespace otra\bin
 {
   use otra\{console\TasksManager, OtraException};
-  use const otra\cache\php\init\CLASSMAP;
+  use const otra\cache\php\CLASSMAP;
   use const otra\cache\php\{APP_ENV, CACHE_PATH, CONSOLE_PATH, CORE_PATH, OTRA_PROJECT, PROD};
   use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
   use function otra\console\{guessWords, launchTask, launchTaskPosixWay, promptUser};

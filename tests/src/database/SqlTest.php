@@ -206,13 +206,13 @@ class SqlTest extends TestCase
     Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
-    self::assertSame(
-      $sqlLogContent
+    self::assertMatchesRegularExpression(
+      '@' . preg_quote($sqlLogContent
         . ($sqlLogContent !== ''
         ? ''
         : '[')
-      . '{"file":"' .  $_SERVER['HOME'] .
-      '/.config/composer/vendor/phpunit/phpunit/src/Framework/TestCase.php","line":1065,"query":"SELECT 1"},',
+      . '{"file":"' .  $_SERVER['HOME']) .
+      '/\.config/composer/vendor/phpunit/phpunit/src/Framework/TestCase\.php","line":\d+,"query":"SELECT 1"},@',
       file_get_contents($sqlLogPath)
     );
 

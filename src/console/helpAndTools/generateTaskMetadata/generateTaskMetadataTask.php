@@ -21,12 +21,12 @@ namespace otra\console\helpAndTools\generateTaskMetadata
   use function otra\console\shortenVarExportArray;
   use function otra\console\deployment\genClassMap\genClassMap;
   use const otra\bin\CACHE_PHP_INIT_PATH;
-  use const otra\cache\php\init\CLASSMAP;
   use const otra\cache\php\
   {
     APP_ENV,
     BASE_PATH,
     CACHE_PATH,
+    CLASSMAP,
     CONSOLE_PATH,
     CORE_PATH,
     CLASS_MAP_PATH,

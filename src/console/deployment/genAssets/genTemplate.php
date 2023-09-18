@@ -9,8 +9,7 @@ namespace otra\console\deployment\genAssets;
 
 use otra\cache\php\Logger;
 use otra\Router;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CLASSMAP, CORE_PATH, PROD};
 use function otra\tools\gzCompressFile;
 
 $argumentsVector = $argv;

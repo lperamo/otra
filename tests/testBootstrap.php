@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace otra\bin;
 
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\CLASSMAP;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\tools\delTree;
 

@@ -82,12 +82,14 @@ function clearCache(array $argumentsVector)
     {
       checkFolder($cachePath, $cacheRelativePath);
 
+      // We want to remove only files for one specific route
       if (isset($route))
       {
         unlinkFile($cachePath . $route . $extension, $cacheRelativePath . $route . $extension);
         return;
       }
 
+      // We want to remove the files for each route
       foreach(array_keys($routes) as $routeToSuppress)
       {
         if ($routeToSuppress === 'otra_exception')

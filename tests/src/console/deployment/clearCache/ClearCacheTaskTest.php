@@ -62,7 +62,7 @@ class ClearCacheTaskTest extends TestCase
     ],
     TEST_CACHE = CACHE_PATH . 'test.cache',
     BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
-    TEST_EXAMPLE_ROUTES = TEST_PATH . 'examples/createAction/Routes.php',
+    TEST_EXAMPLE_ROUTES = TEST_PATH . 'examples/deployment/Routes.php',
     TEST_ROUTES = self::BUNDLES_CONFIG_PATH . 'Routes.php',
     CACHE_ROUTE_MANAGEMENT = self::CACHE_PHP_INIT_PATH . 'RouteManagement.php',
     CACHE_CLASS_MAP = self::CACHE_PHP_INIT_PATH . 'ClassMap.php',

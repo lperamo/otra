@@ -21,11 +21,11 @@
       <directory>./vendor</directory>
     </exclude>
   </source>
-  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">
-    <report>
-      <clover outputFile="./coverage.xml"/>
-    </report>
-  </coverage>
+<!--  <coverage pathCoverage="true" cacheDirectory=".coverage-cache">-->
+<!--    <report>-->
+<!--      <clover outputFile="./coverage.xml"/>-->
+<!--    </report>-->
+<!--  </coverage>-->
   <testsuites>
     <testsuite name="SQL DBAL and the SQL drivers">
       <!-- database console tasks which the other tests depend -->

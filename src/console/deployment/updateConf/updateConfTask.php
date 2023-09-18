@@ -158,9 +158,11 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     foreach($routes as $route)
     {
-      require $route;
+      // If we call multiple times task that launch `updateConf`, for example, we need `require_once` instead of
+      // `require`
+      require_once $route;
 
-      $routesFunctions[] = substr(
+      $routesFunctionsToAdd = substr(
         str_replace(
           [BASE_PATH, '/', '.php'],
           ['', '\\', ''],
@@ -168,7 +170,12 @@ function updateConf(?string $mask = null, ?string $routeName = null)
         ),
         0,
         -6
-      ) . '\\getRoutes';
+      );
+
+      if ($routesFunctionsToAdd[strlen($routesFunctionsToAdd) - 1] === '\\')
+        $routesFunctionsToAdd .= 'routes';
+
+      $routesFunctions[] = $routesFunctionsToAdd . '\\getRoutes';
     }
 
     foreach($routesFunctions as $routeFunction)

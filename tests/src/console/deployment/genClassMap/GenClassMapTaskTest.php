@@ -3,15 +3,12 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genClassMap;
 
-use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
-use function otra\console\deployment\genClassMap\genClassMap;
-use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
-use const otra\cache\php\
-{APP_ENV, BASE_PATH, CONSOLE_PATH, CORE_PATH, DEV, TEST_PATH};
-use const otra\cache\php\init\CLASSMAP2;
+use const otra\bin\CACHE_PHP_INIT_PATH;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CLASSMAP2, CONSOLE_PATH, CORE_PATH, DEV, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\tools\files\returnLegiblePath2;
 
 /**
@@ -44,11 +41,13 @@ class GenClassMapTaskTest extends TestCase
       str_replace(
         [
           '<?php ',
-          'namespace otra\cache\php\init;'
+          'namespace otra\cache\php;',
+          'BASE_PATH.'
         ],
         [
           '',
-          'namespace ' . $newNamespace . ';'
+          'namespace ' . $newNamespace . ';',
+          '\otra\cache\php\BASE_PATH.'
         ],
         file_get_contents($classMapFile)
       )
@@ -83,6 +82,7 @@ class GenClassMapTaskTest extends TestCase
   {
     // context
     $_SERVER[APP_ENV] = DEV;
+    require CORE_PATH . 'console/colors.php';
     require CORE_PATH . 'tools/files/returnLegiblePath.php';
     define(__NAMESPACE__ . '\\FIRST_CLASS_PADDING', 80);
 

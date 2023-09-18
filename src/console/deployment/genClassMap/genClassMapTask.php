@@ -178,10 +178,10 @@ function genClassMap(array $argumentsVector) : void
      */
     function convertClassMapToPHPFile(string $classMap, string $environment = DEV) : string
     {
-      $start = '<?php declare(strict_types=1);namespace otra\\cache\\php' .
-        ($environment === DEV
-        ? '\\init;use const otra\\cache\\php\\{BASE_PATH,CONSOLE_PATH,'
-        : ';use const otra\\cache\\php\\{');
+      $start = '<?php declare(strict_types=1);namespace otra\\cache\\php;use const otra\\cache\\php\\{';
+
+      if ($environment === DEV)
+        $start .= 'BASE_PATH,CONSOLE_PATH,';
 
       // if the class map is empty, then we just return an empty array.
       return $start . 'CORE_PATH};const CLASSMAP=' .
@@ -240,7 +240,9 @@ function genClassMap(array $argumentsVector) : void
   foreach($classes as $classNamespace => $class)
   {
     // We only let external libraries
-    if (str_contains($class, BASE_PATH))
+    if (str_contains($class, BASE_PATH)
+      && (str_contains($class, CORE_PATH) || !str_contains($class, BASE_PATH . 'vendor/'))
+    )
     {
       // Get the relative path of the class from the BASE_PATH.
       $tmpClass = mb_substr($class, $basePathLength);

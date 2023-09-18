@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace otra;
 
 use otra\config\Routes;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, DIR_SEPARATOR, PROD};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, CLASSMAP, DIR_SEPARATOR, PROD};
 
 /**
  * @package otra

@@ -10,8 +10,8 @@ namespace otra\web;
 use Error;
 use otra\cache\php\{Logger, Router, Routes};
 use Throwable;
-use const otra\cache\php\{APP_ENV,BASE_PATH, CACHE_PATH,CORE_PATH,PROD};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV,BASE_PATH, CACHE_PATH, CORE_PATH,PROD};
+use const otra\cache\php\CLASSMAP;
 
 require __DIR__ . '/../config/constants.php';
 
@@ -90,14 +90,16 @@ try
 
   spl_autoload_register(function (string $className) : void
   {
-    if (!isset(CLASSMAP[$className]))
+    if (isset(CLASSMAP[$className]))
     {
-      if (!class_exists(Logger::class))
-        require_once CORE_PATH . 'Logger.php';
-
-      Logger::logWithStackTraces('Path not found for the class name : ' . $className, debug_backtrace());
-    } else
       require CLASSMAP[$className];
+      return;
+    }
+
+    if (!class_exists(Logger::class))
+      require_once CORE_PATH . 'Logger.php';
+
+    Logger::logWithStackTraces('Path not found for the class name : ' . $className, debug_backtrace());
   });
 
   // Loads the found route
@@ -118,7 +120,11 @@ try
     echo 'Cannot log the ' . ($error ? 'errors' : 'exceptions') . ' to <span style="color: blue;">' .
       ISSUE_RELATIVE_LOG_PATH . '</span> due to a lack of permissions!<br/>';
   elseif (class_exists(Logger::class))
-    Logger::logExceptionOrErrorTo(ISSUE_TRACE, $error ? 'Error' : 'Exception', $issue->getTrace());
+    Logger::logExceptionOrErrorTo(
+      ISSUE_TRACE,
+      $error ? 'Error' : 'Exception',
+      $issue->getTrace()
+    );
   else
     error_log(
       json_encode(
