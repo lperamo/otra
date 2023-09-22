@@ -52,7 +52,7 @@ function sqlImportSchema(array $argumentsVector) : void
     /** @var array<int, array<string, ?string>> $columns */
     $columns = $database->values($database->query('
         SELECT `COLUMN_NAME`, `COLUMN_COMMENT`, `DATA_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `IS_NULLABLE`, `EXTRA`,
-          `COLUMN_KEY`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
+          `COLUMN_KEY`, `COLUMN_DEFAULT`, IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') as IS_UNSIGNED
         FROM information_schema.COLUMNS
         WHERE TABLE_SCHEMA = \'' . $databaseName . '\'
          AND TABLE_NAME = \'' . $table .
@@ -85,6 +85,15 @@ function sqlImportSchema(array $argumentsVector) : void
 
       if ('PRI' === $column['COLUMN_KEY'])
         $content .= '      primary: true' . PHP_EOL;
+
+      if (null !== $column['COLUMN_DEFAULT'])
+      {
+        $content .= '      default: ' .
+          (str_ends_with($column['COLUMN_DEFAULT'], '()')
+            ? substr($column['COLUMN_DEFAULT'], 0, -2)
+            : $column['COLUMN_DEFAULT']
+          ) . PHP_EOL;
+      }
 
       if ('' !== $column['COLUMN_COMMENT'])
         $content .= '      comment: \'' . $column['COLUMN_COMMENT'] . '\'' . PHP_EOL;

@@ -11,6 +11,7 @@ testDB_table:
     date_creation:
       type: timestamp
       notnull: true
+      default: current_timestamp
       comment: 'the date creation'
     fk_id_table2:
       type: int
@@ -54,8 +55,10 @@ testDB_table2:
       primary: true
     type:
       type: tinyint unsigned
+      default: NULL
     type_cfg_id:
       type: smallint unsigned
+      default: NULL
     aEnfants:
       type: tinyint
       notnull: true

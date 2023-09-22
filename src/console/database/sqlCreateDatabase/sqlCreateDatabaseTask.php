@@ -57,9 +57,9 @@ function sqlCreateDatabase(array $argumentsVector) : void
     if ($instance->inTransaction())
       $instance->rollBack();
 
-    throw new OtraException('Procedure aborted when executing ' . $exception->getMessage());
+    throw new OtraException('Procedure aborted when executing ' . $exception->getMessage() . '.File ' . $databaseFile . ' : ' . file_get_contents($databaseFile));
   }
 
   echo CLI_BASE, 'Database ', CLI_INFO_HIGHLIGHT, $databaseName, CLI_BASE, ' created', CLI_SUCCESS, ' ✔', END_COLOR,
-  PHP_EOL;
+    PHP_EOL;
 }
