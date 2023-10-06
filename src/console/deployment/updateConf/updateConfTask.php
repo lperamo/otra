@@ -23,8 +23,9 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_FIXTURES,
   UPDATE_CONF_MASK_SECURITIES
 };
+use function otra\console\deployment\genJsRouting\genJsRouting;
 use function otra\src\tools\debug\validateYaml;
-use function otra\tools\files\{compressPHPFile, returnLegiblePath};
+use function otra\tools\files\{compressPHPFile, returnLegiblePath, returnLegiblePath2};
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
@@ -44,7 +45,8 @@ const
   FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
   NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
   PATH_CONFIG_FIXTURES = 'config/fixtures/',
-  PATH_CONFIG_DATA_YML = 'config/data/yml/';
+  PATH_CONFIG_DATA_YML = 'config/data/yml/',
+  MAIN_JS_ROUTING = BUNDLES_PATH . 'resources/js/' . 'jsRouting.js';
 
 /**
  *
@@ -207,6 +209,15 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     }
 
     writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent . '];');
+
+    if (file_exists(MAIN_JS_ROUTING))
+    {
+      require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+      require_once CORE_PATH . 'console/deployment/genJsRouting/genJsRoutingTask.php';
+      echo 'Updating JavaScript routing in ', CLI_INFO_HIGHLIGHT, returnLegiblePath2(MAIN_JS_ROUTING), CLI_BASE,
+        '.', END_COLOR, PHP_EOL;
+      genJsRouting();
+    }
   }
 
   /** SECURITIES MANAGEMENT */
