@@ -116,12 +116,18 @@ class Sql
       }
 
       [
+        'charset' => $charset,
         'db' => $database,
+        'dsnDriver' => $dsnDriver,
         'port' => $databasePort,
         'host' => $hostName,
         'login' => $login,
         'password' => $password
-      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn];
+      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn] +
+      [
+        'dsnDriver' => 'mysql',
+        'charset' => 'utf8mb4'
+      ];
 
       $activeConn = &self::$_activeConn[$currentConnection];
       $activeConn['db'] = $database;
@@ -132,10 +138,9 @@ class Sql
         // Putting the charset in the DNS here IS SUPER IMPORTANT for security!
         // https://stackoverflow.com/a/12202218/1818095
         $activeConn['conn'] = $activeConn['instance']->connect(
-          strtolower(substr($driver, 3)) .
-            ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
+          $dsnDriver . ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
             'host=' . ('' == $databasePort ? $hostName : $hostName . ':' . $databasePort) .
-            ';charset=utf8mb4',
+            ';charset=' . $charset,
           $login,
           $password
         );

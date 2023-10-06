@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" colors="true"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="TestBootstrap.php"
+         colors="true"
          processIsolation="true"
          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
     <testsuite name="Framework tests - SQL">
-        <file>./src/lib/otra/database/SqlTest.php</file>
+        <file>src/database/SqlTest.php</file>
     </testsuite>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">../</directory>
-            <directory suffix=".php">../bundles/*</directory>
-            <directory suffix=".php">../lib/otra/</directory>
-            <directory suffix=".php">../web/</directory>
-            <exclude>
-                <directory>./</directory>
-                <directory>./bundles/</directory>
-                <directory>../.git</directory>
-                <directory>../.idea</directory>
-                <directory>../bundles</directory>
-                <directory>../cache</directory>
-                <directory>../logs</directory>
-                <directory>./coverageHtml</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+    <source>
+        <include>
+            <directory>../</directory>
+            <directory>../bundles/*</directory>
+            <directory>../lib/otra/</directory>
+            <directory>../web/</directory>
+        </include>
+        <exclude>
+            <directory>./</directory>
+            <directory>./bundles/</directory>
+            <directory>../.git</directory>
+            <directory>../.idea</directory>
+            <directory>../bundles</directory>
+            <directory>../cache</directory>
+            <directory>../logs</directory>
+            <directory>./coverageHtml</directory>
+        </exclude>
+    </source>
     <logging>
-       <junit outputFile="./report.xml"/>
+        <junit outputFile="./report.xml"/>
     </logging>
 </phpunit>
