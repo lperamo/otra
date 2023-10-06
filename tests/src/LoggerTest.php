@@ -21,13 +21,16 @@ class LoggerTest extends TestCase
     ATOM_DATE_REGEX = '\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d',
     IP_ADDRESS_REGEX = '((25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?).(25[0–5]|2[0–4][0–9]|[01]?[0–9][0–9]?))|((([0–9A-Fa-f]{1,4}:){7}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){6}:[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){5}:([0–9A-Fa-f]{1,4}:)?[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){4}:([0–9A-Fa-f]{1,4}:){0,2}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){3}:([0–9A-Fa-f]{1,4}:){0,3}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){2}:([0–9A-Fa-f]{1,4}:){0,4}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){6}((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|(([0–9A-Fa-f]{1,4}:){0,5}:((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|(::([0–9A-Fa-f]{1,4}:){0,5}((b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b).){3}(b((25[0–5])|(1d{2})|(2[0–4]d)|(d{1,2}))b))|([0–9A-Fa-f]{1,4}::([0–9A-Fa-f]{1,4}:){0,5}[0–9A-Fa-f]{1,4})|(::([0–9A-Fa-f]{1,4}:){0,6}[0–9A-Fa-f]{1,4})|(([0–9A-Fa-f]{1,4}:){1,7}:))';
 
-  private static string $logsProdPath;
+  private static string
+    $logsProdPath,
+    $simpleLogPath;
 
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
     $_SERVER[APP_ENV] = PROD;
     self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
+    self::$simpleLogPath = self::$logsProdPath . 'simpleLog.txt';
     require CORE_PATH . 'tools/debug/tailCustom.php';
 
     if (!file_exists(self::$logsProdPath))
@@ -149,5 +152,29 @@ class LoggerTest extends TestCase
     // cleaning
     if (!OTRA_PROJECT)
       file_put_contents(TRACE_LOG_FILE, '');
+  }
+
+  /**
+   * @author Lionel Péramo
+   */
+  public function testSimpleLogTo() : void
+  {
+    // context
+    if (!file_exists(self::$logsProdPath))
+      mkdir(self::$logsProdPath, 0777,true);
+
+    if (!file_exists(self::$simpleLogPath))
+      touch(self::$simpleLogPath);
+
+    // Log a simple message
+    Logger::simpleLogTo('[SIMPLE_LOG_TEST]', 'simpleLog');
+
+    // Verify if the message is appended correctly
+    $logContents = file_get_contents(self::$simpleLogPath);
+    self::assertSame('[SIMPLE_LOG_TEST]' . PHP_EOL, $logContents);
+
+    // cleaning
+    if (!OTRA_PROJECT)
+      file_put_contents(self::$simpleLogPath, '');
   }
 }

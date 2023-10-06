@@ -54,7 +54,7 @@ abstract class Logger
     return $infos;
   }
 
-  public static function logging(string $path, string $message) : void
+  private static function logging(string $path, string $message) : void
   {
     if (is_writable($path))
       error_log($message, self::APPEND_LOG, $path);
@@ -110,6 +110,18 @@ abstract class Logger
       $logPath,
       (!file_exists($logPath) || filesize($logPath) === 0 ? '[' : '') .
       json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
+    );
+  }
+
+  /**
+   * Appends a simple message (not OTRA formatted) to the log file at the specified path into log path
+   */
+  public static function simpleLogTo(string $message, string  $logPath = 'log') : void
+  {
+    clearstatcache();
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt',
+      $message . PHP_EOL
     );
   }
 
