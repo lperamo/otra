@@ -12,7 +12,7 @@ use otra\cache\php\Logger;
 use otra\config\AllConfig;
 use PDO;
 use PDOStatement;
-use const otra\cache\php\{APP_ENV,CORE_PATH,DEV};
+use const otra\cache\php\{APP_ENV, CORE_PATH, DEV, PROD};
 
 /**
  * @package otra\bdd
@@ -149,7 +149,10 @@ class Sql
         self::$currentConnectionName = $currentConnection;
       } catch(Exception $exception)
       {
-        throw new OtraException($exception->getMessage());
+        throw new OtraException($_SERVER[APP_ENV] === PROD
+          ? 'Cannot connect to the database'
+          : $exception->getMessage()
+        );
       }
     } else
       throw new OtraException(
