@@ -24,7 +24,6 @@ define('otra\\bin\\CACHE_PHP_INIT_PATH', CACHE_PATH . 'php/init/');
 
 require VENDOR_DIR . 'console/helpAndTools/version/versionTask.php';
 require VENDOR_DIR . 'console/architecture/init/initTask.php';
-require VENDOR_DIR . 'console/deployment/buildDev/buildDevTask.php';
 
 try
 {
