@@ -58,7 +58,7 @@ function createGlobalConstants() : void
     '\',CORE_JS_PATH=\'' . CORE_RESOURCES_PATH . 'js/' .
     '\',SPACE_INDENT=\'  ' .
     '\',APP_ENV=\'APP_ENV' .
-    '\',OTRA_VERSION=\'1.0.0-alpha.2.6.0' .
+    '\',OTRA_VERSION=\'2023.0.0' .
     '\',DIR_SEPARATOR=\'/' .
     '\';if(!defined(__NAMESPACE__.\'\\\\OTRA_PROJECT\'))define(__NAMESPACE__.\'\\\\OTRA_PROJECT\',' .
     ($otraProject ? 'true' : 'false') . ');';
