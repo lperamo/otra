@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\crypt;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 

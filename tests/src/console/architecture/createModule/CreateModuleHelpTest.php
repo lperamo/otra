@@ -5,11 +5,13 @@ namespace src\console\architecture\createModule;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModuleHelpTest extends TestCase
@@ -18,9 +20,6 @@ class CreateModuleHelpTest extends TestCase
     OTRA_TASK_CREATE_MODULE = 'createModule',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

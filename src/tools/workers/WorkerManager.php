@@ -4,211 +4,305 @@ declare(strict_types=1);
 namespace otra\tools\workers;
 
 use RuntimeException;
-use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE};
 
 /**
  * @package otra\tools
  */
 class WorkerManager
 {
-  private const STDIN = 0,
+  private const
+    PERCENTAGE_BAR_LENGTH = 50,
+    STDIN = 0,
     STDOUT = 1,
     STDERR = 2,
     NON_BLOCKING = false,
     //BLOCKING = true,?
     DESCRIPTOR_SPEC = [
-      ['pipe', 'r'],
-      ['pipe', 'w'],
-      ['pipe', 'w']
-    ],
+    ['pipe', 'r'],
+    ['pipe', 'w'],
+    ['pipe', 'w']
+  ],
     OTRA_KEY_STATUS = 1;
 
   final public const
     GO_UP = "\033[1A",
     ERASE_TO_END_OF_LINE = "\033[K";
 
-  /** @var Worker[] $workers */
-  public static array $workers = [],
+  public array
+    /** @var Worker[] $workers */
+    $workers = [],
+    /** @var array<int,string> $allMessages */
     $allMessages = [];
 
-  /** @var resource[] */
-  private array $processes = [];
-
   private array
-    /** @var resource[]  */
+    /** @var resource[] $processes */
+    $processes = [],
+    /** @var Worker[] $runningWorkers */
+    $runningWorkers = [],
+    /** @var resource[]  $stdinStreams */
     $stdinStreams = [],
+    /** @var resource[]  $stdoutStreams */
     $stdoutStreams = [],
-    $stderrStreams = [];
-
-  private static bool
-    $hasStarted = false,
+    /** @var resource[]  $stderrStreams */
+    $stderrStreams = [],
+    /**
+     * @var array<int, array> $processStatuses
+     * Information about running processes.
+     * The array keys are the indices of the corresponding workers in the $runningWorkers array.
+     * Each value is an associative array returned by proc_get_status() that includes the following elements:
+     * - command: the command string that was passed to proc_open()
+     * - pid: process id
+     * - running: true if the process is running, false otherwise
+     * - signaled: true if the child process has been terminated by the receipt of a signal which it did not handle
+     * - stopped: true if the child process has been stopped by the receipt of a signal
+     * - exitcode: the exit code returned by the process (if php has been able to determine it, or -1 otherwise)
+     * - termsig: the number of the signal that caused the child process to terminate its execution (only meaningful if
+     * 'signaled' is true)
+     * - stopsig: the number of the signal that caused the child process to stop its execution (only meaningful if
+     * 'stopped' is true)
+     */
+    $processStatuses = [];
+  private bool
     $hasPrinted = false;
+  private int
+    $runningWorkersCount = 0,
+    $startWorkersAndSubWorkersCount = 0,
+    $workersAndSubWorkersCount = 0,
+    $numWorkerMessagesDisplayed = 0;
+  private array $failMessages = [
+    'message' => '',
+    'height' => 0
+  ];
 
-  private static int $workersThatHaveBeenAttached = 0;
-  private static string $failMessages = '';
-  private static array $informations = [];
+  public function __construct(private readonly int $maxWorkers = 10) { }
 
-  public function listen(int $timeout = 200000, int $verbose = 1) : void
+  /**
+   * @param Worker[]   $workers
+   * @param resource[] $dataRead
+   * @param bool       $verbose  If true, show workers waiting messages
+   */
+  private function handleWorkers(array $workers, array &$dataRead, bool $verbose = false): void
   {
-    if (!self::$hasPrinted)
-      self::$workersThatHaveBeenAttached = 0;
-
-    /** @var resource[] $dataRead */
-    $dataRead = [];
-
-    $workerOrderKey = array_key_first(self::$workers);
-
-    foreach (self::$workers as $worker)
+    foreach ($workers as $workerId => $worker)
     {
-      // Maybe the worker is not attached yet (surely a sub-worker)
-      if (!isset(self::$workers[$workerOrderKey]))
-        continue;
+      // Maybe the worker is not attached yet (surely a sub-worker) so we can't handle it
+      if (!isset($this->runningWorkers[$workerId]))
+        return;
 
-      /** @var resource */
-      $dataRead[] = $this->stdoutStreams[$workerOrderKey];
-      $dataRead[] = $this->stderrStreams[$workerOrderKey];
+      $dataRead[] = [
+        'workerId' => $workerId,
+        'stream' => $this->stdoutStreams[$workerId]
+      ];
+      $dataRead[] = [
+        'workerId' => $worker->identifier,
+        'stream' => $this->stderrStreams[$workerId]
+      ];
 
       // we print the waiting messages if the verbosity is active
-      if ($verbose > 0 && !self::$hasStarted)
+      if ($verbose && !$worker->waitingMessageDisplayed)
       {
-        $worker->keyInWorkersArray = $workerOrderKey;
-        self::$allMessages[$workerOrderKey] = $worker->waitingMessage;
-
-        // handling subworkers messages
-        foreach ($worker->subworkers as $subworker)
-        {
-          ++$workerOrderKey;
-          $subworker->keyInWorkersArray = $workerOrderKey;
-          self::$allMessages[$workerOrderKey] = $subworker->waitingMessage;
-        }
+        $this->allMessages[$workerId]['message'] = $worker->waitingMessage;
+        $this->allMessages[$workerId]['height'] = $worker->waitingMessageHeight;
 
         echo $worker->waitingMessage . PHP_EOL;
-        self::$workersThatHaveBeenAttached += substr_count($worker->waitingMessage, PHP_EOL) + 1;
+        $this->numWorkerMessagesDisplayed += $worker->waitingMessageHeight;
+        $worker->waitingMessageDisplayed = true;
       }
 
-      ++$workerOrderKey;
+      // handling sub-workers messages
+      $this->handleWorkers($worker->subWorkers, $dataRead, $verbose);
     }
-
-    if ($verbose > 0)
-      self::$hasPrinted = true;
-
-    unset($workerOrderKey, $worker, $subworker);
-
-    self::$hasStarted = true;
-
-    $write = $except = null;
-    $changed_num = stream_select($dataRead, $write, $except, 0, $timeout);
-
-    // An error can happen if the system call is interrupted by an incoming signal
-    if (false === $changed_num)
-      throw new RuntimeException();
-
-    // If the timeout expires before anything interesting happens,
-    // we can have 0 resources streams contained in the modified arrays
-    if (0 === $changed_num)
-      return;
-
-    foreach ($dataRead as $stream)
-    {
-      // Which stream do we have to check STDOUT or STDERR?
-      /** @var false|int|string $foundKey 0 is the first worker set, 5 the fifth to have been set etc. */
-      $foundKey = array_search($stream, $this->stdoutStreams, true);
-
-      if (false === $foundKey)
-      {
-        $foundKey = array_search($stream, $this->stderrStreams, true);
-
-        if (false === $foundKey)
-          continue;
-      }
-
-      // Getting information from workers
-      $worker = self::$workers[$foundKey];
-      $stdout = stream_get_contents($this->stdoutStreams[$foundKey]);
-      $stderr = stream_get_contents($this->stderrStreams[$foundKey]);
-      $exitCode = $this->detach($worker)[self::OTRA_KEY_STATUS];
-
-      // Retrieving final messages and statuses
-      if (0 === $exitCode)
-        $finalMessage = $worker->done($stdout);
-      elseif (0 < $exitCode)
-      {
-        self::$failMessages .= $worker->fail($stdout, $stderr, $exitCode);
-        $finalMessage = '';
-      }
-      else // is this really possible?
-        throw new RuntimeException();
-
-      if ($verbose > 0)
-      {
-        if ($worker->verbose > 1)
-        {
-          if ($finalMessage !== '')
-            $finalMessage .= ' ';
-
-          $finalMessage .= $worker->command;
-        }
-
-        if (self::$hasPrinted)
-        {
-          // we do not count self::$allMessages because self::$allMessages contains as well,
-          // the subworkers that do not have been attached yet
-          $messagesCount = self::$workersThatHaveBeenAttached;
-
-          for ($index = 0; $index < $messagesCount; ++$index)
-          {
-            echo self::GO_UP . self::ERASE_TO_END_OF_LINE;
-          }
-
-          unset($messagesCount);
-        }
-
-        self::$allMessages[$worker->keyInWorkersArray] = $finalMessage;
-        self::$workersThatHaveBeenAttached = 0;
-
-        // we print the waiting messages, the success messages and the fail messages
-        foreach (self::$allMessages as $message)
-        {
-          echo $message . PHP_EOL;
-          self::$workersThatHaveBeenAttached += substr_count($message, PHP_EOL) + 1;
-        }
-
-        echo self::$failMessages;
-
-        if (self::$failMessages !== '')
-        {
-          echo PHP_EOL;
-          self::$workersThatHaveBeenAttached += substr_count(self::$failMessages, PHP_EOL) + 1;
-        }
-
-        unset($message);
-      }
-    }
-
-    // If there are no workers left, we consider that we have finished our job
-    if (count(self::$workers) === 0)
-    {
-      self::$hasPrinted = self::$hasStarted = false;
-      self::$workersThatHaveBeenAttached = 0;
-    }
-
-    unset($stream);
   }
 
-  public function attach(Worker $worker) : void
+  /**
+   * @param bool $verbose  false => only a progress bar,
+   *                       true => display detailed information about which files are being sent
+   * @param int $timeout  Microseconds to wait for stream activity before the next iteration.Used to prevent 100% CPU
+   *                      usage by continuously listening to streams.
+   */
+  public function listen(bool $verbose = false, int $timeout = 200_000) : void
   {
-    $process = proc_open($worker->command, self::DESCRIPTOR_SPEC, $pipes);
+    $this->startWorkersAndSubWorkersCount = $this->workersAndSubWorkersCount;
 
-    if (!is_resource($process))
-      throw new RuntimeException();
+    // If the verbosity is wanted, we mask the cursor
+    if (!$verbose)
+      echo "\e[?25l";
 
-    stream_set_blocking($pipes[self::STDOUT], self::NON_BLOCKING);
+    while ($this->workersAndSubWorkersCount > 0)
+    {
+      // If we do not have reach the 'maxWorkers' limit, then we launch the next worker
+      if ($this->runningWorkersCount < $this->maxWorkers && !empty($this->workers))
+      {
+        /**
+         * @var Worker $nextWorkerToRun
+         */
+        $nextWorkerToRun = array_shift($this->workers);
+        $this->runningWorkers[$nextWorkerToRun->identifier]= $nextWorkerToRun;
+        ++$this->runningWorkersCount;
+        $process = proc_open(
+          $nextWorkerToRun->command,
+          self::DESCRIPTOR_SPEC,
+          $pipes,
+          null,
+          $nextWorkerToRun->environmentVariables
+        );
 
-    self::$workers[] = $worker;
-    $this->processes[] = $process;
-    $this->stdinStreams[] = $pipes[self::STDIN];
-    $this->stdoutStreams[] = $pipes[self::STDOUT];
-    $this->stderrStreams[] = $pipes[self::STDERR];
+        $nextWorkerToRun->startTime = microtime(true);
+
+        if (!is_resource($process))
+          throw new RuntimeException('Unable to create process. Error: ' . error_get_last()['message']);
+
+        stream_set_blocking($pipes[self::STDOUT], self::NON_BLOCKING);
+
+        $this->processes[$nextWorkerToRun->identifier] = $process;
+        $this->stdinStreams[$nextWorkerToRun->identifier] = $pipes[self::STDIN];
+        $this->stdoutStreams[$nextWorkerToRun->identifier] = $pipes[self::STDOUT];
+        $this->stderrStreams[$nextWorkerToRun->identifier] = $pipes[self::STDERR];
+
+        unset($nextWorkerToRun);
+      }
+
+      // other work
+      if (!$this->hasPrinted)
+        $this->numWorkerMessagesDisplayed = 0;
+
+      /** @var resource[] $dataRead */
+      $dataRead = [];
+
+      $this->handleWorkers($this->runningWorkers, $dataRead, $verbose);
+
+      if ($verbose)
+        $this->hasPrinted = true;
+
+      $write = $except = null;
+      $readStreams = array_column($dataRead, 'stream');
+      $changedNum = stream_select($readStreams, $write, $except, 0, $timeout);
+
+      if (false === $changedNum)
+        throw new RuntimeException('System call interrupted by an incoming signal!');
+
+      // If the timeout expires before anything interesting happens,
+      // we can have 0 resources streams contained in the modified arrays
+      if (0 === $changedNum && $this->workersAndSubWorkersCount === 0)
+        return;
+
+      foreach (array_keys($readStreams) as $index)
+      {
+        // Getting information from workers
+        $workerId = $dataRead[$index]['workerId'];
+
+        if (!isset($this->runningWorkers[$workerId]))
+          continue;
+
+        $worker = $this->runningWorkers[$workerId];
+        $stdout = stream_get_contents($this->stdoutStreams[$workerId]);
+        $stderr = stream_get_contents($this->stderrStreams[$workerId]);
+
+        // update information about the process
+        $this->processStatuses[$worker->identifier] = proc_get_status($this->processes[$worker->identifier]);
+
+        if (!$this->processStatuses[$worker->identifier]['running'])
+        {
+          $exitCode = $this->detach($worker)[self::OTRA_KEY_STATUS];
+
+          if (!$worker->aborted)
+          {
+            // Retrieving final messages and statuses
+            if (0 === $exitCode)
+            {
+              $worker->done($stdout);
+              $this->allMessages[$worker->identifier] = [
+                'message' => $worker->successFinalMessage,
+                'height' => $worker->successFinalMessageHeight
+              ];
+            } elseif (0 < $exitCode)
+            {
+              $worker->fail($stdout, $stderr, $exitCode);
+              $this->failMessages['message'] .= $worker->failFinalMessage;
+              $this->failMessages['height'] += $worker->failFinalMessageHeight;
+              $this->allMessages[$worker->identifier]['message'] = $worker->failFinalMessage;
+            } else // is this really possible?
+              throw new RuntimeException();
+
+            if ($verbose)
+            {
+              // we do not count $this->allMessages because $this->allMessages contains as well,
+              // the sub-workers that do not have been attached yet
+              if ($this->hasPrinted)
+                echo str_repeat(ERASE_SEQUENCE, $this->numWorkerMessagesDisplayed);
+
+              $this->numWorkerMessagesDisplayed = 0;
+
+              // we print the waiting messages, the success messages and the fail messages
+              foreach ($this->allMessages as $message)
+              {
+                echo $message['message'] . PHP_EOL;
+                $this->numWorkerMessagesDisplayed += $message['height'];
+              }
+
+              echo $this->failMessages['message'];
+
+              if ($this->failMessages['message'] !== '')
+              {
+                echo PHP_EOL;
+                $this->numWorkerMessagesDisplayed += $this->failMessages['height'];
+              }
+            } else
+            {
+              $percentDone = round(
+                100 - ($this->workersAndSubWorkersCount / $this->startWorkersAndSubWorkersCount) * 100
+              );
+
+              // Calculate the number of filled characters
+              $filledLength = (int)round(self::PERCENTAGE_BAR_LENGTH * $percentDone / 100);
+
+              // Display the progress bar
+              echo "\r\033[K", 'Progress: ', CLI_INFO, str_repeat('█', $filledLength), CLI_BASE,
+              str_repeat('░', self::PERCENTAGE_BAR_LENGTH - $filledLength), ' ', $percentDone, '% ';
+            }
+          }
+
+          if ($this->runningWorkersCount === 0)
+            break;
+        }
+      }
+
+      // If there are no workers left, we consider that we have finished our job
+      if ($this->workersAndSubWorkersCount === 0)
+      {
+        $this->hasPrinted = false;
+        $this->numWorkerMessagesDisplayed = 0;
+      }
+
+      unset($stream);
+    }
+
+    // New line and showing the cursor again
+    if (!$verbose)
+      echo PHP_EOL, "\e[?25h";
+  }
+
+  private function countWorkersAndSubWorkers(Worker $worker) : int
+  {
+    // Count the actual worker
+    $count = 1;
+
+    foreach ($worker->subWorkers as $subWorker)
+    {
+      // Recursion to count the sub-workers
+      $count += $this->countWorkersAndSubWorkers($subWorker);
+    }
+
+    return $count;
+  }
+
+  public function attach(Worker $worker, bool $incrementCounter = true) : void
+  {
+    $this->workers[$worker->identifier] = $worker;
+
+    if ($incrementCounter)
+      $this->workersAndSubWorkersCount += $this->countWorkersAndSubWorkers($worker);
   }
 
   /**
@@ -219,73 +313,67 @@ class WorkerManager
    */
   public function detach(Worker $worker) : array
   {
-    $foundKey = array_search($worker, self::$workers, true);
-
-    if (false === $foundKey)
+    if (!isset($this->runningWorkers[$worker->identifier]) && !isset($this->workers[$worker->identifier]))
       throw new RuntimeException(
         'We do not succeed to found the worker "' . $worker->command .
-        '" among the existing workers in order to detach it.' . implode(',', self::$workers) . '.'
+        '" among the existing workers in order to detach it.' . implode(',', $this->workers) . '.'
       );
 
-    fclose($this->stdinStreams[$foundKey]);
-    fclose($this->stdoutStreams[$foundKey]);
-    fclose($this->stderrStreams[$foundKey]);
-
-    $elapsedTime = 0;
-
-    do
+    if (isset($this->stdinStreams[$worker->identifier]))
     {
-      // We are waiting less at the start to speedup things.
-      if ($elapsedTime < 10)
-      {
-        $elapsedTime += 1;
-        usleep(100_000); // .1s
-      } else
-      {
-        $elapsedTime += 10;
-        usleep(1_000_000); // 1s
-      }
-
-      // update information about the process
-      self::$informations[$foundKey] = proc_get_status($this->processes[$foundKey]);
+      fclose($this->stdinStreams[$worker->identifier]);
+      fclose($this->stdoutStreams[$worker->identifier]);
+      fclose($this->stderrStreams[$worker->identifier]);
 
       // If the process is too long, kills it.
-      if ($elapsedTime > $worker->timeout * 10)
+      $elapsedTime = microtime(true) - $worker->startTime;
+
+      if ($elapsedTime > $worker->timeout)
       {
-        echo CLI_ERROR, 'The process that launched ', CLI_INFO_HIGHLIGHT, $worker->command, CLI_ERROR, ' was hanging during ',
-          $worker->timeout, ' second', ($worker->timeout > 1 ? 's' : ''), '. We will kill the process.', END_COLOR,
-          PHP_EOL;
-        proc_terminate($this->processes[$foundKey]);
+        echo CLI_ERROR, 'The process that launched ', CLI_INFO_HIGHLIGHT, $worker->command, CLI_ERROR,
+        ' was hanging during ', $elapsedTime, ' second', ($elapsedTime > 1 ? 's' : ''),
+        '. We will kill the process.', END_COLOR, PHP_EOL;
+        proc_terminate($this->processes[$worker->identifier]);
+        $worker->aborted = true;
       }
-    } while (self::$informations[$foundKey]['running']);
 
-    proc_close($this->processes[$foundKey]);
+      proc_close($this->processes[$worker->identifier]);
 
-    // Handles workers chaining if the worker process finished successfully his job
-    if (!self::$informations[$foundKey]['running']
-      && self::$informations[$foundKey]['exitcode'] === 0
-      && !empty(self::$workers[$foundKey]->subworkers))
+      // Handles workers chaining if the worker process finished successfully his job
+      if (!$this->processStatuses[$worker->identifier]['running']
+        && $this->processStatuses[$worker->identifier]['exitcode'] === 0
+        && !empty($this->runningWorkers[$worker->identifier]->subWorkers))
+      {
+        // We search the first worker to chain, and we remove it from the workers list to chain
+        foreach ($this->runningWorkers[$worker->identifier]->subWorkers as $subWorker)
+        {
+          // We convert the sub-workers into workers
+          $this->attach($subWorker, false);
+        }
+      }
+
+      --$this->workersAndSubWorkersCount;
+      --$this->runningWorkersCount;
+
+      unset(
+        $this->runningWorkers[$worker->identifier],
+        $this->processes[$worker->identifier],
+        $this->stdinStreams[$worker->identifier],
+        $this->stdoutStreams[$worker->identifier],
+        $this->stderrStreams[$worker->identifier]
+      );
+
+      return [
+        $this->processStatuses[$worker->identifier]['running'],
+        $this->processStatuses[$worker->identifier]['exitcode']
+      ];
+    } else
     {
-      // We search the first worker to chain, and we remove it from the workers list to chain
-      foreach(self::$workers[$foundKey]->subworkers as $subworker)
-      {
-        // We convert the subworkers into workers
-        $this->attach($subworker);
-      }
+      unset($this->workers[$worker->identifier]);
+      --$this->workersAndSubWorkersCount;
+
+      return [false, 0];
     }
-
-    unset(
-      self::$workers[$foundKey],
-      $this->processes[$foundKey],
-      $this->stdinStreams[$foundKey],
-      $this->stdoutStreams[$foundKey],
-      $this->stderrStreams[$foundKey]
-    );
-
-    return [
-      self::$informations[$foundKey]['running'],
-      self::$informations[$foundKey]['exitcode']
-    ];
   }
 
   public function __destruct()

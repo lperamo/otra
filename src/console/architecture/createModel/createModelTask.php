@@ -48,6 +48,7 @@ namespace otra\console\architecture\createModel
     FUNCTION_START = SPACE_INDENT . 'public function ';
 
   /**
+   * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
    *
    * @throws OtraException
    * @return void

@@ -21,6 +21,7 @@ class Error404Action extends Controller
   public function __construct(array $otraParams = [], array $params = [])
   {
     parent::__construct($otraParams, $params);
+
     $routes = array_keys(Routes::$allRoutes);
     $defaultUrl = null;
 
@@ -34,9 +35,6 @@ class Error404Action extends Controller
       break;
     }
 
-    echo $this->renderView(
-      'error404.phtml',
-      ['suggestedRoute' => $defaultUrl]
-    );
+    echo $this->renderView('error404.phtml', ['suggestedRoute' => $defaultUrl]);
   }
 }

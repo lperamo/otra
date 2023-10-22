@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genSitemap;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, CONSOLE_PATH, PROD, TEST_PATH};
 
@@ -13,15 +13,13 @@ use function otra\console\deployment\genSitemap\genSitemap;
 use const otra\console\SUCCESS;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenSitemapTaskTest extends TestCase
 {
-  private const
-    SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
+  private const SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
 
   public static function tearDownAfterClass(): void
   {
@@ -33,6 +31,7 @@ class GenSitemapTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

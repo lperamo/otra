@@ -9,6 +9,8 @@ namespace otra\console\helpAndTools\hash;
 const HASH_ARG_BLOWFISH_ROUNDS = 2;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
+ *
  * @return void
  */
 function hash(array $argumentsVector) : void

@@ -5,19 +5,20 @@ namespace src\console\deployment\genSitemap;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenSitemapHelpTest extends TestCase
 {
-  private const OTRA_TASK_GEN_SITEMAP = 'genSitemap',
+  private const
+    OTRA_TASK_GEN_SITEMAP = 'genSitemap',
     OTRA_TASK_HELP = 'help';
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

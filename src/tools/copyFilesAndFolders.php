@@ -10,12 +10,15 @@ use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use const otra\cache\php\CORE_PATH;
+use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\tools\files\returnLegiblePath;
 
 if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
 {
+  if (!defined('SUCCESS'))
+    require_once CONSOLE_PATH . 'colors.php';
+
   /**
    * @throws OtraException
    */

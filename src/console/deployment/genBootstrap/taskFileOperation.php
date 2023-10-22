@@ -15,7 +15,7 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use SplFileObject;
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\CLASSMAP;
 // do not delete CORE_VIEWS_PATH and DIR_SEPARATOR without testing as they can be used via eval()
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_VIEWS_PATH, CORE_PATH, DIR_SEPARATOR};
 use const otra\console\
@@ -312,8 +312,22 @@ function getFileNamesFromUses(
 
         $classToReplace = $beginString . str_replace(' ', '', $lastChunk);
 
-        // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-        $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+        // If it's a vendor, we keep the class?
+        if (
+          !isset(CLASSMAP[$classToReplace])
+          || !str_contains(CLASSMAP[$classToReplace], 'vendor')
+          || str_contains(CLASSMAP[$classToReplace], 'vendor/otra')
+        )
+        {
+          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+          $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+        } else
+        {
+          if ($classToReplace[0] !== '\\')
+            $classToReplace = '\\' . $classToReplace;
+
+          $contentToAdd = preg_replace('@' . $lastChunk . '(?![\\\\])@', $classToReplace, $contentToAdd);
+        }
 
         // case use xxx\xxx{XXX}; (notice that there is only one name between the braces
         if ($classToReplace[-1] === '}')
@@ -333,8 +347,24 @@ function getFileNamesFromUses(
             if ($isConst)
               $constantName = $tempChunks[count($tempChunks) - 1];
 
-            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-            $contentToAdd = str_replace($classToReplace, array_pop($tempChunks), $contentToAdd);
+            $lastChunk = array_pop($tempChunks);
+
+            // If it's a vendor, we keep the class?
+            if (
+              !isset(CLASSMAP[$classToReplace])
+              || !str_contains(CLASSMAP[$classToReplace], 'vendor')
+              || str_contains(CLASSMAP[$classToReplace], 'vendor/otra')
+            )
+            {
+              // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+              $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+            } else
+            {
+              if ($classToReplace[0] !== '\\')
+                $classToReplace = '\\' . $classToReplace;
+
+              $contentToAdd = preg_replace('@' . $lastChunk . '(?![\\\\])@', $classToReplace, $contentToAdd);
+            }
           } else // case use xxx/xxx{xxx, XXX, xxx}; (notice the uppercase, it's where we are)
           {
             $classToReplace = $beginString . $chunk;
@@ -342,8 +372,22 @@ function getFileNamesFromUses(
             if ($isConst)
               $constantName = $chunk;
 
-            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-            $contentToAdd = str_replace($classToReplace, $chunk, $contentToAdd);
+            // If it's a vendor, we keep the class?
+            if (
+              !isset(CLASSMAP[$classToReplace])
+              || !str_contains(CLASSMAP[$classToReplace], 'vendor')
+              || str_contains(CLASSMAP[$classToReplace], 'vendor/otra')
+            )
+            {
+              // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+              $contentToAdd = str_replace($classToReplace, $chunk, $contentToAdd);
+            } else
+            {
+              if ($classToReplace[0] !== '\\')
+                $classToReplace = '\\' . $classToReplace;
+
+              $contentToAdd = preg_replace('@' . $lastChunk . '(?![\\\\])@', $classToReplace, $contentToAdd);
+            }
           }
 
           $lastChunk = $chunk;
@@ -356,8 +400,12 @@ function getFileNamesFromUses(
           if ($isConst)
             $constantName = $lastChunk;
 
-          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
-          $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+          // If it's a vendor, we keep the class?
+          if (!isset(CLASSMAP[$classToReplace]) || !str_contains(CLASSMAP[$classToReplace], 'vendor'))
+          {
+            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+            $contentToAdd = str_replace($classToReplace, $lastChunk, $contentToAdd);
+          }
         }
       }
 
@@ -659,7 +707,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
 }
 
 /**
- * Retrieves information about what kind of file inclusion we have, the related code and its position.
+ * Retrieves information about what kind of file inclusion we have (include, require), the related code and its position.
  *
  * @param array{
  *   level: int,
@@ -692,7 +740,7 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
  *
  * @throws OtraException
  */
-function getFileInfoFromRequiresAndExtends(array &$parameters) : void
+function getDependenciesFileInfo(array &$parameters) : void
 {
 //  list($level, $contentToAdd, $filename, $filesToConcat, &$parsedFiles, $classesFromFile, &$parsedConstants) = $parameters;
   [
@@ -967,7 +1015,7 @@ function assembleFiles(
     'parsedConstants' => $parsedConstants
   ];
   // REQUIRE, INCLUDE AND EXTENDS MANAGEMENT
-  getFileInfoFromRequiresAndExtends(
+  getDependenciesFileInfo(
     $toPassAsReference
   );
 
@@ -1045,7 +1093,7 @@ function assembleFiles(
             if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
             {
               // It can be a SwiftMailer class for example
-              echo CLI_WARNING, 'EXTERNAL LIBRARY : ', $tempFile, END_COLOR, PHP_EOL;
+              echo CLI_WARNING, 'EXTERNAL LIBRARY', ' : ', $tempFile, END_COLOR, PHP_EOL;
               unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
               continue;
             }
@@ -1262,7 +1310,7 @@ function processStaticCalls(
  * @throws OtraException
  * @return string
  */
-function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '') : string
+function fixFiles(string $bundle, string $route, string $content, int $verbose, string $fileToInclude = '', bool $routesManagement = false) : string
 {
   if (!defined(__NAMESPACE__ . '\\VERBOSE'))
     define(__NAMESPACE__ . '\\VERBOSE', $verbose);
@@ -1330,15 +1378,16 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
     ],
     [
       '',
-      '$3',
-      '',
+      PHP_EOL . '$3' . PHP_EOL, // blank lines to prevent, for example, that `// comment` is stuck to `/** comment */` as it is not valid
+      PHP_EOL,
       '\\\\$1'
     ],
     $finalContent
   );
 
   $vendorNamespaceConfigFile = BUNDLES_PATH . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
-  $vendorNamespaces = file_exists($vendorNamespaceConfigFile)
+  // We should not include the additional namespace information in the route management file! (otherwise it's a duplicate)
+  $vendorNamespaces = file_exists($vendorNamespaceConfigFile) && !$routesManagement
     ? file_get_contents($vendorNamespaceConfigFile) . PHP_END_TAG_STRING
     : '';
 
@@ -1393,8 +1442,8 @@ function fixFiles(string $bundle, string $route, string $content, int $verbose, 
   // like 'becaUSE'
   return PHP_OPEN_TAG_STRING . ' declare(strict_types=1); ' . PHP_EOL .
     'namespace otra\\cache\\php;' .
-    ($fileToInclude !== '/var/www/html/perso/otra/src/Router.php'
-      ? 'use \\Exception; use \\Error; use \\Throwable; use \\stdClass; use \\RecursiveDirectoryIterator; use \\RecursiveIteratorIterator; use Phar; use \\PharData; use \\DateTime;'
+    (!$routesManagement
+      ? 'use \\Exception; use \\Error; use \\Throwable; use \\stdClass; use \\RecursiveDirectoryIterator; use \\RecursiveIteratorIterator; use Phar; use \\PharData; use \\DateTime; use \\Redis;'
       : ''
     ) . $vendorNamespaces .
     (str_starts_with($finalContent, PHP_OPEN_TAG_STRING)

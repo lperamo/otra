@@ -4,20 +4,19 @@ declare(strict_types=1);
 namespace src\console;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{CONSOLE_PATH, DEV};
 use const otra\console\{ CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTaskPosixWay;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LaunchTaskPosixWayTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    * @throws OtraException

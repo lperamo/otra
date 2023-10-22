@@ -7,11 +7,16 @@ declare(strict_types=1);
 
 namespace otra\console\deployment;
 
+use JsonException;
+use otra\config\AllConfig;
 use otra\OtraException;
-use function otra\src\console\deployment\googleClosureCompile;
-use const otra\cache\php\{BASE_PATH,CONSOLE_PATH};
+
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use const otra\cache\php\{BASE_PATH,CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
-use function otra\tools\cliCommand;
+use function otra\src\console\deployment\googleClosureCompile;
+use function otra\tools\{cleanFileAndFolders, runCommandWithEnvironment};
 use function otra\tools\files\returnLegiblePath;
 
 const OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
@@ -44,7 +49,6 @@ function generateJavaScript(
    *     noResolve?: bool,
    *     pretty?: bool,
    *     removeComments?: bool,
-   *     noImplicitUseStrict?: bool,
    *     watch?: bool
    *   }
    * } $typescriptConfig
@@ -70,31 +74,50 @@ function generateJavaScript(
   if (!file_exists($resourceFolder))
     mkdir($resourceFolder, 0777, true);
 
-  $generatedTemporaryJsFile = $resourceFolder . $baseName . '_viaTypescript.js';
+  $tmpResourceFolder = $resourceFolder . 'tmp/';
+
+  if (!file_exists($tmpResourceFolder))
+    mkdir($tmpResourceFolder);
+
+  $generatedTemporaryJsFile = $tmpResourceFolder . $baseName . '.js';
   $generatedJsFile = $resourceFolder . $baseName . '.js';
 
   // Creating a temporary typescript json configuration file suited for the OTRA watcher.
   // We need to recreate it each time because the user can alter his original configuration file
   $typescriptConfig['files'] = [$resourceName];
-  $typescriptConfig['compilerOptions']['outFile'] = $generatedTemporaryJsFile;
+  $typescriptConfig['compilerOptions']['outDir'] = $tmpResourceFolder;
   unset($typescriptConfig['compilerOptions']['watch']);
 
   $temporaryTypescriptConfig = BASE_PATH . 'tsconfig_tmp.json';
   $filePointer = fopen($temporaryTypescriptConfig, 'w');
   // The flags for 'json_encode' allows better debugging
   // (otherwise tsc will say that the bug is on the first line ...and the first line represents ALL the json)
-  fwrite(
-    $filePointer,
-    json_encode(
-      $typescriptConfig,
-      JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK)
-  );
+  if (
+    !fwrite(
+      $filePointer,
+      json_encode(
+        $typescriptConfig,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK)
+    )
+  )
+  {
+    echo CLI_ERROR, 'Cannot write in the temporary configuration file ', returnLegiblePath($temporaryTypescriptConfig),
+      ' for TypeScript usage.';
+    throw new OtraException(code: 1, exit: true);
+  }
+
   fclose($filePointer);
   unset($filePointer);
 
   /* Launches typescript compilation on the file with project json configuration
      and launches Google Closure Compiler on the output just after */
-  [, $output] = cliCommand('/usr/bin/tsc --pretty -p ' . $temporaryTypescriptConfig, null, !$watching);
+  $typescriptBinary = AllConfig::$nodeBinariesPath . 'tsc' ?: '/usr/bin/tsc';
+  [, $output] = runCommandWithEnvironment(
+    $typescriptBinary . ' --pretty -p ' . $temporaryTypescriptConfig,
+    ['PATH' => getenv('PATH') . PATH_SEPARATOR . AllConfig::$nodeBinariesPath],
+    null,
+    !$watching
+  );
 
   unlink($temporaryTypescriptConfig);
 
@@ -103,14 +126,33 @@ function generateJavaScript(
 
   if (!$jsFileExists)
   {
-    echo CLI_WARNING,
-      'Something was wrong during typescript compilation but this may not be blocking. Maybe you have a problem with the ',
+    // Maybe TypeScript compiler has created more than one file, so it has recreated an architecture.
+    // So we search where it puts our generated file
+    $folder = new RecursiveDirectoryIterator($tmpResourceFolder);
+    $iterator = new RecursiveIteratorIterator($folder);
+    $compiledFileLocation = false;
+    $filenameToSearch = $baseName . '.js';
+
+    foreach ($iterator as $currentFile)
+    {
+      if ($currentFile->getFilename() == $filenameToSearch)
+      {
+        $compiledFileLocation = $currentFile->getPathname();
+        break;
+      }
+    }
+
+    if ($compiledFileLocation === false)
+    {
+      echo CLI_WARNING,
+        'Something was wrong during typescript compilation of ' . CLI_INFO_HIGHLIGHT . returnLegiblePath($resourceName) .
+        CLI_WARNING . ' but this may not be blocking.' . PHP_EOL . 'Maybe you have a problem with the ',
       CLI_INFO_HIGHLIGHT, OTRA_LABEL_TSCONFIG_JSON, CLI_WARNING, ' file.', END_COLOR, PHP_EOL, $output;
 
-    if (!$watching)
-      throw new OtraException(code: 1, exit: true);
-
-    return;
+      if (!$watching)
+        throw new OtraException(code: 1, exit: true);
+    } else
+      $generatedTemporaryJsFile = $compiledFileLocation;
   }
 
   $temporarySourceMap = $generatedTemporaryJsFile . '.map';
@@ -156,16 +198,21 @@ function generateJavaScript(
     if (file_exists($sourceMapFile))
     {
       rename($generatedTemporaryJsFile . '.map', $generatedJsFile . '.map');
+
       // Fixing class mapping reference
       file_put_contents(
         $generatedJsFile,
         str_replace(
-          $baseName . '_viaTypescript.js.map',
-          $baseName . '.js.map',
+          $tmpResourceFolder,
+          $resourceFolder,
           file_get_contents($generatedJsFile)
         )
       );
     }
+
+    // cleaning the tmp folder
+    require_once CORE_PATH . 'tools/cleanFilesAndFolders.php';
+    cleanFileAndFolders([$tmpResourceFolder]);
   }
 
   // We copy the service worker to the root if there is one

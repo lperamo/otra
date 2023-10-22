@@ -4,17 +4,16 @@ declare(strict_types=1);
 namespace src\console;
 
 use otra\{console\OtraExceptionCli, OtraException};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,PROD};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class OtraExceptionCliTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();

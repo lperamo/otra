@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\checkConfiguration;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
 use const otra\console\
@@ -21,6 +21,8 @@ use const otra\console\
 };
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CheckConfigurationTaskTest extends TestCase
@@ -67,8 +69,6 @@ class CheckConfigurationTaskTest extends TestCase
 
   private static string $labelAnalyzingFiles = '';
 
-  protected $preserveGlobalState = FALSE;
-
   /** @var array<int,array{0:string,1:string} Folder or file paths that will have to be clean */
   public static array $resourcesToClean = [];
 
@@ -77,7 +77,7 @@ class CheckConfigurationTaskTest extends TestCase
    *
    * @param array<int,array{0:string,1:string} $resourcePaths Folder or file paths to tests with file_exists.
    */
-  private static function checkAndCreate(array $resourcePaths)
+  private static function checkAndCreate(array $resourcePaths): void
   {
     foreach($resourcePaths as $resourcePath)
     {

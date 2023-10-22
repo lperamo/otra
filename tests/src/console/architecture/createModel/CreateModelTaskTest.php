@@ -5,22 +5,21 @@ namespace src\console\architecture\createModel;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BASE_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, TEST_PATH};
 use const otra\console\
 {CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_TABLE, CLI_WARNING, END_COLOR, SUCCESS};
 use function otra\tools\{copyFileAndFolders,delTree};
 
-if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
-  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));
-
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModelTaskTest extends TestCase
 {
-  public const 
+  final public const
     BUNDLE_NAME = 'test',
     BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . DIR_SEPARATOR;
 
@@ -50,7 +49,7 @@ class CreateModelTaskTest extends TestCase
     OTRA_LABEL_A_MODEL_IN_THE_BUNDLE = 'A model in the bundle ',
     OTRA_LABEL_THE_MODEL = 'The model ',
     OTRA_LABEL_HAS_BEEN_CREATED_IN_THE_BUNDLE = ' has been created in the bundle ',
-    OTRA_LABEL_YAML_SCHEMA_WARNING = CLI_WARNING . 
+    OTRA_LABEL_YAML_SCHEMA_WARNING = CLI_WARNING .
       'The YAML schema does not exist so we will create a model from the console parameters.' . END_COLOR . PHP_EOL,
     OTRA_LIBRARY_COPY_FILES_AND_FOLDERS = CORE_PATH . 'tools/copyFilesAndFolders.php',
     OTRA_LABEL_NAME_MODEL_NOT_SPECIFIED_WE_USE_THE = CLI_WARNING .
@@ -58,9 +57,6 @@ class CreateModelTaskTest extends TestCase
       self::OTRA_LABEL_WE_USE_THE . CLI_INFO_HIGHLIGHT . CreateModelTaskTest::BUNDLE_NAME . END_COLOR .
       self::OTRA_LABEL_BUNDLE. PHP_EOL,
     TEST_BUNDLE_PATH = BASE_PATH . CreateModelTaskTest::BUNDLE_RELATIVE_PATH;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown() : void
   {
@@ -430,3 +426,6 @@ class CreateModelTaskTest extends TestCase
     );
   }
 }
+
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModelTaskTest::BUNDLE_NAME));

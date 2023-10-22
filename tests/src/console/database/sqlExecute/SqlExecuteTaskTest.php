@@ -5,13 +5,15 @@ namespace src\console\database\sqlExecute;
 
 use otra\console\database\Database;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
 use function otra\console\database\sqlExecute\sqlExecute;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlExecuteTaskTest extends TestCase
@@ -24,9 +26,6 @@ class SqlExecuteTaskTest extends TestCase
     CONFIG_FOLDER_YML = self::CONFIG_FOLDER . 'yml/',
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException

@@ -8,7 +8,7 @@ use otra\bdd\Sql;
 use otra\config\AllConfig;
 use otra\console\database\Database;
 use otra\console\TasksManager;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
@@ -20,6 +20,8 @@ use function otra\tools\{cleanFileAndFolders, copyFileAndFolders, setScopeProtec
 use function otra\tools\files\returnLegiblePath;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlCreateFixturesTaskTest extends TestCase
@@ -57,9 +59,6 @@ class SqlCreateFixturesTaskTest extends TestCase
     CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES = self::CONFIG_FOLDER_SQL . 'truncate/',
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . 'truncate/';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @return void
@@ -108,7 +107,7 @@ class SqlCreateFixturesTaskTest extends TestCase
    */
   private function loadConfig() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -143,7 +142,7 @@ class SqlCreateFixturesTaskTest extends TestCase
       ]
     );
 
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -231,11 +230,11 @@ class SqlCreateFixturesTaskTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    *
-   * @depends testInit
-   * @depends testCreateDatabase
-   * @depends testTruncateTable
-   * @depends testCreateFixture
-   * @depends testExecuteFixture
+   * @depends src\console\DatabaseTest::testInit
+   * @depends src\console\database\sqlCreateDatabase\SqlCreateDatabaseTaskTest::testSqlCreateDatabaseTask
+   * @depends src\console\DatabaseTest::testTruncateTable
+   * @depends src\console\DatabaseTest::testCreateFixture
+   * @depends src\console\DatabaseTest::testExecuteFixture
    */
   public function testCreateFixtures_TruncateOnly() : void
   {
@@ -291,7 +290,7 @@ class SqlCreateFixturesTaskTest extends TestCase
 
     // launching task
     ob_start();
-    require CONSOLE_PATH . 'sqlCreateFixtures/sqlCreateFixturesTask.php';
+    require CONSOLE_PATH . 'database/sqlCreateFixtures/sqlCreateFixturesTask.php';
     sqlCreateFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_FIXTURES, self::DATABASE_NAME, self::TRUNCATE_ONLY]);
 
     // testing

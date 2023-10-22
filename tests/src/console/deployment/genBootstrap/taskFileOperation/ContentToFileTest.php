@@ -9,18 +9,18 @@ namespace otra\console\deployment\genBootstrap
 namespace src\console\deployment\genBootstrap\taskFileOperation
 {
   use otra\OtraException;
-  use phpunit\framework\TestCase;
+  use PHPUnit\Framework\TestCase;
   use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, TEST_PATH};
   use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR};
   use function otra\console\deployment\genBootstrap\contentToFile;
 
   /**
+   * It fixes issues like when AllConfig is not loaded while it should be
+   * @preserveGlobalState disabled
    * @runTestsInSeparateProcesses
    */
   class ContentToFileTest extends TestCase
   {
-    // it fixes issues like when AllConfig is not loaded while it should be
-    protected $preserveGlobalState = FALSE;
     private const
       RELATIVE_FINAL_FILE_PATH = 'tests/examples/deployment/finalFile.php',
       FINAL_FILE_PATH = BASE_PATH . self::RELATIVE_FINAL_FILE_PATH,
@@ -48,7 +48,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @author Lionel Péramo
      * @throws OtraException
      */
-    public function testContentToFile_allGood()
+    public function testContentToFile_allGood(): void
     {
       // context
       define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
@@ -72,7 +72,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      * @author Lionel Péramo
      * @throws OtraException
      */
-    public function testContentToFile_hasSyntaxErrors()
+    public function testContentToFile_hasSyntaxErrors(): void
     {
       // context
       define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 0);

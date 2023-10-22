@@ -5,17 +5,16 @@ namespace src\console\architecture\createModule;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT};
 use const otra\console\
 {CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
 use function otra\tools\delTree;
 
-if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
-  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));
-
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModuleTaskTest extends TestCase
@@ -28,12 +27,9 @@ class CreateModuleTaskTest extends TestCase
     OTRA_BINARY_NAME = 'otra.php',
     CREATE_BUNDLE_FORCE = 'true';
 
-  public const
+  final public const
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {
@@ -264,3 +260,6 @@ class CreateModuleTaskTest extends TestCase
     self::assertFileExists(self::TEST_MODULE_PATH);
   }
 }
+
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateModuleTaskTest::TEST_BUNDLE));

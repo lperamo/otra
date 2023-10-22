@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use const otra\cache\php\CORE_VIEWS_PATH;
+use const otra\cache\php\{CORE_PATH, CORE_VIEWS_PATH};
+use function otra\debugRouterError;
 use function otra\cache\php\{block, endblock};
 
 require CORE_VIEWS_PATH . '/layout.phtml';
@@ -21,6 +22,13 @@ block('body');
       ?>You can try to go to <a href="<?= $suggestedRoute ?>"><?= $suggestedRoute ?></a> instead.<?php
     } else {
       ?> Sorry, we don't have any relevant web pages for you right now.<?php
+    }
+
+    if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1')
+    {
+      ?> It does not work because the tested routes are :<br><br><?php
+      require CORE_PATH . 'debugRouter.php';
+      debugRouterError($_SERVER['REQUEST_URI']);
     }
     ?>
   </div>

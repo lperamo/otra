@@ -15,6 +15,7 @@ const
   CRYPT_ARG_ITERATIONS = 3;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void

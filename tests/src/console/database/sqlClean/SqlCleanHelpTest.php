@@ -5,12 +5,14 @@ namespace src\console\database\sqlClean;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, PROD, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlCleanHelpTest extends TestCase
@@ -20,13 +22,10 @@ class SqlCleanHelpTest extends TestCase
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
     OTRA_TASK_HELP = 'help';
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @throws OtraException
    */
-  public function testSqlCleanHelp()
+  public function testSqlCleanHelp(): void
   {
     // context
     $_SERVER[APP_ENV] = PROD;

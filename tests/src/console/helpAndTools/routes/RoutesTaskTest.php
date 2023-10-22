@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\routes;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DEV};
 use const otra\config\VERSION;
@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, EN
 use function otra\tools\copyFileAndFolders;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RoutesTaskTest extends TestCase
@@ -36,10 +38,6 @@ class RoutesTaskTest extends TestCase
     ROUTE_OTRA_SQL = 'otra_sql',
     ROUTE_OTRA_TEMPLATE_STRUCTURE = 'otra_templateStructure',
     ROUTE_HELLO_WORLD = 'HelloWorld';
-
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void
   {
@@ -95,6 +93,7 @@ class RoutesTaskTest extends TestCase
   }
 
   /**
+   * @large
    * @throws OtraException
    *
    * @author Lionel Péramo
@@ -122,14 +121,6 @@ class RoutesTaskTest extends TestCase
       $tasksClassMap,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
       [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-    TasksManager::execute(
-      $tasksClassMap,
-      self::OTRA_TASK_BUILD_DEV,
-      [
-        self::OTRA_CONSOLE_FILENAME,
-        'genBootstrap'
-      ]
     );
     TasksManager::execute(
       $tasksClassMap,

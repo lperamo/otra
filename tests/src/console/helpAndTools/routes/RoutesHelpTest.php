@@ -5,13 +5,15 @@ namespace src\console\helpAndTools\routes;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tests\tools\taskParameter;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RoutesHelpTest extends TestCase
@@ -20,9 +22,6 @@ class RoutesHelpTest extends TestCase
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass() : void
   {
@@ -35,7 +34,7 @@ class RoutesHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRoutesHelp()
+  public function testRoutesHelp(): void
   {
     // context
     require TEST_PATH . 'tools.php';

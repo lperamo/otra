@@ -11,6 +11,7 @@ testDB_table:
     date_creation:
       type: timestamp
       notnull: true
+      default: current_timestamp
       comment: 'the date creation'
     fk_id_table2:
       type: int
@@ -42,6 +43,8 @@ testDB_table:
     fk_testDB_table3:
       foreign: id
       local: fk_id_table3
+      on_delete: restrict
+      on_update: restrict
       table: testDB_table3
 
 testDB_table2:
@@ -52,8 +55,10 @@ testDB_table2:
       primary: true
     type:
       type: tinyint unsigned
+      default: NULL
     type_cfg_id:
       type: smallint unsigned
+      default: NULL
     aEnfants:
       type: tinyint
       notnull: true

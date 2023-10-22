@@ -58,18 +58,13 @@ function unlinkResourceFile(string $folder, string $shaName) : void
     unlink($fileName);
 }
 
-/**
- *
- *
- * @return string
- */
 function status(string $status, string $color = 'CLI_SUCCESS') : string
 {
   return ' [' . constant('otra\\console\\' . $color) . $status . CLI_GRAY. ']';
 }
 
 /**
- * @param string $assetType   'css' or 'js'
+ * @param string $assetType 'css' or 'js'
  *
  * @return null|string Return the path of the 'macro' resource file
  */
@@ -182,6 +177,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
 }
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws JsonException|OtraException
  * @return void
@@ -373,8 +369,9 @@ function genAssets(array $argumentsVector) : void
 
           if ($pathAndFile === null)
           {
-            echo CLI_ERROR . 'You are trying to generate empty assets!' . END_COLOR . PHP_EOL;
-            throw new OtraException(code:1, exit:true);
+            echo CLI_ERROR, 'You are trying to generate empty assets for ', CLI_INFO_HIGHLIGHT, $routeName, CLI_ERROR,
+              '!' . END_COLOR . PHP_EOL;
+            continue;
           }
 
           $jsFileOut = mb_substr($pathAndFile, 0, -1);

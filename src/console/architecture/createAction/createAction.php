@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace otra\console\architecture;
 
 use otra\OtraException;
+use function bundles\HelloWorld\config\routes\getRoutes;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, DIR_SEPARATOR, SPACE_INDENT};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 use const otra\console\constants\DOUBLE_ERASE_SEQUENCE;
@@ -82,8 +83,8 @@ class ' . $upperActionName . 'Action extends Controller
   /**
    * ' . $upperActionName . 'Action constructor.
    *
-   * @param array $otraParams
-   * @param array $params
+   * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
+   * @param array $params     [...getParams, ...postParams, etc.]
    */
   public function __construct(array $otraParams = [], array $params = [])
   {
@@ -119,20 +120,47 @@ class ' . $upperActionName . 'Action extends Controller
   $routesConfigFolder = BUNDLES_PATH . $bundleName . '/config';
   $routeConfigurationFile = BUNDLES_PATH . $bundleName . '/config/Routes.php';
   $routeConfiguration = $controllerName . $upperActionName . "' => [" . PHP_EOL .
-    SPACE_INDENT_2 . "'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '"
+    SPACE_INDENT_3 . "'chunks' => ['/" . $controllerName . $upperActionName . "', '" . $bundleName . "', '"
     . $moduleName . "', '" . $controllerName . "', '" . $upperActionName . "Action']," . PHP_EOL .
-    SPACE_INDENT_2 . "'resources' => [" . PHP_EOL .
-    SPACE_INDENT_3 . "'template' => true" . PHP_EOL .
-    SPACE_INDENT_2 . "]" . PHP_EOL .
-    SPACE_INDENT . "]";
+    SPACE_INDENT_3 . "'resources' => [" . PHP_EOL .
+    SPACE_INDENT_2 . SPACE_INDENT_2 . "'template' => true" . PHP_EOL .
+    SPACE_INDENT_3 . "]" . PHP_EOL .
+    SPACE_INDENT_2 . "]";
 
   if (!defined(__NAMESPACE__ . '\\PHP_FILE_START'))
-     define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);'. PHP_EOL);
+  {
+    define(__NAMESPACE__ . '\\PHP_FILE_START', '<?php declare(strict_types=1);' . PHP_EOL);
+    define(__NAMESPACE__ . '\\ROUTES_FILE_START', PHP_FILE_START .
+      'namespace bundles\\' . $bundleName . '\\config\\routes;' . PHP_EOL . PHP_EOL .
+      <<<PHPCODE
+/**
+ * @return array{
+ *   $controllerName$upperActionName: array{
+ *     chunks: list<string>,
+ *     resources: array{
+ *       module_css: list<string>,
+ *       print_css: list<string>,
+ *       template: bool
+ *     }
+ *   }
+ * }
+ */
+PHPCODE . PHP_EOL .
+      'function getRoutes(): array' . PHP_EOL . '{' . PHP_EOL);
+  }
 
-  // If there already are actions for this bundle, we have to complete the configuration file not replace it
+  // If actions already exist for this bundle, we should complete the existing configuration file rather than replacing
+  // it.
   if (file_exists($routesConfigFolder))
   {
-    $routesArray = file_exists($routeConfigurationFile) ? require $routeConfigurationFile : [];
+    $routesArray = [];
+
+    if (file_exists($routeConfigurationFile))
+    {
+      require_once $routeConfigurationFile;
+      call_user_func('bundles\\' . $bundleName . '\\config\\routes\\getRoutes');
+    }
+
     $routesArray[$controllerName . $upperActionName] = [
       'chunks' => [
         DIR_SEPARATOR . $controllerName . $upperActionName,
@@ -170,12 +198,12 @@ class ' . $upperActionName . 'Action extends Controller
     $routesArray = preg_replace('/\d+ => /', '', $routesArray);
 
     // now we can detect safely some other unwanted line breaks
-    $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'',$routesArray);
+    $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'', $routesArray);
 
     file_put_contents(
       $routeConfigurationFile,
-      PHP_FILE_START .
-      'return ' . $routesArray . ';' . PHP_EOL
+      ROUTES_FILE_START . '  return ' . $routesArray . ';' . PHP_EOL .
+      '}' . PHP_EOL
     );
   } else
   { // If it's not the case, we replace it
@@ -185,10 +213,11 @@ class ' . $upperActionName . 'Action extends Controller
     // Adds a routes' config file
     file_put_contents(
       $routeConfigurationFile,
-      PHP_FILE_START .
-      "return [" . PHP_EOL .
-      SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
-      "];" . PHP_EOL
+      ROUTES_FILE_START .
+      '  return [' . PHP_EOL .
+      SPACE_INDENT . SPACE_INDENT . "'" . $routeConfiguration . PHP_EOL .
+      SPACE_INDENT . '];' . PHP_EOL .
+      '}' . PHP_EOL
     );
   }
 

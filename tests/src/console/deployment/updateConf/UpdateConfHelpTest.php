@@ -5,7 +5,7 @@ namespace src\console\deployment\updateConf;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\
 {CLI_BASE,
   CLI_GRAY,
@@ -16,14 +16,15 @@ use const otra\console\
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class UpdateConfHelpTest extends TestCase
 {
-  private const OTRA_TASK_UPDATE_CONF = 'updateConf',
+  private const
+    OTRA_TASK_UPDATE_CONF = 'updateConf',
     OTRA_TASK_HELP = 'help';
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

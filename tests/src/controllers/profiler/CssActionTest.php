@@ -6,7 +6,7 @@ namespace src\controllers\profiler;
 use otra\console\TasksManager;
 use otra\controllers\profiler\CssAction;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
@@ -14,6 +14,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CssActionTest extends TestCase
@@ -26,8 +28,6 @@ class CssActionTest extends TestCase
     FULL_ACTION_NAME = self::ACTION . 'Action',
     SASS_TREE_CACHE_PATH = CACHE_PATH . 'css/sassTree.php',
     TEST_TEMPLATE = TEST_PATH . 'examples/profiler/' . self::FULL_ACTION_NAME. '.phtml';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
@@ -63,6 +63,7 @@ class CssActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -92,8 +93,10 @@ class CssActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(CssAction::class, $cssAction);
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
+      ob_get_clean(),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'

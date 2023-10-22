@@ -6,13 +6,15 @@ namespace src\controllers\profiler;
 use otra\console\TasksManager;
 use otra\controllers\profiler\LogsAction;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LogsActionTest extends TestCase
@@ -30,8 +32,6 @@ class LogsActionTest extends TestCase
     LOG_PROD_CLASSIC_LOG = self::LOGS_PROD_PATH . 'log.txt',
     LOG_PROD_UNKNOWN_EXCEPTIONS = self::LOGS_PROD_PATH . 'unknownExceptions.txt',
     LOG_PROD_UNKNOWN_FATAL_ERRORS = self::LOGS_PROD_PATH . 'unknownFatalErrors.txt';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
@@ -79,6 +79,7 @@ class LogsActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -126,8 +127,10 @@ class LogsActionTest extends TestCase
 
     // testing
     self::assertInstanceOf(LogsAction::class, $logsAction);
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
+      ob_get_clean(),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'

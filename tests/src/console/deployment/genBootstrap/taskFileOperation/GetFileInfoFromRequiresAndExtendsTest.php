@@ -4,11 +4,14 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
+use function otra\console\deployment\genBootstrap\getDependenciesFileInfo;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, TEST_PATH};
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequiresAndExtends;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GetFileInfoFromRequiresAndExtendsTest extends TestCase
@@ -36,9 +39,6 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     TEST_FILENAME_PHP = 'test_filename.php',
     TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP = 'tests/examples/deployment/testRequire.php';
 
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();
@@ -49,7 +49,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRequire_NoParsedConstants()
+  public function testRequire_NoParsedConstants(): void
   {
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
@@ -66,7 +66,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -120,7 +120,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testRequire_WithParsedConstants()
+  public function testRequire_WithParsedConstants(): void
   {
     // context
     $exampleFileAbsolutePath = BASE_PATH . self::TESTS_EXAMPLES_DEPLOYMENT_TEST_REQUIRE_PHP;
@@ -137,7 +137,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -191,7 +191,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testExtends_AlreadyParsed()
+  public function testExtends_AlreadyParsed(): void
   {
     // context
     $contentToAdd = 'class TestExtendsController extends otra\Controller';
@@ -207,7 +207,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(
@@ -251,7 +251,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testExtends_NotAlreadyParsed()
+  public function testExtends_NotAlreadyParsed(): void
   {
     // context
     $exampleFileAbsolutePath = TEST_PATH . 'examples/deployment/TestExtendsController.php';
@@ -268,7 +268,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     ];
 
     // launching
-    getFileInfoFromRequiresAndExtends($paramsArrayToPassAsReference);
+    getDependenciesFileInfo($paramsArrayToPassAsReference);
 
     // testing
     self::assertSame(

@@ -9,8 +9,7 @@ namespace otra\console\deployment\genAssets;
 
 use otra\cache\php\Logger;
 use otra\Router;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CORE_PATH, PROD};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CLASSMAP, CORE_PATH, PROD};
 use function otra\tools\gzCompressFile;
 
 $argumentsVector = $argv;
@@ -81,7 +80,7 @@ if (!file_exists($tplPath))
 
 $pathAndFile = ARG_CACHE_PATH . 'tpl/' . ARG_SHA_NAME;
 
-// remove extra spaces
+// remove extra spaces but not into `pre` tags
 $content = preg_replace('@\s{2,}(?![^<]*</pre>)@', ' ', $content);
 
 // strips HTML comments that are not HTML conditional comments and write the content

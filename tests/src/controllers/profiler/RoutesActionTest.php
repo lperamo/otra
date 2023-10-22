@@ -6,13 +6,15 @@ namespace src\controllers\profiler;
 use otra\console\TasksManager;
 use otra\controllers\profiler\RoutesAction;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RoutesActionTest extends TestCase
@@ -22,8 +24,6 @@ class RoutesActionTest extends TestCase
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     TEST_TEMPLATE = TEST_PATH . 'examples/profiler/routesAction.phtml';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
@@ -59,6 +59,7 @@ class RoutesActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -84,9 +85,11 @@ class RoutesActionTest extends TestCase
     $output = ob_get_clean();
 
     // testing
+    ob_start();
+    require self::TEST_TEMPLATE;
     self::assertInstanceOf(RoutesAction::class, $routesAction);
     self::assertSame(
-      file_get_contents(self::TEST_TEMPLATE),
+      ob_get_clean(),
       $output,
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'routesAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'

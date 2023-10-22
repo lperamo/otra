@@ -1,4 +1,4 @@
-#!usr/bin/php -ddisplay_errors=E_ALL
+#!/usr/bin/php -ddisplay_errors=E_ALL
 <?php
 declare(strict_types=1);
 namespace otra\config
@@ -10,7 +10,7 @@ namespace otra\config
 namespace otra\bin
 {
   use otra\{console\TasksManager, OtraException};
-  use const otra\cache\php\init\CLASSMAP;
+  use const otra\cache\php\CLASSMAP;
   use const otra\cache\php\{APP_ENV, CACHE_PATH, CONSOLE_PATH, CORE_PATH, OTRA_PROJECT, PROD};
   use const otra\console\{CLI_BASE, CLI_ERROR, CLI_WARNING, END_COLOR};
   use function otra\console\{guessWords, launchTask, launchTaskPosixWay, promptUser};
@@ -50,8 +50,8 @@ namespace otra\bin
   ini_set('display_errors', '1');
   error_reporting(E_ALL);
   require CORE_PATH . 'OtraException.php';
-  set_error_handler([OtraException::class, 'errorHandler']);
-  set_exception_handler([OtraException::class, 'exceptionHandler']);
+  set_error_handler(OtraException::errorHandler(...));
+  set_exception_handler(OtraException::exceptionHandler(...));
   spl_autoload_register(function (string $className) : void
   {
     require CLASSMAP[$className];

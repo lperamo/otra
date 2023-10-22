@@ -70,16 +70,30 @@ const
       REQ_PHP_LIB
     ],
     [
+      'intl',
+      'PHP extension \'intl\'',
+      CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO .
+      ' Needed for Rector, a library for instant upgrades and automated refactoring.',
+      REQ_PHP_LIB
+    ],
+    [
       'Zend OPcache',
       'PHP extension \'zend-opcache\'',
       CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO . ' Needed to use the preloading feature available since PHP 7.4',
       REQ_PHP_LIB
     ],
     [
-      'PHP Version => 8.1',
-      'PHP version 8.1.x+',
-      'PHP version must be at least 8.1.x.',
+      'PHP Version => 8.2',
+      'PHP version 8.2.x+',
+      'PHP version must be at least 8.2.x.',
       REQ_PHP_VERSION
+    ],
+    [
+      'parallel',
+      '\'parallel\' tool',
+      CLI_INFO_HIGHLIGHT . '[Optional]' . CLI_INFO .
+      ' Needed to use the OTRA task `convertImages` as we use this to speed up the process',
+      REQ_PACKAGE
     ]
   ],
   OTRA_SEARCHING_COMMAND = (PHP_OS === 'Linux') ? 'which ' : 'where ';
@@ -109,7 +123,7 @@ function requirements() : void
       );
     elseif ($requirement[REQ_CHECK_TYPE] === REQ_PHP_VERSION)
       [$error,] = cliCommand(
-        'php -v | egrep -o "PHP\ [8-9]\.[0-9]{1,}\.[0-9]{1,}"',
+        'php -v | egrep -o "PHP\ 8\.[2-9]{1,}\.[0-9]{1,}"',
         null,
         false
       );

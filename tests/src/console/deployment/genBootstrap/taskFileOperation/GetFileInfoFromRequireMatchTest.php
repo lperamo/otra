@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use function otra\console\deployment\genBootstrap\getFileInfoFromRequireMatch;
 use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\phpOrHTMLIntoEval;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GetFileInfoFromRequireMatchTest extends TestCase
@@ -17,9 +19,6 @@ class GetFileInfoFromRequireMatchTest extends TestCase
   private const
     FILENAME = 'filename.php',
     CONSTANT_PATH_CONSTANTS = 'otra\\console\\deployment\\genBootstrap\\PATH_CONSTANTS';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

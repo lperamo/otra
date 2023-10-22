@@ -158,7 +158,7 @@ namespace otra\console
      *
      * @return string
      */
-    function convertArrayFromVarExportToShortVersion(string $code) : string
+    function shortenVarExportArray(string $code) : string
     {
       return
         str_replace(
@@ -180,7 +180,7 @@ namespace otra\console
      *
      * @return string
      */
-    function convertArrayFromVarExportToShorterVersion(string $code) : string
+    function shortenMoreVarExportArray(string $code) : string
     {
       return preg_replace(
         '@,(\s*)]@',

@@ -18,7 +18,7 @@
   },
   "prefer-stable": true,
   "require": {
-    "php": ">=8.1.0",
+    "php": ">=8.2.0",
     "ext-curl": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
@@ -31,11 +31,13 @@
   },
   "require-dev": {
     "ext-inotify": "*",
+    "ext-intl" : "*",
     "ext-pdo_mysql": "*",
-    "rector/rector": "^0.13.10"
+    "rector/rector": "*"
   },
   "suggest": {
     "ext-inotify": "Needed to use the OTRA genWatcher task.",
+    "ext-intl": "Recommended for Rector.",
     "ext-openssl": "Needed to encrypt passwords securely"
   }
 }

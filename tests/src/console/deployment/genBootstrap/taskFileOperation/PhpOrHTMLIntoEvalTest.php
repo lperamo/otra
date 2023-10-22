@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\phpOrHTMLIntoEval;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class PhpOrHTMLIntoEvalTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();

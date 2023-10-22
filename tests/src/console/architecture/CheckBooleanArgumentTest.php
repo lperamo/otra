@@ -4,17 +4,19 @@ declare(strict_types=1);
 namespace src\console\architecture;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CONSOLE_PATH;
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\architecture\checkBooleanArgument;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CheckBooleanArgumentTest extends TestCase
 {
-  public const TEST_BUNDLE = 'test';
+  final public const TEST_BUNDLE = 'test';
   private const
     TEST_TASK = 'createBundle',
     OTRA_BINARY = 'otra.php',
@@ -23,9 +25,6 @@ class CheckBooleanArgumentTest extends TestCase
     ARGUMENT_NAME = 'force',
     NO_INTERACTIVE_MODE = 'false',
     PASSED_DEFAULT_VALUE = 'false';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

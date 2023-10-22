@@ -12,7 +12,7 @@ use otra\cache\php\Logger;
 use otra\config\AllConfig;
 use PDO;
 use PDOStatement;
-use const otra\cache\php\{APP_ENV,CORE_PATH,DEV};
+use const otra\cache\php\{APP_ENV, CORE_PATH, DEV, PROD};
 
 /**
  * @package otra\bdd
@@ -32,7 +32,7 @@ class Sql
     $currentDBMS = '',
     $currentConnectionName;
 
-  public static ?Sql $instance;
+  public static ?Sql $instance = null;
   private const QUERY = 0;
 
   private function __construct()
@@ -98,7 +98,7 @@ class Sql
       'db' => $database,
       'driver' => $driver,
       'port' => $port,
-      'host' => $host,
+      'host' => $hostName,
       'login' => $login,
       'password' => $password
     ] = AllConfig::$dbConnections[$connection];
@@ -116,12 +116,18 @@ class Sql
       }
 
       [
+        'charset' => $charset,
         'db' => $database,
-        'port' => $port,
-        'host' => $host,
+        'dsnDriver' => $dsnDriver,
+        'port' => $databasePort,
+        'host' => $hostName,
         'login' => $login,
         'password' => $password
-      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn];
+      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn] +
+      [
+        'dsnDriver' => 'mysql',
+        'charset' => 'utf8mb4'
+      ];
 
       $activeConn = &self::$_activeConn[$currentConnection];
       $activeConn['db'] = $database;
@@ -129,12 +135,12 @@ class Sql
 
       try
       {
-        // Putting the charset in the DNS here IS SUPER IMPORTANT! https://stackoverflow.com/a/12202218/1818095
+        // Putting the charset in the DNS here IS SUPER IMPORTANT for security!
+        // https://stackoverflow.com/a/12202218/1818095
         $activeConn['conn'] = $activeConn['instance']->connect(
-          strtolower(substr($driver, 3)) .
-            ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
-            'host=' . ('' == $port ? $host : $host . ':' . $port) .
-            ';charset=utf8mb4',
+          $dsnDriver . ($haveDatabase  ? ':dbname=' . $database . ';' : ':') .
+            'host=' . ('' == $databasePort ? $hostName : $hostName . ':' . $databasePort) .
+            ';charset=' . $charset,
           $login,
           $password
         );
@@ -143,9 +149,12 @@ class Sql
         self::$currentConnectionName = $currentConnection;
       } catch(Exception $exception)
       {
-        throw new OtraException($exception->getMessage());
+        throw new OtraException($_SERVER[APP_ENV] === PROD
+          ? 'Cannot connect to the database'
+          : $exception->getMessage()
+        );
       }
-    }else
+    } else
       throw new OtraException(
         'This DBMS \'' . $driver . '\' is not available...yet ! Available DBMS are : ' .
         implode(', ', self::$dbmsCollection),

@@ -13,13 +13,13 @@ const
     's' => 'Stack trace',
     'u' => 'User Agent'
   ],
-  QUOTE = '<span class="requests--parameter--string">"</span>',
-  KEY_CONTAINER = '<i class="logs-container--message-container--label">',
+  QUOTE = '<span class=requests--parameter--string>"</span>',
+  KEY_CONTAINER = '<i class=logs-container--message-container--label>',
   KEY_CONTAINER_END = '</i>',
   YES_ICON = '✔',
   NO_ICON = '✘',
-  YES_ICON_HTML = '<span class="yes-icon">' . YES_ICON . '</span>',
-  NO_ICON_HTML = '<span class="no-icon">' . NO_ICON . '</span>';
+  YES_ICON_HTML = '<span class=yes-icon>' . YES_ICON . '</span>',
+  NO_ICON_HTML = '<span class=no-icon>' . NO_ICON . '</span>';
 
 /**
  * Shows an information line in the 'Message' kind of blocks in the logs
@@ -46,8 +46,8 @@ function beautifyPath(string $path) : string
   return str_replace(
     ['CORE_PATH +', 'BASE_PATH +'],
     [
-      '<span class="requests--parameter--path">CORE_PATH + </span>',
-      '<span class="requests--parameter--path">BASE_PATH + </span>'
+      '<span class=requests--parameter--path>CORE_PATH +</span>',
+      '<span class=requests--parameter--path>BASE_PATH +</span>'
     ],
     $path
   );
@@ -61,21 +61,19 @@ function createTabs(array $tabRadioNames, array $tabNames) : void
 {
   foreach($tabRadioNames as $tabKey => $tabName)
   {
-    ?><input type="radio" id="<?= $tabName?>-tab" class="tabs-radios" name="requests"<?php
-  if (array_key_first($tabNames) === $tabKey) {?>checked<?php }
+    ?><input type=radio id=<?= $tabName?>-tab class=tabs-radios name=requests<?php
+  if (array_key_first($tabNames) === $tabKey) {?> checked<?php }
     ?>><?php
   }
   unset($tabKey, $tabName);
-  ?>
-  <ul class="tabs" role="tablist"><?php
+  ?><ul class=tabs role=tablist><?php
     foreach ($tabNames as $tabKey => $tabName)
     {
-      ?><li class="tabs--item" role="tab">
-      <label for="<?= $tabRadioNames[$tabKey] ?>-tab" class="tab--item-label"><?= $tabName ?></label>
-      </li><?php
-    }?>
-  </ul>
-  <?php
+      ?><li class=tabs--item role=tab><?php
+      ?><label for=<?= $tabRadioNames[$tabKey] ?>-tab class=tab--item-label><?= $tabName ?></label><?php
+      ?></li><?php
+    }
+  ?></ul><?php
 }
 
 /**
@@ -83,7 +81,7 @@ function createTabs(array $tabRadioNames, array $tabNames) : void
  */
 function noLogs(string $noLogsMessage)
 {
-  ?><div class="logs-container--item-container"><?= $noLogsMessage ?></div><?php
+  ?><div class=logs-container--item-container><?= $noLogsMessage ?></div><?php
 }
 
 /**
@@ -91,7 +89,9 @@ function noLogs(string $noLogsMessage)
  * @param string $logFile
  * @param string $noLogsMessage
  * @param string $openAccordion
- * @param bool   $classic       Are there classic logs that do not need JSON decoding?
+ * @param bool   $classic Are there classic logs that do not need JSON decoding?
+ *
+ * @throws JsonException
  */
 function showLogsFull(
   string $logType,
@@ -101,11 +101,9 @@ function showLogsFull(
   bool $classic = false
 )
 {
-  ?>
-  <details class="accordion"<?= $openAccordion ?>>
-    <summary class="accordion"><?= $logType ?></summary>
-    <div class="accordion--block">
-      <?php
+  ?><details class=accordion<?= $openAccordion ?>><?php
+    ?><summary class=accordion><?= $logType ?></summary><?php
+      ?><div class=accordion--block><?php
       $traceLogs = file_get_contents($logFile);
 
       if (!empty($traceLogs))
@@ -117,10 +115,8 @@ function showLogsFull(
       }
       else
         noLogs($noLogsMessage);
-      ?>
-    </div>
-  </details>
-  <?php
+      ?></div><?php
+    ?></details><?php
 }
 
 /**
@@ -156,6 +152,21 @@ function getPrettyStackTrace(array $stackTrace): string
   return $stackTraceInfo;
 }
 
+function trimAndRemoveLastComma(string $inputString): string
+{
+  $length = strlen($inputString);
+
+  // Remove trailing newline characters
+  while ($length > 0 && ($inputString[$length - 1] === "\n" || $inputString[$length - 1] === "\r"))
+    $length--;
+
+  // Remove the last comma
+  if ($length > 0 && $inputString[$length - 1] === ',')
+    $length--;
+
+  return substr($inputString, 0, $length);
+}
+
 /**
  * Converts raw logs in beautiful HTML logs
  *
@@ -164,24 +175,32 @@ function getPrettyStackTrace(array $stackTrace): string
  *
  * @throws JsonException
  */
-function showLogs(string $errorsLogs, string $noLogsMessage) : void
+/**
+ * Converts raw logs in beautiful HTML logs
+ *
+ * @param string $errorsLogs
+ * @param string $noLogsMessage
+ *
+ * @throws JsonException
+ */
+function showLogs(string $errorsLogs, string $noLogsMessage): void
 {
-  $errorsLogs = json_decode(
-    substr($errorsLogs, 0, -2) . ']',
-    true,
-    512,
-    JSON_THROW_ON_ERROR
-  );
-
   if (empty($errorsLogs))
   {
     noLogs($noLogsMessage);
     return;
   }
 
+  $errorsLogs = json_decode(
+    trimAndRemoveLastComma($errorsLogs) . ']',
+    true,
+    512,
+    JSON_THROW_ON_ERROR
+  );
+
   foreach ($errorsLogs as $traceProperties)
   {
-    ?><div class="logs-container--item-container"><?php
+    ?><div class=logs-container--item-container><?php
     foreach (TRACE_LABELS as $labelKey => $labelValue)
     {
       if (!isset($traceProperties[$labelKey]))
@@ -192,16 +211,17 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
       // Checks if it was console log or web log
       switch($labelKey)
       {
-        case 'c' :
+        case 'c':
           $value = $tracePropertyValue === '1'
             ? YES_ICON_HTML
             : NO_ICON_HTML;
           break;
-        case 'd' :
+        case 'd':
           // Formats the date if it's a date
           $value = date_format(date_create($tracePropertyValue), 'Y-m-d H:i:s');
           break;
         case 'm':
+          // Handle message decoding and formatting
           $decodedMessage = json_decode(
             $tracePropertyValue,
             true,
@@ -213,7 +233,7 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
 
           /**
            * @var int|string $messageKey
-           * @var string     $messageProperty
+           * @var int|string $messageProperty
            */
           foreach ($tracePropertyValue as $messageKey => $messageProperty)
           {
@@ -224,10 +244,6 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
             $isString = is_string($messageProperty) && $messageKey !== 'a' && $messageKey !== 'f';
 
             // We check if the message contains some stack trace
-            // (we process this particular case here, because it is not appropriate for the `match` statement
-            if ($messageKey === 's')
-              $stackTraceInfo = getPrettyStackTrace($messageProperty);
-
             if ($messageProperty === YES_ICON)
               $messageProperty = YES_ICON_HTML;
             elseif ($messageProperty === NO_ICON)
@@ -240,7 +256,7 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
               'hrc' => showMessageBlock('HTTP response code', (string) $messageProperty),
               'p' => showMessageBlock('Pattern', $messageProperty),
               'r' => showMessageBlock('Route', $messageProperty),
-              's' => $stackTraceInfo,
+              's' => getPrettyStackTrace([$messageProperty]),
               default => ($isString)
                 ? QUOTE . htmlentities($messageProperty) . QUOTE
                 : htmlentities($messageProperty),
@@ -259,25 +275,18 @@ function showLogs(string $errorsLogs, string $noLogsMessage) : void
         default:
           $value = $tracePropertyValue;
       }
-      ?>
-    <div<?php if ($labelKey === 'm') {?> class="message-container"<?php }?>>
-      <?php
+    ?><div<?php if ($labelKey === 'm') {?> class=message-container<?php }?>><?php
       if ($labelKey === 'm')
-      {?>
-        <i class="logs-container--label">
-          <b><?= TRACE_LABELS[$labelKey] ?></b>
-        </i>
-        <br>
-        <?= $value; ?>
-        <?php
+      {?><i class=logs-container--label><?php
+          ?><b><?= TRACE_LABELS[$labelKey] ?></b><?php
+        ?></i><?php
+        ?><br><?php echo $value;
       } else
-      {?>
-        <i class="logs-container--label"><?= TRACE_LABELS[$labelKey];?></i>
-        <?php echo $value;
+      {?><i class=logs-container--label><?= TRACE_LABELS[$labelKey];?></i> <?php
+        echo $value;
       }
-      ?>
-      </div><?php
-    }?>
-    </div><?php
+      ?></div><?php
+    }
+    ?></div><?php
   }
 }

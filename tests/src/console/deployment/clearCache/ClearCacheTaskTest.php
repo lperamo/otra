@@ -5,7 +5,7 @@ namespace src\console\deployment\clearCache;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, PROD, TEST_PATH};
 use const otra\config\VERSION;
@@ -13,6 +13,8 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ClearCacheTaskTest extends TestCase
@@ -60,7 +62,7 @@ class ClearCacheTaskTest extends TestCase
     ],
     TEST_CACHE = CACHE_PATH . 'test.cache',
     BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
-    TEST_EXAMPLE_ROUTES = TEST_PATH . 'examples/createAction/Routes.php',
+    TEST_EXAMPLE_ROUTES = TEST_PATH . 'examples/deployment/Routes.php',
     TEST_ROUTES = self::BUNDLES_CONFIG_PATH . 'Routes.php',
     CACHE_ROUTE_MANAGEMENT = self::CACHE_PHP_INIT_PATH . 'RouteManagement.php',
     CACHE_CLASS_MAP = self::CACHE_PHP_INIT_PATH . 'ClassMap.php',
@@ -74,9 +76,6 @@ class ClearCacheTaskTest extends TestCase
     $testRouteCss,
     $testRouteJs,
     $testRouteTemplate;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {
@@ -95,6 +94,7 @@ class ClearCacheTaskTest extends TestCase
   protected function tearDown(): void
   {
     parent::tearDown();
+
     ob_start();
     require CONSOLE_PATH . 'helpAndTools/generateTaskMetadata/generateTaskMetadataTask.php';
     generateTaskMetadata();
@@ -149,6 +149,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -175,6 +176,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -202,6 +204,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -248,6 +251,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -294,6 +298,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -340,6 +345,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -386,6 +392,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -432,6 +439,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -478,6 +486,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -524,6 +533,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -570,6 +580,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -616,6 +627,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -662,6 +674,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

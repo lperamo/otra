@@ -5,7 +5,7 @@ namespace src\console\architecture\createModel;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\
 {
   CLI_BASE,
@@ -17,6 +17,8 @@ use const otra\console\
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateModelHelpTest extends TestCase
@@ -28,9 +30,6 @@ class CreateModelHelpTest extends TestCase
     OTRA_INTERACTIVE_MODE_NAME_SECOND = ' mode.',
     OTRA_ONLY_USEFUL_AND_REQUIRED = 'Only useful (and required) for the ',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

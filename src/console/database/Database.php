@@ -195,14 +195,25 @@ abstract class Database
       if ($mode === self::OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT)
         return ' ' . strtoupper($attribute);
       elseif ($mode === self::OTRA_DB_PROPERTY_MODE_TYPE)
-        return strtoupper($value);
+        return !str_starts_with(strtoupper(self::$attributeInfos['type']), 'ENUM(') ? strtoupper($value) : 'ENUM' . substr($value,4);
       else // self::OTRA_DB_PROPERTY_MODE_DEFAULT
-        return ' ' . strtoupper($attribute) . ' ' . (is_string($value) ? '\'' . $value . '\'' : $value);
+      {
+        $isDateTimeOrTimestamp = in_array(strtoupper(self::$attributeInfos['type']),  ['DATETIME', 'TIMESTAMP']);
+        $testValue = strtoupper($value);
+
+        return ' ' . strtoupper($attribute) . ' ' .
+          (is_string($value) && !$isDateTimeOrTimestamp
+            ? '\'' . $value . '\''
+            : ($isDateTimeOrTimestamp && ($testValue === 'CURRENT_TIMESTAMP' || $testValue === 'NOW')
+              ? $value
+              : '\'' . $value . '\'')
+          );
+      }
     } elseif ($attribute === 'default'
       && isset(self::$attributeInfos['type'])
-      && strtoupper(self::$attributeInfos['type']) === 'TIMESTAMP')
+      && in_array(strtoupper(self::$attributeInfos['type']),  ['DATETIME', 'TIMESTAMP']))
       // We force a default value in case the SQL_MODE requires it to avoid errors
-      return ' DEFAULT CURRENT_TIMESTAMP';
+      return ' DEFAULT current_timestamp';
 
     return '';
   }

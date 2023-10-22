@@ -5,8 +5,9 @@ namespace src\database;
 
 use Exception;
 use PDOStatement;
-use phpunit\framework\TestCase;
-use otra\{bdd\Sql,OtraException};
+use PHPUnit\Framework\TestCase;
+use otra\
+{bdd\Sql, config\AllConfig, OtraException};
 use ReflectionException;
 use ReflectionMethod;
 use TypeError;
@@ -40,9 +41,12 @@ class SqlTest extends TestCase
 
     $_SERVER[APP_ENV] = PROD;
 
-    try {
-      Sql::getDb()->__destruct();
-    } catch (Exception $exception) {
+    try
+    {
+      if (Sql::$instance !== null)
+        Sql::$instance->__destruct();
+    } catch (Exception)
+    {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
   }
@@ -89,7 +93,7 @@ class SqlTest extends TestCase
    * @throws OtraException
    */
   private function createDatabaseForTest() : void {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();
@@ -108,6 +112,7 @@ class SqlTest extends TestCase
     // context
     require self::TEST_CONFIG_PATH;
     require self::TEST_CONFIG_GOOD_PATH;
+
 
     // launching task
     $sqlInstance = Sql::getDb(null, false);
@@ -201,12 +206,13 @@ class SqlTest extends TestCase
     Sql::getDb();
     $sqlLogContent = file_get_contents($sqlLogPath);
     self::assertInstanceOf(PDOStatement::class, Sql::$instance->query(self::QUERY_SELECT_1));
-    self::assertSame(
-      $sqlLogContent
+    self::assertMatchesRegularExpression(
+      '@' . preg_quote($sqlLogContent
         . ($sqlLogContent !== ''
         ? ''
         : '[')
-      . '{"file":"phar:///var/www/html/lib/phpunit.phar/phpunit/Framework/TestCase.php","line":1248,"query":"SELECT 1"},',
+      . '{"file":"' .  $_SERVER['HOME']) .
+      '/\.config/composer/vendor/phpunit/phpunit/src/Framework/TestCase\.php","line":\d+,"query":"SELECT 1"},@',
       file_get_contents($sqlLogPath)
     );
 
@@ -431,6 +437,7 @@ class SqlTest extends TestCase
   public function testSelectDB_NoMethodSelectDbButOtherDriverThanPDOMySQL() : void
   {
     self::markTestIncomplete('We have to create more drivers classes to be able to test this condition');
+
     // loading the test configuration
     require BASE_PATH . self::TEST_CONFIG_GOOD_PATH;
 
@@ -616,7 +623,7 @@ class SqlTest extends TestCase
     // context
     require TEST_PATH . 'config/AllConfigNoDefaultConnection.php';
 
-    // assertions
+    // testing
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage('There is no default connection in your configuration ! Check your configuration.');
 
@@ -709,15 +716,19 @@ class SqlTest extends TestCase
 
     try {
       Sql::$instance->query('bogus sql');
-    } catch (Exception $exception)
+    } catch (Exception)
     {
-      self::assertSame(
-      [
-        0 => '42000',
-        1 => 1064,
-        2 => 'You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'bogus sql\' at line 1'
-      ],
-        Sql::$instance->errorInfo()
+      $errorInfo = Sql::$instance->errorInfo();
+      self::assertArrayHasKey(0, $errorInfo);
+      self::assertSame('42000', $errorInfo[0]);
+
+      self::assertArrayHasKey(1, $errorInfo);
+      self::assertSame(1064, $errorInfo[1]);
+
+      self::assertArrayHasKey(2, $errorInfo);
+      self::assertMatchesRegularExpression(
+        '@You have an error in your SQL syntax; check the manual that corresponds to your \w+ server version for the right syntax to use near \'bogus sql\' at line 1@',
+        $errorInfo[2]
       );
     }
   }

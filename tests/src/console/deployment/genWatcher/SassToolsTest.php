@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\console\deployment\genWatcher;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 use ReflectionException;
 use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, TEST_PATH};
@@ -20,6 +20,8 @@ use function otra\console\deployment\genWatcher\
   updateSassTreeAfterEvent};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SassToolsTest extends TestCase
@@ -61,9 +63,6 @@ class SassToolsTest extends TestCase
       ]
     ];
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();
@@ -86,7 +85,7 @@ class SassToolsTest extends TestCase
     }
   }
 
-  private function searchSassLastLeavesContext()
+  private function searchSassLastLeavesContext(): void
   {
     // -- preparing the architecture
     mkdir(self::BUNDLES_CONFIG_PATH, 0777, true);
@@ -102,7 +101,7 @@ class SassToolsTest extends TestCase
   }
 
 
-  public function testCreatePrunedFullTree()
+  public function testCreatePrunedFullTree(): void
   {
     // launching
     // 0 equals to array_search(self::SCSS_MAIN_PATH, $sassTreeKeys)
@@ -115,7 +114,7 @@ class SassToolsTest extends TestCase
     );
   }
 
-  public function testGetCssPathFromImport()
+  public function testGetCssPathFromImport(): void
   {
     // context
     $partialPath = CORE_PATH . 'resources/scss/pages/templateStructure/';
@@ -152,7 +151,7 @@ class SassToolsTest extends TestCase
   /**
    * @throws OtraException|ReflectionException
    */
-  public function testSaveSassTree()
+  public function testSaveSassTree(): void
   {
     // context
     // If there is already a cache for the sass tree, we remove it to be sure it will not interfere with our test
@@ -272,7 +271,7 @@ class SassToolsTest extends TestCase
     );
   }
 
-  public function testUpdateSassTree()
+  public function testUpdateSassTree(): void
   {
     // context
     $sassTree = self::BIG_TREE;
@@ -293,7 +292,7 @@ class SassToolsTest extends TestCase
    *
    * @throws OtraException
    */
-  public function testUpdateSassTreeAfterEvent()
+  public function testUpdateSassTreeAfterEvent(): void
   {
     // context
     $this->searchSassLastLeavesContext();

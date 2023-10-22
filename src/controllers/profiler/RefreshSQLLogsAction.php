@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace otra\controllers\profiler;
 
 use otra\{Controller, OtraException, services\ProfilerService};
+use JsonException;
 use const otra\cache\php\{APP_ENV,BASE_PATH,CORE_PATH};
 
 /**
@@ -16,7 +17,7 @@ class RefreshSQLLogsAction extends Controller
    * @param array $otraParams [pattern, bundle, module, controller, action, route, js, css, internalRedirect]
    * @param array $params     [...getParams, ...postParams, etc.]
    *
-   * @throws OtraException
+   * @throws JsonException|OtraException
    */
   public function __construct(array $otraParams = [], array $params = [])
   {

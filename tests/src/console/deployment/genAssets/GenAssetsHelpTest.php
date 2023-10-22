@@ -5,13 +5,15 @@ namespace src\console\deployment\genAssets;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\
 {CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, STRING_PAD_FOR_OPTION_FORMATTING};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenAssetsHelpTest extends TestCase
@@ -20,9 +22,6 @@ class GenAssetsHelpTest extends TestCase
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace otra;
 
 use otra\config\Routes;
-use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, DIR_SEPARATOR, PROD};
-use const otra\cache\php\init\CLASSMAP;
+use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, CLASSMAP, DIR_SEPARATOR, PROD};
 
 /**
  * @package otra
@@ -18,13 +17,15 @@ use const otra\cache\php\init\CLASSMAP;
 abstract class Router
 {
   private const
+    OTRA_ROUTE_PREFIX_KEY = 'prefix',
+    OTRA_ROUTE_RESOURCES_KEY = 'resources';
+
+  public const
+    OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8',
     OTRA_ROUTE_CHUNKS_KEY = 'chunks',
     OTRA_ROUTE_CONTENT_TYPE_KEY = 'content-type',
     OTRA_ROUTE_METHOD_KEY = 'method',
-    OTRA_ROUTE_PREFIX_KEY = 'prefix',
-    OTRA_ROUTE_RESOURCES_KEY = 'resources',
-    OTRA_ROUTE_URL_KEY = 0,
-    OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
+    OTRA_ROUTE_URL_KEY = 0;
 
   final public const
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
@@ -141,7 +142,7 @@ abstract class Router
   }
 
   /**
-   * Check if the pattern is present among the routes and launch a 404 error page it it does not
+   * Check if the pattern is present among the routes and launch a 404 error page if it does not
    *
    * @param string $userUrl The pattern to check
    *
@@ -216,14 +217,21 @@ abstract class Router
       ))
         continue;
 
-      if ($_SERVER['CONTENT_TYPE'] === '')
-        $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
+      if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
+      {
+        if ($_SERVER['CONTENT_TYPE'] === '')
+          $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
 
-      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
-      if (!str_contains(
-        $_SERVER['CONTENT_TYPE'],
-        $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
-      )
+        // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+        if (!str_contains(
+          $_SERVER['CONTENT_TYPE'],
+          $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)
+        )
+          continue;
+      } elseif (!in_array(
+        $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'],
+        $routeData[self::OTRA_ROUTE_METHOD_KEY] ?? ['GET']
+      ))
         continue;
 
       /** @var string $routeUrl */
@@ -295,7 +303,10 @@ abstract class Router
   public static function getRouteUrlWithoutParameters(string $routeName) : string
   {
     $routeLongName = Routes::$allRoutes[$routeName][self::OTRA_ROUTE_CHUNKS_KEY][Routes::ROUTES_CHUNKS_URL];
+    $bracketPosition = strpos($routeLongName, '{');
 
-    return mb_substr($routeLongName, 0, strpos($routeLongName, '{') - 1);
+    return $bracketPosition !== false
+      ? mb_substr($routeLongName, 0, $bracketPosition - 1)
+      : $routeLongName;
   }
 }

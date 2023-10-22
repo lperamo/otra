@@ -7,13 +7,15 @@ use otra\console\TasksManager;
 use otra\controllers\profiler\RequestsAction;
 use otra\OtraException;
 use otra\Session;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DEV, OTRA_PROJECT, TEST_PATH};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RequestsActionTest extends TestCase
@@ -24,8 +26,6 @@ class RequestsActionTest extends TestCase
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'requests',
     FULL_ACTION_NAME = self::ACTION . 'Action';
-
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @throws OtraException
@@ -61,6 +61,7 @@ class RequestsActionTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException|ReflectionException
    */

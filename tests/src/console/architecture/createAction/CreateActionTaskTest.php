@@ -5,16 +5,16 @@ namespace src\console\architecture\createAction;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT, PROD, TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
-
-define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
-define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');
+use function otra\tools\files\returnLegiblePath;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateActionTaskTest extends TestCase
@@ -37,9 +37,11 @@ class CreateActionTaskTest extends TestCase
     TEST_CONTROLLER_PATH = self::TEST_MODULE_PATH . 'controllers/' . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
     TEST_ACTION_PATH = self::TEST_CONTROLLER_PATH . TEST_ACTION_FULL,
     TEST_VIEWS_PATH = self::TEST_MODULE_PATH . 'views/',
-    TEST_VIEWS_SUBFOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR;
+    TEST_VIEWS_SUB_FOLDER_PATH = self::TEST_VIEWS_PATH . CreateActionTaskTest::TEST_CONTROLLER_NAME . DIR_SEPARATOR,
+    EXPECTED_ACTION_FILE = TEST_PATH . 'examples/createAction/Action.php',
+    EXPECTED_ROUTES_FILE = TEST_PATH . 'examples/createAction/Routes.php';
 
-  public const
+  final public const
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test',
@@ -47,14 +49,12 @@ class CreateActionTaskTest extends TestCase
 
   private static array $taskClassMapPath;
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();
     $_SERVER[APP_ENV] = PROD;
     self::$taskClassMapPath = require TASK_CLASS_MAP_PATH;
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
   }
 
   protected function tearDown(): void
@@ -109,6 +109,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @depends testCreateActionTask
    * @doesNotPerformAssertions
@@ -188,6 +189,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -317,6 +319,7 @@ class CreateActionTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -342,22 +345,25 @@ class CreateActionTaskTest extends TestCase
 
     // testing
     self::assertFileExists(self::TEST_ACTION_PATH);
+
     self::assertFileEquals(
-      TEST_PATH . 'examples/createAction/Action.php',
+      self::EXPECTED_ACTION_FILE,
       self::TEST_ACTION_PATH,
-      'Testing action generated.'
+      'Testing action generated. Comparing ' . returnLegiblePath(self::TEST_ACTION_PATH) . ' against ' .
+      returnLegiblePath(self::EXPECTED_ACTION_FILE)
     );
     self::assertFileExists(self::TEST_VIEWS_PATH);
-    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH);
-    self::assertFileExists(self::TEST_VIEWS_SUBFOLDER_PATH . self::TEST_ACTION_NAME . '.phtml');
+    self::assertFileExists(self::TEST_VIEWS_SUB_FOLDER_PATH);
+    self::assertFileExists(self::TEST_VIEWS_SUB_FOLDER_PATH . self::TEST_ACTION_NAME . '.phtml');
 
     self::assertFileExists(self::TEST_BUNDLES_CONFIG_FILE_PATH);
 
     self::assertFileExists(self::TEST_BUNDLE_ROUTES_PATH);
     self::assertFileEquals(
-      TEST_PATH . 'examples/createAction/Routes.php',
+      self::EXPECTED_ROUTES_FILE,
       self::TEST_BUNDLE_ROUTES_PATH,
-      'Testing routes generated.'
+      'Testing routes generated. Comparing ' . returnLegiblePath(self::TEST_BUNDLE_ROUTES_PATH) .
+      ' against' . returnLegiblePath(self::EXPECTED_ROUTES_FILE)
     );
 
     // cleaning
@@ -371,3 +377,6 @@ class CreateActionTaskTest extends TestCase
     }
   }
 }
+
+define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateActionTaskTest::TEST_BUNDLE_NAME));
+define(__NAMESPACE__ . '\\TEST_ACTION_FULL', ucfirst(CreateActionTaskTest::TEST_ACTION_NAME) . 'Action.php');

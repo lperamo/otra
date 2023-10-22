@@ -4,13 +4,15 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH};
 use const otra\console\{CLI_WARNING, END_COLOR};
 use const otra\console\deployment\genBootstrap\{ANNOTATION_DEBUG_PAD};
 use function otra\console\deployment\genBootstrap\{showFile, evalPathVariables};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ShowFileTest extends TestCase
@@ -21,9 +23,6 @@ class ShowFileTest extends TestCase
     FILENAME_ABSOLUTE_PATH = BASE_PATH . self::FILENAME,
     LEVEL_ZERO = 0,
     LEVEL_ONE = 1;
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {

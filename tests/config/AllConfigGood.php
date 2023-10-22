@@ -15,7 +15,7 @@ AllConfig::$dbConnections = [ // mandatory
     'driver' => 'OtherDriver',
     'host' => 'localhost',
     'port' => '',
-    'db' => 'testDB', // do not modify this!
+    'db' => 'testDB' // do not modify this!
   ]
 ];
 AllConfig::$debugConfig = [

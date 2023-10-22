@@ -12,9 +12,10 @@ namespace otra\console\deployment;
 use otra\config\AllConfig;
 use JetBrains\PhpStorm\ArrayShape;
 use otra\OtraException;
-use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR};
+use const otra\cache\php\
+{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
-use function otra\tools\cliCommand;
+use function otra\tools\runCommandWithEnvironment;
 use function otra\tools\files\returnLegiblePath;
 
 if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
@@ -41,10 +42,34 @@ const FILE_TASK_ARG_MASK = 3,
     CORE_PATH
   ],
   RESOURCES_TO_WATCH = ['ts', 'scss', 'sass'];
-
+define(
+  __NAMESPACE__ . '\\DEFAULTS_PATH_TO_AVOID',
+  array_merge([
+    BASE_PATH . '.git',
+    BASE_PATH . '.idea', // Jetbrains folder
+    BASE_PATH . '.scannerwork', // SonarQube
+    BASE_PATH . 'cache',
+    BUNDLES_PATH . 'config',
+    BASE_PATH . 'logs'
+  ],
+  OTRA_PROJECT
+    ? []
+    : [
+      BASE_PATH . 'doc',
+      BASE_PATH . 'phpdoc',
+      BASE_PATH . 'reports',
+      BASE_PATH . 'sassdoc',
+      BASE_PATH . 'tests/.coverage-cache', // PHPUnit's coverage cache folder
+      BASE_PATH . 'tests/config/data',
+      BASE_PATH . 'tests/config/serverConfBackup',
+      BASE_PATH . 'tests/examples/nginx',
+      BASE_PATH . 'vendor'
+    ]
+  )
+);
 define(
   __NAMESPACE__ . '\\PATHS_TO_AVOID',
-  array_merge([BUNDLES_PATH . 'config'], AllConfig::$pathsToAvoidForBuild ?? [])
+  array_merge(DEFAULTS_PATH_TO_AVOID, AllConfig::$pathsToAvoidForBuild ?? [])
 );
 
 // Defines if we want to use Google Closure Compiler or not
@@ -122,8 +147,13 @@ function generateStylesheetsFiles(
   foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
     $sassLoadPathString .= ' -I ' . $sassLoadPath;
 
-  [, $output] = cliCommand(
-    'sass --update ' . $sassLoadPathString . (TASK_FILE_SOURCE_MAPS ? ' ' : ' --no-source-map ') . $resourceName . ':' . $cssPath,
+  [, $output] = runCommandWithEnvironment(
+    AllConfig::$nodeBinariesPath . 'sass' . ' -scompressed --update ' . $sassLoadPathString .
+    (TASK_FILE_SOURCE_MAPS
+      ? ' '
+      : ' --no-source-map '
+    ) . $resourceName . ':' . $cssPath,
+    ['PATH' => getenv('PATH')],
     null,
     false
   );
@@ -139,8 +169,9 @@ function generateStylesheetsFiles(
   if (!TASK_FILE_SOURCE_MAPS && file_exists($sourceMapPath))
     unlink($sourceMapPath);
 
-  // remove "Compiled [...]" messages from SASS CLI command as OTRA already talks about it
-  return preg_replace('@Compiled .*?.scss to .*?.css\.@','',$output);
+  // removes "Compiled [...]" messages from SASS CLI command as OTRA already talks about it
+  // also removes dates
+  return preg_replace('@\[[^]]+] Compiled .*?.scss to .*?.css\.@','',$output);
 }
 
 /**

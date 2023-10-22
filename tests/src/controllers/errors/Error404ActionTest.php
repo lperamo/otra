@@ -6,12 +6,15 @@ namespace src\controllers\errors;
 use otra\console\TasksManager;
 use otra\controllers\errors\Error404Action;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
+use function otra\tools\files\returnLegiblePath2;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD, TEST_PATH};
 use function otra\tools\delTree;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class Error404ActionTest extends TestCase
@@ -20,8 +23,6 @@ class Error404ActionTest extends TestCase
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld';
-
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {
@@ -52,6 +53,7 @@ class Error404ActionTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
+    require CORE_PATH . 'tools/files/returnLegiblePath.php';
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
@@ -62,14 +64,17 @@ class Error404ActionTest extends TestCase
   }
 
   /**
+   * @dataProvider dataProvider
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testError404Action() : void
+  public function testError404Action(?string $ipAddress, string $expectedOutput) : void
   {
     // context
     $_SERVER['HTTP_HOST'] = 'dev.otra-framework.tech';
     $_SERVER['REQUEST_URI'] = '/';
+    $_SERVER['REMOTE_ADDR'] = $ipAddress;
 
     // launching
     ob_start();
@@ -85,11 +90,25 @@ class Error404ActionTest extends TestCase
     ]);
     $output = ob_get_clean();
 
+    ob_start();
+    require $expectedOutput;
+
     // testing
     self::assertSame(
-      file_get_contents(TEST_PATH . 'examples/error404.phtml'),
+      ob_get_clean(),
       $output,
-      'Testing 404 error page output...'
+      'Testing 404 error page output against ' . returnLegiblePath2($expectedOutput)
     );
+  }
+
+  /**
+   * @return array<string, array{0: null|string, 1: string}>
+   */
+  public static function dataProvider(): array
+  {
+    return [
+      'local' => ['::1', TEST_PATH . 'examples/error404/local.phtml'],
+      'online' => [null, TEST_PATH . 'examples/error404/online.phtml']
+    ];
   }
 }

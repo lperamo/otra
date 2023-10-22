@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\serve;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\TEST_PATH;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
@@ -24,7 +24,7 @@ class ServeHelpTest extends TestCase
    * @author Lionel Péramo
    * @throws OtraException
    */
-  public function testServeHelp()
+  public function testServeHelp(): void
   {
     // context
     require TEST_PATH . 'tools.php';

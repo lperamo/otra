@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\{analyzeUseToken};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class AnalyzeUseTokenTest extends TestCase
@@ -18,9 +20,6 @@ class AnalyzeUseTokenTest extends TestCase
     LABEL_TESTING_PARSED_FILES = 'Testing $parsedFiles variable...',
     PHP_EXTENSION = '.php',
     CONST_NAME_DEBUG_LEVEL = '\\DEBUG_LEVEL';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = false;
 
   protected function setUp(): void
   {
@@ -34,7 +33,7 @@ class AnalyzeUseTokenTest extends TestCase
    * @Depends ShowFileTest::testVerbose_LevelZero()
    * @Depends ShowFileTest::testNoVerbose()
    */
-  public function testRouterAlwaysIncluded()
+  public function testRouterAlwaysIncluded(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -57,7 +56,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsDevControllerTrait()
+  public function testIsDevControllerTrait(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -81,7 +80,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsProdControllerTrait()
+  public function testIsProdControllerTrait(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -112,7 +111,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testIsBlockSystem()
+  public function testIsBlockSystem(): void
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
@@ -135,7 +134,7 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
-  public function testHasSlashAtFirstAndExternalLibraryClass()
+  public function testHasSlashAtFirstAndExternalLibraryClass(): void
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);

@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace src\tools\debug;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV, CORE_PATH, PROD, TEST_PATH};
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_SUCCESS, CLI_TABLE, END_COLOR, REMOVE_BOLD_INTENSITY};
 use function otra\tools\getSourceFromFileCli;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class DumpTest extends TestCase
@@ -23,8 +25,6 @@ class DumpTest extends TestCase
 
   private static string $logsProdPath;
   private static bool $outputFlag = true;
-  // it fixes issues like in 'testDump_NoParameters' test, AllConfig is not loaded without that line
-  protected $preserveGlobalState = FALSE;
 
   public static function setUpBeforeClass(): void
   {
@@ -42,7 +42,7 @@ class DumpTest extends TestCase
    * @param int   $depthIndex
    * @param array $array
    */
-  private static function fillArrayDepth(int &$depthIndex, array &$array)
+  private static function fillArrayDepth(int &$depthIndex, array &$array): void
   {
     while($depthIndex < self::OTRA_DEBUG_TEST_VALUE_MAX_DEPTH - 1)
     {

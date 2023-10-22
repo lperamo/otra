@@ -25,6 +25,7 @@ const
   SPACE_INDENT_3 = SPACE_INDENT_2 . SPACE_INDENT;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException
  * @return void

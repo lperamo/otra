@@ -3,22 +3,21 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CONSOLE_PATH;
 use function otra\console\deployment\genBootstrap\processReturn;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ProcessReturnTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    */
-  public function testCaseRoutesMainConfig()
+  public function testCaseRoutesMainConfig(): void
   {
     // context
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';

@@ -8,20 +8,20 @@ namespace otra\console\deployment\genBootstrap
 
 namespace src\console\deployment\genBootstrap\taskFileOperation
 {
-  use phpunit\framework\TestCase;
+  use PHPUnit\Framework\TestCase;
   use const otra\cache\php\CONSOLE_PATH;
   use function otra\console\deployment\genBootstrap\{getFileNamesFromUses};
   use const otra\console\CLI_WARNING;
   use const otra\console\END_COLOR;
 
   /**
+   * It fixes issues like when AllConfig is not loaded while it should be
+   * @preserveGlobalState disabled
    * @runTestsInSeparateProcesses
    */
   class GetFileNamesFromUsesTest extends TestCase
   {
     private const LEVEL = 1;
-    // it fixes issues like when AllConfig is not loaded while it should be
-    protected $preserveGlobalState = FALSE;
 
     protected function setUp(): void
     {

@@ -11,12 +11,12 @@ use DateTime;
  * @author Lionel Péramo
  * @package otra
  */
-class FakeDateTime
+readonly class FakeDateTime
 {
-  private readonly string
+  private string
     $date,
     $timezone;
-  private readonly int $timezone_type;
+  private int $timezone_type;
 
   public function __construct(DateTime $dateTimeInstance)
   {

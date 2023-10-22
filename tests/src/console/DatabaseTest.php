@@ -21,6 +21,8 @@ use function otra\tools\
   setScopeProtectedFields};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  *
  * @author Lionel Péramo
@@ -61,8 +63,6 @@ class DatabaseTest extends TestCase
     OTRA_VARIABLE_DATABASE_SCHEMA_FILE = 'schemaFile',
     OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE = 'tablesOrderFile';
 
-  protected $preserveGlobalState = FALSE; // to fix some bugs like 'constant VERBOSE already defined
-
   /**
    * @throws ReflectionException
    */
@@ -101,7 +101,7 @@ class DatabaseTest extends TestCase
       self::CONFIG_FOLDER_YML
     ]);
 
-    require_once(self::TEST_CONFIG_GOOD_PATH);
+    require_once self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->query('DROP DATABASE IF EXISTS `' . self::DATABASE_NAME . '`;');
@@ -112,7 +112,7 @@ class DatabaseTest extends TestCase
    */
   private function loadConfig() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -173,18 +173,19 @@ class DatabaseTest extends TestCase
       Database::class,
       $testKeys
     );
+
     $testValues = [
-      self::DATABASE_NAME,
-      'InnoDB',
-      '3c>*v(U;Rhoq77[}',
-      'root',
-      self::CONFIG_FOLDER_YML_FIXTURES,
-      true
+      'base' => self::DATABASE_NAME,
+      'motor' => 'InnoDB',
+      'password' => $_SERVER['TEST_PASSWORD'],
+      'user' => $_SERVER['TEST_LOGIN'],
+      'pathYmlFixtures' => self::CONFIG_FOLDER_YML_FIXTURES,
+      'init' => true
     ];
 
     foreach ($unprotectedFields as $fieldNameKey => $unprotectedField)
     {
-      if ($testKeys[$fieldNameKey] === 'pathYmlFixtures')
+      if ($fieldNameKey === 'pathYmlFixtures')
         continue;
 
       self::assertSame(
@@ -279,7 +280,7 @@ class DatabaseTest extends TestCase
    * @throws OtraException
    * @throws ReflectionException
    * @depends testInitBase
-   * @depends testCreateDatabase
+   * @depends src\console\database\sqlCreateDatabase\SqlCreateDatabaseTaskTest::testSqlCreateDatabaseTask
    * @doesNotPerformAssertions
    */
   public function testTruncateTable() : void

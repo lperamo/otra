@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace src\tools\workers;
 
 use otra\tools\workers\{Worker};
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_ERROR, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class WorkerTest extends TestCase
@@ -21,9 +23,6 @@ class WorkerTest extends TestCase
     TIMEOUT = 120,
     WHITE = "\e[15;2]";
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
    * @author Lionel Péramo
    */
@@ -35,7 +34,7 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      self::VERBOSE,
+      self::VERBOSE > 0,
       self::TIMEOUT
     );
 
@@ -45,8 +44,8 @@ class WorkerTest extends TestCase
     self::assertIsString($worker->command);
     self::assertSame(self::COMMAND, $worker->command);
 
-    self::assertIsInt($worker->verbose);
-    self::assertSame(self::VERBOSE, $worker->verbose);
+    self::assertIsBool($worker->verbose);
+    self::assertSame(self::VERBOSE > 0, $worker->verbose);
 
     self::assertIsString($worker->successMessage);
     self::assertSame(self::SUCCESS_MESSAGE, $worker->successMessage);
@@ -57,8 +56,8 @@ class WorkerTest extends TestCase
     self::assertIsString($worker->waitingMessage);
     self::assertNull($worker->failMessage);
 
-    self::assertIsInt($worker->timeout);
-    self::assertSame(self::TIMEOUT, $worker->timeout);
+    self::assertIsFloat($worker->timeout);
+    self::assertSame((float)self::TIMEOUT, $worker->timeout);
   }
 
   /**
@@ -74,13 +73,12 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      0
+      false
     );
-    $string = $worker->done('Worker command done.');
+    $worker->done('Worker command done.');
 
     // testing
-    self::assertIsString($string);
-    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $string);
+    self::assertSame('Worker command done.' . self::WHITE . self::SUCCESS_MESSAGE, $worker->successFinalMessage);
   }
 
   /**
@@ -101,18 +99,17 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       null,
-      0
+      false
     );
-    $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
+    $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
-    self::assertIsString($string);
     self::assertSame(
       CLI_ERROR . 'Fail! ' . END_COLOR . PHP_EOL .
       'STDOUT : ' . TEST_STDOUT . PHP_EOL .
       'STDERR : ' . TEST_STDERR . PHP_EOL .
       'Exit code : ' . TEST_STATUS,
-      $string
+      $worker->failFinalMessage
     );
   }
 
@@ -134,12 +131,11 @@ class WorkerTest extends TestCase
       self::SUCCESS_MESSAGE,
       self::WAITING_MESSAGE,
       self::FAIL_MESSAGE,
-      0
+      false
     );
-    $string = $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
+    $worker->fail(TEST_STDOUT, TEST_STDERR, TEST_STATUS);
 
     // testing
-    self::assertIsString($string);
-    self::assertSame(self::FAIL_MESSAGE, $string);
+    self::assertSame(self::FAIL_MESSAGE, $worker->failFinalMessage);
   }
 }

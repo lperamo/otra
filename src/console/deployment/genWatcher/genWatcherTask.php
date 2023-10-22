@@ -9,6 +9,7 @@ namespace otra\console\deployment\genWatcher;
 
 use FilesystemIterator;
 use JetBrains\PhpStorm\Pure;
+use JsonException;
 use otra\config\AllConfig;
 use otra\OtraException;
 use RecursiveDirectoryIterator;
@@ -69,7 +70,6 @@ const
   IN_DELETE_DIR = 1_073_742_336;
 
 /**
- *
  * @return string
  */
 #[Pure] function debugHeader(string $header, int $padding) : string
@@ -163,7 +163,6 @@ function updatePHP(string $filename) : void
 }
 
 /**
- *
  * @return string
  */
 function addVerboseInformation(
@@ -209,9 +208,9 @@ function deleteAsset(string $assetName, string $assetExtension): void
 }
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
- * @throws OtraException
- * @throws ReflectionException
+ * @throws JsonException|OtraException|ReflectionException
  * @return void
  */
 function genWatcher(array $argumentsVector): void
@@ -333,24 +332,27 @@ function genWatcher(array $argumentsVector): void
     }
 
     // Adding watches for PHP files if needed
-    if (WATCH_FOR_PHP_FILES)
+    // Does the PHP path belongs to a valid defined path ? If yes, we process it
+    if (WATCH_FOR_PHP_FILES
+      && !isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
+      && ($extension === 'php' || $isFolder))
     {
-      // Does the PHP path belongs to a valid defined path ? If yes, we process it
-      if (!isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
-        && ($extension === 'php' || $isFolder))
+      $phpEntriesToWatch[] = $realPath;
+
+      if ($isFolder)
       {
-        $phpEntriesToWatch[] = $realPath;
+        $foldersWatchedIds[inotify_add_watch(
+          $inotifyInstance,
+          $realPath,
+          IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
+        )] = $realPath;
 
-        if ($isFolder)
-          $foldersWatchedIds[inotify_add_watch(
-            $inotifyInstance,
-            $realPath,
-            IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
-          )] = $realPath;
-
-        // We avoid adding a watch multiple times on an entry
-        $haveBeenWatched = true;
+        if (GEN_WATCHER_VERBOSE > 1)
+          echo 'Add watch : ' . returnLegiblePath($realPath), PHP_EOL;
       }
+
+      // We avoid adding a watch multiple times on an entry
+      $haveBeenWatched = true;
     }
 
     // Adding watches for resources files if needed
@@ -369,11 +371,16 @@ function genWatcher(array $argumentsVector): void
         $resourcesEntriesToWatch[] = $realPath;
 
         if ($isFolder)
+        {
           $foldersWatchedIds[inotify_add_watch(
             $inotifyInstance,
             $realPath,
             IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
           )] = $realPath;
+
+          if (GEN_WATCHER_VERBOSE > 1)
+            echo 'Add watch : ' . returnLegiblePath($realPath), PHP_EOL;
+        }
         else
         {
           $mainResourceFilename = $entry->getFilename();
@@ -416,7 +423,7 @@ function genWatcher(array $argumentsVector): void
     $mainResourceFilename,
     $pathToAvoid,
     $realPath,
-    // maybe those two variables have to been cleaned in TaskManager instead ?
+    // maybe those two variables have to be cleaned in TaskManager instead ?
     $otraTask,
     $tasksClassMap
   );
@@ -453,6 +460,7 @@ function genWatcher(array $argumentsVector): void
   // ******************** Watching ! ********************
   // Allows to not be forced to type 'enter' after typing 'q'
   system('stty cbreak -echo');
+
   while (true)
   {
     $events = inotify_read($inotifyInstance);
@@ -487,7 +495,8 @@ function genWatcher(array $argumentsVector): void
 
         // If it is not a folder
         if (($binaryMask & IN_CREATE_DIR) !== IN_CREATE_DIR
-          && ($binaryMask & IN_DELETE_DIR) !== IN_DELETE_DIR)
+          && ($binaryMask & IN_DELETE_DIR) !== IN_DELETE_DIR
+          && !is_dir($resourceName))
           // We store the extension without the dot
           $extension = substr($filename, strrpos($filename, '.') + 1);
 
@@ -545,6 +554,10 @@ function genWatcher(array $argumentsVector): void
               if ($sassFileKey === false)
               {
                 $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = dirname($resourceName);
+
+                if (GEN_WATCHER_VERBOSE > 1)
+                  echo 'Add watch : ' . returnLegiblePath(dirname($resourceName)), PHP_EOL;
+
                 $resourcesEntriesToWatch[] = $resourceName;
                 $sassMainResources[$filename] = $resourceName;
                 // We add the new resource to the SASS/SCSS dependency tree
@@ -640,7 +653,8 @@ function genWatcher(array $argumentsVector): void
             }
           }
         } elseif ( // If it is an event IN_DELETE and is a file to watch
-          ($binaryMask & IN_DELETE) === IN_DELETE
+          (($binaryMask & IN_DELETE) === IN_DELETE
+          || ($binaryMask & IN_DELETE_SELF) === IN_DELETE_SELF)
           && (in_array($resourceName, $phpEntriesToWatch)
             || in_array($resourceName, $resourcesEntriesToWatch)
           )
@@ -658,83 +672,85 @@ function genWatcher(array $argumentsVector): void
           );
 
           // // We make sure not to watch this file again, and we clean up related generated files
-          if ($extension === 'scss' || $extension === 'sass')
+          if (isset($extension))
           {
-            unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-
-            // removing the sass file from the sass dependency tree
-            $sassKeyTreeToDelete = array_search($resourceName, $sassTreeKeys);
-
-            // Prevents some edge cases to crash the script
-            if ($sassKeyTreeToDelete !== false)
+            if ($extension === 'scss' || $extension === 'sass')
             {
-              foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+              unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+
+              // removing the sass file from the sass dependency tree
+              $sassKeyTreeToDelete = array_search($resourceName, $sassTreeKeys);
+
+              // Prevents some edge cases to crash the script
+              if ($sassKeyTreeToDelete !== false)
               {
-                $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
+                foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $leave => &$mainSassFiles)
+                {
+                  $mainFileToDelete = array_search($sassKeyTreeToDelete, $mainSassFiles);
 
-                if ($mainFileToDelete !== false)
-                  unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
+                  if ($mainFileToDelete !== false)
+                    unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
 
-                // If there are no more main files associated to the leave or the leave IS the file to delete
-                // => we remove the leave
-                if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
-                  unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+                  // If there are no more main files associated to the leave or the leave IS the file to delete
+                  // => we remove the leave
+                  if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
+                    unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
+                }
               }
-            }
 
-            // We now adjust the indexes because there is one less element and therefore the things do not match anymore
-            $newMainToLeaves = [];
+              // We now adjust the indexes because there is one less element and therefore the things do not match anymore
+              $newMainToLeaves = [];
 
-            foreach($sassTree[KEY_MAIN_TO_LEAVES] as $leave => $values)
-            {
-              $newLeave = ($leave > $sassKeyTreeToDelete) ? $leave - 1 : $leave;
-              $newValues = [];
-
-              foreach($values as $value)
+              foreach ($sassTree[KEY_MAIN_TO_LEAVES] as $leave => $values)
               {
-                $newValues[] = ($value > $sassKeyTreeToDelete) ? $value - 1 : $value;
+                $newLeave = ($leave > $sassKeyTreeToDelete) ? $leave - 1 : $leave;
+                $newValues = [];
+
+                foreach ($values as $value)
+                {
+                  $newValues[] = ($value > $sassKeyTreeToDelete) ? $value - 1 : $value;
+                }
+                $newMainToLeaves[$newLeave] = $newValues;
               }
-              $newMainToLeaves[$newLeave] = $newValues;
-            }
-            $sassTree[KEY_MAIN_TO_LEAVES] = $newMainToLeaves;
+              $sassTree[KEY_MAIN_TO_LEAVES] = $newMainToLeaves;
 
-            // cleaning variables that will not be used anymore
-            unset($leave, $value, $newMainToLeave);
+              // cleaning variables that will not be used anymore
+              unset($leave, $value, $newMainToLeave);
 
-            $newFullTree = [];
+              $newFullTree = [];
 
-            foreach($sassTree[KEY_FULL_TREE] as $importingFile => $importedFiles)
+              foreach ($sassTree[KEY_FULL_TREE] as $importingFile => $importedFiles)
+              {
+                if ($importingFile === $sassKeyTreeToDelete)
+                  continue;
+
+                $newImportingFile = ($importingFile > $sassKeyTreeToDelete) ? $importingFile - 1 : $importingFile;
+                $newFullTree[$newImportingFile] = createPrunedFullTree($sassKeyTreeToDelete, $importedFiles);
+              }
+
+              $sassTree[KEY_FULL_TREE] = $newFullTree;
+
+              // removing the list of sass/scss files and cleaning variables that will not be used anymore
+              unset($sassTree[KEY_ALL_SASS][$resourceName], $sassKeyTreeToDelete);
+
+              saveSassTree($sassTree);
+
+              // If the file is meant to be used directly (this file will probably be the one that import the others)
+              // like resource.scss
+              if ($filename[0] !== '_')
+              {
+                unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
+                deleteAsset($resourceName, 'css');
+              }
+            } elseif ($extension === 'ts')
             {
-              if ($importingFile === $sassKeyTreeToDelete)
-                continue;
-
-              $newImportingFile = ($importingFile > $sassKeyTreeToDelete) ? $importingFile - 1 : $importingFile;
-              $newFullTree[$newImportingFile] = createPrunedFullTree($sassKeyTreeToDelete, $importedFiles);
-            }
-
-            $sassTree[KEY_FULL_TREE] = $newFullTree;
-
-            // removing the list of sass/scss files and cleaning variables that will not be used anymore
-            unset($sassTree[KEY_ALL_SASS][$resourceName], $sassKeyTreeToDelete);
-
-            saveSassTree($sassTree);
-
-            // If the file is meant to be used directly (this file will probably be the one that import the others)
-            // like resource.scss
-            if ($filename[0] !== '_')
+              unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
+              deleteAsset($resourceName, 'js');
+            } elseif ($extension === 'php')
             {
-              unset($sassMainResources[array_search($resourceName, $sassMainResources)]);
-              deleteAsset($resourceName, 'css');
+              unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
+              updatePHP($resourceName);
             }
-          } elseif ($extension === 'ts')
-          {
-            unset($resourcesEntriesToWatch[array_search($resourceName, $resourcesEntriesToWatch)]);
-            deleteAsset($resourceName, 'js');
-          }
-          elseif ($extension === 'php')
-          {
-            unset($phpEntriesToWatch[array_search($resourceName, $phpEntriesToWatch)]);
-            updatePHP($resourceName);
           }
         } elseif ( // If it is an event IN_CREATE and is a file to watch
           ($binaryMask & IN_CREATE) === IN_CREATE
@@ -744,11 +760,18 @@ function genWatcher(array $argumentsVector): void
           )
         )
         {
-          // If this is not a file that we want to watch, we skip it.
-          if (isset($extension) && !in_array($extension, EXTENSIONS_TO_WATCH))
+          // If this is not a file that we want to watch or is a temporary file that may have been removed in the
+          // meantime, we skip it.
+          if ((isset($extension) && !in_array($extension, EXTENSIONS_TO_WATCH)) || !file_exists($resourceName))
             continue;
 
+          if (!file_exists($resourceName))
+            throw new OtraException('The resource ' . returnLegiblePath($resourceName) . ' does not exist!');
+
           $foldersWatchedIds[inotify_add_watch($inotifyInstance, $resourceName, EVENTS_TO_WATCH)] = $resourceName;
+
+          if (GEN_WATCHER_VERBOSE > 1)
+            echo 'Add watch : ' . returnLegiblePath($resourceName), PHP_EOL;
 
           if (!isset($extension))
             continue;
@@ -786,6 +809,9 @@ function genWatcher(array $argumentsVector): void
             IN_ALL_EVENTS ^ IN_CLOSE_NOWRITE ^ IN_OPEN ^ IN_ACCESS | IN_ISDIR
           )] = $resourceName;
 
+          if (GEN_WATCHER_VERBOSE > 1)
+            echo 'Add watch : ' . returnLegiblePath($resourceName), PHP_EOL;
+
           addVerboseInformation(
             $eventsDebug,
             PHP_EOL . 'Creating the folder ',
@@ -798,7 +824,8 @@ function genWatcher(array $argumentsVector): void
           );
 
           continue;
-        } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR)
+        } elseif (($binaryMask & IN_DELETE_DIR) === IN_DELETE_DIR
+        || ($binaryMask & IN_DELETE_SELF) === IN_DELETE_SELF)
         {
           // User is deleting a folder
           addVerboseInformation(
@@ -813,7 +840,20 @@ function genWatcher(array $argumentsVector): void
           );
 
           // A watch has been already deleted by inotify on the old folder, we update our variables accordingly
-          unset($foldersWatchedIds[$watchDescriptor]);
+          $relatedDescriptor = array_search($resourceName, $foldersWatchedIds);
+
+          if ($relatedDescriptor !== false)
+          {
+            if (GEN_WATCHER_VERBOSE > 1)
+            {
+              echo 'Processing      : ' . returnLegiblePath($resourceName) . PHP_EOL,
+                'Descriptor n°' . $watchDescriptor . ' : ', returnLegiblePath($foldersWatchedIds[$watchDescriptor]), PHP_EOL,
+                'Key             : ' . $relatedDescriptor, PHP_EOL;
+            }
+
+            unset($foldersWatchedIds[$relatedDescriptor]);
+            inotify_rm_watch($inotifyInstance, $relatedDescriptor);
+          }
 
           continue;
         }
@@ -826,6 +866,9 @@ function genWatcher(array $argumentsVector): void
       if (GEN_WATCHER_VERBOSE > 0 && $eventsDebug !== '')
         echo $eventsDebug, PHP_EOL;
     }
+
+    // Avoid that in next loop, the $extension is used as if the resource was a file when it's a folder
+    unset($extension);
 
     if (nonBlockRead(STDIN) === 'q')
       break;

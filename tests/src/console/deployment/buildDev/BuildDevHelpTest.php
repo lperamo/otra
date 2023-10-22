@@ -5,11 +5,13 @@ namespace src\console\deployment\buildDev;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class BuildDevHelpTest extends TestCase
@@ -18,9 +20,6 @@ class BuildDevHelpTest extends TestCase
     OTRA_TASK_BUILD_DEV = 'buildDev',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
-
-  // It fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   /**
    * @author Lionel Péramo

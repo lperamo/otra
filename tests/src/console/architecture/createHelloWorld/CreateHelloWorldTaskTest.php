@@ -5,7 +5,7 @@ namespace src\console\architecture\createHelloWorld;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use function otra\tools\delTree;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD};
 use const otra\console\
@@ -15,6 +15,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase !
  *
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateHelloWorldTaskTest extends TestCase
@@ -26,9 +28,6 @@ class CreateHelloWorldTaskTest extends TestCase
     OTRA_LABEL_FOLDER = 'Folder ',
     OTRA_LABEL_BASE_PATH_PLUS = 'BASE_PATH + ',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {
@@ -58,6 +57,7 @@ class CreateHelloWorldTaskTest extends TestCase
   }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

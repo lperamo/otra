@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use function otra\console\deployment\genBootstrap\searchForClass;
 use const otra\cache\php\{CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SearchForClassTest extends TestCase
@@ -18,9 +20,6 @@ class SearchForClassTest extends TestCase
     TEST_CLASS = 'Controller',
     LABEL_TESTING_CLASS_FOUND = 'Testing $classFound...',
     CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE';
-
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
 
   protected function setUp(): void
   {
@@ -31,7 +30,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testAlreadyParsed()
+  public function testAlreadyParsed(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -51,7 +50,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNoNamespace()
+  public function testNoNamespace(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -71,7 +70,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNotInClassMap_Verbose()
+  public function testNotInClassMap_Verbose(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);
@@ -99,7 +98,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testNotInClassMap_NotVerbose()
+  public function testNotInClassMap_NotVerbose(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 0);
@@ -125,7 +124,7 @@ class SearchForClassTest extends TestCase
   /**
    * @author Lionel Péramo
    */
-  public function testIsInClassMap()
+  public function testIsInClassMap(): void
   {
     // context
     define(self::CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE, 2);

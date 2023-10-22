@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace src\database;
 
 use Exception;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use otra\{bdd\Pdomysql, bdd\Sql, OtraException};
 use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 
@@ -39,7 +39,7 @@ class PdomysqlTest extends TestCase
     try
     {
       Sql::getDb()->__destruct();
-    } catch (Exception $exception)
+    } catch (Exception)
     {
       // If it crashes, it means that there is no default connection and probably no instance to destruct !
     }
@@ -50,7 +50,7 @@ class PdomysqlTest extends TestCase
    */
   private function createDatabaseForTest() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     Sql::getDb(null, false);
     Sql::$instance->beginTransaction();

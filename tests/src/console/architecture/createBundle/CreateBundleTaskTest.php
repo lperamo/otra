@@ -5,21 +5,20 @@ namespace src\console\architecture\createBundle;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, DIR_SEPARATOR, OTRA_PROJECT};
 use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use function otra\tools\delTree;
 
-if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
-  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));
-
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class CreateBundleTaskTest extends TestCase
 {
-  public const TEST_BUNDLE_NAME = 'test';
+  final public const TEST_BUNDLE_NAME = 'test';
   private const
     TEST_TASK = 'createBundle',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
@@ -32,9 +31,6 @@ class CreateBundleTaskTest extends TestCase
     CREATE_BUNDLE_NO_INTERACTIVE_MODE = 'false',
     CREATE_BUNDLE_FORCE = 'true',
     OTRA_BINARY = 'otra.php';
-
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
 
   protected function tearDown(): void
   {
@@ -201,3 +197,6 @@ class CreateBundleTaskTest extends TestCase
     $this->testAll();
   }
 }
+
+if (!defined(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER'))
+  define(__NAMESPACE__ . '\\TEST_BUNDLE_UPPER', ucfirst(CreateBundleTaskTest::TEST_BUNDLE_NAME));

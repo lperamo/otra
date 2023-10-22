@@ -7,8 +7,11 @@ declare(strict_types=1);
 
 namespace otra\console\deployment\updateConf;
 
+use FilesystemIterator;
 use otra\config\Routes;
 use otra\OtraException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use const otra\cache\php\
 {BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV, DIR_SEPARATOR, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, END_COLOR};
@@ -20,8 +23,9 @@ use const otra\src\console\deployment\updateConf\{
   UPDATE_CONF_MASK_FIXTURES,
   UPDATE_CONF_MASK_SECURITIES
 };
+use function otra\console\deployment\genJsRouting\genJsRouting;
 use function otra\src\tools\debug\validateYaml;
-use function otra\tools\files\{compressPHPFile, returnLegiblePath};
+use function otra\tools\files\{compressPHPFile, returnLegiblePath, returnLegiblePath2};
 
 require_once CONSOLE_PATH . 'deployment/updateConf/updateConfConstants.php';
 
@@ -41,7 +45,8 @@ const
   FIXTURES_FILES_PATTERN = 'fixtures/*.yml',
   NOT_MODULE_FOLDERS = ['.', '..', 'config', 'tasks', 'views'],
   PATH_CONFIG_FIXTURES = 'config/fixtures/',
-  PATH_CONFIG_DATA_YML = 'config/data/yml/';
+  PATH_CONFIG_DATA_YML = 'config/data/yml/',
+  MAIN_JS_ROUTING = BUNDLES_PATH . 'resources/js/' . 'jsRouting.js';
 
 /**
  *
@@ -138,7 +143,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
       $delta += $length;
     }
 
-    $configsContent = '<?php declare(strict_types=1);namespace bundles\\config;' .
+    $configsContent = '<?php declare(strict_types=1);namespace otra\\cache\\php;' .
       implode('', $useStatements) . $configsContent;
     define(__NAMESPACE__ . '\\MAIN_CONFIG_FILE', BUNDLES_MAIN_CONFIG_DIR . 'Config.php');
     writeConfigFile(MAIN_CONFIG_FILE, $configsContent);
@@ -151,12 +156,34 @@ function updateConf(?string $mask = null, ?string $routeName = null)
   /** ROUTES MANAGEMENT */
   if ($updateConfRoutes !== 0)
   {
-    $routesArray = [];
+    $routesArray = $routesFunctions = [];
 
     foreach($routes as $route)
-      $routesArray = array_merge($routesArray, require $route);
+    {
+      // If we call multiple times task that launch `updateConf`, for example, we need `require_once` instead of
+      // `require`
+      require_once $route;
 
-    unset($route);
+      $routesFunctionsToAdd = substr(
+        str_replace(
+          [BASE_PATH, '/', '.php'],
+          ['', '\\', ''],
+          $route
+        ),
+        0,
+        -6
+      );
+
+      if ($routesFunctionsToAdd[strlen($routesFunctionsToAdd) - 1] === '\\')
+        $routesFunctionsToAdd .= 'routes';
+
+      $routesFunctions[] = $routesFunctionsToAdd . '\\getRoutes';
+    }
+
+    foreach($routesFunctions as $routeFunction)
+      $routesArray = array_merge($routesArray, call_user_func($routeFunction));
+
+    unset($route, $routeFunction);
 
     // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
     // front of them
@@ -182,6 +209,15 @@ function updateConf(?string $mask = null, ?string $routeName = null)
     }
 
     writeConfigFile(BUNDLES_MAIN_CONFIG_DIR . 'Routes.php', $routesContent . '];');
+
+    if (file_exists(MAIN_JS_ROUTING))
+    {
+      require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+      require_once CORE_PATH . 'console/deployment/genJsRouting/genJsRoutingTask.php';
+      echo 'Updating JavaScript routing in ', CLI_INFO_HIGHLIGHT, returnLegiblePath2(MAIN_JS_ROUTING), CLI_BASE,
+        '.', END_COLOR, PHP_EOL;
+      genJsRouting();
+    }
   }
 
   /** SECURITIES MANAGEMENT */
@@ -351,8 +387,8 @@ function searchFilesInFolder(
   // we scan the bundles' directory to retrieve all the bundles name ...
   while (false !== ($filename = readdir($folderHandler)))
   {
-    // 'config' and 'views' are not bundles ...
-    if (in_array($filename, ['.', '..', 'config', 'views']))
+    // 'config', 'resources', 'tasks' and 'views' are not bundles ...
+    if (in_array($filename, ['.', '..', 'config', 'repositories', 'resources', 'tasks', 'views']))
       continue;
 
     $actualFolder = $folderPath . $filename;
@@ -395,7 +431,13 @@ function searchFilesInFolder(
 
     if ($updateConfRoutes !== 0)
     {
-      $bundleRoutes = glob($bundleConfigDir . '*Routes.php');
+      foreach (new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator($bundleConfigDir, FilesystemIterator::SKIP_DOTS)
+        ) as $file)
+      {
+        if ($file->isFile() && str_ends_with($file->getFilename(), 'Routes.php'))
+          $bundleRoutes[] = $file->getPathname();
+      }
 
       if (!empty($bundleRoutes))
         $routes = array_merge($routes, $bundleRoutes);

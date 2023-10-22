@@ -7,27 +7,27 @@ use bundles\HelloWorld\frontend\controllers\index\HomeAction;
 use otra\console\TasksManager;
 use otra\OtraException;
 use otra\Router;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 /**
  * /!\ Beware the bundle HelloWorld will be erased in cleaning phase !
  *
  * @author Lionel Péramo
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class RouterTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
   private const
     LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
     LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';
-  protected $preserveGlobalState = FALSE;
   protected const
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
-  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html;charset=utf-8';
+  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   public static function setUpBeforeClass(): void
   {
@@ -52,6 +52,7 @@ class RouterTest extends TestCase
 
   /**
    * we use "Depends" and not "depends" (note the uppercase letter) as it does not work with "depends"
+   * @medium
    * @Depends src\console\architecture\HelloWorldTest::testCreateHelloWorld
    * @throws OtraException
    */
@@ -92,6 +93,10 @@ class RouterTest extends TestCase
     );
   }
 
+  /**
+   * @medium
+   * @return void
+   */
   public function testGet_DoNotLaunch() : void
   {
     // launching
@@ -106,6 +111,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern() : void
@@ -131,6 +137,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern_NonExistentRoute_firstCase() : void
@@ -156,6 +163,7 @@ class RouterTest extends TestCase
   }
 
   /**
+   * @medium
    * @throws OtraException
    */
   public function testGetByPattern_NonExistentRoute_secondCase() : void
@@ -181,6 +189,10 @@ class RouterTest extends TestCase
   }
 
 
+  /**
+   * @medium
+   * @return void
+   */
   public function testGetRouteUrl() : void
   {
     // launching

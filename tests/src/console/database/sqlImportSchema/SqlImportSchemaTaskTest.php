@@ -7,7 +7,7 @@ use otra\config\AllConfig;
 use otra\console\database\Database;
 use otra\OtraException;
 use otra\Session;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use const otra\cache\php\{APP_ENV, CONSOLE_PATH, CORE_PATH, PROD, TEST_PATH};
@@ -17,6 +17,8 @@ use function otra\console\database\sqlImportSchema\sqlImportSchema;
 use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class SqlImportSchemaTaskTest extends TestCase
@@ -43,15 +45,12 @@ class SqlImportSchemaTaskTest extends TestCase
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . self::TABLES_ORDER_FILE,
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php';
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
    * Loads a main configuration specific to test purposes.
    */
   private function loadConfig() : void
   {
-    require(self::TEST_CONFIG_GOOD_PATH);
+    require self::TEST_CONFIG_GOOD_PATH;
 
     AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
     AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
@@ -98,8 +97,8 @@ class SqlImportSchemaTaskTest extends TestCase
     self::assertFileEquals(
       self::SCHEMA_FILE_BACKUP,
       self::IMPORTED_SCHEMA_ABSOLUTE_PATH,
-      'Comparing ' . CLI_INFO_HIGHLIGHT . self::IMPORTED_SCHEMA_ABSOLUTE_PATH . CLI_ERROR . ' against ' .
-      CLI_INFO_HIGHLIGHT . self::SCHEMA_FILE_BACKUP . CLI_ERROR
+      'Comparing ' . CLI_INFO_HIGHLIGHT . self::IMPORTED_SCHEMA_ABSOLUTE_PATH . CLI_ERROR .
+      ' against (expected) ' . CLI_INFO_HIGHLIGHT . self::SCHEMA_FILE_BACKUP . CLI_ERROR
     );
   }
 }

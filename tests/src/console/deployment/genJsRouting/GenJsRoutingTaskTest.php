@@ -5,7 +5,7 @@ namespace src\console\deployment\genJsRouting;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{BUNDLES_PATH, TEST_PATH};
 use const otra\console\
@@ -13,6 +13,8 @@ use const otra\console\
 use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_PATH};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class GenJsRoutingTaskTest extends TestCase
@@ -27,10 +29,8 @@ class GenJsRoutingTaskTest extends TestCase
     BACKUP_MAIN_JS_ROUTING = TEST_PATH . 'examples/' . self::JS_ROUTING_FILENAME,
     OTRA_BINARY = 'otra.php';
 
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

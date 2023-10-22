@@ -23,7 +23,6 @@ function checkPHPPath(string $basePath, string $route) : bool
 /**
  * Returns true if the resource file exists, false otherwise.
  *
- *
  * @return bool
  */
 function checkResourcePath(

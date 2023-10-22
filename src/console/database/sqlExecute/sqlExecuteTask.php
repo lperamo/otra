@@ -19,6 +19,7 @@ const
   ARG_DATABASE_NAME = 3;
 
 /**
+ * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws OtraException if the file to execute doesn't exist
  * @return void

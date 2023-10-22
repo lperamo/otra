@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace src\tools\debug;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{BASE_PATH,CORE_PATH};
 use function otra\tools\debug\tailCustom;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class TailCustomTest extends TestCase
 {
-  // it fixes issues like when AllConfig is not loaded while it should be
-  protected $preserveGlobalState = FALSE;
-
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();

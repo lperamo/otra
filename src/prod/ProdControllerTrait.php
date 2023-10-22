@@ -19,21 +19,21 @@ trait ProdControllerTrait
   /**
    * Renders a view. NB: Even is cache is activated, the template can be not fresh !
    *
-   * @param string $file      The file to render
-   * @param array  $variables Variables to pass
-   * @param bool   $ajax      Is this an ajax partial ?
-   * @param bool   $viewPath  If true, we add the usual view path before the $file variable.
+   * @param string      $file      The file to render
+   * @param array       $variables Variables to pass
+   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
    *
-   * @return string
    * @throws OtraException
+   * @return string
    */
   final public function renderView(
     string $file,
     array $variables = [],
     bool $ajax = false,
-    bool $viewPath = true
+    bool|string $viewPath = true
   ) : string
   {
     [$templateFile, ] = $this->getTemplateFile($file, $viewPath);
@@ -80,15 +80,15 @@ trait ProdControllerTrait
     // If we have CSS files to load, then we load them
     if (self::$hasCssToLoad)
     {
-      $startLink = '<link rel="stylesheet" nonce="';
-      $midLink = '" href="';
+      $startLink = '<link rel=stylesheet nonce=';
+      $midLink = ' href="';
       $content = $startLink . getRandomNonceForCSP('style-src') . $midLink .
-        parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" media="screen" />';
+        parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" media=screen />';
       $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.gz');
 
       if (file_exists(substr(BASE_PATH, 0, -1) . $printCssPath))
         $content .= $startLink . getRandomNonceForCSP('style-src') . $midLink . $printCssPath .
-          '" media="print" />';
+          '" media=print />';
 
       return $content;
     } else
@@ -110,7 +110,7 @@ trait ProdControllerTrait
     $content = '';
 
     if (self::$hasJsToLoad)
-      $content = parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . '" src="' .
+      $content = parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' .
         parent::getCacheFileName(
           $route,
           '/cache/js/',
@@ -142,12 +142,12 @@ trait ProdControllerTrait
     }
 
     if (strlen($allJs) < RESOURCE_FILE_MIN_SIZE)
-      return parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . '" async defer>' . $allJs . '</script>';
+      return parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' async defer>' . $allJs . '</script>';
 
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($route, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
-    return $content . parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . '" src="' .
+    return $content . parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' .
       parent::getCacheFileName($route, '/cache/js/', '_dyn', '.js') .
       '" async defer></script>';
   }

@@ -5,25 +5,37 @@ namespace src\console;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
 use const otra\cache\php\{APP_ENV, CONSOLE_PATH, DEV, PROD};
 use const otra\console\{CLI_BASE, CLI_INFO_HIGHLIGHT, END_COLOR};
 use function otra\console\launchTask;
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class LaunchTaskTest extends TestCase
 {
   private const
     CONF_FILE_NAME = 'test.conf',
+    CACHE_CONF_FILE_NAME = 'test_cache.conf',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';
 
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
+  protected function tearDown(): void
+  {
+    parent::tearDown();
+
+    if (file_exists(self::CONF_FILE_NAME))
+      unlink(self::CONF_FILE_NAME);
+
+    if (file_exists(self::CACHE_CONF_FILE_NAME))
+      unlink(self::CACHE_CONF_FILE_NAME);
+  }
 
   /**
+   * @medium
    * @author Lionel Péramo
    * @throws OtraException
    */

@@ -3,21 +3,20 @@ declare(strict_types=1);
 
 namespace src\console;
 
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use const otra\cache\php\{CONSOLE_PATH,TEST_PATH};
 use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_SUCCESS};
 use function otra\console\
-{convertArrayFromVarExportToShortVersion, convertLongArrayToShort, showContext, showContextByError};
+{shortenVarExportArray, convertLongArrayToShort, showContext, showContextByError};
 
 /**
+ * It fixes issues like when AllConfig is not loaded while it should be
+ * @preserveGlobalState disabled
  * @runTestsInSeparateProcesses
  */
 class ToolsTest extends TestCase
 {
-  // fixes isolation related issues
-  protected $preserveGlobalState = FALSE;
-
   protected function setUp(): void
   {
     parent::setUp();
@@ -61,7 +60,7 @@ class ToolsTest extends TestCase
   public function testConvertArrayFromVarExportToShortVersion(): void
   {
     // launching
-    $reducedArray = convertArrayFromVarExportToShortVersion(
+    $reducedArray = shortenVarExportArray(
       var_export(
         [
           'test' => ['test2' => 'test3'],

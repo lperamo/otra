@@ -5,7 +5,7 @@ namespace src\console\helpAndTools\requirements;
 
 use otra\console\TasksManager;
 use otra\OtraException;
-use phpunit\framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use const otra\console\{ADD_BOLD, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, REMOVE_BOLD_INTENSITY};
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
@@ -77,6 +77,10 @@ class RequirementsTaskTest extends TestCase
       $this->showRequirement(
         'PHP version 7.4.x+',
         'PHP version must be at least 7.4.x.'
+      ) .
+      $this->showRequirement(
+        '\'parallel\' tool',
+        preg_quote(CLI_INFO_HIGHLIGHT) . '[Optional]' . preg_quote(CLI_INFO) .' Needed to use the OTRA task `convertImages` as we use this to speed up the process'
       ) .
       '\s@'
     );

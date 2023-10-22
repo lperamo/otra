@@ -5,7 +5,7 @@ namespace otra\src\views\profiler\logs;
 use const otra\cache\php\{BASE_PATH, DEV};
 use function otra\src\views\profiler\showLogsFull;
 ?>
-<div class="activatable-divs--item" role="tabpanel">
+<div class=activatable-divs--item role="tabpanel">
   <a href="sql?route=<?= $_GET['route'] ?>" class="ripple ripple-link" rel="noopener noreferrer">SQL logs</a><br/><br/>
   <?php
   showLogsFull(

@@ -18,15 +18,15 @@ namespace otra\console\helpAndTools\generateTaskMetadata
   use RecursiveDirectoryIterator;
   use RecursiveIteratorIterator;
   use SplFileInfo;
-  use function otra\console\convertArrayFromVarExportToShortVersion;
+  use function otra\console\shortenVarExportArray;
   use function otra\console\deployment\genClassMap\genClassMap;
   use const otra\bin\CACHE_PHP_INIT_PATH;
-  use const otra\cache\php\init\CLASSMAP;
   use const otra\cache\php\
   {
     APP_ENV,
     BASE_PATH,
     CACHE_PATH,
+    CLASSMAP,
     CONSOLE_PATH,
     CORE_PATH,
     CLASS_MAP_PATH,
@@ -83,7 +83,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata
     }
 
     // loading the class map if not defined
-    if (!defined('otra\\cache\\php\\init\\CLASSMAP'))
+    if (!defined('otra\\cache\\php\\CLASSMAP'))
       require CLASS_MAP_PATH;
 
     spl_autoload_register(function (string $className): void {
@@ -138,12 +138,12 @@ namespace otra\console\helpAndTools\generateTaskMetadata
 
     // Generate the tasks descriptions in a cached file.
     $helpFileFinalContent = PHP_INIT_FILE_BEGINNING . var_export($helpFileContent, true);
-    $helpFileFinalContent = convertArrayFromVarExportToShortVersion($helpFileFinalContent) . ';' . PHP_EOL;
+    $helpFileFinalContent = shortenVarExportArray($helpFileFinalContent) . ';' . PHP_EOL;
 
     file_put_contents(CACHE_PHP_INIT_PATH . 'tasksHelp.php', $helpFileFinalContent);
 
     // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
-    $taskClassMap = convertArrayFromVarExportToShortVersion(
+    $taskClassMap = shortenVarExportArray(
       PHP_INIT_FILE_BEGINNING . var_export($taskClassMap, true) . ';'
     );
 
