@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace otra\config;
 
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, PROD};
 
 const
   VERSION = '1.0.0-alpha.2.6.0',
