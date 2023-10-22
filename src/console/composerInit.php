@@ -32,7 +32,7 @@ try
   init();
   echo CLI_BASE, 'Building assets...', END_COLOR, PHP_EOL;
   echo 'Configure the path in the variable ', CLI_INFO_HIGHLIGHT, '$nodeBinariesPath', CLI_BASE, ' in ',
-    CLI_INFO_HIGHLIGHT, 'config/dev/AllConfig.php', CLI_BASE, ' and ', CLI_INFO_HIGHLIGHT, 'config/dev/AllConfig.php',
+    CLI_INFO_HIGHLIGHT, 'config/dev/AllConfig.php', CLI_BASE, ' and ', CLI_INFO_HIGHLIGHT, 'config/prod/AllConfig.php',
     CLI_BASE, '.', PHP_EOL, 'Then launch ', CLI_INFO_HIGHLIGHT, 'otra buildDev 0 7 true 1', CLI_BASE, '.', PHP_EOL;
 } catch (Exception $exception)
 {
