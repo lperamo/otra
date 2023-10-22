@@ -30,10 +30,14 @@ try
 {
   version();
   init();
-  echo CLI_BASE, 'Building assets...', END_COLOR, PHP_EOL;
   echo 'Configure the path in the variable ', CLI_INFO_HIGHLIGHT, '$nodeBinariesPath', CLI_BASE, ' in ',
     CLI_INFO_HIGHLIGHT, 'config/dev/AllConfig.php', CLI_BASE, ' and ', CLI_INFO_HIGHLIGHT, 'config/prod/AllConfig.php',
     CLI_BASE, '.', PHP_EOL, 'Then launch ', CLI_INFO_HIGHLIGHT, 'otra buildDev 0 7 true 1', CLI_BASE, '.', PHP_EOL;
+  echo 'If you are on some unix distribution, you can add the following line to your profile to have a shortcut to OTRA binary',
+  PHP_EOL;
+  echo CLI_INFO_HIGHLIGHT, 'alias otra="php bin/otra.php"', END_COLOR, PHP_EOL, PHP_EOL;
+  echo 'If you want to see an example application, type ', CLI_INFO_HIGHLIGHT, 'otra createHelloWorld'. END_COLOR, '.',
+    PHP_EOL;
 } catch (Exception $exception)
 {
   echo CLI_ERROR, $exception->getTraceAsString(), END_COLOR, PHP_EOL;
