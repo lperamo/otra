@@ -19,9 +19,12 @@ namespace otra\console\architecture\createAction
 {
 
   use otra\OtraException;
-  use function otra\console\architecture\{actionHandling, checkBooleanArgument};
   use const otra\cache\php\CONSOLE_PATH;
-  use const otra\console\architecture\constants\{ARG_FORCE, ARG_INTERACTIVE};
+  use const otra\console\architecture\constants\
+  {ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE, ARG_MODULE_NAME};
+  use function otra\console\architecture\
+  {actionHandling, checkBooleanArgument, createController\checkControllerExistence};
+  use function otra\console\architecture\createModule\checkModuleExistence;
 
   const ARG_ACTION_NAME = 5;
 
@@ -36,15 +39,19 @@ namespace otra\console\architecture\createAction
     require_once CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
     $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
     $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
-    /** @var string $bundleName */
-    require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
-    /** @var string $moduleName */
-    require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
-    /** @var string $controllerName */
-    /** @var string $controllerPath */
-    require CONSOLE_PATH . 'architecture/createController/checkControllerExistence.php';
-    require_once CONSOLE_PATH . 'architecture/createAction/createAction.php';
 
+    /** @var string $bundleName */
+    $bundleName = require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
+
+    /** @var string $moduleName */
+    require_once CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
+    $moduleName = $argumentsVector[ARG_MODULE_NAME];
+    checkModuleExistence($bundleName, $moduleName, $interactive, $consoleForce);
+    /** @var string $controllerPath */
+    require_once CONSOLE_PATH . 'architecture/createController/checkControllerExistence.php';
+    $controllerName = $argumentsVector[ARG_CONTROLLER_NAME];
+    $controllerPath = checkControllerExistence($bundleName, $moduleName, $controllerName, $interactive, $consoleForce);
+    require_once CONSOLE_PATH . 'architecture/createAction/createAction.php';
     actionHandling(
       $interactive,
       $bundleName,

@@ -38,14 +38,14 @@ if (!function_exists(__NAMESPACE__ . '\\createFolder'))
       $sentence = CLI_ERROR . 'The ' . $folderType . ' ' . CLI_INFO_HIGHLIGHT .
         substr($absoluteFolderPath, strlen(BASE_PATH)) . CLI_ERROR . ' already exists.';
 
-      if (!$interactive && !$consoleForce)
+      if ($consoleForce)
+        break;
+
+      if (!$interactive)
       {
         echo $sentence, END_COLOR, PHP_EOL;
         throw new OtraException(code: 1, exit: true);
       }
-
-      if ($consoleForce)
-        break;
 
       $folderName = promptUser($sentence . ' Try another folder name (type n to stop):');
 

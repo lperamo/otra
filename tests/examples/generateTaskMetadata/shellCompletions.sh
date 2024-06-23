@@ -31,6 +31,7 @@ typeset -a OTRA_COMMANDS=(
   'genSitemap'
   'genWatcher'
   'updateConf'
+  'gptInstructions'
   'checkConfiguration'
   'clearSession'
   'convertImages'
@@ -47,6 +48,7 @@ typeset -a OTRA_COMMANDS=(
 typeset CAT_ARCHITECTURE="${BLC}[  Architecture  ]${WHI}";
 typeset CAT_DATABASE="${BLC}[    Database    ]${WHI}";
 typeset CAT_DEPLOYMENT="${BLC}[   Deployment   ]${WHI}";
+typeset CAT_GPT="${BLC}[      GPT       ]${WHI}";
 typeset CAT_HELP_AND_TOOLS="${BLC}[ Help and tools ]${WHI}";
 
 typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
@@ -77,6 +79,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DEPLOYMENT} genSitemap                  : ${CYA}Generates a sitemap based on routes configuration.${ECO}"
   "${CAT_DEPLOYMENT} genWatcher                  : ${CYA}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${ECO}"
   "${CAT_DEPLOYMENT} updateConf                  : ${CYA}Updates the files related to bundles and routes : schemas, routes, securities.${ECO}"
+  "${CAT_GPT} gptInstructions             : ${CYA}Generates instructions for the GPT 'OTRA Mentor'.${ECO}"
   "${CAT_HELP_AND_TOOLS} checkConfiguration          : ${CYA}Checks route configuration files structure.${ECO}"
   "${CAT_HELP_AND_TOOLS} clearSession                : ${CYA}Clears all things related to the session : PHP session and OTRA session.${ECO}"
   "${CAT_HELP_AND_TOOLS} convertImages               : ${CYA}Converts images to another format.${ECO}"

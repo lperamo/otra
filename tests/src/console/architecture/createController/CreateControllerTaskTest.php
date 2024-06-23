@@ -113,6 +113,8 @@ class CreateControllerTaskTest extends TestCase
   }
 
   /**
+   * In this case, the bundle should be created and then the controller folder too
+   *
    * @author Lionel Péramo
    * @throws OtraException
    */
