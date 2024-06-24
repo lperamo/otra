@@ -398,7 +398,7 @@ function genAssets(array $argumentsVector) : void
       /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
       if (GEN_ASSETS_TEMPLATE !== 0)
       {
-        if (!isset($resources['template']))
+        if (!isset($resources['template']) || !$resources['template'])
           echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING); // no static template
         else
         {
