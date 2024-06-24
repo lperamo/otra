@@ -30,22 +30,21 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     }
 
     /**
-     * Tests only ONE use statement at a time.
+     * Tests various use statements.
      *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
+     * @dataProvider useStatementsProvider
+     *
+     * @param string                   $useStatement          The use statement to test.
+     * @param string                   $expectedOutput        The expected output.
+     * @param array<array-key, string> $expectedFilesToConcat The expected files to concatenate.
+     *
+     * @return void
      */
-    public function testClassic() : void
+    public function testVariousUseStatements(string $useStatement, string $expectedOutput, array $expectedFilesToConcat) : void
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test{firstTest, secondTest, thirdTest};';
+      $contentToAdd = PHP_EOL . $useStatement;
       $filesToConcat = $parsedConstants = $parsedFiles = [];
 
-      // launching
       getFileNamesFromUses(
         self::LEVEL,
         $contentToAdd,
@@ -54,66 +53,53 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         $parsedConstants
       );
 
-      // testing
-      $this->expectOutputString(
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\thirdTest' . END_COLOR . PHP_EOL
-      );
-      static::assertSame([], $filesToConcat);
+      $this->expectOutputString($expectedOutput);
+      static::assertSame($expectedFilesToConcat, $filesToConcat);
       static::assertSame([], $parsedConstants);
       static::assertSame([], $parsedFiles);
     }
 
     /**
-     * Tests only ONE use statement at a time.
+     * Provides data for testVariousUseStatements.
      *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
+     * @return array<string, array{0: string, 1: string, 2: array<array-key, string>}>
      */
-    public function testWithoutBraces() : void
+    public static function useStatementsProvider() : array
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test\\fourthTest;';
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
-
-      // launching
-      getFileNamesFromUses(
-        self::LEVEL,
-        $contentToAdd,
-        $filesToConcat,
-        $parsedFiles,
-        $parsedConstants
-      );
-
-      // testing
-      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\fourthTest' . END_COLOR . PHP_EOL);
-      static::assertSame([], $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      return [
+        'Simple use' => [
+          'use Some\Namespace\Class;',
+          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class' . END_COLOR . PHP_EOL,
+          []
+        ],
+        'Multiple classes' => [
+          'use Some\Namespace\{Class1, Class2, Class3};',
+            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class1' . END_COLOR . PHP_EOL .
+            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class2' . END_COLOR . PHP_EOL .
+            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class3' . END_COLOR . PHP_EOL,
+          []
+        ],
+        'With carriage return' => [
+          'use Some\\Namespace' . "\n" . '{Class1,Class2};',
+          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\\Namespace\\Class1' . END_COLOR . PHP_EOL .
+          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\\Namespace\\Class2' . END_COLOR . PHP_EOL,
+          [],
+        ]
+      ];
     }
 
-    /**
-     * Tests only ONE use statement at a time.
-     *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
-     */
-    public function testWithCarriageReturn() : void
+    public function testNoReplacementInVariableNames(): void
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test' . "\n" . '{firstTest,secondTest};';
+      // Context
+      $contentToAdd = <<<EOD
+    \$otra\cache\php\BASE_PATH = '/some/path/';
+    \$config = require otra\cache\php\BASE_PATH . 'config/' . \$_SERVER[otra\cache\php\APP_ENV] . '/AllConfig.php';
+    use SomeNamespace\SomeClass;
+    EOD;
+
       $filesToConcat = $parsedConstants = $parsedFiles = [];
 
-      // launching
+      // Run
       getFileNamesFromUses(
         self::LEVEL,
         $contentToAdd,
@@ -122,14 +108,16 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         $parsedConstants
       );
 
-      // testing
-      $this->expectOutputString(
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL
-      );
-      static::assertSame([], $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      // Test
+      $expectedContent = <<<EOD
+    \$otra\cache\php\BASE_PATH = '/some/path/';
+    \$config = require otra\cache\php\BASE_PATH . 'config/' . \$_SERVER[otra\cache\php\APP_ENV] . '/AllConfig.php';
+    
+    EOD;
+
+      static::assertEquals($expectedContent, $contentToAdd);
+      static::assertEmpty($filesToConcat);
+      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : SomeNamespace\\SomeClass' . END_COLOR . PHP_EOL);
     }
   }
 }

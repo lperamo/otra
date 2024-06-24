@@ -363,7 +363,13 @@ function getFileNamesFromUses(
               if ($classToReplace[0] !== '\\')
                 $classToReplace = '\\' . $classToReplace;
 
-              $contentToAdd = preg_replace('@' . $lastChunk . '(?![\\\\])@', $classToReplace, $contentToAdd);
+              // We use preg_quote($lastChunk, '/') to properly escape special characters in $lastChunk.
+              // (?<![\$\\\\]) is a negative lookbehind assertion ensuring the word is not preceded by $ or \.
+              // This prevents replacing parts of variable names or namespaces.
+              // \b adds a word boundary at the beginning and end of the pattern, which prevents partial replacements.
+              // (?![\\\\\w]) is a negative lookahead assertion ensuring the word is not followed by \ or a word
+              // character. This also prevents partial replacements.
+              $contentToAdd = preg_replace('/(?<![\$\\\\])\b' . preg_quote($lastChunk, '/') . '\b(?![\\\\\w])/', $classToReplace, $contentToAdd);
             }
           } else // case use xxx/xxx{xxx, XXX, xxx}; (notice the uppercase, it's where we are)
           {
@@ -490,10 +496,10 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
         && 'require $renderController->viewPath . \'renderedWithoutController.phtml\';' !== $trimmedMatch
       )
       {
-        echo CLI_ERROR, 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ', CLI_WARNING,
-        '$', $pathVariable[0], CLI_ERROR, ' in ', CLI_WARNING, $trimmedMatch, CLI_ERROR, ' in the file ', CLI_WARNING,
-        $filename, CLI_ERROR, ' !', END_COLOR, PHP_EOL;
-        throw new OtraException(code: 1, exit: true);
+        echo CLI_WARNING, 'REQUIRE STATEMENT NOT EVALUATED BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ',
+          CLI_INFO_HIGHLIGHT, '$', $pathVariable[0], CLI_WARNING, ' in', PHP_EOL,
+          '  ', CLI_INFO_HIGHLIGHT, $trimmedMatch, CLI_WARNING, PHP_EOL,
+          '  in the file ', CLI_INFO_HIGHLIGHT, $filename, CLI_WARNING, ' !', END_COLOR, PHP_EOL;
       }
     }
   }
@@ -851,6 +857,10 @@ function getDependenciesFileInfo(array &$parameters) : void
               $tempFile = str_replace($constantMatch, $parsedConstants[$constantMatch[0]], $tempFile);
           }
         }
+
+        // Ugly temporary fix for dynamic inclusions via the `self` keyword
+        if (str_contains($tempFile, 'self::'))
+          continue;
 
         $tempFile = str_replace(
           NAMESPACE_SEPARATOR,
