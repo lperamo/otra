@@ -128,13 +128,16 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   $resourceType = substr(strrchr($key, '_'), 1);
   $resourcePath = $bundlePath . ($resourcePath ?? '') . 'resources/' . $resourceType . DIR_SEPARATOR;
 
-  foreach ($resources[$key] as $resource)
+  foreach ($resources[$key] as $resourceKey => $resource)
   {
+    $resourceName = is_array($resource) ? $resourceKey : $resource;
+
     ob_start();
 
-    if (!str_contains($resource, 'http'))
+    if (!str_contains($resourceName, 'http'))
     {
-      $finalPath = $resourcePath . $resource . '.' . $resourceType;
+      $finalPath = $resourcePath . $resourceName . '.' . $resourceType;
+
       if (file_exists($finalPath))
         echo file_get_contents($finalPath);
       else
@@ -146,7 +149,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     else
     {
       $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $resource . '.' . $resourceType);
+      curl_setopt($curlHandle, CURLOPT_URL, $resourceName . '.' . $resourceType);
       curl_setopt($curlHandle, CURLOPT_HEADER, false);
       curl_exec($curlHandle);
       curl_close($curlHandle);
