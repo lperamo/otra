@@ -11,8 +11,6 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   use PHPUnit\Framework\TestCase;
   use const otra\cache\php\CONSOLE_PATH;
   use function otra\console\deployment\genBootstrap\{getFileNamesFromUses};
-  use const otra\console\CLI_WARNING;
-  use const otra\console\END_COLOR;
 
   /**
    * It fixes issues like when AllConfig is not loaded while it should be
@@ -21,7 +19,12 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
    */
   class GetFileNamesFromUsesTest extends TestCase
   {
-    private const LEVEL = 1;
+    private const int LEVEL = 1;
+    private const string
+      EOL_CLASS1 = PHP_EOL . 'class Class1{}',
+      EOL_CLASS2 = PHP_EOL . 'class Class2{}',
+      EOL_CLASS3 = PHP_EOL . 'class Class3{}',
+      USE_SOME_NAMESPACE = 'use Some\\Namespace';
 
     protected function setUp(): void
     {
@@ -34,29 +37,36 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
      *
      * @dataProvider useStatementsProvider
      *
-     * @param string                   $useStatement          The use statement to test.
+     * @param string                   $contentToAdd          The use statement to test.
+     * @param string                   $expectedContent       The expected content after replacement
      * @param string                   $expectedOutput        The expected output.
      * @param array<array-key, string> $expectedFilesToConcat The expected files to concatenate.
      *
      * @return void
      */
-    public function testVariousUseStatements(string $useStatement, string $expectedOutput, array $expectedFilesToConcat) : void
+    public function testVariousUseStatements(
+      string $contentToAdd,
+      string $expectedContent,
+      string $expectedOutput,
+      array $expectedFilesToConcat
+    ) : void
     {
-      $contentToAdd = PHP_EOL . $useStatement;
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
+      $filesToConcat = $parsedConstants = $parsedFiles = $parsedClasses = [];
 
       getFileNamesFromUses(
         self::LEVEL,
         $contentToAdd,
         $filesToConcat,
         $parsedFiles,
-        $parsedConstants
+        $parsedConstants,
+        $parsedClasses
       );
 
       $this->expectOutputString($expectedOutput);
-      static::assertSame($expectedFilesToConcat, $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      static::assertSame($expectedFilesToConcat, $filesToConcat, 'Testing the files array to include');
+      static::assertSame($expectedContent, $contentToAdd, 'Testing replaced content');
+      static::assertSame([], $parsedConstants, 'Testing parsed constants');
+      static::assertSame([], $parsedFiles, 'Testing parsed files');
     }
 
     /**
@@ -67,22 +77,26 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     public static function useStatementsProvider() : array
     {
       return [
-        'Simple use' => [
-          'use Some\Namespace\Class;',
-          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class' . END_COLOR . PHP_EOL,
+        'Simple use' =>
+        [
+          self::USE_SOME_NAMESPACE . '\\Class1;' . self::EOL_CLASS1,
+          self::EOL_CLASS1,
+          '',
           []
         ],
-        'Multiple classes' => [
-          'use Some\Namespace\{Class1, Class2, Class3};',
-            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class1' . END_COLOR . PHP_EOL .
-            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class2' . END_COLOR . PHP_EOL .
-            CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\Namespace\Class3' . END_COLOR . PHP_EOL,
+        'Multiple classes' =>
+        [
+          self::USE_SOME_NAMESPACE . '\\{Stripe, Class2, Class3};' . PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 .
+          self::EOL_CLASS3,
+          PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 . self::EOL_CLASS3,
+          '',
           []
         ],
-        'With carriage return' => [
-          'use Some\\Namespace' . "\n" . '{Class1,Class2};',
-          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\\Namespace\\Class1' . END_COLOR . PHP_EOL .
-          CLI_WARNING . 'EXTERNAL LIBRARY CLASS : Some\\Namespace\\Class2' . END_COLOR . PHP_EOL,
+        'With carriage return' =>
+        [
+          self::USE_SOME_NAMESPACE . PHP_EOL . '{Class1,Class2};' . self::EOL_CLASS1 . self::EOL_CLASS2,
+          self::EOL_CLASS1 . self::EOL_CLASS2,
+          '',
           [],
         ]
       ];
@@ -97,7 +111,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     use SomeNamespace\SomeClass;
     EOD;
 
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
+      $filesToConcat = $parsedConstants = $parsedFiles = $parsedClasses = [];
 
       // Run
       getFileNamesFromUses(
@@ -105,7 +119,8 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         $contentToAdd,
         $filesToConcat,
         $parsedFiles,
-        $parsedConstants
+        $parsedConstants,
+        $parsedClasses
       );
 
       // Test
@@ -117,7 +132,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
 
       static::assertEquals($expectedContent, $contentToAdd);
       static::assertEmpty($filesToConcat);
-      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : SomeNamespace\\SomeClass' . END_COLOR . PHP_EOL);
+      $this->expectOutputString('');
     }
   }
 }
