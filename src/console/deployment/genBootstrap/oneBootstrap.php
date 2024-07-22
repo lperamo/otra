@@ -17,7 +17,14 @@ use function otra\tools\files\compressPHPFile;
 
 const OTRA_KEY_BOOTSTRAP = 'bootstrap';
 
-function oneBootstrap(string $route) : void
+/**
+ * @param string $route
+ * @param        $parsedFiles
+ *
+ * @throws OtraException
+ * @return void
+ */
+function oneBootstrap(string $route, $parsedFiles = []) : void
 {
   echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL,
   END_COLOR;
@@ -107,15 +114,20 @@ function oneBootstrap(string $route) : void
   $chunks = $params['chunks'];
 
   // For the moment, as a workaround, we will temporarily explicitly add the OtraException file to solve issues.
+  [$finalContent, ] = fixFiles(
+    $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
+    $route,
+    file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
+    file_get_contents($fileToInclude),
+    VERBOSE,
+    GEN_BOOTSTRAP_LINT,
+    $temporaryPhpRouteFile,
+    $fileToInclude,
+    false,
+    $parsedFiles
+  );
   contentToFile(
-    fixFiles(
-      $chunks[Routes::ROUTES_CHUNKS_BUNDLE],
-      $route,
-      file_get_contents(CORE_PATH . 'OtraException.php') . PHP_END_TAG_STRING .
-      file_get_contents($fileToInclude),
-      VERBOSE,
-      $fileToInclude
-    ),
+    $finalContent,
     $temporaryPhpRouteFile
   );
 

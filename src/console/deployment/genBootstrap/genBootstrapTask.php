@@ -17,13 +17,13 @@ use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\tools\{cliCommand, files\compressPHPFile, guessRoute};
 
 const
-GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
-GEN_BOOTSTRAP_ARG_VERBOSE = 3,
-GEN_BOOTSTRAP_ARG_LINT = 4,
-GEN_BOOTSTRAP_ARG_ROUTE = 5,
-OTRA_KEY_DRIVER = 'driver',
-BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
-ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
+  GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
+  GEN_BOOTSTRAP_ARG_VERBOSE = 3,
+  GEN_BOOTSTRAP_ARG_LINT = 4,
+  GEN_BOOTSTRAP_ARG_ROUTE = 5,
+  OTRA_KEY_DRIVER = 'driver',
+  BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
+  ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
 
 /**
  *
@@ -121,6 +121,29 @@ function genBootstrap(array $argumentsVector)
   require CORE_PATH . 'tools/files/compressPhpFile.php';
   require CORE_PATH . 'Session.php';
   require CORE_PATH . 'bdd/Sql.php';
+  
+  // Specific management for routes files
+  echo 'Create the specific routes management file... ', PHP_EOL;
+
+  $fileToInclude = CORE_PATH . 'Router.php';
+
+  [$routesManagementContent, $parsedFiles] = fixFiles(
+    'otraFakeBundle',
+    'otraFakeRoute',
+    file_get_contents($fileToInclude) . PHP_END_TAG_STRING,
+    VERBOSE,
+    GEN_BOOTSTRAP_LINT,
+    ROUTE_MANAGEMENT_TEMPORARY_FILE,
+    $fileToInclude,
+    true
+  );
+  contentToFile(
+    $routesManagementContent,
+    ROUTE_MANAGEMENT_TEMPORARY_FILE
+  );
+
+  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
+    return 1;
 
   foreach(array_keys($routes) as $routeKey => $route)
   {
@@ -132,28 +155,8 @@ function genBootstrap(array $argumentsVector)
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH),
         END_COLOR, PHP_EOL;
     else
-      oneBootstrap($route);
+      oneBootstrap($route, $parsedFiles);
   }
-
-  // Final specific management for routes files
-  echo 'Create the specific routes management file... ', PHP_EOL;
-
-  $fileToInclude = CORE_PATH . 'Router.php';
-
-  contentToFile(
-    fixFiles(
-      $routes[$route]['chunks'][Routes::ROUTES_CHUNKS_BUNDLE],
-      $route,
-      file_get_contents($fileToInclude) . PHP_END_TAG_STRING,
-      VERBOSE,
-      $fileToInclude,
-      true
-    ),
-    ROUTE_MANAGEMENT_TEMPORARY_FILE
-  );
-
-  if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors(ROUTE_MANAGEMENT_TEMPORARY_FILE))
-    return 1;
 
   compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement.php');
   unlink(ROUTE_MANAGEMENT_TEMPORARY_FILE);

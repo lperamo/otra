@@ -6,7 +6,8 @@ namespace src\console\deployment\genBootstrap\taskFileOperation;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
 use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\{CLI_ERROR, CLI_WARNING, END_COLOR};
+use const otra\console\
+{CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\evalPathVariables;
 
 /**
@@ -24,7 +25,7 @@ class EvalPathVariablesTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    require CONSOLE_PATH . 'deployment/genBootstrap/evalPathVariables.php';
   }
 
   /**
@@ -87,11 +88,11 @@ class EvalPathVariablesTest extends TestCase
     define(self::CONSTANT_PATH_CONSTANTS, []);
 
     // testing exceptions and output string
-    self::expectException(OtraException::class);
     self::expectOutputString(
-      CLI_ERROR . 'CANNOT EVALUATE THE REQUIRE STATEMENT BECAUSE OF THE NON DEFINED DYNAMIC VARIABLE ' .
-      CLI_WARNING . '$test' . CLI_ERROR . ' in ' . CLI_WARNING . $trimmedMatch . CLI_ERROR .
-      ' in the file ' . CLI_WARNING . $filename . CLI_ERROR . ' !' . END_COLOR . PHP_EOL
+      CLI_WARNING . 'require/include statement not evaluated because of the non defined dynamic variable ' .
+      CLI_INFO_HIGHLIGHT . '$test' . CLI_WARNING . ' in' . PHP_EOL .
+      '  ' . CLI_INFO_HIGHLIGHT . $trimmedMatch . CLI_WARNING . PHP_EOL .
+      '  in the file ' . CLI_INFO_HIGHLIGHT . $filename . CLI_WARNING . '!' . END_COLOR . PHP_EOL
     );
 
     // launching
@@ -99,7 +100,7 @@ class EvalPathVariablesTest extends TestCase
 
     // testing
     static::assertSame(
-      'echo \'value\'',
+      'echo $test',
       $fileContent
     );
     static::assertSame(
