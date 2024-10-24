@@ -65,7 +65,7 @@ function genJsRouting(): void
   file_put_contents(
     MAIN_JS_ROUTING,
     'window.JS_ROUTING = ' .
-    json_encode($routes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) . PHP_EOL
+    json_encode($routes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) . ';' . PHP_EOL
   );
 
   echo ERASE_SEQUENCE, 'JavaScript routing generated in ', CLI_INFO_HIGHLIGHT, MAIN_JS_ROUTING, END_COLOR, SUCCESS;
