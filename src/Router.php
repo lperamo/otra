@@ -31,6 +31,21 @@ abstract class Router
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS = 1;
 
+  // Mapping between HTTP status codes and X-Robots-Tag headers
+  final public const array 
+    HTTP_STATUS_ROBOTS_TAGS =
+    [
+      301 => 'noindex',                      // Moved Permanently
+      302 => 'noindex, nofollow',            // Found / Temporary Redirect
+      307 => 'noindex, nofollow',            // Temporary Redirect
+      308 => 'noindex',                      // Permanent Redirect
+      401 => 'noindex, noarchive',           // Unauthorized
+      403 => 'noindex, noarchive',           // Forbidden
+      404 => 'noindex, follow',              // Not Found
+      410 => 'noindex, follow',              // Gone
+      451 => 'noindex, noarchive'            // Unavailable for Legal Reasons
+    ];
+
   /**
    * Retrieve the controller's path that we want or launches the route !
    *
@@ -156,9 +171,34 @@ abstract class Router
     // We do not have been able to find a matching route
     if (!$patternFound)
     {
-      header('HTTP/1.0 404 Not Found');
-
+      http_response_code(404);
+      header('X-Robots-Tag: ' . self::HTTP_STATUS_ROBOTS_TAGS[404]);
       return array_key_exists('404', Routes::$allRoutes) ? ['404', []] : ['otra_404', []];
+    } else
+    {
+      $routeConfig = Routes::$allRoutes[$routeName];
+      $statusCode = $routeConfig['httpStatus'][Routes::ROUTES_HTTP_STATUS] ?? null;
+
+      if ($statusCode !== null && $statusCode >= 300 && $statusCode < 452)
+      {
+        http_response_code($statusCode);
+
+        // Check if the status code requires an X-Robots-Tag header
+        if (isset(self::HTTP_STATUS_ROBOTS_TAGS[$statusCode]))
+          header('X-Robots-Tag: ' . self::HTTP_STATUS_ROBOTS_TAGS[$statusCode]);
+
+        // Handle 3xx redirections if a URL is provided
+        if ($statusCode < 400)
+        {
+          $redirectUrl = $routeConfig['httpStatus'][Routes::ROUTES_HTTP_REDIRECTION_URL] ?? null;
+
+          if ($redirectUrl !== null)
+          {
+            header('Location: ' . $redirectUrl);
+            throw new OtraException(code: 0, exit: true);
+          }
+        }
+      }
     }
 
     // The route is found, do we have parameters to get?

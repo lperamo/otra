@@ -139,6 +139,9 @@ try
       ISSUE_LOG_PATH
     );
 
-  header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+  // If no HTTP status code has been set, correct the default 200 to a 500 for critical errors.
+  if (http_response_code() === 200)
+    http_response_code(500);
+  
   echo 'Server in ' . ($error ? 'great ' : '') . 'trouble. Please come back later !';
 }
