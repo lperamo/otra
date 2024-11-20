@@ -144,8 +144,8 @@ abstract class Router
       // Is it a static page
       if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
-        header('Content-Encoding: gzip');
-        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.gz'); // version to change
+        header('Content-Encoding: br');
+        echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . $route . 'v1che') . '.br'); // version to change
         exit;
       }
 

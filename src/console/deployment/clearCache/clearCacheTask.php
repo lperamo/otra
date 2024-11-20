@@ -219,21 +219,21 @@ function clearCache(array $argumentsVector)
 
     echo 'SASS/SCSS cached tree cleared', SUCCESS;
 
-    $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.gz');
+    $removeCachedFiles(CACHE_PATH . 'css/', 'cache/css', '.br');
     echo 'CSS files cleared', SUCCESS;
   }
 
   /* **************** JS **************** */
   if (($binaryMask & CLEAR_CACHE_MASK_JS) >> 3 !== 0)
   {
-    $removeCachedFiles(CACHE_PATH . 'js/', 'cache/js', '.gz');
+    $removeCachedFiles(CACHE_PATH . 'js/', 'cache/js', '.br');
     echo 'JS files cleared', SUCCESS;
   }
 
   /* **************** TEMPLATES **************** */
   if (($binaryMask & CLEAR_CACHE_MASK_TEMPLATES) !== 0)
   {
-    $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.gz');
+    $removeCachedFiles(CACHE_PATH . 'tpl/', 'cache/tpl', '.br');
     echo 'Templates cleared', SUCCESS;
   }
 

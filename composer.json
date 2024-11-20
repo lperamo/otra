@@ -18,16 +18,17 @@
   },
   "prefer-stable": true,
   "require": {
-    "php": ">=8.3.0",
+    "ext-brotli": "*",
     "ext-curl": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
+    "ext-pdo": "*",
     "ext-zend-opcache": "*",
     "ext-zlib": "*",
-    "symfony/yaml": "6.1.*",
-    "ext-pdo": "*"
+    "php": ">=8.3.0",
+    "symfony/yaml": "6.1.*"
   },
   "require-dev": {
     "ext-inotify": "*",

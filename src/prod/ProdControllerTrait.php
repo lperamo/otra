@@ -83,8 +83,8 @@ trait ProdControllerTrait
       $startLink = '<link rel=stylesheet nonce=';
       $midLink = ' href="';
       $content = $startLink . getRandomNonceForCSP('style-src') . $midLink .
-        parent::getCacheFileName($route,'/cache/css/', VERSION, '.gz') . '" media=screen />';
-      $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.gz');
+        parent::getCacheFileName($route,'/cache/css/', VERSION, '.br') . '" media=screen />';
+      $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.br');
 
       if (file_exists(substr(BASE_PATH, 0, -1) . $printCssPath))
         $content .= $startLink . getRandomNonceForCSP('style-src') . $midLink . $printCssPath .
@@ -115,7 +115,7 @@ trait ProdControllerTrait
           $route,
           '/cache/js/',
           VERSION,
-          '.gz'
+          '.br'
         ) . '" async defer></script>';
 
     // If there are no scripts loaded dynamically (not from the routes' configuration)

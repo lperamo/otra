@@ -30,7 +30,7 @@ const
   OTRA_LABEL_ROOT_PATH = 'root $rootPath;',
   CHECK_HTTP_REFERER_2 = SPACE_INDENT_2 . 'if ($http_referer = "")' . PHP_EOL . OTRA_LABEL_RETURN_403_BLOCK_2,
   LABEL_TYPES_2 = SPACE_INDENT_2 . OTRA_LABEL_TYPES . PHP_EOL,
-  GZIP_HEADER_2 = SPACE_INDENT_2 . 'add_header Content-Encoding gzip;' . PHP_EOL,
+  COMPRESSED_HEADER_2 = SPACE_INDENT_2 . 'add_header Content-Encoding br;' . PHP_EOL,
   LABEL_APPLICATION_JSON_3 = SPACE_INDENT_3 . 'application/json map;' . PHP_EOL,
   KEY_CORE = 'core',
   KEY_NO_NONCES = 'noNonces',
@@ -72,7 +72,7 @@ function addingSecurityAdjustments() : string
 /**
  * @return string
  */
-#[Pure] function handleGzippedAsset(string $assetType = 'css'): string
+#[Pure] function handleCompressedAsset(string $assetType = 'css'): string
 {
   $mimeType = [
     'css' => 'text/css',
@@ -82,20 +82,20 @@ function addingSecurityAdjustments() : string
 
   $content = SPACE_INDENT . '# Handling cached ' . strtoupper($assetType) .
     ' (PWA uses them even when we are in development mode)'. PHP_EOL .
-    SPACE_INDENT . 'location ~ /cache/' . $assetType . '/.*\.gz$' . PHP_EOL .
+    SPACE_INDENT . 'location ~ /cache/' . $assetType . '/.*\.br$' . PHP_EOL .
     OPENING_BRACKET .
     CHECK_HTTP_REFERER_2 . PHP_EOL .
     LABEL_TYPES_2 .
     OPENING_BRACKET_2 .
-    SPACE_INDENT_3 . $mimeType . ' gz;' . PHP_EOL .
+    SPACE_INDENT_3 . $mimeType . ' br;' . PHP_EOL .
     ENDING_BRACKET_2 .
     PHP_EOL;
 
-  // gzip_types has the text/html set by default so no need to add it again
+  // brotli_types has the text/html set by default so no need to add it again
   if ($assetType !== 'tpl')
-    $content .= SPACE_INDENT_2 . 'gzip_types ' . $mimeType . ';' . PHP_EOL;
+    $content .= SPACE_INDENT_2 . 'brotli_types ' . $mimeType . ';' . PHP_EOL;
 
-  return $content . GZIP_HEADER_2 .
+  return $content . COMPRESSED_HEADER_2 .
     addingSecurityAdjustments() .
     PHP_EOL .
     SPACE_INDENT_2 . OTRA_LABEL_ROOT_PATH . PHP_EOL .
@@ -172,7 +172,7 @@ function handleRewriting() : string
       && $routeConfig[KEY_RESOURCES][KEY_TEMPLATE] && $routeConfig[KEY_RESOURCES][KEY_NO_NONCES])
     {
       $rewriteRules .= 'rewrite ' . substr($routeConfig['chunks'][Routes::ROUTES_CHUNKS_URL], 1) . ' /static/' .
-        sha1('ca' . $route . VERSION . 'che') . '.gz last;' . PHP_EOL;
+        sha1('ca' . $route . VERSION . 'che') . '.br last;' . PHP_EOL;
       $addedRules = true;
     }
   }
@@ -256,32 +256,34 @@ $content = handlesHTTPSRedirection() .
   SPACE_INDENT_2 . 'return 403;' . PHP_EOL .
   SPACE_INDENT . '}' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . '# Forces static compression (for already gzipped files)' . PHP_EOL .
+  SPACE_INDENT . '# Forces static compression (for already compressed files)' . PHP_EOL .
+  SPACE_INDENT . 'brotli on;' . PHP_EOL .
+  SPACE_INDENT . 'brotli_comp_level 7' . PHP_EOL .
+  SPACE_INDENT . 'brotli_static always;' . PHP_EOL .
   SPACE_INDENT . 'gzip off;' . PHP_EOL .
-  SPACE_INDENT . 'gzip_static always;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Blocking any page that don\'t send a referrer via if conditions in the next \'location\' blocks' .
   PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . '# Handling the gzipped web manifest' . PHP_EOL .
-  SPACE_INDENT . 'location ~ /manifest\.gz' . PHP_EOL .
+  SPACE_INDENT . '# Handling the compressed web manifest' . PHP_EOL .
+  SPACE_INDENT . 'location ~ /manifest\.br' . PHP_EOL .
   OPENING_BRACKET .
   CHECK_HTTP_REFERER_2 . PHP_EOL .
   LABEL_TYPES_2 .
   OPENING_BRACKET_2 .
-  SPACE_INDENT_3 . 'application/manifest+json gz;' . PHP_EOL .
+  SPACE_INDENT_3 . 'application/manifest+json br;' . PHP_EOL .
   ENDING_BRACKET_2 .
   PHP_EOL .
-  SPACE_INDENT_2 . 'gzip_types application/manifest+json;' . PHP_EOL .
-  GZIP_HEADER_2 .
+  SPACE_INDENT_2 . 'brotli_types application/manifest+json;' . PHP_EOL .
+  COMPRESSED_HEADER_2 .
   addingSecurityAdjustments() .
   ENDING_BRACKET .
 
   (GEN_SERVER_CONFIG_ENVIRONMENT === DEV
   ? PHP_EOL .
-    handleGzippedAsset() .
+    handleCompressedAsset() .
     PHP_EOL .
-    handleGzippedAsset('js') .
+    handleCompressedAsset('js') .
     PHP_EOL .
     SPACE_INDENT . '# Handling CSS, JS ...and TS for source maps(project and vendor)' . PHP_EOL .
     SPACE_INDENT . 'location ~ /(bundles|src|vendor)/.*\.(css|js|ts)$' . PHP_EOL .
@@ -310,20 +312,20 @@ $content = handlesHTTPSRedirection() .
     ENDING_BRACKET_2 .
     ENDING_BRACKET
   : PHP_EOL .
-    handleGzippedAsset() .
+    handleCompressedAsset() .
     PHP_EOL .
     SPACE_INDENT . '# For local testing purpose only' . PHP_EOL .
     SPACE_INDENT . 'location ~ /vendor/.*\.css$' . PHP_EOL .
     OPENING_BRACKET .
     CHECK_HTTP_REFERER_2 .
     PHP_EOL .
-    SPACE_INDENT_2 . 'gzip_types text/css;' . PHP_EOL .
+    SPACE_INDENT_2 . 'brotli_types text/css;' . PHP_EOL .
     SPACE_INDENT_2 . 'root $rootPath;' . PHP_EOL .
     ENDING_BRACKET .
     PHP_EOL .
-    handleGzippedAsset('js') .
+    handleCompressedAsset('js') .
     PHP_EOL .
-    handleGzippedAsset('tpl')
+    handleCompressedAsset('tpl')
   ) .
   PHP_EOL .
   handleWebFolderAssets() .

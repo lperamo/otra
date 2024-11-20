@@ -52,6 +52,12 @@ const
       REQ_PHP_LIB
     ],
     [
+      'brotli',
+      'PHP extension \'brotli\'',
+      'Needed for compressing files',
+      REQ_PHP_LIB
+    ],
+    [
       'json',
       'PHP extension \'json\'',
       'Needed for encoding/decoding JSON format. (needed by the developer toolbar)',

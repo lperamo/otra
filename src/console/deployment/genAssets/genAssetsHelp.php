@@ -11,7 +11,7 @@ use otra\console\TasksManager;
 use const otra\console\STRING_PAD_FOR_OPTION_FORMATTING;
 
 return [
-  'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Gzips the SVGs.',
+  'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Compresses the SVGs.',
   [
     'mask' => '1 => templates' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '2 => CSS' . PHP_EOL .
