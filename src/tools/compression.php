@@ -17,7 +17,7 @@ namespace otra\tools;
  * @return bool Success or failure
  */
 
-function brotliCompressFile(string $sourceFile, string $destinationFile = null, int $level = 7, bool $keep = false) : bool
+function brotliCompressFile(string $sourceFile, ?string $destinationFile = null, int $level = 7, bool $keep = false) : bool
 {
   // Default destination to the source file with a .br extension
   $destinationFile ??= $sourceFile . '.br';

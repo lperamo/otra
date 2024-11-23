@@ -25,10 +25,10 @@ class HtmlMinifierTest extends TestCase
   {
     self::assertSame(
       $expectedHtmlCode,
-      (new ReflectionMethod(
+      new ReflectionMethod(
         HtmlMinifier::class,
         'minifyHTML'
-      ))->invokeArgs(null, [$htmlCodeToTest, $configuration]),
+      )->invokeArgs(null, [$htmlCodeToTest, $configuration]),
       'Data set "' . $this->dataName() . '"' . PHP_EOL . 'Passed code :\'' . $htmlCodeToTest . '\''
     );
   }

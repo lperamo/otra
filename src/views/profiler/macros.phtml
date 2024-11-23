@@ -280,11 +280,11 @@ function showLogs(string $errorsLogs, string $noLogsMessage): void
       {?><i class=logs-container--label><?php
           ?><b><?= TRACE_LABELS[$labelKey] ?></b><?php
         ?></i><?php
-        ?><br><?php echo $value;
+        ?><br><?php
       } else
       {?><i class=logs-container--label><?= TRACE_LABELS[$labelKey];?></i> <?php
-        echo $value;
       }
+      echo $value;
       ?></div><?php
     }
     ?></div><?php

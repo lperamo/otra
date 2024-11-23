@@ -33,7 +33,7 @@ class Sql
     $currentConnectionName;
 
   public static ?Sql $instance = null;
-  private const QUERY = 0;
+  private const int QUERY = 0;
 
   private function __construct()
   {
@@ -405,7 +405,7 @@ class Sql
    *
    * @return int|string The last inserted id (can be a string for certain DBMSes?)
    */
-  public function lastInsertedId(string $sequenceName = null) : int|string
+  public function lastInsertedId(?string $sequenceName = null) : int|string
   {
     $lastId = (self::$currentDBMS . '::lastInsertedId')($sequenceName);
     return is_numeric($lastId) ? (int)($lastId) : $lastId;

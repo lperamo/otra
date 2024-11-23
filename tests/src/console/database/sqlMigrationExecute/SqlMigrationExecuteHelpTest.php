@@ -16,7 +16,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class SqlMigrationExecuteHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_SQL_MIGRATION_EXECUTE = 'sqlMigrationExecute',
     OTRA_TASK_HELP = 'help';
 

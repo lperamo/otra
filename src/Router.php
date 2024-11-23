@@ -16,18 +16,18 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, CLASSMAP, DIR_SEPARATO
  */
 abstract class Router
 {
-  private const
+  private const string
     OTRA_ROUTE_PREFIX_KEY = 'prefix',
     OTRA_ROUTE_RESOURCES_KEY = 'resources';
 
-  public const
+  public const int OTRA_ROUTE_URL_KEY = 0;
+  public const string
     OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8',
     OTRA_ROUTE_CHUNKS_KEY = 'chunks',
     OTRA_ROUTE_CONTENT_TYPE_KEY = 'content-type',
-    OTRA_ROUTE_METHOD_KEY = 'method',
-    OTRA_ROUTE_URL_KEY = 0;
+    OTRA_ROUTE_METHOD_KEY = 'method';
 
-  final public const
+  final public const int
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_ROUTE_NAME = 0,
     OTRA_ROUTER_GET_BY_PATTERN_METHOD_PARAMS = 1;
 

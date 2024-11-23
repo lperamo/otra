@@ -21,7 +21,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
    */
   class ContentToFileTest extends TestCase
   {
-    private const
+    private const string
       RELATIVE_FINAL_FILE_PATH = 'tests/examples/deployment/finalFile.php',
       FINAL_FILE_PATH = BASE_PATH . self::RELATIVE_FINAL_FILE_PATH,
       NO_SYNTAX_ERRORS_FILE = TEST_PATH . 'examples/deployment/noSyntaxErrors.php',

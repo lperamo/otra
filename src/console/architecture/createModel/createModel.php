@@ -83,7 +83,7 @@ function addGettersAndSetters(string $columnName, string $columnType, string &$f
  * @param string      $bundleName    The bundle in which the model have to be created
  * @param string|null $propertiesTxt
  */
-function modelCreationSuccess(string $bundleName, string $modelName, string $propertiesTxt = null) : void
+function modelCreationSuccess(string $bundleName, string $modelName, ?string $propertiesTxt = null) : void
 {
   echo 'The model ', CLI_INFO_HIGHLIGHT, $modelName, END_COLOR, ' has been created in the bundle ', CLI_INFO_HIGHLIGHT,
     $bundleName, END_COLOR;

@@ -26,10 +26,8 @@ use const otra\console\
  * @runTestsInSeparateProcesses
  */
 class CheckConfigurationTaskTest extends TestCase
-{
-  private const
-    OTRA_TASK_CHECK_CONFIGURATION = 'checkConfiguration',
-    EXAMPLES_PATH = TEST_PATH . 'examples/tools/routesCheck/',
+{  
+  private const array
     ROUTE_ALLOWED_PARAMETERS = [
       'bootstrap',
       'chunks',
@@ -49,14 +47,20 @@ class CheckConfigurationTaskTest extends TestCase
       'module_js',
       'print_css',
       'template'
-    ],
-    HELLO_WORLD_FOLDER = BUNDLES_PATH . 'HelloWorld/',
-    HELLO_WORLD_CONFIG_FOLDER = self::HELLO_WORLD_FOLDER . 'config/',
+    ];
+  
+  private const int
     CHECK_RESOURCE_TYPE = 0,
     CHECK_RESOURCE_VALUE = 1,
     CHECK_RESOURCE_BACKUP_VALUE = 2,
     CHECK_RESOURCE_TYPE_FILE = 0,
-    CHECK_RESOURCE_TYPE_FOLDER = 1,
+    CHECK_RESOURCE_TYPE_FOLDER = 1;
+
+  private const string
+    OTRA_TASK_CHECK_CONFIGURATION = 'checkConfiguration',
+    EXAMPLES_PATH = TEST_PATH . 'examples/tools/routesCheck/',
+    HELLO_WORLD_FOLDER = BUNDLES_PATH . 'HelloWorld/',
+    HELLO_WORLD_CONFIG_FOLDER = self::HELLO_WORLD_FOLDER . 'config/',
     LABEL_CHECKING_ROUTES_CONFIG = 'Checking routes configuration...' . PHP_EOL,
     LABEL_YOUR_ROUTE_PARAMETER = 'Your route parameter ',
     LABEL_RESOURCES = 'resources',

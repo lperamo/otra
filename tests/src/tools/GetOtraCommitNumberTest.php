@@ -14,7 +14,7 @@ use function otra\tools\getOtraCommitNumber;
  */
 class GetOtraCommitNumberTest extends TestCase
 {
-  private const GET_OTRA_COMMIT_NUMBER_PATH = CORE_PATH . 'tools/getOtraCommitNumber.php';
+  private const string GET_OTRA_COMMIT_NUMBER_PATH = CORE_PATH . 'tools/getOtraCommitNumber.php';
 
   /**
    * @author Lionel Péramo

@@ -18,7 +18,7 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT};
  */
 class ConvertTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CONVERT_IMAGES = 'convertImages',
     CONVERT_PATH = BASE_PATH . 'web/testsConvert/',
     TEST_IMAGE_BASENAME = 'dummy',

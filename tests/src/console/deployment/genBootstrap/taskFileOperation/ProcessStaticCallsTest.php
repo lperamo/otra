@@ -14,7 +14,7 @@ use function otra\console\deployment\genBootstrap\processStaticCalls;
  */
 class ProcessStaticCallsTest extends TestCase
 {
-  private const LEVEL = 1;
+  private const int LEVEL = 1;
 
   /**
    * @author Lionel Péramo

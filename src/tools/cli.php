@@ -103,7 +103,7 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
   function runCommandWithEnvironment(
     string $command,
     array $environmentVariables,
-    string $errorMessage = null,
+    ?string $errorMessage = null,
     bool $launchExceptionOnError = true
   ): array
   {

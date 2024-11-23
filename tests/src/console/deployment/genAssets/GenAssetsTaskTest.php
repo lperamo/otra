@@ -19,13 +19,16 @@ use const otra\console\
  */
 class GenAssetsTaskTest extends TestCase
 {
-  private const
+  private const int
+    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
+    ROUTES_PADDING = 25;
+
+  private const string
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
-    OTRA_HELLO_WORLD_MAX_ROUTES_NUMBER = 11,
-    ROUTES_PADDING = 25,
+    
     LABEL_SCREEN_CSS = 'SCREEN CSS';
 
   /**

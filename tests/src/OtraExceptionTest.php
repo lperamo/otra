@@ -16,7 +16,7 @@ use const otra\cache\php\{APP_ENV, BUNDLES_PATH, OTRA_PROJECT, PROD};
  */
 class OtraExceptionTest extends TestCase
 {
-  private const
+  private const string
     BUNDLES_CONFIG_FOLDER = BUNDLES_PATH . 'config/',
     BUNDLES_CONFIG_ROUTES = self::BUNDLES_CONFIG_FOLDER . 'Routes.php';
 
@@ -61,7 +61,7 @@ class OtraExceptionTest extends TestCase
   {
     $exception = new OtraException('test');
     self::assertInstanceOf(OtraException::class, $exception);
-    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
+    new ReflectionMethod(OtraException::class, 'errorMessage')->invokeArgs($exception, []);
   }
 
   /**
@@ -75,6 +75,6 @@ class OtraExceptionTest extends TestCase
      * OtraExceptionCli class. */
     $exception = new OtraException('test', null, '', null, ['variables' => []]);
     self::assertInstanceOf(OtraException::class, $exception);
-    (new ReflectionMethod(OtraException::class, 'errorMessage'))->invokeArgs($exception, []);
+    new ReflectionMethod(OtraException::class, 'errorMessage')->invokeArgs($exception, []);
   }
 }

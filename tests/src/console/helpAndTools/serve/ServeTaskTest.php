@@ -14,8 +14,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class ServeTaskTest extends TestCase
 {
-  private const
-    TASK_SERVE = 'serve';
+  private const string TASK_SERVE = 'serve';
 
   /**
    * @author Lionel Péramo

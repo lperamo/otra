@@ -26,7 +26,33 @@ use function otra\console\deployment\genWatcher\
  */
 class SassToolsTest extends TestCase
 {
-  private const
+  private const array BIG_TREE = [
+    0 => [
+      self::SCSS_MAIN_PATH => true,
+      self::SCSS_MAIN_DEPENDENCY_LVL0_PATH => true,
+      self::SCSS_MAIN_DEPENDENCY_LVL1_PATH => true,
+      self::SCSS_MAIN_DEPENDENCY2_LVL0_2_PATH => true,
+      self::SCSS_MAIN2_PATH => true
+    ],
+    1 => [
+      1 => [0 => 0],
+      2 => [0 => 0, 1 => 4],
+      3 => [0 => 0, 1 => 4],
+    ],
+    2 => [
+      0 => [
+        1 => [
+          2 => [3 => []]
+        ],
+        3 => []
+      ],
+      4 => [
+        2 => [3 => []]
+      ],
+    ]
+  ];
+
+  private const string
     EXAMPLES_SCSS_PATH = TEST_PATH . 'examples/deployment/resources/scss/',
     SCSS_MAIN_PATH = self::EXAMPLES_SCSS_PATH . 'main.scss',
     SCSS_MAIN2_PATH = self::EXAMPLES_SCSS_PATH . 'main2.scss',
@@ -36,32 +62,7 @@ class SassToolsTest extends TestCase
     BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
     ROUTES_CONFIG_PATH = self::BUNDLES_CONFIG_PATH . 'Routes.php',
     DOT_EXTENSION = '.scss',
-    LABEL_TESTING_THE_TREE = 'Testing the sass tree... We have :',
-    BIG_TREE = [
-      0 => [
-        self::SCSS_MAIN_PATH => true,
-        self::SCSS_MAIN_DEPENDENCY_LVL0_PATH => true,
-        self::SCSS_MAIN_DEPENDENCY_LVL1_PATH => true,
-        self::SCSS_MAIN_DEPENDENCY2_LVL0_2_PATH => true,
-        self::SCSS_MAIN2_PATH => true
-      ],
-      1 => [
-        1 => [0 => 0],
-        2 => [0 => 0, 1 => 4],
-        3 => [0 => 0, 1 => 4],
-      ],
-      2 => [
-        0 => [
-          1 => [
-            2 => [3 => []]
-          ],
-          3 => []
-        ],
-        4 => [
-          2 => [3 => []]
-        ],
-      ]
-    ];
+    LABEL_TESTING_THE_TREE = 'Testing the sass tree... We have :';
 
   protected function setUp(): void
   {

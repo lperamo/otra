@@ -64,7 +64,7 @@ const
  */
 function checkConfiguration() : void
 {
-  if (!file_exists(BUNDLES_PATH) || !(new FilesystemIterator(BUNDLES_PATH))->valid())
+  if (!file_exists(BUNDLES_PATH) || !new FilesystemIterator(BUNDLES_PATH)->valid())
   {
     echo CLI_ERROR, 'There are no bundles to use!', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);

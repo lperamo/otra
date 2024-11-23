@@ -16,7 +16,7 @@ use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
  */
 class SearchForClassTest extends TestCase
 {
-  private const
+  private const string
     TEST_CLASS = 'Controller',
     LABEL_TESTING_CLASS_FOUND = 'Testing $classFound...',
     CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE';

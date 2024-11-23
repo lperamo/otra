@@ -20,7 +20,7 @@ use function otra\tools\delTree;
  */
 class SqlActionTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',

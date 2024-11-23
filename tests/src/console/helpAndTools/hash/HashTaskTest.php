@@ -13,9 +13,9 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class HashTaskTest extends TestCase
 {
-  private const
-    OTRA_TASK_HASH = 'hash',
-    BLOWFISH_SALT_LENGTH = 22;
+  private const int BLOWFISH_SALT_LENGTH = 22;
+  
+  private const string OTRA_TASK_HASH = 'hash',
 
   /**
    * @author Lionel Péramo

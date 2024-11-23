@@ -22,7 +22,7 @@ use const otra\console\
  */
 class ClearSessionHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CLEAR_SESSION = 'clearSession',
     OTRA_TASK_HELP = 'help',
     OTRA_PHP_BINARY = 'otra.php';

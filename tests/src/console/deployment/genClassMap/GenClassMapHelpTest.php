@@ -16,7 +16,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class GenClassMapHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
     OTRA_TASK_HELP = 'help';
 

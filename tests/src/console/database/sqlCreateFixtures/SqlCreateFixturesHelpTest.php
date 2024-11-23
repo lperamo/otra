@@ -17,7 +17,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class SqlCreateFixturesHelpTest extends TestCase
 {
-  private const OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
+  private const string
+    OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
     OTRA_TASK_HELP = 'help';
 
   /**

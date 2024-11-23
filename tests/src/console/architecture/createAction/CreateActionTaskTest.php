@@ -19,7 +19,7 @@ use function otra\tools\files\returnLegiblePath;
  */
 class CreateActionTaskTest extends TestCase
 {
-  private const
+  private const string
     TEST_TASK = 'createAction',
     TEST_BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
     TEST_BUNDLES_CONFIG_FILE_PATH = self::TEST_BUNDLES_CONFIG_PATH . 'Routes.php',
@@ -41,7 +41,7 @@ class CreateActionTaskTest extends TestCase
     EXPECTED_ACTION_FILE = TEST_PATH . 'examples/createAction/Action.php',
     EXPECTED_ROUTES_FILE = TEST_PATH . 'examples/createAction/Routes.php';
 
-  final public const
+  final public const string
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test',

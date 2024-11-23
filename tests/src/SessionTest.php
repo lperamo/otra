@@ -19,11 +19,13 @@ use function otra\tools\isSerialized;
  */
 class SessionTest extends TestCase
 {
-  private const
+  private const int
     ROUNDS = 4, // 4 is the minimum to make the Blowfish algorithm work
+    BAR = 1; // testing via an int instead of a string is important to fully test deserialization
+    
+  private const string
     SESSIONS_CACHE_PATH = CACHE_PATH . 'php/sessions/',
     BLOWFISH_ALGORITHM = '$2y$0' . self::ROUNDS . '$',
-    BAR = 1, // testing via an int instead of a string is important to fully test deserialization
     TEST = 'test',
     TEST2 = 'test2',
     SESSION_FILE_BEGINNING = '<?php declare(strict_types=1);namespace otra\cache\php\sessions;';

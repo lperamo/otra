@@ -21,7 +21,8 @@ use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
  */
 class SqlImportFixturesTaskTest extends TestCase
 {
-  private const
+  private const array TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'];
+  private const string
     CONFIG_BACKUP_FOLDER = TEST_PATH . 'config/data/',
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
     CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . self::OTRA_LABEL_FIXTURES_FOLDER,
@@ -44,7 +45,6 @@ class SqlImportFixturesTaskTest extends TestCase
     OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES = 'pathYmlFixtures',
     SCHEMA_FILE = 'schema.yml',
     SCHEMA_ABSOLUTE_PATH = self::CONFIG_FOLDER_YML . self::SCHEMA_FILE,
-    TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'],
     TABLES_ORDER_FILE = 'tables_order.yml',
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . self::TABLES_ORDER_FILE,
     TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
@@ -116,7 +116,7 @@ class SqlImportFixturesTaskTest extends TestCase
     sqlCreateFixtures([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_FIXTURES, self::DATABASE_NAME, 1]);
 
     // restores correct content in the variable overwritten by the function call
-    (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)
+    new ReflectionClass(Database::class)->getProperty(self::OTRA_VARIABLE_DATABASE_TABLES_ORDER_FILE)
       ->setValue(self::TABLES_ORDER_FILE_PATH);
 
     // launching the task
