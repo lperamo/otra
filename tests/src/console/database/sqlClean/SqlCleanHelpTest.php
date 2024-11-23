@@ -17,7 +17,7 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_CO
  */
 class SqlCleanHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
     OTRA_TASK_HELP = 'help';

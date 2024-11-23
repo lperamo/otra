@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace otra;
 use otra\config\Routes;
 

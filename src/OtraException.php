@@ -33,7 +33,6 @@ class OtraException extends Exception
     E_NOTICE            => 'E_NOTICE',
     E_PARSE             => 'E_PARSE',
     E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
-    E_STRICT            => 'E_STRICT',
     E_USER_DEPRECATED   => 'E_USER_DEPRECATED',
     E_USER_ERROR        => 'E_USER_ERROR',
     E_USER_NOTICE       => 'E_USER_NOTICE',

@@ -17,12 +17,14 @@ use function otra\console\deployment\genBootstrap\{showFile, evalPathVariables};
  */
 class ShowFileTest extends TestCase
 {
-  private const
-    ADDITIONAL_TEXT = 'additional text',
-    FILENAME = 'filename.php',
-    FILENAME_ABSOLUTE_PATH = BASE_PATH . self::FILENAME,
+  private const int
     LEVEL_ZERO = 0,
     LEVEL_ONE = 1;
+
+  private const string
+    ADDITIONAL_TEXT = 'additional text',
+    FILENAME = 'filename.php',
+    FILENAME_ABSOLUTE_PATH = BASE_PATH . self::FILENAME;
 
   protected function setUp(): void
   {
@@ -75,7 +77,6 @@ class ShowFileTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testNoVerbose() : void
   {

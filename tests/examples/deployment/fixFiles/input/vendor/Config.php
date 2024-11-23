@@ -11,7 +11,7 @@ namespace tests\examples\deployment\fixFiles\input\vendor;
 use const otra\cache\php\{APP_ENV, BUNDLES_PATH, PROD, TEST_PATH};
 
 const
-  VERSION = '2023.0.0',
+  VERSION = '2024.0.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
 // require_once 'cause maybe the class OtraException will attempt to load it too !

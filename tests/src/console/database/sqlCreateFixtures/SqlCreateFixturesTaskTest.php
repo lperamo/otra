@@ -26,9 +26,12 @@ use function otra\tools\files\returnLegiblePath;
  */
 class SqlCreateFixturesTaskTest extends TestCase
 {
-  private const
-    OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
+  private const array TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'];
+  private const int 
     ERASE_AND_CLEAN = 2,
+    TRUNCATE_ONLY = 1;
+  private const string
+    OTRA_TASK_SQL_CREATE_FIXTURES = 'sqlCreateFixtures',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_CONNECTION = 'test',
     DATABASE_NAME = 'testDB',
@@ -53,8 +56,7 @@ class SqlCreateFixturesTaskTest extends TestCase
     CONFIG_FOLDER_SQL_FIXTURES = self::CONFIG_FOLDER_SQL . self::OTRA_LABEL_FIXTURES_FOLDER,
     OTRA_VARIABLE_DATABASE_PATH_YML_FIXTURES = 'pathYmlFixtures',
     SCHEMA_FILE_BACKUP = self::CONFIG_FOLDER_YML_BACKUP . self::SCHEMA_FILE,
-    TABLES_ORDER = ['testDB_table2', 'testDB_table3', 'testDB_table'],
-    TRUNCATE_ONLY = 1,
+    
     CONFIG_FOLDER_SQL_BACKUP = self::CONFIG_BACKUP_FOLDER . 'sqlBackup/',
     CONFIG_FOLDER_SQL_FIXTURES_BACKUP = self::CONFIG_FOLDER_SQL_BACKUP . self::OTRA_LABEL_FIXTURES_FOLDER,
     CONFIG_FOLDER_SQL_TRUNCATE_FIXTURES = self::CONFIG_FOLDER_SQL . 'truncate/',

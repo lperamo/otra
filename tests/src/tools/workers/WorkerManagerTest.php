@@ -16,7 +16,12 @@ use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE
  */
 class WorkerManagerTest extends TestCase
 {
-  private const
+  private const bool VERBOSE = true;
+  private const int
+    CUSTOM_TIMEOUT = 1,
+    TIMEOUT = 60;
+  
+  private const string
     COMMAND = 'sleep 0.001',
     COMMAND_SLEEP_2 = 'sleep 2',
     BAD_COMMAND = 'slept',
@@ -33,15 +38,12 @@ class WorkerManagerTest extends TestCase
     WAITING_MESSAGE_2 = 'waiting for the result of the second final message ...',
     WAITING_MESSAGE_3 = 'waiting for the result of the third final message ...',
     WAITING_MESSAGE_4 = 'waiting for the result of the fourth final message ...',
-    VERBOSE = true,
-    CUSTOM_TIMEOUT = 1,
     OTRA_FIELD_STDIN_STREAMS = 'stdinStreams',
     OTRA_FIELD_STDOUT_STREAMS = 'stdoutStreams',
     OTRA_FIELD_STDERR_STREAMS = 'stderrStreams',
     UP_ONE_LINE = "\033[1A",
     WHITE = "\e[15;2]",
-    STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.',
-    TIMEOUT = 60;
+    STREAMS_DESTRUCT_MESSAGE = 'streams must be empty after the Worker Manager destruction.';
 
   /**
    * @param string $command

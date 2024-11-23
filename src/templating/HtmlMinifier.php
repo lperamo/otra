@@ -7,7 +7,7 @@ namespace otra\templating;
  */
 class HtmlMinifier
 {
-  private const
+  private const array
     INLINE_TAGS =
     [
       'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'dfn', 'em', 'font', 'i',
@@ -15,6 +15,13 @@ class HtmlMinifier
       'textarea', 'time', 'var', 'video'
     ],
     PRESERVED_TAGS = ['code', 'pre', 'script', 'svg', 'textarea'],
+    DEFAULT_CONFIGURATION =
+    [
+      'comments' => true,
+      'spaces' => 'consecutiveSpaces'
+    ];
+
+  private const string
     STATE_CLOSING_TAG = 'CLOSING_TAG',
     STATE_IN_HTML_ATTRIBUTE_VALUE = 'IN HTML ATTRIBUTE VALUE',
     STATE_INSIDE_CDATA = 'INSIDE_CDATA',
@@ -25,12 +32,7 @@ class HtmlMinifier
     STATE_INSIDE_TAG_TAG_NAME = 'INSIDE TAG - TAG NAME',
     STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND = 'INSIDE TAG - TAG NAME NOT FOUND',
     STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES = 'INSIDE TAG - SEARCHING ATTRIBUTES',
-    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG',
-    DEFAULT_CONFIGURATION =
-    [
-      'comments' => true,
-      'spaces' => 'consecutiveSpaces'
-    ];
+    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG';
 
   /** @var array<int,string> $actualTags  */
   private static array $actualTags = [];

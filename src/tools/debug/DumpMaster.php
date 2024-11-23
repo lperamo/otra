@@ -18,21 +18,30 @@ use const otra\cache\php\CORE_PATH;
  */
 abstract class DumpMaster
 {
-  protected const
+  protected const array
     // 'How much' constants
     OTRA_DUMP_ARRAY = [128, 512, 3],
     OTRA_DUMP_ARRAY_KEY = ['maxChildren', 'maxData', 'maxDepth'],
+    OTRA_DUMP_CONFIGURATION = [
+      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN] => self::OTRA_DUMP_MAX_CHILDREN,
+      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA] => self::OTRA_DUMP_MAX_DATA,
+      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH] => self::OTRA_DUMP_MAX_DEPTH,
+    ],
+    // visibilities constants
+    OTRA_DUMP_VISIBILITIES = [
+      self::OTRA_DUMP_VISIBILITY_PUBLIC => ['public', '+'],
+      self::OTRA_DUMP_VISIBILITY_PROTECTED => ['protected', '#'],
+      self::OTRA_DUMP_VISIBILITY_PRIVATE => ['private', '-']
+    ];
+  
+  protected const int
+    // 'How much' constants
     OTRA_DUMP_KEY_MAX_CHILDREN = 0,
     OTRA_DUMP_KEY_MAX_DATA = 1,
     OTRA_DUMP_KEY_MAX_DEPTH = 2,
     OTRA_DUMP_MAX_CHILDREN = 128,
     OTRA_DUMP_MAX_DATA = 512,
     OTRA_DUMP_MAX_DEPTH = 3,
-    OTRA_DUMP_CONFIGURATION = [
-      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_CHILDREN] => self::OTRA_DUMP_MAX_CHILDREN,
-      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DATA] => self::OTRA_DUMP_MAX_DATA,
-      self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH] => self::OTRA_DUMP_MAX_DEPTH,
-    ],
 
     // visibilities constants
     OTRA_DUMP_VISIBILITY_PUBLIC = 1,
@@ -40,21 +49,15 @@ abstract class DumpMaster
     OTRA_DUMP_VISIBILITY_PRIVATE = 4,
     OTRA_DUMP_KEY_VISIBILITY = 0,
     OTRA_DUMP_KEY_VISIBILITY_SYMBOL = 1,
-    OTRA_DUMP_VISIBILITIES = [
-      self::OTRA_DUMP_VISIBILITY_PUBLIC => ['public', '+'],
-      self::OTRA_DUMP_VISIBILITY_PROTECTED => ['protected', '#'],
-      self::OTRA_DUMP_VISIBILITY_PRIVATE => ['private', '-']
-    ],
+    // Initial depth
+    OTRA_DUMP_INITIAL_DEPTH = -1;
 
+  protected const string
     // Display constants
     OTRA_DUMP_INDENT_STRING = '│ ',
-
-  // Initial depth
-  OTRA_DUMP_INITIAL_DEPTH = -1,
-
-  // Types
-  OTRA_DUMP_TYPE_STRING = 'string',
-  OTRA_DUMP_TYPE_ARRAY = 'array';
+    // Types
+    OTRA_DUMP_TYPE_STRING = 'string',
+    OTRA_DUMP_TYPE_ARRAY = 'array';
 
   /**
    * Sets the dump configuration to the defaults if the dump configuration is not set.
@@ -72,7 +75,7 @@ abstract class DumpMaster
    *   barPosition ?: string
    * } Returns the actual dump configuration.
    */
-  public static function setDumpConfig(array $options = null) : array
+  public static function setDumpConfig(?array $options = null) : array
   {
     // We ensure us that there are values set to the dump keys
     AllConfig::$debugConfig = isset(AllConfig::$debugConfig)
@@ -159,13 +162,13 @@ abstract class DumpMaster
    */
   public static function getPropertiesViaReflection(string $className, mixed $param) : array
   {
-    $properties = (new ReflectionClass($className))->getProperties();
+    $properties = new ReflectionClass($className)->getProperties();
 
     // We need a fake class as DateTime does not handle reflection :(
     if ($className ===  DateTime::class )
     {
       $param = new FakeDateTime($param);
-      $properties = (new ReflectionClass(FakeDateTime::class))->getProperties();
+      $properties = new ReflectionClass(FakeDateTime::class)->getProperties();
     }
 
     return [$properties, $param];

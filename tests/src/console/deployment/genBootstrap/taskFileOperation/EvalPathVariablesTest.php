@@ -18,7 +18,7 @@ use function otra\console\deployment\genBootstrap\evalPathVariables;
 class EvalPathVariablesTest extends TestCase
 {
   // it fixes issues like when AllConfig is not loaded while it should be
-  private const
+  private const string
     FILENAME = 'filename.php',
     CONSTANT_PATH_CONSTANTS = 'otra\\console\\deployment\\genBootstrap\\PATH_CONSTANTS';
 
@@ -30,7 +30,6 @@ class EvalPathVariablesTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testNoVariables() : void
   {
@@ -53,7 +52,6 @@ class EvalPathVariablesTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testVariableReplacedNoTemplate() : void
   {
@@ -77,7 +75,6 @@ class EvalPathVariablesTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testVariableCannotBeReplacedNoTemplate() : void
   {
@@ -111,7 +108,6 @@ class EvalPathVariablesTest extends TestCase
 
   /**
    * @author Lionel Péramo
-   * @throws OtraException
    */
   public function testIsTemplate() : void
   {

@@ -18,8 +18,8 @@ use function otra\tools\delTree;
  */
 class CreateBundleTaskTest extends TestCase
 {
-  final public const TEST_BUNDLE_NAME = 'test';
-  private const
+  final public const string TEST_BUNDLE_NAME = 'test';
+  private const string
     TEST_TASK = 'createBundle',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
     TEST_BUNDLE_CONFIG_PATH = self::TEST_BUNDLE_PATH . 'config/',

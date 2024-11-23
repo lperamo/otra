@@ -1,0 +1,48 @@
+parameters:
+  level: 0
+  bootstrapFiles:
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/ArrayShape.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/Deprecated.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/ExpectedValues.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/Immutable.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/Language.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/NoReturn.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/ObjectShape.php
+    - /home/lionel/.config/composer/vendor/jetbrains/phpstorm-attributes/src/Pure.php
+    - phpstan/bootstrap.php    
+    - web/index.php
+
+  paths:
+    - src
+    - web
+  excludePaths:
+    - .github
+    - .scannerwork
+    - bin
+    - cache/css
+    - cache/js
+    - cache/php/otraRoutes
+    - cache/php/security
+    - cache/php/sessions
+    - cache/tpl
+    - cache/php/HelloWorld.php
+    - cache/php/testTest.php
+    - cache/test.cache
+    - doc    
+    - logs
+    - node_modules
+    - OtraStandard
+    - phpdoc
+    - phpstan
+    - rector.php
+    - reports
+    - sassdoc
+    - tests
+    - tests pour JMeter
+    - tmp
+    - vendor
+  parallel:
+    jobSize: 20
+    maximumNumberOfProcesses: 4
+    minimumNumberOfJobsPerProcess: 2
+    processTimeout: 300.0

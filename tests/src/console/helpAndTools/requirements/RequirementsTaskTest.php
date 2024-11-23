@@ -14,9 +14,9 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class RequirementsTaskTest extends TestCase
 {
-  private const
-    TASK_REQUIREMENTS = 'requirements',
-    REQUIREMENTS_PADDING = 30;
+  private const int REQUIREMENTS_PADDING = 30;
+  private const string TASK_REQUIREMENTS = 'requirements';
+    
 
   /**
    * @param string $requirement

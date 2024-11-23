@@ -16,7 +16,7 @@ use const otra\cache\php\PROD;
 abstract class Pdomysql
 {
   private readonly PDO $conn;
-  private const DEFAULT_MOTOR = 'InnoDB';
+  private const string DEFAULT_MOTOR = 'InnoDB';
 
   /**
    * Connects to PDO_MySql
@@ -272,7 +272,7 @@ abstract class Pdomysql
    * @return string The ID generated for an AUTO_INCREMENT column by the previous query on success, 0 if the previous
    *                query does not generate an AUTO_INCREMENT value, or FALSE if no MySQL connection was established.
    */
-  public static function lastInsertedId(string $sequenceName = null) : string
+  public static function lastInsertedId(?string $sequenceName = null) : string
   {
     return Sql::$currentConn->lastInsertId($sequenceName);
   }

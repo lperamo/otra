@@ -16,7 +16,7 @@ use function otra\tools\copyFileAndFolders;
  */
 class CompressTest extends TestCase
 {
-  private const
+  private const string
     FILE_TO_COMPRESS = TEST_PATH . 'examples/deployment/FileToCompress.php',
     COMPRESSED_FILE = TEST_PATH . 'examples/deployment/CompressedFile.php',
     BACKUP_COMPRESSED_FILE = TEST_PATH . 'examples/deployment/BackupCompressedFile.php';

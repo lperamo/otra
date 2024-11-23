@@ -22,7 +22,7 @@ echo MODEL_CREATED_FROM_YAML_SCHEMA;
 $modelNameQuestion =
   'What is the name of the model that you want to create from \'schema.yml\' ? (camelCase, no need to put .php)';
 
-// We cleans the bundle/module question
+// We clean the bundle/module question
 echo DOUBLE_ERASE_SEQUENCE;
 $modelLocation = getModelLocation();
 

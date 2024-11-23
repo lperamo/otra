@@ -55,7 +55,7 @@ const
 }
 
 /**
- * Removes XSS useless protection for this kind of resources.
+ * Removes XSS useless protection for this kind of resource.
  * Enforces a right Referrer-Policy, HSTS, sniff protection and server information hiding.
  *
  * @return string

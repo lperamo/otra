@@ -11,7 +11,7 @@ namespace otra\cache\php
    */
   abstract class BlocksSystem
   {
-    final public const
+    final public const string
       OTRA_BLOCKS_KEY_CONTENT = 'content',
       OTRA_BLOCKS_KEY_ENDING_BLOCK = 'endingBlock',
       OTRA_BLOCKS_KEY_INDEX = 'index',

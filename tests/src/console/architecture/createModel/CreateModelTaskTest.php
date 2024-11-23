@@ -19,22 +19,25 @@ use function otra\tools\{copyFileAndFolders,delTree};
  */
 class CreateModelTaskTest extends TestCase
 {
-  final public const
+  final public const string
     BUNDLE_NAME = 'test',
     BUNDLE_RELATIVE_PATH = 'bundles/' . TEST_BUNDLE_UPPER . DIR_SEPARATOR;
 
-  private const TASK_NAME = 'createModel',
+  private const int
+    FROM_NOTHING = 1,
+    ONE_MODEL = 2,
+    ALL_MODELS = 3,
+    MODEL_LOCATION_BUNDLE = 0,
+    MODEL_LOCATION_MODULE = 1;
+
+  private const string
+    TASK_NAME = 'createModel',
     MODULE_NAME = 'test',
     INTERACTIVE = 'false',
     MODEL_NAME = 'testModel',
     MODEL_NAME_2 = 'testDB_table',
     MODEL_NAME_3 = 'testDB_table2',
     MODEL_NAME_4 = 'testDB_table3',
-    FROM_NOTHING = 1,
-    ONE_MODEL = 2,
-    ALL_MODELS = 3,
-    MODEL_LOCATION_BUNDLE = 0,
-    MODEL_LOCATION_MODULE = 1,
     MODEL_PROPERTIES = 'rock, paper, scissors, lizard, spock',
     MODEL_SQL_TYPES = 'text,int,bool,date,float',
     SCHEMA_YML_FILE = 'schema.yml',
