@@ -23,7 +23,7 @@ use function otra\tools\files\returnLegiblePath;
  */
 class SqlMigrationGenerateTaskTest extends TestCase
 {
-  private const
+  private const string
     DATABASE_CONNECTION = 'test',
     DATABASE_NAME = 'testDB',
     DATABASE_MIGRATION_TABLE = 'otra_migration_versions',

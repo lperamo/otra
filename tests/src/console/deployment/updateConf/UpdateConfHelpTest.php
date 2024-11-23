@@ -22,7 +22,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class UpdateConfHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_UPDATE_CONF = 'updateConf',
     OTRA_TASK_HELP = 'help';
 

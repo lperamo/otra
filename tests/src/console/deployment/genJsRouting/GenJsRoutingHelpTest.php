@@ -16,7 +16,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class GenJsRoutingHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_GEN_JS_ROUTING = 'genJsRouting',
     OTRA_TASK_HELP = 'help';
 

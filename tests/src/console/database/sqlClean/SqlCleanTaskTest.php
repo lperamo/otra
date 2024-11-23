@@ -22,9 +22,9 @@ use function otra\tools\{cleanFileAndFolders, copyFileAndFolders};
  */
 class SqlCleanTaskTest extends TestCase
 {
-  private const
+  private const int DEPLOY_ARG_SQL_CLEANING_LEVEL = 2;
+  private const string
     OTRA_TASK_SQL_CLEAN = 'sqlClean',
-    DEPLOY_ARG_SQL_CLEANING_LEVEL = 2,
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
     CONFIG_FOLDER = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
@@ -66,7 +66,7 @@ class SqlCleanTaskTest extends TestCase
     );
 
     // testing
-    $sqlPath = (new ReflectionClass(Database::class))->getProperty('pathSql')->getValue();
+    $sqlPath = new ReflectionClass(Database::class)->getProperty('pathSql')->getValue();
     self::assertSame([], glob($sqlPath . '/*.sql'));
     self::assertSame([], glob($sqlPath . 'truncate/*.sql'));
     self::expectOutputString(CLI_BASE . 'Cleaning done' . CLI_SUCCESS . ' ✔' . END_COLOR . PHP_EOL);

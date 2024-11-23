@@ -15,7 +15,6 @@ use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use const otra\cache\php\
   {APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV, DIR_SEPARATOR, PROD, VERSION};
-use const otra\services\OTRA_KEY_STYLE_SRC_DIRECTIVE;
 use function otra\services\getRandomNonceForCSP;
 use function otra\templating\showBlocksVisually;
 
@@ -75,14 +74,7 @@ abstract class MasterController
     $stylesheetFile = 0,
     $printStylesheet = 1;
 
-  final public const
-    INLINE_TAGS =
-    [
-      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
-      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
-      'time', 'title', 'var', 'video'
-    ],
-    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  final public const array
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -146,11 +138,17 @@ abstract class MasterController
       'HTTP_LOOP_DETECTED' => 508,                                               // RFC5842
       'HTTP_NOT_EXTENDED' => 510,                                                // RFC2774
       'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              // RFC6585
+    ],
+    INLINE_TAGS =
+    [
+      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
+      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
+      'time', 'title', 'var', 'video'
     ];
 
-  protected const
-    CSS_MEDIA_SCREEN = 0,
-    LABEL_SCRIPT_NONCE = '<script nonce=';
+  final public const string OTRA_LABEL_ENDING_TITLE_TAG = '/title>';
+  protected const int CSS_MEDIA_SCREEN = 0;
+  protected const string LABEL_SCRIPT_NONCE = '<script nonce=';
 
   /**
    * @param array{

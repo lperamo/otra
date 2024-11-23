@@ -14,7 +14,7 @@ use function otra\tools\files\returnLegiblePath2;
 class BlocksTest extends TestCase
 {
   private static Controller $controller;
-  private const
+  private const string
     LAYOUTS_PATH = TEST_PATH . 'src/bundles/views/',
     BACKUPS_PATH = self::LAYOUTS_PATH . 'backups/',
     LABEL_COMPARING_THE_RENDERED_VIEW = 'Comparing the rendered view ',

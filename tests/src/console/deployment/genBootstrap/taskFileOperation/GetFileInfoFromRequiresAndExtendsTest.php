@@ -16,7 +16,7 @@ use function otra\console\deployment\genBootstrap\getFileInfoFromRequiresAndExte
  */
 class GetFileInfoFromRequiresAndExtendsTest extends TestCase
 {
-  private const
+  private const string
     CONST_NAME_OTRA_CONSOLE_DEPLOYMENT_GEN_BOOTSTRAP_VERBOSE = 'otra\\console\\deployment\\genBootstrap\\VERBOSE',
     KEY_LEVEL = 'level',
     KEY_CONTENT_TO_ADD = 'contentToAdd',

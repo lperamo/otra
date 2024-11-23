@@ -70,7 +70,6 @@ function genClassMap(array $argumentsVector) : void
      * @param string[]              $classes
      * @param array<string, string> $classesThatMayHaveToBeAdded
      *
-     * @throws OtraException
      * @return array{0: string[], 1: int, 2: array<string, string>}
      */
     #[ArrayShape([

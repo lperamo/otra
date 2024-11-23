@@ -16,7 +16,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CreateBundleHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CREATE_BUNDLE = 'createBundle',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';

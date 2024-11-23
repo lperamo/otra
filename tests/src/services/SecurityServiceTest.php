@@ -30,7 +30,7 @@ use function otra\services\
  */
 class SecurityServiceTest extends TestCase
 {
-  private const
+  private const array
     CONTENT_SECURITY_POLICY = [
       DEV => self::CSP_ARRAY,
       PROD => self::CSP_ARRAY
@@ -48,10 +48,13 @@ class SecurityServiceTest extends TestCase
       'manifest-src' => self::OTRA_LABEL_SECURITY_SELF,
       self::OTRA_KEY_STYLE_SRC_DIRECTIVE => self::OTRA_LABEL_SECURITY_SELF,
       self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE => self::OTRA_LABEL_SECURITY_SELF
-    ],
+    ];
+  
+  private const int DIRECTIVES = 1;
+  
+  private const string 
     CSP_POLICY_VALUE_WITHOUT_SCRIPT_SRC_NOR_STYLE_SRC = "Content-Security-Policy: frame-ancestors 'none';",
     DOT_PHP = '.php',
-    DIRECTIVES = 1,
     EXPECTED_SECURITY_POLICY_EXAMPLE = "Content-Security-Policy: base-uri " . self::OTRA_LABEL_SECURITY_SELF .
       "; form-action " . self::OTRA_LABEL_SECURITY_SELF . "; frame-ancestors " . self::OTRA_LABEL_SECURITY_NONE .
       "; default-src " . self::OTRA_LABEL_SECURITY_NONE . "; font-src " . self::OTRA_LABEL_SECURITY_SELF . "; img-src " .

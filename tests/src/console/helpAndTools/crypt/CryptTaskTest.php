@@ -14,7 +14,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CryptTaskTest extends TestCase
 {
-  private const OTRA_TASK_CRYPT = 'crypt';
+  private const string OTRA_TASK_CRYPT = 'crypt';
 
   /**
    * @author Lionel Péramo

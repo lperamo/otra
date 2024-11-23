@@ -309,7 +309,7 @@ function lastAdjustments(
   {
     $vendorNamespaceConfigFile = BUNDLES_PATH . $bundle . '/config/vendorNamespaces/' . $route . '.txt';
     // We should not include the additional namespace information in the route management file! (otherwise it's a duplicate)
-    $vendorNamespaces = file_exists($vendorNamespaceConfigFile) && !$routesManagement
+    $vendorNamespaces = file_exists($vendorNamespaceConfigFile)
       ? file_get_contents($vendorNamespaceConfigFile) . PHP_END_TAG_STRING
       : '';
   } else

@@ -31,14 +31,14 @@ define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT
  */
 abstract class DumpWeb extends DumpMaster {
   // Display constants
-  private const
+  private const string
     OTRA_DUMP_TEXT_BLOCK = '<span class="otra-dump--value">',
     ENDING_SPAN = '</span>',
     OTRA_DUMP_HELP_CLASS = 'otra-dump--help',
     BR = '<br>',
     RIGHT_ARROW = ' => ';
 
-  final public const OTRA_DUMP_INDENT_STRING = '│ ';
+  final public const string OTRA_DUMP_INDENT_STRING = '│ ';
   private static bool $cssNotAdded = true;
 
   /**
@@ -180,7 +180,7 @@ abstract class DumpWeb extends DumpMaster {
       ':';
 
     if (!$isPublicProperty)
-      $property = (new ReflectionClass($reflectionClassName))->getProperty($propertyName);
+      $property = new ReflectionClass($reflectionClassName)->getProperty($propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)

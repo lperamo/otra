@@ -11,15 +11,17 @@ namespace otra\cache\php;
 
 abstract class Logger
 {
-  private const
-    APPEND_LOG = 3,
+  private const int
+    APPEND_LOG = 3;
+
+  private const string
     LOGS_PATH = BASE_PATH . 'logs/',
     SESSION_DATE = '_date',
     HTTP_USER_AGENT = 'HTTP_USER_AGENT',
     SESSION_BROWSER = '_browser',
     REMOTE_ADDR = 'REMOTE_ADDR';
 
-  final public const LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
+  final public const int LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
 
   /**
    * Returns the date or also the ip address and the browser if different

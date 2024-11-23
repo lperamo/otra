@@ -15,8 +15,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class HelpTaskTest extends TestCase
 {
-  private const
-    OTRA_TASK_HELP = 'help';
+  private const string OTRA_TASK_HELP = 'help';
 
   /**
    * @author Lionel Péramo

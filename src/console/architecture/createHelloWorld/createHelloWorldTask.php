@@ -17,6 +17,8 @@ namespace otra\console\architecture\constants
 
 namespace otra\console\architecture\createHelloWorld
 {
+
+  use JsonException;
   use otra\OtraException;
   use function otra\console\deployment\buildDev\buildDev;
   use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
@@ -61,7 +63,7 @@ namespace otra\console\architecture\createHelloWorld
   }
 
   /**
-   * @throws OtraException
+   * @throws OtraException|JsonException
    * @return void
    */
   function createHelloWorld()

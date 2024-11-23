@@ -14,7 +14,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class GenerateTaskMetadataHelpTest extends TestCase
 {
-  private const
+  private const string
     TASK_GENERATE_TASK_METADATA = 'generateTaskMetadata',
     OTRA_TASK_HELP = 'help';
 

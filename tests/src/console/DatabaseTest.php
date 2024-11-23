@@ -29,7 +29,7 @@ use function otra\tools\
  */
 class DatabaseTest extends TestCase
 {
-  private const
+  private const string
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
     CONFIG_FOLDER = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
@@ -209,7 +209,7 @@ class DatabaseTest extends TestCase
   public function test_SortTableByForeignKeysEmpty() : void
   {
     $sortedTables = [];
-    (new ReflectionMethod(Database::class, '_sortTableByForeignKeys'))
+    new ReflectionMethod(Database::class, '_sortTableByForeignKeys')
       ->invokeArgs(null, [[], &$sortedTables]);
   }
 
@@ -291,7 +291,7 @@ class DatabaseTest extends TestCase
     );
 
     // Removes protection on this field
-    (new ReflectionClass(Database::class))->getProperty('databaseFile');
+    new ReflectionClass(Database::class)->getProperty('databaseFile');
 
     $this->loadConfig();
 
@@ -347,7 +347,7 @@ class DatabaseTest extends TestCase
     require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
     sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
-    (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)
+    new ReflectionClass(Database::class)->getProperty(self::OTRA_VARIABLE_DATABASE_PATH_SQL_FIXTURES)
       ->setValue(self::CONFIG_FOLDER_SQL_FIXTURES);
 
     // launching task
@@ -538,7 +538,7 @@ class DatabaseTest extends TestCase
     $confToUse = $database = null;
 
     // launching the task
-    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
+    new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION)
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
@@ -561,7 +561,7 @@ class DatabaseTest extends TestCase
     $this->expectException(OtraException::class);
     $this->expectExceptionMessage("The database 'testDB' does not exist.");
 
-    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
+    new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION)
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
@@ -596,7 +596,7 @@ class DatabaseTest extends TestCase
     // launching the task
     $confToUse = self::DATABASE_CONNECTION;
     $database = self::DATABASE_NAME;
-    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
+    new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION)
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 
@@ -621,7 +621,7 @@ class DatabaseTest extends TestCase
     $this->expectExceptionMessage("The database 'noBDD' does not exist.");
 
     // launching task
-    (new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION))
+    new ReflectionMethod(Database::class, self::INIT_IMPORTS_FUNCTION)
       ->invokeArgs(null, [&$database, &$confToUse]);
   }
 }

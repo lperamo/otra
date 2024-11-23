@@ -19,7 +19,7 @@ use function otra\tools\delTree;
  */
 class CreateModuleTaskTest extends TestCase
 {
-  private const
+  private const string
     TEST_TASK = 'createModule',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
     TEST_MODULE_PATH = self::TEST_BUNDLE_PATH . CreateModuleTaskTest::TEST_MODULE . DIR_SEPARATOR,
@@ -27,7 +27,7 @@ class CreateModuleTaskTest extends TestCase
     OTRA_BINARY_NAME = 'otra.php',
     CREATE_BUNDLE_FORCE = 'true';
 
-  final public const
+  final public const string
     TEST_BUNDLE = 'test',
     TEST_MODULE = 'test';
 

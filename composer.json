@@ -27,7 +27,7 @@
     "ext-pdo": "*",
     "ext-zend-opcache": "*",
     "ext-zlib": "*",
-    "php": ">=8.3.0",
+    "php": ">=8.4.0",
     "symfony/yaml": "6.1.*"
   },
   "require-dev": {

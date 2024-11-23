@@ -22,7 +22,7 @@ use const otra\console\
  */
 class CheckConfigurationHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CHECK_CONFIGURATION = 'checkConfiguration',
     OTRA_TASK_HELP = 'help',
     OTRA_PHP_BINARY = 'otra.php';

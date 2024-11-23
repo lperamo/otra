@@ -17,7 +17,7 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WA
  */
 class GenServerConfigHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_GEN_SERVER_CONFIG = 'genServerConfig',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';

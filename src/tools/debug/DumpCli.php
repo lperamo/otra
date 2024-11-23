@@ -146,7 +146,7 @@ class DumpCli extends DumpMaster
       ':';
 
     if (!$isPublicProperty)
-      $property = (new ReflectionClass($className))->getProperty($propertyName);
+      $property = new ReflectionClass($className)->getProperty($propertyName);
 
     $propertyValue = $property->isInitialized($param)
       ? $property->getValue($param)

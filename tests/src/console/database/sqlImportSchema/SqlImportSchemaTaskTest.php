@@ -23,7 +23,7 @@ use function otra\tools\{copyFileAndFolders, setScopeProtectedFields};
  */
 class SqlImportSchemaTaskTest extends TestCase
 {
-  private const
+  private const string
     CONFIG_BACKUP_FOLDER = TEST_PATH . 'config/data/',
     CONFIG_FOLDER = TEST_PATH . 'src/bundles/HelloWorld/config/data/',
     CONFIG_FOLDER_SQL = self::CONFIG_FOLDER . 'sql/',
@@ -87,7 +87,7 @@ class SqlImportSchemaTaskTest extends TestCase
     sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
     // we change the path to the schema.yml in order to not overwrite the existing one by precaution
-    (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
+    new ReflectionClass(Database::class)->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
       ->setValue(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
 
     // launching task

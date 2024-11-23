@@ -18,7 +18,7 @@ use function otra\console\database\sqlExecute\sqlExecute;
  */
 class SqlExecuteTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_SQL_EXECUTE = 'sqlExecute',
     OTRA_VARIABLE_DATABASE_SCHEMA_FILE = 'schemaFile',
@@ -33,7 +33,7 @@ class SqlExecuteTaskTest extends TestCase
    */
   public function testExecuteFile_DoesNotExist() : void
   {
-    (new ReflectionClass(Database::class))->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
+    new ReflectionClass(Database::class)->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
       ->setValue(self::SCHEMA_ABSOLUTE_PATH);
 
     $this->expectException(OtraException::class);

@@ -25,7 +25,7 @@ use function otra\src\views\profiler\
  */
 class MacrosTest extends TestCase
 {
-  private const
+  private const string
     KEY_CONTAINER = '<i class=logs-container--message-container--label>',
     KEY_CONTAINER_END = '</i>',
     LABEL_TEST = 'TestLabel',
@@ -177,6 +177,8 @@ class MacrosTest extends TestCase
    * @param string $errorsLogs
    * @param string $noLogsMessage
    * @param string $expectedOutput
+   *
+   * @throws JsonException
    */
   public function testShowLogs(string $errorsLogs, string $noLogsMessage, string $expectedOutput) : void
   {

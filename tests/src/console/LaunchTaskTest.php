@@ -18,7 +18,7 @@ use function otra\console\launchTask;
  */
 class LaunchTaskTest extends TestCase
 {
-  private const
+  private const string
     CONF_FILE_NAME = 'test.conf',
     CACHE_CONF_FILE_NAME = 'test_cache.conf',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld';

@@ -16,7 +16,7 @@ use function otra\tools\removeFieldsScopeProtection;
  */
 class MasterControllerTest extends TestCase
 {
-  private const
+  private const string
     KEY_STYLESHEETS = 'stylesheets',
     KEY_JAVASCRIPTS = 'javaScripts',
     BASE_NAME_TEST_1_CSS = 'test.css',
@@ -33,10 +33,10 @@ class MasterControllerTest extends TestCase
   {
     self::assertSame(
       BASE_PATH . 'b8b627367b7342de2af53dfe7e4f85c3d2185eb3.cacheTest',
-      (new ReflectionMethod(
+      new ReflectionMethod(
         MasterController::class,
         'getCacheFileName'
-      ))->invokeArgs(null, ['route', BASE_PATH, 'v1', '.cacheTest'])
+      )->invokeArgs(null, ['route', BASE_PATH, 'v1', '.cacheTest'])
     );
   }
 
@@ -51,10 +51,10 @@ class MasterControllerTest extends TestCase
     $stylesheets->setValue([self::BASE_NAME_TEST_1_CSS]);
 
     // launch
-    (new ReflectionMethod(
+    new ReflectionMethod(
       MasterController::class,
       'css'
-    ))->invokeArgs(null, [[self::BASE_NAME_TEST_2_CSS, self::BASE_NAME_TEST_3_CSS], true]);
+    )->invokeArgs(null, [[self::BASE_NAME_TEST_2_CSS, self::BASE_NAME_TEST_3_CSS], true]);
 
     // launching and testing
     self::assertSame(
@@ -74,10 +74,10 @@ class MasterControllerTest extends TestCase
     $stylesheets->setValue([self::BASE_NAME_TEST_1_JS]);
 
     // launch
-    (new ReflectionMethod(
+    new ReflectionMethod(
       MasterController::class,
       'js'
-    ))->invokeArgs(null, [[self::BASE_NAME_TEST_2_JS, self::BASE_NAME_TEST_3_JS], true]);
+    )->invokeArgs(null, [[self::BASE_NAME_TEST_2_JS, self::BASE_NAME_TEST_3_JS], true]);
 
     // launching and testing
     self::assertSame(

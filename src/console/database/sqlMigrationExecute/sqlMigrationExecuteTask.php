@@ -137,5 +137,5 @@ function sqlMigrationExecute(array $argumentsVector) : void
     $database->query(
       'INSERT INTO ' . AllConfig::$dbConnections[$database::$currentConnectionName]['db'] .
       '.otra_migration_versions(`version`, `executed_at`,`execution_time`) VALUES (' . $migrationVersion .
-      ',' . (new DateTime())->getTimestamp() . ',' . $executionTime . ');');
+      ',' . new DateTime()->getTimestamp() . ',' . $executionTime . ');');
 }

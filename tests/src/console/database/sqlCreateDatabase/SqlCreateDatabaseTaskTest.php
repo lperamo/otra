@@ -22,7 +22,7 @@ use function otra\tools\
  */
 class SqlCreateDatabaseTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     DATABASE_NAME = 'testDB',
@@ -96,7 +96,7 @@ class SqlCreateDatabaseTaskTest extends TestCase
     );
 
     // Testing
-    $endPath = (new ReflectionClass(Database::class))->getProperty('databaseFile')->getValue()
+    $endPath = new ReflectionClass(Database::class)->getProperty('databaseFile')->getValue()
       . '_force.sql';
     define(__NAMESPACE__ . '\\SCHEMA_FORCE_PATH', self::CONFIG_FOLDER_SQL . $endPath);
     self::assertFileEquals(

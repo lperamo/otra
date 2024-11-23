@@ -22,7 +22,7 @@ echo CREATE_ALL_MODELS_FROM_YAML_SCHEMA;
 
 $modelLocation = getModelLocation();
 
-// We cleans the bundle/module question
+// We clean the bundle/module question
 echo DOUBLE_ERASE_SEQUENCE;
 
 if (MODEL_LOCATION_BUNDLE === $modelLocation)

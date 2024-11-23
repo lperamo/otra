@@ -16,7 +16,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class ClearCacheHelpTest extends TestCase
 {
-  private const OTRA_TASK_CLEAR_CACHE = 'clearCache',
+  private const string 
+    OTRA_TASK_CLEAR_CACHE = 'clearCache',
     OTRA_TASK_HELP = 'help';
 
   /**
