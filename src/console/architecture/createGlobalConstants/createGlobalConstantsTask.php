@@ -37,6 +37,7 @@ function createGlobalConstants() : void
     $_SERVER[APP_ENV] = 'prod';
     define('otra\\cache\\php\\CACHE_PATH', BASE_PATH . 'cache/');
     define('otra\\cache\\php\\DIR_SEPARATOR', '/');
+    define('otra\\cache\\php\\PROD', 'prod');
   }
 
   define(__NAMESPACE__ . '\\OTRA_PROJECT_SUFFIX', $otraProject ? 'vendor/otra/otra/src/' : 'src/');
