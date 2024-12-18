@@ -5,7 +5,7 @@ namespace otra;
 
 use Exception;
 use otra\cache\php\Logger;
-use const otra\cache\php\{BASE_PATH, CACHE_PATH, CORE_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, CORE_PATH, PROD_SRI};
 use const otra\config\{RESOURCE_FILE_MIN_SIZE, VERSION};
 use function otra\services\{addCspHeader,addPermissionsPoliciesHeader,getRandomNonceForCSP};
 
@@ -21,7 +21,7 @@ trait ProdControllerTrait
    *
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
-   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool        $ajax      Is this an ajax partial?
    * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
@@ -82,13 +82,20 @@ trait ProdControllerTrait
     {
       $startLink = '<link rel=stylesheet nonce=';
       $midLink = ' href="';
+      $screenCssPath = parent::getCacheFileName($route,'/cache/css/', VERSION, '.br');
       $content = $startLink . getRandomNonceForCSP('style-src') . $midLink .
-        parent::getCacheFileName($route,'/cache/css/', VERSION, '.br') . '" media=screen />';
+        $screenCssPath . '" media=screen integrity=sha384-' . 
+        constant('\\otra\\cache\\php\\' . strtoupper($_SERVER[APP_ENV]) . '_SRI')[$route]['css'][parent::getSRICacheKey(substr(BASE_PATH, 0, -1) . $screenCssPath)] . 
+        ' />';
       $printCssPath = parent::getCacheFileName($route,'/cache/css/print_', VERSION, '.br');
 
-      if (file_exists(substr(BASE_PATH, 0, -1) . $printCssPath))
+      $cssAbsolutePath = substr(BASE_PATH, 0, -1) . $printCssPath;
+      
+      if (file_exists($cssAbsolutePath))
         $content .= $startLink . getRandomNonceForCSP('style-src') . $midLink . $printCssPath .
-          '" media=print />';
+          '" media=print integrity=sha384-' . 
+          constant('\\otra\\cache\\php\\' . strtoupper($_SERVER[APP_ENV]) . '_SRI')[$route]['css'][parent::getSRICacheKey($cssAbsolutePath)] .
+          ' />';
 
       return $content;
     } else
@@ -110,13 +117,18 @@ trait ProdControllerTrait
     $content = '';
 
     if (self::$hasJsToLoad)
-      $content = parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' .
-        parent::getCacheFileName(
-          $route,
-          '/cache/js/',
-          VERSION,
-          '.br'
-        ) . '" async defer></script>';
+    {
+      $cacheFileName = parent::getCacheFileName(
+        $route,
+        '/cache/js/',
+        VERSION,
+        '.br'
+      );
+      $content = parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' . $cacheFileName
+         . '" integrity=sha384-' . 
+        constant('\\otra\\cache\\php\\' . strtoupper($_SERVER[APP_ENV]) . '_SRI')[$route]['js'][parent::getSRICacheKey( BASE_PATH . substr($cacheFileName,1))] .
+        ' async defer></script>';
+    }
 
     // If there are no scripts loaded dynamically (not from the routes' configuration)
     if (empty(self::$javaScript))
@@ -147,8 +159,9 @@ trait ProdControllerTrait
     // Creates/erase the corresponding cleaned js file
     file_put_contents(parent::getCacheFileName($route, CACHE_PATH . 'js/', '_dyn', '.js'), $allJs);
 
+    $cacheFileName = parent::getCacheFileName($route, '/cache/js/', '_dyn', '.js');
     return $content . parent::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' .
-      parent::getCacheFileName($route, '/cache/js/', '_dyn', '.js') .
-      '" async defer></script>';
+      $cacheFileName . '" integrity=sha384-' . 
+      constant('\\otra\\cache\\php\\' . strtoupper($_SERVER[APP_ENV]) . '_SRI')[$route]['js'][parent::getSRICacheKey(BASE_PATH . substr($cacheFileName, 1))] . ' async defer></script>';
   }
 }

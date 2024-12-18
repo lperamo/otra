@@ -174,7 +174,7 @@ namespace otra\console
     /**
      * PHP7'izes the content and changes \\\\ by \\.
      * We take care of the spaces contained into folders and files names.
-     * Beware, this function do not cover all the possibles cases. It only works for some usages.
+     * Beware, this function does not cover all the possible cases. It only works for some usages.
      * This tool is not used by OTRA but is meant to be used in user projects.
      *
      *
@@ -194,7 +194,7 @@ namespace otra\console
     }
 
     /**
-     * Converts an array to a PHP "readable" array that we can put in a file in order to make
+     * Converts an array to a PHP "readable" array that we can put in a file to make
      * $myVar = require myFile.php;
      * A bit like `var_export` function
      *
@@ -224,7 +224,9 @@ namespace otra\console
         else
           $newArrayItem = $arrayItem;
 
-        $arrayString .= (is_int($arrayKey) ? $arrayKey : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';
+        $arrayString .= (is_int($arrayKey)
+            ? $arrayKey
+            : '\'' . $arrayKey . '\'') . '=>' . $newArrayItem . ',';
       }
 
       return mb_substr($arrayString, 0, -1) . ']';

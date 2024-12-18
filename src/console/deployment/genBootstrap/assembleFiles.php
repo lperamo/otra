@@ -356,7 +356,7 @@ function getDependenciesFileInfo(array &$parameters) : void
         /** @var string $tempFile */
         // Here we handle the namespaces issues (if we were not using namespaces, we would not need this condition)
         if (preg_match_all(
-          '@BASE_PATH|BUNDLES_PATH|CORE_PATH|DIR_SEPARATOR@',
+          '@BASE_PATH|BUNDLES_PATH|CACHE_PATH|CORE_PATH|DIR_SEPARATOR@',
           $tempFile,
           $constantsMatches
         ))

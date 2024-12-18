@@ -60,7 +60,7 @@ if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
  */
 class HtmlMinifier
 {
-  private const
+  private const array
     INLINE_TAGS =
     [
       'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'dfn', 'em', 'font', 'i',
@@ -68,6 +68,13 @@ class HtmlMinifier
       'textarea', 'time', 'var', 'video'
     ],
     PRESERVED_TAGS = ['code', 'pre', 'script', 'svg', 'textarea'],
+    DEFAULT_CONFIGURATION =
+    [
+      'comments' => true,
+      'spaces' => 'consecutiveSpaces'
+    ];
+
+  private const string
     STATE_CLOSING_TAG = 'CLOSING_TAG',
     STATE_IN_HTML_ATTRIBUTE_VALUE = 'IN HTML ATTRIBUTE VALUE',
     STATE_INSIDE_CDATA = 'INSIDE_CDATA',
@@ -78,12 +85,7 @@ class HtmlMinifier
     STATE_INSIDE_TAG_TAG_NAME = 'INSIDE TAG - TAG NAME',
     STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND = 'INSIDE TAG - TAG NAME NOT FOUND',
     STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES = 'INSIDE TAG - SEARCHING ATTRIBUTES',
-    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG',
-    DEFAULT_CONFIGURATION =
-    [
-      'comments' => true,
-      'spaces' => 'consecutiveSpaces'
-    ];
+    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG';
 
   /** @var array<int,string> $actualTags  */
   private static array $actualTags = [];
@@ -635,7 +637,7 @@ abstract class Session
     $sessionId,
     $sessionFile;
   private static array $matches = [];
-  final public const
+  final public const int
     SESSION_KEY_EXISTS = 0,
     SESSION_KEY_VALUE = 1;
 
@@ -903,14 +905,7 @@ abstract class MasterController
     $stylesheetFile = 0,
     $printStylesheet = 1;
 
-  final public const
-    INLINE_TAGS =
-    [
-      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
-      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
-      'time', 'title', 'var', 'video'
-    ],
-    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  final public const array
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -955,11 +950,17 @@ abstract class MasterController
       'HTTP_SERVICE_UNAVAILABLE' => 503,
       'HTTP_GATEWAY_TIMEOUT' => 504,
       'HTTP_VERSION_NOT_SUPPORTED' => 505,
-      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ];
+      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ],
+    INLINE_TAGS =
+    [
+      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
+      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
+      'time', 'title', 'var', 'video'
+    ];
 
-  protected const
-    CSS_MEDIA_SCREEN = 0,
-    LABEL_SCRIPT_NONCE = '<script nonce=';
+  final public const string OTRA_LABEL_ENDING_TITLE_TAG = '/title>';
+  protected const int CSS_MEDIA_SCREEN = 0;
+  protected const string LABEL_SCRIPT_NONCE = '<script nonce=';
 
   /**
    * @param array{
@@ -1648,8 +1649,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
  */ /**
  * @author Lionel Péramo
  * @package otra
- *
- * @method static string getTemplateResources() Annotation needed for static analysis tools
  */
 
 if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')

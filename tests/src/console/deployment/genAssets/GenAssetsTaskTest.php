@@ -7,10 +7,9 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\BASE_PATH;
+use const otra\cache\php\{BASE_PATH, CACHE_PATH, DEV, PROD, TEST_PATH};
 use const otra\config\VERSION;
-use const otra\console\
-{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -29,7 +28,10 @@ class GenAssetsTaskTest extends TestCase
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
     
-    LABEL_SCREEN_CSS = 'SCREEN CSS';
+    LABEL_SCREEN_CSS = 'SCREEN CSS',
+    SRI_FILE_NAME = 'Sri.php',
+    DEV_SRI_FULL_PATH = CACHE_PATH . DEV . self::SRI_FILE_NAME,
+    PROD_SRI_FULL_PATH = CACHE_PATH . PROD . self::SRI_FILE_NAME;
 
   /**
    * @author Lionel Péramo
@@ -37,8 +39,6 @@ class GenAssetsTaskTest extends TestCase
    */
   public function test_noBundles() : void
   {
-    // context
-
     // testing
     self::expectException(OtraException::class);
     self::expectOutputString(CLI_ERROR . 'There are no bundles to use!' . END_COLOR . PHP_EOL);
@@ -50,7 +50,7 @@ class GenAssetsTaskTest extends TestCase
       [self::OTRA_BINARY, self::OTRA_TASK_GEN_ASSETS]
     );
   }
-
+  
   /**
    * @medium
    * @author Lionel Péramo
@@ -99,7 +99,8 @@ class GenAssetsTaskTest extends TestCase
         $outputExpected .= ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]';
       elseif (in_array(
         $route,
-        ['otra_404', 'otra_clearSQLLogs', 'otra_exception', 'otra_refreshSQLLogs']
+        ['otra_404', 'otra_clearSQLLogs', 'otra_exception', 'otra_refreshSQLLogs'],
+        true
       ))
         $outputExpected .= ' [' . CLI_INFO . 'Nothing to do' . CLI_GRAY . '] =>' . CLI_SUCCESS . ' OK' . END_COLOR;
       elseif (in_array($route, ['otra_css', 'otra_logs', 'otra_requests', 'otra_routes', 'otra_templateStructure']))
@@ -124,18 +125,33 @@ class GenAssetsTaskTest extends TestCase
 
     self::expectOutputString(
       $outputExpected .
-      CLI_ERROR . 'The JSON manifest file ' . CLI_WARNING . BASE_PATH . 'web/devManifest.json' . CLI_ERROR .
+      CLI_ERROR . 'The JSON manifest file ' . CLI_INFO . 'BASE_PATH + ' . CLI_INFO_HIGHLIGHT . 'web/devManifest.json' . CLI_ERROR .
       ' to optimize does not exist.' . END_COLOR . PHP_EOL .
       'Checking for uncompressed SVGs in the folder ' . CLI_INFO_HIGHLIGHT . BASE_PATH . 'web/images' . END_COLOR .
       ' ...' . PHP_EOL .
       CLI_WARNING . 'There is no folder ' . CLI_INFO_HIGHLIGHT . BASE_PATH . 'web/images' . CLI_WARNING . '.' .
       END_COLOR . PHP_EOL);
 
-    // launching
+    // launching `otra genAssets`
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,
       self::OTRA_TASK_GEN_ASSETS,
       [self::OTRA_BINARY, self::OTRA_TASK_GEN_ASSETS]
     );
+    
+    self::assertFileExists(self::DEV_SRI_FULL_PATH);
+    self::assertFileEquals(
+      TEST_PATH . 'examples/genAssetsTask/' . DEV . self::SRI_FILE_NAME,
+      self::DEV_SRI_FULL_PATH
+    );
+    self::assertFileExists(self::PROD_SRI_FULL_PATH);
+    self::assertFileEquals(
+      TEST_PATH . 'examples/genAssetsTask/' . PROD . self::SRI_FILE_NAME,
+      self::PROD_SRI_FULL_PATH
+    );
+    
+    // cleaning
+    unlink(self::DEV_SRI_FULL_PATH);
+    unlink(self::PROD_SRI_FULL_PATH);
   }
 }

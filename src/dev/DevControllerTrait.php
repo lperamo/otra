@@ -6,13 +6,15 @@ use otra\config\{AllConfig, Routes};
 use Exception;
 use otra\cache\php\Logger;
 use otra\templating\HtmlMinifier;
-use function otra\tools\getOtraCommitNumber;
 use const otra\cache\php\
-{BASE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DIR_SEPARATOR};
+{BASE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, CORE_VIEWS_PATH, DEV_SRI, DIR_SEPARATOR};
 use const otra\services\{OTRA_KEY_SCRIPT_SRC_DIRECTIVE, OTRA_KEY_STYLE_SRC_DIRECTIVE};
+use function otra\tools\getOtraCommitNumber;
 use function otra\services\{addCspHeader, addPermissionsPoliciesHeader, getRandomNonceForCSP};
 
-const OTRA_FILENAME_TRACE = 'trace';
+const
+  OTRA_FILENAME_TRACE = 'trace',
+  RESOURCE_PATH_BUNDLE = '/bundles/';
 
 /**
  * A classic MVC development controller class
@@ -177,28 +179,28 @@ trait DevControllerTrait
     if (!isset($routes[$route]))
       return '';
 
-    $route = $routes[$route];
+    $routeData = $routes[$route];
 
     // No 'resources' section so no CSS/JS to load
-    if (!isset($route['resources']))
+    if (!isset($routeData['resources']))
       return '';
 
-    $resources = $route['resources'];
+    $resources = $routeData['resources'];
 
     if (
       !isset($resources['app_' . $assetType])
-      && !isset($resources['bundle_' . $assetType])
-      && !isset($resources['core_' . $assetType])
-      && !isset($resources['module_' . $assetType])
+      && !isset($resources['bundle_' . $assetType], $resources['core_' . $assetType], $resources['module_' . $assetType])
       && !($assetType === 'css' && isset($resources['print_css']))
     )
       return '';
 
-    $chunks = $route['chunks'];
+    $chunks = $routeData['chunks'];
 
     // Bundle and module information do not exist on exceptions
     if (!isset($chunks[Routes::ROUTES_CHUNKS_BUNDLE]))
-      $chunks[Routes::ROUTES_CHUNKS_BUNDLE] = $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
+      $chunks[Routes::ROUTES_CHUNKS_MODULE] = '';
+
+    $bundleChunk = $chunks[Routes::ROUTES_CHUNKS_BUNDLE] ?? '';
 
     $debLink = PHP_EOL;
 
@@ -211,18 +213,17 @@ trait DevControllerTrait
     {
       $debLink .= '<link rel="stylesheet" nonce="<<<TO_REPLACE>>>" href="';
       $endLink = '.css" />';
-      $endLink2 = '';
+      $endLink2 = '/>';
     }
 
     $naturalPriorityIndex = 0;
-    $debLink2 = $debLink . '/bundles/';
     $resourcesArray = [];
 
     // **Reminder** : $viewsResourcePath is like
-    // '/bundles/' . $this->bundle . '/' . $this->module . '/resources/css/'
+    // RESOURCE_PATH_BUNDLE . $this->bundle . '/' . $this->module . '/resources/css/'
     $resourcesType = [
-      'app_' . $assetType => $debLink2 . 'resources/' . $assetType . DIR_SEPARATOR,
-      'bundle_' . $assetType => $debLink2 . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . '/resources/' . $assetType .
+      'app_' . $assetType => $debLink . RESOURCE_PATH_BUNDLE . 'resources/' . $assetType . DIR_SEPARATOR,
+      'bundle_' . $assetType => $debLink . RESOURCE_PATH_BUNDLE . $bundleChunk . '/resources/' . $assetType .
         DIR_SEPARATOR,
       'module_' . $assetType => $debLink . $viewResourcePath[$assetType],
       'print_' . $assetType => $debLink . $viewResourcePath[$assetType],
@@ -232,12 +233,40 @@ trait DevControllerTrait
     // For each kind of asset file, we will look for them in their respective folders
     foreach ($resourcesType as $resourceType => $resourceTypeInfo)
     {
-      if (isset($resources[$resourceType]))
+      if (!isset($resources[$resourceType]))
+        continue;
+
+      $currentResources = $resources[$resourceType];
+
+      // We add a link to the CSS/JS array for each file we found
+      foreach($currentResources as $resourceFile => $resourceFileData)
       {
-        // We add a link to the CSS/JS array for each file we found
-        foreach($resources[$resourceType] as $resourceFile => $resourceFileData)
+        // Normalizes the data structure
+        if (!is_array($resourceFileData))
         {
-          $resourceTypeInfoActual = str_replace(
+          $resourceFile = $resourceFileData;
+          $resourceFileData = ['order' => $naturalPriorityIndex];
+        }
+
+        if ($resourceType === 'app_' . $assetType) 
+          $diskPath = BASE_PATH . 'bundles/resources/' . $assetType . '/' . $resourceFile . '.' . $assetType;
+        elseif ($resourceType === 'bundle_' . $assetType)
+          $diskPath = BASE_PATH . 'bundles/' . $bundleChunk . '/resources/' . $assetType . '/' . $resourceFile . '.' .
+            $assetType;
+        elseif ($resourceType === 'module_' . $assetType || $resourceType === 'print_' . $assetType)
+          $diskPath = str_replace('/bundles', BASE_PATH . 'bundles', $viewResourcePath[$assetType]) .
+            $resourceFile . '.' . $assetType;
+        elseif ($resourceType === 'core_' . $assetType)
+          $diskPath = BASE_PATH . 'vendor/otra/otra/src/resources/' . $assetType . '/' . $resourceFile . '.' . 
+            $assetType;
+
+        $cacheKey = str_starts_with($diskPath, BASE_PATH)
+          ? 'l:' . substr($diskPath, strlen(BASE_PATH))
+          : $diskPath;
+
+        // Stores the data in a resources array
+        $resourcesArray[$resourceFileData['order'] ?? $naturalPriorityIndex] =
+          str_replace(
             '<<<TO_REPLACE>>>',
             getRandomNonceForCSP(
               $assetType === 'css'
@@ -245,25 +274,14 @@ trait DevControllerTrait
                 : OTRA_KEY_SCRIPT_SRC_DIRECTIVE
             ),
             $resourceTypeInfo
+          ) . $resourceFile .
+          ($resourceType !== 'print_css'
+            ? '.' . $assetType . '"' . (isset($resourceFileData['module']) ? ' type=module' : '') . ' integrity=sha384-' .
+            DEV_SRI[$route][$assetType][$cacheKey] . ' ' . $endLink2
+            : '.css" media=print integrity=sha384-' . DEV_SRI[$route][$assetType][$cacheKey] . ' />'
           );
 
-          // Normalizes the data structure
-          if (!is_array($resourceFileData))
-          {
-            $resourceFile = $resourceFileData;
-            $resourceFileData = ['order' => $naturalPriorityIndex];
-          }
-
-          // Stores the data in a resources array
-          $resourcesArray[$resourceFileData['order'] ?? $naturalPriorityIndex] =
-            $resourceTypeInfoActual . $resourceFile .
-            ($resourceType !== 'print_css'
-              ? $endLink . (isset($resourceFileData['module']) ? ' type="module"': '') . $endLink2
-              : '.css" media="print" />'
-            );
-
-          ++$naturalPriorityIndex;
-        }
+        ++$naturalPriorityIndex;
       }
     }
 
@@ -278,8 +296,8 @@ trait DevControllerTrait
         if (is_int($jsResourceKey))
           $jsResourceKey = '';
 
-        $resourceContent .= PHP_EOL . '<script type="module" src="' . $javaScript . '.js" nonce="' .
-          getRandomNonceForCSP() . '" ' . $jsResourceKey . '></script>';
+        $resourceContent .= PHP_EOL . '<script type=module src="' . $javaScript . '.js" nonce="' .
+          getRandomNonceForCSP() . '" ' . $jsResourceKey . ' integrity=sha384-' . DEV_SRI[$route][$assetType][$diskPath] . ' ></script>';
       }
     }
 

@@ -182,6 +182,7 @@ abstract class MasterController
 
         // require_once needed, instead of require, because of the RouterTest::testGet_Launch test
         require_once CORE_PATH . 'services/securityService.php';
+        require_once CACHE_PATH . $_SERVER[APP_ENV] . 'Sri.php';
         $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' . $this->route . '.php';
       }
 
@@ -202,7 +203,7 @@ abstract class MasterController
 
     // require_once needed, instead of require, because of the RouterTest::testGet_Launch test
     require_once CORE_PATH . 'services/securityService.php';
-
+    require_once CACHE_PATH . $_SERVER[APP_ENV] . 'Sri.php';
     $this->routeSecurityFilePath = CACHE_PATH . 'php/security/' .  $_SERVER[APP_ENV] . DIR_SEPARATOR . $this->route .
       '.php';
 
@@ -494,6 +495,13 @@ abstract class MasterController
     return $content;
   }
 
+  public static function getSRICacheKey(string $diskPath) : string
+  {
+    return str_starts_with($diskPath, BASE_PATH)
+      ? 'l:' . substr($diskPath, strlen(BASE_PATH))
+      : $diskPath;
+  }
+
   /**
    * Adds extra CSS dynamically (needed for the debug bar for example).
    *
@@ -509,8 +517,10 @@ abstract class MasterController
       $cssContent .= PHP_EOL . '<link rel=stylesheet href="' . $stylesheet[self::$stylesheetFile] .
         '.css" media=' . (isset($stylesheet[self::$printStylesheet]) && $stylesheet[self::$printStylesheet]
           ? 'print'
-          : 'screen')
-        . ' />';
+          : 'screen') .
+        'integrity=' .
+        constant($_SERVER[APP_ENV] . '_SRI')[self::$route]['css'][self::getSRICacheKey($stylesheet[self::$stylesheetFile] . '.css')] .
+        ' />';
     }
 
     return $cssContent;
@@ -528,8 +538,9 @@ abstract class MasterController
 
     foreach(self::$javaScripts as $javaScript)
     {
-      $jsContent .= self::LABEL_SCRIPT_NONCE .
-        getRandomNonceForCSP() . ' src="' . $javaScript . '.js" ></script>';
+      $jsContent .= self::LABEL_SCRIPT_NONCE . getRandomNonceForCSP() . ' src="' . $javaScript . '.js" integrity=' .
+        constant($_SERVER[APP_ENV] . '_SRI')[self::$route]['js'][self::getSRICacheKey($stylesheet[self::$stylesheetFile] . '.js')] .
+        ' ></script>';
     }
 
     return $jsContent;
@@ -555,7 +566,8 @@ abstract class MasterController
           'nonce' => getRandomNonceForCSP(),
           'media' => ($stylesheetType === self::CSS_MEDIA_SCREEN)
             ? 'screen'
-            : 'print'
+            : 'print',
+          'integrity' => constant($_SERVER[APP_ENV] . '_SRI')[self::$route]['css'][self::getSRICacheKey($stylesheet . '.css')]
         ];
       }
     }
@@ -577,7 +589,8 @@ abstract class MasterController
     {
       $jsContent[] = [
         'nonce' => getRandomNonceForCSP(),
-        'src' => $javaScript . '.js'
+        'src' => $javaScript . '.js',
+        'integrity' => constant($_SERVER[APP_ENV] . '_SRI')[self::$route]['js'][self::getSRICacheKey($javaScript . '.js')]
       ];
     }
 

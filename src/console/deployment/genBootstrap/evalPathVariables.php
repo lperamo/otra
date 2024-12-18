@@ -55,10 +55,10 @@ function evalPathVariables(string &$fileContent, string $filename, string $trimm
       )
       {
         echo CLI_WARNING, 'require/include statement not evaluated because of the non defined dynamic variable ',
-        CLI_INFO_HIGHLIGHT, '$', $aPathVariable, CLI_WARNING, ' in', PHP_EOL,
-        '  ', CLI_INFO_HIGHLIGHT, $trimmedMatch, CLI_WARNING, PHP_EOL,
-        '  in the file ', CLI_INFO_HIGHLIGHT, $filename, CLI_WARNING, '!', END_COLOR, PHP_EOL;
-        $cannotIncludeFile = true;
+          CLI_INFO_HIGHLIGHT, '$', $aPathVariable, CLI_WARNING, ' in', PHP_EOL,
+          '  ', CLI_INFO_HIGHLIGHT, $trimmedMatch, CLI_WARNING, PHP_EOL,
+          '  in the file ', CLI_INFO_HIGHLIGHT, $filename, CLI_WARNING, '!', END_COLOR, PHP_EOL;
+          $cannotIncludeFile = true;
       }
     }
   }

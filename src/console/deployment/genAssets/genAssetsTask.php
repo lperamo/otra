@@ -10,42 +10,44 @@ namespace otra\console\deployment\genAssets;
 use FilesystemIterator;
 use JsonException;
 use otra\config\Routes;
-use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionException;
+use RuntimeException;
 use SplFileInfo;
 use const otra\cache\php\
-{APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_CSS_PATH, CORE_JS_PATH, CORE_PATH, DIR_SEPARATOR};
+{BASE_PATH, BUNDLES_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH, DEV_SRI, DIR_SEPARATOR, PROD_SRI};
 use const otra\config\VERSION;
 use const otra\console\
-{
-  CLI_ERROR,
-  CLI_GRAY,
-  CLI_INFO,
-  CLI_INFO_HIGHLIGHT,
-  CLI_SUCCESS,
-  CLI_WARNING,
-  END_COLOR};
+{CLI_BASE, CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\console\convertLongArrayToShort;
 use function otra\src\console\deployment\googleClosureCompile;
 use function otra\tools\brotliCompressFile;
+use function otra\tools\files\returnLegiblePath;
 
 const
   GEN_ASSETS_ARG_ASSETS_MASK = 2,
   GEN_ASSETS_ARG_ROUTE = 4,
   COMPRESSION_LEVEL = 9,
-
+  
   GEN_ASSETS_MASK_TEMPLATE = 1,
   GEN_ASSETS_MASK_CSS = 2,
   GEN_ASSETS_MASK_JS = 4,
   GEN_ASSETS_MASK_MANIFEST = 8,
   GEN_ASSETS_MASK_SVG = 16,
   GEN_ASSETS_MASK_TOTAL = 31,
-
+  
   OTRA_UNLINK_CALLBACK = 'unlink',
   OTRA_CLI_INFO_STRING = 'CLI_INFO',
-  OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json';
-
+  OTRA_LABEL_TSCONFIG_JSON = 'tsconfig.json',
+  SRI_DEV_FULL_PATH = CACHE_PATH . 'devSri.php',
+  SRI_PROD_FULL_PATH = CACHE_PATH . 'prodSri.php',
+  SRI_FILE_BEGINNING = '<?php declare(strict_types=1);namespace otra\cache\php;const ',
+  KEY_CSS = 'css',
+  KEY_JS = 'js',
+  KEY_PREFIX = 0,
+  KEY_PATH = 1;
 /**
  * @param string $folder  The resource folder name
  * @param string $shaName The route's name encoded in sha1
@@ -63,126 +65,180 @@ function status(string $status, string $color = 'CLI_SUCCESS') : string
   return ' [' . constant('otra\\console\\' . $color) . $status . CLI_GRAY. ']';
 }
 
+function getSRIHash(string $absolutePath) : string
+{
+  return base64_encode(hash_file('sha384', $absolutePath, true));
+}
+
 /**
  * @param string $assetType 'css' or 'js'
  *
- * @return null|string Return the path of the 'macro' resource file
+ * @return array<null|string, array> Return the path of the 'macro' resource file
  */
 function loadAndSaveResources(
   array $resources,
   array $routeChunks,
   string $assetType,
   string $bundlePath,
-  string $shaName
-) : ?string
+  string $shaName,
+  string $routeName,
+  array $devSriHashes
+) : array
 {
-  ob_start();
-  loadResource($resources, $routeChunks, 'app_' . $assetType, 'bundles/');
-  loadResource($resources, $routeChunks, 'bundle_' . $assetType, $bundlePath, '');
-  loadResource(
-    $resources,
-    $routeChunks,
-    'core_' . $assetType,
-    CORE_PATH,
-    ''
-  );
-  loadResource(
-    $resources,
-    $routeChunks,
-    'module_' . $assetType,
-    $bundlePath . $routeChunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
-  );
+  $allResourcesParts = [];
+  $resourceVariants = [
+    [
+      KEY_PREFIX => 'app_',
+      KEY_PATH => BASE_PATH . 'bundles/'
+    ],
+    [
+      KEY_PREFIX => 'bundle_',
+      KEY_PATH => $bundlePath
+    ],
+    [
+      KEY_PREFIX => 'core_',
+      KEY_PATH => CORE_PATH
+    ],
+    [
+      KEY_PREFIX => 'module_',
+      KEY_PATH => $bundlePath . $routeChunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
+    ]
+  ];
 
-  $allResources = ob_get_clean();
+  foreach ($resourceVariants as $variant)
+  {
+    [$returnedContent, $devSriHashes] = loadResource(
+      $resources,
+      $routeChunks,
+      $variant[KEY_PREFIX] . $assetType,
+      $variant[KEY_PATH],
+      $routeName,
+      $devSriHashes
+    );
+
+    if ($returnedContent !== null)
+      $allResourcesParts[] = $returnedContent;
+  }
 
   // If there were no resources to optimize
-  if ('' === $allResources)
-    return null;
+  if (empty($allResourcesParts))
+    return [null, $devSriHashes];
+
+  // Combine all resources efficiently
+  $allResources = implode('', $allResourcesParts);
 
   $resourceFolderPath = CACHE_PATH . $assetType . DIR_SEPARATOR;
-  $pathAndFile = $resourceFolderPath . $shaName;
+  $pathAndFile = $resourceFolderPath . $shaName . ($assetType === KEY_JS ? '_' : '');
 
-  if ($assetType === 'js')
-    $pathAndFile .= '_';
+  if (!is_dir($resourceFolderPath) && !mkdir($resourceFolderPath, 0755, true))
+    throw new RuntimeException('Failed to create directory: ' . $resourceFolderPath);
 
-  if (!file_exists($resourceFolderPath))
-    mkdir($resourceFolderPath, 0755, true);
+  if (file_put_contents($pathAndFile, $allResources) === false)
+    throw new RuntimeException('Failed to write to file: ' . $pathAndFile);
 
-  file_put_contents($pathAndFile, $allResources);
-
-  return $pathAndFile;
+  return [$pathAndFile, $devSriHashes];
 }
 
 /**
- * Loads css or js resources
+ * Loads CSS or JS resources
  *
- * @param string  $key          app_js, module_css kind of ...
+ * @param string $variantKey app_js, module_css kind of ...
+ *
+ * @return ?string[] Returns an array with the content and the final path, or null if the resource doesn't exist
  */
-function loadResource(array $resources, array $chunks, string $key, string $bundlePath, ?string $resourcePath = null)
-: void
+function loadResource(array $resources,
+  array $chunks,
+  string $variantKey,
+  string $bundlePath,
+  string $routeName,
+  array $devSriHashes,
+  ?string $resourcePath = null)
+: ?array
 {
   // If this kind of resource does not exist, we leave
-  if (!isset($resources[$key]))
-    return;
+  if (!isset($resources[$variantKey]))
+    return [null, $devSriHashes];
 
-  $resourceType = substr(strrchr($key, '_'), 1);
+  $resourceType = substr(strrchr($variantKey, '_'), 1);
   $resourcePath = $bundlePath . ($resourcePath ?? '') . 'resources/' . $resourceType . DIR_SEPARATOR;
+  $content = $finalContent = '';
 
-  foreach ($resources[$key] as $resourceKey => $resource)
+  foreach ($resources[$variantKey] as $resourceKey => $resource)
   {
     $resourceName = is_array($resource) ? $resourceKey : $resource;
 
-    ob_start();
-
-    if (!str_contains($resourceName, 'http'))
+    if (!str_contains($resourceName, 'http:'))
     {
       $finalPath = $resourcePath . $resourceName . '.' . $resourceType;
 
-      if (file_exists($finalPath))
-        echo file_get_contents($finalPath);
-      else
+      if (!file_exists($finalPath))
       {
-        ob_end_clean();
-        return;
+        require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+        echo CLI_WARNING, 'This file does not exist: ', returnLegiblePath($finalPath), CLI_BASE;
+        return [null, $devSriHashes];
       }
-    }
-    else
+
+      $content = file_get_contents($finalPath);
+    } else
     {
       $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $resourceName . '.' . $resourceType);
-      curl_setopt($curlHandle, CURLOPT_HEADER, false);
-      curl_exec($curlHandle);
+      $finalPath = $resourceName . '.' . $resourceType;
+      curl_setopt_array($curlHandle, [
+        CURLOPT_URL => $finalPath,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HEADER => false,
+      ]);
+      $content = curl_exec($curlHandle);
       curl_close($curlHandle);
+
+      if ($content === false)
+      {
+        echo CLI_WARNING, 'No content retrieved! for ', $finalPath, CLI_BASE, PHP_EOL;
+        return [null, $devSriHashes];
+      }
     }
 
-    $content = ob_get_clean();
-
-    if ($resourceType === 'css')
+    if ($resourceType === KEY_CSS)
     {
-      $content = str_replace(
-        ['  ', PHP_EOL, ' :', ': ', ', ', ' {', '{ ','; '],
-        [' ', '', ':', ':', ',', '{', '{', ';'],
+      // Minify CSS: remove unnecessary spaces and line breaks
+      $content .= str_replace(
+        ['  ', ' :', ': ', ', ', ' {', '{ ', '; ', PHP_EOL],
+        [' ', ':', ':', ',', '{', '{', ';', ''],
         $content
       );
     }
 
-    echo $content;
-    /** Workaround for Google Closure Compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
-     *  feed after source map declaration like
-     *  //# sourceMappingURL=modules.js.map
-     *  So the last letter is 'p' and not a line feed.
-     *  Then we have to put ourselves the line feed !
-     **/
+    // Handle the workaround for Google Closure Compiler
+    if (str_ends_with($content, 'p'))
+      $content .= PHP_EOL;
 
-    if ($content[-1] === 'p')
-      echo PHP_EOL;
+    $finalContent.= $content;
+    $sriFilePath = (str_contains($finalPath, 'https::'))
+      ? $finalPath
+      : 'l:' . substr($finalPath, strlen(BASE_PATH));
+
+    $devSriHashes[$routeName][$resourceType][$sriFilePath] = getSRIHash($finalPath);
   }
+
+  return ($finalContent === ''
+    ? [null, $devSriHashes] // Return null explicitly if no resource matches
+    : [$content, $devSriHashes]
+  );
+}
+
+/**
+ * @throws ReflectionException
+ */
+function saveSRIHashes(string $path, string $constant, array $hashes): void
+{
+  file_put_contents($path, SRI_FILE_BEGINNING . $constant . '=' . convertLongArrayToShort($hashes) . ';' . PHP_EOL);
 }
 
 /**
  * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @throws JsonException|OtraException
+ * @throws ReflectionException
  * @return void
  */
 function genAssets(array $argumentsVector) : void
@@ -194,10 +250,11 @@ function genAssets(array $argumentsVector) : void
   }
 
   require_once BASE_PATH . 'config/AllConfig.php';
-  // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
+  // `require_once` needed because of the case of 'deploy' task that already launched the routes.
   require_once BASE_PATH . 'config/Routes.php';
   require CORE_PATH . 'tools/compression.php';
 
+  define(__NAMESPACE__ . '\\STRLEN_BASE_PATH', strlen(BASE_PATH));
   define(
     __NAMESPACE__ . '\\JS_LEVEL_COMPILATION',
     [
@@ -208,18 +265,15 @@ function genAssets(array $argumentsVector) : void
 
   $routes = Routes::$allRoutes;
 
-  // Checking the mask parameter
-  if (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]) && !is_numeric($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK]))
+  // Checking the mask parameter, 31 = defaults to all assets
+  $assetsMask = $argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK] ?? 31;
+  if (!is_numeric($assetsMask))
   {
-    echo CLI_ERROR, 'This not a valid mask ! It must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL,
-    '.', END_COLOR;
+    echo CLI_ERROR, 'Invalid mask! Must be between ', GEN_ASSETS_MASK_TEMPLATE, ' and ', GEN_ASSETS_MASK_TOTAL, '.',
+      END_COLOR;
     throw new OtraException(code: 1, exit: true);
   }
-
-  define(
-    __NAMESPACE__ . '\\ASSETS_MASK',
-    (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
-  ); // 31 = default to all assets
+  define(__NAMESPACE__ . '\\ASSETS_MASK', $assetsMask + 0);
 
   define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
   define('GEN_ASSETS_CSS', (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1);
@@ -229,12 +283,25 @@ function genAssets(array $argumentsVector) : void
 
   // If we only need the manifest or the SVGs, skips the assets' generation loop
   if (
-    !in_array(
-      ASSETS_MASK,
-      [GEN_ASSETS_MASK_MANIFEST, GEN_ASSETS_MASK_SVG, GEN_ASSETS_MASK_MANIFEST | GEN_ASSETS_MASK_SVG]
-    )
+    ASSETS_MASK !== GEN_ASSETS_MASK_MANIFEST &&
+    ASSETS_MASK !== GEN_ASSETS_MASK_SVG &&
+    ASSETS_MASK !== (GEN_ASSETS_MASK_MANIFEST | GEN_ASSETS_MASK_SVG)
   )
   {
+    if (file_exists(SRI_DEV_FULL_PATH))
+    {
+      require SRI_DEV_FULL_PATH;
+      $devSriHashes = DEV_SRI;
+    } else
+      $devSriHashes = [];
+
+    if (file_exists(SRI_PROD_FULL_PATH))
+    {
+      require SRI_PROD_FULL_PATH;
+      $prodSriHashes = PROD_SRI;
+    } else
+      $prodSriHashes = [];
+
     // If we ask just for only one route
     if (isset($argumentsVector[GEN_ASSETS_ARG_ROUTE]))
     {
@@ -265,6 +332,13 @@ function genAssets(array $argumentsVector) : void
     } else
     {
       echo PHP_EOL, 'Cleaning the resources cache...';
+
+      // Clean obsolete routes
+      foreach (array_keys($prodSriHashes) as $routeName)
+      {
+        if (!in_array($routeName, $routes, true))
+          unset($prodSriHashes[$routeName], $devSriHashes[$routeName]);
+      }
 
       if (GEN_ASSETS_TEMPLATE !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
@@ -303,6 +377,7 @@ function genAssets(array $argumentsVector) : void
       {
         echo status('Nothing to do', OTRA_CLI_INFO_STRING),
           ' =>', CLI_SUCCESS, ' OK', END_COLOR, '[', CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
+        unset($prodSriHashes[$routeName], $devSriHashes[$routeName]);
         continue;
       }
 
@@ -314,6 +389,7 @@ function genAssets(array $argumentsVector) : void
       {
         echo ' [NOTHING TO DO (NOT IMPLEMENTED FOR THIS PARTICULAR ROUTE)]', '[',
         CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
+        unset($prodSriHashes[$routeName], $devSriHashes[$routeName]);
         continue;
       }
 
@@ -323,38 +399,53 @@ function genAssets(array $argumentsVector) : void
       /***** CSS - GENERATES THE COMPRESSED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
       if (GEN_ASSETS_CSS !== 0)
       {
-        if (str_contains(implode(array_keys($resources)), 'css'))
+        if (str_contains(implode(array_keys($resources)), KEY_CSS))
         {
-          $pathAndFile = loadAndSaveResources($resources, $chunks, 'css', $bundlePath, $shaName);
+          if (!isset($prodSriHashes[$routeName][KEY_CSS]))
+            $prodSriHashes[$routeName][KEY_CSS] = $devSriHashes[$routeName][KEY_CSS] = [];
+
+          [$pathAndFile, $devSriHashes] =
+            loadAndSaveResources($resources, $chunks, KEY_CSS, $bundlePath, $shaName, $routeName, $devSriHashes);
 
           if ($pathAndFile !== null)
           {
+            /* @var string $pathAndFile */
+            $prodSriFilePath = (str_contains($pathAndFile, 'https::'))
+              ? $pathAndFile
+              : 'l:' . substr($pathAndFile, strlen(BASE_PATH));
+
+            $prodSriHashes[$routeName][KEY_CSS][$prodSriFilePath . '.br'] = getSRIHash($pathAndFile);
             brotliCompressFile($pathAndFile, null, COMPRESSION_LEVEL);
             echo status('SCREEN CSS');
           }
           else
             echo status('NO SCREEN CSS', OTRA_CLI_INFO_STRING);
 
-          ob_start();
-          loadResource(
+          [$printCss, $devSriHashes] = loadResource(
             $resources,
             $chunks,
             'print_css',
-            $bundlePath . $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
+            $bundlePath . $chunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR,
+            $routeName,
+            $devSriHashes
           );
-          $printCss = ob_get_clean();
 
-          if ($printCss === '')
+          if ($printCss === '' || $printCss === null)
             echo status('NO PRINT CSS', 'CLI_ERROR');
           else
           {
             $resourceFolderPath = CACHE_PATH . 'css/';
             $pathAndFile = $resourceFolderPath . 'print_' . $shaName;
+            $prodSriFilePath = (str_contains($pathAndFile, 'https::'))
+              ? $pathAndFile
+              : 'l:' . substr($pathAndFile, strlen(BASE_PATH));
 
             if (!file_exists($resourceFolderPath))
               mkdir($resourceFolderPath, 0755, true);
 
             file_put_contents($pathAndFile, $printCss);
+
+            $prodSriHashes[$routeName][KEY_CSS][$prodSriFilePath . '.br'] = getSRIHash($pathAndFile);
             brotliCompressFile($pathAndFile, null, COMPRESSION_LEVEL);
             echo status('PRINT CSS');
           }
@@ -366,9 +457,13 @@ function genAssets(array $argumentsVector) : void
       /***** JS - GENERATES THE COMPRESSED JS FILES (IF ASKED AND IF NEEDED TO) *****/
       if (GEN_ASSETS_JS !== 0)
       {
-        if (str_contains(implode(array_keys($resources)), 'js'))
+        if (str_contains(implode(array_keys($resources)), KEY_JS))
         {
-          $pathAndFile = loadAndSaveResources($resources, $chunks, 'js', $bundlePath, $shaName);
+          if (!isset($prodSriHashes[$routeName][KEY_JS]))
+            $prodSriHashes[$routeName][KEY_JS] = $devSriHashes[$routeName][KEY_JS] = [];
+
+          [$pathAndFile, $devSriHashes] =
+            loadAndSaveResources($resources, $chunks, KEY_JS, $bundlePath, $shaName, $routeName, $devSriHashes);
 
           if ($pathAndFile === null)
           {
@@ -391,6 +486,11 @@ function genAssets(array $argumentsVector) : void
             JS_LEVEL_COMPILATION
           );
 
+          $prodSriFilePath = (str_contains($jsFileOut, 'https::'))
+            ? $jsFileOut
+            : 'l:' . substr($jsFileOut, strlen(BASE_PATH));
+
+          $prodSriHashes[$routeName][KEY_JS][$prodSriFilePath . '.br'] = getSRIHash($jsFileOut);
           brotliCompressFile($jsFileOut, $jsFileOut . '.br', COMPRESSION_LEVEL);
           echo status('JS');
         }
@@ -429,7 +529,16 @@ function genAssets(array $argumentsVector) : void
 
       echo ' => ', $noErrors ? CLI_SUCCESS . 'OK' . END_COLOR : CLI_ERROR . 'ERROR' . END_COLOR, '[',
       CLI_INFO, $shaName, END_COLOR, ']', PHP_EOL;
+
+      // Avoid routes that do not have SRI hashes
+      if (isset($prodSriHashes[$routeName]) && $prodSriHashes[$routeName] === [])
+        unset($prodSriHashes[$routeName], $devSriHashes[$routeName]);
     }
+
+    require CONSOLE_PATH . 'tools.php';
+
+    saveSRIHashes(SRI_DEV_FULL_PATH, 'DEV_SRI', $devSriHashes);
+    saveSRIHashes(SRI_PROD_FULL_PATH, 'PROD_SRI', $prodSriHashes);
   }
 
   if (GEN_ASSETS_MANIFEST !== 0)
@@ -437,20 +546,34 @@ function genAssets(array $argumentsVector) : void
     $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
     if (!file_exists($jsonManifestPath))
-      echo CLI_ERROR, 'The JSON manifest file ', CLI_WARNING, $jsonManifestPath, CLI_ERROR , ' to optimize does not exist.',
+    {
+      require_once CORE_PATH . 'tools/files/returnLegiblePath.php';
+      echo CLI_ERROR, 'The JSON manifest file ', returnLegiblePath($jsonManifestPath, ''), CLI_ERROR, ' to optimize does not exist.',
       END_COLOR, PHP_EOL;
+    }
     else
     {
       $message = 'Generation of the compressed JSON manifest';
       echo $message . '...', PHP_EOL;
 
       $contents = file_get_contents($jsonManifestPath);
-      $contents = preg_replace('@([{,:])\s+(")@', '$1$2', $contents);
-      $contents = preg_replace('@([\[,])\s+(\{)@', '$1$2', $contents);
-      $contents = preg_replace('@(")\s+(\})@', '$1$2', $contents);
-      $contents = preg_replace('@(\})\s+(\])@', '$1$2', $contents);
-      $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
+      $contents = preg_replace(
+        [
+          '@([{,:])\s+(")@',
+          '@([\[,])\s+(\{)@',
+          '@(")\s+(\})@',
+          '@(\})\s+(\])@'
+        ],
+        [
+          '$1$2',
+          '$1$2',
+          '$1$2',
+          '$1$2'
+        ],
+        $contents
+      );
 
+      $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
       file_put_contents($generatedJsonManifestPath, $contents);
       brotliCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.br', COMPRESSION_LEVEL);
       echo "\033[1A\033[" . strlen($message) . "C", CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL;
@@ -466,12 +589,11 @@ function genAssets(array $argumentsVector) : void
     // Searches in the 'web/images' folder for SVGs
     if (file_exists(FOLDER_TO_CHECK_FOR_SVGS))
     {
-      $dir_iterator = new RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, FilesystemIterator::SKIP_DOTS);
-
-      $iterator = new RecursiveIteratorIterator($dir_iterator);
+      $dirIterator = new RecursiveDirectoryIterator(FOLDER_TO_CHECK_FOR_SVGS, FilesystemIterator::SKIP_DOTS);
+      $iterator = new RecursiveIteratorIterator($dirIterator);
 
       /** @var SplFileInfo $entry */
-      foreach($iterator as $entry)
+      foreach ($iterator as $entry)
       {
         $extension = $entry->getExtension();
 
@@ -483,10 +605,10 @@ function genAssets(array $argumentsVector) : void
         if (!brotliCompressFile($realPath, $realPath . '.br', COMPRESSION_LEVEL))
         {
           echo CLI_ERROR, 'There was an error during the Brotli compression of the file ', CLI_INFO_HIGHLIGHT,
-          mb_substr($realPath, mb_strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
+          mb_substr($realPath, strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
         } else
         {
-          echo 'The file ', CLI_INFO_HIGHLIGHT, mb_substr($realPath, mb_strlen(BASE_PATH)), END_COLOR,
+          echo 'The file ', CLI_INFO_HIGHLIGHT, mb_substr($realPath, strlen(BASE_PATH)), END_COLOR,
           ' has been compressed successfully.', END_COLOR, PHP_EOL;
         }
       }

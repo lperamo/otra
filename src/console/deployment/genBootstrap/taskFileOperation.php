@@ -331,6 +331,8 @@ function lastAdjustments(
       'require_once BASE_PATH . \'config/\' . $_SERVER[APP_ENV] . \'/AllConfig.php\';',
       // line in MasterController
       'require CORE_PATH . \'services/securityService.php\';',
+      // line in MasterController
+      'require_once CACHE_PATH . $_SERVER[APP_ENV] . \'Sri.php\';',
       // PHPStorm PHP attributes
       '#[Pure] ',
       '#[NoReturn] '
