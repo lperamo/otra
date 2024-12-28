@@ -18,9 +18,11 @@ namespace otra\console\architecture\constants
 namespace otra\console\architecture\createController
 {
   use otra\OtraException;
+  use function otra\console\architecture\createModule\checkModuleExistence;
   use const otra\cache\php\{BUNDLES_PATH, CONSOLE_PATH};
   use const otra\console\{CLI_ERROR, CLI_INFO_HIGHLIGHT, END_COLOR};
-  use const otra\console\architecture\constants\{ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE};
+  use const otra\console\architecture\constants\
+  {ARG_CONTROLLER_NAME, ARG_FORCE, ARG_INTERACTIVE, ARG_MODULE_NAME};
   use function otra\console\architecture\checkBooleanArgument;
 
   /**
@@ -43,10 +45,11 @@ namespace otra\console\architecture\createController
     require CONSOLE_PATH . 'architecture/checkBooleanArgument.php';
     $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
     $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
-    require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
+    $bundleName = require CONSOLE_PATH . 'architecture/createBundle/checkBundleExistence.php';
 
     /** @var string $modulePath */
     require CONSOLE_PATH . 'architecture/createModule/checkModuleExistence.php';
+    $modulePath = checkModuleExistence($bundleName, $argumentsVector[ARG_MODULE_NAME],$interactive,$consoleForce);
     require CONSOLE_PATH . 'architecture/createController/createController.php';
 
     $controllersFolder = $modulePath . '/controllers/';

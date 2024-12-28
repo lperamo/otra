@@ -14,13 +14,15 @@ use const otra\console\{CLI_ERROR, END_COLOR};
  */
 class WorkerTest extends TestCase
 {
-  private const
+  private const int
+    VERBOSE = 0,
+    TIMEOUT = 120;
+
+  private const string
     COMMAND = 'sleep',
     SUCCESS_MESSAGE = 'hello',
     WAITING_MESSAGE = 'waiting for the final message',
     FAIL_MESSAGE = 'fail',
-    VERBOSE = 0,
-    TIMEOUT = 120,
     WHITE = "\e[15;2]";
 
   /**

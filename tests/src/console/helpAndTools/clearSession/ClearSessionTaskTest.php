@@ -18,7 +18,7 @@ use const otra\console\
  */
 class ClearSessionTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_CLEAR_SESSION = 'clearSession',
     OTRA_PHP_BINARY = 'otra.php',
     TEST_FILE = CACHE_PATH . 'php/sessions/test.php';

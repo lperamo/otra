@@ -7,41 +7,65 @@ namespace otra\tools;
  */
 
 /**
- * GZIPs a file on disk. Based on function by Kioob at:
- * http://www.php.net/manual/en/function.gzwrite.php#34955
+ * Compresses a file on disk using Brotli. 
  *
- * @param string  $source      Path to file that should be compressed
- * @param ?string $destination Name of the file once gzipped. By default, we add 'gz' to the name.
- * @param int     $level       GZIP compression level (default: 9)
- * @param bool    $keep        Do we have to keep the source file
+ * @param string  $sourceFile      Path to the file that should be compressed
+ * @param ?string $destinationFile Name of the file once compressed. By default, '.br' is added to the name.
+ * @param int     $level           Brotli compression level (default: 7, range: 0-11)
+ * @param bool    $keep            Should the source file be kept after compression
  *
- * @return bool Success or not
+ * @return bool Success or failure
  */
-function gzCompressFile(string $source, string $destination = null, int $level = 9, bool $keep = false) : bool
-{
-  $destination ??= $source . '.gz';
-  $fp_out = gzopen($destination, 'wb' . ((string) $level));
 
-  if ($fp_out === false)
+function brotliCompressFile(string $sourceFile, ?string $destinationFile = null, int $level = 7, bool $keep = false) : bool
+{
+  // Default destination to the source file with a .br extension
+  $destinationFile ??= $sourceFile . '.br';
+  $filePointerIn = fopen($sourceFile, 'rb');
+  
+  if ($filePointerIn === false)
     return false;
 
-  $fp_in = fopen($source, 'rb');
-
-  if ($fp_in === false)
+  $fpOut = fopen($destinationFile, 'wb');
+  
+  if ($fpOut === false)
   {
-    gzclose($fp_out);
+    fclose($filePointerIn);
     return false;
   }
 
-  while (!feof($fp_in))
-    gzwrite($fp_out, fread($fp_in, 524288));  // 1024 * 512
+  $context = brotli_compress_init($level);
+  
+  if ($context === false)
+  {
+    fclose($filePointerIn);
+    fclose($fpOut);
+    return false;
+  }
 
-  fclose($fp_in);
-  gzclose($fp_out);
+  // Read and compress the file in chunks
+  while (!feof($filePointerIn))
+  {
+    $chunk = fread($filePointerIn, 524_288); // 512 KB chunk
 
-  // Avoids keeping a file without .gz extension and one with .gz extension for example.
-  if (!$keep && $source !== $destination)
-    unlink($source);
+    if ($chunk === false)
+    {
+      fclose($filePointerIn);
+      fclose($fpOut);
+      return false;
+    }
+
+    fwrite($fpOut, brotli_compress_add($context, $chunk, BROTLI_PROCESS));
+  }
+
+  fwrite($fpOut, brotli_compress_add($context, '', BROTLI_FINISH));
+
+  fclose($filePointerIn);
+  fclose($fpOut);
+
+  if (!$keep && $sourceFile !== $destinationFile)
+    unlink($sourceFile);
 
   return true;
 }
+

@@ -16,7 +16,7 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, END_CO
  */
 class SqlCreateDatabaseHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_SQL_CREATE_DATABASE = 'sqlCreateDatabase',
     OTRA_TASK_HELP = 'help';
 

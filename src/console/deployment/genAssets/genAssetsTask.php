@@ -28,12 +28,12 @@ use const otra\console\
   CLI_WARNING,
   END_COLOR};
 use function otra\src\console\deployment\googleClosureCompile;
-use function otra\tools\gzCompressFile;
+use function otra\tools\brotliCompressFile;
 
 const
   GEN_ASSETS_ARG_ASSETS_MASK = 2,
   GEN_ASSETS_ARG_ROUTE = 4,
-  GZIP_COMPRESSION_LEVEL = 9,
+  COMPRESSION_LEVEL = 9,
 
   GEN_ASSETS_MASK_TEMPLATE = 1,
   GEN_ASSETS_MASK_CSS = 2,
@@ -52,7 +52,7 @@ const
  */
 function unlinkResourceFile(string $folder, string $shaName) : void
 {
-  $fileName = CACHE_PATH . $folder . $shaName . '.gz';
+  $fileName = CACHE_PATH . $folder . $shaName . '.br';
 
   if (file_exists($fileName))
     unlink($fileName);
@@ -128,13 +128,16 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
   $resourceType = substr(strrchr($key, '_'), 1);
   $resourcePath = $bundlePath . ($resourcePath ?? '') . 'resources/' . $resourceType . DIR_SEPARATOR;
 
-  foreach ($resources[$key] as $resource)
+  foreach ($resources[$key] as $resourceKey => $resource)
   {
+    $resourceName = is_array($resource) ? $resourceKey : $resource;
+
     ob_start();
 
-    if (!str_contains($resource, 'http'))
+    if (!str_contains($resourceName, 'http'))
     {
-      $finalPath = $resourcePath . $resource . '.' . $resourceType;
+      $finalPath = $resourcePath . $resourceName . '.' . $resourceType;
+
       if (file_exists($finalPath))
         echo file_get_contents($finalPath);
       else
@@ -146,7 +149,7 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     else
     {
       $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $resource . '.' . $resourceType);
+      curl_setopt($curlHandle, CURLOPT_URL, $resourceName . '.' . $resourceType);
       curl_setopt($curlHandle, CURLOPT_HEADER, false);
       curl_exec($curlHandle);
       curl_close($curlHandle);
@@ -317,7 +320,7 @@ function genAssets(array $argumentsVector) : void
       $bundlePath = BASE_PATH . 'bundles/' . $chunks[Routes::ROUTES_CHUNKS_BUNDLE] . DIR_SEPARATOR;
       $noErrors = true;
 
-      /***** CSS - GENERATES THE GZIPPED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
+      /***** CSS - GENERATES THE COMPRESSED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
       if (GEN_ASSETS_CSS !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'css'))
@@ -326,7 +329,7 @@ function genAssets(array $argumentsVector) : void
 
           if ($pathAndFile !== null)
           {
-            gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
+            brotliCompressFile($pathAndFile, null, COMPRESSION_LEVEL);
             echo status('SCREEN CSS');
           }
           else
@@ -352,7 +355,7 @@ function genAssets(array $argumentsVector) : void
               mkdir($resourceFolderPath, 0755, true);
 
             file_put_contents($pathAndFile, $printCss);
-            gzCompressFile($pathAndFile, null, GZIP_COMPRESSION_LEVEL);
+            brotliCompressFile($pathAndFile, null, COMPRESSION_LEVEL);
             echo status('PRINT CSS');
           }
         }
@@ -360,7 +363,7 @@ function genAssets(array $argumentsVector) : void
           echo status('NO CSS', OTRA_CLI_INFO_STRING);
       }
 
-      /***** JS - GENERATES THE GZIPPED JS FILES (IF ASKED AND IF NEEDED TO) *****/
+      /***** JS - GENERATES THE COMPRESSED JS FILES (IF ASKED AND IF NEEDED TO) *****/
       if (GEN_ASSETS_JS !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'js'))
@@ -388,17 +391,17 @@ function genAssets(array $argumentsVector) : void
             JS_LEVEL_COMPILATION
           );
 
-          gzCompressFile($jsFileOut, $jsFileOut . '.gz', GZIP_COMPRESSION_LEVEL);
+          brotliCompressFile($jsFileOut, $jsFileOut . '.br', COMPRESSION_LEVEL);
           echo status('JS');
         }
         else
           echo status('NO JS', OTRA_CLI_INFO_STRING);
       }
 
-      /***** TEMPLATE - GENERATES THE GZIPPED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
+      /***** TEMPLATE - GENERATES THE COMPRESSED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
       if (GEN_ASSETS_TEMPLATE !== 0)
       {
-        if (!isset($resources['template']))
+        if (!isset($resources['template']) || !$resources['template'])
           echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING); // no static template
         else
         {
@@ -406,7 +409,7 @@ function genAssets(array $argumentsVector) : void
             ? BASE_PATH . 'web/'
             : CACHE_PATH;
 
-          // Generates the gzipped template files
+          // Generates the compressed template files
           passthru(PHP_BINARY . ' "' . CONSOLE_PATH . 'deployment/genAssets/genTemplate.php" "' .
             $staticTemplateBasePath . '" "' .
             $routeName . '" ' .
@@ -414,7 +417,7 @@ function genAssets(array $argumentsVector) : void
             'bundles\\' . Routes::$allRoutes[$routeName]['chunks'][Routes::ROUTES_CHUNKS_BUNDLE] . '\\Init::Init"'
           );
 
-          if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.gz'))
+          if (file_exists(CACHE_PATH . 'tpl/' . $shaName . '.br'))
             echo status('TEMPLATE');
           else
           {
@@ -438,7 +441,7 @@ function genAssets(array $argumentsVector) : void
       END_COLOR, PHP_EOL;
     else
     {
-      $message = 'Generation of the gzipped JSON manifest';
+      $message = 'Generation of the compressed JSON manifest';
       echo $message . '...', PHP_EOL;
 
       $contents = file_get_contents($jsonManifestPath);
@@ -449,7 +452,7 @@ function genAssets(array $argumentsVector) : void
       $generatedJsonManifestPath = BASE_PATH . 'web/manifest';
 
       file_put_contents($generatedJsonManifestPath, $contents);
-      gzCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.gz', GZIP_COMPRESSION_LEVEL);
+      brotliCompressFile($generatedJsonManifestPath, $generatedJsonManifestPath . '.br', COMPRESSION_LEVEL);
       echo "\033[1A\033[" . strlen($message) . "C", CLI_SUCCESS . '  ✔  ' . END_COLOR . PHP_EOL;
     }
   }
@@ -477,9 +480,9 @@ function genAssets(array $argumentsVector) : void
 
         $realPath = $entry->getRealPath();
 
-        if (!gzCompressFile($realPath, $realPath . '.gz', GZIP_COMPRESSION_LEVEL))
+        if (!brotliCompressFile($realPath, $realPath . '.br', COMPRESSION_LEVEL))
         {
-          echo CLI_ERROR, 'There was an error during the gzip compression of the file ', CLI_INFO_HIGHLIGHT,
+          echo CLI_ERROR, 'There was an error during the Brotli compression of the file ', CLI_INFO_HIGHLIGHT,
           mb_substr($realPath, mb_strlen(BASE_PATH)), '.', END_COLOR, PHP_EOL;
         } else
         {

@@ -11,21 +11,21 @@ use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_C
  */
 class WorkerManager
 {
-  private const
+  private const array DESCRIPTOR_SPEC = [
+    ['pipe', 'r'],
+    ['pipe', 'w'],
+    ['pipe', 'w']
+  ];
+  private const bool NON_BLOCKING = false;
+  private const int
     PERCENTAGE_BAR_LENGTH = 50,
     STDIN = 0,
     STDOUT = 1,
     STDERR = 2,
-    NON_BLOCKING = false,
     //BLOCKING = true,?
-    DESCRIPTOR_SPEC = [
-    ['pipe', 'r'],
-    ['pipe', 'w'],
-    ['pipe', 'w']
-  ],
     OTRA_KEY_STATUS = 1;
 
-  final public const
+  final public const string
     GO_UP = "\033[1A",
     ERASE_TO_END_OF_LINE = "\033[K";
 

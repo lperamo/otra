@@ -16,7 +16,7 @@ use function otra\console\deployment\genBootstrap\phpOrHTMLIntoEval;
  */
 class GetFileInfoFromRequireMatchTest extends TestCase
 {
-  private const
+  private const string
     FILENAME = 'filename.php',
     CONSTANT_PATH_CONSTANTS = 'otra\\console\\deployment\\genBootstrap\\PATH_CONSTANTS';
 
@@ -30,10 +30,10 @@ class GetFileInfoFromRequireMatchTest extends TestCase
    * // Not sure of this test
    *
    * @author  Lionel Péramo
-   * @Depends EvalPathVariablesTest::testNoVariables
-   * @Depends EvalPathVariablesTest::testVariableReplacedNoTemplate()
-   * @Depends EvalPathVariablesTest::testVariableCannotBeReplacedNoTemplate()
-   * @Depends EvalPathVariablesTest::testIsTemplate()
+   * @Depends ResolveInclusionPathTest::testNoVariables
+   * @Depends ResolveInclusionPathTest::testVariableReplacedNoTemplate()
+   * @Depends ResolveInclusionPathTest::testVariableCannotBeReplacedNoTemplate()
+   * @Depends ResolveInclusionPathTest::testIsTemplate()
    * @throws OtraException
    */
   public function testGetFileInfoFromRequireMatch() : void

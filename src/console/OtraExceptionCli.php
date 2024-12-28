@@ -14,9 +14,16 @@ use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
  */
 class OtraExceptionCli extends Exception
 {
-  private const
+  private const array TABLE_WIDTHS = ['function', 'line', 'file', 'arguments'];
+  
+  private const int
+    CELL_PADDING = 2,
+    UNKNOWN_LENGTH = 7,
+    LINE_HEADER_LENGTH = 4,
+    NOT_IMPLEMENTED_YET_LENGTH = 19;
+  
+  private const string
     KEY_VARIABLES = 'variables',
-    TABLE_WIDTHS = ['function', 'line', 'file', 'arguments'],
     TOP_START_SEPARATOR = '┌',
     TOP_INTERSECTION_SEPARATOR = '┬',
     TOP_END_SEPARATOR = '┐',
@@ -26,10 +33,6 @@ class OtraExceptionCli extends Exception
     BOTTOM_INTERSECTION_SEPARATOR = '┴',
     BOTTOM_END_SEPARATOR = '┘',
     HORIZONTAL_SEPARATOR = '─',
-    CELL_PADDING = 2,
-    UNKNOWN_LENGTH = 7,
-    LINE_HEADER_LENGTH = 4,
-    NOT_IMPLEMENTED_YET_LENGTH = 19,
     GET_LONGER_STRING_CALLBACK = self::class . '::getLongerString';
 
   private static int
@@ -198,36 +201,37 @@ class OtraExceptionCli extends Exception
 
     unset($exceptionBacktraces[0]['args'][self::KEY_VARIABLES]);
 
-    foreach ($exceptionBacktraces as $actualTraceIndex => $exceptionBacktrace) {
-        $actualTrace = $exceptionBacktrace;
-        $backtracesOutput .= CLI_TABLE . self::VERTICAL_SEPARATOR . ' ' . END_COLOR .
-          str_pad(
-            0 === $actualTraceIndex ? $exception->scode : '',
-            self::$typeLongestString - 1
-          ) .
-          self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
-          self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
-          /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
-          (isset($formattedFilenames[$actualTraceIndex])
-          ? self::consoleLine(
-            $actualTrace,
-            'file',
-            // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-            self::$fileLongestString +
-            ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
-            $formattedFilenames[$actualTraceIndex]['file']
-          )
-          : self::consoleLine(
-            $actualTrace,
-            'file',
-            // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
-            self::$fileLongestString - 21
-          )) .
-          /** ARGUMENTS */
-          CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_BASE .
-          ' NOT IMPLEMENTED YET ' . CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR .
-          PHP_EOL;
-        // echo $now['args']; after args has been converted
+    foreach ($exceptionBacktraces as $actualTraceIndex => $exceptionBacktrace)
+    {
+      $actualTrace = $exceptionBacktrace;
+      $backtracesOutput .= CLI_TABLE . self::VERTICAL_SEPARATOR . ' ' . END_COLOR .
+        str_pad(
+          0 === $actualTraceIndex ? $exception->scode : '',
+          self::$typeLongestString - 1
+        ) .
+        self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
+        self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
+        /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
+        (isset($formattedFilenames[$actualTraceIndex])
+        ? self::consoleLine(
+          $actualTrace,
+          'file',
+          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          self::$fileLongestString +
+          ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
+          $formattedFilenames[$actualTraceIndex]['file']
+        )
+        : self::consoleLine(
+          $actualTrace,
+          'file',
+          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          self::$fileLongestString - 21
+        )) .
+        /** ARGUMENTS */
+        CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_BASE .
+        ' NOT IMPLEMENTED YET ' . CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR .
+        PHP_EOL;
+      // echo $now['args']; after args has been converted
     }
 
     $backtracesOutput .= CLI_TABLE . '└' .
@@ -238,7 +242,7 @@ class OtraExceptionCli extends Exception
   }
 
   /**
-   * Returns the text that shows the headers for a unicode table (command line style)
+   * Returns the text that shows the headers for a Unicode table (command line style)
    *
    * @return string
    */
@@ -258,7 +262,7 @@ class OtraExceptionCli extends Exception
   /**
    * Returns the content of a stack trace row in console style.
    *
-   * @param array  $rowData          Data of a stack trace line
+   * @param array $rowData Data of a stack trace line
    *
    * @return string
    */

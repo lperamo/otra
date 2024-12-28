@@ -17,7 +17,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class SqlImportFixturesHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_SQL_IMPORT_FIXTURES = 'sqlImportFixtures',
     OTRA_TASK_HELP = 'help';
 

@@ -20,14 +20,16 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class RouterTest extends TestCase
 {
-  private const
+  private const string
     LABEL_TESTING_ROUTE_NAME = 'Testing route name...',
     LABEL_TESTING_ROUTE_PARAMS = 'Testing route params...';
-  protected const
+  
+  protected const string
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     ROUTE_NAME = 'HelloWorld',
     ROUTE_URL = '/helloworld';
-  private const OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
+  
+  private const string OTRA_DEFAULT_CONTENT_TYPE = 'text/html; charset=utf-8';
 
   public static function setUpBeforeClass(): void
   {

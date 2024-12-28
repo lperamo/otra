@@ -16,7 +16,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CreateActionHelpTest extends TestCase
 {
-  private const OTRA_TASK_CREATE_ACTION = 'createAction',
+  private const string
+    OTRA_TASK_CREATE_ACTION = 'createAction',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
 

@@ -31,5 +31,5 @@ function checkResourcePath(
   string $shaName,
 ) : bool
 {
-  return file_exists($basePath . $resourceExtension . DIR_SEPARATOR . $shaName. '.gz');
+  return file_exists($basePath . $resourceExtension . DIR_SEPARATOR . $shaName. '.br');
 }

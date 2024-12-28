@@ -14,7 +14,7 @@ use const otra\console\{CLI_BASE, CLI_GRAY, CLI_INFO, END_COLOR};
  */
 class VersionHelpTest extends TestCase
 {
-  private const
+  private const string
     TASK_VERSION = 'version',
     OTRA_TASK_HELP = 'help';
 

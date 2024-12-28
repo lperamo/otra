@@ -18,7 +18,7 @@ use function otra\tools\files\returnLegiblePath2;
  */
 class GenClassMapTaskTest extends TestCase
 {
-  private const
+  private const string
     CLASS_MAP_FILENAME = 'ClassMap.php',
     PROD_CLASS_MAP_FILENAME = 'ProdClassMap.php',
     CLASS_MAP_PATH = CACHE_PHP_INIT_PATH . self::CLASS_MAP_FILENAME,
@@ -88,7 +88,7 @@ class GenClassMapTaskTest extends TestCase
 
     // testing
     $expectedContent = '';
-    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 453);
+    define(__NAMESPACE__ . '\\OTRA_MAX_FOLDERS', 457);
 
     for ($currentFolder = 1; $currentFolder < OTRA_MAX_FOLDERS; ++$currentFolder)
     {

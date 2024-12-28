@@ -10,7 +10,7 @@ namespace otra\console\deployment\genAssets;
 use otra\cache\php\Logger;
 use otra\Router;
 use const otra\cache\php\{APP_ENV, BASE_PATH, CLASSMAP, CORE_PATH, PROD};
-use function otra\tools\gzCompressFile;
+use function otra\tools\brotliCompressFile;
 
 $argumentsVector = $argv;
 define(__NAMESPACE__ . '\\ARG_CACHE_PATH', $argumentsVector[1]);
@@ -72,7 +72,7 @@ $content = ob_get_clean();
 // We restore the error reporting
 error_reporting($oldErrorReporting);
 
-// We generate the file and gzip it
+// We generate the file and compress it
 $tplPath = ARG_CACHE_PATH . 'tpl/';
 
 if (!file_exists($tplPath))
@@ -86,4 +86,4 @@ $content = preg_replace('@\s{2,}(?![^<]*</pre>)@', ' ', $content);
 // strips HTML comments that are not HTML conditional comments and write the content
 file_put_contents($pathAndFile, preg_replace('@<!--.*?-->@', '', $content));
 
-gzCompressFile($pathAndFile, $pathAndFile . '.gz');
+brotliCompressFile($pathAndFile, $pathAndFile . '.br');

@@ -19,7 +19,7 @@ use const otra\console\SUCCESS;
  */
 class GenSitemapTaskTest extends TestCase
 {
-  private const SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
+  private const string SITEMAP_PATH = BASE_PATH . 'web/sitemap.xml';
 
   public static function tearDownAfterClass(): void
   {

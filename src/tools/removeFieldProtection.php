@@ -40,7 +40,7 @@ function removeFieldsScopeProtection(string $class, array $fields) : array
  *
  * @throws ReflectionException
  */
-function setScopeProtectedFields(string $class, array $fieldsAndValues, object $objectInstance = null) : void
+function setScopeProtectedFields(string $class, array $fieldsAndValues, ?object $objectInstance = null) : void
 {
   $class = new ReflectionClass($class);
 

@@ -14,7 +14,7 @@ use const otra\console\deployment\updateConf\{UPDATE_CONF_ARG_MASK, UPDATE_CONF_
  */
 abstract class TasksManager
 {
-  final public const
+  final public const int
     STRING_PAD_NUMBER_OF_CHARACTERS_FOR_OPTION_FORMATTING = 40,
     PAD_LENGTH_FOR_TASK_TITLE_FORMATTING = 27,
     PAD_LENGTH_FOR_TASK_OPTION_FORMATTING = 22,
@@ -24,7 +24,9 @@ abstract class TasksManager
     TASK_NAME = 1,
     TASK_PARAMETERS = 1,
     TASK_STATUS = 2,
-    TASK_CATEGORY = 3,
+    TASK_CATEGORY = 3;
+
+  final public const string
     REQUIRED_PARAMETER = 'required',
     OPTIONAL_PARAMETER = 'optional';
 

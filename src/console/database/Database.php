@@ -22,15 +22,17 @@ use function otra\console\database\sqlExecute\sqlExecute;
  */
 abstract class Database
 {
-  private const
-    OTRA_BINARY = 'otra.php',
-    OTRA_TASK_SQL_EXECUTE = 'sqlExecute',
+  private const int
     OTRA_DB_PROPERTY_MODE_NOTNULL_AUTOINCREMENT = 0,
     OTRA_DB_PROPERTY_MODE_TYPE = 1,
-    OTRA_DB_PROPERTY_MODE_DEFAULT = 2,
+    OTRA_DB_PROPERTY_MODE_DEFAULT = 2;
+
+  private const string
+    OTRA_BINARY = 'otra.php',
+    OTRA_TASK_SQL_EXECUTE = 'sqlExecute',
     LABEL_FIXTURES = 'fixtures/';
 
-  final public const
+  final public const string
     ERROR_CANNOT_CREATE_THE_FOLDER = 'Cannot create the folder ',
     ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH = 'Cannot remove the folder \'',
     ERROR_CLOSE_DIR_FORGOT_CALL = 'Framework note : Maybe you forgot a closedir() call (and then the folder is still used) ? Exception message : ',
@@ -69,7 +71,7 @@ abstract class Database
    * @throws OtraException If there are no database or database engine configured.
    * @return void
    */
-  public static function init(string $dbConnKey = null) : void
+  public static function init(?string $dbConnKey = null) : void
   {
     $dbConn = AllConfig::$dbConnections;
     $dbConnKey ??= key($dbConn);
@@ -102,7 +104,7 @@ abstract class Database
       define(__NAMESPACE__ . '\\VERBOSE', AllConfig::$verbose);
 
     self::$base = $infosDb['db'];
-    self::$motor = $infosDb['motor'] ?? (Sql::$currentConn)::DEFAULT_MOTOR;
+    self::$motor = $infosDb['motor'];
     self::$password = $infosDb['password'];
     self::$user = $infosDb['login'];
     self::$pathYmlFixtures = self::$pathYml . self::LABEL_FIXTURES;

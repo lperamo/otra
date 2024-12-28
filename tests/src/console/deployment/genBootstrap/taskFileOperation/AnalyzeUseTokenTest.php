@@ -15,7 +15,7 @@ use function otra\console\deployment\genBootstrap\{analyzeUseToken};
  */
 class AnalyzeUseTokenTest extends TestCase
 {
-  private const
+  private const string
     LABEL_TESTING_FILES_TO_CONCAT = 'Testing $filesToConcat variable...',
     LABEL_TESTING_PARSED_FILES = 'Testing $parsedFiles variable...',
     PHP_EXTENSION = '.php',

@@ -40,7 +40,7 @@ if (!empty($extension))
       header('Content-Type:' . $mime_type);
   }
 
-  if (in_array($extension[0], ['.css', '.js', '.json', '.gz']))
+  if (in_array($extension[0], ['.css', '.js', '.json', '.br']))
     $filePath = BASE_PATH . $_SERVER[OTRA_KEY_REQUEST_URI];
 
   echo file_get_contents($filePath);

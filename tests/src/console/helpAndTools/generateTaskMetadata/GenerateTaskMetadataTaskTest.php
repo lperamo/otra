@@ -16,7 +16,7 @@ use const otra\bin\{CACHE_PHP_INIT_PATH,TASK_CLASS_MAP_PATH};
  */
 class GenerateTaskMetadataTaskTest extends TestCase
 {
-  private const
+  private const string
     TASKS_CLASSMAP_FILENAME = 'tasksClassMap.php',
     TASKS_HELP_FILENAME = 'tasksHelp.php',
     SHELL_COMPLETIONS_FILENAME = 'shellCompletions.sh',

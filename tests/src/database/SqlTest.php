@@ -18,7 +18,8 @@ use const otra\cache\php\{APP_ENV, BASE_PATH, DEV, OTRA_PROJECT, PROD, TEST_PATH
  */
 class SqlTest extends TestCase
 {
-  private const TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
+  private const string
+    TEST_CONFIG_PATH = TEST_PATH . 'config/AllConfig.php',
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     TEST_CONFIG_BAD_DRIVER_PATH = TEST_PATH . 'config/AllConfigBadDriver.php',
     LOG_PATH = BASE_PATH . 'logs/',
@@ -748,7 +749,7 @@ class SqlTest extends TestCase
     // testing
     Sql::$instance = null;
     self::assertFalse(
-      (new ReflectionMethod(Sql::class, 'close'))->invokeArgs(null, [&Sql::$instance])
+      new ReflectionMethod(Sql::class, 'close')->invokeArgs(null, [&Sql::$instance])
     );
   }
 }

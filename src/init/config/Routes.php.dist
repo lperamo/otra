@@ -14,12 +14,14 @@ use const otra\cache\php\BUNDLES_PATH;
  */
 abstract class Routes
 {
-  public const
+  final public const int
     ROUTES_CHUNKS_URL = 0,
     ROUTES_CHUNKS_BUNDLE = 1,
     ROUTES_CHUNKS_MODULE = 2,
     ROUTES_CHUNKS_CONTROLLER = 3,
-    ROUTES_CHUNKS_ACTION = 4;
+    ROUTES_CHUNKS_ACTION = 4,
+    ROUTES_HTTP_STATUS = 0,
+    ROUTES_HTTP_REDIRECTION_URL = 1;
 
   public static array $allRoutes = [
     'otra_404' => [

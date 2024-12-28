@@ -11,9 +11,9 @@ use ReflectionObject;
  * @author Lionel Péramo
  * @package otra
  */
-abstract class Model
+abstract readonly class Model
 {
-  private readonly string $table;
+  private string $table;
 
   /**
    * @return mixed

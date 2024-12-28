@@ -17,6 +17,8 @@ namespace otra\console\architecture\constants
 
 namespace otra\console\architecture\createHelloWorld
 {
+
+  use JsonException;
   use otra\OtraException;
   use function otra\console\deployment\buildDev\buildDev;
   use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
@@ -33,7 +35,8 @@ namespace otra\console\architecture\createHelloWorld
     SUCCESS};
   use const otra\console\architecture\constants\
   {ARG_BUNDLE_NAME, ARG_CONTROLLER_NAME, ARG_FORCE, ARG_MODULE_NAME, ARG_INTERACTIVE};
-  use function otra\console\architecture\{actionHandling, checkBooleanArgument};
+  use function otra\console\architecture\
+  {actionHandling, checkBooleanArgument, createController\checkControllerExistence, createModule\checkModuleExistence};
   use function otra\console\deployment\genClassMap\genClassMap;
   use function otra\console\deployment\updateConf\updateConf;
   use function otra\tools\copyFileAndFolders;
@@ -60,7 +63,7 @@ namespace otra\console\architecture\createHelloWorld
   }
 
   /**
-   * @throws OtraException
+   * @throws OtraException|JsonException
    * @return void
    */
   function createHelloWorld()
@@ -96,12 +99,16 @@ namespace otra\console\architecture\createHelloWorld
     $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
     /** @var string $bundleName */
     $bundleMask = 9;
-    require ARCHITECTURE_FOLDER . 'createBundle/checkBundleExistence.php';
+    $bundleName = require ARCHITECTURE_FOLDER . 'createBundle/checkBundleExistence.php';
     /** @var string $moduleName */
     require ARCHITECTURE_FOLDER . 'createModule/checkModuleExistence.php';
+    $moduleName = $argumentsVector[ARG_MODULE_NAME];
+    checkModuleExistence($bundleName, $moduleName, $interactive, $consoleForce);
     /** @var string $controllerName */
     /** @var string $controllerPath */
     require ARCHITECTURE_FOLDER . 'createController/checkControllerExistence.php';
+    $controllerName = $argumentsVector[ARG_CONTROLLER_NAME];
+    $controllerPath = checkControllerExistence($bundleName, $moduleName, $controllerName, $interactive, $consoleForce);
     require ARCHITECTURE_FOLDER . 'createAction/createAction.php';
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
 

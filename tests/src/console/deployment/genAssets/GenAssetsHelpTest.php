@@ -18,7 +18,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class GenAssetsHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_HELP = 'help',
     LABEL_PLUS = '   + ';
@@ -33,7 +33,7 @@ class GenAssetsHelpTest extends TestCase
       CLI_BASE .
       str_pad(self::OTRA_TASK_GEN_ASSETS, TasksManager::PAD_LENGTH_FOR_TASK_TITLE_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO .
-      'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Gzips the SVGs.' .
+      'Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Compresses the SVGs.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('mask', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .

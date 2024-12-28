@@ -15,7 +15,7 @@ use const otra\cache\php\{APP_ENV,PROD,TEST_PATH};
  */
 class PdomysqlTest extends TestCase
 {
-  private const
+  private const string
     TEST_CONFIG_GOOD_PATH = TEST_PATH . 'config/AllConfigGood.php',
     GENERIC_QUERY = 'SELECT 1 FROM OtraTestTable';
 

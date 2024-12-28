@@ -19,7 +19,7 @@ use const otra\console\deployment\genJsRouting\{MAIN_JS_ROUTING, MAIN_RESOURCES_
  */
 class GenJsRoutingTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_TASK_INIT = 'init',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_JS_ROUTING = 'genJsRouting',

@@ -11,8 +11,6 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
   use PHPUnit\Framework\TestCase;
   use const otra\cache\php\CONSOLE_PATH;
   use function otra\console\deployment\genBootstrap\{getFileNamesFromUses};
-  use const otra\console\CLI_WARNING;
-  use const otra\console\END_COLOR;
 
   /**
    * It fixes issues like when AllConfig is not loaded while it should be
@@ -21,7 +19,12 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
    */
   class GetFileNamesFromUsesTest extends TestCase
   {
-    private const LEVEL = 1;
+    private const int LEVEL = 1;
+    private const string
+      EOL_CLASS1 = PHP_EOL . 'class Class1{}',
+      EOL_CLASS2 = PHP_EOL . 'class Class2{}',
+      EOL_CLASS3 = PHP_EOL . 'class Class3{}',
+      USE_SOME_NAMESPACE = 'use Some\\Namespace';
 
     protected function setUp(): void
     {
@@ -30,106 +33,106 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     }
 
     /**
-     * Tests only ONE use statement at a time.
+     * Tests various use statements.
      *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
+     * @dataProvider useStatementsProvider
+     *
+     * @param string                   $contentToAdd          The use statement to test.
+     * @param string                   $expectedContent       The expected content after replacement
+     * @param string                   $expectedOutput        The expected output.
+     * @param array<array-key, string> $expectedFilesToConcat The expected files to concatenate.
+     *
+     * @return void
      */
-    public function testClassic() : void
+    public function testVariousUseStatements(
+      string $contentToAdd,
+      string $expectedContent,
+      string $expectedOutput,
+      array $expectedFilesToConcat
+    ) : void
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test{firstTest, secondTest, thirdTest};';
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
+      $filesToConcat = $parsedConstants = $parsedFiles = $parsedClasses = [];
 
-      // launching
       getFileNamesFromUses(
         self::LEVEL,
         $contentToAdd,
         $filesToConcat,
         $parsedFiles,
-        $parsedConstants
+        $parsedConstants,
+        $parsedClasses
       );
 
-      // testing
-      $this->expectOutputString(
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\thirdTest' . END_COLOR . PHP_EOL
-      );
-      static::assertSame([], $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      $this->expectOutputString($expectedOutput);
+      static::assertSame($expectedFilesToConcat, $filesToConcat, 'Testing the files array to include');
+      static::assertSame($expectedContent, $contentToAdd, 'Testing replaced content');
+      static::assertSame([], $parsedConstants, 'Testing parsed constants');
+      static::assertSame([], $parsedFiles, 'Testing parsed files');
     }
 
     /**
-     * Tests only ONE use statement at a time.
+     * Provides data for testVariousUseStatements.
      *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
+     * @return array<string, array{0: string, 1: string, 2: array<array-key, string>}>
      */
-    public function testWithoutBraces() : void
+    public static function useStatementsProvider() : array
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test\\fourthTest;';
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
-
-      // launching
-      getFileNamesFromUses(
-        self::LEVEL,
-        $contentToAdd,
-        $filesToConcat,
-        $parsedFiles,
-        $parsedConstants
-      );
-
-      // testing
-      $this->expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\fourthTest' . END_COLOR . PHP_EOL);
-      static::assertSame([], $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      return [
+        'Simple use' =>
+        [
+          self::USE_SOME_NAMESPACE . '\\Class1;' . self::EOL_CLASS1,
+          self::EOL_CLASS1,
+          '',
+          []
+        ],
+        'Multiple classes' =>
+        [
+          self::USE_SOME_NAMESPACE . '\\{Stripe, Class2, Class3};' . PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 .
+          self::EOL_CLASS3,
+          PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 . self::EOL_CLASS3,
+          '',
+          []
+        ],
+        'With carriage return' =>
+        [
+          self::USE_SOME_NAMESPACE . PHP_EOL . '{Class1,Class2};' . self::EOL_CLASS1 . self::EOL_CLASS2,
+          self::EOL_CLASS1 . self::EOL_CLASS2,
+          '',
+          [],
+        ]
+      ];
     }
 
-    /**
-     * Tests only ONE use statement at a time.
-     *
-     * @author Lionel Péramo
-     * @Depends AnalyzeUseTokenTest::testRouterAlwaysIncluded()
-     * @Depends AnalyzeUseTokenTest::testIsDevControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsProdControllerTrait()
-     * @Depends AnalyzeUseTokenTest::testIsBlockSystem()
-     * @Depends AnalyzeUseTokenTest::testHasSlashAtFirstAndExternalLibraryClass()
-     */
-    public function testWithCarriageReturn() : void
+    public function testNoReplacementInVariableNames(): void
     {
-      // context
-      $contentToAdd = PHP_EOL . 'use test\\test' . "\n" . '{firstTest,secondTest};';
-      $filesToConcat = $parsedConstants = $parsedFiles = [];
+      // Context
+      $contentToAdd = <<<EOD
+    \$otra\cache\php\BASE_PATH = '/some/path/';
+    \$config = require otra\cache\php\BASE_PATH . 'config/' . \$_SERVER[otra\cache\php\APP_ENV] . '/AllConfig.php';
+    use SomeNamespace\SomeClass;
+    EOD;
 
-      // launching
+      $filesToConcat = $parsedConstants = $parsedFiles = $parsedClasses = [];
+
+      // Run
       getFileNamesFromUses(
         self::LEVEL,
         $contentToAdd,
         $filesToConcat,
         $parsedFiles,
-        $parsedConstants
+        $parsedConstants,
+        $parsedClasses
       );
 
-      // testing
-      $this->expectOutputString(
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\firstTest' . END_COLOR . PHP_EOL .
-        CLI_WARNING . 'EXTERNAL LIBRARY CLASS : test\\test\\secondTest' . END_COLOR . PHP_EOL
-      );
-      static::assertSame([], $filesToConcat);
-      static::assertSame([], $parsedConstants);
-      static::assertSame([], $parsedFiles);
+      // Test
+      $expectedContent = <<<EOD
+    \$otra\cache\php\BASE_PATH = '/some/path/';
+    \$config = require otra\cache\php\BASE_PATH . 'config/' . \$_SERVER[otra\cache\php\APP_ENV] . '/AllConfig.php';
+    
+    EOD;
+
+      static::assertEquals($expectedContent, $contentToAdd);
+      static::assertEmpty($filesToConcat);
+      $this->expectOutputString('');
     }
   }
 }

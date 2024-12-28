@@ -18,7 +18,7 @@ use function otra\tools\delTree;
  */
 class CreateControllerTaskTest extends TestCase
 {
-  private const
+  private const string
     TEST_TASK = 'createController',
     TEST_BUNDLE_PATH = BUNDLES_PATH . TEST_BUNDLE_UPPER . DIR_SEPARATOR,
     TEST_MODULE_PATH = self::TEST_BUNDLE_PATH . CreateControllerTaskTest::TEST_MODULE_NAME . DIR_SEPARATOR,
@@ -29,7 +29,7 @@ class CreateControllerTaskTest extends TestCase
     OTRA_BINARY_NAME = 'otra.php',
     CREATE_BUNDLE_FORCE = 'true';
 
-  final public const
+  final public const string
     TEST_BUNDLE_NAME = 'test',
     TEST_MODULE_NAME = 'test',
     TEST_CONTROLLER_NAME = 'test';
@@ -113,6 +113,8 @@ class CreateControllerTaskTest extends TestCase
   }
 
   /**
+   * In this case, the bundle should be created and then the controller folder too
+   *
    * @author Lionel Péramo
    * @throws OtraException
    */

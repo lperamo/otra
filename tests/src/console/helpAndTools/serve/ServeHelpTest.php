@@ -16,7 +16,7 @@ use function otra\tests\tools\taskParameter;
  */
 class ServeHelpTest extends TestCase
 {
-  private const
+  private const string
     TASK_SERVE = 'serve',
     OTRA_TASK_HELP = 'help';
 

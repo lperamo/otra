@@ -19,7 +19,7 @@ use function otra\tools\copyFileAndFolders;
  */
 class RoutesTaskTest extends TestCase
 {
-  private const
+  private const string
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
     OTRA_TASK_BUILD_DEV = 'buildDev',

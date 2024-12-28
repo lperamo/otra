@@ -19,10 +19,21 @@ use function otra\console\helpAndTools\generateTaskMetadata\generateTaskMetadata
  */
 class ClearCacheTaskTest extends TestCase
 {
-  private const
-    OTRA_TASK_CLEAR_CACHE = 'clearCache',
-    OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
-    OTRA_BINARY = 'otra.php',
+  private const array
+    BOOTSTRAPS = [
+      self::TEST_ROUTE_BOOTSTRAP,
+      self::OTRA_404,
+      self::OTRA_CLEAR_SQL_LOGS,
+      self::OTRA_CSS,
+      self::OTRA_LOGS,
+      self::OTRA_REFRESH_SQL_LOGS,
+      self::OTRA_REQUESTS,
+      self::OTRA_ROUTES,
+      self::OTRA_SQL,
+      self::OTRA_TEMPLATE_STRUCTURE,
+    ];
+
+  private const int
     MASK_WRONG = -1,
     MASK_INTERNAL_CACHE = 1,
     MASK_BOOTSTRAPS = 2,
@@ -33,7 +44,12 @@ class ClearCacheTaskTest extends TestCase
     MASK_CLASS_MAPPING = 64,
     MASK_CONSOLE_TASKS_METADATA = 128,
     MASK_SECURITY = 256,
-    MASK_ALL = 511,
+    MASK_ALL = 511;
+
+  private const string
+    OTRA_TASK_CLEAR_CACHE = 'clearCache',
+    OTRA_TASK_GEN_CLASS_MAP = 'genClassMap',
+    OTRA_BINARY = 'otra.php',
     CACHE_PHP_PATH = CACHE_PATH . 'php/',
     CACHE_PHP_INIT_PATH = self::CACHE_PHP_PATH . 'init/',
     TEST_ROUTE = 'testTest',
@@ -48,18 +64,6 @@ class ClearCacheTaskTest extends TestCase
     OTRA_ROUTES = self::CACHE_PHP_OTRA_ROUTES_PATH . 'otra_routes.php',
     OTRA_SQL = self::CACHE_PHP_OTRA_ROUTES_PATH . 'otra_sql.php',
     OTRA_TEMPLATE_STRUCTURE = self::CACHE_PHP_OTRA_ROUTES_PATH . 'otra_templateStructure.php',
-    BOOTSTRAPS = [
-      self::TEST_ROUTE_BOOTSTRAP,
-      self::OTRA_404,
-      self::OTRA_CLEAR_SQL_LOGS,
-      self::OTRA_CSS,
-      self::OTRA_LOGS,
-      self::OTRA_REFRESH_SQL_LOGS,
-      self::OTRA_REQUESTS,
-      self::OTRA_ROUTES,
-      self::OTRA_SQL,
-      self::OTRA_TEMPLATE_STRUCTURE,
-    ],
     TEST_CACHE = CACHE_PATH . 'test.cache',
     BUNDLES_CONFIG_PATH = BUNDLES_PATH . 'config/',
     TEST_EXAMPLE_ROUTES = TEST_PATH . 'examples/deployment/Routes.php',

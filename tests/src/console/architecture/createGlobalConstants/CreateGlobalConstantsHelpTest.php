@@ -17,7 +17,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CreateGlobalConstantsHelpTest extends TestCase
 {
-  private const OTRA_TASK_CREATE_GLOBAL_CONSTANTS = 'createGlobalConstants',
+  private const string
+    OTRA_TASK_CREATE_GLOBAL_CONSTANTS = 'createGlobalConstants',
     OTRA_TASK_HELP = 'help';
 
   /**

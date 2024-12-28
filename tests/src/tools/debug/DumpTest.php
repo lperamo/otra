@@ -15,11 +15,13 @@ use function otra\tools\getSourceFromFileCli;
  */
 class DumpTest extends TestCase
 {
-  private const
-    DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
+  private const int
     OTRA_DEBUG_TEST_VALUE_MAX_CHILDREN = 5,
     OTRA_DEBUG_TEST_VALUE_MAX_DATA = 10,
-    OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3,
+    OTRA_DEBUG_TEST_VALUE_MAX_DEPTH = 3;
+  
+  private const string
+    DUMP_STRING = 'OTRA DUMP - ' . __FILE__ . ':',
     LABEL_ARRAY6 = 'array (6) ',
     LABEL_ONZE_ZEROS = '0 => string (11) \'00000000000\'';
 

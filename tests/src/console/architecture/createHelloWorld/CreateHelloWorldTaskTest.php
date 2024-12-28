@@ -21,7 +21,7 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class CreateHelloWorldTaskTest extends TestCase
 {
-  private const
+  private const string
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     OTRA_LABEL_CREATED = ' created',
     OTRA_LABEL_UPDATED = ' updated',

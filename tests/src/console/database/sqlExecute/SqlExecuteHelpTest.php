@@ -16,7 +16,8 @@ use const otra\bin\TASK_CLASS_MAP_PATH;
  */
 class SqlExecuteHelpTest extends TestCase
 {
-  private const OTRA_TASK_SQL_EXECUTE = 'sqlExecute',
+  private const string 
+    OTRA_TASK_SQL_EXECUTE = 'sqlExecute',
     OTRA_TASK_HELP = 'help';
 
   /**

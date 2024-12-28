@@ -18,7 +18,7 @@ use function otra\tests\tools\taskParameter;
  */
 class RoutesHelpTest extends TestCase
 {
-  private const
+  private const string
     OTRA_CONSOLE_FILENAME = 'otra.php',
     TASK_ROUTES = 'routes',
     OTRA_TASK_HELP = 'help';

@@ -20,10 +20,10 @@ define(
   CACHE_PATH . 'php/security/' . $_SERVER[APP_ENV] . DIR_SEPARATOR . OTRA_ROUTE . '.php'
 );
 define(__NAMESPACE__ . '\\SECURITY_ROUTE_PATH', file_exists(TMP_SECURITY_ROUTE_PATH) ? TMP_SECURITY_ROUTE_PATH : null);
-header('Content-Encoding: gzip');
+header('Content-Encoding: br');
 
 addCspHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);
 addPermissionsPoliciesHeader(OTRA_ROUTE, SECURITY_ROUTE_PATH);
 
-echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . OTRA_ROUTE . VERSION . 'che') . '.gz');
+echo file_get_contents(BASE_PATH . 'cache/tpl/' . sha1('ca' . OTRA_ROUTE . VERSION . 'che') . '.br');
 exit;

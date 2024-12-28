@@ -16,12 +16,13 @@ use function otra\console\architecture\checkBooleanArgument;
  */
 class CheckBooleanArgumentTest extends TestCase
 {
-  final public const TEST_BUNDLE = 'test';
-  private const
+  final public const string TEST_BUNDLE = 'test';
+  private const int
+    CREATE_BUNDLE_ARG_FORCE = 5,
+    CREATE_BUNDLE_MASK = 0;
+  private const string
     TEST_TASK = 'createBundle',
     OTRA_BINARY = 'otra.php',
-    CREATE_BUNDLE_ARG_FORCE = 5,
-    CREATE_BUNDLE_MASK = 0,
     ARGUMENT_NAME = 'force',
     NO_INTERACTIVE_MODE = 'false',
     PASSED_DEFAULT_VALUE = 'false';
