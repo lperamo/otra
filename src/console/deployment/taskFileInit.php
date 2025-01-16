@@ -134,7 +134,7 @@ function generateStylesheetsFiles(
   // 5 length of scss/ or sass/
   $cssFolder = $resourcesMainFolder  . 'css/' . mb_substr($resourcesFolderEndPath, 5);
 
-  // if the css folder corresponding to the sass/scss folder does not exist yet, we create it
+  // if the CSS folder corresponding to the sass/scss folder does not exist yet, we create it
   // as well as its subfolders
   if (!file_exists($cssFolder))
     mkdir($cssFolder, 0777,true);

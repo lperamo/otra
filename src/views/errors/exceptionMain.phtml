@@ -48,7 +48,7 @@ if (!defined(__NAMESPACE__ . '\\BASE_PATH_LENGTH'))
   <?php
   require CORE_PATH . 'tools/debug/dump.php';
 
-  // showing first line only of backtraces
+  // showing only the first line of backtraces
   showTraceLine([
     'class' => $backtraces[0]['class'] ?? null,
     'file' => BASE_PATH . $fileName,

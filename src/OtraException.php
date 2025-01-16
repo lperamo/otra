@@ -64,7 +64,7 @@ class OtraException extends Exception
     parent::__construct();
     $this->code = $code ?? $this->getCode();
 
-    // When $otraCliWarning is true then we only need the error code that will be used as exit code
+    // When $otraCliWarning is true, then we only need the error code that will be used as exit code
     if ($exit)
       return;
 
@@ -88,10 +88,10 @@ class OtraException extends Exception
     require_once BASE_PATH . 'config/AllConfig.php';
     $route = 'otra_exception';
 
-    // Cleans all the things processed before in order to not perturb the exception page
+    // Cleans all the things processed before to not perturb the exception page
     ob_clean();
 
-    // If the error is that we do not found the Controller class then we directly show the message.
+    // If the error is that we do not found the Controller class, then we directly show the message.
     try {
       $renderController = new Controller(
         [
@@ -118,7 +118,7 @@ class OtraException extends Exception
     $renderController->viewPath = CORE_VIEWS_PATH . 'errors/';
     $renderController::$path = $_SERVER['DOCUMENT_ROOT'] . '..';
 
-    // Is the error code a native error code ?
+    // Is the error code a native error code?
     $errorCode = self::$codes[$this->code] ?? 'UNKNOWN';
     http_response_code(MasterController::HTTP_CODES['HTTP_INTERNAL_SERVER_ERROR']);
 
@@ -175,7 +175,7 @@ class OtraException extends Exception
   ) : void
   {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-      // json sent if it was an AJAX request
+      // JSON sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(
         new OtraException($message),
         JSON_THROW_ON_ERROR
@@ -199,7 +199,7 @@ class OtraException extends Exception
       exit($exception->getCode());
 
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'])
-      // json sent if it was an AJAX request
+      // JSON sent if it was an AJAX request
       echo '{"success": "exception", "msg":' . json_encode(
         new OtraException($exception->getMessage()),
         JSON_THROW_ON_ERROR

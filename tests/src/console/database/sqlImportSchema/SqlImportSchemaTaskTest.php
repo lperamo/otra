@@ -86,7 +86,7 @@ class SqlImportSchemaTaskTest extends TestCase
     require CONSOLE_PATH . 'database/sqlCreateDatabase/sqlCreateDatabaseTask.php';
     sqlCreateDatabase([self::OTRA_BINARY, self::OTRA_TASK_SQL_CREATE_DATABASE, self::DATABASE_NAME]);
 
-    // we change the path to the schema.yml in order to not overwrite the existing one by precaution
+    // we change the path to the schema.yml to not overwrite the existing one by precaution
     new ReflectionClass(Database::class)->getProperty(self::OTRA_VARIABLE_DATABASE_SCHEMA_FILE)
       ->setValue(self::IMPORTED_SCHEMA_ABSOLUTE_PATH);
 

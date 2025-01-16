@@ -320,7 +320,7 @@ class DatabaseTest extends TestCase
    */
   public function testExecuteFixture() : void
   {
-    // context - copying the needed configuration files
+    // context - copying the necessary configuration files
     copyFileAndFolders(
       [
         self::SCHEMA_FILE_BACKUP,

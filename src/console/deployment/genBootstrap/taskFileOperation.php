@@ -16,7 +16,7 @@ use function otra\console\showContextByError;
 require_once CONSOLE_PATH . 'tools.php';
 
 const
-  // We need to use * and / in the characters to avoid to prevent comments containing 'use' to be taken into account
+  // We need to use * and / in the characters to avoid preventing comments containing 'use' to be taken into account
   PATTERN_REMOVE_USE = '@
     ^(?!.*//.*\buse\b)           # Ensures the line does not contain a comment with "use"
     (?<!//|/\*)                  # Ensures we are not inside a comment
@@ -62,9 +62,9 @@ function hasSyntaxErrors(string $phpFile) : bool
 /**
  * Puts the final contents into a temporary file.
  * Checks syntax errors.
- * If all was ok, retrieves the contents of the temporary file in the real final file.
+ * If all was ok, it retrieves the contents of the temporary file in the real final file.
  * Then it checks namespaces errors.
- * If all was ok, deletes the temporary file.
+ * If all was ok, it deletes the temporary file.
  *
  * @throws OtraException
  */
@@ -75,11 +75,11 @@ function contentToFile(string $content, string $outputFile) : void
 
   echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow testing namespaces problems. We put the file in another directory
-     in order to see if namespaces errors are declared at the normal place and not at the temporary place */
+     to see if namespaces errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
 
-  // Test each part of the process in order to precisely detect where there is an error.
+  // Test each part of the process to precisely detect where there is an error.
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . mb_substr($tempFile, BASE_PATH_LENGTH) . '!]',
@@ -291,7 +291,7 @@ function lastAdjustments(
 
   $finalContent = preg_replace(
     [
-      '@\?>\s*<\?php@', // We stick the php files by removing end and open php tag between files
+      '@\?>\s*<\?php@', // We stick the PHP files by removing ending and opening PHP tag between files
       '@(namespace\s[\w\\\\]+\s+)(\{((?:[^}{]*|(?2))*)})@', // Only keep blocks like in `namespace thing { my block }`
       '@\s*namespace [^;]+;\s*@', // We suppress namespaces occurrences in simple cases like  ̀namespace thing;`
       '@\\\\?(PDO(?:Statement)?)@' // We fix PDO and PDOStatement namespaces

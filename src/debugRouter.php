@@ -40,7 +40,7 @@ function debugRouterError(string $userUrl): void
       if ($_SERVER['CONTENT_TYPE'] === '')
         $_SERVER['CONTENT_TYPE'] = Router::OTRA_DEFAULT_CONTENT_TYPE;
 
-      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+      // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries, for example
       if (!str_contains(
         $_SERVER['CONTENT_TYPE'],
         $routeData[Router::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? Router::OTRA_DEFAULT_CONTENT_TYPE)

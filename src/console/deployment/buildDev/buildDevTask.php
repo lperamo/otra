@@ -67,7 +67,7 @@ function buildDev(array $argumentsVector) : void
 
   if (WATCH_FOR_ROUTES)
   {
-    // We update routes configuration if the php file is a routes' configuration file
+    // We update routes configuration if the PHP file is a routes' configuration file
     echo 'Launching routes update...', PHP_EOL;
     require_once CONSOLE_PATH . 'deployment/updateConf/updateConfTask.php';
     updateConf('2');
@@ -79,7 +79,7 @@ function buildDev(array $argumentsVector) : void
   $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
   // Convert RESOURCES_TO_WATCH into an associative array for faster lookup
-  // SELF_FIRST to have file AND folders in order to detect addition of new files
+  // SELF_FIRST to have file AND folders to detect an addition of new files
   $iterator = new RecursiveIteratorIterator(
     new DirectoryFilter($dir_iterator, array_flip(RESOURCES_TO_WATCH)),
     RecursiveIteratorIterator::SELF_FIRST
@@ -93,7 +93,7 @@ function buildDev(array $argumentsVector) : void
       if ($entry->isDir())
         continue;
 
-      // Adding watches for resources files if needed
+      // Adding watches for resource files if needed
       $filesProcessed = true;
       $extension = $entry->getExtension();
       $resourceName = $entry->getPathname();

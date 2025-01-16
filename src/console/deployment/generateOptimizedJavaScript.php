@@ -36,10 +36,10 @@ function generateJavaScript(
   string $resourceName
 ) : void
 {
-  /* TypeScript seems to not handle the compilation of one file using the json configuration file !
-   * It is either the entire project with the json configuration file
-   * or a list of files without json configuration ... but not a list with json configuration ...
-   * so we create one temporary json that list only the file we want */
+  /* TypeScript seems to not handle the compilation of one file using the JSON configuration file!
+   * It is either the entire project with the JSON configuration file
+   * or a list of files without JSON configuration ... but not a list with JSON configuration ...
+   * so we create one temporary JSON that lists only the file we want */
   /** @var ?array{
    *   compilerOptions?: array{
    *     target?: string,
@@ -69,7 +69,7 @@ function generateJavaScript(
   }
 
   // The Google Closure Compiler application cannot overwrite a file, so we have to create a temporary one
-  // and remove the dummy file ...
+  // and remove the fake file ...
   // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
   if (!file_exists($resourceFolder))
     mkdir($resourceFolder, 0777, true);
@@ -82,7 +82,7 @@ function generateJavaScript(
   $generatedTemporaryJsFile = $tmpResourceFolder . $baseName . '.js';
   $generatedJsFile = $resourceFolder . $baseName . '.js';
 
-  // Creating a temporary typescript json configuration file suited for the OTRA watcher.
+  // Creating a temporary TypeScript JSON configuration file suited for the OTRA watcher.
   // We need to recreate it each time because the user can alter his original configuration file
   $typescriptConfig['files'] = [$resourceName];
   $typescriptConfig['compilerOptions']['outDir'] = $tmpResourceFolder;
@@ -91,7 +91,7 @@ function generateJavaScript(
   $temporaryTypescriptConfig = BASE_PATH . 'tsconfig_tmp.json';
   $filePointer = fopen($temporaryTypescriptConfig, 'w');
   // The flags for 'json_encode' allows better debugging
-  // (otherwise tsc will say that the bug is on the first line ...and the first line represents ALL the json)
+  // (otherwise tsc will say that the bug is on the first line ...and the first line represents ALL the JSON)
   if (
     !fwrite(
       $filePointer,
@@ -109,7 +109,7 @@ function generateJavaScript(
   fclose($filePointer);
   unset($filePointer);
 
-  /* Launches typescript compilation on the file with project json configuration
+  /* Launches TypeScript compilation on the file with project JSON configuration
      and launches Google Closure Compiler on the output just after */
   $typescriptBinary = AllConfig::$nodeBinariesPath . 'tsc' ?: '/usr/bin/tsc';
   [, $output] = runCommandWithEnvironment(
@@ -172,7 +172,7 @@ function generateJavaScript(
   }
 
   // We launch Google Closure Compiler only if a file has been generated with success but...
-  // should we launch Google Closure Compiler ?
+  // should we launch Google Closure Compiler?
   if ($mustLaunchGcc)
   {
     googleClosureCompile(

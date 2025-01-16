@@ -115,7 +115,7 @@ function genClassMap(array $argumentsVector) : void
             $classesThatMayHaveToBeAdded
           );
 
-        // Only php files that begin by an uppercase letter are interesting (as classes MUST begin by an uppercase letter)
+        // Only PHP files that begin by an uppercase letter are interesting (as classes MUST begin by an uppercase letter)
         $posDot = strrpos($entry, '.');
 
         if ($posDot === false
@@ -138,7 +138,7 @@ function genClassMap(array $argumentsVector) : void
         if (!isset($matches[1]))
           continue;
 
-        // we calculate the shortest string of path with realpath and str_replace function
+        // we calculate the shortest string of the path with realpath and str_replace function
         $className = substr($entry, 0, $posDot);
 
         foreach($matches[1] as $namespace)
@@ -205,8 +205,8 @@ function genClassMap(array $argumentsVector) : void
 
   foreach ($folders as $folder)
   {
-    // if the user wants to launch tasks in an empty project when there are not a class map yet,
-    // we need to check if the needed folders exist
+    // if the user wants to launch tasks in an empty project when there is not a class map yet,
+    // we need to check if the necessary folders exist
     if (!file_exists($folder))
       mkdir($folder);
 
@@ -297,17 +297,17 @@ function genClassMap(array $argumentsVector) : void
       ? CLI_BASE . '[BASE_PATH]' . CLI_INFO . substr($finalClassName, strlen(BASE_PATH))
       // for classes outside the BASE_PATH
       : CLI_INFO . $finalClassName),
-      // and we pass to the next line !
+      // and we pass to the next line!
     PHP_EOL;
   }
 
   echo END_COLOR;
 
-  /** Shows a help to find classes that may have to be added to the custom configuration in order to complete
+  /** Shows a help to find classes that may have to be added to the custom configuration to complete
    *  this automatic task */
   if (!empty($classesThatMayHaveToBeAdded))
   {
-    echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
+    echo PHP_EOL, 'You may have to add these classes to make your project work.', PHP_EOL,
     'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
     foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)

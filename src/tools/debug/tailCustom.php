@@ -31,7 +31,7 @@ if (!function_exists(__NAMESPACE__ . '\\tailCustom'))
     fseek($fileDescriptor, -1, SEEK_END);
 
     // Read it and adjust line number if necessary
-    // (Otherwise the result would be wrong if file doesn't end with a blank line)
+    // (Otherwise the result would be wrong if the file doesn't end with a blank line)
     if (fread($fileDescriptor, 1) !== PHP_EOL)
       --$lines;
 

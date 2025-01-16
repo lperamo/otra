@@ -39,7 +39,7 @@ class DumpTest extends TestCase
   }
 
   /**
-   * Updates the depth of the array. For a depth of 3, we will see 3 levels of KEYS (2 levels only of values).
+   * Updates the depth of the array. For a depth of 3, we will see three levels of KEYS (two levels only of values).
    *
    * @param int   $depthIndex
    * @param array $array

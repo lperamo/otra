@@ -101,7 +101,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
     // we let the inclusion code, and we do not add the content to the bootstrap file.
     if (str_contains($tempFile, 'vendor') && !str_contains($tempFile, 'otra'))
     {
-      // It can be a SwiftMailer class for example
+      // It can be a SwiftMailer class, for example
       echo CLI_WARNING, 'EXTERNAL LIBRARY', ' : ', $tempFile, END_COLOR, PHP_EOL;
       unset($filesToConcat[$fileType][$inclusionMethod][$tempFile]);
       continue;
@@ -140,7 +140,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
     {
       $requirePosition = strpos($partialContent, $nextFileOrInfo['match']);
 
-      // If it's not related to the `renderView` controller function call then it can return a result other than a
+      // If it's not related to the `renderView` controller function call, then it can return a result other than a
       // string
       if ($fileType !== 'renderView')
       {
@@ -205,7 +205,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
         // if the inclusion statement has not already been removed (because already loaded via another way)
         if ($requirePosition !== false)
         {
-          /* if the file has contents that begin by a return statement and strict type declaration then we apply a
+          /* if the file has contents that begin by a return statement and strict type declaration, then we apply a
              particular process*/
           if ($isReturn)
           {
@@ -303,7 +303,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
       }
     }
 
-    // If we have a "return type" PHP file then the file have already been included before,
+    // If we have a "return type" PHP file, then the file has already been included before,
     // in the 'processReturn' function
     if (!$isReturn)
       assembleFiles($actualId, $taskData, $nextContentToAdd);

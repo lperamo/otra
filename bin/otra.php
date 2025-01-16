@@ -25,7 +25,7 @@ namespace otra\bin
   require CONSOLE_PATH . 'TasksManager.php';
   require CONSOLE_PATH . 'colors.php';
 
-  // We check if the help and task class map is present, if not ... generate it.
+  // We check if the help and task class map are present, if not ... generate it.
   // In fact, we also generate shell completions... for now.
   if (!file_exists(CACHE_PHP_INIT_PATH . 'tasksHelp.php'))
   {
@@ -93,7 +93,7 @@ namespace otra\bin
     require CONSOLE_PATH . 'tools.php';
     [$newTask] = guessWords($taskName,  $tasks);
 
-    // If there are no existing task with a close name ...
+    // If there is no existing task with a close name ...
     if (null === $newTask)
     {
       echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $taskName, CLI_ERROR, ' !', END_COLOR, PHP_EOL;

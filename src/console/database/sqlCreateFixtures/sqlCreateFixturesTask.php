@@ -28,7 +28,7 @@ const
   SQL_CREATE_FIXTURES_ARG_MASK = 3;
 
 /**
- * Executes the sql file for the specified table and database
+ * Executes the SQL file for the specified table and database
  *
  * @param string $databaseName The database name
  * @param string $table        The table name
@@ -81,17 +81,17 @@ function analyzeFixtures(string $file) : array
 }
 
 /**
- * Create the sql content of the wanted fixture. We only allow one table per file for simplicity and performance.
+ * Create the SQL content of the wanted fixture. We only allow one table per file for simplicity and performance.
  *
  * @param string              $databaseName   The database name to use
  * @param string              $table          The table name relating to the fixture to create
  * @param array<string,array> $fixturesData   The table fixtures
- * @param array<string,array> $tableData      The table data form the database schema in order to have the properties type
+ * @param array<string,array> $tableData      The table data form the database schema to have the properties type
  * @param string[]            $sortedTables   Final sorted tables array
- * @param array               $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
+ * @param array               $fixturesMemory An array that stores foreign identifiers to resolve YAML aliases
  * @param string              $createdFile    Name of the fixture file that will be created.
  *
- * @throws OtraException If a database relation is missing or if we can't create the fixtures folder
+ * @throws OtraException If a database relation is missing, or if we can't create the fixtures folder
  */
 function createFixture(
   string $databaseName,
@@ -111,14 +111,14 @@ function createFixture(
   $tableSql = /** @lang text Necessary to avoid false positives from PHPStorm inspections */
     'USE `' . $databaseName . '`;' . PHP_EOL . 'SET NAMES utf8mb4;' . PHP_EOL . PHP_EOL . 'INSERT INTO `' . $table . '` (';
 //    $localMemory This variable stores the identifiers found in this table that are not available in
-//    sorted tables ?
+//    sorted tables?
   $localMemory = $properties = [];
   $theProperties = '';
 
   $databaseId = 1; // The database ids begin to 1 by default
 
-  /** IMPORTANT : The Yml identifiers are, in fact, not real ids in the database sense, but rather a temporary id that
-   * represents the position of the line in the database ! */
+  /** IMPORTANT: The Yml identifiers are, in fact, not real ids in the database sense, but rather a temporary id that
+   * represents the position of the line in the database! */
   foreach (array_keys($fixturesData) as $fixtureName)
   {
     $ymlIdentifiers .= '  ' . $fixtureName . ': ' . $databaseId++ . PHP_EOL;
@@ -176,7 +176,7 @@ function createFixture(
   Sql::getDb();
 
   // We ensure us that we use the correct database
-  /** @var PDO $dbConfig 'query' method returns PDOStatement but to avoid a PHPStorm warning we said PDO! */
+  /** @var PDO $dbConfig 'query' method returns PDOStatement but to avoid a PHPStorm warning, we said PDO! */
   $dbConfig = Sql::$instance->query('USE `' . $databaseName . '`');
   Sql::$instance->freeResult($dbConfig);
 
@@ -236,7 +236,7 @@ function createFixture(
         }
 
         // If the property refers to another table, then we search the corresponding foreign key name
-        // (e.g. : lpcms_module -> 'module1' => fk_id_module -> 4 )
+        // (e.g.: lpcms_module -> 'module1' => fk_id_module -> 4 )
         $theProperties .= '`' .
           ($propertyRefersToAnotherTable
             ? $localFieldsFromTheTable[$property]
@@ -292,7 +292,7 @@ function createFixture(
 
   $tableSql = substr($tableSql, 0, -1) . ';' . PHP_EOL;
 
-  // We create sql file that can generate the fixtures in the BDD.
+  // We create an SQL file that can generate the fixtures in the BDD.
   if (!file_exists(Database::$pathSqlFixtures))
     mkdir(Database::$pathSqlFixtures, 0777, true);
 
@@ -302,15 +302,15 @@ function createFixture(
 }
 
 /**
- * Creates all the sql fixtures files for the specified database and executes them.
+ * Creates all the SQL fixtures files for the specified database and executes them.
  *
  * @param array $argumentsVector
  *
  * @throws OtraException
  *  If we cannot open the YAML fixtures folder
  *  If there is no YAML schema
- *  If the file that describe the table priority/order doesn't exist
- *  If we cannot create fixtures sql folder
+ *  If the file that describes the table priority/order doesn't exist
+ *  If we cannot create fixtures SQL folder
  *  If we attempt to create an already existing file
  * @return void
  */
@@ -319,7 +319,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
   $databaseName = $argumentsVector[SQL_CREATE_FIXTURES_ARG_DATABASE_NAME];
   /**
    * 1 => we truncate the table before inserting the fixtures,
-   * 2 => we clean the fixtures sql files, and THEN we truncate the table before inserting the fixtures
+   * 2 => we clean the fixtures SQL files, and THEN we truncate the table before inserting the fixtures
    */
   $cleaningMask = isset($argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK])
     ? (int)$argumentsVector[SQL_CREATE_FIXTURES_ARG_MASK]
@@ -328,7 +328,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
   if (!Database::$init)
     Database::init();
 
-  // Analyzes the database schema in order to guess the properties types
+  // Analyzes the database schema to guess the properties types
   if (!file_exists(Database::$schemaFile))
     throw new OtraException(
       'You have to create a database schema file in ' . CLI_INFO_HIGHLIGHT . 'config/data/schema.yml' .
@@ -369,7 +369,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
   $tablesOrder = Yaml::parse(file_get_contents(Database::$tablesOrderFile));
   $fixtureFileNameBeginning = Database::$pathSqlFixtures . $databaseName . '_';
 
-  // We clean the fixtures sql files whether it's needed
+  // We clean the fixtures SQL files whether it's necessary
   if (2 === $cleaningMask)
   {
     array_map('unlink', glob($fixtureFileNameBeginning . '*.sql'));

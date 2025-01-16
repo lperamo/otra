@@ -224,7 +224,7 @@ abstract class MasterController
   }
 
   /**
-   * Encodes the value passed as parameter in order to create a cache file name
+   * Encodes the value passed as parameter to create a cache file name
    *
    * @param string $path     File's path
    * @param string $suffix   Suffix of the file name
@@ -266,12 +266,12 @@ abstract class MasterController
   }
 
   /**
-   * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
+   * Adds dynamically CSS script(s) (not coming from the routes' configuration) to the existing ones.
    *
-   * @param array $stylesheets The css files to add [0 => File, 1 => Print]
+   * @param array $stylesheets The CSS files to add [0 => File, 1 => Print]
    *                           Do not put '.css'.
-   *                           /!\ DO NOT fill the second key if it is not needed
-   * @param bool  $print       Does the stylesheet must be only used for a print usage ?
+   *                           /!\ DO NOT fill the second key if it is unnecessary
+   * @param bool  $print       Does the stylesheet must be only used for a print usage?
    */
   public static function css(array $stylesheets = [], bool $print = false) : void
   {
@@ -282,10 +282,10 @@ abstract class MasterController
   }
 
   /**
-   * Adds dynamically javascript script(s) (not coming from the routes' configuration) to the existing ones.
-   * If the keys are string it will add the string to the link.
+   * Adds dynamically JavaScript script(s) (not coming from the routes' configuration) to the existing ones.
+   * If the keys are string, it will add the string to the link.
    *
-   * @param array|string $js The javascript file to add (Array of strings)
+   * @param array|string $js The JavaScript file to add (Array of strings)
    */
   public static function js(array|string $js = []) : void
   {
@@ -304,7 +304,7 @@ abstract class MasterController
     ob_start();
     require $templateFilename;
 
-    // If the template motor is not loaded then we quit
+    // If the template motor is not loaded, then we quit
     if (!in_array(CORE_PATH . 'templating/blocks.php', get_included_files()))
     {
       // closes the output buffering and return the content as is
@@ -330,7 +330,7 @@ abstract class MasterController
       }
     }
 
-    // If the template motor is loaded then we use it
+    // If the template motor is loaded, then we use it
     return BlocksSystem::getTemplate();
   }
 
@@ -357,8 +357,8 @@ abstract class MasterController
 
   /**
    * @param string $content     The main content of the template
-   * @param string $cssResource The css resources to link to the template
-   * @param string $jsResource  The js resources to link to the template
+   * @param string $cssResource The CSS resources to link to the template
+   * @param string $jsResource  The JS resources to link to the template
    */
   protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
@@ -396,7 +396,7 @@ abstract class MasterController
 
     if ($cacheActivated)
     {
-      // cacheUsed is used in order to simplify conditions and show a status on the debug bar
+      // cacheUsed is used to simplify conditions and show a status on the debug bar
       if (isset(self::$rendered[$templateFile]))
         self::$cacheUsed = 'memory';
 
@@ -487,15 +487,15 @@ abstract class MasterController
 
     $content = HtmlMinifier::minifyHTML($content);
 
-    // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
-    // css and js imported in the layout)
+    // We clear these variables to put CSS and JS for other modules that will not be cached (in case there are
+    // CSS and JS imported in the layout)
     self::$javaScripts = self::$stylesheets = [];
 
     return $content;
   }
 
   /**
-   * Adds extra CSS dynamically (needed for the debug bar for example).
+   * Adds extra CSS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string
@@ -517,7 +517,7 @@ abstract class MasterController
   }
 
   /**
-   * Adds extra JS dynamically (needed for the debug bar for example).
+   * Adds extra JS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string

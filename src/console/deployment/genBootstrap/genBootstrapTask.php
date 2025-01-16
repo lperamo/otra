@@ -97,7 +97,7 @@ function genBootstrap(array $argumentsVector)
     echo 'Generating \'micro\' bootstraps for the routes ...', PHP_EOL, PHP_EOL;
   }
 
-  // In CLI mode, the $_SERVER variable is not set, so we set it !
+  // In CLI mode, the $_SERVER variable is not set, so we set it!
   $_SERVER[APP_ENV] = PROD;
 
   // CACHE_PATH will not be found if we do not have dbConnections in AllConfig, so we need to explicitly include the

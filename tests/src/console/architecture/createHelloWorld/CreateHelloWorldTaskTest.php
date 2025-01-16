@@ -13,7 +13,7 @@ use const otra\console\
 use const otra\bin\TASK_CLASS_MAP_PATH;
 
 /**
- * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase !
+ * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase!
  *
  * It fixes issues like when AllConfig is not loaded while it should be
  * @preserveGlobalState disabled

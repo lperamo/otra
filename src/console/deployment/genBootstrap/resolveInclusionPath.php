@@ -89,7 +89,7 @@ function resolveInclusionPath(string $expression): string
     }
     else
       // If the part is neither a string, nor a constant, nor a function call,
-      // treat it as raw string and keep it as is
+      // treat it as a raw string and keep it as is
       $result .= preg_replace("/^.*?'([^']+)'.*$/", '$1', $requirePart);
   }
 

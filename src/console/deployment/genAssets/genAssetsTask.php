@@ -114,7 +114,7 @@ function loadAndSaveResources(
 }
 
 /**
- * Loads css or js resources
+ * Loads CSS or JS resources
  *
  * @param string  $key          app_js, module_css kind of ...
  */
@@ -170,8 +170,8 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     /** Workaround for Google Closure Compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
      *  feed after source map declaration like
      *  //# sourceMappingURL=modules.js.map
-     *  So the last letter is 'p' and not a line feed.
-     *  Then we have to put ourselves the line feed !
+     *  So, the last letter is 'p' and not a line feed.
+     *  Then we have to put ourselves the line feed!
      **/
 
     if ($content[-1] === 'p')

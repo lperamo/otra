@@ -29,7 +29,7 @@ function oneBootstrap(string $route, $parsedFiles = []) : void
   echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL,
   END_COLOR;
 
-  $_SESSION[OTRA_KEY_BOOTSTRAP] = 1; // in order to not really make BDD requests !
+  $_SESSION[OTRA_KEY_BOOTSTRAP] = 1; // to not really make BDD requests !
   $firstFilesIncluded = get_included_files();
 
   // Force to show all errors
@@ -52,7 +52,7 @@ function oneBootstrap(string $route, $parsedFiles = []) : void
 
   $params = Routes::$allRoutes[$route];
 
-  // in order to pass some conditions
+  // to pass some conditions
   $_SERVER['REMOTE_ADDR'] = 'console';
   $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
   $_SERVER['HTTP_HOST'] = AllConfig::$deployment['domainName'];
@@ -64,7 +64,7 @@ function oneBootstrap(string $route, $parsedFiles = []) : void
   if (isset($params['get']))
     $_GET = $params['get'];
 
-  // We put default parameters in order to not write too much times the session configuration in the routes file
+  // We put default parameters to not write too much times the session configuration in the routes file
   $_SESSION['sid'] = ['uid' => 1, 'role' => 1];
 
   if (isset($params['session']))

@@ -114,7 +114,7 @@ class ClearCacheTaskTest extends TestCase
   }
 
   /**
-   * Create dummy files that we will clean with the `clearCache` task. Do nothing of that if the same file names exist
+   * Create fake files that we will clean with the `clearCache` task. Do nothing of that if the same file names exist
    * already.
    * Copy routes if needed.
    *

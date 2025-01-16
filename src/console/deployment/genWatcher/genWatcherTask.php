@@ -100,8 +100,8 @@ function nonBlockRead($fileDescriptor) : false|string
 
 /**
  * @param string $filename        Folder or file name
- * @param string $resource        Folder of file watched
- * @param bool   $mustShowHeaders Do we have to show the headers
+ * @param string $resource        Folder of the file watched
+ * @param bool   $mustShowHeaders Do we have to show the headers?
  *
  * @return string The debug output
  */
@@ -141,7 +141,7 @@ function debugEvent(
  */
 function updatePHP(string $filename) : void
 {
-  // All those needed files can be launched multiple times by `genWatcher` so "once" is required
+  // All those necessary files can be launched multiple times by `genWatcher` so "once" is required
   // We generate the class mapping...
   require_once CONSOLE_PATH . 'deployment/genClassMap/genClassMapTask.php';
   genClassMap([]);
@@ -299,7 +299,7 @@ function genWatcher(array $argumentsVector): void
 
   $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
-  // SELF_FIRST to have file AND folders in order to detect addition of new files
+  // SELF_FIRST to have file AND folders to detect addition of new files
   $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
   // SASS/SCSS tree cache to optimize updates
@@ -331,8 +331,8 @@ function genWatcher(array $argumentsVector): void
         continue 2;
     }
 
-    // Adding watches for PHP files if needed
-    // Does the PHP path belongs to a valid defined path ? If yes, we process it
+    // Adding watches for PHP files, if needed.
+    // Does the PHP path belong to a valid defined path? If yes, we process it
     if (WATCH_FOR_PHP_FILES
       && !isNotInThePath(PATHS_TO_HAVE_PHP, $realPath)
       && ($extension === 'php' || $isFolder))
@@ -355,11 +355,11 @@ function genWatcher(array $argumentsVector): void
       $haveBeenWatched = true;
     }
 
-    // Adding watches for resources files if needed
+    // Adding watches for resource files if needed
     if (!$haveBeenWatched && (WATCH_FOR_CSS_RESOURCES || WATCH_FOR_TS_RESOURCES))
     {
       if (
-        // Does the resources' path belongs to a valid defined path ? If yes, we process it
+        // Does the resources' path belong to a valid defined path? If yes, we process it
         isNotInThePath(PATHS_TO_HAVE_RESOURCES, $realPath)
         // starters are only meant to be copied, not used
         || str_contains($realPath, 'starters')
@@ -423,12 +423,12 @@ function genWatcher(array $argumentsVector): void
     $mainResourceFilename,
     $pathToAvoid,
     $realPath,
-    // maybe those two variables have to be cleaned in TaskManager instead ?
+    // maybe those two variables have to be cleaned in TaskManager instead?
     $otraTask,
     $tasksClassMap
   );
 
-  // If we are looking for SASS/SCSS resources then we certainly have created a dependency tree, so we will now save this
+  // If we are looking for SASS/SCSS resources, then we certainly have created a dependency tree, so we will now save this
   // tree into a cache ...unless we already have a cache ...in this case we retrieve this cache.
   if (WATCH_FOR_CSS_RESOURCES)
   {
@@ -593,7 +593,7 @@ function genWatcher(array $argumentsVector): void
                 $countImports = count($imports);
               }
 
-              // browsing the full SASS/SCSS dependency tree to know if the imports number has changed
+              // browsing the full SASS/SCSS dependency tree to know if the number of imports has changed
               foreach ($sassTree[KEY_FULL_TREE] as $importingFile => &$importedFiles)
               {
                 updateSassTreeAfterEvent(
@@ -612,7 +612,7 @@ function genWatcher(array $argumentsVector): void
 
               if ($baseName[0] !== '_')
               {
-                // If the file is meant to be used directly (this file will probably be the one that import the others)
+                // If the file is meant to be used directly (this file will probably be the one that imports the others)
                 // like resource.scss
                 $return = generateStylesheetsFiles(
                   $baseName,
@@ -691,7 +691,7 @@ function genWatcher(array $argumentsVector): void
                   if ($mainFileToDelete !== false)
                     unset($mainSassFiles[array_search($sassKeyTreeToDelete, $mainSassFiles)]);
 
-                  // If there are no more main files associated to the leave or the leave IS the file to delete
+                  // If there are no more main files associated with the leave or the leave IS the file to delete
                   // => we remove the leave
                   if ($mainSassFiles === [] || $leave === $sassKeyTreeToDelete)
                     unset($sassTree[KEY_MAIN_TO_LEAVES][$leave]);
@@ -735,7 +735,7 @@ function genWatcher(array $argumentsVector): void
 
               saveSassTree($sassTree);
 
-              // If the file is meant to be used directly (this file will probably be the one that import the others)
+              // If the file is meant to be used directly (this file will probably be the one that imports the others)
               // like resource.scss
               if ($filename[0] !== '_')
               {
@@ -867,7 +867,7 @@ function genWatcher(array $argumentsVector): void
         echo $eventsDebug, PHP_EOL;
     }
 
-    // Avoid that in next loop, the $extension is used as if the resource was a file when it's a folder
+    // Avoid that in the next loop, the $extension is used as if the resource was a file when it's a folder
     unset($extension);
 
     if (nonBlockRead(STDIN) === 'q')

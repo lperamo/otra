@@ -18,7 +18,7 @@ const
   SQL_CREATE_DATABASE_ARG_FORCE = 3;
 
 /**
- * Creates the sql database schema file if it doesn't exist and runs it
+ * Creates the SQL database schema file if it doesn't exist and runs it
  *
  * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
@@ -53,7 +53,7 @@ function sqlCreateDatabase(array $argumentsVector) : void
   } catch(Exception $exception)
   {
     // Checks if we already commit, otherwise we do not have an active transaction, so we check this to prevent
-    // showing an error about not having active transaction
+    // showing an error about not having an active transaction
     if ($instance->inTransaction())
       $instance->rollBack();
 

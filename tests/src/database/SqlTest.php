@@ -48,12 +48,12 @@ class SqlTest extends TestCase
         Sql::$instance->__destruct();
     } catch (Exception)
     {
-      // If it crashes, it means that there is no default connection and probably no instance to destruct !
+      // If it crashes, it means that there is no default connection and probably no instance to destruct!
     }
   }
 
   /**
-   * Creates an empty temporary table that have to be removed later.
+   * Creates an empty temporary table that has to be removed later.
    */
   protected function createTemporaryTestTable() : void
   {

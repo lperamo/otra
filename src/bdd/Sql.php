@@ -47,7 +47,7 @@ class Sql
   /**
    * Retrieves an instance of this class or creates it if it not exists yet.
    *
-   * @param bool    $haveDatabase Generic operation ? Can be no, to CREATE or DROP a database for example, no database name
+   * @param bool    $haveDatabase Generic operation? Can be no, to CREATE or DROP a database, for example, no database name
    *                           needed in this case.
    *
    * @return bool|Sql
@@ -56,11 +56,11 @@ class Sql
    *
    * @internal param string $dbms       Kind of dbms
    * @internal param string $connection Connection used (see AllConfig files)
-   * @internal param bool   $selectDb   Do we have to select the default database ? (omits it for PDO connection)
+   * @internal param bool   $selectDb   Do we have to select the default database? (omits it for PDO connection)
    */
   public static function getDb(?string $connection = null, bool $haveDatabase = true) : bool|Sql
   {
-    /* If the connection is :
+    /* If the connection is:
      * - specified => active we use it, otherwise => added if exists
      * - not specified => we use default connection, and we add it
      */
@@ -105,7 +105,7 @@ class Sql
 
     $driver = ucfirst(strtolower($driver));
 
-    // Is this driver available ?
+    // Is this driver available? 
     if (in_array($driver, self::$dbmsCollection))
     {
       if (null === self::$_activeConn[$currentConnection])
@@ -440,7 +440,7 @@ class Sql
    */
   public function commit() : bool
   {
-    // this condition is useful because ... quoting from php.net
+    // This condition is useful because ... quoting from php.net
     // Some databases, including MySQL, automatically issue an implicit COMMIT when a database definition language
     // (DDL) statement such as DROP TABLE or CREATE TABLE is issued within a transaction. The implicit COMMIT will
     // prevent you from rolling back any other changes within the transaction boundary.

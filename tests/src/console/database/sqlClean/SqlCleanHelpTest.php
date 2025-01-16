@@ -40,7 +40,7 @@ class SqlCleanHelpTest extends TestCase
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       '   + ' . str_pad('cleaning-level', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'Type 1 in order to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
+      ') ' . CLI_INFO . 'Type 1 to also remove the file that describes the tables order.' . PHP_EOL . END_COLOR
     );
 
     // launching

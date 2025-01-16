@@ -45,7 +45,7 @@ function genJsRouting(): void
     $routes['otra_refreshSQLLogs']
   );
 
-  // For each route, if the url contains curly braces then it has parameters that we have to remove
+  // For each route, if the url contains curly braces, then it has parameters that we have to remove
   foreach ($routes as &$route)
   {
     $routeUrl = $route['chunks'][Routes::ROUTES_CHUNKS_URL];

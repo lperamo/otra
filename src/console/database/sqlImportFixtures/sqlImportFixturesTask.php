@@ -57,7 +57,7 @@ function sqlImportFixtures(array $argumentsVector): void
   // Everything is in order, we can clean the old files before the process
   array_map('unlink', glob(Database::$pathYmlFixtures . '*.yml'));
 
-  // We ensure us that the folder where we have to create the fixtures file exist
+  // We ensure us that the folder where we have to create the fixtures file exists
   if (!file_exists(Database::$pathYmlFixtures))
   {
     $exceptionMessage = Database::ERROR_CANNOT_REMOVE_THE_FOLDER_SLASH . Database::$pathYmlFixtures . '\'.';
@@ -151,7 +151,7 @@ function sqlImportFixtures(array $argumentsVector): void
 
             $columnMetaData = $columns[array_search($keyCol, array_column($columns, 'COLUMN_NAME'))];
             /** We check if the column is a primary key and, if it's the case, we put the name of the actual table,
-             * and we store the association for later in order to manage the foreign key associations */
+             * and we store the association for later to manage the foreign key associations */
             if ('PRI' === $columnMetaData['COLUMN_KEY'])
             {
               $foreignKeysMemory[$table][$colOfRow] = $fixtureId;

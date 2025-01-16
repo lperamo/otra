@@ -23,7 +23,7 @@ const SPECIAL_CLASSES = [
 ];
 
 /**
- * We analyze the use statement in order to retrieve the name of each class which is included in it.
+ * We analyze the use statement to retrieve the name of each class which is included in it.
  *
  * @param array{
  *  php:array{
@@ -54,7 +54,7 @@ function analyzeUseToken(
 {
   $trimmedClass = trim($class);
 
-  // this class is already included in all the cases, no need to have it more than once !
+  // this class is already included in all the cases, no need to have it more than once!
   if ('config\\Router' === $trimmedClass)
     return;
 

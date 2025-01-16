@@ -402,7 +402,7 @@ class SecurityServiceTest extends TestCase
   }
 
   /**
-   * When we say without script-src for example, we mean in the user configuration not in the final configuration.
+   * When we say without `script-src`, for example, we mean in the user configuration not in the final configuration.
    * @return array<string, array<string, string, string, string, ?bool, ?string, ?bool>>
    */
 

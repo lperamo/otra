@@ -12,7 +12,7 @@ namespace otra\tools;
  * @param string  $sourceFile      Path to the file that should be compressed
  * @param ?string $destinationFile Name of the file once compressed. By default, '.br' is added to the name.
  * @param int     $level           Brotli compression level (default: 7, range: 0-11)
- * @param bool    $keep            Should the source file be kept after compression
+ * @param bool    $keep            Should the source file be kept after compression?
  *
  * @return bool Success or failure
  */

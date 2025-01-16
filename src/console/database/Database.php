@@ -50,7 +50,7 @@ abstract class Database
     $user;
 
   private static array
-    // just in order to simplify the code
+    // just to simplify the code
     $attributeInfos = [];
 
   public static string
@@ -112,11 +112,11 @@ abstract class Database
   }
 
   /**
-   * Initializes main paths :
-   * - configuration path : $pathSql, $pathYml
-   * - output path : $pathSQL
-   * - schema file path : $schemaFile
-   * - tables order path : $tablesOrderFile
+   * Initializes main paths:
+   * - configuration path: $pathSql, $pathYml
+   * - output path: $pathSQL
+   * - schema file path: $schemaFile
+   * - tables order path: $tablesOrderFile
    */
   public static function initBase() : void
   {
@@ -147,7 +147,7 @@ abstract class Database
     $folderHandler = opendir($folder);
     $folders = [];
 
-    // We scan the bundles' directory to retrieve all the bundles name ...
+    // We scan the bundles' directory to retrieve all the bundles'name ...
     while (false !== ($actualFile = readdir($folderHandler)))
     {
       // 'config' and 'views' are not bundles ...
@@ -169,7 +169,7 @@ abstract class Database
   }
 
   /**
-   * Returns the attribute (notnull, type, primary etc.) in uppercase if it exists
+   * Returns the attribute (notnull, type, primary, etc.) in uppercase if it exists
    *
    * @param string $attribute Attribute
    * @param int    $mode      How we show the type of date
@@ -241,8 +241,8 @@ abstract class Database
     {
       $mustAddTableToSortedTables = ['valid' => true];
 
-      // Are the relations of $properties['relations'] all in $sortedTables or are they recursive links (e.g. : parent
-      // property) ?
+      // Are the relations of $properties['relations'] all in $sortedTables or are they recursive links (e.g.: parent
+      // property)?
       foreach (array_column($properties['relations'], 'table') as $relation)
       {
         $alreadyExists = (in_array($relation, $sortedTables) || $relation === $tableName);
@@ -270,7 +270,7 @@ abstract class Database
       return;
     }
 
-    // If it remains some tables to sort we re-launch the function
+    // If it remains some tables to sort, we re-launch the function
     if (0 < $countArrayToSort)
       self::_sortTableByForeignKeys($nextArrayToSort, $sortedTables, $countArrayToSort);
   }
@@ -310,12 +310,12 @@ abstract class Database
   }
 
   /**
-   * Generates the sql schema. A YAML schema is required.
+   * Generates the SQL schema. A YAML schema is required.
    *
    * @param string $databaseName Database name
    * @param bool   $force        If true, we erase the existing tables
    *
-   * @return string $dbFile Name of the sql file generated
+   * @return string $dbFile Name of the SQL file generated
    *
    * @throws OtraException If the YAML schema doesn't exist.
    *   If there is a missing foreign/local key
@@ -354,7 +354,7 @@ abstract class Database
         __LINE__
       );
 
-    // We ensure us that all the needed folders exist
+    // We ensure us that all the necessary folders exist
     if (!file_exists(self::$pathSql))
       mkdir(self::$pathSql, 0777, true);
 
@@ -486,14 +486,14 @@ abstract class Database
       // Cleaning memory...
       unset($primaries, $primaryKey);
 
-      // We add the default character set (utf8mb4) and the ENGINE define in the framework configuration
+      // We add the default character set (utf8mb4), and the ENGINE define in the framework configuration
       $tableSql[$table] .= PHP_EOL . ('' === $defaultCharacterSet ? ') ENGINE=' . self::$motor .
           ' DEFAULT CHARACTER SET utf8mb4' : ') ENGINE=' . self::$motor . ' DEFAULT CHARACTER SET ' . $defaultCharacterSet);
       $tableSql[$table] .= ';';
 
       /**
        * We separate
-       * the tables with no relations with other tables (that doesn't need to be sorted)
+       * the tables with no relations with other tables (that don't need to be sorted)
        * from the tables that have relations with other tables (that need to be sorted)
        */
       if ($hasRelations)
@@ -516,17 +516,17 @@ abstract class Database
      */
     foreach ($sortedTables as $arrayIndex => $sortedTable)
     {
-      // We store the names of the sorted tables into a file in order to use it later
+      // We store the names of the sorted tables into a file to use it later
       if ($storeSortedTables)
         $tablesOrder .= '- ' . $sortedTable . PHP_EOL;
 
-      /* We create the 'create' section of the sql schema file */
+      /* We create the 'create' section of the SQL schema file */
       $sqlCreateSection .= $tableSql[$sortedTable];
 
       if ($arrayIndex !== array_key_last($sortedTables))
         $sqlCreateSection .= PHP_EOL . PHP_EOL;
 
-      /* We create the 'drop' section of the sql schema file */
+      /* We create the 'drop' section of the SQL schema file */
       $sqlDropSection = ' `' . $sortedTable . '`,' . PHP_EOL . $sqlDropSection;
     }
 

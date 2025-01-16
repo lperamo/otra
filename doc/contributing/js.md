@@ -9,7 +9,7 @@ Previous section : [CSS side or SCSS side](css.md)
 - Use TypeScript, it provides types, annotations, object-oriented code and so more.
   So type every variable, put return types …
   
-- Use the ‘use strict’ statement in order to have a clean code
+- Use the ‘use strict’ statement to have a clean code
 
 - Use `border: 0` and not `border: none` (shorter).
 

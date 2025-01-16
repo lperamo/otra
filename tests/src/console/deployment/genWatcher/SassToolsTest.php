@@ -97,7 +97,7 @@ class SassToolsTest extends TestCase
     $_SERVER[APP_ENV] = 'prod';
     $argumentsVector = [];
 
-    // -- including needed libraries
+    // -- including necessary libraries
     require CONSOLE_PATH . 'deployment/taskFileInit.php';
   }
 

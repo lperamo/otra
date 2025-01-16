@@ -1221,7 +1221,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Encodes the value passed as parameter in order to create a cache file name
+   * Encodes the value passed as parameter to create a cache file name
    *
    * @param string $path     File's path
    * @param string $suffix   Suffix of the file name

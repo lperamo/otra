@@ -174,13 +174,13 @@ if (!function_exists(__NAMESPACE__ . '\\startsWithPhp'))
       // *** specific rules for the first block ***
       if ($firstBlock && $contentPartInsideTemp['php'])
       {
-        // The first content is PHP? We do not need to start the PHP tag as we already begin by PHP
+        // The first content is PHP? We do not need to start the PHP tag as we already begin with PHP
         if (str_starts_with($contentPartInsideTemp['content'], PHP_OPEN_TAG_STRING))
           $contentPartInsideTemp['content'] = substr(
             $contentPartInsideTemp['content'],
             PHP_OPEN_TAG_LENGTH
           );
-        // The first content is PHP? We do not need to end the PHP tag as we already begin by PHP
+        // The first content is PHP? We do not need to end the PHP tag as we already begin with PHP
         if (str_starts_with($contentPartInsideTemp['content'], PHP_END_TAG_STRING))
           $contentPartInsideTemp['content'] = substr($contentPartInsideTemp['content'], PHP_END_TAG_LENGTH);
       }

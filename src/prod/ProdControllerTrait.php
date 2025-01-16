@@ -21,7 +21,7 @@ trait ProdControllerTrait
    *
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
-   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool        $ajax      Is this an ajax partial?
    * @param bool|string $viewPath  If true, we add the usual view path before the $file variable.
    *
    * return string parent::$template Content of the template
@@ -69,11 +69,11 @@ trait ProdControllerTrait
   }
 
   /**
-   * Returns the pre-generated css and the additional concatenated css
+   * Returns the pre-generated CSS and the additional concatenated CSS
    *
    *
    * @throws Exception
-   * @return string The links to the css files or the style markup with the css inside
+   * @return string The links to the CSS files or the style markup with the CSS inside
    */
   private static function addCss(string $route) : string
   {

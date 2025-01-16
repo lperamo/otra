@@ -106,7 +106,7 @@ class HtmlMinifier
   }
 
   /**
-   * It must minify the HTML by removing whitespaces (spaces, tabulations etc.) and quotes while preserving spaces in
+   * It must minify the HTML by removing whitespaces (spaces, tabulations, etc.) and quotes while preserving spaces in
    * pre and code markups, between block type markups and attributes' and preserving attributes values' quotes when we
    * cannot remove them.
    * The HTML code must be valid as the minification function does not fix bugs into the code.
@@ -161,7 +161,7 @@ class HtmlMinifier
         case self::STATE_INSIDE_TAG_TAG_NAME:
           if (!ctype_space(self::$character))
           {
-            // we do not add '/' in auto-closing tags if it is not XML (SVG files for example)
+            // we do not add '/' in auto-closing tags if it is not XML (SVG files, for example)
             if (self::$character === '/')
             {
               self::$lastState = self::$state;
@@ -383,7 +383,7 @@ class HtmlMinifier
               self::$actualMarkupContent = substr(self::$actualMarkupContent, 0,-1);
             } elseif (strpbrk(self::$attributeValueBuffer, ' =<>') !== false)
               // If there is one of the forbidden special characters in the attribute value, we need the quotes.
-              // Otherwise, skips them.
+              // Otherwise, it skips them.
               self::$actualMarkupContent .= self::$attributeValueBuffer . self::$character;
             else
             {

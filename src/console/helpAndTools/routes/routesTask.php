@@ -38,8 +38,8 @@ function routes(array $argumentsVector) : void
     echo CLI_WARNING, 'No custom routes are defined.', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
-  /** Task that show all or one of the routes available for the application.
-   * It shows for each related route :
+  /** Task that shows all or one of the routes available for the application.
+   * It shows for each related route:
    * - the url
    * - the action
    * - the resources generated
@@ -55,7 +55,7 @@ function routes(array $argumentsVector) : void
   {
     define(__NAMESPACE__ . '\\WIDTH_LEFT', 25);
     define(__NAMESPACE__ . '\\WIDTH_MIDDLE', 10);
-    // The longest text : [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
+    // The longest text: [PHP] No other resources. [strlen(sha1('ca' . 'route' . config\AllConfig::$version . 'che'))]
     define(__NAMESPACE__ . '\\WIDTH_RIGHT', 70);
   }
 
@@ -91,12 +91,12 @@ function routes(array $argumentsVector) : void
       $chunks[Routes::ROUTES_CHUNKS_CONTROLLER] . 'Controller/' . $chunks[Routes::ROUTES_CHUNKS_ACTION],
     PHP_EOL;
 
-    // shaName is the encrypted key that match a particular route / version
+    // shaName is the encrypted key that matches a particular route / version
     $shaName = sha1('ca' . $route . VERSION . 'che');
 
     echo str_pad(' ', WIDTH_LEFT), 'Resources : ';
 
-    // Resources management : show the state of each resource. Red => missing, green => exists
+    // Resources management: show the state of each resource. Red => missing, green => exists
     if (isset($details['resources']))
     {
       $resources = $details['resources'];

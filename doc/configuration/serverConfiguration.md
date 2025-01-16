@@ -9,6 +9,6 @@
 - [PHP requirements](serverConfiguration/php.md)
 
 #### Other requirements
-You need Java in order to optimize javascript files as it uses Google Closure Compiler jar file.
+You need Java to optimize javascript files as it uses Google Closure Compiler jar file.
 
 Next section : [Setting project configuration](projectConfiguration.md)

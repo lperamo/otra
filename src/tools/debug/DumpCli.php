@@ -38,7 +38,7 @@ if (!defined(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT'))
   define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
 /**
- * Class that handles the dump mechanism, on web and CLI side.
+ * Class that handles the dump mechanism, on the web and CLI side.
  *
  * @package otra
  */
@@ -68,7 +68,7 @@ class DumpCli extends DumpMaster
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
-    // If we have reach the depth limit, we exit this function
+    // If we have reached the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
       echo PHP_EOL, self::indentColors($depth), ADD_BOLD, '...', REMOVE_BOLD_INTENSITY, PHP_EOL;
@@ -104,7 +104,7 @@ class DumpCli extends DumpMaster
     [$className, $description] = parent::getClassDescription($param);
     echo $description, PHP_EOL;
 
-    // If we have reach the depth limit, we exit this function
+    // If we have reached the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
       echo self::indentColors($depth), ADD_BOLD, '...', REMOVE_BOLD_INTENSITY, PHP_EOL;

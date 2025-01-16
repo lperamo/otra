@@ -77,7 +77,7 @@ class CheckConfigurationTaskTest extends TestCase
   public static array $resourcesToClean = [];
 
   /**
-   * If the folders/files do not exist create them and return them in an array.
+   * If the folders/files do not exist, create them and return them in an array.
    *
    * @param array<int,array{0:string,1:string} $resourcePaths Folder or file paths to tests with file_exists.
    */

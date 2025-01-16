@@ -65,7 +65,7 @@ namespace otra\cache\php
       if (in_array($blockKey, $indexesToUnset))
         return '';
 
-      // If this block does not have to be replaced and has not already been shown
+      // If this block does not have to be replaced and has not yet been shown
       if (!isset(self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_REPLACED_BY])
         || self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_NAME] === 'root'
         || self::$blocksStack[$blockKey][self::OTRA_BLOCKS_KEY_NAME] === '')
@@ -190,7 +190,7 @@ namespace otra\cache\php
   }
 
   /* Light templating engine */
-  // those functions can be redeclared if we have an exception later, exception that will also use the block system
+  // those functions can be redeclared if we have an exception later, an exception that will also use the block system
   if (!function_exists(__NAMESPACE__ . '\\block'))
   {
     /* Little remainder
@@ -200,7 +200,7 @@ namespace otra\cache\php
     /**
      * Begins a template block.
      *
-     * @param ?string $inline If we just want an inline block then we echo this string and close the block directly.
+     * @param ?string $inline If we just want an inline block, then we echo this string and close the block directly.
      */
     function block(string $name, ?string $inline = null): void
     {
@@ -221,7 +221,7 @@ namespace otra\cache\php
       // Key of the next $currentBlock (new actual block) in the stack
       $actualKey = count(BlocksSystem::$blocksStack);
 
-      // Is there another block of the same type
+      // Is there another block of the same type?
       if (isset(BlocksSystem::$blockNames[$name]))
       {
         // We retrieve it
@@ -249,7 +249,7 @@ namespace otra\cache\php
             $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX] > $previousSameKindBlock[BlocksSystem::OTRA_BLOCKS_KEY_INDEX]
             && $stackKey === $firstPreviousSameKindBlockKey)
           {
-            // If the block to replace have a parent
+            // If the block to replace has a parent
             if (BlocksSystem::$blocksStack[$firstPreviousSameKindBlockKey][BlocksSystem::OTRA_BLOCKS_KEY_PARENT] !== null
               && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== BlocksSystem::OTRA_BLOCK_NAME_ROOT
               && $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_NAME] !== '')
@@ -272,7 +272,7 @@ namespace otra\cache\php
       // Start listening for the block we just prepared
       ob_start();
 
-      // If we just want an inline block then we echo the content and close the block directly
+      // If we just want an inline block, then we echo the content and close the block directly
       if ($inline !== null)
       {
         echo $inline;
@@ -313,7 +313,7 @@ namespace otra\cache\php
 
       BlocksSystem::$blocksStack[] = $currentBlock;
 
-      // If the next content is not at the root level maybe it is a block content not explicitly named...
+      // If the next content is not at the root level, maybe it is a block content not explicitly named...
       // so we add 1 to the index
       if (isset($currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_INDEX]))
       {
@@ -333,7 +333,7 @@ namespace otra\cache\php
           $currentBlock[BlocksSystem::OTRA_BLOCKS_KEY_PARENT][BlocksSystem::OTRA_BLOCKS_KEY_NAME] ?? ''
       ];
 
-      // Start listening the remaining content
+      // Start listening to the remaining content
       ob_start();
     }
 
