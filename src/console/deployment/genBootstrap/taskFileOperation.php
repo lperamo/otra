@@ -75,11 +75,11 @@ function contentToFile(string $content, string $outputFile) : void
 
   echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow testing namespaces problems. We put the file in another directory
-     in order to see if namespaces errors are declared at the normal place and not at the temporary place */
+     to see if namespace errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
 
-  // Test each part of the process in order to precisely detect where there is an error.
+  // Test each part of the process to precisely detect where there is an error.
   if (GEN_BOOTSTRAP_LINT && hasSyntaxErrors($tempFile))
   {
     echo PHP_EOL, PHP_EOL, CLI_ERROR, '[CLASSIC SYNTAX ERRORS in ' . mb_substr($tempFile, BASE_PATH_LENGTH) . '!]',

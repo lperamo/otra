@@ -79,7 +79,7 @@ function buildDev(array $argumentsVector) : void
   $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
   // Convert RESOURCES_TO_WATCH into an associative array for faster lookup
-  // SELF_FIRST to have file AND folders in order to detect addition of new files
+  // SELF_FIRST to have file AND folders to detect the addition of new files
   $iterator = new RecursiveIteratorIterator(
     new DirectoryFilter($dir_iterator, array_flip(RESOURCES_TO_WATCH)),
     RecursiveIteratorIterator::SELF_FIRST

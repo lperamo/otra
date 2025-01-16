@@ -23,7 +23,7 @@ const SPECIAL_CLASSES = [
 ];
 
 /**
- * We analyze the use statement in order to retrieve the name of each class which is included in it.
+ * We analyze the use statement to retrieve the name of each class which is included in it.
  *
  * @param array{
  *  php:array{

@@ -148,7 +148,7 @@ function getModelFullNameAndModelExists(string $modelName, string $modelNameQues
 }
 
 /**
- * Asks the user in order to know if he wants a BUNDLE model or a MODULE model.
+ * Asks the user to know if he wants a BUNDLE model or a MODULE model.
  *
  * @return int 0 => bundle or 1 => model
  */

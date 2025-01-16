@@ -50,7 +50,7 @@ abstract class Database
     $user;
 
   private static array
-    // just in order to simplify the code
+    // just to simplify the code
     $attributeInfos = [];
 
   public static string
@@ -516,7 +516,7 @@ abstract class Database
      */
     foreach ($sortedTables as $arrayIndex => $sortedTable)
     {
-      // We store the names of the sorted tables into a file in order to use it later
+      // We store the names of the sorted tables into a file to use it later
       if ($storeSortedTables)
         $tablesOrder .= '- ' . $sortedTable . PHP_EOL;
 

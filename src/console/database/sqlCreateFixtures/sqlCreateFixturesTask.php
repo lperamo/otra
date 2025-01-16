@@ -86,12 +86,12 @@ function analyzeFixtures(string $file) : array
  * @param string              $databaseName   The database name to use
  * @param string              $table          The table name relating to the fixture to create
  * @param array<string,array> $fixturesData   The table fixtures
- * @param array<string,array> $tableData      The table data form the database schema in order to have the properties type
+ * @param array<string,array> $tableData      The table data form the database schema to have the properties type
  * @param string[]            $sortedTables   Final sorted tables array
- * @param array               $fixturesMemory An array that stores foreign identifiers in order to resolve yaml aliases
+ * @param array               $fixturesMemory An array that stores foreign identifiers to resolve YAML aliases
  * @param string              $createdFile    Name of the fixture file that will be created.
  *
- * @throws OtraException If a database relation is missing or if we can't create the fixtures folder
+ * @throws OtraException If a database relation is missing, or if we can't create the fixtures folder
  */
 function createFixture(
   string $databaseName,
@@ -328,7 +328,7 @@ function sqlCreateFixtures(array $argumentsVector) : void
   if (!Database::$init)
     Database::init();
 
-  // Analyzes the database schema in order to guess the properties types
+  // Analyzes the database schema to guess the properties types
   if (!file_exists(Database::$schemaFile))
     throw new OtraException(
       'You have to create a database schema file in ' . CLI_INFO_HIGHLIGHT . 'config/data/schema.yml' .

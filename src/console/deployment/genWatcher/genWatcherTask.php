@@ -299,7 +299,7 @@ function genWatcher(array $argumentsVector): void
 
   $dir_iterator = new RecursiveDirectoryIterator(BASE_PATH, FilesystemIterator::SKIP_DOTS);
 
-  // SELF_FIRST to have file AND folders in order to detect addition of new files
+  // SELF_FIRST to have file AND folders to detect addition of new files
   $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
 
   // SASS/SCSS tree cache to optimize updates

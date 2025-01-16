@@ -71,7 +71,7 @@ class OtraExceptionTest extends TestCase
   public function testOtraException_WithContext(): void
   {
     /* We cannot force the PHP_SAPI constant, so it will launch OtraExceptionCli, but we can work around it.
-     * We launch it this way anyway, but we manually set the context after in order to not be overwritten by the
+     * We launch it this way anyway, but we manually set the context after to not be overwritten by the
      * OtraExceptionCli class. */
     $exception = new OtraException('test', null, '', null, ['variables' => []]);
     self::assertInstanceOf(OtraException::class, $exception);

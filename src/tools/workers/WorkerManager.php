@@ -316,7 +316,7 @@ class WorkerManager
     if (!isset($this->runningWorkers[$worker->identifier]) && !isset($this->workers[$worker->identifier]))
       throw new RuntimeException(
         'We do not succeed to found the worker "' . $worker->command .
-        '" among the existing workers in order to detach it.' . implode(',', $this->workers) . '.'
+        '" among the existing workers to detach it.' . implode(',', $this->workers) . '.'
       );
 
     if (isset($this->stdinStreams[$worker->identifier]))

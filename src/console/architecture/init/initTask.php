@@ -80,7 +80,7 @@ function init() : void
       copy($distFile, $destinationFilePath);
   }
 
-  // We need a routes' configuration file even empty.
+  // We need a routes' configuration file, even empty.
   if (!file_exists(OTRA_BUNDLES_CONFIG_PATH))
     mkdir(OTRA_BUNDLES_CONFIG_PATH, 0777, true);
 
@@ -125,7 +125,7 @@ function init() : void
     if (!file_exists($logFile))
       touch($logFile);
 
-    // Force the rights' mode in order to be sure to be able to overwrite the file.
+    // Force the rights' mode to be sure to be able to overwrite the file.
     chmod($logFile, 0666);
   }
 

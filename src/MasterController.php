@@ -224,7 +224,7 @@ abstract class MasterController
   }
 
   /**
-   * Encodes the value passed as parameter in order to create a cache file name
+   * Encodes the value passed as parameter to create a cache file name
    *
    * @param string $path     File's path
    * @param string $suffix   Suffix of the file name
@@ -396,7 +396,7 @@ abstract class MasterController
 
     if ($cacheActivated)
     {
-      // cacheUsed is used in order to simplify conditions and show a status on the debug bar
+      // cacheUsed is used to simplify conditions and show a status on the debug bar
       if (isset(self::$rendered[$templateFile]))
         self::$cacheUsed = 'memory';
 
@@ -487,8 +487,8 @@ abstract class MasterController
 
     $content = HtmlMinifier::minifyHTML($content);
 
-    // We clear these variables in order to put css and js for other modules that will not be cached (in case there are
-    // css and js imported in the layout)
+    // We clear these variables to put CSS and JS for other modules that will not be cached (in case there are
+    // CSS and JS imported in the layout)
     self::$javaScripts = self::$stylesheets = [];
 
     return $content;

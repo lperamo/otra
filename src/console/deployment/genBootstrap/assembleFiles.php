@@ -219,7 +219,7 @@ function getFileNamesFromUses(
         $parsedConstants[$constantName] = substr($fullyQualifiedConstantName, STRLEN_LABEL_CONST);
       else
       {
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
+        // We analyze the use statement to retrieve the name of each class which is included in it.
         require_once CONSOLE_PATH . 'deployment/genBootstrap/analyzeUseToken.php';
         analyzeUseToken(
           $level,

@@ -88,10 +88,10 @@ class OtraException extends Exception
     require_once BASE_PATH . 'config/AllConfig.php';
     $route = 'otra_exception';
 
-    // Cleans all the things processed before in order to not perturb the exception page
+    // Cleans all the things processed before to not perturb the exception page
     ob_clean();
 
-    // If the error is that we do not found the Controller class then we directly show the message.
+    // If the error is that we do not found the Controller class, then we directly show the message.
     try {
       $renderController = new Controller(
         [

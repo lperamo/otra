@@ -114,7 +114,7 @@ class GenClassMapTaskTest extends TestCase
       $expectedContent .= $classMappingLine . PHP_EOL;
     }
 
-    $expectedContent .= 'You may have to add these classes in order to make your project work.' . PHP_EOL .
+    $expectedContent .= 'You may have to add these classes to make your project work.' . PHP_EOL .
       'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.' . PHP_EOL . PHP_EOL .
       str_pad('Class ' . CLI_WARNING . 'otra\config\AllConfig' . END_COLOR . ' ', FIRST_CLASS_PADDING,
         '.') . ' => possibly related file ' . CLI_WARNING . 'tests/config/AllConfig.php' . END_COLOR . PHP_EOL;

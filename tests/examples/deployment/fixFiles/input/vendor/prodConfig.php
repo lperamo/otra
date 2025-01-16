@@ -19,19 +19,18 @@ abstract class AllConfig
   public static int $verbose = 0;
   public static bool $cssSourceMaps = true;
   public static string
-    /* In order to not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
-    case
+    /* To not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this case
     (if we not use AllConfig::$foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
-    accessible ) */
+    accessible) */
     $cachePath = CACHE_PATH,
-    $defaultConn = 'CMS',  // mandatory in order to modify it later if needed
-    $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.5.0/bin/';  // mandatory in order to modify it later if needed
+    $defaultConn = 'CMS',  // mandatory to modify it later if needed
+    $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.5.0/bin/';  // mandatory to modify it later if needed
   public static array
     $debugConfig = [
     //      'maxChildren' => 130,
     'maxData' => 514,
     'maxDepth' => 6
-  ], // mandatory in order to modify it later if needed
+  ], // mandatory to modify it later if needed
     $deployment = [
     'domainName' => 'otra.tech',
     'server' => 'lionelp@vps812032.ovh.net',
@@ -48,8 +47,8 @@ abstract class AllConfig
       'db' => 'lpcms',
       'motor' => 'InnoDB'
     ]
-  ], // mandatory in order to modify it later if needed
-    $sassLoadPaths = [BUNDLES_PATH . 'HelloWorld/resources/']; // mandatory in order to modify it later if needed
+  ], // mandatory to modify it later if needed
+    $sassLoadPaths = [BUNDLES_PATH . 'HelloWorld/resources/']; // mandatory to modify it later if needed
 }
 
 echo 'test';

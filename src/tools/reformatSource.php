@@ -7,10 +7,10 @@ namespace otra\tools;
  */
 
 /**
- * Puts <br> between markups in order to add legibility to a code in debug mode and convert other markups in html
+ * Puts <br> between markups to add legibility to a code in debug mode and convert other markups in HTML
  * entities.
  *
- * @param string $stringToFormat The ... (e.g. : self::$template)
+ * @param string $stringToFormat The ... (e.g.: self::$template)
  *
  * @return string The formatted string
  */

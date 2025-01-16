@@ -303,11 +303,11 @@ function genClassMap(array $argumentsVector) : void
 
   echo END_COLOR;
 
-  /** Shows a help to find classes that may have to be added to the custom configuration in order to complete
+  /** Shows a help to find classes that may have to be added to the custom configuration to complete
    *  this automatic task */
   if (!empty($classesThatMayHaveToBeAdded))
   {
-    echo PHP_EOL, 'You may have to add these classes in order to make your project work.', PHP_EOL,
+    echo PHP_EOL, 'You may have to add these classes to make your project work.', PHP_EOL,
     'Maybe because you use dynamic class inclusion via require(_once)/include(_once) statements.', PHP_EOL, PHP_EOL;
 
     foreach($classesThatMayHaveToBeAdded as $namespace => $classFile)

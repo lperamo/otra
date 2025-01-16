@@ -64,7 +64,7 @@ abstract class Router
   )
   : string|Controller
   {
-    // We ensure that our input array really contains 5 parameters in order to make array_combine works
+    // We ensure that our input array really contains 5 parameters to make array_combine works
     [
       'action' => $action,
       'bundle' => $bundle,

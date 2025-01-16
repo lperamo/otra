@@ -151,7 +151,7 @@ function sqlImportFixtures(array $argumentsVector): void
 
             $columnMetaData = $columns[array_search($keyCol, array_column($columns, 'COLUMN_NAME'))];
             /** We check if the column is a primary key and, if it's the case, we put the name of the actual table,
-             * and we store the association for later in order to manage the foreign key associations */
+             * and we store the association for later to manage the foreign key associations */
             if ('PRI' === $columnMetaData['COLUMN_KEY'])
             {
               $foreignKeysMemory[$table][$colOfRow] = $fixtureId;

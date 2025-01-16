@@ -194,7 +194,7 @@ namespace otra\console
     }
 
     /**
-     * Converts an array to a PHP "readable" array that we can put in a file in order to make
+     * Converts an array to a PHP "readable" array that we can put in a file to make
      * $myVar = require myFile.php;
      * A bit like `var_export` function
      *

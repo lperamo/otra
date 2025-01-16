@@ -185,7 +185,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     unset($route, $routeFunction);
 
-    // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
+    // We check the order of routes path to avoid that routes like '/' override more complex rules by being in
     // front of them
     /** @var Closure $sortRoutes */
     if (!function_exists(__NAMESPACE__ . '\\sortRoutes'))

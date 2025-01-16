@@ -211,12 +211,12 @@ class OtraExceptionCli extends Exception
         ) .
         self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
         self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
-        /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
+        /** FILE - Path is shortened to the essential to leave more place for the path's end */
         (isset($formattedFilenames[$actualTraceIndex])
         ? self::consoleLine(
           $actualTrace,
           'file',
-          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          // If the path is composite e.g.: 'KIND_OF_PATH + File'; then no coloring is needed
           self::$fileLongestString +
           ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
           $formattedFilenames[$actualTraceIndex]['file']
