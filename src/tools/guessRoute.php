@@ -18,7 +18,7 @@ function guessRoute(string $route) : string
     return $route;
 
   // We try to find a route which the name is similar
-  // `require_once` 'cause maybe the user type a wrong task like 'genBootstrap' so we have already loaded this src !
+  // `require_once` 'cause maybe the user types a wrong task like 'genBootstrap', so we have already loaded this src!
   require_once CONSOLE_PATH . 'tools.php';
   [$newRoute] = guessWords($route, array_keys(Routes::$allRoutes));
 
@@ -26,7 +26,7 @@ function guessRoute(string $route) : string
   $choice = promptUser('There are no route with the name ' . CLI_BASE . $route . CLI_WARNING
     . ' ! Do you mean ' . CLI_BASE . $newRoute . CLI_WARNING . ' ? (y/n)');
 
-  // If our guess is wrong, we apologise and exit !
+  // If our guess is wrong, we apologize and exit!
   if ('n' === $choice)
   {
     echo CLI_ERROR, 'Sorry then !', END_COLOR, PHP_EOL;

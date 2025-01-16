@@ -20,7 +20,7 @@ use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
  */
 function searchForClass(array $classesFromFile, string $class, string $contentToAdd, int $matchOffset) : false|string
 {
-  // Do we already have this class ?
+  // Do we already have this class?
   /** @var string $classFromFile */
   foreach($classesFromFile as $classFromFile)
   {
@@ -28,11 +28,11 @@ function searchForClass(array $classesFromFile, string $class, string $contentTo
       return false;
   }
 
-  // if it's not the case ... we search it in the directory of the file that we are parsing
-  // /!\ BEWARE ! Maybe we don't have handled the case where the word namespace is in a comment.
-  // we use a namespace so ...
+  // If it's not the case ... we search it in the directory of the file that we are parsing
+  // /!\ BEWARE! Maybe we don't have handled the case where the word namespace is in a comment.
+  // We use a namespace so ...
 
-  // we search the namespace in the content before the extends call
+  // we search the namespace in the content before the `extends` call
   $contentToAddLength = mb_strlen($contentToAdd);
   $namespacePosition = mb_strrpos($contentToAdd, 'namespace', $matchOffset - $contentToAddLength);
 

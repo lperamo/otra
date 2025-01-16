@@ -142,7 +142,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata
 
     file_put_contents(CACHE_PHP_INIT_PATH . 'tasksHelp.php', $helpFileFinalContent);
 
-    // Generate the tasks paths in a cached file. We change the path in the task path that can be replaced by constants
+    // Generate the tasks paths in a cached file. We change the path in the task path that constants can replace
     $taskClassMap = shortenVarExportArray(
       PHP_INIT_FILE_BEGINNING . var_export($taskClassMap, true) . ';'
     );
@@ -168,7 +168,7 @@ namespace otra\console\helpAndTools\generateTaskMetadata
      * SHELL COMPLETIONS GENERATION *
      ********************************/
 
-    // if we launch this task, the console will already launch this task before so for now, we check the variable existence
+    // if we launch this task, the console will already launch this task before, so for now, we check the variable existence
     $shellCompletionsContent = '#!/usr/bin/env bash' . PHP_EOL
       . 'typeset BLC="\033[1;96m"' . PHP_EOL // CLI_INFO_HIGHLIGHT
       . 'typeset WHI="\033[0;38m"' . PHP_EOL // CLI_BASE

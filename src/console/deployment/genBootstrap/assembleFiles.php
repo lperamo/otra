@@ -124,7 +124,7 @@ function getFileNamesFromUses(
         $lastClassSegment = $lastChunk;
       } else
       {
-        /** if we have a right parenthesis we strip it and put the content before the beginning of the use statement,
+        /** if we have a right parenthesis, we strip it and put the content before the beginning of the use statement,
          * otherwise ... if it uses a PHP7 shortcut with parenthesis, we add the beginning of the use statement
          * otherwise ... we just put the string directly */
         if (!str_contains($chunk, '}'))
@@ -219,7 +219,7 @@ function getFileNamesFromUses(
         $parsedConstants[$constantName] = substr($fullyQualifiedConstantName, STRLEN_LABEL_CONST);
       else
       {
-        // We analyze the use statement in order to retrieve the name of each class which is included in it.
+        // We analyze the use statement to retrieve the name of each class which is included in it.
         require_once CONSOLE_PATH . 'deployment/genBootstrap/analyzeUseToken.php';
         analyzeUseToken(
           $level,
@@ -319,10 +319,10 @@ function getDependenciesFileInfo(array &$parameters) : void
 
       /* we make an exception for this particular require statement because
          it is a `require` made by the prod controller, and then it is a template ...
-         (so no need to include it because html templates management is not totally functional right now) */
+         (so no need to include it because HTML templates management is not totally functional right now) */
       if (!$isTemplate) // if the file to include is not a template
       {
-        // If we find __DIR__ in the include/require statement then we replace it with the good folder and not the
+        // If we find __DIR__ in the include/require statement, then we replace it with the good folder and not the
         // actual folder (...console ^^)
         $posDir = strpos($tempFile, '__DIR__');
 
@@ -354,7 +354,7 @@ function getDependenciesFileInfo(array &$parameters) : void
           $tempFile .= "'";
 
         /** @var string $tempFile */
-        // Here we handle the namespaces issues (if we were not using namespaces, we would not need this condition)
+        // Here we handle the namespace issues (if we were not using namespaces, we would not need this condition)
         if (preg_match_all(
           '@BASE_PATH|BUNDLES_PATH|CORE_PATH|DIR_SEPARATOR@',
           $tempFile,
@@ -461,7 +461,7 @@ function getDependenciesFileInfo(array &$parameters) : void
       // Extracts the file name in the extends statement ... (8 = strlen('extends '))
       $class = mb_substr($trimmedMatch, 8);
 
-      // if the class begin by \ then it is a standard class, and then we do nothing
+      // if the class begin by \, then it is a standard class, and then we do nothing
       if (NAMESPACE_SEPARATOR === $class[0])
         continue;
 
@@ -559,14 +559,14 @@ function processStaticCalls(
 
     // no need to include self or parent !!
     // renderController is an edge case present in OtraException.php
-    // PDO is a native class, no need to import it !
+    // PDO is a native class, no need to import it!
     if (in_array($class, ['self', 'static', 'parent', 'renderController', PDO::class]))
       continue;
 
     // str_replace to ensure us that the same character is used each time
     $newFile = BASE_PATH . str_replace(NAMESPACE_SEPARATOR, '/', $classPath . $class . '.php');
 
-    // does the class exist ? if not we search the real path of it
+    // does the class exist ? if not, we search the real path of it
     if (!file_exists($newFile))
     {
       require_once CONSOLE_PATH . 'deployment/genBootstrap/searchForClass.php';
@@ -758,7 +758,7 @@ function assembleFiles(
     foreach ($filesToConcat as $fileType => $entries)
     {
       // There is no function, so we can include that multiple times with no issues. No need of `require_once` then!
-      // If we put require_once, it will prevent to detected nested inclusions.
+      // If we put require_once, it will prevent detecting nested inclusions.
       require CONSOLE_PATH . 'deployment/genBootstrap/processFile.php';
     }
   }

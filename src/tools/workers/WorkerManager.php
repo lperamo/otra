@@ -86,7 +86,7 @@ class WorkerManager
   {
     foreach ($workers as $workerId => $worker)
     {
-      // Maybe the worker is not attached yet (surely a sub-worker) so we can't handle it
+      // Maybe the worker is not attached yet (surely a subworker), so we can't handle it
       if (!isset($this->runningWorkers[$workerId]))
         return;
 
@@ -131,7 +131,7 @@ class WorkerManager
 
     while ($this->workersAndSubWorkersCount > 0)
     {
-      // If we do not have reach the 'maxWorkers' limit, then we launch the next worker
+      // If we do not have reached the 'maxWorkers' limit, then we launch the next worker
       if ($this->runningWorkersCount < $this->maxWorkers && !empty($this->workers))
       {
         /**
@@ -316,7 +316,7 @@ class WorkerManager
     if (!isset($this->runningWorkers[$worker->identifier]) && !isset($this->workers[$worker->identifier]))
       throw new RuntimeException(
         'We do not succeed to found the worker "' . $worker->command .
-        '" among the existing workers in order to detach it.' . implode(',', $this->workers) . '.'
+        '" among the existing workers to detach it.' . implode(',', $this->workers) . '.'
       );
 
     if (isset($this->stdinStreams[$worker->identifier]))
@@ -339,7 +339,7 @@ class WorkerManager
 
       proc_close($this->processes[$worker->identifier]);
 
-      // Handles workers chaining if the worker process finished successfully his job
+      // Handles workers chaining if the worker process successfully finished his job
       if (!$this->processStatuses[$worker->identifier]['running']
         && $this->processStatuses[$worker->identifier]['exitcode'] === 0
         && !empty($this->runningWorkers[$worker->identifier]->subWorkers))

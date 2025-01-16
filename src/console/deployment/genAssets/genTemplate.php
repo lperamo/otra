@@ -52,7 +52,7 @@ require CORE_PATH . 'tools/compression.php';
 
 $_SERVER['REQUEST_URI'] = Router::getRouteUrl(ARG_SITE_ROUTE);
 
-// We don't allow errors shown on production !
+// We don't allow errors shown on production!
 $oldErrorReporting = error_reporting();
 error_reporting(0);
 ob_start();

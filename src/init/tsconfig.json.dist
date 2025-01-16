@@ -10,7 +10,6 @@
     "noResolve": true,
     "pretty": true,
     "removeComments": true,
-    "noImplicitUseStrict": true,
     "watch": true
   }
 }

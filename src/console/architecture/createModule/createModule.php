@@ -40,7 +40,7 @@ function createModuleCore(string $bundleBasePath, string $moduleName, bool $inte
  * @param bool   $consoleForce Determines whether we show an error when something is missing in non-interactive
  *                             mode or not. The false value by default will stop the execution if something does
  *                             not exist and show an error.
- * @param string $bundleName   The bundle in which the module have to be created
+ * @param string $bundleName   The bundle in which the module has to be created
  *
  * @throws OtraException
  */

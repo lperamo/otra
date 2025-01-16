@@ -13,7 +13,7 @@ use const otra\console\{CLI_BASE, CLI_SUCCESS, END_COLOR};
 const SQL_CLEAN_ARG_CLEANING_LEVEL = 2;
 
 /**
- * Cleans sql and yml files in the case where there are problems that had corrupted files.
+ * Cleans SQL and yml files in the case where there are problems that had corrupted files.
  * @param array<int, string> $argumentsVector Command-line arguments, similar to those provided by $argv.
  *
  * @return void

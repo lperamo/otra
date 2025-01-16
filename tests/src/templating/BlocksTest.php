@@ -82,7 +82,7 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use :
+   * Use:
    * - overridden blocks,
    * - an inline title block,
    * - alternate blocks between blocks override and a parent block call.
@@ -105,7 +105,7 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use :
+   * Use:
    * - overridden blocks,
    * - an inline title block,
    * - alternate blocks between blocks override
@@ -130,7 +130,7 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use :
+   * Use:
    * - overridden blocks,
    * - an inline title block,
    * - alternate blocks between blocks override
@@ -156,7 +156,7 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use :
+   * Use:
    * - overridden blocks,
    * - an inline title block
    * - parent block call
@@ -184,7 +184,7 @@ class BlocksTest extends TestCase
   }
 
   /**
-   * Use :
+   * Use:
    * - overridden blocks,
    * - inline blocks
    * - parent block call

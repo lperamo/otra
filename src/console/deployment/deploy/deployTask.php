@@ -175,7 +175,7 @@ function deploy(array $argumentsVector) : void
   CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;
 
   /* --delete allows deleting things that are no present anymore on the source to keep a really synchronized folder
-   * -P It combines the flags –progress and –partial.
+   * -P It combines the flags `–progress` and `–partial`.
    * The first of these gives you a progress bar for the transfers.
    * The second allows you to resume interrupted transfers.
    * -u => 'update' to not send files that are older than those in the server

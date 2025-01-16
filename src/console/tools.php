@@ -106,7 +106,7 @@ namespace otra\console
      *
      * @param string $file      Name of the file that contains the error
      * @param int    $errorLine N° of the error
-     * @param int    $context   How many lines for context ?
+     * @param int    $context   How many lines for context?
      */
     function showContext(string $file, int $errorLine, int $context) : void
     {
@@ -139,7 +139,7 @@ namespace otra\console
      *
      * @param string $file    Name of the file that contains the error
      * @param string $error   Error to analyze
-     * @param int    $context How many lines for context ?
+     * @param int    $context How many lines for context?
      */
     function showContextByError(string $file, string $error, int $context) : void
     {
@@ -153,7 +153,7 @@ namespace otra\console
     /**
      * Strips spaces, PHP7'izes the content and changes \\\\ by \\.
      * We take care of the spaces contained into folders and files names.
-     * Beware, this function do not cover all the possibles cases. It only works for the usages of this framework.
+     * Beware, this function does not cover all the possible cases. It only works for the usages of this framework.
      *
      *
      * @return string
@@ -174,7 +174,7 @@ namespace otra\console
     /**
      * PHP7'izes the content and changes \\\\ by \\.
      * We take care of the spaces contained into folders and files names.
-     * Beware, this function do not cover all the possibles cases. It only works for some usages.
+     * Beware, this function does not cover all the possible cases. It only works for some usages.
      * This tool is not used by OTRA but is meant to be used in user projects.
      *
      *
@@ -194,7 +194,7 @@ namespace otra\console
     }
 
     /**
-     * Converts an array to a PHP "readable" array that we can put in a file in order to make
+     * Converts an array to a PHP "readable" array that we can put in a file to make
      * $myVar = require myFile.php;
      * A bit like `var_export` function
      *

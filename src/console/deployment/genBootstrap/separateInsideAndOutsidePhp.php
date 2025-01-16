@@ -327,7 +327,7 @@ function separateInsideAndOutsidePhp(string $phpContent, array &$parsedClasses):
         $functionStarted = true;
         $isConditionalFunction = ($conditionalLevel > 0);
 
-        // Check if previous token is a variable (indicating an anonymous function)
+        // Check if the previous token is a variable (indicating an anonymous function)
         if (isset($previousToken)) 
           $buffer = $previousToken;
         elseif ($conditionalLevel > 0)

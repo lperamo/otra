@@ -44,7 +44,7 @@ echo DOUBLE_ERASE_SEQUENCE;
 while (file_exists(MODEL_PATH . MODEL_DIRECTORY . $modelFullName))
 {
   $modelName = promptUser($modelExists, $modelExists);
-  // We update the information right now in order to deliver precise error messages
+  // We update the information right now to deliver precise error messages
   [$modelFullName, $modelExists] = getModelFullNameAndModelExists($modelName, $modelNameQuestion);
   echo DOUBLE_ERASE_SEQUENCE;
 }
@@ -61,7 +61,7 @@ while ('no!more' !== $property)
 {
   addCode($functions, $propertiesCode, $property);
 
-  // Do we want another properties ?
+  // Do we want another properties?
   $property = promptUser(DOUBLE_ERASE_SEQUENCE . PROPERTY_TEXT, PROPERTY_ERROR_TEXT);
 }
 

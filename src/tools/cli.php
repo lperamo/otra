@@ -72,7 +72,7 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
   function cliCommand(string $command, ?string $errorMessage = null, bool $launchExceptionOnError = true) : array
   {
     // "The handle could not be duplicated when redirecting handle 1"
-    // Moreover the developer could have already used those redirections or similar things
+    // Moreover, the developer could have already used those redirections or similar things
     $result = exec($command . ' 2>&1', $output, $returnCode);
     $output = implode(PHP_EOL, $output);
 

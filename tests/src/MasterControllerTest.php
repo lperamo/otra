@@ -9,7 +9,7 @@ use const otra\cache\php\{BASE_PATH, CORE_PATH};
 use function otra\tools\removeFieldsScopeProtection;
 
 /**
- * /!\ Beware the bundle HelloWorld will be erased in cleaning phase !
+ * /!\ Beware the bundle HelloWorld will be erased in cleaning phase!
  *
  * @author Lionel Péramo
  * @runTestsInSeparateProcesses

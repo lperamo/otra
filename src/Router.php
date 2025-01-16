@@ -47,12 +47,12 @@ abstract class Router
     ];
 
   /**
-   * Retrieve the controller's path that we want or launches the route !
+   * Retrieve the controller's path that we want or launches the route!
    *
    * @param string 			    $route            The wanted route
    * @param string[]|string $params           Additional params
-   * @param bool 				    $launch           True if we have to launch the route or just retrieve the path
-   * @param bool            $internalRedirect True if we redirect from a controller/action to another one
+   * @param bool 				    $launch           True, if we have to launch the route or just retrieve the path
+   * @param bool            $internalRedirect True, if we redirect from a controller/action to another one
    *
    * @return string|Controller Controller's path
    */
@@ -64,7 +64,7 @@ abstract class Router
   )
   : string|Controller
   {
-    // We ensure that our input array really contains 5 parameters in order to make array_combine works
+    // We ensure that our input array really contains 5 parameters to make array_combine works
     [
       'action' => $action,
       'bundle' => $bundle,
@@ -109,7 +109,7 @@ abstract class Router
     $otraParams['css'] = $otraParams['js'] = false;
     $otraParams['internalRedirect'] = $internalRedirect;
 
-    // Do we have some resources for this route...
+    // Do we have some resources for this route...?
     if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]))
     {
       $resources = Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY];
@@ -141,7 +141,7 @@ abstract class Router
       && !$internalRedirect
     )
     {
-      // Is it a static page
+      // Is it a static page?
       if (isset(Routes::$allRoutes[$route][self::OTRA_ROUTE_RESOURCES_KEY]['template']))
       {
         header('Content-Encoding: br');
@@ -201,11 +201,11 @@ abstract class Router
       }
     }
 
-    // The route is found, do we have parameters to get?
+    // The route is found; do we have parameters to get?
     if ($firstBracketPosition === false)
       return [$routeName, []];
 
-    // We have found parameters so let's get them!
+    // We have found parameters, so let's get them!
     array_shift($foundParameters);
     $params = [];
 
@@ -262,7 +262,7 @@ abstract class Router
         if ($_SERVER['CONTENT_TYPE'] === '')
           $_SERVER['CONTENT_TYPE'] = self::OTRA_DEFAULT_CONTENT_TYPE;
 
-        // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries for example
+        // We use `str_contains` to not be forced to use regexp for multipart/form-data boundaries, for example
         if (!str_contains(
           $_SERVER['CONTENT_TYPE'],
           $routeData[self::OTRA_ROUTE_CONTENT_TYPE_KEY] ?? self::OTRA_DEFAULT_CONTENT_TYPE)

@@ -52,7 +52,7 @@ try
    * }> \cache\php\Routes::$allRoutes
    */
 
-  // Is it a static page
+  // Is it a static page?
   if ('cli' !== PHP_SAPI &&
     isset(
       Routes::$allRoutes[OTRA_ROUTE]['resources']['template']

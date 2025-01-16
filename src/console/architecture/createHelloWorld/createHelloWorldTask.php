@@ -87,7 +87,7 @@ namespace otra\console\architecture\createHelloWorld
 
     $bundleMask = 9;
 
-    // load console tools in order to ask questions (the following includes need those functions)
+    // load console tools to ask questions (the following includes need those functions)
     // beware, we are using require_once only for tests purposes
     require_once CONSOLE_PATH . 'tools.php';
 

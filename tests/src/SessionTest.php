@@ -100,7 +100,7 @@ class SessionTest extends TestCase
       file_get_contents($sessionsFile)
     );
 
-    // sessions file permissions must be 0775
+    // session file permissions must be 0775
     self::assertSame(0775, fileperms($sessionsFile) & 0777);
 
     // There should be no output
@@ -527,7 +527,7 @@ class SessionTest extends TestCase
     self::assertSame($identifier, $dataFromFile['otra_i']);
     self::assertSame(self::BLOWFISH_ALGORITHM, $dataFromFile['otra_b']);
 
-    // sessions file permissions must be 0775
+    // session file permissions must be 0775
     self::assertSame(0775, fileperms($sessionsFile) & 0777);
   }
 }

@@ -175,7 +175,7 @@ PHPCODE . PHP_EOL .
     ];
     $routesArray = var_export($routesArray, true);
 
-    // replaces by short array notation
+    // replaces it by short array notation
     $routesArray = str_replace(
       [
         'array (',
@@ -197,7 +197,7 @@ PHPCODE . PHP_EOL .
     // removes useless numerical indexes
     $routesArray = preg_replace('/\d+ => /', '', $routesArray);
 
-    // now we can detect safely some other unwanted line breaks
+    // now we can safely detect some other unwanted line breaks
     $routesArray = str_replace(',' . PHP_EOL . '      \'', ', \'', $routesArray);
 
     file_put_contents(

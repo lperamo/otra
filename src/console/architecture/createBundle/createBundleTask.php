@@ -54,7 +54,7 @@ namespace otra\console\architecture\createBundle
     $interactive = checkBooleanArgument($argumentsVector, ARG_INTERACTIVE, 'interactive');
     $consoleForce = checkBooleanArgument($argumentsVector, ARG_FORCE, 'force', 'false');
 
-    // Checking argument : bundle name
+    // Checking argument: bundle name
     if (!isset($argumentsVector[ARG_BUNDLE_NAME]))
     {
       $bundleName = promptUser('You did not specified a name for the bundle. What is it ?');

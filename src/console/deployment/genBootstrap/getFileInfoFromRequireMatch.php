@@ -26,9 +26,9 @@ function getFileInfoFromRequireMatch(string $trimmedMatch, string $filename) : a
   preg_match('@(?:require|include)(?:_once)?\s+([^;]+)\\)?@m', $trimmedMatch, $inclusionMatches);
   $fileContent = $inclusionMatches[1];
 
-  /* Not sure of the safety of this code
+  /* Not sure of the safety of this code.
      We check if the require/include statement is in a function call
-     by counting the number of parenthesis between the require statement and the semicolon */
+     by counting the number of parentheses between the require statement and the semicolon */
   if (0 !== (mb_substr_count($trimmedMatch, ')') + mb_substr_count($trimmedMatch, '(')) % 2 )
     $fileContent = mb_substr($fileContent, 0, -1);
 

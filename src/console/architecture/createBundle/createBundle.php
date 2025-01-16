@@ -105,7 +105,7 @@ function bundleHandling(
 
   foreach (BUNDLE_FOLDERS as $numericKey => $folder)
   {
-    // Checks if the folder have to be created or not.
+    // Checks if the folder has to be created or not.
     if ((BUNDLE_FOLDERS_MASK & (2 ** $numericKey)) !== 0)
     {
       mkdir(BUNDLE_BASE_PATH . $folder, 0755);

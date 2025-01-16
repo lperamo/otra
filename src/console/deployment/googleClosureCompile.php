@@ -54,7 +54,7 @@ function googleClosureCompile(
   $jamVmCommand = 'jamvm -Xmx32m -jar ' . '../src/yuicompressor-2.4.8.jar' . $compilerOptions;
   $linux = !str_contains(php_uname('s'), 'Windows');
 
-  // Linux or Windows ? We have java or jamvm ?
+  // Linux or Windows? We have java or jamvm?
   if (($linux && !empty(exec('which java'))) // LINUX JAVA CASE
     || (!$linux && !empty(exec('where java')))) // WINDOWS JAVA CASE
     [, $output] = cliCommand(

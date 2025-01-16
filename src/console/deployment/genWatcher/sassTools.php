@@ -43,7 +43,7 @@ function updateSassTree(array &$sassTree, string $realPath, string $previousImpo
 }
 
 /**
- * @param string      $importedSass      SASS/SCSS file to get absolute path from
+ * @param string      $importedSass      SASS/SCSS file to get the absolute path from
  * @param string      $dotExtension      Extension with the dot as in '.scss'
  * @param string      $resourcesPath     Folder of the stylesheet that imports $importedSass
  * @param bool|string $sassLoadPathCheck Whether we have to use a specific SASS load path or not
@@ -85,11 +85,11 @@ function getCssPathFromImport(
   $absoluteImportPathWithDots = $resourcesPath . $importPath . $importedFileBaseName;
   $absoluteImportPathWithDotsAlt = $resourcesPath . $importPath. '_' . $importedFileBaseName;
 
-  // Does the file exist without '_' at the beginning
+  // Does the file exist without '_' at the beginning?
   $newResourceToAnalyze = realpath($absoluteImportPathWithDots);
 
   if ($newResourceToAnalyze === false)
-    // Does the file exist with '_' at the beginning
+    // Does the file exist with '_' at the beginning?
     $newResourceToAnalyze = realpath($absoluteImportPathWithDotsAlt);
 
   // Checks for loadPaths
@@ -136,7 +136,7 @@ function searchSassLastLeaves(
   $sassTreeString .= '[' . array_search($previousImportedCssFound, array_keys($sassTree[KEY_ALL_SASS])) . ']';
   eval($sassTreeString . '=[];');
 
-  // Backups the state of the cursor to be able to restore it when we finish the sub-branches.
+  // Backups the state of the cursor to be able to restore it when we finish the subbranches.
   $oldSassTreeString = $sassTreeString;
 
   [, $resourcesMainFolder, $resourcesFolderEndPath, ] =
@@ -172,7 +172,7 @@ function searchSassLastLeaves(
     [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
       getCssPathFromImport($importedStylesheetFound, $dotExtension, $resourcesPath);
 
-    // If it does not exist in the two previously cases, it is surely a wrongly written import
+    // If it does not exist in the two previous cases, it is surely a wrongly written import
     if ($newResourceToAnalyze === false)
     {
       $wrongsImportPath = '';

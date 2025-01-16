@@ -178,7 +178,7 @@ function clearCache(array $argumentsVector)
     {
       $cacheFileName = AllConfig::$cachePath . sha1('ca' . $route . VERSION . 'che');
 
-      // Is there a cache for this route ? If yes, clears it.
+      // Is there a cache for this route? If yes, it clears it.
       if (file_exists($cacheFileName))
         unlinkFile($cacheFileName, $cacheFileName);
 

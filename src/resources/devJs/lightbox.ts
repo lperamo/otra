@@ -13,7 +13,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
       confirmEnding = '<br><br><a id="lightbox-cancel" class="soft-btn confirm-button">Cancel</a><a id="lightbox-ok" class="soft-btn confirm-button">OK</a>' + ending;
 
   /**
-   * We use either html or the url.
+   * We use either HTML or the url.
    *
    * @param {Object} params
    */
@@ -89,7 +89,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
   }
 
   /**
-   * Creates the dialog html and assigns events.
+   * Creates the dialog HTML and assigns events.
    *
    * @param {string} code Code to put into the dialog.
    */
@@ -101,7 +101,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
   }
 
   /**
-   * We use either html or the url.
+   * We use either HTML or the url.
    *
    * @param {string} html
    * @param {Function} _callbackYes
@@ -117,7 +117,7 @@ window['LIB_LIGHTBOX'] = (function(d : Document, u : undefined)
   }
 
   /**
-   * We use either html or the url.
+   * We use either HTML or the url.
    *
    * @param {Object} params
    */

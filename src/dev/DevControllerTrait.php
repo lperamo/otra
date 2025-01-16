@@ -53,7 +53,7 @@ trait DevControllerTrait
    *
    * @param string      $file      The file to render
    * @param array       $variables Variables to pass
-   * @param bool        $ajax      Is this an ajax partial ?
+   * @param bool        $ajax      Is this an ajax partial?
    * @param bool|string $viewPath  If true, we add the usual view path before the $file variable. Otherwise, there is NO
    *                               path before the `$file` variable allowing us to put an entirely customized absolute
    *                               path. Affects template files AND assets.
@@ -70,8 +70,8 @@ trait DevControllerTrait
   {
     [$templateFile, $otraRoute] = $this->getTemplateFile($file, $viewPath);
 
-    // We log : ajax state, action variables and the template file name into logs/trace.txt
-    // a for AJAX, v for variables, f for file
+    // We log: ajax state, action variables and the template file name into logs/trace.txt
+    // a for 'AJAX', v for 'variables', f for 'file'
     Logger::logTo(
       json_encode(
         [
@@ -254,7 +254,7 @@ trait DevControllerTrait
             $resourceFileData = ['order' => $naturalPriorityIndex];
           }
 
-          // Stores the data in a resources array
+          // Stores the data in a resource array
           $resourcesArray[$resourceFileData['order'] ?? $naturalPriorityIndex] =
             $resourceTypeInfoActual . $resourceFile .
             ($resourceType !== 'print_css'
@@ -274,7 +274,7 @@ trait DevControllerTrait
       // $jsResourceKey can be 'async', 'defer' or a numerical array index
       foreach(self::$javaScripts as $jsResourceKey => $javaScript)
       {
-        // If the key don't give info on async and defer then put them automatically
+        // If the key don't give info on async and defer, then put them automatically
         if (is_int($jsResourceKey))
           $jsResourceKey = '';
 

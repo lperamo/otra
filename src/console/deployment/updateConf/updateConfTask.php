@@ -185,7 +185,7 @@ function updateConf(?string $mask = null, ?string $routeName = null)
 
     unset($route, $routeFunction);
 
-    // We check the order of routes path in order to avoid that routes like '/' override more complex rules by being in
+    // We check the order of routes path to avoid that routes like '/' override more complex rules by being in
     // front of them
     /** @var Closure $sortRoutes */
     if (!function_exists(__NAMESPACE__ . '\\sortRoutes'))
@@ -538,7 +538,7 @@ function searchFilesInFolder(
 }
 
 /**
- * If the content is empty, we remove the file configuration if it exists otherwise we update the file.
+ * If the content is empty, we remove the file configuration if it exists, otherwise we update the file.
  */
 function writeConfigFile(string $configFile, string $content, bool $toCompress = true) : void
 {
@@ -600,7 +600,7 @@ function loopForEach(
           ? ($arrayChunk ? 'true' : 'false')
           : addslashes($arrayChunk);
 
-        /* If it is a route config file then we search for the main pattern,
+        /* If it is a route config file, then we search for the main pattern,
           namely the route part that doesn't contain parameters.
           Once found, we add it to the route configuration.
           It will help the router to go faster to name the parameters. */

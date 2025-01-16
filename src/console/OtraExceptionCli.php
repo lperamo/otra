@@ -51,7 +51,7 @@ class OtraExceptionCli extends Exception
 
     $exception->backtraces = $exception->getTrace();
 
-    // Is the error code a native error code ?
+    // Is the error code a native error code?
     $exception->scode = OtraException::$codes[$exception->code] ?? 'UNKNOWN';
     $exception->message = preg_replace('/<br\s*\/?>/i', '', $exception->message);
 
@@ -211,12 +211,12 @@ class OtraExceptionCli extends Exception
         ) .
         self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
         self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
-        /** FILE - Path is shortened to the essential in order to leave more place for the path's end */
+        /** FILE - Path is shortened to the essential to leave more place for the path's end */
         (isset($formattedFilenames[$actualTraceIndex])
         ? self::consoleLine(
           $actualTrace,
           'file',
-          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          // If the path is composite e.g.: 'KIND_OF_PATH + File'; then no coloring is needed
           self::$fileLongestString +
           ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
           $formattedFilenames[$actualTraceIndex]['file']
@@ -224,7 +224,7 @@ class OtraExceptionCli extends Exception
         : self::consoleLine(
           $actualTrace,
           'file',
-          // If the path is composite e.g. : 'KIND_OF_PATH + File'; then no coloring is needed
+          // If the path is composite e.g.: 'KIND_OF_PATH + File'; then no coloring is needed
           self::$fileLongestString - 21
         )) .
         /** ARGUMENTS */

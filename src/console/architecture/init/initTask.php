@@ -125,7 +125,7 @@ function init() : void
     if (!file_exists($logFile))
       touch($logFile);
 
-    // Force the rights' mode in order to be sure to be able to overwrite the file.
+    // Force the rights' mode to be sure to be able to overwrite the file.
     chmod($logFile, 0666);
   }
 

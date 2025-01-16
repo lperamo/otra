@@ -54,7 +54,7 @@ function getDataType(string $modelName, string $columnName, string $columnType) 
   if (str_contains($columnType, 'timestamp') || str_contains($columnType, 'date'))
     return  DateTime::class;
 
-  // If we don't know this type !
+  // If we don't know this type!
   echo CLI_ERROR, 'We don\'t know the type ', CLI_WARNING, $columnType, CLI_ERROR, ' in ', CLI_WARNING, $modelName, CLI_ERROR,
     ' for the property ', CLI_WARNING, $columnName, CLI_ERROR, ' !', END_COLOR;
   throw new OtraException(code: 1, exit: true);
@@ -111,7 +111,7 @@ function writeModelFile(
   string $propertiesCode,
   string $functions) : void
 {
-  // If the 'models' folder doesn't exist => creates it.
+  // If the 'models' folder doesn't exist, creates it.
   $modelsPath = $bundlePath . MODEL_DIRECTORY;
 
   if (!file_exists($modelsPath))
@@ -120,7 +120,7 @@ function writeModelFile(
   // Creates the model with all the content that we gathered.
   $filePointer = fopen($modelsPath . ucfirst($modelFullName), 'w');
 
-  // If we use DateTime type then we add a use statement to handle this type.
+  // If we use DateTime type, then we add a use statement to handle this type.
   $useDateTime = '';
 
   if (str_contains($functions, DateTime::class))
@@ -148,7 +148,7 @@ function getModelFullNameAndModelExists(string $modelName, string $modelNameQues
 }
 
 /**
- * Asks the user in order to know if he wants a BUNDLE model or a MODULE model.
+ * Asks the user to know if he wants a BUNDLE model or a MODULE model.
  *
  * @return int 0 => bundle or 1 => model
  */

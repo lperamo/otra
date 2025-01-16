@@ -24,7 +24,7 @@ const OTRA_DUMP_INDENT_COLORS = [
 define(__NAMESPACE__ . '\\OTRA_DUMP_INDENT_COLORS_COUNT', count(OTRA_DUMP_INDENT_COLORS));
 
 /**
- * Class that handles the dump mechanism, on web and CLI side.
+ * Class that handles the dump mechanism, on the web and CLI side.
  *
  * @author Lionel Péramo
  * @package otra
@@ -76,7 +76,7 @@ abstract class DumpWeb extends DumpMaster {
   {
     $description = $paramType . ' (' . count($param) . ') ';
 
-    // If we have reach the depth limit, we exit this function
+    // If we have reached the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
       echo self::BR, self::indentColors($depth + 1), '<b>...</b><br>';
@@ -128,7 +128,7 @@ abstract class DumpWeb extends DumpMaster {
     else
       echo self::BR;
 
-    // If we have reach the depth limit, we exit this function
+    // If we have reached the depth limit, we exit this function
     if ($depth + 1 > AllConfig::$debugConfig[self::OTRA_DUMP_ARRAY_KEY[self::OTRA_DUMP_KEY_MAX_DEPTH]])
     {
       echo self::indentColors($depth + 1), '<b>...</b><br>';

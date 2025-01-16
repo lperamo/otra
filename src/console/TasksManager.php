@@ -84,7 +84,7 @@ abstract class TasksManager
       require $tasksClassMap['genClassMap'][TasksManager::TASK_CLASS_MAP_TASK_PATH] . '/genClassMapTask.php';
       genClassMap([]);
 
-      // If the task was genClassMap...then we have nothing left to do !
+      // If the task was genClassMap...then we have nothing left to do!
       if ($otraTask === 'genClassMap')
         throw new OtraException(exit: true);
 

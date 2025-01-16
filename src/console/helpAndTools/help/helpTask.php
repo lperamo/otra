@@ -32,7 +32,7 @@ function help(array $argumentsVector): void
     require CONSOLE_PATH . 'tools.php';
     [$newTask] = guessWords($consoleTask, array_keys($tasksClassMap));
 
-    // If there are no existing task with a close name ...
+    // If there is no existing task with a close name ...
     if (null === $newTask)
     {
       echo CLI_ERROR, 'There is no task named ', CLI_WARNING, $consoleTask, CLI_ERROR, ' !', END_COLOR, PHP_EOL;

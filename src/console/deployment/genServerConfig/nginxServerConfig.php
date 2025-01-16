@@ -91,7 +91,7 @@ function addingSecurityAdjustments() : string
     ENDING_BRACKET_2 .
     PHP_EOL;
 
-  // brotli_types has the text/html set by default so no need to add it again
+  // brotli_types has the text/html set by default, so no need to add it again
   if ($assetType !== 'tpl')
     $content .= SPACE_INDENT_2 . 'brotli_types ' . $mimeType . ';' . PHP_EOL;
 
@@ -165,7 +165,7 @@ function handleRewriting() : string
     if (isset($routeConfig[KEY_CORE]) && $routeConfig[KEY_CORE])
       continue;
 
-    // If it is a static page without nonces (generated dynamically) then we can deliver directly the (compressed)
+    // If it is a static page without nonces (generated dynamically), then we can deliver directly the (compressed)
     // template. `substr` is used to remove the first slash.
     if (isset($routeConfig[KEY_RESOURCES][KEY_NO_NONCES])
       && isset($routeConfig[KEY_RESOURCES][KEY_TEMPLATE])

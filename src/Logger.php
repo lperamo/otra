@@ -48,7 +48,7 @@ abstract class Logger
       ? ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR])
       : 'l';
 
-    // user agent not set if we come from the console
+    // user agent isn't set if we come from the console
     if (isset($_SERVER[self::HTTP_USER_AGENT])
       && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
       $infos['u'] = $_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT];
@@ -93,7 +93,7 @@ abstract class Logger
   }
 
   /**
-   * Appends a message to the log file at the specified path into log path
+   * Appends a message to the log file at the specified path into the log path
    */
   public static function logTo(string $message, string  $logPath = 'log') : void
   {
@@ -116,7 +116,7 @@ abstract class Logger
   }
 
   /**
-   * Appends a simple message (not OTRA formatted) to the log file at the specified path into log path
+   * Appends a simple message (not OTRA formatted) to the log file at the specified path into the log path
    */
   public static function simpleLogTo(string $message, string  $logPath = 'log') : void
   {
@@ -128,7 +128,7 @@ abstract class Logger
   }
 
   /**
-   * Logs all sql queries with the file name that launches it and the line number where it occurred.
+   * Logs all SQL queries with the file name that launches it and the line number where it occurred.
    */
   public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
   {

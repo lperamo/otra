@@ -44,7 +44,7 @@ const
   CODE_DIV = '</div>';
 
 /**
- * Returns the pretty printed versions of sql clauses
+ * Returns the pretty printed versions of SQL clauses
  *
  *
  * @return string[]
@@ -85,8 +85,8 @@ function sqlReplacements(
 }
 
 /**
- * @param string $rawSql Raw sql to pretty print
- * @param bool   $raw    Do we want the raw sql or the styled sql ?
+ * @param string $rawSql Raw SQL to pretty print
+ * @param bool   $raw    Do we want the raw SQL or the styled SQL?
  *
  * @return string
  */
@@ -133,8 +133,8 @@ function rawSqlPrettyPrint(string $rawSql, bool $raw = false) : string
 
 /**
  * @param PDOStatement $statement         Statement to use if we want to replace parameters by their values
- * @param bool         $raw               Do we want the raw sql or the styled sql ?
- * @param bool         $replaceParameters Do we have to replace the parameters by their values ?
+ * @param bool         $raw               Do we want the raw SQL or the styled SQL?
+ * @param bool         $replaceParameters Do we have to replace the parameters by their values?
  *
  * @return string
  */
@@ -189,7 +189,7 @@ function statementPrettyPrint(PDOStatement $statement, bool $raw = false, bool $
 
   $output .= PHP_EOL . PHP_EOL;
 
-  // Display parameters at end.
+  // Display parameters at the end.
   if (!$replaceParameters)
   {
     foreach ($parameters as $parameterName => $parameterValue)
