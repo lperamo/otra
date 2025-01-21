@@ -1,0 +1,2 @@
+[{"file":"/var/www/html/perso/newCMS/bundles/CMS/backend/controllers/index/IndexAction.php","line":31,"query":"SELECT
+ * FROM lpcms_footer"},

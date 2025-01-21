@@ -118,7 +118,7 @@ abstract class Logger
   /**
    * Appends a simple message (not OTRA formatted) to the log file at the specified path into the log path
    */
-  public static function simpleLogTo(string $message, string  $logPath = 'log') : void
+  public static function simpleLogTo(string $message, string $logPath = 'log') : void
   {
     clearstatcache();
     self::logging(

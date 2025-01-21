@@ -223,11 +223,11 @@ $themes: (
     'profiler--line--text-shadow' : 0 0 1px #cc3,
     // ** profiler - SQL logs -fields
     'profiler--field--color' : #88f,
-    'profiler--field--text-shadow' : #88f,
+    'profiler--field--text-shadow' : 0 0 1px #88f,
     'profiler--field--gradient' : linear-gradient(
       90deg,
-      #88f,
-      #04f
+      #7070ff,
+      #a3a3ff
     ),
     // ** profiler - routes block
     'profiler--routes--block--background-color' : rgb(77 77 77 / 15%),

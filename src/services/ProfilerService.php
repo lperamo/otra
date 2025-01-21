@@ -41,7 +41,11 @@ class ProfilerService
 
     /** @var array{file:string, line:int, query:string}[] $requests */
     $requests = json_decode(
-      substr($contents, 0, -2) . ']',
+      substr(
+        str_replace(PHP_EOL, '', $contents), // in case a manual modification of the logs was made in error
+        0,
+        -1
+      ) . ']',
       true,
       512,
       JSON_THROW_ON_ERROR
@@ -55,14 +59,14 @@ class ProfilerService
     foreach($requests as $request)
     {
       ?>
-      <div class="profiler--sql-logs--element">
-        <div class="profiler--sql-logs--element--left-block">
-          <?= trans('In file') . ' <span class="profiler--sql-logs--element--file" title="Click to select">', substr($request['file'],
-            $basePathLength), '</span>:<span class="profiler--sql-logs--element--line" title="Click to select">', $request['line'],
+      <div class=profiler--sql-logs--element>
+        <div class=profiler--sql-logs--element--left-block>
+          <?= trans('In file') . ' <span class=profiler--sql-logs--element--file title="Click to select">', substr($request['file'],
+            $basePathLength), '</span>:<span class=profiler--sql-logs--element--line title="Click to select">', $request['line'],
           '</span>&nbsp;:',
           rawSqlPrettyPrint($request['query']) ?>
         </div>
-        <button type="button" class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
+        <button type=button class="profiler--sql-logs--element--ripple ripple"><?= trans('Copy') ?></button>
       </div>
       <?php
     }
