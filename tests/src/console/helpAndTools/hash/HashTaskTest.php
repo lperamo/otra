@@ -15,7 +15,7 @@ class HashTaskTest extends TestCase
 {
   private const int BLOWFISH_SALT_LENGTH = 22;
   
-  private const string OTRA_TASK_HASH = 'hash',
+  private const string OTRA_TASK_HASH = 'hash';
 
   /**
    * @author Lionel Péramo

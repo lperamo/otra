@@ -42,7 +42,7 @@ if (!function_exists(__NAMESPACE__ . '\\cliCommand'))
       require_once CORE_PATH . 'console/colors.php';
 
     $errorMessage = (
-        $errorMessage ?? 'Problem when loading the command :' . PHP_EOL .
+        $errorMessage ?? 'Problem when loading the command:' . PHP_EOL .
       ($isCli
         ? CLI_WARNING . $command . END_COLOR
         : $command

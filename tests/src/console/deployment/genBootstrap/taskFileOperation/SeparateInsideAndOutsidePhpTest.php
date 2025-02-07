@@ -3,17 +3,9 @@ declare(strict_types=1);
 
 namespace src\console\deployment\genBootstrap\taskFileOperation
 {
-
-  use otra\OtraException;
   use PHPUnit\Framework\TestCase;
+  use const otra\cache\php\{CONSOLE_PATH, TEST_PATH};
   use function otra\console\deployment\genBootstrap\separateInsideAndOutsidePhp;
-  use const otra\cache\php\
-  {APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, PROD, TEST_PATH
-  };
-  use const otra\console\
-  {CLI_SUCCESS, CLI_WARNING, END_COLOR
-  };
-  use function otra\console\deployment\genBootstrap\fixFiles;
 
   /**
    * It fixes issues like when AllConfig is not loaded while it should be
@@ -23,16 +15,27 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
    */
   class SeparateInsideAndOutsidePhpTest extends TestCase
   {
+    private const string USED_NAMESPACE = 'otra\\console\\deployment\\genBootstrap\\';
     protected function setUp(): void
     {
       parent::setUp();
-      require CONSOLE_PATH . 'deployment/genBootstrap/processFile.php';
+      define(self::USED_NAMESPACE . 'PHP_END_TAG_LENGTH', 2);
+      define(self::USED_NAMESPACE . 'PHP_OPEN_TAG_AND_SPACE_LENGTH', 6);
+      define(self::USED_NAMESPACE . 'PHP_OPEN_TAG_LENGTH', 5);
+      define(self::USED_NAMESPACE . 'DECLARE_PATTERN', '@\s*declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;@m');
+      define(self::USED_NAMESPACE . 'CLASS_TOKENS', [
+        T_CLASS => true,
+        T_INTERFACE => true,
+        T_TRAIT => true,
+        T_ENUM => true
+      ]);
+      require CONSOLE_PATH . 'deployment/genBootstrap/separateInsideAndOutsidePhp.php';
       define('otra\console\deployment\genBootstrap\PHP_OPEN_TAG_STRING', '<?php');
       define('otra\console\deployment\genBootstrap\PHP_END_TAG_STRING', '?>');
     }
 
     /**
-     * Tests various use statements.
+     * Tests some varied use statements. For now, we are removing namespaces. It should be different in the future.
      *
      * @dataProvider fileProvider
      *
@@ -62,15 +65,19 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
           TEST_PATH . 'examples/deployment/separate.php',
           [
             [
-              'type' => 'phpOutside',
-              'content' => <<<CODE
-namespace examples\\deployment\\fixFiles\\input;
-class Test2
-{
-
-}
-CODE
-            ]
+              [
+                  'type' => 'phpOutside',
+                  'content' => <<<CODE
+  class Test2
+  {
+  
+  }
+  CODE
+              ],
+            ],
+            '',
+            '',
+            []
           ]
         ]
       ];

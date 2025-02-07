@@ -29,7 +29,7 @@ class ShowFileTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    define('otra\\console\\deployment\\genBootstrap\\BASE_PATH_LENGTH', strlen(BASE_PATH));
   }
 
   /**
@@ -39,6 +39,7 @@ class ShowFileTest extends TestCase
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
+    require CONSOLE_PATH . '/deployment/genBootstrap/showFile.php';
 
     // testing string output
     static::expectOutputString(
@@ -61,6 +62,7 @@ class ShowFileTest extends TestCase
   {
     // context
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
+    require CONSOLE_PATH . '/deployment/genBootstrap/showFile.php';
 
     // testing string output
     static::expectOutputString(
@@ -83,6 +85,7 @@ class ShowFileTest extends TestCase
     // context
     $fileContent = 'echo $test';
     define('otra\\console\\deployment\\genBootstrap\\PATH_CONSTANTS', ['test' => 'value']);
+    require CONSOLE_PATH . '/deployment/genBootstrap/evalPathVariables.php';
 
     // launching
     [$fileContent, $isTemplate] = evalPathVariables($fileContent, self::FILENAME, 'echo $test;');

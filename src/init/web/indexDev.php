@@ -11,7 +11,8 @@ use const otra\cache\php\{BASE_PATH,CACHE_PATH,CORE_PATH};
 use const otra\cache\php\CLASSMAP;
 
 require __DIR__ . '/../config/constants.php';
-ini_set('session.save_path', CACHE_PATH . 'php/sessions/');
+// no need to put a `/` at the end as PHP already does it
+ini_set('session.save_path', CACHE_PATH . 'php/sessions');
 session_name('__Secure-LPSESSID');
 session_start([
   'cookie_secure' => true,

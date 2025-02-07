@@ -20,7 +20,7 @@ class ProcessReturnTest extends TestCase
   public function testCaseRoutesMainConfig(): void
   {
     // context
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    require CONSOLE_PATH . 'deployment/genBootstrap/processReturn.php';
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
 
     $inclusionCode = PHP_EOL . 'require BUNDLES_PATH . \'config/Routes.php\'' . PHP_EOL . ');';
@@ -41,14 +41,13 @@ class ProcessReturnTest extends TestCase
     );
 
     // testing
-    $insertedCode = '[\'testKey\'=>\'testValue\']';
     self::assertSame(
-      $includingStartCode . $insertedCode . PHP_EOL . ');',
+      $includingStartCode . $includedCode . PHP_EOL . ');',
       $includingCode,
       'Testing $includingCode...'
     );
     self::assertSame(
-      $insertedCode,
+      $includedCode,
       $includedCode,
       'Testing $includedCode...'
     );

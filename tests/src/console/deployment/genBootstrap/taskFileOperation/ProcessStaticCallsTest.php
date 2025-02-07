@@ -15,15 +15,18 @@ use function otra\console\deployment\genBootstrap\processStaticCalls;
 class ProcessStaticCallsTest extends TestCase
 {
   private const int LEVEL = 1;
-
+  private const string USED_NAMESPACE = 'otra\\console\\deployment\\genBootstrap\\';
+  
   /**
    * @author Lionel Péramo
    */
   public function testAllGood(): void
   {
     // context
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
-    define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
+    define(self::USED_NAMESPACE . 'OTRA_KEY_STATIC', 'static');
+    define(self::USED_NAMESPACE . 'NAMESPACE_SEPARATOR', '\\');
+    require CONSOLE_PATH . 'deployment/genBootstrap/assembleFiles.php';
+    define(self::USED_NAMESPACE . 'VERBOSE', 2);
 
     $contentToAdd = 'namespace otra;' . PHP_EOL .
       'self::test();' . PHP_EOL .

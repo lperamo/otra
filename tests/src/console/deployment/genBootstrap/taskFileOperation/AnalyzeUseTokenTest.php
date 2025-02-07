@@ -5,7 +5,8 @@ namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use PHPUnit\Framework\TestCase;
 use const otra\cache\php\{CONSOLE_PATH, CORE_PATH};
-use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
+use const otra\console\
+{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genBootstrap\{analyzeUseToken};
 
 /**
@@ -24,7 +25,8 @@ class AnalyzeUseTokenTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    define('otra\\console\\deployment\\genBootstrap\\NAMESPACE_SEPARATOR', '\\');
+    require CONSOLE_PATH . 'deployment/genBootstrap/analyzeUseToken.php';
   }
 
   /**
@@ -37,17 +39,19 @@ class AnalyzeUseTokenTest extends TestCase
   {
     // context
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
-    $filesToConcat = [];
-    $parsedFiles = [];
+    $filesToConcat = $parsedFiles = [];
     $class = 'config\\Router';
 
     // launching
+    $parsedClasses = [];
     analyzeUseToken(
       DEBUG_LEVEL,
       $filesToConcat,
       $class,
       $parsedFiles,
-      $class
+      $class,
+      $parsedClasses,
+      ''
     );
 
     // testing
@@ -64,12 +68,15 @@ class AnalyzeUseTokenTest extends TestCase
     $class = 'DevControllerTrait';
 
     // launching
+    $parsedClasses = [];
     analyzeUseToken(
       DEBUG_LEVEL,
       $filesToConcat,
       $class,
       $parsedFiles,
-      $class
+      $class,
+      $parsedClasses,
+      ''
     );
 
     // testing
@@ -80,6 +87,8 @@ class AnalyzeUseTokenTest extends TestCase
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
+  // The ProdControllerTrait is already included using `require` statements,
+  // so the analysis only permits replacements afterward as well as debugging messages.
   public function testIsProdControllerTrait(): void
   {
     // context
@@ -88,27 +97,27 @@ class AnalyzeUseTokenTest extends TestCase
     $class = 'ProdControllerTrait';
 
     // launching
+    $parsedClasses = [];
     analyzeUseToken(
       DEBUG_LEVEL,
       $filesToConcat,
       $class,
       $parsedFiles,
-      $class
+      $class,
+      $parsedClasses,
+      ''
     );
 
     // testing
-    $filename = CORE_PATH . 'prod/' . $class . self::PHP_EXTENSION;
-    static::expectOutputString('');
-    static::assertSame([
-      'php' =>
-        [
-          'use' => [$filename]
-        ]
-    ],
+    static::expectOutputString(
+      CLI_INFO . 'ProdControllerTrait has been already loaded by a require statement.' . END_COLOR . PHP_EOL
+    );
+    static::assertSame(
+      [],
       $filesToConcat,
       self::LABEL_TESTING_FILES_TO_CONCAT
     );
-    static::assertSame([$filename], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
+    static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }
 
   public function testIsBlockSystem(): void
@@ -120,12 +129,15 @@ class AnalyzeUseTokenTest extends TestCase
     $class = 'cache\\php\\BlocksSystem';
 
     // launching
+    $parsedClasses = [];
     analyzeUseToken(
       DEBUG_LEVEL,
       $filesToConcat,
       $class,
       $parsedFiles,
-      $class
+      $class,
+      $parsedClasses,
+      ''
     );
 
     // testing
@@ -140,19 +152,22 @@ class AnalyzeUseTokenTest extends TestCase
     define('otra\\console\\deployment\\genBootstrap\\VERBOSE', 2);
     define(__NAMESPACE__ . self::CONST_NAME_DEBUG_LEVEL, 1);
     $filesToConcat = $parsedFiles = [];
-    $class = '\ProdControllerTrait';
+    $class = '\vendor\SomeLibrary\SomeClass';
 
     // launching
+    $parsedClasses = [];
     analyzeUseToken(
       DEBUG_LEVEL,
       $filesToConcat,
       $class,
       $parsedFiles,
-      $class
+      $class,
+      $parsedClasses,
+      ''
     );
 
     // testing
-    static::expectOutputString(CLI_WARNING . 'EXTERNAL LIBRARY CLASS : ' . $class . END_COLOR . PHP_EOL);
+    static::expectOutputString(CLI_INFO_HIGHLIGHT . 'EXTERNAL LIBRARY CLASS : ' . $class . END_COLOR . PHP_EOL);
     static::assertSame([], $filesToConcat, self::LABEL_TESTING_FILES_TO_CONCAT);
     static::assertSame([], $parsedFiles, self::LABEL_TESTING_PARSED_FILES);
   }

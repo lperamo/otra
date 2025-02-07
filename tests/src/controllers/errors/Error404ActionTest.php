@@ -64,8 +64,9 @@ class Error404ActionTest extends TestCase
   }
 
   /**
+   * (should be medium not large)
    * @dataProvider dataProvider
-   * @medium
+   * @large
    * @author Lionel Péramo
    * @throws OtraException
    */

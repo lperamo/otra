@@ -100,7 +100,6 @@ class CreateHelloWorldTaskTest extends TestCase
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'cache/php/security/prod/HelloWorld.php' . CLI_BASE .
       self::OTRA_LABEL_UPDATED . SUCCESS .
       CLI_BASE . 'Building the CSS assets...' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'The production configuration is used for this task.' . END_COLOR . PHP_EOL .
       CLI_BASE . 'Files have been generated' . SUCCESS .
       CLI_BASE . 'CSS assets built' . SUCCESS .
       'Class mapping finished' . SUCCESS .

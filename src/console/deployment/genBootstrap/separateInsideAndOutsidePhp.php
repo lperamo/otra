@@ -63,8 +63,6 @@ function extractConstants(string $code) : array
         {
           $constantValueStart = true;
           $finalConst .= $tokenValue;
-//          var_dump($previousKey, $tokenValue);
-
           $globalConstants[$previousKey] .= $tokenValue;
         }
       }
@@ -217,14 +215,20 @@ function extractBlock(string $pattern, string &$insideContent, string &$variable
 }
 
 /**
+ *  Processes PHP content to separate code inside and outside of class/functions, extracts use statements and constants.
+ *
+ *  This function takes a string of PHP content, removes comments, it extracts use statements (const/function),
+ *  parses classes to separate their content, extracts global constants and functions, processes namespaces,
+ *  and returns structured parts along with extracted elements.
+ *
  * @param string   $phpContent
- * @param string[] $parsedClasses
+ * @param string[] &$parsedClasses
  *
  * @return array{
- *    0: array<string,string>,
- *    1: string[],
- *    2: string[],
- *    3: array<string,string>
+ *    0: array<int, array{type: 'phpInside'|'phpOutside', content: string}>
+ *    1: string,
+ *    2: string,
+ *    3: array<string, mixed>
  *  } [$parts, $useConst, $useFunction, $globalConstants]
  */
 function separateInsideAndOutsidePhp(string $phpContent, array &$parsedClasses): array
@@ -381,7 +385,6 @@ function separateInsideAndOutsidePhp(string $phpContent, array &$parsedClasses):
 
   // Retrieve constants
   [$globalConstants, $fullDeclarationsBlock] = extractConstants($insideContent);
-//  var_dump($fullDeclarationsBlock);
 
   // remove constants block as we have processed them
   foreach ($fullDeclarationsBlock as $fullDeclarationBlock)

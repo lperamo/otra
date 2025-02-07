@@ -23,7 +23,7 @@ class GetFileInfoFromRequireMatchTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    require CONSOLE_PATH . 'deployment/genBootstrap/getFileInfoFromRequireMatch.php';
   }
 
   /**

@@ -52,7 +52,8 @@ class GenAssetsTaskTest extends TestCase
   }
 
   /**
-   * @medium
+   * Should be medium not large.
+   * @large
    * @author Lionel Péramo
    * @throws OtraException
    */

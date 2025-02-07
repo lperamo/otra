@@ -43,6 +43,7 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
   {
     parent::setUp();
     require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    require CONSOLE_PATH . 'deployment/genBootstrap/assembleFiles.php';
   }
 
   /**
@@ -87,13 +88,15 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertSame(
       [
         'php' => [
+          'use' => [],
           'require' =>
           [
             $exampleFileAbsolutePath => [
-              'match' => self::REQUIRE_MATCHED,
-              'posMatch' => 12
+              'match' => self::REQUIRE_MATCHED
             ]
-          ]
+          ],
+          'extends' => [],
+          'static' => []
         ]
       ],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],
@@ -158,13 +161,13 @@ class GetFileInfoFromRequiresAndExtendsTest extends TestCase
     self::assertSame(
       [
         'php' => [
+          'use' => [],
           'require' =>
             [
-              $exampleFileAbsolutePath => [
-                'match' => self::REQUIRE_MATCHED,
-                'posMatch' => 12
-              ]
-            ]
+              $exampleFileAbsolutePath => ['match' => self::REQUIRE_MATCHED]
+            ],
+          'extends' => [],
+          'static' => []
         ]
       ],
       $paramsArrayToPassAsReference[self::KEY_FILES_TO_CONCAT],

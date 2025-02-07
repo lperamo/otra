@@ -258,7 +258,7 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   SPACE_INDENT . '# Forces static compression (for already compressed files)' . PHP_EOL .
   SPACE_INDENT . 'brotli on;' . PHP_EOL .
-  SPACE_INDENT . 'brotli_comp_level 7' . PHP_EOL .
+  SPACE_INDENT . 'brotli_comp_level 7;' . PHP_EOL .
   SPACE_INDENT . 'brotli_static always;' . PHP_EOL .
   SPACE_INDENT . 'gzip off;' . PHP_EOL .
   PHP_EOL .

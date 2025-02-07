@@ -23,17 +23,18 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     private const string
       EOL_CLASS1 = PHP_EOL . 'class Class1{}',
       EOL_CLASS2 = PHP_EOL . 'class Class2{}',
-      EOL_CLASS3 = PHP_EOL . 'class Class3{}',
-      USE_SOME_NAMESPACE = 'use Some\\Namespace';
+      EOL_CLASS3 = PHP_EOL . 'class Class3{}';
 
     protected function setUp(): void
     {
       parent::setUp();
-      require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+      define('otra\\console\\deployment\\genBootstrap\\NAMESPACE_SEPARATOR', '\\');
+      require CONSOLE_PATH . 'deployment/genBootstrap/assembleFiles.php';
     }
 
     /**
-     * Tests various use statements.
+     * Tests some varied `use` statements.
+     * We do not remove use statements immediately anymore but later by creating an array of replacements.
      *
      * @dataProvider useStatementsProvider
      *
@@ -79,22 +80,22 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       return [
         'Simple use' =>
         [
-          self::USE_SOME_NAMESPACE . '\\Class1;' . self::EOL_CLASS1,
+          self::EOL_CLASS1,
           self::EOL_CLASS1,
           '',
           []
         ],
         'Multiple classes' =>
         [
-          self::USE_SOME_NAMESPACE . '\\{Stripe, Class2, Class3};' . PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 .
+          'class Stripe{}' . self::EOL_CLASS2 .
           self::EOL_CLASS3,
-          PHP_EOL . 'class Stripe{}' . self::EOL_CLASS2 . self::EOL_CLASS3,
+          'class Stripe{}' . self::EOL_CLASS2 . self::EOL_CLASS3,
           '',
           []
         ],
         'With carriage return' =>
         [
-          self::USE_SOME_NAMESPACE . PHP_EOL . '{Class1,Class2};' . self::EOL_CLASS1 . self::EOL_CLASS2,
+          self::EOL_CLASS1 . self::EOL_CLASS2,
           self::EOL_CLASS1 . self::EOL_CLASS2,
           '',
           [],
@@ -102,6 +103,11 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       ];
     }
 
+    /**
+     * We do not remove use statements immediately anymore but later by creating an array of replacements.
+     * 
+     * @return void
+     */
     public function testNoReplacementInVariableNames(): void
     {
       // Context
@@ -127,7 +133,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       $expectedContent = <<<EOD
     \$otra\cache\php\BASE_PATH = '/some/path/';
     \$config = require otra\cache\php\BASE_PATH . 'config/' . \$_SERVER[otra\cache\php\APP_ENV] . '/AllConfig.php';
-    
+    use SomeNamespace\SomeClass;
     EOD;
 
       static::assertEquals($expectedContent, $contentToAdd);

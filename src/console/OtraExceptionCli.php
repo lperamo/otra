@@ -3,44 +3,35 @@ declare(strict_types=1);
 namespace otra\console;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 use otra\OtraException;
 use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
 
 /**
  * Shows an exception 'colorful' display for command line commands.
- *
- * @author Lionel Péramo
  */
 class OtraExceptionCli extends Exception
 {
-  private const array TABLE_WIDTHS = ['function', 'line', 'file', 'arguments'];
-  
+  private const array TABLE_COLUMNS = ['type', 'function', 'line', 'file', 'arguments'];
+
   private const int
     CELL_PADDING = 2,
     UNKNOWN_LENGTH = 7,
     LINE_HEADER_LENGTH = 4,
     NOT_IMPLEMENTED_YET_LENGTH = 19;
-  
+
   private const string
     KEY_VARIABLES = 'variables',
-    TOP_START_SEPARATOR = '┌',
-    TOP_INTERSECTION_SEPARATOR = '┬',
-    TOP_END_SEPARATOR = '┐',
-    MEDIUM_START_SEPARATOR = '├',
-    VERTICAL_SEPARATOR = '│',
-    INTERSECTION_OPERATOR = '┼',
-    BOTTOM_INTERSECTION_SEPARATOR = '┴',
-    BOTTOM_END_SEPARATOR = '┘',
-    HORIZONTAL_SEPARATOR = '─',
-    GET_LONGER_STRING_CALLBACK = self::class . '::getLongerString';
-
-  private static int
-    $typeLongestString,
-    $functionLongestString,
-    $lineLongestString,
-    $fileLongestString,
-    $argumentsLongestString;
+    TOP_LEFT = '┌',
+    TOP_SEP = '┬',
+    TOP_RIGHT = '┐',
+    MID_LEFT = '├',
+    MID_SEP = '┼',
+    MID_RIGHT = '┤',
+    BOT_LEFT = '└',
+    BOT_SEP = '┴',
+    BOT_RIGHT = '┘',
+    VERTICAL = '│',
+    HORIZONTAL = '─';
 
   public function __construct(OtraException $exception)
   {
@@ -59,231 +50,206 @@ class OtraExceptionCli extends Exception
   }
 
   /**
-   * Converts the absolute path into 'BASE_PATH/CORE_PATH/CONSOLE_PATH + path' path like
-   *
-   * @param string $pathType 'BASE', 'CORE' or 'CONSOLE'
-   *
-   * @return string
+   * Returns a short path: e.g. "CORE_PATH + tools/cli.php" instead of the full absolute path
    */
-  private static function returnShortenFilePath(string $pathType, string $file) : string
+  private static function returnShortenFilePath(string $pathType, string $file): string
   {
-    return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR . ' + ' .
-      mb_substr($file, mb_strlen(constant('otra\\cache\\php\\' . $pathType . '_PATH')));
+    return CLI_INFO_HIGHLIGHT . $pathType . '_PATH' . END_COLOR
+      . ' + '
+      . mb_substr($file, mb_strlen(constant('otra\\cache\\php\\' . $pathType . '_PATH')));
   }
 
   /**
-   * Shows an exception 'colorful' display for command line commands.
+   * Pads a string ignoring ANSI color codes.
+   * Formula: length = $finalLength + (strlen($colored) - strlen($uncolored)).
    */
-  public static function showMessage(OtraException $exception) : void
+  public static function strPadIgnoreAnsi(
+    string $content,
+    int $finalLength,
+    string $padString = ' ',
+    int $padType = STR_PAD_RIGHT
+  ): string
+  {
+    $uncolored = preg_replace('/\e\[[0-9;]*m/', '', $content);
+    
+    if ($uncolored === null)
+      $uncolored = $content; // fallback
+
+    return str_pad($content, $finalLength + strlen($content) - strlen($uncolored), $padString, $padType);
+  }
+
+  /**
+   * Returns the maximum "uncolored" length of a set of strings (so we can align properly).
+   */
+  private static function getMaxUncoloredLength(array $strings): int
+  {
+    $maxLength = 0;
+
+    foreach ($strings as $string)
+    {
+      if (!is_string($string))
+        continue;
+      
+      $uncolored = preg_replace('/\e\[[0-9;]*m/', '', $string);
+      
+      if ($uncolored === null)
+        $uncolored = $string;
+      
+      $length = mb_strlen($uncolored);
+      
+      if ($length > $maxLength)
+        $maxLength = $length;
+    }
+
+    return $maxLength;
+  }
+
+  /**
+   * Displays a single cell's content with a left and right padding ignoring ANSI.
+   */
+  private static function displayCell(string $content, int $width): string
+  {
+    // We add a space on each side so it looks a bit nicer
+    return self::strPadIgnoreAnsi(' ' . $content . ' ', $width);
+  }
+
+  /**
+   * Builds the top line (┌───┬───┬───┐), middle line (├───┼───┤), or bottom line (└───┴───┘) for the table.
+   *
+   * @param string $start The left char (e.g. '┌', '├', '└')
+   * @param string $sep   The separator between columns (e.g. '┬', '┼', '┴')
+   * @param string $end   The right char (e.g. '┐', '┤', '┘')
+   * @param array<int> $widths The widths of each column
+   *
+   * @return string The line (without color, just the box-drawing chars).
+   */
+  private static function buildLine(string $start, string $sep, string $end, array $widths): string
+  {
+    $line = $start;
+
+    $totalCols = count($widths);
+    foreach ($widths as $index => $colWidth)
+    {
+      $line .= str_repeat(self::HORIZONTAL, $colWidth);
+      // If it's not the last column, add the "sep"
+      if ($index < $totalCols - 1)
+        $line .= $sep;
+    }
+
+    $line .= $end;
+    return $line;
+  }
+
+  /**
+   * Actually displays the final message with the table, given the OtraException.
+   */
+  public static function showMessage(OtraException $exception): void
   {
     echo CLI_ERROR, PHP_EOL, 'PHP exception', PHP_EOL, '=============', END_COLOR, PHP_EOL, PHP_EOL;
 
     if (isset($exception->scode))
     {
-      $exceptionFile = $exception->file;
+      $filePath = $exception->file ?? '';
 
-      if (str_contains($exceptionFile, CONSOLE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'CONSOLE_PATH + ', $exceptionFile);
-      elseif (str_contains($exceptionFile, CORE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'CORE_PATH + ', $exceptionFile);
-      elseif (str_contains($exceptionFile, BASE_PATH))
-        $exceptionFile = str_replace(CONSOLE_PATH, 'BASE_PATH + ', $exceptionFile);
-
-      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR, ' in ', CLI_INFO_HIGHLIGHT, $exceptionFile,
-      END_COLOR, ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR, PHP_EOL, $exception->message, PHP_EOL;
-    }
-
-    $exceptionBacktraces = $exception->backtraces;
-
-    // If there is a context, we add it
-    if (!empty($exception->context))
-      array_push($exceptionBacktraces, ...$exception->context);
-
-    // Preparing table decorations
-    $tableEnd = $headersTop = $headersEnd = '';
-
-    $filenames = array_column($exceptionBacktraces, 'file');
-    $formattedFilenames = [];
-    $compositeColoredPath = true;
-
-    foreach ($filenames as &$filename)
-    {
-      $compositeColoredPath = true;
-
-      if ($filename !== '')
-      {
-        $filename = str_replace('\\', DIR_SEPARATOR, $filename);
-
-        if (str_contains($filename, CONSOLE_PATH))
-          $filename = self::returnShortenFilePath('CONSOLE', $filename);
-        elseif (str_contains($filename, CORE_PATH))
-          $filename = self::returnShortenFilePath('CORE', $filename);
-        elseif (str_contains($filename, BASE_PATH))
-          $filename = self::returnShortenFilePath('BASE', $filename);
-        else
-          $compositeColoredPath = false;
-      }
-      else
-        $compositeColoredPath = false;
-
-      $formattedFilenames[] = [
-        'compositeColoredPath' => $compositeColoredPath,
-        'file' => $filename
+      // Replace known paths with constants
+      $pathReplacements = [
+        CONSOLE_PATH => 'CONSOLE_PATH + ',
+        CORE_PATH => 'CORE_PATH + ',
+        BASE_PATH => 'BASE_PATH + '
       ];
+
+      foreach ($pathReplacements as $path => $replacement) {
+        if (str_contains($filePath, $path)) {
+          $filePath = str_replace($path, $replacement, $filePath);
+          break;
+        }
+      }
+
+      echo 'Error type ', CLI_INFO_HIGHLIGHT, $exception->scode, END_COLOR,
+      ' in ', CLI_INFO_HIGHLIGHT, $filePath, END_COLOR,
+      ' at line ', CLI_INFO_HIGHLIGHT, $exception->line, END_COLOR,
+      PHP_EOL, $exception->message, PHP_EOL;
     }
 
-    $exceptionCodeLen = mb_strlen($exception->scode);
-    self::$typeLongestString = ($exceptionCodeLen > self::UNKNOWN_LENGTH
-        ? $exceptionCodeLen
-        : self::UNKNOWN_LENGTH) + self::CELL_PADDING;
+    $backtraceData = $exception->backtraces;
 
-    $functionLen = mb_strlen(array_reduce(
-      array_column($exceptionBacktraces, 'function'),
-      self::GET_LONGER_STRING_CALLBACK,
-      ''
-    ));
-    self::$functionLongestString = ($functionLen > 8 ? $functionLen : 8) + self::CELL_PADDING;
-    $lineCodeLen = mb_strlen(array_reduce(
-      array_column($exceptionBacktraces, 'line'),
-      self::GET_LONGER_STRING_CALLBACK,
-      ''
-    ));
+    if (!empty($exception->context))
+      array_push($backtraceData, ...$exception->context);
 
-    self::$lineLongestString = ($lineCodeLen > self::LINE_HEADER_LENGTH
-        ? $lineCodeLen
-        : self::LINE_HEADER_LENGTH) + self::CELL_PADDING;
-    self::$fileLongestString = mb_strlen(array_reduce(
-      $filenames,
-      self::GET_LONGER_STRING_CALLBACK,
-      ''
-    ));
-
-    self::$argumentsLongestString = (self::$typeLongestString > self::NOT_IMPLEMENTED_YET_LENGTH
-        ? self::$typeLongestString
-        : self::NOT_IMPLEMENTED_YET_LENGTH) + self::CELL_PADDING;
-
-    foreach(self::TABLE_WIDTHS as $headerWidth)
+    // Preprocess backtrace entries
+    foreach ($backtraceData as $traceIndex => $traceEntry)
     {
-      $separatorsLength = self::${$headerWidth . 'LongestString'};
+      if (empty($traceEntry['file']))
+        continue;
 
-      // adjustments due to color changes (curious that is not dependent of $compositeColoredPath
-      if ($headerWidth === 'file')
-        $separatorsLength -= 21;
+      // Normalize and shorten file paths
+      $normalizedPath = str_replace('\\', DIR_SEPARATOR, $traceEntry['file']);
 
-      $separators = str_repeat(self::HORIZONTAL_SEPARATOR, $separatorsLength);
-      $headersTop .= self::TOP_INTERSECTION_SEPARATOR . $separators;
-      $headersEnd .= self::INTERSECTION_OPERATOR . $separators;
-      $tableEnd .= self::BOTTOM_INTERSECTION_SEPARATOR . $separators;
+      $pathShorteners = [
+        CONSOLE_PATH => 'CONSOLE',
+        CORE_PATH => 'CORE',
+        BASE_PATH => 'BASE'
+      ];
+
+      foreach ($pathShorteners as $path => $prefix) {
+        if (str_contains($normalizedPath, $path)) {
+          $normalizedPath = self::returnShortenFilePath($prefix, $normalizedPath);
+          break;
+        }
+      }
+
+      $backtraceData[$traceIndex]['file'] = $normalizedPath;
+
+      // Remove sensitive variables from args
+      unset($backtraceData[$traceIndex]['args']['variables']);
     }
 
-    unset($compositeColoredPath);
+    // Calculate column widths
+    $columnWidths = [
+      max(mb_strlen($exception->scode), self::UNKNOWN_LENGTH) + self::CELL_PADDING,
+      max(self::getMaxUncoloredLength(array_column($backtraceData, 'function')), 8) + self::CELL_PADDING,
+      max(self::getMaxUncoloredLength(array_column($backtraceData, 'line')), self::LINE_HEADER_LENGTH) + self::CELL_PADDING,
+      self::getMaxUncoloredLength(array_column($backtraceData, 'file')) + self::CELL_PADDING,
+      max(self::UNKNOWN_LENGTH, self::NOT_IMPLEMENTED_YET_LENGTH) + self::CELL_PADDING
+    ];
 
-    $headersTop .= self::TOP_END_SEPARATOR;
-    $headersEnd .= self::VERTICAL_SEPARATOR;
-    $tableEnd .= self::BOTTOM_END_SEPARATOR;
+    // Build table output
+    $output = CLI_TABLE
+      . self::buildLine(self::TOP_LEFT, self::TOP_SEP, self::TOP_RIGHT, $columnWidths)
+      . END_COLOR . PHP_EOL
+      . CLI_TABLE;
 
-    unset($headerWidth);
+    // Header row
+    foreach (['Type', 'Function', 'Line', 'File', 'Arguments'] as $index => $header) {
+      $output .= self::VERTICAL . CLI_TABLE_HEADER
+        . self::displayCell($header, $columnWidths[$index])
+        . CLI_TABLE;
+    }
 
-    /******************************
-     * Write HEADERS of the table *
-     ******************************/
-    $backtracesOutput = CLI_TABLE . self::TOP_START_SEPARATOR .
-      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) .
-      $headersTop . END_COLOR . PHP_EOL .
-      self::consoleHeaders() . PHP_EOL .
-      CLI_TABLE . self::MEDIUM_START_SEPARATOR .
-      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) . $headersEnd .
-      END_COLOR . END_COLOR . PHP_EOL;
+    $output .= self::VERTICAL . PHP_EOL . CLI_TABLE
+      . self::buildLine(self::MID_LEFT, self::MID_SEP, self::MID_RIGHT, $columnWidths)
+      . END_COLOR . PHP_EOL;
 
-    /*******************************
-     * Write the BODY of the table *
-     *******************************/
-
-    unset($exceptionBacktraces[0]['args'][self::KEY_VARIABLES]);
-
-    foreach ($exceptionBacktraces as $actualTraceIndex => $exceptionBacktrace)
+    // Backtrace rows
+    foreach ($backtraceData as $traceIndex => $traceEntry)
     {
-      $actualTrace = $exceptionBacktrace;
-      $backtracesOutput .= CLI_TABLE . self::VERTICAL_SEPARATOR . ' ' . END_COLOR .
-        str_pad(
-          0 === $actualTraceIndex ? $exception->scode : '',
-          self::$typeLongestString - 1
-        ) .
-        self::consoleLine($actualTrace, 'function', self::$functionLongestString) .
-        self::consoleLine($actualTrace, 'line', self::$lineLongestString) .
-        /** FILE - Path is shortened to the essential to leave more place for the path's end */
-        (isset($formattedFilenames[$actualTraceIndex])
-        ? self::consoleLine(
-          $actualTrace,
-          'file',
-          // If the path is composite e.g.: 'KIND_OF_PATH + File'; then no coloring is needed
-          self::$fileLongestString +
-          ($formattedFilenames[$actualTraceIndex]['compositeColoredPath'] && isset($actualTrace['file']) ? 2 : -21),
-          $formattedFilenames[$actualTraceIndex]['file']
-        )
-        : self::consoleLine(
-          $actualTrace,
-          'file',
-          // If the path is composite e.g.: 'KIND_OF_PATH + File'; then no coloring is needed
-          self::$fileLongestString - 21
-        )) .
-        /** ARGUMENTS */
-        CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_BASE .
-        ' NOT IMPLEMENTED YET ' . CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR .
-        PHP_EOL;
-      // echo $now['args']; after args has been converted
+      $output .= CLI_TABLE . self::VERTICAL
+        . self::strPadIgnoreAnsi(' ' . ($traceIndex === 0 ? $exception->scode : '') . ' ', $columnWidths[0])
+        . self::VERTICAL
+        . self::strPadIgnoreAnsi(' ' . ($traceEntry['function'] ?? '-') . ' ', $columnWidths[1])
+        . self::VERTICAL
+        . self::strPadIgnoreAnsi(' ' . (isset($traceEntry['line']) ? (string)$traceEntry['line'] : '-') . ' ', $columnWidths[2])
+        . self::VERTICAL
+        . self::strPadIgnoreAnsi(' ' . ($traceEntry['file'] ?? '-') . ' ', $columnWidths[3])
+        . CLI_TABLE . self::VERTICAL
+        . self::strPadIgnoreAnsi(' NOT IMPLEMENTED YET ', $columnWidths[4])
+        . self::VERTICAL . END_COLOR . PHP_EOL;
     }
 
-    $backtracesOutput .= CLI_TABLE . '└' .
-      str_repeat(self::HORIZONTAL_SEPARATOR, self::$typeLongestString) . $tableEnd . END_COLOR . PHP_EOL;
+    $output .= CLI_TABLE
+      . self::buildLine(self::BOT_LEFT, self::BOT_SEP, self::BOT_RIGHT, $columnWidths)
+      . END_COLOR . PHP_EOL;
 
-    // End of the table
-    echo $backtracesOutput;
-  }
-
-  /**
-   * Returns the text that shows the headers for a Unicode table (command line style)
-   *
-   * @return string
-   */
-  private static function consoleHeaders() : string
-  {
-    $output = '';
-
-    foreach(['Type', 'Function', 'Line', 'File', 'Arguments'] as $value)
-    {
-      $output .= CLI_TABLE . self::VERTICAL_SEPARATOR . CLI_TABLE_HEADER .
-        str_pad(' ' . $value, ($value === 'File' ? -21 : 0) + self::${lcfirst($value) . 'LongestString'});
-    }
-
-    return $output . CLI_TABLE . self::VERTICAL_SEPARATOR;
-  }
-
-  /**
-   * Returns the content of a stack trace row in console style.
-   *
-   * @param array $rowData Data of a stack trace line
-   *
-   * @return string
-   */
-  #[Pure] private static function consoleLine(
-    array $rowData,
-    string $columnName,
-    int $padLength,
-    string $alternateContent = ''
-  ) : string
-  {
-    return CLI_TABLE . self::VERTICAL_SEPARATOR . END_COLOR . str_pad((isset($rowData[$columnName])
-        ? ' ' . ('' === $alternateContent ? $rowData[$columnName] : $alternateContent) . ' '
-        : ' -'), $padLength);
-  }
-
-  /**
-   *
-   * @return string
-   */
-  private static function getLongerString(string $firstString, string $secondString) : string
-  {
-    return (mb_strlen($firstString) > mb_strlen($secondString)) ? $firstString : $secondString;
+    echo $output;
   }
 }

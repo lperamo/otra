@@ -35,7 +35,7 @@ const
   VERSION = '2025.0.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
-// require_once 'cause maybe the class OtraException will attempt to load it too !
+// require_once 'cause maybe the class OtraException will attempt to load it too!
 /** THE framework production config
  *
  * @author Lionel Péramo
@@ -60,7 +60,7 @@ if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
  */
 class HtmlMinifier
 {
-  private const
+  private const array
     INLINE_TAGS =
     [
       'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'dfn', 'em', 'font', 'i',
@@ -68,6 +68,13 @@ class HtmlMinifier
       'textarea', 'time', 'var', 'video'
     ],
     PRESERVED_TAGS = ['code', 'pre', 'script', 'svg', 'textarea'],
+    DEFAULT_CONFIGURATION =
+    [
+      'comments' => true,
+      'spaces' => 'consecutiveSpaces'
+    ];
+
+  private const string
     STATE_CLOSING_TAG = 'CLOSING_TAG',
     STATE_IN_HTML_ATTRIBUTE_VALUE = 'IN HTML ATTRIBUTE VALUE',
     STATE_INSIDE_CDATA = 'INSIDE_CDATA',
@@ -78,12 +85,7 @@ class HtmlMinifier
     STATE_INSIDE_TAG_TAG_NAME = 'INSIDE TAG - TAG NAME',
     STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND = 'INSIDE TAG - TAG NAME NOT FOUND',
     STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES = 'INSIDE TAG - SEARCHING ATTRIBUTES',
-    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG',
-    DEFAULT_CONFIGURATION =
-    [
-      'comments' => true,
-      'spaces' => 'consecutiveSpaces'
-    ];
+    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG';
 
   /** @var array<int,string> $actualTags  */
   private static array $actualTags = [];
@@ -157,7 +159,7 @@ class HtmlMinifier
   }
 
   /**
-   * It must minify the HTML by removing whitespaces (spaces, tabulations etc.) and quotes while preserving spaces in
+   * It must minify the HTML by removing whitespaces (spaces, tabulations, etc.) and quotes while preserving spaces in
    * pre and code markups, between block type markups and attributes' and preserving attributes values' quotes when we
    * cannot remove them.
    * The HTML code must be valid as the minification function does not fix bugs into the code.
@@ -212,7 +214,7 @@ class HtmlMinifier
         case self::STATE_INSIDE_TAG_TAG_NAME:
           if (!ctype_space(self::$character))
           {
-            // we do not add '/' in auto-closing tags if it is not XML (SVG files for example)
+            // we do not add '/' in auto-closing tags if it is not XML (SVG files, for example)
             if (self::$character === '/')
             {
               self::$lastState = self::$state;
@@ -434,7 +436,7 @@ class HtmlMinifier
               self::$actualMarkupContent = substr(self::$actualMarkupContent, 0,-1);
             } elseif (strpbrk(self::$attributeValueBuffer, ' =<>') !== false)
               // If there is one of the forbidden special characters in the attribute value, we need the quotes.
-              // Otherwise, skips them.
+              // Otherwise, it skips them.
               self::$actualMarkupContent .= self::$attributeValueBuffer . self::$character;
             else
             {
@@ -635,7 +637,7 @@ abstract class Session
     $sessionId,
     $sessionFile;
   private static array $matches = [];
-  final public const
+  final public const int
     SESSION_KEY_EXISTS = 0,
     SESSION_KEY_VALUE = 1;
 
@@ -714,6 +716,11 @@ abstract class Session
 
       $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
     }
+  }
+
+  public static function unset(string $sessionKey) : void
+  {
+    unset(self::$matches[$sessionKey], $_SESSION[$sessionKey]);
   }
 
   /**
@@ -903,14 +910,7 @@ abstract class MasterController
     $stylesheetFile = 0,
     $printStylesheet = 1;
 
-  final public const
-    INLINE_TAGS =
-    [
-      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
-      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
-      'time', 'title', 'var', 'video'
-    ],
-    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  final public const array
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -955,11 +955,17 @@ abstract class MasterController
       'HTTP_SERVICE_UNAVAILABLE' => 503,
       'HTTP_GATEWAY_TIMEOUT' => 504,
       'HTTP_VERSION_NOT_SUPPORTED' => 505,
-      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ];
+      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ],
+    INLINE_TAGS =
+    [
+      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
+      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
+      'time', 'title', 'var', 'video'
+    ];
 
-  protected const
-    CSS_MEDIA_SCREEN = 0,
-    LABEL_SCRIPT_NONCE = '<script nonce=';
+  final public const string OTRA_LABEL_ENDING_TITLE_TAG = '/title>';
+  protected const int CSS_MEDIA_SCREEN = 0;
+  protected const string LABEL_SCRIPT_NONCE = '<script nonce=';
 
   /**
    * @param array{
@@ -1261,12 +1267,12 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
+   * Adds dynamically CSS script(s) (not coming from the routes' configuration) to the existing ones.
    *
-   * @param array $stylesheets The css files to add [0 => File, 1 => Print]
+   * @param array $stylesheets The CSS files to add [0 => File, 1 => Print]
    *                           Do not put '.css'.
-   *                           /!\ DO NOT fill the second key if it is not needed
-   * @param bool  $print       Does the stylesheet must be only used for a print usage ?
+   *                           /!\ DO NOT fill the second key if it is unnecessary
+   * @param bool  $print       Does the stylesheet must be only used for a print usage?
    */public static function css(array $stylesheets = [], bool $print = false) : void
   {
     array_push(
@@ -1276,10 +1282,10 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds dynamically javascript script(s) (not coming from the routes' configuration) to the existing ones.
-   * If the keys are string it will add the string to the link.
+   * Adds dynamically JavaScript script(s) (not coming from the routes' configuration) to the existing ones.
+   * If the keys are string, it will add the string to the link.
    *
-   * @param array|string $js The javascript file to add (Array of strings)
+   * @param array|string $js The JavaScript file to add (Array of strings)
    */public static function js(array|string $js = []) : void
   {
     self::$javaScripts = array_merge(self::$javaScripts, is_array($js) ? $js : [$js]);
@@ -1433,8 +1439,8 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
 
   /**
    * @param string $content     The main content of the template
-   * @param string $cssResource The css resources to link to the template
-   * @param string $jsResource  The js resources to link to the template
+   * @param string $cssResource The CSS resources to link to the template
+   * @param string $jsResource  The JS resources to link to the template
    */protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
     $contentAndJs = str_replace(
@@ -1554,7 +1560,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds extra CSS dynamically (needed for the debug bar for example).
+   * Adds extra CSS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string
@@ -1575,7 +1581,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds extra JS dynamically (needed for the debug bar for example).
+   * Adds extra JS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string
@@ -1648,8 +1654,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
  */ /**
  * @author Lionel Péramo
  * @package otra
- *
- * @method static string getTemplateResources() Annotation needed for static analysis tools
  */
 
 if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')

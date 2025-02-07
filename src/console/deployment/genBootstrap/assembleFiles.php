@@ -38,7 +38,7 @@ const
  * }                $filesToConcat   Files to parse after have parsed this one
  * @param string[]  $parsedFiles     Remaining files to concatenate
  * @param string[]  $parsedConstants
- * @param string[]  $parsedClasses   Classes already used. It allows resolving name conflicts.
+ * @param string[]  $parsedClasses   Classes already used. It helps to resolve name conflicts.
  *
  * @return array<string[],array<string,string>,array<string,string>> [$classesFromFile, $replacements]
  */
@@ -103,7 +103,7 @@ function getFileNamesFromUses(
         // If it's a vendor, we keep the class?
         if (!isset(CLASSMAP[$classToReplace]) || str_contains(CLASSMAP[$classToReplace], 'vendor'))
         {
-          // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+          // simplifies the usage of classes by transitioning from FQCN to simple class names ... otra\bdd\Sql => Sql
           $replacements[$classToReplace] = $lastChunk;
         } else
         {
@@ -124,9 +124,9 @@ function getFileNamesFromUses(
         $lastClassSegment = $lastChunk;
       } else
       {
-        /** if we have a right parenthesis, we strip it and put the content before the beginning of the use statement,
-         * otherwise ... if it uses a PHP7 shortcut with parenthesis, we add the beginning of the use statement
-         * otherwise ... we just put the string directly */
+        /** If we have a right parenthesis, we strip it and put the content before the beginning of the use statement.
+         * Otherwise ... if it uses a PHP7 shortcut with parenthesis, we add the beginning of the use statement.
+         * Otherwise ... we just put the string directly */
         if (!str_contains($chunk, '}'))
         {
           /** @var string $lastChunk */
@@ -158,7 +158,7 @@ function getFileNamesFromUses(
                 '';
             } else
             {
-              // Always replace by the short name of the class
+              // Always replace it by the short name of the class
               $replacements['@(?<![\$\\\\])\b' . preg_quote($classToReplace, '@') . '\b(?![\\\\\w])@'] =
                 $lastChunk;
 
@@ -175,7 +175,7 @@ function getFileNamesFromUses(
             // If it's a vendor, we keep the class?
             if (!isset(CLASSMAP[$classToReplace]) || str_contains(CLASSMAP[$classToReplace], 'vendor'))
             {
-              // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+              // simplifies the usage of classes by transitioning from FQCN to simple class names ... otra\bdd\Sql => Sql
               $replacements[$classToReplace] = $chunk;
             } else
             {
@@ -199,7 +199,7 @@ function getFileNamesFromUses(
           // If it's a vendor, we keep the class?
           if (!isset(CLASSMAP[$classToReplace]) || !str_contains(CLASSMAP[$classToReplace], 'vendor'))
           {
-            // simplifies the usage of classes by passing from FQCN to class name ... otra\bdd\Sql => Sql
+            // simplifies the usage of classes by transitioning from FQCN to class names ... otra\bdd\Sql => Sql
             $replacements[$classToReplace] = $lastChunk;
           }
 
@@ -317,9 +317,10 @@ function getDependenciesFileInfo(array &$parameters) : void
       if ($cannotIncludeFile)
         continue;
 
-      /* we make an exception for this particular require statement because
-         it is a `require` made by the prod controller, and then it is a template ...
-         (so no need to include it because HTML templates management is not totally functional right now) */
+      /* We are making an exception for this specific `require` statement because
+         it is used by the production controller and relates to a template.
+         So there's no need to include it since
+         the management of HTML templates is not fully operational at the moment. */
       if (!$isTemplate) // if the file to include is not a template
       {
         // If we find __DIR__ in the include/require statement, then we replace it with the good folder and not the

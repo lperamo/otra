@@ -358,6 +358,36 @@ class SessionTest extends TestCase
 
   /**
    * @depends testInit
+   * @throws OtraException|ReflectionException
+   */
+  public function testUnset(): void
+  {
+    // context
+    Session::init(self::ROUNDS);
+    Session::set(self::TEST, self::$fooThing);
+    Session::set(self::TEST2, self::BAR);
+
+    // launching
+    Session::unset(self::TEST);
+
+    // testing
+    $reflectedClass = new ReflectionClass(Session::class);
+    $matches = $reflectedClass->getProperty('matches')->getValue();
+
+    // Check that the key is removed from self::$matches
+    self::assertArrayNotHasKey(self::TEST, $matches);
+
+    // Check that the key is removed from $_SESSION
+    self::assertArrayNotHasKey(self::TEST, $_SESSION);
+
+    // Check that the other key still exists
+    self::assertArrayHasKey(self::TEST2, $matches);
+    self::assertArrayHasKey(self::TEST2, $_SESSION);
+  }
+
+
+  /**
+   * @depends testInit
    * @depends testSet
    * @throws OtraException|ReflectionException
    */
