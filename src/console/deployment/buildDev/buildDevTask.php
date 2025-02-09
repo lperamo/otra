@@ -109,8 +109,7 @@ function buildDev(array $argumentsVector) : void
           $baseName,
           $resourceName
         );
-      }
-      elseif ($extension !== 'ts' && !str_starts_with($baseName, '_') && WATCH_FOR_CSS_RESOURCES)
+      } elseif ($extension !== 'ts' && !str_starts_with($baseName, '_') && WATCH_FOR_CSS_RESOURCES)
         generateStylesheetsFiles(
           $baseName,
           $resourcesMainFolder,
@@ -128,7 +127,6 @@ function buildDev(array $argumentsVector) : void
   {
     if (BUILD_DEV_VERBOSE === 0)
       echo CLI_BASE, 'Files have been generated', SUCCESS;
-  }
-  else
+  } else
     echo CLI_WARNING, 'No files to process.', END_COLOR, PHP_EOL;
 }
