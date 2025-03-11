@@ -41,6 +41,7 @@ typeset -a OTRA_COMMANDS=(
   'help'
   'requirements'
   'routes'
+  'secretManager'
   'serve'
   'version'
 );
@@ -89,6 +90,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_HELP_AND_TOOLS} help                        : ${CYA}Shows the extended help for the specified command.${ECO}"
   "${CAT_HELP_AND_TOOLS} requirements                : ${CYA}Shows the requirements to use OTRA at its maximum capabilities.${ECO}"
   "${CAT_HELP_AND_TOOLS} routes                      : ${CYA}Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)${ECO}"
+  "${CAT_HELP_AND_TOOLS} secretManager               : ${CYA}Manages encrypted secrets securely with an interactive menu. [38;2;100;200;200mBy default, it uses the "dev" environment.[38;2;100;150;200m${ECO}"
   "${CAT_HELP_AND_TOOLS} serve                       : ${CYA}Creates a PHP web internal server.${ECO}"
   "${CAT_HELP_AND_TOOLS} version                     : ${CYA}Shows the framework version.${ECO}"
 )

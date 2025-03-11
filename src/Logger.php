@@ -99,7 +99,7 @@ abstract class Logger
   {
     $infos = self::logIpTest();
     $infos['m'] = $message;
-    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt';
+    $logPath = self::LOGS_PATH . ($_SERVER[APP_ENV] ?? 'dev') . DIR_SEPARATOR . $logPath . '.txt';
     $filePointer = fopen($logPath, 'r+');
 
     if (!fread($filePointer, 1))
