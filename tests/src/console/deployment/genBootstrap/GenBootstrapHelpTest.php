@@ -34,20 +34,28 @@ class GenBootstrapHelpTest extends TestCase
       'Launch the genClassMap command and generates a file that contains all the necessary php files.' .
       PHP_EOL . CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('genclassmap', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'If set to 0, it prevents the generation/override of the class mapping file.' . PHP_EOL .
-      CLI_INFO_HIGHLIGHT .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER . ') ' . CLI_INFO . 'If set to ' .
+      CLI_INFO_HIGHLIGHT . '0' . CLI_INFO . ', it prevents the generation/override of the class mapping file.' .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('verbose', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
-      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'If set to 1, we print all the main warnings when the task fails. Put 2 to get every warning.' . PHP_EOL .
-      CLI_INFO_HIGHLIGHT .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER . ') ' . CLI_INFO . 
+      'If set to ' . CLI_INFO_HIGHLIGHT . '1' . CLI_INFO .
+      ', we print all the main warnings when the task fails. Put ' . CLI_INFO_HIGHLIGHT . '2' . CLI_INFO .
+      ' to get every warning. Defaults to ' .
+      CLI_INFO_HIGHLIGHT . '0' . CLI_INFO . '.' . PHP_EOL . CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('lint', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'Checks for syntax errors. 0 disabled, 1 enabled (defaults to 0)' . PHP_EOL .
-      CLI_INFO_HIGHLIGHT .
+      ') ' . CLI_INFO . 'Checks for syntax errors. ' . CLI_INFO_HIGHLIGHT . '0' . CLI_INFO . ' disabled, ' . 
+      CLI_INFO_HIGHLIGHT . '1' . CLI_INFO . ' enabled (defaults to ' . CLI_INFO_HIGHLIGHT . '0' . CLI_INFO . ')' .
+      PHP_EOL . CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('route', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'The route for which you want to generate the micro bootstrap.' . PHP_EOL .
+      ') ' . CLI_INFO . 'The route for which you want to generate the micro bootstrap. Defaults to ' . CLI_INFO_HIGHLIGHT .
+      '_all' . CLI_INFO . '.' . PHP_EOL . CLI_INFO_HIGHLIGHT .
+      self::LABEL_PLUS . str_pad('environment', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'What environment are we aiming for? Defaults to ' . CLI_INFO_HIGHLIGHT . 'prod' . CLI_INFO . 
+      '.' . PHP_EOL .
       END_COLOR
     );
 

@@ -36,7 +36,7 @@ class SessionTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $_SERVER['REMOTE_ADDR'] = '::1';
     require TEST_PATH . 'config/AllConfigGood.php';
     self::$fooThing = new Datetime('2021-12-09');

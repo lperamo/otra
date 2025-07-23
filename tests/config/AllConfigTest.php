@@ -16,11 +16,11 @@ class AllConfigTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
   }
 
   /**
-   * We only test here if there is no exceptions launched.
+   * We only test here if there are no exceptions launched.
    *
    * @author Lionel Péramo
    * @doesNotPerformAssertions
@@ -36,7 +36,7 @@ class AllConfigTest extends TestCase
     $externalConfigFilePath = $externalConfigFileFolder . 'Config.php';
     $externalConfigFileCreated = false;
 
-    // If there is not already an external file present then we create it temporarily
+    // If there is not already an external file present, then we create it temporarily
     if (!file_exists($externalConfigFilePath))
     {
       touch($externalConfigFilePath);

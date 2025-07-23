@@ -32,9 +32,10 @@ class CreateHelloWorldTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     require CORE_PATH . 'tools/deleteTree.php';
+    require TEST_PATH . 'config/AllConfigGood.php';
     /** @var callable $delTree */
 
     if (file_exists(self::HELLO_WORLD_BUNDLE_PATH))

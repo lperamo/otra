@@ -42,7 +42,8 @@ class LaunchTaskTest extends TestCase
   public function test() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     ob_start();
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,

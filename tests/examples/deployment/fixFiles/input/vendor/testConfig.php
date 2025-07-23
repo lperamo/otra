@@ -19,13 +19,12 @@ abstract class AllConfig
   public static int $verbose = 0;
   public static bool $cssSourceMaps = true;
   public static string
-    /* to not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
-    case
+    /* to not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this case
     (if we not use AllConfig::$foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
-    accessible ) */
+    accessible) */
     $cachePath = CACHE_PATH,
     $defaultConn = 'CMS',  // mandatory to modify it later if needed
-    $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.5.0/bin/';  // mandatory to modify it later if needed
+    $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.19.1/bin/';  // mandatory to modify it later if needed
   public static array
     $debugConfig = [
     //      'maxChildren' => 130,

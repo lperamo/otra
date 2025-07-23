@@ -9,7 +9,8 @@ namespace otra\console\architecture\createGlobalConstants;
 
 use otra\config\AllConfig;
 use const otra\cache\php\{APP_ENV, BASE_PATH, DIR_SEPARATOR};
-use const otra\console\{CLI_ERROR,CLI_SUCCESS,END_COLOR};
+use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, END_COLOR};
+use function otra\tools\getconfigByEnvironment;
 
 const
   BASE_PATH_STRING = 'BASE_PATH.\'',
@@ -78,11 +79,12 @@ function createGlobalConstants() : void
       PHP_FILE_START . 'namespace otra\\cache\\php;' . $content
     ) === false)
     ? CLI_ERROR . 'There was a problem while writing the OTRA global constants.'
-    : 'OTRA global constants generated.', CLI_SUCCESS, ' ✔';
+    : 'OTRA global constants for the ' . CLI_INFO_HIGHLIGHT . 'dev' . CLI_BASE . ' environment generated.' .
+      CLI_SUCCESS . ' ✔';
 
   echo END_COLOR, PHP_EOL;
 
-// Needed when installing/updating OTRA
+  // Needed when installing/updating OTRA
   if (!class_exists(AllConfig::class))
   {
     if (!defined('otra\\cache\\php\\BUNDLES_PATH'))
@@ -92,18 +94,32 @@ function createGlobalConstants() : void
       require BASE_PATH . 'config/AllConfig.php';
   }
 
-  if (class_exists(AllConfig::class) && isset(AllConfig::$deployment['folder']))
+  require BASE_PATH . OTRA_PROJECT_SUFFIX . 'tools/getConfigByEnvironment.php';
+
+  $configPath = BASE_PATH . 'config/';
+  $filesAndFoldersInConfigPath = scandir($configPath);
+  $constantsBaseContent = PHP_FILE_START . 'namespace otra\\cache\\php;' . $content;
+
+  foreach($filesAndFoldersInConfigPath as $fileOrFolder)
   {
-    echo (file_put_contents(
-        BASE_PATH . 'config/prodConstants.php',
-        str_replace(
-          BASE_PATH,
-          AllConfig::$deployment['folder'], PHP_FILE_START . 'namespace otra\\cache\\php;' . $content,
-          $count)
-      ) === false)
-      ? CLI_ERROR . 'There was a problem while writing the OTRA global constants for the online side.'
-      : 'OTRA global constants for the online side generated.', CLI_SUCCESS, ' ✔';
+    if (!is_dir($configPath . $fileOrFolder)
+      || $fileOrFolder === '.'
+      || $fileOrFolder === '..'
+      || $fileOrFolder === 'dev')
+      continue;
+
+    $config = getConfigByEnvironment($fileOrFolder, ['remote'], false);
+    $finalContent = $constantsBaseContent;
+
+    if (isset($config['remote']['folder']))
+      $finalContent =  str_replace(BASE_PATH, $config['remote']['folder'], $constantsBaseContent, $count);
+
+    echo (file_put_contents(BASE_PATH . 'config/' . $fileOrFolder . 'Constants.php', $finalContent) === false)
+      ? CLI_ERROR . 'There was a problem while writing the OTRA global constants for the ' . CLI_INFO_HIGHLIGHT .
+      $fileOrFolder . CLI_ERROR . ' environment.' . PHP_EOL
+      : 'OTRA global constants for the ' . CLI_INFO_HIGHLIGHT . $fileOrFolder . CLI_BASE . ' environment generated.' .
+      CLI_SUCCESS . ' ✔' . CLI_BASE . PHP_EOL;
   }
 
-  echo END_COLOR, PHP_EOL;
+  echo END_COLOR;
 }

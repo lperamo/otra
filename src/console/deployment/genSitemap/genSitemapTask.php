@@ -27,7 +27,7 @@ function genSitemap() : void
   {
     $siteMapContent .= /** @lang text */
       SPACE_INDENT . '<url>' . PHP_EOL .
-      SPACE_INDENT_2 . '<loc>https://' . AllConfig::$deployment['domainName'] . $route['chunks']['0'] .
+      SPACE_INDENT_2 . '<loc>https://' . AllConfig::${$_SERVER['APP_SCOPE']}['domainName'] . $route['chunks']['0'] .
       '</loc>' . PHP_EOL .
       SPACE_INDENT_2 . '<lastmod>' . date('c') . '</lastmod>' . PHP_EOL .
       SPACE_INDENT . '</url>';

@@ -231,7 +231,7 @@ function getPathInformations(string $fullName) : array
 
 /**
  * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
- *                           True, if the file belongs to the scope we want to watch. Defaults to true.
+ *                           True, if the file belongs to the scope, we want to watch. Defaults to true.
  *
  * @return bool
  */
@@ -251,7 +251,7 @@ function isNotInThePath(array $paths, string $realPath, bool $checkScope = true)
 }
 
 /**
- * @param int   $fullBinaryMask The binary masks that contains all the options: CSS, TS, JS, CSS etc...
+ * @param int   $fullBinaryMask The binary mask that contains all the options: CSS, TS, JS, CSS, etc...
  * @param bool  $maskExists     Does the mask it
  *
  * @return bool

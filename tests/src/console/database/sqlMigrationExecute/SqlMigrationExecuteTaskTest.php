@@ -50,6 +50,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   {
     parent::setUp();
 
+    $_SERVER['APP_SCOPE'] = 'local';
     require CORE_PATH . 'tools/deleteTree.php';
     require CORE_PATH . 'tools/files/returnLegiblePath.php';
 
@@ -79,8 +80,8 @@ class SqlMigrationExecuteTaskTest extends TestCase
   private function loadConfig() : void
   {
     require self::TEST_CONFIG_GOOD_PATH;
-    AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
-    AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    AllConfig::$local['db']['test']['login'] = $_SERVER['TEST_LOGIN'];
+    AllConfig::$local['db']['test']['password'] = $_SERVER['TEST_PASSWORD'];
     self::$database = Sql::getDb(self::DATABASE_CONNECTION, false);
     self::$database->query('CREATE DATABASE IF NOT EXISTS testDB;');
   }
@@ -91,7 +92,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   private function loadAndTest(string $example, string $keyToTest) : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
     mkdir(self::MIGRATIONS_FOLDER);
     copy($example, self::MIGRATION_FILE_VERSION_ZERO);
@@ -115,7 +116,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   public function testBadWay() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
 
     // testing
@@ -137,7 +138,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   public function testMigrationFileDoesNotExist(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
 
     // testing
@@ -159,7 +160,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   public function testBadDbmsConnection(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
     mkdir(self::MIGRATIONS_FOLDER);
     touch(self::MIGRATION_FILE_VERSION_ZERO);
@@ -189,7 +190,7 @@ class SqlMigrationExecuteTaskTest extends TestCase
   public function testMigrationIsNotAnArray(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
     mkdir(self::MIGRATIONS_FOLDER);
     copy(self::EXAMPLE_NOT_AN_ARRAY, self::MIGRATION_FILE_VERSION_ZERO);

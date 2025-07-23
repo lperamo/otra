@@ -337,7 +337,7 @@ function getDependenciesFileInfo(array &$parameters) : void
 
         // we must not change these inclusions from
         // - CORE_PATH . Router.php
-        // - securities configuration
+        // - security configuration
         // - dump tool
         if (in_array(
           $tempFile,
@@ -399,27 +399,28 @@ function getDependenciesFileInfo(array &$parameters) : void
         if ($tempFile === BUNDLES_PATH . 'config/Config.php')
           continue;
 
-        // We exclude inclusions that has `$` from the warning
+        // We exclude inclusions that have `$` from the warning
         // as the variable could have the beginning the path of the absolute path
         if (VERBOSE > 0
           && $tempFile[0] !== '/'  
           && !str_contains($tempFile, BASE_PATH)
           && !str_contains($tempFile, BUNDLES_PATH)
+          && !str_contains($tempFile, 'SECRETS_FILE')
         )
         {
-          echo PHP_EOL, CLI_WARNING, 'BEWARE, you have to use absolute path for files inclusion ! \'' . $tempFile,
+          echo PHP_EOL, CLI_WARNING, 'BEWARE, you have to use absolute path for files inclusion! \'' . $tempFile,
           '\' in ', $filename, '.', PHP_EOL,
-          'Ignore this warning if your path is already an absolute one or your file is outside of the project folder.',
+          'Ignore this warning if your path is already absolute or your file is outside the project folder.',
           END_COLOR, PHP_EOL;
         }
 
-        if (!file_exists($tempFile))
+        if (!file_exists($tempFile) && !str_contains($tempFile, 'SECRETS_FILE'))
         {
           echo PHP_EOL, CLI_WARNING, 'OTRA cannot process this ', CLI_INFO_HIGHLIGHT, $trimmedMatch, CLI_WARNING,
-          PHP_EOL,
-          ' => ', CLI_INFO_HIGHLIGHT, $tempFile, CLI_WARNING, ' in ', CLI_INFO_HIGHLIGHT, $filename, CLI_WARNING,
-          '!', PHP_EOL,
-          'Maybe the file does not exist or it\'s a dynamic inclusion.', END_COLOR, PHP_EOL, PHP_EOL;
+            PHP_EOL,
+            ' => ', CLI_INFO_HIGHLIGHT, $tempFile, CLI_WARNING, ' in ', CLI_INFO_HIGHLIGHT, $filename, CLI_WARNING,
+            '!', PHP_EOL,
+            'Maybe the file does not exist or it\'s a dynamic inclusion.', END_COLOR, PHP_EOL, PHP_EOL;
         }
 
         if ($cannotIncludeFile)

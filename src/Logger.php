@@ -61,7 +61,7 @@ abstract class Logger
     if (is_writable($path))
       error_log($message, self::APPEND_LOG, $path);
     else
-      echo 'Cannot log the errors due to a lack of permissions' . (APP_ENV === PROD
+      echo 'Cannot log the errors due to a lack of permissions' . ($_SERVER[APP_ENV] === PROD
         ? '!' . PHP_EOL
         : ' for the file \'' . $path . '\'!' . PHP_EOL);
   }

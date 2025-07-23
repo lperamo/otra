@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace otra\config;
 
-use const otra\cache\php\CACHE_PATH;
+use const otra\cache\php\{BUNDLES_PATH,CACHE_PATH};
 
 const
   VERSION = '2025.0.0',
@@ -19,18 +19,19 @@ class AllConfig
 {
   public static int $verbose = 0;
   public static string
-    /* to not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
-    case
+    /* to not make new AllConfig::$foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this case
     (if we not use AllConfig::$foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
-    accessible ) */
+    accessible) */
     $cachePath = CACHE_PATH,
     $version = 'v1',
-    $defaultConn = ''; // mandatory to modify it later if needed
-  public static array $dbConnections = [], // mandatory to modify it later if needed
+    $defaultConn = '', // mandatory to modify it later if needed
+    $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.19.1/bin/';  // mandatory to modify it later if needed
+  public static array $local = [], // mandatory to modify it later if needed
     $debugConfig = [
       'barPosition' => 'bottom',
       'maxChildren' => 130,
       'maxData' => 514,
       'maxDepth' => 6
-    ];
+    ],
+    $sassLoadPaths = [BUNDLES_PATH . 'HelloWorld/resources/']; // mandatory to modify it later if needed;
 }

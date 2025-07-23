@@ -24,7 +24,8 @@ class PdomysqlTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
   }
 
   protected function tearDown(): void
@@ -34,7 +35,7 @@ class PdomysqlTest extends TestCase
     if (isset($_SESSION['bootstrap']))
       unset($_SESSION['bootstrap']);
 
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     try
     {

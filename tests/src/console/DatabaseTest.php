@@ -69,7 +69,8 @@ class DatabaseTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     $reflectedClass = (new ReflectionClass(Database::class));
     $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
   }
@@ -114,8 +115,8 @@ class DatabaseTest extends TestCase
   {
     require self::TEST_CONFIG_GOOD_PATH;
 
-    AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
-    AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    AllConfig::$local['db']['test']['login'] = $_SERVER['TEST_LOGIN'];
+    AllConfig::$local['db']['test']['password'] = $_SERVER['TEST_PASSWORD'];
   }
 
   /**

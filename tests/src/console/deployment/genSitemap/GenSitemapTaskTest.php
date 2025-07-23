@@ -38,7 +38,8 @@ class GenSitemapTaskTest extends TestCase
   public function test() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     require CONSOLE_PATH . 'architecture/createHelloWorld/createHelloWorldTask.php';
     ob_start();
     createHelloWorld();

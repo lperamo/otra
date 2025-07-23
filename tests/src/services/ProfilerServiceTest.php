@@ -51,7 +51,7 @@ class ProfilerServiceTest extends TestCase
   public function testSecurityCheck_Prod(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     // run
     ob_start();

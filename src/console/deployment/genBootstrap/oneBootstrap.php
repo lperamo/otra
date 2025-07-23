@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment\genBootstrap;
 
 use otra\{OtraException, Router};
-use otra\config\{AllConfig, Routes};
+use otra\config\Routes;
 use const otra\cache\php\
 {APP_ENV, BASE_PATH, BUNDLES_PATH, CACHE_PATH, CLASS_MAP_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\cache\php\init\CLASSMAP;
@@ -19,15 +19,16 @@ const OTRA_KEY_BOOTSTRAP = 'bootstrap';
 
 /**
  * @param string $route
- * @param        $parsedFiles
+ * @param array  $parsedFiles
+ * @param string $domainName
  *
  * @throws OtraException
  * @return void
  */
-function oneBootstrap(string $route, $parsedFiles = []) : void
+function oneBootstrap(string $route, $parsedFiles = [], string $domainName = '') : void
 {
   echo CLI_BASE, str_pad(' ' . $route . ' ', 80, '=', STR_PAD_BOTH), PHP_EOL, PHP_EOL,
-  END_COLOR;
+    END_COLOR;
 
   $_SESSION[OTRA_KEY_BOOTSTRAP] = 1; // to not really make BDD requests !
   $firstFilesIncluded = get_included_files();
@@ -55,7 +56,7 @@ function oneBootstrap(string $route, $parsedFiles = []) : void
   // to pass some conditions
   $_SERVER['REMOTE_ADDR'] = 'console';
   $_SERVER['REQUEST_SCHEME'] = 'HTTPS';
-  $_SERVER['HTTP_HOST'] = AllConfig::$deployment['domainName'];
+  $_SERVER['HTTP_HOST'] = $domainName;
 
   // Preparation of default parameters for the routes
   if (isset($params['post']))

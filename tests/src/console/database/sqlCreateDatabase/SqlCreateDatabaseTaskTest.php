@@ -39,13 +39,15 @@ class SqlCreateDatabaseTaskTest extends TestCase
     TABLES_ORDER_FILE_PATH = self::CONFIG_FOLDER_YML . 'tables_order.yml';
 
   /**
+   * @medium
    * @throws ReflectionException
    * @throws OtraException
    */
   public function testSqlCreateDatabaseTask() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     require CORE_PATH . 'tools/copyFilesAndFolders.php';
     copyFileAndFolders(
       [self::SCHEMA_FILE_BACKUP],
@@ -58,8 +60,8 @@ class SqlCreateDatabaseTaskTest extends TestCase
     if (file_exists(self::DATABASE_SCHEMA_FORCE_SQL))
       unlink(self::DATABASE_SCHEMA_FORCE_SQL);
 
-    AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
-    AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    AllConfig::$local['db']['test']['login'] = $_SERVER['TEST_LOGIN'];
+    AllConfig::$local['db']['test']['password'] = $_SERVER['TEST_PASSWORD'];
     $helloWorldBundleFolderExists = $bundlesFolderExists = true;
 
     if (!file_exists(BUNDLES_PATH))

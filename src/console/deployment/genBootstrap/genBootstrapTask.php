@@ -9,18 +9,20 @@ namespace otra\console\deployment\genBootstrap;
 
 use FilesystemIterator;
 use otra\OtraException;
-use otra\config\{AllConfig,Routes};
+use otra\config\Routes;
 use const otra\bin\CACHE_PHP_INIT_PATH;
 use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_BASE, CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR};
 use function otra\console\deployment\genClassMap\genClassMap;
-use function otra\tools\{cliCommand, files\compressPHPFile, guessRoute};
+use function otra\tools\{cliCommand, getConfigByEnvironment, guessRoute};
+use function otra\tools\files\compressPHPFile;
 
 const
   GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
   GEN_BOOTSTRAP_ARG_VERBOSE = 3,
   GEN_BOOTSTRAP_ARG_LINT = 4,
   GEN_BOOTSTRAP_ARG_ROUTE = 5,
+  GEN_BOOTSTRAP_ARG_ENVIRONMENT = 6,
   OTRA_KEY_DRIVER = 'driver',
   BOOTSTRAP_PATH = BASE_PATH . 'cache/php',
   ROUTE_MANAGEMENT_TEMPORARY_FILE = CACHE_PHP_INIT_PATH . 'RouteManagement_.php';
@@ -38,8 +40,14 @@ function genBootstrap(array $argumentsVector)
     throw new OtraException(code: 1, exit: true);
   }
 
-  define(__NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT', isset($argumentsVector[GEN_BOOTSTRAP_ARG_LINT]) && $argumentsVector[GEN_BOOTSTRAP_ARG_LINT] === '1');
-  define(__NAMESPACE__ . '\\VERBOSE', isset($argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE] : 0);
+  define(
+    __NAMESPACE__ . '\\GEN_BOOTSTRAP_LINT',
+    isset($argumentsVector[GEN_BOOTSTRAP_ARG_LINT]) && $argumentsVector[GEN_BOOTSTRAP_ARG_LINT] === '1'
+  );
+  define(
+    __NAMESPACE__ . '\\VERBOSE',
+    isset($argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE]) ? (int) $argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE] : 0
+  );
 
   // We do not do micro bootstraps for 'otra_exception' route.
   if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]) && $argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] === 'otra_exception')
@@ -49,7 +57,14 @@ function genBootstrap(array $argumentsVector)
     throw new OtraException(code: 1, exit: true);
   }
 
-  if (!isset(AllConfig::$deployment) || !isset(AllConfig::$deployment['domainName']))
+  define(
+    __NAMESPACE__ . '\\ENVIRONMENT',
+    isset($argumentsVector[GEN_BOOTSTRAP_ARG_ENVIRONMENT]) ? $argumentsVector[GEN_BOOTSTRAP_ARG_ENVIRONMENT] : 0
+  );
+  require CORE_PATH . 'tools/getConfigByEnvironment.php';
+  $config = getConfigByEnvironment(ENVIRONMENT, ['remote']);
+
+  if (!isset($config['remote']) || !isset($config['remote']['domainName']))
   {
     echo CLI_ERROR, 'You must define the ', CLI_INFO_HIGHLIGHT, 'domainName', CLI_ERROR,
     ' key in the production configuration file to make this task work.', END_COLOR, PHP_EOL, PHP_EOL;
@@ -68,7 +83,7 @@ function genBootstrap(array $argumentsVector)
 
     [$status, $return] = cliCommand(
       PHP_BINARY . ' ./bin/otra.php genBootstrap 0 ' . VERBOSE . ' ' . (int) GEN_BOOTSTRAP_LINT .
-      ' ' . ($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] ?? '')
+      ' ' . ($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] ?? '_all') . ' ' . ENVIRONMENT
     );
     echo $return;
 
@@ -83,7 +98,7 @@ function genBootstrap(array $argumentsVector)
     mkdir(BOOTSTRAP_PATH);
 
   // Checks whether we want only one/many CORRECT route(s)
-  if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]))
+  if (isset($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]) && $argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] !== '_all')
   {
     require CORE_PATH . 'tools/guessRoute.php';
     $route = guessRoute($argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE]);
@@ -91,6 +106,7 @@ function genBootstrap(array $argumentsVector)
     echo 'Generating \'micro\' bootstrap ...', PHP_EOL, PHP_EOL;
   } else
   {
+    $argumentsVector[GEN_BOOTSTRAP_ARG_ROUTE] = '_all'; // Enforce it in case we need this later
     $routes = Routes::$allRoutes;
     // otra_exception route has no controller
     unset($routes['otra_exception']);
@@ -98,7 +114,7 @@ function genBootstrap(array $argumentsVector)
   }
 
   // In CLI mode, the $_SERVER variable is not set, so we set it!
-  $_SERVER[APP_ENV] = PROD;
+  $_SERVER[APP_ENV] = ENVIRONMENT;
 
   // CACHE_PATH will not be found if we do not have dbConnections in AllConfig, so we need to explicitly include the
   // configuration. We check if we do not have already loaded the configuration before.
@@ -106,9 +122,10 @@ function genBootstrap(array $argumentsVector)
     __NAMESPACE__ . '\\PATH_CONSTANTS',
     [
       'externalConfigFile' => BUNDLES_PATH . 'config/Config.php',
-      OTRA_KEY_DRIVER => !empty(AllConfig::$dbConnections)
-      && array_key_exists(OTRA_KEY_DRIVER, AllConfig::$dbConnections[key(AllConfig::$dbConnections)])
-        ? AllConfig::$dbConnections[key(AllConfig::$dbConnections)][OTRA_KEY_DRIVER]
+      OTRA_KEY_DRIVER => !empty($config['remote']['db'])
+      && array_key_exists(OTRA_KEY_DRIVER, $config['remote']['db'][key($config['remote']['db'])])
+
+        ? $config['remote']['db'][key($config['remote']['db'])][OTRA_KEY_DRIVER]
         : '',
       "_SERVER[APP_ENV]" => $_SERVER[APP_ENV],
       'temporaryEnv' => PROD
@@ -155,7 +172,7 @@ function genBootstrap(array $argumentsVector)
         . ' [NO MICRO BOOTSTRAP => TEMPLATE GENERATED] ' . CLI_BASE, 94, '=', STR_PAD_BOTH),
         END_COLOR, PHP_EOL;
     else
-      oneBootstrap($route, $parsedFiles);
+      oneBootstrap($route, $parsedFiles, $config['remote']['domainName']);
   }
 
   compressPHPFile(ROUTE_MANAGEMENT_TEMPORARY_FILE, CACHE_PHP_INIT_PATH . 'RouteManagement.php');

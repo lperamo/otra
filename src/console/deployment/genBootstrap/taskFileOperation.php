@@ -317,8 +317,6 @@ function lastAdjustments(
 
   $finalContent = str_replace(
     [
-      // line from src/Controller.php
-      'require CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
       // line at the top of src/OtraException.php
       'require_once CORE_PATH . \'tools/debug/dump.php\';',
       // line 115 in getDB, Sql class => src/bdd/Sql.php

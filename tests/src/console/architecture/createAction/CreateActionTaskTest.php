@@ -52,7 +52,7 @@ class CreateActionTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     self::$taskClassMapPath = require TASK_CLASS_MAP_PATH;
     require CORE_PATH . 'tools/files/returnLegiblePath.php';
   }

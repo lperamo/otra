@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace otra\console\deployment\deploy;
 
 use otra\console\TasksManager;
-use const otra\console\{CLI_WARNING, END_COLOR, STRING_PAD_FOR_OPTION_FORMATTING};
+use const otra\console\{CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_WARNING, END_COLOR, STRING_PAD_FOR_OPTION_FORMATTING};
 
 return [
   'Deploy the site. ' . CLI_WARNING . '[Currently only works for unix systems !]' . END_COLOR,
@@ -19,9 +19,16 @@ return [
       STRING_PAD_FOR_OPTION_FORMATTING . '4 => CSS production files' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '8 => Templates, JSON manifest and SVGs' . PHP_EOL .
       STRING_PAD_FOR_OPTION_FORMATTING . '15 => all production files',
-    'verbose' => 'If set to 1 => we print all the warnings during the production php files generation'
+    'verbose' => 'If set to 1 => we print all the warnings during the production php files generation',
+    'js-level-compilation' => 'Optimization level for Google Closure Compiler' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '0 for WHITESPACE_ONLY' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '1 for SIMPLE_OPTIMIZATIONS (default)' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '2 for ADVANCED_OPTIMIZATIONS',
+    'environment' => 'Where should we deploy? Defaults to ' . CLI_INFO_HIGHLIGHT . 'prod' . CLI_INFO . '.'
   ],
   [
+    TasksManager::OPTIONAL_PARAMETER,
+    TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER,
     TasksManager::OPTIONAL_PARAMETER
   ],

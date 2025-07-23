@@ -23,7 +23,7 @@ class BlocksTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $_SERVER['REQUEST_URI'] = '';
     require CORE_PATH . 'tools/files/returnLegiblePath.php';
 

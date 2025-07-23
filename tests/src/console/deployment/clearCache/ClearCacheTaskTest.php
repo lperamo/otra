@@ -84,7 +84,7 @@ class ClearCacheTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     require TEST_PATH . 'config/AllConfigGood.php';
     $cacheKeyBr = sha1('ca' . self::TEST_ROUTE . VERSION . 'che') . '.br';
     self::$testRouteCss = CACHE_PATH . 'css/' . $cacheKeyBr;

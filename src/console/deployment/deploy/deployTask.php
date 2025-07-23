@@ -8,23 +8,25 @@
 declare(strict_types=1);
 namespace otra\console\deployment\deploy;
 
-use otra\config\AllConfig;
 use DirectoryIterator;
 use otra\OtraException;
 use otra\tools\runCommandWithSshAgent;
 use otra\tools\workers\{Worker, WorkerManager};
-use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH};
+use const otra\cache\php\{BASE_PATH, CONSOLE_PATH, CORE_PATH, PROD};
 use const otra\console\{CLI_ERROR, CLI_INFO, CLI_SUCCESS, END_COLOR, SUCCESS};
 use function otra\console\deployment\genClassMap\genClassMap;
 use function otra\console\deployment\updateConf\updateConf;
-use function otra\tools\cliCommand;
+use function otra\tools\{cliCommand, getConfigByEnvironment};
 
-const DEPLOY_ARG_MASK = 2,
+const 
+  DEPLOY_ARG_MASK = 2,
   DEPLOY_ARG_VERBOSE = 3,
-  DEPLOY_ARG_GCC_LEVEL_COMPILATION = 4,
+  DEPLOY_ARG_GCC_LEVEL_COMPILATION = 4, // GCC stands for Google Closure Compiler
+  DEPLOY_ARG_ENVIRONMENT = 5,
 
   GEN_BOOTSTRAP_ARG_CLASS_MAPPING = 2,
   GEN_BOOTSTRAP_ARG_VERBOSE = 3,
+  GEN_BOOTSTRAP_ARG_ENVIRONMENT = 6,
 
   BUILD_DEV_MASK_SCSS = 1,
   BUILD_DEV_MASK_TS = 2,
@@ -51,26 +53,6 @@ const DEPLOY_ARG_MASK = 2,
  */
 function deploy(array $argumentsVector) : void
 {
-  // **** Checking the deployment config parameters ****
-  if (!isset(AllConfig::$deployment))
-  {
-    echo CLI_ERROR . 'You have not defined deployment configuration.', END_COLOR, PHP_EOL;
-    throw new OtraException(code: 1, exit: true);
-  }
-
-  $deploymentParameters = ['server', 'port', 'folder', 'privateSshKey', 'gcc'];
-
-  foreach($deploymentParameters as $deploymentParameter)
-  {
-    if (!isset(AllConfig::$deployment[$deploymentParameter]))
-    {
-      echo CLI_ERROR . 'You have not defined the ' . $deploymentParameter . ' in deployment configuration.', END_COLOR,
-      PHP_EOL;
-      throw new OtraException(code: 1, exit: true);
-    }
-  }
-
-  unset($deploymentParameter);
   $mainBundlesFolder = BASE_PATH . 'bundles';
 
   if (!file_exists($mainBundlesFolder))
@@ -92,6 +74,12 @@ function deploy(array $argumentsVector) : void
       ? (int) $argumentsVector[DEPLOY_ARG_GCC_LEVEL_COMPILATION]
       : 1
   );
+  define(
+    __NAMESPACE__ . '\\DEPLOY_ENVIRONMENT',
+    isset($argumentsVector[DEPLOY_ARG_ENVIRONMENT])
+      ? $argumentsVector[DEPLOY_ARG_ENVIRONMENT]
+      : PROD
+  );
 
   if (($deployMask & DEPLOY_MASK_PHP_BEFORE_RSYNC) !== 0)
   {
@@ -106,6 +94,7 @@ function deploy(array $argumentsVector) : void
     // bootstraps
     $argumentsVector[GEN_BOOTSTRAP_ARG_CLASS_MAPPING] = 0; // prevents the class mapping
     $argumentsVector[GEN_BOOTSTRAP_ARG_VERBOSE] = VERBOSE; // if true, print warnings when the task fails
+    $argumentsVector[GEN_BOOTSTRAP_ARG_ENVIRONMENT] = DEPLOY_ENVIRONMENT;
     require CONSOLE_PATH . 'deployment/genBootstrap/genBootstrapTask.php';
   }
 
@@ -126,7 +115,7 @@ function deploy(array $argumentsVector) : void
     // Generates all TypeScript (and CSS files ?) that belong to the project files, verbosity and gcc parameters took
     // into account
     [, $output] = cliCommand(
-      'php bin/otra.php buildDev ' . VERBOSE . ' ' . $buildDevMode . ' ' . ((string)AllConfig::$deployment['gcc']),
+      'php bin/otra.php buildDev ' . VERBOSE . ' ' . $buildDevMode . ' ' . ((string)$config::gcc),
       CLI_ERROR . 'There was a problem during the assets transcompilation.' . END_COLOR . PHP_EOL
     );
 
@@ -151,6 +140,33 @@ function deploy(array $argumentsVector) : void
   if (($deployMask & DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC) >> 3 !== 0)
     $genAssetsMode |= DEPLOY_MASK_TEMPLATES_MANIFEST_AND_SVG_BEFORE_RSYNC | GEN_ASSETS_MASK_TEMPLATE | GEN_ASSETS_MASK_SVG;
 
+  require CORE_PATH . 'tools/getConfigByEnvironment.php';
+  $config = getConfigByEnvironment(DEPLOY_ENVIRONMENT, ['remote', 'gcc']);
+
+  // **** Checking the deployment config parameters ****
+  if (!isset($config['remote']))
+  {
+    echo CLI_ERROR . 'You have not defined deployment configuration.', END_COLOR, PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
+
+  $deploymentParameters = ['server', 'sshPort', 'folder', 'privateSshKey'];
+
+  foreach($deploymentParameters as $deploymentParameter)
+  {
+    if (!isset($config['remote'][$deploymentParameter]))
+    {
+      echo CLI_ERROR . 'You have not defined the ' . $deploymentParameter . ' in deployment configuration.', END_COLOR,
+      PHP_EOL;
+      throw new OtraException(code: 1, exit: true);
+    }
+  }
+
+  if (!isset($config['gcc']))
+    echo CLI_ERROR . 'You have not defined the gcc in deployment configuration.', END_COLOR, PHP_EOL;
+
+  unset($deploymentParameter);
+
   if ($genAssetsMode > 0)
   {
     echo 'Assets minification and compression...';
@@ -166,10 +182,10 @@ function deploy(array $argumentsVector) : void
   // Deploy the files on the server...
   [
     'server' => $server,
-    'port' => $destinationPort,
+    'sshPort' => $destinationPort,
     'folder' => $folder,
     'privateSshKey' => $privateSshKey
-  ] = AllConfig::$deployment;
+  ] = $config['remote'];
 
   echo PHP_EOL, 'Deploys the files on the server ', CLI_INFO, $server, ':', $destinationPort, END_COLOR, ' in ',
   CLI_INFO, $folder . ' ...', END_COLOR, PHP_EOL;

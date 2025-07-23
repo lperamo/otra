@@ -14,7 +14,7 @@ const
   VERSION = '2025.0.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
-// require_once 'cause maybe the class OtraException will attempt to load it too !
+// require_once 'cause maybe the class OtraException will attempt to load it too!
 require_once TEST_PATH . 'examples/deployment/fixFiles/input/vendor/' . $_SERVER[APP_ENV] . 'Config.php';
 
 $externalConfigFile = BUNDLES_PATH . 'config/Config.php';

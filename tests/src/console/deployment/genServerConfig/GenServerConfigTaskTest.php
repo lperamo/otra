@@ -59,7 +59,7 @@ class GenServerConfigTaskTest extends TestCase
   public function testNoDeploymentConfiguration(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     require TEST_PATH . 'config/AllConfigNoDeploymentConfiguration.php';
 
     // testing
@@ -79,7 +79,8 @@ class GenServerConfigTaskTest extends TestCase
   public function testNoDomainNameInDeploymentConfiguration(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'remote';
     require TEST_PATH . 'config/AllConfigNoDeploymentDomainName.php';
 
     // testing
@@ -99,7 +100,8 @@ class GenServerConfigTaskTest extends TestCase
   public function testNoFolderKeyInDeploymentConfiguration(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'remote';
     require TEST_PATH . 'config/AllConfigNoDeploymentFolder.php';
 
     // testing
@@ -123,7 +125,8 @@ class GenServerConfigTaskTest extends TestCase
   public function testNoRoutes() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
 
     // testing
     $this->expectException(OtraException::class);
@@ -145,7 +148,8 @@ class GenServerConfigTaskTest extends TestCase
   public function testDevNginx() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     self::createHelloWorld();
 
     // launching
@@ -158,8 +162,9 @@ class GenServerConfigTaskTest extends TestCase
 
     // testing
     self::assertSame(
-      CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH .
-      CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
+      CLI_BASE . 'Nginx development server configuration generated in ' . CLI_INFO_HIGHLIGHT . 
+      self::TEST_CONF_PATH . CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT .
+      self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
       'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL,
       ob_get_clean()
     );
@@ -186,7 +191,8 @@ class GenServerConfigTaskTest extends TestCase
   public function testProdNginx() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
     self::createHelloWorld();
 
     // launching
@@ -199,8 +205,9 @@ class GenServerConfigTaskTest extends TestCase
 
     // testing
     self::assertSame(
-      CLI_BASE . 'Nginx production server configuration generated in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_PATH .
-      CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
+      CLI_BASE . 'Nginx production server configuration generated in ' . CLI_INFO_HIGHLIGHT . 
+      self::TEST_CONF_PATH . CLI_BASE . ' and the cache configuration in ' . CLI_INFO_HIGHLIGHT .
+      self::TEST_CONF_CACHE_PATH . CLI_BASE . '.' . PHP_EOL .
       'Do not forget to include the cache file in your main server configuration file!' . END_COLOR . PHP_EOL,
       ob_get_clean()
     );
@@ -214,8 +221,8 @@ class GenServerConfigTaskTest extends TestCase
     self::assertFileEquals(
       self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH,
       self::TEST_CONF_CACHE_PATH,
-      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_ERROR . ' against ' . CLI_INFO_HIGHLIGHT .
-      self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH
+      'Testing ' . CLI_INFO_HIGHLIGHT . self::TEST_CONF_CACHE_PATH . CLI_ERROR . ' against ' .
+      CLI_INFO_HIGHLIGHT . self::EXAMPLE_PROD_TEST_CONF_CACHE_PATH
     );
   }
 }

@@ -27,7 +27,7 @@ class Error404ActionTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
   }
 
   /** Cleaning all the files and folders that have been created */

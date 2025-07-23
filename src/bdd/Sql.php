@@ -60,16 +60,18 @@ class Sql
    */
   public static function getDb(?string $connection = null, bool $haveDatabase = true) : bool|Sql
   {
+    $config = AllConfig::${$_SERVER['APP_SCOPE']};
+    
     /* If the connection is:
-     * - specified => active we use it, otherwise => added if exists
-     * - not specified => we use default connection, and we add it
+     * - specified => it's active, so we use it; otherwise => added if exists
+     * - not specified => we use the default connection, and we add it
      */
     if (null !== $connection)
     {
       if (isset(self::$_activeConn[$connection]))
       {
         $currentConnection = $connection;
-      } elseif (isset(AllConfig::$dbConnections[$connection]))
+      } elseif (isset($config['db'][$connection]))
       {
         $currentConnection = $connection;
         self::$_activeConn[$connection] = null;
@@ -101,7 +103,7 @@ class Sql
       'host' => $hostName,
       'login' => $login,
       'password' => $password
-    ] = AllConfig::$dbConnections[$connection];
+    ] = $config['db'][$connection];
 
     $driver = ucfirst(strtolower($driver));
 
@@ -123,7 +125,7 @@ class Sql
         'host' => $hostName,
         'login' => $login,
         'password' => $password
-      ] = AllConfig::$dbConnections[$connection ?: AllConfig::$defaultConn] +
+      ] = $config['db'][$connection ?: AllConfig::$defaultConn] +
       [
         'dsnDriver' => 'mysql',
         'charset' => 'utf8mb4'

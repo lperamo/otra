@@ -3,14 +3,18 @@ declare(strict_types=1);
 namespace otra\console\deployment\genBootstrap;
 
 const RESOLVE_CONST_PATTERN = '@^[a-zA-Z_][a-zA-Z0-9_]*(\\\\[a-zA-Z_][a-zA-Z0-9_]*)*$@';
+
 /**
  * @param string $constant
  *
  * @return string
  */
- function resolveConstant(string $constant) : string
- {
-  if (defined($constant)) 
+function resolveConstant(string $constant) : string
+{
+  if ($constant === 'SECRETS_FILE')
+    $constant = 'otra\\tools\\secrets\\' . $constant;
+  
+  if (defined($constant))
   {
     $value = constant($constant);
 
@@ -20,7 +24,7 @@ const RESOLVE_CONST_PATTERN = '@^[a-zA-Z_][a-zA-Z0-9_]*(\\\\[a-zA-Z_][a-zA-Z0-9_
     return $value;
   }
 
-  return $constant;
+  return $constant . '.\'';
 }
 
 /**
