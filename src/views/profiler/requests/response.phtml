@@ -8,5 +8,5 @@ namespace otra\src\views\profiler\requests;
     This will not contain <em class=doc-paragraph--emphasis>CSP</em>, <em class=doc-paragraph--emphasis>Feature-Policies</em> and some headers that will be added after. This
     is <strong><em class=doc-paragraph--emphasis>not</em></strong> perfect.
   </p>
-  <?php showParameters($sessionData['responseHeaders'], 'response headers'); ?>
+  <?php showParameters($sessionData['responseHeaders'] ?? [], 'response headers'); ?>
 </div>

@@ -91,7 +91,14 @@ class SqlActionTest extends TestCase
     self::assertInstanceOf(SqlAction::class, $sqlAction);
     self::assertSame(
       ob_get_clean(),
-      $output,
+      preg_replace(
+        [
+          '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
+          '@<script nonce=\w{64} src=/src/resources/js/profiler.js></script>@'
+        ],
+        '',
+        $output
+      ),
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'sqlAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

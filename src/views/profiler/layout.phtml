@@ -24,7 +24,15 @@ const
 $sessionId = session_id();
 define('ANALYZED_PAGE', '?route=' . $_GET['route'] . '&session_id=' . $sessionId);
 define('ROUTE', urldecode($_GET['route']));
-define('SITE_HOST', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+define(
+  'SITE_HOST',
+  (!str_starts_with($_SERVER['HTTP_HOST'], 'http')
+    ? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+      ? 'https'
+      : 'http'
+    ) . '://'
+    : ''
+  ) . $_SERVER['HTTP_HOST']);
 define('SESSION_FILE', CACHE_PATH . 'php/sessions/' . sha1('ca' . $sessionId . VERSION . 'che') . '.php');
 
 $sessionData = [];
@@ -43,15 +51,15 @@ $menuItem = function (string $routeToTest, array $itemProperties) use ($route)
   /** @var string $route */
   ?>
   <li
-    class="vertical-menu vertical-menu--container--item<?php
+    class="menu-vertical menu--container--item<?php
     if ($route === $routeToTest)
-      echo ' vertical-menu--container--item-active';
-    ?>">
+      echo ' menu--container--item-active';
+    ?>" role=menuitem>
     <a
       href="<?= SITE_HOST . Routes::$allRoutes[$routeToTest][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] . ANALYZED_PAGE ?>"
-      rel="noreferrer noopener" class="vertical-menu--container--item--link" >
+      rel="noreferrer noopener" class="menu-vertical menu--container--item--link" >
       <span title="<?= $itemProperties[LABEL] ?>"><?= $itemProperties[ICON] ?> </span>
-      <span class="vertical-menu--container--item--link--label"><?= $itemProperties[LABEL] ?></span>
+      <span class="menu--container--item--link--label"><?= $itemProperties[LABEL] ?></span>
     </a>
   </li>
   <?php
@@ -59,12 +67,12 @@ $menuItem = function (string $routeToTest, array $itemProperties) use ($route)
 
 block('body');
 ?>
-<h1 class="otra-title">
-  OTRA profiler - Data about the route
-  <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] ?>" class="otra-title--link"><?= ROUTE ?></a>
+<h1 class=otra-title>
+  OTRA profiler — Data about the route
+  <a href="<?= SITE_HOST . Routes::$allRoutes[ROUTE][LABEL_CHUNKS][Routes::ROUTES_CHUNKS_URL] ?>" class=otra-title--link><?= ROUTE ?></a>
 </h1>
-<div class="profiler-container flex-container">
-  <ul class="vertical-menu vertical-menu--container">
+<div class="profiler-container flex-container suffix">
+  <ul class="menu-vertical menu--container" role=menu>
     <?php
     foreach([
       ROUTE_LOGS => ['📄', 'Logs'],
