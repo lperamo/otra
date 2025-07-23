@@ -4,35 +4,25 @@ namespace otra\src\views\profiler\requests;
 
 /** @var array $sessionData Session that was logged in a file in `cache/php/sessions` folder */
 ?>
-<div class=activatable-divs--item>
-  <details class="accordion">
-    <summary class="accordion">GET parameters</summary>
-    <div class="accordion--block">
-      <?php showParameters($sessionData['GET'], 'GET parameters'); ?>
 <div class="activatable-divs--item suffix">
   <details class=accordion>
     <summary class=accordion>GET parameters</summary>
     <div class=accordion--block>
+      <?php showParameters($sessionData['GET'] ?? [], 'GET parameters'); ?>
     </div>
   </details>
 
-  <details class="accordion">
-    <summary class="accordion">POST parameters</summary>
-    <div class="accordion--block">
-      <?php showParameters($sessionData['POST'], 'POST parameters'); ?>
   <details class=accordion>
     <summary class=accordion>POST parameters</summary>
     <div class=accordion--block>
+      <?php showParameters($sessionData['POST'] ?? [], 'POST parameters'); ?>
     </div>
   </details>
 
-  <details class="accordion">
-    <summary class="accordion">Request headers</summary>
-    <div class="accordion--block">
-      <?php showParameters($sessionData['requestHeaders'], 'request headers'); ?>
   <details class=accordion>
     <summary class=accordion>Request headers</summary>
     <div class=accordion--block>
+      <?php showParameters($sessionData['requestHeaders'] ?? [], 'request headers'); ?>
     </div>
   </details>
 </div>

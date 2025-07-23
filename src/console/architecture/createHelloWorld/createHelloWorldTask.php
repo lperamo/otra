@@ -44,6 +44,11 @@ namespace otra\console\architecture\createHelloWorld
   const
     ARG_ACTION_NAME = 5,
     ARCHITECTURE_FOLDER = CONSOLE_PATH . 'architecture/',
+    BUILD_DEV_GCC_FALSE = 'false',  
+    BUILD_DEV_SCSS = 1,
+    BUILD_DEV_SILENT = 0,
+    BUILD_DEV_SCOPE_PROJECT = 0,
+    ROUTE = 'HelloWorld',
     HELLO_WORLD_STARTER_FOLDER = ARCHITECTURE_FOLDER . 'starters/helloWorld/',
     HELLO_WORLD_IMAGES_PATH = HELLO_WORLD_STARTER_FOLDER . 'img/',
     HELLO_WORLD_STARTER_SCSS_FOLDER = HELLO_WORLD_STARTER_FOLDER . 'scss/',
@@ -201,7 +206,15 @@ namespace otra\console\architecture\createHelloWorld
     echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
     require CORE_PATH . 'tools/cli.php';
     require CONSOLE_PATH . 'deployment/buildDev/buildDevTask.php';
-    buildDev(['bin/otra.php', 'buildDev', 0, 1]);
+    buildDev([
+      'bin/otra.php',
+      'buildDev',
+      BUILD_DEV_SILENT,
+      BUILD_DEV_SCSS,
+      BUILD_DEV_GCC_FALSE,
+      BUILD_DEV_SCOPE_PROJECT,
+      ROUTE
+    ]);
     echo CLI_BASE, 'CSS assets built', SUCCESS;
 
     /* We update the class mapping since we have one action more.
