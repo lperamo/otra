@@ -1,27 +1,28 @@
 // loading configuration
-@use '../../configuration/themes' as *;
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/flexContainer/flexContainer';
-@use '../../components/theming/theming';
-@use '../../components/verticalMenu/verticalMenu';
+@use 'components/design/flexContainer/flexContainer';
+@use 'components/design/theming/theming';
+@use 'components/navigation/menu/menu';
 
 // loading partials
-@use '../../partials/otraPage/otraPage';
+@use 'partials/otraPage/otraPage';
 
 // responsive
 @use 'mobile';
 
 // configuring components
+@include flexContainer.init();
 @include flexContainer.create();
-@include verticalMenu.init();
-@include verticalMenu.create(
+@include menu.init();
+@include menu.create(
   (
-    'border-radius' : 0 0 0.5rem 0,
-    'padding' : null,
-    'themes' : $themes,
-    'vertical-menu--background-image' : false,
-    'width' : false
+    border-radius : 0 0 .5rem * theming.$font-size 0,
+    padding : null,
+    themes : $themes,
+    vertical-menu--background-image : false,
+    width : false
   )
 );
 
@@ -33,25 +34,22 @@
   );
 }
 
-.vertical-menu {
-  &.vertical-menu--container--item:first-child {
+.menu-vertical {
+  &.menu--container--item:first-child {
     border-radius : 0;
   }
 
-  &--container--item {
+  @at-root .menu--container--item {
     &:hover:not(:active) {
       text-shadow : 1px 1px #6e7bcf;
     }
 
     &--link {
       // box
-      display : inline-block;
-      padding : 1rem;
-      width   : 100%;
+      padding : 1rem * theming.$font-size;
 
       // text
       color           : inherit;
-      text-decoration : none;
     }
   }
 }

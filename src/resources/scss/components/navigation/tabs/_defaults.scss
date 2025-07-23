@@ -1,0 +1,50 @@
+////
+/// @group Tabs
+/// @since 1.2
+/// @author Lionel Péramo
+////
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+$defaults : (
+  'animate' : true,
+  'background': true,
+  'border' : null,
+  'divs--font-size' : 1.6rem * theming.$font-size,
+  'divs--margin-bottom' : 4rem * theming.$font-size,
+  'tabs--font-size' : 1.6rem * theming.$font-size,
+  'tabs--background-color': 'tabs--background-color',
+  'tabs--background-image': 'tabs--background-image',
+  'tabs--hover--background-color': 'tabs--hover--background-color',
+  'tabs--hover--background-image': 'tabs--hover--background-image',
+  'tabs--border--color' : 'tabs--border--color',
+  'tabs--color' : 'tabs--color',
+  'tabs--div--background' : 'tabs--div--background',
+  'tabs--div--box-shadow' : 'tabs--div--box-shadow',
+  'count' : 4,
+  'print' : false,
+  'suffix' : '',
+  'themes' : (
+    'light' : (
+      'default--tabs--background-color' : #ddd,
+      'default--tabs--background-image' : linear-gradient(45deg, #e0e6e6, #b9dada),
+      'default--tabs--hover--background-color' : #ddf,
+      'default--tabs--hover--background-image' : linear-gradient(45deg, #d3f1f1, #94ebce),
+      'default--tabs--border--color' : #f00,
+      'default--tabs--color' : #000,
+      'default--tabs--div--background' : #eee,
+      'default--tabs--div--box-shadow' : 0 0 3px #000
+    ),
+    'dark' : (
+      'default--tabs--background-color' : #ddd,
+      'default--tabs--background-image' : linear-gradient(45deg, #e0e6e6, #b9dada),
+      'default--tabs--hover--background-color' : #ddf,
+      'default--tabs--hover--background-image' : linear-gradient(45deg, #267878, #146c4e),
+      'default--tabs--border--color' : #fff,
+      'default--tabs--color' : #000,
+      'default--tabs--div--background' : #333,
+      'default--tabs--div--box-shadow' : 0 0 3px #000
+    )
+  )
+);

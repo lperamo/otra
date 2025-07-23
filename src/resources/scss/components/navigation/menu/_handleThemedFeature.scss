@@ -1,0 +1,32 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+///
+/// Mixin that handles themed features for the menu.
+///
+/// @access private
+/// @param  {string} $-property    - e.g. : 'background-image'
+/// @param  {string} $-value       - name of your theme variable for `background-image` like 'menu--background-image'
+/// @param  {string} $-suffix      - Suffix put after all the selectors
+/// @param  {bool}   $-themeUsed   - Are we using a theme?
+/// @param  {bool}   $-print       - Do we want a print stylesheet?
+/// @param  {string} $-specificity - Do we have to add :not(.active) for example to the selector?
+///
+@mixin handle-themed-feature($-property, $-value, $-suffix, $-themeUsed, $-print, $-specificity: '') {
+  @if $-value {
+    @include theming.to-theme(
+      (
+        #{&} + $-specificity : ($-property, $-value)
+      ),
+      $-suffix,
+      $-themeUsed,
+      $-print
+    );
+  }
+}

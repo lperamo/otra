@@ -1,0 +1,53 @@
+////
+/// @group Tabs
+/// @since 1.2
+/// @author Lionel Péramo
+///
+/// @access public
+////
+
+// loading specific configuration
+@use 'desktop';
+@use 'mobile';
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+@mixin init() {
+  @include desktop.init;
+  @include mobile.init;
+
+  input[type=radio][class^=tabs-radios] {
+    display : none;
+  }
+
+  ul[class^=tabs] {
+    display         : flex;
+    list-style-type : none;
+    margin          : 0;
+    padding         : 0;
+
+    @at-root li[class^=tabs--item] {
+      display : flex;
+
+      &:not(:last-child) {
+        margin-right : 1rem * theming.$font-size;
+      }
+
+      @at-root label[class^=tab--item-label] {
+        cursor      : pointer;
+        display     : flex;
+        align-items : center;
+      }
+    }
+  }
+
+  div.activatable-divs {
+    position : relative;
+
+    @at-root div.activatable-divs--item {
+      transition : opacity .5s;
+      position   : relative;
+    }
+  }
+}

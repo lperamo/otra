@@ -1,0 +1,277 @@
+////
+/// @group Tabs
+/// @since 1.2
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+// load menu defaults values - How to keep it private?
+@use 'defaults' as *;
+
+// loading component mixins
+@forward 'init';
+
+///
+/// Main mixin that creates tabs.
+///
+/// @access public
+/// @param  {array} $-options ()
+///
+@mixin create($-options : ()) {
+  $-themeUsed : map.has-key($-options, 'themes');
+  $-options : map.deep-merge($defaults, $-options); // deep-merge is needed to ensure default theme variables are kept
+
+  // extracting variables...
+  $-background          : map.get($-options, 'background');
+  $-border              : map.get($-options, 'border');
+  $-border-radius       : map.get($-options, 'border-radius');
+  $-divs--font-size     : map.get($-options, 'divs--font-size');
+  $-divs--margin-bottom : map.get($-options, 'divs--margin-bottom');
+  $-print               : map.get($-options, 'print');
+  $-tabs--font-size     : map.get($-options, 'tabs--font-size');
+  $-suffix              : map.get($-options, 'suffix');
+
+  // theme variables
+  $-background-color        : map.get($-options, 'tabs--background-color');
+  $-background-image        : map.get($-options, 'tabs--background-image');
+  $-tabs--div--background   : map.get($-options, 'tabs--div--background');
+  $-tabs--div--box-shadow   : map.get($-options, 'tabs--div--box-shadow');
+  $-tabs--hover--background-color : map.get($-options, 'tabs--hover--background-color');
+  $-tabs--hover--background-image : map.get($-options, 'tabs--hover--background-image');
+  $-border--color           : map.get($-options, 'tabs--border--color');
+
+  @include theming.set-actual-component('tabs');
+  @include theming.add-themes(map.get($-options, 'themes'));
+
+  .suffix#{$-suffix}.activatable-divs {
+    @if $-tabs--div--box-shadow {
+      @include theming.to-theme(
+        (#{&} : ('box-shadow', $-tabs--div--box-shadow)),
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+    }
+
+    @if $-tabs--div--background {
+      @include theming.to-theme(
+        (#{&} : ('background', $-tabs--div--background)),
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+    }
+
+    @if $-divs--font-size {
+      font-size: $-divs--font-size;
+    }
+
+    @if $-border-radius {
+      border-radius : map.get($-options, 'border-radius');
+    }
+
+    margin-bottom : $-divs--margin-bottom;
+    padding       : 2rem * theming.$font-size;
+  }
+
+  ul[class^=tabs].suffix#{$-suffix} {
+    @include theming.to-theme(
+      (
+        #{&} : ('color', 'tabs--color')
+      ),
+      $-suffix,
+      $-themeUsed,
+      $-print
+    );
+
+    @if $-tabs--font-size {
+      font-size : $-tabs--font-size;
+    }
+
+    font-family: theming.$font-family;
+    flex-wrap : wrap;
+  }
+
+  @if $-background-color
+    or $-background-image
+    or $-tabs--hover--background-color
+    or $-tabs--hover--background-image {
+    li.tabs--item.suffix#{$-suffix} {
+      transition : background-color .5s;
+
+      @if $-background-color or $-background-image {
+        &:not(:hover) {
+          @if $-background-color {
+            @include theming.to-theme(
+              ('#{&}' : ('background-color', $-background-color)),
+              $-suffix,
+              $-themeUsed,
+              $-print
+            );
+          }
+
+          @if $-background-image {
+            @include theming.to-theme(
+              ('#{&}' : ('background-image', $-background-image)),
+              $-suffix,
+              $-themeUsed,
+              $-print
+            );
+          }
+        }
+      }
+
+      @if $-tabs--hover--background-color or $-tabs--hover--background-image {
+        &:hover {
+          @if $-tabs--hover--background-color {
+            @include theming.to-theme(
+              ('#{&}' : ('background-color', $-tabs--hover--background-color)),
+              $-suffix,
+              $-themeUsed,
+              $-print
+            );
+          }
+
+          @if $-tabs--hover--background-image {
+            @include theming.to-theme(
+              ('#{&}' : ('background-image', $-tabs--hover--background-image)),
+              $-suffix,
+              $-themeUsed,
+              $-print
+            );
+          }
+        }
+      }
+    }
+  }
+
+  @if $-border {
+    li[class^=tabs--item].suffix#{$-suffix} {
+      border-style : solid;
+      border-width : 1px;
+      transition   : border-color .5s;
+
+      &:hover {
+        @include theming.to-theme(
+          (#{&} : ('border-color', $-border--color)),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+    }
+  }
+
+  $-mega-selector--hidden : null;
+  $-mega-selector--visible : null;
+  $-mega-selector--hover--background-color : null;
+  $-mega-selector--hover--background-image : null;
+
+  input[type=radio].suffix#{$-suffix}.tabs-radios {
+    @for $-i from 1 through map.get($-options, 'count') {
+      &:nth-of-type(#{$-i}) {
+        @if $-border
+          or (
+            $-background-color
+            or $-background-image
+            or  $-tabs--hover--background-color
+            or $-tabs--hover--background-image
+          ) {
+          &:checked ~ ul.tabs.suffix#{$-suffix} > li.tabs--item.suffix#{$-suffix}:nth-child(#{$-i}):not(:hover) {
+            @if $-border {
+              @include theming.to-theme(
+                (#{&} : ('border-color', $-border--color)),
+                $-suffix,
+                $-themeUsed,
+                $-print
+              );
+            }
+
+            @if $-tabs--hover--background-color and $-tabs--hover--background-image {
+              $-mega-selector--background--hover-color : if(
+                $-mega-selector--hover--background-color,
+                  list.append($-mega-selector--hover--background-color, &),
+                  &
+              );
+              $-mega-selector--hover--background-image : if(
+                $-mega-selector--hover--background-image,
+                  list.append($-mega-selector--hover--background-image, &),
+                  &
+              );
+              $-mega-selector--background--hover-color : if(
+                $-mega-selector--hover--background-color,
+                  list.append($-mega-selector--hover--background-color, &),
+                  &
+              );
+              $-mega-selector--hover--background-image : if(
+                $-mega-selector--hover--background-image,
+                  list.append($-mega-selector--hover--background-image, &),
+                  &
+              );
+            }
+          }
+        }
+
+        &:checked ~ div.activatable-divs.suffix#{$-suffix} > div.activatable-divs--item {
+          &:nth-child(#{$-i}) {
+            $-mega-selector--visible : if(
+              $-mega-selector--visible,
+                list.append($-mega-selector--visible, &),
+                &
+            );
+          }
+
+          &:not(:nth-child(#{$-i})) {
+            $-mega-selector--hidden : if(
+              $-mega-selector--hidden,
+              list.append($-mega-selector--hidden, &),
+              &
+            );
+          }
+        }
+      }
+    }
+  }
+
+  @if $-mega-selector--hover--background-color {
+    #{$-mega-selector--hover--background-color} {
+      @include theming.to-theme(
+        (#{&} : ('background-color', $-tabs--hover--background-color)),
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+    }
+  }
+
+  @if $-mega-selector--hover--background-image {
+    #{$-mega-selector--hover--background-image} {
+      @include theming.to-theme(
+        (#{&} : ('background-image', $-tabs--hover--background-image)),
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+    }
+  }
+
+  #{$-mega-selector--hidden} {
+    opacity : 0;
+
+    // those properties are only set to those values to prevent the active tab to have the height of the bigger hidden
+    // tab
+    height   : 0;
+    overflow : hidden;
+  }
+
+  #{$-mega-selector--visible} {
+    opacity : 1;
+  }
+}

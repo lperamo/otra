@@ -1,15 +1,16 @@
 // loading configuration
-@use '../configuration/themes' as *;
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../components/accordion/accordion';
-@use '../components/theming/theming';
+@use 'components/content/accordion/accordion';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../partials/otraPage/otraPage';
+@use 'partials/otraPage/otraPage';
 
 // configuring components
 @include theming.init-themes($themes);
+@include accordion.init();
 @include accordion.create(
   ('themes': $themes)
 );

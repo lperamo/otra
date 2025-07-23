@@ -9,6 +9,10 @@ namespace otra\src\views\profiler\requests;
     <summary class="accordion">GET parameters</summary>
     <div class="accordion--block">
       <?php showParameters($sessionData['GET'], 'GET parameters'); ?>
+<div class="activatable-divs--item suffix">
+  <details class=accordion>
+    <summary class=accordion>GET parameters</summary>
+    <div class=accordion--block>
     </div>
   </details>
 
@@ -16,6 +20,9 @@ namespace otra\src\views\profiler\requests;
     <summary class="accordion">POST parameters</summary>
     <div class="accordion--block">
       <?php showParameters($sessionData['POST'], 'POST parameters'); ?>
+  <details class=accordion>
+    <summary class=accordion>POST parameters</summary>
+    <div class=accordion--block>
     </div>
   </details>
 
@@ -23,6 +30,9 @@ namespace otra\src\views\profiler\requests;
     <summary class="accordion">Request headers</summary>
     <div class="accordion--block">
       <?php showParameters($sessionData['requestHeaders'], 'request headers'); ?>
+  <details class=accordion>
+    <summary class=accordion>Request headers</summary>
+    <div class=accordion--block>
     </div>
   </details>
 </div>

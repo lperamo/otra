@@ -1,0 +1,68 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+///
+/// Mixin that creates menu element states for the vertical menu.
+///
+/// @access private
+/// @param  {string} $-state                   - 'active', 'hover' or 'focus'
+/// @param  {string} $-background-color--value - name of your theme variable for `background-color` like
+/// 'menu--background-color'
+/// @param  {string} $-background-image--value - name of your theme variable for `background-image` like
+/// 'menu--background-image'
+/// @param  {string} $-color--value            - name of your theme variable for `color` like 'menu--color'
+/// @param  {string} $-suffix                  - Suffix put after all the selectors
+/// @param  {bool}   $-theme-used              - Are we using a theme?
+/// @param  {bool}   $-print                   - Do we need a print stylesheet?
+///
+
+@mixin menu-state(
+  $-state,
+  $-background-color--value,
+  $-background-image--value,
+  $-color--value,
+  $-suffix,
+  $-theme-used,
+  $-print) {
+  &:#{$-state} {
+    @if $-background-color--value {
+      @include theming.to-theme(
+        (
+          #{&} : ('background-color', $-background-color--value)
+        ),
+        $-suffix,
+        $-theme-used,
+        $-print
+      );
+    }
+
+    @if $-background-image--value {
+      @include theming.to-theme(
+        (
+          #{&} : ('background-image', $-background-image--value)
+        ),
+        $-suffix,
+        $-theme-used,
+        $-print
+      );
+    }
+
+    @if $-color--value {
+      @include theming.to-theme(
+        (
+          #{&} + ':not(.menu--has-link),' + #{&} + '.menu--has-link > .menu--container--item--link' :
+          ('color', $-color--value)
+        ),
+        $-suffix,
+        $-theme-used,
+        $-print
+      );
+    }
+  }
+}

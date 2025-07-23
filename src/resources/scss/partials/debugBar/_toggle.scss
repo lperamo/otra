@@ -7,7 +7,7 @@
 @use '../../configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/theming/theming';
+@use '../../components/design/theming/theming';
 
 // loading mixins
 @use 'mixins';
@@ -19,11 +19,6 @@
 
   // animation
   transition : text-shadow .25s;
-
-  // For IE (needed by WebHint)
-  @supports (will-change : text-shadow) {
-    will-change : text-shadow;
-  }
 
   // text
   @include theming.to-theme(
@@ -37,6 +32,7 @@
 
   // others
   cursor      : pointer;
+  will-change : text-shadow;
 
   &:not(:hover) {
     @include theming.to-theme(

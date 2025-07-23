@@ -1,9 +1,9 @@
 :root {
+  font-size    : 10px;
+
   @supports (color-scheme: light dark) {
     color-scheme : light dark;
   }
-
-  font-size    : 10px;
 }
 
 body,
