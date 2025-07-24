@@ -143,12 +143,18 @@ function generateStylesheetsFiles(
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
   $sassLoadPathString = '';
+  $sassLoadPaths = array_merge([CORE_PATH . 'resources/scss/'], AllConfig::$sassLoadPaths);
 
-  foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+  foreach ($sassLoadPaths as $sassLoadPath)
     $sassLoadPathString .= ' -I ' . $sassLoadPath;
 
+  // `--update` is not used as it can hide errors from files not being modified recently.
   [, $output] = runCommandWithEnvironment(
-    AllConfig::$nodeBinariesPath . 'sass' . ' -scompressed --update ' . $sassLoadPathString .
+    AllConfig::$nodeBinariesPath .
+    'sass' . ' -s compressed ' . (PHP_OS === 'Linux' 
+      ? '--fatal-deprecation=$(' . AllConfig::$nodeBinariesPath . 'sass --version | cut -d" " -f1) ' 
+      : ''
+    ) .  $sassLoadPathString .
     (TASK_FILE_SOURCE_MAPS
       ? ' '
       : ' --no-source-map '

@@ -5,7 +5,7 @@ namespace otra\cache\php;use \Exception; use \Error; use \Throwable; use \stdCla
   public static bool $cssSourceMaps = true;
   public static string
     $cachePath = CACHE_PATH,
-    $defaultConn = 'CMS',  $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.5.0/bin/';  public static array
+    $defaultConn = 'CMS',  $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.19.1/bin/';  public static array
     $debugConfig = [
     'maxData' => 514,
     'maxDepth' => 6
