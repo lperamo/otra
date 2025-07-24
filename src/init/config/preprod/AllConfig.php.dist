@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 namespace otra\config;
 
-use const otra\cache\php\{BUNDLES_PATH,CACHE_PATH, PROD};
+use const otra\cache\php\{BUNDLES_PATH,CACHE_PATH};
 use function otra\tools\secrets\getEncryptionKeyFromTPMDaemon;
 use function otra\tools\secrets\getSecrets;
 
@@ -39,7 +39,7 @@ abstract class AllConfig
     $sassLoadPaths = [];
 }
 
-$secrets = false && file_exists(CACHE_PATH . 'php/' . PROD . 'Secrets.php')
+$secrets = false && file_exists(CACHE_PATH . 'php/preprodSecrets.php')
   ? getSecrets(getEncryptionKeyFromTPMDaemon())
   : [
     'databaseLogin'=> $_SERVER['TEST_LOGIN'],

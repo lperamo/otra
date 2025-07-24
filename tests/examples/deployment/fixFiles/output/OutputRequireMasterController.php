@@ -415,7 +415,7 @@ public static bool
  */
 
 const
-  VERSION = '2025.0.0',
+  VERSION = '2025.1.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
 // require_once 'cause maybe the class OtraException will attempt to load it too!

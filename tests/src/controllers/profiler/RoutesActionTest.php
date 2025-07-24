@@ -87,8 +87,14 @@ class RoutesActionTest extends TestCase
       self::assertSame(
         ob_get_clean(),
         preg_replace(
-          '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
-          '',
+          [
+            '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
+            '@(<span class=routes--block--line--informations-box>)[a-zA-Z0-9]{40}(</span>)@'
+          ],
+          [
+            '',
+            '$1$2'
+          ],
           $output
         ),
         'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'routesAction' . CLI_ERROR . ' page output with ' .

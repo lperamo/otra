@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace otra\cache\php;use \Exception; use \Error; use \Throwable; use \stdClass; use \RecursiveDirectoryIterator; use \RecursiveIteratorIterator; use Phar; use \PharData; use \DateTime; use \Redis;const VERSION='2025.0.0',RESOURCE_FILE_MIN_SIZE=21000,CACHE_TIME=300;abstract class AllConfig
+namespace otra\cache\php;use \Exception; use \Error; use \Throwable; use \stdClass; use \RecursiveDirectoryIterator; use \RecursiveIteratorIterator; use Phar; use \PharData; use \DateTime; use \Redis;const VERSION='2025.1.0',RESOURCE_FILE_MIN_SIZE=21000,CACHE_TIME=300;abstract class AllConfig
 {
   public static int $verbose = 0;
   public static bool $cssSourceMaps = true;
