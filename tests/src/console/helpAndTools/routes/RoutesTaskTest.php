@@ -47,7 +47,7 @@ class RoutesTaskTest extends TestCase
   }
 
   /**
-   * Gets the hashed route using SHA1 algorith, enclosed by brackets
+   * Gets the hashed route using SHA1 algorithm, enclosed by brackets
    *
    * @param string $route
    *
@@ -121,11 +121,6 @@ class RoutesTaskTest extends TestCase
       $tasksClassMap,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
       [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-    TasksManager::execute(
-      $tasksClassMap,
-      self::OTRA_TASK_GEN_ASSETS,
-      [self::OTRA_CONSOLE_FILENAME, self::OTRA_TASK_GEN_ASSETS]
     );
     ob_end_clean();
 
