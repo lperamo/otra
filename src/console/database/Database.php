@@ -73,7 +73,7 @@ abstract class Database
    */
   public static function init(?string $dbConnKey = null) : void
   {
-    $dbConn = AllConfig::$dbConnections;
+    $dbConn = AllConfig::${$_SERVER['APP_SCOPE']}['db'];
     $dbConnKey ??= key($dbConn);
 
     if (!isset($dbConn[$dbConnKey]))
@@ -608,10 +608,10 @@ abstract class Database
   public static function _initImports(?string &$databaseName, ?string &$confToUse) : bool|Sql
   {
     if (null === $confToUse)
-      $confToUse = key(AllConfig::$dbConnections);
+      $confToUse = key(AllConfig::${$_SERVER['APP_SCOPE']}['db']);
 
     if (null === $databaseName)
-      $databaseName = AllConfig::$dbConnections[$confToUse]['db'];
+      $databaseName = AllConfig::${$_SERVER['APP_SCOPE']}['db'][$confToUse]['db'];
 
     Session::set('db', $confToUse);
     $database = Sql::getDb(null, false);

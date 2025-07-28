@@ -1,44 +1,47 @@
 // loading configuration
-@use '../../configuration/themes' as *;
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/accordion/accordion';
-@use '../../components/styledButtons/ripple';
-@use '../../components/tabs/tabs';
-@use '../../components/theming/theming';
+@use 'components/content/accordion/accordion';
+@use 'components/form/styledButtons/ripple';
+@use 'components/navigation/tabs/tabs';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../../partials/profiler/index';
+@use 'partials/profiler/index';
 
 // configuring components
-@include theming.init-themes($themes);
+@include theming.init-themes($themes, 'accordion' 'styledButtons' 'tabs' 'theming');
 @include ripple.create(
-  ('themes': $themes)
+  (themes: $themes)
 );
+@include tabs.init();
 @include tabs.create(
   (
-    'count' : 2,
-    'themes' : $themes,
-    'border-radius' : 0 0 .5rem .5rem
+    count : 2,
+    themes : $themes,
+    border-radius : 0 0 .5rem .5rem
   )
 );
+@include accordion.init();
 @include accordion.create(
   (
-    'details-padding' : null,
-    'themes': $themes
+    details-padding : null,
+    themes: $themes
   )
 );
 
 #logs-container {
   // box
   box-sizing : border-box;
-  padding    : 2rem;
+  padding    : 2rem * theming.$font-size;
   // the following combination prevent to go outside the screen but taking all the space available in the flex container
   flex-grow : 1;
   width     : min-content;
 
   // text
-  font-size  : 1.6rem;
+  font-size  : 1.6rem * theming.$font-size;
+
   // word-break is not supported by IE!
   @supports (word-break: break-word) {
     word-break : break-word;
@@ -53,36 +56,33 @@
   }
 
   @at-root .accordion--block {
-    margin-left  : .1rem;
-    margin-right : .1rem;
+    margin-left  : .1rem * theming.$font-size;
+    margin-right : .1rem * theming.$font-size;
 
     @at-root .logs-container--item-container {
+      box-shadow    : 0 0 .3rem * theming.$font-size #444;
+      margin-bottom : 1rem * theming.$font-size;
+      padding       : 1rem * theming.$font-size;
+
       @media all and (prefers-color-scheme : dark) {
         background-color: hsl(240deg 20% 53% / 15%);
       }
-
-      box-shadow    : 0 0 .3rem #444;
-      margin-bottom : 1rem;
-      padding       : 1rem;
     }
   }
 
   @at-root .logs-container--label {
-    width : 15rem;
+    width : 15rem * theming.$font-size;
   }
 
   @at-root .logs-container--message-container--label {
-    width : 18.6rem;
+    width : 18.6rem * theming.$font-size;
   }
 
   @at-root .logs-container--label,
   .logs-container--message-container--label {
     // positioning
     display       : inline-block;
-    margin-bottom : 1rem;
-
-    // text
-    font-size   : 2rem;
+    margin-bottom : 1rem * theming.$font-size;
   }
 
   @at-root .yes-icon {
@@ -121,11 +121,11 @@
     );
 
     border-style : solid;
-    border-width : 0 0 0 0.3rem;
-    padding-left : 1rem;
+    border-width : 0 0 0 .3rem * theming.$font-size;
+    padding-left : 1rem * theming.$font-size;
     border-color : #5781ff;
   }
 }
 
 // applying theme
-@include theming.global-mass-theme();
+@include theming.global-mass-theme;

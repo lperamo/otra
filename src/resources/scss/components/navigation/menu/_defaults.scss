@@ -1,0 +1,223 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+$defaults : (
+  'border-radius' : .5rem * theming.$font-size,
+  'block--active-element' : true,
+  'horizontal' : true,
+  'item--border-radius' : 0 .5rem * theming.$font-size 0 0,
+  'margin-top' : 0,
+  'margin-bottom' : 0,
+  'padding' : 1rem * theming.$font-size,
+  'print' : false,
+  'menu--background-color' : 'menu--background-color',
+  'menu--background-image' : 'menu--background-image',
+  'menu--border' : 'menu--border',
+  'menu--element--animated-border' : true,
+  'menu--element--animated-border-color' : 'menu--element--animated-border-color',
+  'menu--element--animated-border-width' : .4rem * theming.$font-size,
+  'menu--element--border' : 'menu--element--border',
+  'menu--element--border-style' : 'menu--element--border-style',
+  'menu--element--border-color' : 'menu--element--border-color',
+  // -- menu states start
+  // idle state
+  'menu--element--background-color' : 'menu--element--background-color',
+  'menu--element--background-image' : 'menu--element--background-image',
+  'menu--element--color' : 'menu--element--color',
+  // active state
+  'menu--element--active--background-color' : 'menu--element--active--background-color',
+  'menu--element--active--background-image' : 'menu--element--active--background-image',
+  'menu--element--active--color' : 'menu--element--active--color',
+  // focus state
+  'menu--element--focus--background-color' : 'menu--element--focus--background-color',
+  'menu--element--focus--background-image' : 'menu--element--focus--background-image',
+  'menu--element--focus--color' : 'menu--element--focus--color',
+  // focus-visible state
+  'menu--element--focus-visible--box-shadow' : 'menu--element--focus-visible--box-shadow',
+  // hover state
+  'menu--element--hover--background-color' : 'menu--element--hover--background-color',
+  'menu--element--hover--background-image' : 'menu--element--hover--background-image',
+  'menu--element--hover--color' : 'menu--element--hover--color',
+  // visited state
+  'menu--element--visited--background-color' : 'menu--element--visited--background-color',
+  'menu--element--visited--background-image' : 'menu--element--visited--background-color',
+  'menu--element--link--visited--color' : 'menu--element--link--visited--color',
+  // menu states end --
+  // font
+  'menu--font' : 'menu--font',
+  // submenus
+  'submenu--background-color' : 'submenu--background-color',
+  'submenu--background-image' : 'submenu--background-image',
+  'submenu--border' : 'submenu--border',
+  'submenu--element--border' : 'submenu--element--border',
+  'submenu--element--border-style' : 'submenu--element--border-style',
+  'submenu--element--border-color' : 'submenu--element--border-color',
+  // -- submenu states start
+  // idle state
+  'submenu--element--background-color' : 'submenu--element--background-color',
+  'submenu--element--background-image' : 'submenu--element--background-image',
+  'submenu--element--color' : 'submenu--element--color',
+  // active state
+  'submenu--element--active--background-color' : 'submenu--element--active--background-color',
+  'submenu--element--active--background-image' : 'submenu--element--active--background-image',
+  'submenu--element--active--color' : 'submenu--element--active--color',
+  // focus state
+  'submenu--element--focus--background-color' : 'submenu--element--focus--background-color',
+  'submenu--element--focus--background-image' : 'submenu--element--focus--background-image',
+  'submenu--element--focus--color' : 'submenu--element--focus--color',
+  // hover state
+  'submenu--element--hover--background-color' : 'submenu--element--hover--background-color',
+  'submenu--element--hover--background-image' : 'submenu--element--hover--background-image',
+  'submenu--element--hover--color' : 'submenu--element--hover--color',
+  // visited state
+  'submenu--element--visited--background-color' : 'submenu--element--visited--background-color',
+  'submenu--element--visited--background-image' : 'submenu--element--visited--background-image',
+  'submenu--element--link--visited--color' : 'submenu--element--link--visited--color',
+  // submenu states end --
+  'submenus' : null,
+  'suffix' : '',
+  'width' : max-content,
+  'themes' :  (
+    'light' : (
+      // menu main properties
+      'default--menu--background-color' : null,
+      'default--menu--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
+      'default--menu--border' : 1px solid #000,
+      'default--menu--element--animated-border-color' : #77a,
+      'default--menu--element--border' : 1px solid #000,
+      'default--menu--element--border-style' : solid,
+      'default--menu--element--border-color' : #000,
+      // -- menu states start
+      // idle state
+      'default--menu--element--background-color' : null,
+      'default--menu--element--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--menu--element--color' : null,
+      // active state
+      'default--menu--element--active--background-color' : null,
+      'default--menu--element--active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+      'default--menu--element--active--color' : #44a,
+      // focus state
+      'default--menu--element--focus--background-color' : null,
+      'default--menu--element--focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--menu--element--focus--color' : #44a,
+      // focus-visible state
+      'default--menu--element--focus-visible--box-shadow' :
+      inset 0 0 .3rem * theming.$font-size .1rem * theming.$font-size,
+      // hover state
+      'default--menu--element--hover--background-color' : null,
+      'default--menu--element--hover--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--menu--element--hover--color' : #66c,
+      // visited state
+      'default--menu--element--visited--background-color' : null,
+      'default--menu--element--visited--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--menu--element--link--visited--color' : null,
+      // menu states end --
+      'default--menu--font' : '#{2rem * theming.$font-size} system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif',
+      // submenu main properties
+      'default--submenu--background-color' : null,
+      'default--submenu--background-image' : linear-gradient(#c6d8df 0%, #bedce8 45%, #c6d8df 100%),
+      'default--submenu--border' : 1px solid #000,
+      'default--submenu--element--border' : 1px solid #000,
+      'default--submenu--element--border-style' : solid,
+      'default--submenu--element--border-color' : #000,
+      // -- submenu states start
+      // idle state
+      'default--submenu--element--background-color' : null,
+      'default--submenu--element--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--submenu--element--color' : null,
+      // active state
+      'default--submenu--element-active--background-color' : null,
+      'default--submenu--element-active--background-image' : linear-gradient(45deg, #86acbb, #bedce8),
+      'default--submenu--element-active--color' : null,
+      // focus state
+      'default--submenu--element-focus--background-color' : null,
+      'default--submenu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--submenu--element-focus--color' : null,
+      // hover state
+      'default--submenu--element-hover--background-color' : null,
+      'default--submenu--element-hover--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--submenu--element-hover--color' : null,
+      // visited state
+      'default--submenu--element--visited--background-color' : null,
+      'default--submenu--element--visited--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+      'default--submenu--element--link--visited--color' : #null
+      // submenu states end --
+    ),
+    'dark' : (
+      // menu main properties
+      'default--menu--background-color' : null,
+      'default--menu--background-image' : linear-gradient(#3e5e6a, #517a8a),
+      'default--menu--border' : 1px solid #000,
+      'menu--element--animated-border-color' : #77a,
+      'default--menu--element--border' : 1px solid #000,
+      'default--menu--element--border-style' : solid,
+      'default--menu--element--border-color' : #000,
+      // -- menu states start
+      // idle state
+      'default--menu--element--background-color' : null,
+      'default--menu--element--background-image' : linear-gradient(45deg, #1c2427 0%, #18252a 45%, #1c2427 100%),
+      'default--menu--element--color' : #ccc,
+      // active state
+      'default--menu--element-active--background-color' : null,
+      'default--menu--element-active--background-image' : linear-gradient(45deg, #1c2427 0%, #2b414a 45%, #1c2427 100%),
+      'default--menu--element-active--color' : null,
+      // focus state
+      'default--menu--element-focus--background-color' : null,
+      'default--menu--element-focus--background-image' : linear-gradient(45deg, #185b77 0%, #204756 45%, #185b77 100%),
+      'default--menu--element-focus--color' : null,
+      // focus-visible state
+      'default--menu--element-focus-visible--box-shadow' :
+      inset 0 0 .3rem * theming.$font-size .1rem * theming.$font-size,
+      // hover state
+      'default--menu--element-hover--background-color' : null,
+      'default--menu--element-hover--background-image' : linear-gradient(45deg, #1c2427 0%, #3d7085 45%, #1c2427 100%),
+      'default--menu--element-hover--color' : null,
+      // visited state
+      'default--menu--element--visited--background-color' : null,
+      'default--menu--element--visited--background-image' :
+      linear-gradient(45deg, #1c2427 0%, #18252a 45%, #1c2427 100%),
+      'default--menu--element--link--visited--color' : #ccc,
+      // menu states end --
+      'default--menu--font' : '#{2rem * theming.$font-size} system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif',
+      // submenu main properties
+      'default--submenu--background-color' : null,
+      'default--submenu--background-image' : linear-gradient(#3e5e6a, #517a8a),
+      'default--submenu--border' : 1px solid #000,
+      'default--submenu--element--border' : 1px solid #000,
+      'default--submenu--element--border-style' : solid,
+      'default--submenu--element--border-color' : #000,
+      // -- submenu states start
+      // idle state
+      'default--submenu--element--background-color' : null,
+      'default--submenu--element--background-image' : linear-gradient(45deg, #313f44 0%, #2b424a 45%, #313f44 100%),
+      'default--submenu--element--color' : #ccc,
+      // active state
+      'default--submenu--element-active--background-color' : null,
+      'default--submenu--element-active--background-image' :
+      linear-gradient(45deg, #1c2427 0%, #2b414a 45%, #1c2427 100%),
+      'default--submenu--element-active--color' : #44a,
+      // focus state
+      'default--submenu--element-focus--background-color' : null,
+      'default--submenu--element-focus--background-image' :
+      linear-gradient(45deg, #185b77 0%, #204756 45%, #185b77 100%),
+      'default--submenu--element-focus--color' : #44a,
+      // hover state
+      'default--submenu--element-hover--background-color' : null,
+      'default--submenu--element-hover--background-image' :
+      linear-gradient(45deg, #1c2427 0%, #3d7085 45%, #1c2427 100%),
+      'default--submenu--element-hover--color' : #44a,
+      // visited state
+      'default--submenu--element--visited--background-color' : null,
+      'default--submenu--element--visited--background-image' :
+      linear-gradient(45deg, #313f44 0%, #2b424a 45%, #313f44 100%),
+      'default--submenu--element--link--visited--color' : #ccc
+      // submenu states end --
+    )
+  )
+);

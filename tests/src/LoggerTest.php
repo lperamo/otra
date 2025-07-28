@@ -28,7 +28,7 @@ class LoggerTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     self::$logsProdPath = self::LOG_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR;
     self::$simpleLogPath = self::$logsProdPath . 'simpleLog.txt';
     require CORE_PATH . 'tools/debug/tailCustom.php';

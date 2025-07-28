@@ -11,7 +11,7 @@ use function otra\cache\php\{block, endblock};
  * @var false|string $templateVisualization
  */
 require CORE_VIEWS_PATH . 'profiler/layout.phtml';
-block('title', 'Profiler - Template structure');
+block('title', 'Profiler — Template structure');
 block('view');
 
 if ($templateVisualization[Session::SESSION_KEY_EXISTS] !== false)

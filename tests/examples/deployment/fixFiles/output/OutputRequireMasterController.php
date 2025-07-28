@@ -1,50 +1,463 @@
 <?php declare(strict_types=1);
-namespace otra\cache\php;use \Exception; use \Error; use \Throwable; use \stdClass; use \RecursiveDirectoryIterator; use \RecursiveIteratorIterator; use Phar; use \PharData; use \DateTime; use \Redis;const DOUBLE_ERASE_SEQUENCE=ERASE_SEQUENCE.ERASE_SEQUENCE,ADD_BOLD="\e[1m",REMOVE_BOLD_INTENSITY="\e[22m",ADD_UNDERLINE="\e[4m",REMOVE_UNDERLINE="\e[24m",END_COLOR="\e[0m",CLI_BASE="\e[38;2;190;190;190m",CLI_SUCCESS="\e[38;2;100;200;100m",CLI_INFO="\e[38;2;100;150;200m",CLI_ERROR="\e[38;2;255;100;100m",CLI_INFO_HIGHLIGHT="\e[38;2;100;200;200m",CLI_TABLE="\e[38;2;100;180;255m",CLI_TABLE_HEADER="\e[38;2;75;100;255m",CLI_WARNING="\e[38;2;190;190;100m",CLI_GRAY="\e[38;2;160;160;160m",CLI_INDENT_COLOR_FIRST=ADD_BOLD.CLI_INFO,CLI_INDENT_COLOR_SECOND=ADD_BOLD.CLI_ERROR,CLI_INDENT_COLOR_FOURTH=ADD_BOLD.CLI_INFO_HIGHLIGHT,CLI_INDENT_COLOR_FIFTH="\e[38;2;150;0;255m",CLI_DUMP_LINE_HIGHLIGHT="\e[38;2;140;200;255m",CLI_LINE_DUMP="\e[38;2;83;148;236m",ERASE_SEQUENCE="\033[1A\r\033[K",SUCCESS=CLI_SUCCESS.' ✔'.END_COLOR.PHP_EOL,OTRA_KEY_PERMISSIONS_POLICY='permissionsPolicy',OTRA_KEY_CONTENT_SECURITY_POLICY='csp',OTRA_KEY_SCRIPT_SRC_DIRECTIVE='script-src',OTRA_KEY_STYLE_SRC_DIRECTIVE='style-src',OTRA_LABEL_SECURITY_NONE="'none'",OTRA_LABEL_SECURITY_SELF="'self'",OTRA_LABEL_SECURITY_STRICT_DYNAMIC="'strict-dynamic'",OTRA_POLICY=0,OTRA_POLICIES=[OTRA_KEY_PERMISSIONS_POLICY=>'Permissions-Policy: ',OTRA_KEY_CONTENT_SECURITY_POLICY=>'Content-Security-Policy: '],OTRA_ROUTES_PREFIX='otra',CSP_ARRAY=['base-uri'=>OTRA_LABEL_SECURITY_SELF,'form-action'=>OTRA_LABEL_SECURITY_SELF,'frame-ancestors'=>OTRA_LABEL_SECURITY_NONE,'default-src'=>OTRA_LABEL_SECURITY_NONE,'font-src'=>OTRA_LABEL_SECURITY_SELF,'img-src'=>OTRA_LABEL_SECURITY_SELF,'object-src'=>OTRA_LABEL_SECURITY_SELF,'connect-src'=>OTRA_LABEL_SECURITY_SELF,'child-src'=>OTRA_LABEL_SECURITY_SELF,'manifest-src'=>OTRA_LABEL_SECURITY_SELF,OTRA_KEY_STYLE_SRC_DIRECTIVE=>OTRA_LABEL_SECURITY_SELF,OTRA_KEY_SCRIPT_SRC_DIRECTIVE=>OTRA_LABEL_SECURITY_STRICT_DYNAMIC],CONTENT_SECURITY_POLICY=[DEV=>CSP_ARRAY,PROD=>CSP_ARRAY],PERMISSIONS_POLICY=[DEV=>['sync-xhr'=>''],PROD=>[]],CACHE_TIME=300;abstract class AllConfig
+namespace otra\cache\php;use \Exception; use \Error; use \Throwable; use \stdClass; use \RecursiveDirectoryIterator; use \RecursiveIteratorIterator; use Phar; use \PharData; use \DateTime; use \Redis;const DOUBLE_ERASE_SEQUENCE=ERASE_SEQUENCE.ERASE_SEQUENCE,OTRA_KEY_PERMISSIONS_POLICY='permissionsPolicy',OTRA_KEY_CONTENT_SECURITY_POLICY='csp',OTRA_KEY_SCRIPT_SRC_DIRECTIVE='script-src',OTRA_KEY_STYLE_SRC_DIRECTIVE='style-src',OTRA_LABEL_SECURITY_NONE="'none'",OTRA_LABEL_SECURITY_SELF="'self'",OTRA_LABEL_SECURITY_STRICT_DYNAMIC="'strict-dynamic'",OTRA_POLICY=0,OTRA_POLICIES=[OTRA_KEY_PERMISSIONS_POLICY=>'Permissions-Policy: ',OTRA_KEY_CONTENT_SECURITY_POLICY=>'Content-Security-Policy: '],OTRA_ROUTES_PREFIX='otra',CSP_ARRAY=['base-uri'=>OTRA_LABEL_SECURITY_SELF,'form-action'=>OTRA_LABEL_SECURITY_SELF,'frame-ancestors'=>OTRA_LABEL_SECURITY_NONE,'default-src'=>OTRA_LABEL_SECURITY_NONE,'font-src'=>OTRA_LABEL_SECURITY_SELF,'img-src'=>OTRA_LABEL_SECURITY_SELF,'object-src'=>OTRA_LABEL_SECURITY_SELF,'connect-src'=>OTRA_LABEL_SECURITY_SELF,'child-src'=>OTRA_LABEL_SECURITY_SELF,'manifest-src'=>OTRA_LABEL_SECURITY_SELF,OTRA_KEY_STYLE_SRC_DIRECTIVE=>OTRA_LABEL_SECURITY_SELF,OTRA_KEY_SCRIPT_SRC_DIRECTIVE=>OTRA_LABEL_SECURITY_STRICT_DYNAMIC],CONTENT_SECURITY_POLICY=[DEV=>CSP_ARRAY,PROD=>CSP_ARRAY,'preprod'=>CSP_ARRAY,'test'=>CSP_ARRAY],PERMISSIONS_POLICY=[DEV=>['sync-xhr'=>''],PROD=>[],'test'=>[],'preprod'=>[]],TPM_SCRIPT=CORE_PATH.'tools/secrets/tpm.sh',ADD_BOLD="\e[1m",REMOVE_BOLD_INTENSITY="\e[22m",ADD_UNDERLINE="\e[4m",REMOVE_UNDERLINE="\e[24m",END_COLOR="\e[0m",CLI_BASE="\e[38;2;190;190;190m",CLI_SUCCESS="\e[38;2;100;200;100m",CLI_INFO="\e[38;2;100;150;200m",CLI_ERROR="\e[38;2;255;100;100m",CLI_INFO_HIGHLIGHT="\e[38;2;100;200;200m",CLI_TABLE="\e[38;2;100;180;255m",CLI_TABLE_HEADER="\e[38;2;75;100;255m",CLI_WARNING="\e[38;2;190;190;100m",CLI_GRAY="\e[38;2;160;160;160m",CLI_INDENT_COLOR_FIRST=ADD_BOLD.CLI_INFO,CLI_INDENT_COLOR_SECOND=ADD_BOLD.CLI_ERROR,CLI_INDENT_COLOR_FOURTH=ADD_BOLD.CLI_INFO_HIGHLIGHT,CLI_INDENT_COLOR_FIFTH="\e[38;2;150;0;255m",CLI_DUMP_LINE_HIGHLIGHT="\e[38;2;140;200;255m",CLI_LINE_DUMP="\e[38;2;83;148;236m",ERASE_SEQUENCE="\033[1A\r\033[K",SUCCESS=CLI_SUCCESS.' ✔'.END_COLOR.PHP_EOL;function getEncryptionKeyFromTPM(): string
 {
-  public static int $verbose = 0;
-  public static bool $cssSourceMaps = true;
+  /** @author Lionel Péramo @package otra\console */
+
+  if (!file_exists('/dev/tpm0'))
+  {
+    echo CLI_ERROR, 'TPM device not found. Ensure your TPM is enabled.', END_COLOR, PHP_EOL;
+    require_once CORE_PATH . 'OtraException.php';
+    throw new OtraException(code: 1, exit: true);
+  }
+
+  $process = proc_open(
+    'sudo ' . escapeshellcmd(TPM_SCRIPT . ' -b ' . BASE_PATH),
+    [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
+    $pipes
+  );
+
+  if (!is_resource($process))
+  {
+    echo CLI_ERROR, 'Failed to execute TPM script.', END_COLOR, PHP_EOL;
+    require_once CORE_PATH . 'OtraException.php';
+    throw new OtraException(code: 1, exit: true);
+  }
+
+  $output = stream_get_contents($pipes[1]);
+  fclose($pipes[1]);
+  $errorOutput = stream_get_contents($pipes[2]);
+  fclose($pipes[2]);
+
+  $exitCode = proc_close($process);
+
+  if ($exitCode !== 0)
+  {
+    echo CLI_ERROR, 'TPM script failed:', PHP_EOL, $errorOutput, END_COLOR, PHP_EOL;
+    require_once CORE_PATH . 'OtraException.php';
+    throw new OtraException(code: 1, exit: true);
+  }
+
+  if (preg_match('@keyedhash:\s*([a-fA-F0-9]+)@', $output, $matches))
+    return trim($matches[1]);
+
+  if (preg_match('@🔑 Unsealed AES Key:\s*([\da-fA-F\s]+)@', $output, $matches))
+    return trim(str_replace([PHP_EOL, ' '], '', $matches[1])); echo CLI_ERROR, 'Failed to extract AES key from TPM script output.', END_COLOR, PHP_EOL;
+  require_once CORE_PATH . 'OtraException.php';
+  throw new OtraException(code: 1, exit: true);
+}
+
+/** Simple logger class
+ *
+ * @package otra
+ * @author Lionel Péramo
+ */
+
+abstract class Logger
+{
+  private const int
+    APPEND_LOG = 3;
+
+  private const string
+    LOGS_PATH = BASE_PATH . 'logs/',
+    SESSION_DATE = '_date',
+    HTTP_USER_AGENT = 'HTTP_USER_AGENT',
+    SESSION_BROWSER = '_browser',
+    REMOTE_ADDR = 'REMOTE_ADDR';
+
+  final public const int LOG_JSON_MASK = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
+
+  /**
+   * Returns the date or also the ip address and the browser if different
+   *
+   * @return array
+   */
+  private static function logIpTest() : array
+  {
+    if (!isset($_SESSION[self::SESSION_DATE]))
+      $_SESSION[self::SESSION_DATE] = $_SESSION['_ip'] = $_SESSION[self::SESSION_BROWSER] = '';
+
+    $infos = [];
+    $todayDate = date(DATE_ATOM, time());
+
+    if ($todayDate !== $_SESSION[self::SESSION_DATE])
+      $infos['d'] = $_SESSION[self::SESSION_DATE] = $todayDate;
+
+    // if we come from console, adds it to the log
+    $infos['c'] = (PHP_SAPI === 'cli') ? '1' : '0';
+
+    /** @var array{REMOTE_ADDR?: string, HTTP_USER_AGENT?: string} $_SERVER */
+    // remote address ip is not set if we come from the console or if we are in localhost
+    $infos['i'] = (isset($_SERVER[self::REMOTE_ADDR]) && $_SERVER[self::REMOTE_ADDR] !== $_SESSION['_ip'])
+      ? ($_SESSION['_ip'] = $_SERVER[self::REMOTE_ADDR])
+      : 'l';
+
+    // user agent isn't set if we come from the console
+    if (isset($_SERVER[self::HTTP_USER_AGENT])
+      && $_SERVER[self::HTTP_USER_AGENT] != $_SESSION[self::SESSION_BROWSER])
+      $infos['u'] = $_SESSION[self::SESSION_BROWSER] = $_SERVER[self::HTTP_USER_AGENT];
+
+    return $infos;
+  }
+
+  private static function logging(string $path, string $message) : void
+  {
+    if (is_writable($path))
+      error_log($message, self::APPEND_LOG, $path);
+    else
+      echo 'Cannot log the errors due to a lack of permissions' . ($_SERVER[APP_ENV] === PROD
+        ? '!' . PHP_EOL
+        : ' for the file \'' . $path . '\'!' . PHP_EOL);
+  }
+
+  /**
+   * Appends a message to the log file at logs/log.txt
+   */
+  public static function log(string $message) : void
+  {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . '/log.txt',
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
+    );
+  }
+
+  /**
+   * Appends a message to the log file at the specified path appended to __DIR__
+   */
+  public static function logToRelativePath(string $message, string $path = '') : void
+  {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
+    self::logging(
+      __DIR__ . DIR_SEPARATOR . $path . '.txt',
+      json_encode($infos, self::LOG_JSON_MASK) . PHP_EOL
+    );
+  }
+
+  /**
+   * Appends a message to the log file at the specified path into the log path
+   */
+  public static function logTo(string $message, string  $logPath = 'log') : void
+  {
+    $infos = self::logIpTest();
+    $infos['m'] = $message;
+    $logPath = self::LOGS_PATH . ($_SERVER[APP_ENV] ?? 'dev') . DIR_SEPARATOR . $logPath . '.txt';
+    $filePointer = fopen($logPath, 'r+');
+
+    if (!fread($filePointer, 1))
+      fwrite($filePointer, '[');
+
+    fclose($filePointer);
+
+    clearstatcache();
+    self::logging(
+      $logPath,
+      (!file_exists($logPath) || filesize($logPath) === 0 ? '[' : '') .
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
+    );
+  }
+
+  /**
+   * Appends a simple message (not OTRA formatted) to the log file at the specified path into the log path
+   */
+  public static function simpleLogTo(string $message, string $logPath = 'log') : void
+  {
+    clearstatcache();
+    self::logging(
+      self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt',
+      $message . PHP_EOL
+    );
+  }
+
+  /**
+   * Logs all SQL queries with the file name that launches it and the line number where it occurred.
+   */
+  public static function logSQLTo(string $file, int $line, string $message, string $path = '') : void
+  {
+    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $path . '.txt';
+    clearstatcache();
+    self::logging(
+      $logPath,
+      (
+      (!file_exists($logPath) || filesize($logPath) === 0) ? '[' : '') .
+      '{"file":"' . $file . '","line":' . $line . ',"query":"' .
+      preg_replace(
+        '/\s\s+/',
+        ' ',
+        str_replace(PHP_EOL, '', trim($message))
+      ) . '"},'
+    );
+  }
+
+  public static function logExceptionOrErrorTo(string $message, string $errorType, array $traces): void
+  {
+    clearstatcache();
+    $filePath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR .
+      ($errorType === 'Exception' ? 'unknownExceptions' : 'unknownFatalErrors') . '.txt';
+    $infos = self::logIpTest();
+    $infos['m'] = $errorType . ' : ' . $message;
+    $infos['s'] = self::formatStackTracesForLog($traces);
+    self::logging(
+      $filePath,
+      (!file_exists($filePath) || filesize($filePath) === 0 ? '[' : '') .
+      json_encode($infos, self::LOG_JSON_MASK) . ',' . PHP_EOL
+    );
+  }
+
+  public static function lg(string $message) : void
+  {
+    self::logTo($message, 'trace');
+  }
+
+  /**
+   * @return array
+   */
+  public static function formatStackTracesForLog(array $traces) : array
+  {
+    foreach ($traces as &$traceItems)
+    {
+      foreach ($traceItems as $traceKey => &$traceValue)
+      {
+        if ($traceKey === 'file')
+        {
+          $traceValue = str_replace(
+            [
+              BASE_PATH,
+              CORE_PATH
+            ],
+            [
+              'BASE_PATH + ',
+              'CORE_PATH + '
+            ],
+            $traceValue
+          );
+        }
+      }
+    }
+
+    return $traces;
+  }
+
+  /**
+   * We keep this code into a function only to lighten to useful code
+   * (that the code be slow when there is an error/exception is less important)
+   *
+   * @param $message
+   * @param $traces
+   */
+  public static function logWithStackTraces($message, $traces): void
+  {
+    Logger::logTo(
+      json_encode(
+        [
+          'm' =>  $message,
+          's' => self::formatStackTracesForLog($traces)
+        ],
+        Logger::LOG_JSON_MASK
+      ),
+      'classNotFound'
+    );
+  }
+}
+function getEncryptionKeyFromTPMDaemon(string $tpmDaemonSocketPath = '/run/otra/tpm_daemon.sock'): string
+{
+  static $redis;
+
+  if ($redis === null)
+  {
+    $redis = new \Redis();
+    $redis->pconnect('127.0.0.1');
+  }
+
+  if ($redis->exists('tpm'))
+    return $redis->get('tpm');
+
+  $client = stream_socket_client(
+    'unix://' . $tpmDaemonSocketPath,
+    $errno,
+    $errorString,
+    5
+  );
+
+  if (!$client)
+  {
+    define (__NAMESPACE__ . '\\ERROR', 'Could not connect to TPM daemon: ' . $errorString . ' (' . $errno . ')');
+    Logger::logTo(ERROR, 'tpm');
+    throw new OtraException(ERROR);
+  }
+
+  fwrite($client, json_encode(
+    [
+      'basePath' => BASE_PATH,
+      'command' => 'decrypt',
+      'scriptPath' => CORE_PATH . 'tools/secrets/tpm.sh'
+    ],
+    JSON_THROW_ON_ERROR
+  ));
+
+  fflush($client);
+  stream_socket_shutdown($client, STREAM_SHUT_WR);
+
+  $response = stream_get_contents($client);
+  fclose($client);
+
+  try
+  {
+    $result = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+  } catch (JsonException $exception)
+  {
+    define(__NAMESPACE__ . '\\ERROR', 'JSON decoding error: ' . $exception->getMessage() . $response);
+    Logger::logTo(ERROR, 'tpm');
+    throw new OtraException(ERROR);
+  }
+
+  if (isset($result['result']))
+  {
+    $redis->set('tpm', $result);
+    $redis->expire('tpm', 600); return trim($result['result']);
+  }
+
+  require_once CORE_PATH . 'OtraException.php';
+  throw new OtraException('TPM daemon error: ' . ($result['error'] ?? 'Unknown error'));
+}function getSecrets(string $encryptionKey, string $environment = DEV): array
+{
+  if (!defined(__NAMESPACE__ . '\\CIPHER_ALGO'))
+    define(__NAMESPACE__ . '\\CIPHER_ALGO', 'AES-256-CBC');
+
+  if (!defined(__NAMESPACE__ . '\\SECRETS_FILE'))
+    define(__NAMESPACE__ . '\\SECRETS_FILE', CACHE_PATH . 'php/' . $environment . 'Secrets.php');
+
+  if (!file_exists(SECRETS_FILE))
+    return [];
+
+  $secrets =  array (
+);
+
+  if ($secrets === [])
+    return [];
+
+  $rawKey = hex2bin($encryptionKey);
+
+  if ($rawKey === false || strlen($rawKey) !== 32)
+  {
+    require_once CONSOLE_PATH . 'colors.php';
+    echo CLI_ERROR, 'Invalid encryption key. Expected a 32-byte key.', END_COLOR, PHP_EOL;
+    return [];
+  }
+
+  $decryptedSecrets = [];
+
+  foreach ($secrets as $entry)
+  {
+    $initializationVector = hex2bin($entry['initializationVector']);
+    $decryptedKey = openssl_decrypt(
+      $entry['encryptedKey'],
+      CIPHER_ALGO,
+      $rawKey,
+      0,
+      $initializationVector
+    );
+    $decryptedValue = openssl_decrypt(
+      $entry['encryptedValue'],
+      CIPHER_ALGO,
+      $rawKey,
+      0,
+      $initializationVector
+    );
+
+    if ($decryptedKey === false || $decryptedValue === false)
+    {
+      require_once CONSOLE_PATH . 'colors.php';
+      echo CLI_ERROR, 'Decryption failed for a secret. ', END_COLOR;
+      continue;
+    }
+
+    $decryptedSecrets[$decryptedKey] = json_decode($decryptedValue, true, flags: JSON_THROW_ON_ERROR);
+  }
+
+  return $decryptedSecrets;
+}abstract class AllConfig
+{
+  public static int $verbose = 1;
+public static bool
+    $debug = true,
+    $cache = false,
+    $gcc = true;
   public static string
     $cachePath = CACHE_PATH,
-    $defaultConn = 'CMS',  $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.5.0/bin/';  public static array
-    $debugConfig = [
-      'maxData' => 514,
-      'maxDepth' => 6
-    ], $deployment = [
+    $defaultConn = 'CMS', $nodeBinariesPath = '/home/lionel/.nvm/versions/node/v20.19.1/bin/';  public static array
+    $local = [
+      'db' =>
+      [
+        'CMS' => [
+          'driver' => '\PDOMySQL',
+          'host' => 'localhost',
+          'port' => '',
+          'db' => 'lpcms',
+          'motor' => 'InnoDB'
+        ]
+      ],
       'domainName' => 'otra.tech',
       'server' => 'lionelp@vps812032.ovh.net',
-      'port' => 49153,
+      'sshPort' => 49153,
       'folder' => '/var/www/html/test/',
-      'privateSshKey' => '~/.ssh/id_rsa',
-      'gcc' => true
-    ],
-    $dbConnections = [
-      'CMS' => [
-        'driver' => '\PDOMySQL',
-        'host' => 'localhost',
-        'port' => '',
-        'db' => 'lpcms',
-        'motor' => 'InnoDB'
-      ]
-    ], $sassLoadPaths = [BUNDLES_PATH . 'HelloWorld/resources/']; }/**
+      'privateSshKey' => '~/.ssh/id_rsa'
+    ], $debugConfig = [
+      'autoLaunch' => true,
+      'barPosition' => 'bottom',
+'maxData' => 514,
+      'maxDepth' => 9 ],
+    $taskFolders = [], $sassLoadPaths = [BUNDLES_PATH . 'HelloWorld/resources/']; }/**
  * THE framework global config
  *
  * @author Lionel Péramo
  */
 
 const
-  VERSION = '2025.0.0',
+  VERSION = '2025.1.0',
   RESOURCE_FILE_MIN_SIZE = 21000; // n characters
 
-// require_once 'cause maybe the class OtraException will attempt to load it too !
-/** THE framework production config
+// require_once 'cause maybe the class OtraException will attempt to load it too!
+/** THE framework test config
  *
- * @author Lionel Péramo
- */ /**
+ * @author Lionel Péramo */define('otra\\cache\\php\\CACHE_TIME', 300); define('otra\\cache\\php\\COMPILE_MODE_MODIFY', 0);
+define('otra\\cache\\php\\COMPILE_MODE_SAVE', 1);
+
+/**
  * @package config
  */
 
-AllConfig::$dbConnections['CMS']['login'] = $_SERVER['TEST_LOGIN'];
-AllConfig::$dbConnections['CMS']['password'] = $_SERVER['TEST_PASSWORD'];
+/**
+ * Retrieve the encryption key directly from the TPM using the script.
+ * If the key does not exist, it will be created automatically.
+ *
+ * @throws OtraException
+ * @return string
+ */
+/**
+ * Returns the encryption key.
+ * 1) Try Redis cache.
+ * 2) If missing, contact TPM daemon and store key 5 min in Redis.
+ *
+ * @param string $tpmDaemonSocketPath We need this variable to prevent security holes when using Docker containers
+ *
+ * @throws JsonException|OtraException
+ */
+/**
+ * Loads secrets from the file if it exists.
+ *
+ * @throws JsonException
+ * @return array The stored secrets.
+ */
+$secrets = (false && file_exists(CACHE_PATH . 'php/' . 'test' . 'Secrets.php'))
+  ? getSecrets(getEncryptionKeyFromTPMDaemon())
+  : [
+    'testLogin'=> $_SERVER['TEST_LOGIN'],
+    'testPassword'=> $_SERVER['TEST_PASSWORD']
+  ];
+AllConfig::$local['db']['CMS']['login'] = $secrets['testLogin'];
+AllConfig::$local['db']['CMS']['password'] = $secrets['testPassword'];
 
 $externalConfigFile = BUNDLES_PATH . 'config/Config.php';
 
@@ -60,7 +473,7 @@ if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')
  */
 class HtmlMinifier
 {
-  private const
+  private const array
     INLINE_TAGS =
     [
       'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'dfn', 'em', 'font', 'i',
@@ -68,6 +481,13 @@ class HtmlMinifier
       'textarea', 'time', 'var', 'video'
     ],
     PRESERVED_TAGS = ['code', 'pre', 'script', 'svg', 'textarea'],
+    DEFAULT_CONFIGURATION =
+    [
+      'comments' => true,
+      'spaces' => 'consecutiveSpaces'
+    ];
+
+  private const string
     STATE_CLOSING_TAG = 'CLOSING_TAG',
     STATE_IN_HTML_ATTRIBUTE_VALUE = 'IN HTML ATTRIBUTE VALUE',
     STATE_INSIDE_CDATA = 'INSIDE_CDATA',
@@ -78,12 +498,7 @@ class HtmlMinifier
     STATE_INSIDE_TAG_TAG_NAME = 'INSIDE TAG - TAG NAME',
     STATE_INSIDE_TAG_TAG_NAME_NOT_FOUND = 'INSIDE TAG - TAG NAME NOT FOUND',
     STATE_INSIDE_TAG_SEARCHING_ATTRIBUTES = 'INSIDE TAG - SEARCHING ATTRIBUTES',
-    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG',
-    DEFAULT_CONFIGURATION =
-    [
-      'comments' => true,
-      'spaces' => 'consecutiveSpaces'
-    ];
+    STATE_OUTSIDE_CLOSING_AUTO_CLOSED_TAG = 'OUTSIDE - CLOSING AUTO-CLOSED TAG';
 
   /** @var array<int,string> $actualTags  */
   private static array $actualTags = [];
@@ -157,7 +572,7 @@ class HtmlMinifier
   }
 
   /**
-   * It must minify the HTML by removing whitespaces (spaces, tabulations etc.) and quotes while preserving spaces in
+   * It must minify the HTML by removing whitespaces (spaces, tabulations, etc.) and quotes while preserving spaces in
    * pre and code markups, between block type markups and attributes' and preserving attributes values' quotes when we
    * cannot remove them.
    * The HTML code must be valid as the minification function does not fix bugs into the code.
@@ -212,7 +627,7 @@ class HtmlMinifier
         case self::STATE_INSIDE_TAG_TAG_NAME:
           if (!ctype_space(self::$character))
           {
-            // we do not add '/' in auto-closing tags if it is not XML (SVG files for example)
+            // we do not add '/' in auto-closing tags if it is not XML (SVG files, for example)
             if (self::$character === '/')
             {
               self::$lastState = self::$state;
@@ -434,7 +849,7 @@ class HtmlMinifier
               self::$actualMarkupContent = substr(self::$actualMarkupContent, 0,-1);
             } elseif (strpbrk(self::$attributeValueBuffer, ' =<>') !== false)
               // If there is one of the forbidden special characters in the attribute value, we need the quotes.
-              // Otherwise, skips them.
+              // Otherwise, it skips them.
               self::$actualMarkupContent .= self::$attributeValueBuffer . self::$character;
             else
             {
@@ -635,7 +1050,7 @@ abstract class Session
     $sessionId,
     $sessionFile;
   private static array $matches = [];
-  final public const
+  final public const int
     SESSION_KEY_EXISTS = 0,
     SESSION_KEY_VALUE = 1;
 
@@ -714,6 +1129,11 @@ abstract class Session
 
       $_SESSION[$sessionKey] = self::$matches[$sessionKey]['hashed'];
     }
+  }
+
+  public static function unset(string $sessionKey) : void
+  {
+    unset(self::$matches[$sessionKey], $_SESSION[$sessionKey]);
   }
 
   /**
@@ -818,7 +1238,7 @@ abstract class Session
     $actualSessionData['otra_i'] = self::$identifier;
     $actualSessionData['otra_b'] = self::$blowfishAlgorithm;
 
-    /** @author Lionel Péramo @package otra\console */
+    require_once CORE_PATH . 'console/colors.php';
     
 
     $dataInformation = convertLongArrayToShort($actualSessionData);
@@ -903,14 +1323,7 @@ abstract class MasterController
     $stylesheetFile = 0,
     $printStylesheet = 1;
 
-  final public const
-    INLINE_TAGS =
-    [
-      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
-      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
-      'time', 'title', 'var', 'video'
-    ],
-    OTRA_LABEL_ENDING_TITLE_TAG = '/title>',
+  final public const array
     HTTP_CODES =
     [
       'HTTP_CONTINUE' => 100,
@@ -955,11 +1368,17 @@ abstract class MasterController
       'HTTP_SERVICE_UNAVAILABLE' => 503,
       'HTTP_GATEWAY_TIMEOUT' => 504,
       'HTTP_VERSION_NOT_SUPPORTED' => 505,
-      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ];
+      'HTTP_VARIANT_ALSO_NEGOTIATES_EXPERIMENTAL' => 506,                        'HTTP_INSUFFICIENT_STORAGE' => 507,                                        'HTTP_LOOP_DETECTED' => 508,                                               'HTTP_NOT_EXTENDED' => 510,                                                'HTTP_NETWORK_AUTHENTICATION_REQUIRED' => 511                              ],
+    INLINE_TAGS =
+    [
+      'a', 'abbr', 'acronym', 'audio', 'b', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'dfn', 'em', 'font', 'head', 'i', 'img',
+      'input', 'kbd', 'label', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'textarea',
+      'time', 'title', 'var', 'video'
+    ];
 
-  protected const
-    CSS_MEDIA_SCREEN = 0,
-    LABEL_SCRIPT_NONCE = '<script nonce=';
+  final public const string OTRA_LABEL_ENDING_TITLE_TAG = '/title>';
+  protected const int CSS_MEDIA_SCREEN = 0;
+  protected const string LABEL_SCRIPT_NONCE = '<script nonce=';
 
   /**
    * @param array{
@@ -1261,12 +1680,12 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds dynamically css script(s) (not coming from the routes' configuration) to the existing ones.
+   * Adds dynamically CSS script(s) (not coming from the routes' configuration) to the existing ones.
    *
-   * @param array $stylesheets The css files to add [0 => File, 1 => Print]
+   * @param array $stylesheets The CSS files to add [0 => File, 1 => Print]
    *                           Do not put '.css'.
-   *                           /!\ DO NOT fill the second key if it is not needed
-   * @param bool  $print       Does the stylesheet must be only used for a print usage ?
+   *                           /!\ DO NOT fill the second key if it is unnecessary
+   * @param bool  $print       Does the stylesheet must be only used for a print usage?
    */public static function css(array $stylesheets = [], bool $print = false) : void
   {
     array_push(
@@ -1276,10 +1695,10 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds dynamically javascript script(s) (not coming from the routes' configuration) to the existing ones.
-   * If the keys are string it will add the string to the link.
+   * Adds dynamically JavaScript script(s) (not coming from the routes' configuration) to the existing ones.
+   * If the keys are string, it will add the string to the link.
    *
-   * @param array|string $js The javascript file to add (Array of strings)
+   * @param array|string $js The JavaScript file to add (Array of strings)
    */public static function js(array|string $js = []) : void
   {
     self::$javaScripts = array_merge(self::$javaScripts, is_array($js) ? $js : [$js]);
@@ -1433,8 +1852,8 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
 
   /**
    * @param string $content     The main content of the template
-   * @param string $cssResource The css resources to link to the template
-   * @param string $jsResource  The js resources to link to the template
+   * @param string $cssResource The CSS resources to link to the template
+   * @param string $jsResource  The JS resources to link to the template
    */protected static function addResourcesToTemplate(string &$content, string $cssResource, string $jsResource) : void
   {
     $contentAndJs = str_replace(
@@ -1554,7 +1973,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds extra CSS dynamically (needed for the debug bar for example).
+   * Adds extra CSS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string
@@ -1575,7 +1994,7 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
   }
 
   /**
-   * Adds extra JS dynamically (needed for the debug bar for example).
+   * Adds extra JS dynamically (needed for the debug bar, for example).
    *
    * @throws Exception
    * @return string
@@ -1648,8 +2067,6 @@ if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))
  */ /**
  * @author Lionel Péramo
  * @package otra
- *
- * @method static string getTemplateResources() Annotation needed for static analysis tools
  */
 
 if ($_SERVER[APP_ENV] === PROD && PHP_SAPI !== 'cli')

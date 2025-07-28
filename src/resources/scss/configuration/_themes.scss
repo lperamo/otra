@@ -1,3 +1,6 @@
+// loading SASS module
+@use 'sass:color';
+
 $themes: (
   'light': (
     // generic color codes
@@ -107,7 +110,7 @@ $themes: (
     // ripple
     // ------
     'ripple--background-color' : #bce,
-    'ripple--active--background-color' : lighten(#bce, 10),
+    'ripple--active--background-color' : color.adjust(#bce, $lightness: 10%),
     'ripple--hover--background-color' : #9ac,
     // table
     'table--border' : 0,
@@ -125,25 +128,25 @@ $themes: (
     'tabs--div--box-shadow' : 0 0 3px #000,
     // vertical menu
     // -------------
-    'vertical-menu--border' : 1px solid #a3afff,
-    'vertical-menu--element--border' : 1px solid #a3afff,
-    'vertical-menu--element--border-color' : #a3afff,
-    'vertical-menu--element--border-style' : solid,
+    'menu--border' : 1px solid #a3afff,
+    'menu--element--border' : 1px solid #a3afff,
+    'menu--element--border-color' : #a3afff,
+    'menu--element--border-style' : solid,
     // -- states start
     // -- idle state
-    'vertical-menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
-    'vertical-menu--element--color' : #333,
+    'menu--element--background-image' : linear-gradient(45deg, #f0f2ff, #a3afff),
+    'menu--element--color' : #333,
     // -- active state
-    'vertical-menu--element-active--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
-    'vertical-menu--element-active--color' : #fff,
+    'menu--element--active--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'menu--element--active--color' : #fff,
     // -- focus state
-    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
-    'vertical-menu--element-focus--color' : #44a,
+    'menu--element--focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'menu--element--focus--color' : #44a,
     // -- hover state
-    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
-    'vertical-menu--element-hover--color' : #fff,
+    'menu--element--hover--background-image' : linear-gradient(45deg, #bdc6ff, #a3afff),
+    'menu--element--hover--color' : #fff,
     // states end --
-    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
+    'menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
   ),
   'dark': (
     // generic color codes
@@ -207,7 +210,7 @@ $themes: (
     'profiler--logs--sql-button--color' : inherit,
     // ** profiler - SQL logs - generic
     'profiler--sql--logs--background--hover--color' : #b4defb,
-    'profiler--sql--logs--background-color' : transparentize(#000, 0.7),
+    'profiler--sql--logs--background-color' : color.adjust(#000, $alpha: -0.7),
     'profiler--sql--logs--hover--background-color' : #303030,
     'profiler--sql--logs--selection-color' : #667,
     'profiler--logs--message-container--border-color' : #8da2e2,
@@ -223,11 +226,11 @@ $themes: (
     'profiler--line--text-shadow' : 0 0 1px #cc3,
     // ** profiler - SQL logs -fields
     'profiler--field--color' : #88f,
-    'profiler--field--text-shadow' : #88f,
+    'profiler--field--text-shadow' : 0 0 1px #88f,
     'profiler--field--gradient' : linear-gradient(
       90deg,
-      #88f,
-      #04f
+      #7070ff,
+      #a3a3ff
     ),
     // ** profiler - routes block
     'profiler--routes--block--background-color' : rgb(77 77 77 / 15%),
@@ -253,7 +256,7 @@ $themes: (
     // ripple
     // ------
     'ripple--background-color' : #92a2d3,
-    'ripple--active--background-color' : lighten(#92a2d3, 10),
+    'ripple--active--background-color' : color.adjust(#92a2d3, $lightness: 10%),
     'ripple--hover--background-color' : #92a2d3,
     // table
     'table--border' : 0,
@@ -271,24 +274,24 @@ $themes: (
     'tabs--div--box-shadow' : 0 0 3px #fff,
     // vertical menu
     // -------------
-    'vertical-menu--border' : 1px solid #a3afff,
-    'vertical-menu--element--border' : 1px solid #a3afff,
-    'vertical-menu--element--border-color' : #a3afff,
-    'vertical-menu--element--border-style' : solid,
+    'menu--border' : 1px solid #a3afff,
+    'menu--element--border' : 1px solid #a3afff,
+    'menu--element--border-color' : #a3afff,
+    'menu--element--border-style' : solid,
     // -- states start
     // -- idle state
-    'vertical-menu--element--background-image' : linear-gradient(45deg, #56a, #78b),
-    'vertical-menu--element--color' : #ccc,
+    'menu--element--background-image' : linear-gradient(45deg, #56a, #78b),
+    'menu--element--color' : #ccc,
     // -- active state
-    'vertical-menu--element-active--background-image' :linear-gradient(45deg, #929fd3, #78b),
-    'vertical-menu--element-active--color' : #44a,
+    'menu--element--active--background-image' :linear-gradient(45deg, #929fd3, #78b),
+    'menu--element--active--color' : #44a,
     // -- focus state
-    'vertical-menu--element-focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
-    'vertical-menu--element-focus--color' : #44a,
+    'menu--element--focus--background-image' : linear-gradient(45deg, #c6d8df, #bedce8),
+    'menu--element--focus--color' : #44a,
     // -- hover state
-    'vertical-menu--element-hover--background-image' : linear-gradient(45deg, #6d7fc5, #78b),
-    'vertical-menu--element-hover--color' : #3838b7,
+    'menu--element--hover--background-image' : linear-gradient(45deg, #6d7fc5, #78b),
+    'menu--element--hover--color' : #3838b7,
     // states end --
-    'vertical-menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
+    'menu--font' : '2rem system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
   )
 );

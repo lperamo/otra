@@ -1,14 +1,14 @@
 // loading configuration
-@use '../../configuration/devModeFonts';
-@use '../../configuration/themes' as *;
+@use 'configuration/devModeFonts';
+@use 'configuration/themes' as *;
 
 // loading components TODO put the ripple component in the profiler file instead !
-@use '../../components/lightbox/lightbox';
-@use '../../components/styledButtons/ripple';
-@use '../../components/theming/theming';
+@use 'components/lightbox/lightbox';
+@use 'components/form/styledButtons/ripple';
+@use 'components/design/theming/theming';
 
 // use other partials
-@use '../debugBar/debugBar';
+@use 'partials/debugBar/debugBar';
 
 // initializing components
 @include theming.init-themes($themes);

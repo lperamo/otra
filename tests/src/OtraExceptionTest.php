@@ -23,7 +23,7 @@ class OtraExceptionTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     // Adding test bundle routes config in "bundles/config" if nothing exists
     if (!file_exists(self::BUNDLES_CONFIG_FOLDER))

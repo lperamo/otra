@@ -1,0 +1,232 @@
+////
+/// @group Tables - First design
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading sass module list
+@use 'sass:map';
+@use 'sass:list';
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+$-defaults : (
+  border-collapse : collapse,
+  desktop--td-padding : 1rem * theming.$font-size,
+  mobile--header-min-width : 25rem * theming.$font-size,
+  mobile--gap : 1rem * theming.$font-size,
+  mobile--td-padding : .5rem * theming.$font-size,
+  print : false,
+  table--border : 'table--border',
+  table--border-radius : .5rem * theming.$font-size,
+  table--font-family : theming.$font-family,
+  table--td--border : 'table--td--border',
+  table--td--color : 'table--td--color',
+  table--th--border : 'table--th--border',
+  table--th--color : 'table--th--color',
+  suffix : '',
+  themes :  (
+    light : (
+      default--table--border : 1px solid #333,
+      default--table--td--border : 1px solid #333,
+      default--table--td--color : #333,
+      default--table--th--border : 1px solid #333,
+      default--table--th--color : #333,
+    ),
+    dark : (
+      default--table--border : 1px solid #eee,
+      default--table--td--border : 1px solid #eee,
+      default--table--td--color : #ccc,
+      default--table--th--border : 1px solid #eee,
+      default--table--th--color : #ccc,
+    )
+  )
+);
+
+///
+/// Table initialization mixin.
+///
+/// @access public
+///
+@mixin init() {
+  .table {
+    &--caption {
+      text-align    : left;
+      margin-bottom : 2rem * theming.$font-size;
+      padding-left  : .2rem * theming.$font-size;
+    }
+
+    @media (width <= 699px) {
+      &-header {
+        display : none;
+      }
+
+      @if list.index(theming.$loaded-components, 'pager') {
+        & tr:not(.pager--hidden) {
+          display: block;
+        }
+      } @else {
+        & tr {
+          display: block;
+        }
+      }
+
+      & td {
+        display         : flex;
+        justify-content : space-between;
+
+        &::before {
+          content     : attr(data-label);
+          font-weight : bold;
+        }
+      }
+    }
+  }
+}
+
+///
+/// Main mixin that creates table components (first design).
+///
+/// @access public
+/// @param  {array} $-options ()
+///
+@mixin create($-options : ()) {
+  $-themeUsed : map.has-key($-options, 'themes');
+  $-options : map.deep-merge($-defaults, $-options); // deep-merge is needed to ensure default theme variables are kept
+
+  // extracting variables...
+  $-border-collapse : map.get($-options, 'border-collapse');
+  $-desktop--td-padding : map.get($-options, 'desktop--td-padding');
+  $-mobile--header-min-width : map.get($-options, 'mobile--header-min-width');
+  $-mobile--gap : map.get($-options, 'mobile--gap');
+  $-mobile--td-padding : map.get($-options, 'mobile--td-padding');
+  $-print : map.get($-options, 'print');
+  $-suffix : map.get($-options, 'suffix');
+  $-table-border : map.get($-options, 'table--border');
+  $-table--border-radius : map.get($-options, 'table--border-radius');
+  $-table--font-family : map.get($-options, 'table--font-family');
+  $-table--td--border : map.get($-options, 'table--td--border');
+  $-table--th--border : map.get($-options, 'table--th--border');
+
+  // theme variables
+  $-table--td--color : map.get($-options, 'table--td--color');
+  $-table--th--color : map.get($-options, 'table--th--color');
+
+  @include theming.set-actual-component('table');
+  @include theming.add-themes(map.get($-options, 'themes'));
+
+  .table.suffix#{$-suffix} {
+    @if $-border-collapse {
+      border-collapse: $-border-collapse;
+    }
+
+    @if $-table--font-family {
+      font-family : $-table--font-family;
+    }
+
+    td {
+      @if $-table--td--color {
+        @include theming.mass-theme(
+          (
+            ('color', $-table--td--color)
+          ),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+    }
+
+    @media (width >= 700px) {
+      @if $-table-border {
+        @include theming.mass-theme(
+          (
+            ('border', $-table-border)
+          ),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+
+      @if $-table--border-radius {
+        border-radius : $-table--border-radius;
+
+        // this simple trick prevents the need to use numerous rules on tds to handle rounded borders
+        overflow : hidden;
+      }
+
+      td {
+        @if $-desktop--td-padding {
+          padding : $-desktop--td-padding;
+        }
+
+        @if $-table--td--border {
+          @include theming.mass-theme(
+            (
+              ('border', $-table--td--border)
+            ),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+      }
+
+      th {
+        @if $-table--th--color {
+          @include theming.mass-theme(
+            (
+              ('color', $-table--th--color)
+            ),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+
+        @if $-table--th--border {
+          @include theming.mass-theme(
+            (
+              ('border', $-table--th--border)
+            ),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+      }
+    }
+
+    @media (width <= 699px) {
+      tr {
+        @if $-table-border {
+          @include theming.mass-theme(
+            (
+              ('border', map.get($-options, 'table--border'))
+            ),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+
+        // size
+        @if $-mobile--gap {
+          margin-bottom : $-mobile--gap;
+        }
+      }
+
+      td {
+        @if $-mobile--header-min-width {
+          min-width : map.get($-options, 'mobile--header-min-width');
+        }
+
+        @if $-mobile--td-padding {
+          padding : map.get($-options, 'mobile--td-padding');
+        }
+      }
+    }
+  }
+}

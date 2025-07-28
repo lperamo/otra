@@ -131,7 +131,17 @@ class LogsActionTest extends TestCase
     require self::TEST_TEMPLATE;
     self::assertSame(
       ob_get_clean(),
-      $output,
+      preg_replace(
+        [
+          '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
+          '@\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}@'
+        ],
+        [
+          '',
+          '2025-07-08 13:05:14'
+        ],
+        $output
+      ),
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . 'logsAction' . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

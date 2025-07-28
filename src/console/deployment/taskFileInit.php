@@ -143,12 +143,18 @@ function generateStylesheetsFiles(
 
   // We do not launch an exception on error to avoid stopping the execution of the watcher
   $sassLoadPathString = '';
+  $sassLoadPaths = array_merge([CORE_PATH . 'resources/scss/'], AllConfig::$sassLoadPaths);
 
-  foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+  foreach ($sassLoadPaths as $sassLoadPath)
     $sassLoadPathString .= ' -I ' . $sassLoadPath;
 
+  // `--update` is not used as it can hide errors from files not being modified recently.
   [, $output] = runCommandWithEnvironment(
-    AllConfig::$nodeBinariesPath . 'sass' . ' -scompressed --update ' . $sassLoadPathString .
+    AllConfig::$nodeBinariesPath .
+    'sass' . ' -s compressed ' . (PHP_OS === 'Linux' 
+      ? '--fatal-deprecation=$(' . AllConfig::$nodeBinariesPath . 'sass --version | cut -d" " -f1) ' 
+      : ''
+    ) .  $sassLoadPathString .
     (TASK_FILE_SOURCE_MAPS
       ? ' '
       : ' --no-source-map '
@@ -231,7 +237,7 @@ function getPathInformations(string $fullName) : array
 
 /**
  * @param bool   $checkScope Related to the project scope (0: project files, 1: OTRA, 2: All).
- *                           True, if the file belongs to the scope we want to watch. Defaults to true.
+ *                           True, if the file belongs to the scope, we want to watch. Defaults to true.
  *
  * @return bool
  */
@@ -251,7 +257,7 @@ function isNotInThePath(array $paths, string $realPath, bool $checkScope = true)
 }
 
 /**
- * @param int   $fullBinaryMask The binary masks that contains all the options: CSS, TS, JS, CSS etc...
+ * @param int   $fullBinaryMask The binary mask that contains all the options: CSS, TS, JS, CSS, etc...
  * @param bool  $maskExists     Does the mask it
  *
  * @return bool

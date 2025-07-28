@@ -43,11 +43,17 @@ class BuildDevHelpTest extends TestCase
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('gcc', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
-      ') ' . CLI_INFO . 'Should we use Google Closure Compiler for javascript/typescript files ? Defaults to false.' . PHP_EOL .
+      ') ' . CLI_INFO . 'Should we use Google Closure Compiler for javascript/typescript files ? Defaults to ' .
+      CLI_INFO_HIGHLIGHT . 'false' . CLI_INFO . '.' . PHP_EOL .
       CLI_INFO_HIGHLIGHT .
       self::LABEL_PLUS . str_pad('scope', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . '0 => project files (default), 1 => OTRA files, 2 => All the files' . PHP_EOL .
+      CLI_INFO_HIGHLIGHT .
+      self::LABEL_PLUS . str_pad('route', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'Specify the route whose assets should be compiled. Defaults to ' . CLI_INFO_HIGHLIGHT . '_all' .
+      CLI_INFO . '.' . PHP_EOL .
       END_COLOR
     );
 

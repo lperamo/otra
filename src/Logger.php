@@ -61,7 +61,7 @@ abstract class Logger
     if (is_writable($path))
       error_log($message, self::APPEND_LOG, $path);
     else
-      echo 'Cannot log the errors due to a lack of permissions' . (APP_ENV === PROD
+      echo 'Cannot log the errors due to a lack of permissions' . ($_SERVER[APP_ENV] === PROD
         ? '!' . PHP_EOL
         : ' for the file \'' . $path . '\'!' . PHP_EOL);
   }
@@ -99,7 +99,7 @@ abstract class Logger
   {
     $infos = self::logIpTest();
     $infos['m'] = $message;
-    $logPath = self::LOGS_PATH . $_SERVER[APP_ENV] . DIR_SEPARATOR . $logPath . '.txt';
+    $logPath = self::LOGS_PATH . ($_SERVER[APP_ENV] ?? 'dev') . DIR_SEPARATOR . $logPath . '.txt';
     $filePointer = fopen($logPath, 'r+');
 
     if (!fread($filePointer, 1))
@@ -118,7 +118,7 @@ abstract class Logger
   /**
    * Appends a simple message (not OTRA formatted) to the log file at the specified path into the log path
    */
-  public static function simpleLogTo(string $message, string  $logPath = 'log') : void
+  public static function simpleLogTo(string $message, string $logPath = 'log') : void
   {
     clearstatcache();
     self::logging(

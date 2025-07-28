@@ -14,7 +14,7 @@ class ConsoleTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
   }
 
   /**

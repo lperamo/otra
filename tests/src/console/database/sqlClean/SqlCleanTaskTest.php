@@ -42,7 +42,8 @@ class SqlCleanTaskTest extends TestCase
   public function testSqlClean() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'preprod';
+    $_SERVER['APP_SCOPE'] = 'local';
     $reflectedClass = (new ReflectionClass(Database::class));
     $reflectedClass->getProperty('folder')->setValue('tests/src/bundles/');
 

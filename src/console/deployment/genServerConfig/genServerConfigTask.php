@@ -44,21 +44,21 @@ function genServerConfig(array $argumentsVector) : void
     $argumentsVector[GEN_SERVER_CONFIG_ARG_SERVER_TECHNOLOGY] ?? 'nginx'
   );
 
-  if (!isset(AllConfig::$deployment))
+  if (!isset(AllConfig::${$_SERVER['APP_SCOPE']}))
   {
     echo CLI_ERROR, 'There is no deployment configuration so we cannot know which server name to use.', END_COLOR,
       PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 
-  if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
+  if (!isset(AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]))
   {
     echo CLI_INFO_HIGHLIGHT, GEN_SERVER_CONFIG_DOMAIN_NAME_KEY, CLI_ERROR,
       ' is not defined in the deployment configuration so we cannot know which domain name to use.', END_COLOR, PHP_EOL;
     throw new OtraException(code: 1, exit: true);
   }
 
-  if (!isset(AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY]))
+  if (!isset(AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_FOLDER_KEY]))
   {
     echo CLI_INFO_HIGHLIGHT, GEN_SERVER_CONFIG_FOLDER_KEY, CLI_ERROR,
       ' is not defined in the deployment configuration so we cannot know which server name to use.', END_COLOR, PHP_EOL;
@@ -73,7 +73,7 @@ function genServerConfig(array $argumentsVector) : void
 
   define(
     __NAMESPACE__ . '\\GEN_SERVER_CONFIG_SERVER_NAME',
-    GEN_SERVER_CONFIG_ENVIRONMENT . '.' . AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]
+    GEN_SERVER_CONFIG_ENVIRONMENT . '.' . AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY]
   );
 
   require CONSOLE_PATH . 'deployment/genServerConfig/' . GEN_SERVER_CONFIG_SERVER_TECHNOLOGY . 'ServerConfig.php';

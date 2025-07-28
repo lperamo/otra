@@ -55,11 +55,12 @@ class SqlImportFixturesTaskTest extends TestCase
    */
   private function loadConfig() : void
   {
+    $_SERVER['APP_SCOPE'] = 'local';
     require self::TEST_CONFIG_PATH;
     require self::TEST_CONFIG_GOOD_PATH;
 
-    AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
-    AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    AllConfig::$local['db']['test']['login'] = $_SERVER['TEST_LOGIN'];
+    AllConfig::$local['db']['test']['password'] = $_SERVER['TEST_PASSWORD'];
   }
 
   /**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="TestBootstrap.php" enforceTimeLimit="true"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="testBootstrap.php" enforceTimeLimit="true"
          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/sebastianbergmann/phpunit/master/phpunit.xsd">
   <source>
     <include>
@@ -71,6 +71,9 @@
     </testsuite>
     <testsuite name="Console architecture tasks">
       <directory>src/console/architecture</directory>
+    </testsuite>
+    <testsuite name="Secrets management">
+      <directory>src/tools/secrets</directory>
     </testsuite>
     <testsuite name="Services">
       <directory>src/services</directory>

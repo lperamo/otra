@@ -20,8 +20,16 @@ use function otra\tools\delTree;
  */
 class CssActionTest extends TestCase
 {
+  private const bool BUILD_DEV_GCC = true;
+  
+  private const int
+    BUILD_DEV_SILENT = 0,
+    BUILD_DEV_SCSS_AND_JS = 3,
+    BUILD_DEV_OTRA = 1;
+  
   private const string
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
+    OTRA_TASK_BUILD_DEV = 'buildDev',
     OTRA_PHP_BINARY = 'otra.php',
     HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     ACTION = 'css',
@@ -36,11 +44,24 @@ class CssActionTest extends TestCase
   {
     parent::setUp();
     $_SERVER[APP_ENV] = DEV;
+    $taskClassMapPath = require TASK_CLASS_MAP_PATH;
     ob_start();
     TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
+      $taskClassMapPath,
       self::OTRA_TASK_CREATE_HELLO_WORLD,
       [self::OTRA_PHP_BINARY, self::OTRA_TASK_CREATE_HELLO_WORLD]
+    );
+    TasksManager::execute(
+      $taskClassMapPath,
+      self::OTRA_TASK_BUILD_DEV,
+      [
+        self::OTRA_PHP_BINARY,
+        self::OTRA_TASK_BUILD_DEV,
+        self::BUILD_DEV_SILENT,
+        self::BUILD_DEV_SCSS_AND_JS,
+        self::BUILD_DEV_GCC,
+        self::BUILD_DEV_OTRA
+      ]
     );
     ob_end_clean();
   }
@@ -97,7 +118,11 @@ class CssActionTest extends TestCase
     require self::TEST_TEMPLATE;
     self::assertSame(
       ob_get_clean(),
-      $output,
+      preg_replace(
+        '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
+        '',
+        $output
+      ),
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

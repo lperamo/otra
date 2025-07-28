@@ -1,15 +1,16 @@
 // loading configuration
-@use '../../configuration/themes' as *;
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/accordion/accordion';
-@use '../../components/theming/theming';
+@use 'components/content/accordion/accordion';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../../partials/profiler/index';
+@use 'partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);
+@include accordion.init();
 @include accordion.create(
   ('themes': $themes)
 );
@@ -59,15 +60,14 @@
       background-image : linear-gradient(45deg, #222, #444, #222);
       border-radius    : .5rem;
 
-      @media all and (prefers-color-scheme : dark) {
-        box-shadow: 0 0 3px #aaa;
-      }
-
       // positioning
       padding  : 1rem;
       position : absolute;
       inset    : -6rem 0 0 0; // We shift it sufficiently to prevent flickering
       z-index  : 1; // on Chrome (at least) it seems to be semi-transparent if we don't do that!
+
+      // text
+      color : #ddd;
 
       // size
       @supports (width: fit-content) {
@@ -80,8 +80,10 @@
         width  : -moz-fit-content;
       }
 
-      // text
-      color : #ddd;
+      // box
+      @media all and (prefers-color-scheme : dark) {
+        box-shadow: 0 0 3px #aaa;
+      }
     }
 
     &:not(:hover) + div {

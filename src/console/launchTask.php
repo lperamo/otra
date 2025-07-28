@@ -17,7 +17,7 @@ function launchTask(array $tasksClassMap, array $arguments, int $argumentsCount,
   $paramsDesc = require $tasksClassMap[$taskName][TasksManager::TASK_CLASS_MAP_TASK_PATH] .
     DIR_SEPARATOR . $taskName . 'Help.php';
 
-  // We test if the number of parameters is correct
+  // We check if the number of parameters is correct
   $total = $required = 0;
 
   if (isset($paramsDesc[TasksManager::TASK_STATUS]))

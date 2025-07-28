@@ -104,6 +104,11 @@ abstract class Session
     }
   }
 
+  public static function unset(string $sessionKey) : void
+  {
+    unset(self::$matches[$sessionKey], $_SESSION[$sessionKey]);
+  }
+
   /**
    * Returns false if it does not exist in the cache...should not occur.
    *

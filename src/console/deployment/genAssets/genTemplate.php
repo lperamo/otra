@@ -46,9 +46,10 @@ spl_autoload_register(function (string $className) : void
     require CLASSMAP[$className];
 });
 
-// Loads router and compression tools
+// Loads the router and compression tools
 require CORE_PATH . 'Router.php';
-require CORE_PATH . 'tools/compression.php';
+// `require_once` as already used in genAssets so can be loaded multiple times
+require_once CORE_PATH . 'tools/compression.php';
 
 $_SERVER['REQUEST_URI'] = Router::getRouteUrl(ARG_SITE_ROUTE);
 

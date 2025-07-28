@@ -7,7 +7,7 @@ use function otra\cache\php\{block, endblock};
 
 require CORE_VIEWS_PATH . 'profiler/layout.phtml';
 
-block('title', 'Profiler - Logs');
+block('title', 'Profiler — Logs');
 block('view');
 
 require CORE_VIEWS_PATH . 'profiler/macros.phtml';
@@ -15,7 +15,7 @@ require CORE_VIEWS_PATH . 'profiler/macros.phtml';
 <div id="logs-container">
   <?php require CORE_VIEWS_PATH . 'profiler/logs/tabs.phtml'; ?>
 
-  <div class=activatable-divs>
+  <div class="activatable-divs suffix">
     <?php
     require CORE_VIEWS_PATH . 'profiler/logs/development.phtml';
     require CORE_VIEWS_PATH . 'profiler/logs/production.phtml';

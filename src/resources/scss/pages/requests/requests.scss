@@ -1,29 +1,31 @@
 // loading configuration
-@use '../../configuration/themes' as *;
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/accordion/accordion';
-@use '../../components/tabs/tabs';
-@use '../../components/table/table';
-@use '../../components/theming/theming';
+@use 'components/content/accordion/accordion';
+@use 'components/navigation/tabs/tabs';
+@use 'components/dataVisualization/tableFirstDesign/tableFirstDesign';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../../partials/profiler/index';
+@use 'partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);
+@include accordion.init();
 @include accordion.create(
   (
     'themes': $themes
   )
 );
-@include table.init();
-@include table.create(
+@include tableFirstDesign.init();
+@include tableFirstDesign.create(
   (
     'desktop--td-padding' : 1rem,
     'themes': $themes
   )
 );
+@include tabs.init();
 @include tabs.create(
   (
     'count' : 4,
@@ -42,6 +44,7 @@
 
   // text
   font-size  : 1.6rem;
+
   // word-break is not supported by IE!
   @supports (word-break: break-word) {
     word-break : break-word;

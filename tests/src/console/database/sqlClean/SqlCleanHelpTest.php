@@ -28,7 +28,7 @@ class SqlCleanHelpTest extends TestCase
   public function testSqlCleanHelp(): void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     require TEST_PATH . 'config/AllConfigGood.php';
 
     // testing

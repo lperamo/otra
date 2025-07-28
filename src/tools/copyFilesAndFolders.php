@@ -45,6 +45,9 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
    */
   function copyFileAndFolders(array $filesOrFoldersSrc, array $filesOrFoldersDest) : void
   {
+    // Prevent the umask from changing the permissions we are setting
+    $oldUmask = umask(0);
+
     /** @var int $key */
     foreach ($filesOrFoldersSrc as $numericKey => $fileOrFolderSrc)
     {
@@ -57,12 +60,14 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
         $destinationFolder = substr($fileOrFolderDest, 0, -strlen(basename($fileOrFolderDest)));
 
         if (!file_exists($destinationFolder))
-          mkdir($destinationFolder, 0777, true);
+          mkdir($destinationFolder, 0775, true);
 
         if (!copy($fileOrFolderSrc, $fileOrFolderDest))
           cannotCopy($fileOrFolderSrc, $fileOrFolderDest);
       }
     }
+
+    umask($oldUmask);
   }
 
   /**
@@ -71,7 +76,7 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
    */
   function iterateOnFilesAndFolders(string $source, string $destination): void
   {
-    if (!file_exists($destination) && !mkdir($destination, 0777, true))
+    if (!file_exists($destination) && !mkdir($destination, 0775, true))
       throw new OtraException('Cannot create the folder ' . $destination);
 
     $initialFolderLength = strlen($source);
@@ -86,9 +91,10 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
     {
       if ($splFileInfo->isDir())
       {
-        $destinationFolder = $destination . mb_substr($splFileInfo->getPath(), $initialFolderLength) . '/' . $splFileInfo->getFilename();
+        $destinationFolder = $destination . mb_substr($splFileInfo->getPath(), $initialFolderLength) . '/' .
+          $splFileInfo->getFilename();
 
-        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0775, true))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
       } else
       {
@@ -96,7 +102,7 @@ if (!function_exists(__NAMESPACE__ . '\\copyFileAndFolders'))
         $destinationFilePath = $destination . mb_substr($filePath, $initialFolderLength);
         $destinationFolder = mb_substr($destinationFilePath, 0, mb_strrpos($destinationFilePath, '/'));
 
-        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true))
+        if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0775, true))
           throw new OtraException('Cannot create the folder ' . $destinationFolder);
 
         if (!copy($filePath, $destinationFilePath))

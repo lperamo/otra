@@ -1,13 +1,16 @@
+// loading sass modules
+@use 'sass:color';
+
 // loading configuration
 @use 'colors';
-@use '../../configuration/devModeFonts';
-@use '../../configuration/themes' as *;
+@use 'configuration/devModeFonts';
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/theming/theming';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../../partials/profiler/index';
+@use 'partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);
@@ -29,10 +32,6 @@ $padding : 1rem;
 }
 
 .otra--template-rendering--title {
-  @supports (-webkit-text-stroke : 1px colors.$another-shade) {
-    -webkit-text-stroke : 1px colors.$another-shade;
-  }
-
   color       : colors.$secondary;
   text-align  : center;
   text-shadow : 0 0 2px colors.$tertiary, 1px 1px 1px colors.$tertiary, 2px 2px 2px colors.$tertiary;
@@ -40,6 +39,10 @@ $padding : 1rem;
   // put to avoid CSS conflicts with the user project
   font-size   : 32px;
   font-weight : 700;
+
+  @supports (-webkit-text-stroke : 1px colors.$another-shade) {
+    -webkit-text-stroke : 1px colors.$another-shade;
+  }
 }
 
 .otra-block--base,
@@ -76,7 +79,7 @@ $padding : 1rem;
   width         : 100%;
 
   &:target {
-    background-image: radial-gradient(ellipse at center, transparentize(colors.$nonary, 0.8), transparentize(colors.$decenary, 0.8));
+    background-image: radial-gradient(ellipse at center, color.adjust(colors.$nonary, $alpha: 0.8), color.adjust(colors.$decenary, $alpha: 0.8));
   }
 
   @at-root {
@@ -123,11 +126,11 @@ $padding : 1rem;
         .otra--block--ending-- {
           // 1 for true
           &1 {
-            background-image : linear-gradient(45deg, lighten(colors.$quinary, 5), darken(colors.$quinary, 5));
+            background-image : linear-gradient(45deg, color.adjust(colors.$quinary, $lightness: 5%), color.adjust(colors.$quinary, $lightness: 5%));
           }
 
           &false {
-            background : linear-gradient(45deg, lighten(colors.$senary, 5), darken(colors.$senary, 5));
+            background : linear-gradient(45deg, color.adjust(colors.$senary, $lightness: 5%), color.adjust(colors.$senary, $lightness: 5%));
           }
         }
       }

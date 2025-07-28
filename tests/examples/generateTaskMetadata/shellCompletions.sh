@@ -41,6 +41,7 @@ typeset -a OTRA_COMMANDS=(
   'help'
   'requirements'
   'routes'
+  'secretManager'
   'serve'
   'version'
 );
@@ -71,7 +72,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DEPLOYMENT} buildDev                    : ${CYA}Compiles the typescripts, sass and php configuration files (modulo the binary mask).${ECO}"
   "${CAT_DEPLOYMENT} clearCache                  : ${CYA}Clears whatever cache you want to clear.${ECO}"
   "${CAT_DEPLOYMENT} deploy                      : ${CYA}Deploy the site. [38;2;190;190;100m[Currently only works for unix systems !][0m${ECO}"
-  "${CAT_DEPLOYMENT} genAssets                   : ${CYA}Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Gzips the SVGs.${ECO}"
+  "${CAT_DEPLOYMENT} genAssets                   : ${CYA}Generates one css file and one js file that contain respectively all the minified css files and all the obfuscated minified js files. Compresses the SVGs.${ECO}"
   "${CAT_DEPLOYMENT} genBootstrap                : ${CYA}Launch the genClassMap command and generates a file that contains all the necessary php files.${ECO}"
   "${CAT_DEPLOYMENT} genClassMap                 : ${CYA}Generates a class mapping file that will be used to replace the autoloading method.${ECO}"
   "${CAT_DEPLOYMENT} genJsRouting                : ${CYA}Generates a route mapping that can be used by JavaScript files.${ECO}"
@@ -79,7 +80,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_DEPLOYMENT} genSitemap                  : ${CYA}Generates a sitemap based on routes configuration.${ECO}"
   "${CAT_DEPLOYMENT} genWatcher                  : ${CYA}Launches a watcher that will update the PHP class mapping, the ts files and the scss files.${ECO}"
   "${CAT_DEPLOYMENT} updateConf                  : ${CYA}Updates the files related to bundles and routes : schemas, routes, securities.${ECO}"
-  "${CAT_GPT} gptInstructions             : ${CYA}Generates instructions for the GPT 'OTRA Mentor'.${ECO}"
+  "${CAT_GPT} gptInstructions             : ${CYA}Generates CLI commands list for the GPT 'OTRA Mentor'.${ECO}"
   "${CAT_HELP_AND_TOOLS} checkConfiguration          : ${CYA}Checks route configuration files structure.${ECO}"
   "${CAT_HELP_AND_TOOLS} clearSession                : ${CYA}Clears all things related to the session : PHP session and OTRA session.${ECO}"
   "${CAT_HELP_AND_TOOLS} convertImages               : ${CYA}Converts images to another format.${ECO}"
@@ -89,6 +90,7 @@ typeset -a OTRA_COMMANDS_DESCRIPTIONS=(
   "${CAT_HELP_AND_TOOLS} help                        : ${CYA}Shows the extended help for the specified command.${ECO}"
   "${CAT_HELP_AND_TOOLS} requirements                : ${CYA}Shows the requirements to use OTRA at its maximum capabilities.${ECO}"
   "${CAT_HELP_AND_TOOLS} routes                      : ${CYA}Shows the routes and their associated kind of resources in the case they have some. (lightGreen whether they exists, red otherwise)${ECO}"
+  "${CAT_HELP_AND_TOOLS} secretManager               : ${CYA}Manages encrypted secrets securely with an interactive menu. [38;2;100;200;200mBy default, it uses the "dev" environment.[38;2;100;150;200m${ECO}"
   "${CAT_HELP_AND_TOOLS} serve                       : ${CYA}Creates a PHP web internal server.${ECO}"
   "${CAT_HELP_AND_TOOLS} version                     : ${CYA}Shows the framework version.${ECO}"
 )

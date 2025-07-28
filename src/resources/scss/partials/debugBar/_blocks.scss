@@ -8,7 +8,7 @@
 @use '../../configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/theming/theming';
+@use '../../components/design/theming/theming';
 
 $debug-bar--size : 38px;
 

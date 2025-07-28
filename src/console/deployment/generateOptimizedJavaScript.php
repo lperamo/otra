@@ -70,7 +70,7 @@ function generateJavaScript(
 
   // The Google Closure Compiler application cannot overwrite a file, so we have to create a temporary one
   // and remove the fake file ...
-  // if the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders
+  // If the js folder corresponding to the ts folder does not exist yet, we create it as well as its subfolders.
   if (!file_exists($resourceFolder))
     mkdir($resourceFolder, 0777, true);
 
@@ -171,7 +171,7 @@ function generateJavaScript(
     echo CLI_SUCCESS, ' ✔', END_COLOR, PHP_EOL, PHP_EOL;
   }
 
-  // We launch Google Closure Compiler only if a file has been generated with success but...
+  // We launch Google Closure Compiler only if a file has been generated with success, but...
   // should we launch Google Closure Compiler?
   if ($mustLaunchGcc)
   {

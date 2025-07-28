@@ -67,7 +67,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
       FILE_VENDOR_CLASS_NAME_CONFLICT = self::VENDOR_FOLDER . 'TestRequireClassNameConflict.php',
       FILE_VENDOR_CONSTANT_DUPLICATIONS = self::VENDOR_FOLDER . 'constantDuplications.php',
       FILE_ALL_CONFIG = self::VENDOR_FOLDER . 'Config.php',
-      FILE_PROD_ALL_CONFIG = self::VENDOR_FOLDER . 'prodConfig.php',
+      FILE_TEST_ALL_CONFIG = self::VENDOR_FOLDER . 'testConfig.php',
 
       INCLUDE_FILE = self::INPUT_FOLDER . 'TestInclude.php',
       INCLUDE_ONCE_FILE = self::INPUT_FOLDER . 'TestIncludeOnce.php',
@@ -144,7 +144,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
     protected function setUp(): void
     {
       parent::setUp();
-      $_SERVER[APP_ENV] = PROD; // needed for the test data set "replaceable variables"  
+      $_SERVER[APP_ENV] = 'test'; // needed for the test data set "replaceable variables"  
       require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
       // Only useful for some tests like 'Dynamic require with a simple variable'
       define(
@@ -199,7 +199,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         $fileToInclude
       );
 
-      // I do not use expect `$this->expectOutputString($expectedContent);`
+      // I do not use `$this->expectOutputString($expectedContent);`
       // to ensure the assertions are used in that order
 //      static::assertFileDoesNotExist($temporaryFile);
       static::assertSame($expectedOutput, ob_get_clean(), 'Testing launching the file ' . $fileToInclude);
@@ -315,7 +315,10 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
         'Extends without use' =>
         [
           self::OUTPUT_FOLDER . 'OutputExtendsWithoutUse.php',
-          self::formatString(self::EXTENDS_WITHOUT_USE_FILE, [[self::FILE_2, ' via extends statement', 2]]),
+          self::formatString(
+            self::EXTENDS_WITHOUT_USE_FILE,
+            [[self::FILE_2, ' via extends statement', 2]]
+          ),
           BASE_PATH . self::EXTENDS_WITHOUT_USE_FILE,
           self::OUTPUT_FOLDER . 'errorExtendsWithoutUse.php'
         ],
@@ -634,7 +637,8 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
           self::formatString(self::MINIFIED_FILE,
             [
               [self::FILE_VENDOR_PHP_MINIFIED, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::ONE_INDENT]
-            ]),
+            ]
+          ),
           BASE_PATH . self::MINIFIED_FILE,
           self::OUTPUT_FOLDER . 'errorMinified.php'
         ],
@@ -730,7 +734,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
             self::REQUIRE_REPLACEABLE_VARIABLES,
             [
               [self::FILE_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::ONE_INDENT],
-              [self::FILE_PROD_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS]
+              [self::FILE_TEST_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS]
             ]
           ),
           BASE_PATH . self::REQUIRE_REPLACEABLE_VARIABLES,
@@ -775,7 +779,7 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
               [self::FILE_VENDOR_COMPLEX_USE_CASE, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::ONE_INDENT],
               [self::FILE_VENDOR_COMPLEX_USE_CASE_BIS, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS],
               [self::FILE_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
-              [self::FILE_PROD_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::TWO_INDENTS]
+              [self::FILE_TEST_ALL_CONFIG, self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::TWO_INDENTS]
             ]
           ),
           BASE_PATH . self::REQUIRE_COMPLEX_USE_CASE,
@@ -789,7 +793,20 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
             [
               ['src/MasterController.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::ONE_INDENT],
               ['config/AllConfig.php', self::VIA_USE_STATEMENT, self::TWO_INDENTS],
-              ['config/prod/AllConfig.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
+              ['config/test/AllConfig.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
+              ['src/tools/secrets/getEncryptionKeyFromTPM.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, 
+               self::TWO_INDENTS + self::TWO_INDENTS],
+              ['src/OtraException.php', self::VIA_USE_STATEMENT . self::ALREADY_PARSED, 
+               self::TWO_INDENTS + self::TWO_INDENTS + self::ONE_INDENT],
+              ['src/console/colors.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, 
+               self::TWO_INDENTS + self::TWO_INDENTS + self::ONE_INDENT],
+              ['src/tools/secrets/getEncryptionKeyFromTPMDaemon.php', self::VIA_REQUIRE_INCLUDE_STATEMENT,
+               self::TWO_INDENTS + self::TWO_INDENTS],
+              ['src/OtraException.php', self::VIA_USE_STATEMENT . self::ALREADY_PARSED,
+               self::TWO_INDENTS + self::TWO_INDENTS + self::ONE_INDENT],
+              ['src/Logger.php', self::VIA_USE_STATEMENT, self::TWO_INDENTS + self::TWO_INDENTS + self::ONE_INDENT],
+              ['src/tools/secrets/getSecrets.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::TWO_INDENTS],
+              ['cache/php/testSecrets.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::TWO_INDENTS + self::ONE_INDENT],
               ['src/templating/HtmlMinifier.php', self::VIA_USE_STATEMENT, self::TWO_INDENTS],
               ['src/services/securityService.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS],
               ['config/AllConfig.php', self::VIA_USE_STATEMENT . self::ALREADY_PARSED, self::TWO_INDENTS + self::ONE_INDENT],
@@ -797,7 +814,6 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
               ['src/views/profiler/templateStructure/visualRendering.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS],
               ['src/Session.php', self::VIA_STATIC_DIRECT_CALL, self::TWO_INDENTS],
               ['src/tools/isSerialized.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
-              ['src/console/colors.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
               ['src/console/tools.php', self::VIA_REQUIRE_INCLUDE_STATEMENT, self::TWO_INDENTS + self::ONE_INDENT],
             ]
           ),
@@ -811,17 +827,16 @@ namespace src\console\deployment\genBootstrap\taskFileOperation
             self::REQUIRE_CLASS_NAME_CONFLICT,
             [
               [self::FILE_VENDOR_CLASS_NAME_CONFLICT, self::VIA_USE_STATEMENT, self::ONE_INDENT],
-            ],
-//            CLI_INFO_HIGHLIGHT . 'EXTERNAL LIBRARY CLASS : ' . 
-//            self::CLASS_VENDOR_CLASS_NAME_CONFLICT . END_COLOR . PHP_EOL
+            ]
           ),
           BASE_PATH . self::REQUIRE_CLASS_NAME_CONFLICT,
           self::OUTPUT_FOLDER . 'errorRequireClassNameConflict.php'
         ],
-        // Testing constants, parentheses, classic operators, logical operators, multi-line declarations, single line
+        // Testing constants, parentheses, classic operators, logical operators, multi-line declarations, single-line 
         // declarations, declarations blocks separated by other code, arrays, constants names conflicts, constants that
-        // contain constants, concatenation. All that in a namespace block. Testing also when constants are defined on
-        // different files.
+        // contain constants, concatenation.
+        // All that in a namespace block.
+        // Testing also when constants are defined in different files.
         'constant duplications' =>
         [
           self::OUTPUT_FOLDER . 'OutputRequireConstantDuplications.php',

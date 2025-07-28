@@ -86,7 +86,7 @@ class SecurityServiceTest extends TestCase
    */
   public function testGetRandomNonceForCSP() : void
   {
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     require self::SECURITY_SERVICE;
     $nonce = getRandomNonceForCSP(self::OTRA_KEY_SCRIPT_SRC_DIRECTIVE);
 

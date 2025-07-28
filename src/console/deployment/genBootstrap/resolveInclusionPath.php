@@ -3,14 +3,18 @@ declare(strict_types=1);
 namespace otra\console\deployment\genBootstrap;
 
 const RESOLVE_CONST_PATTERN = '@^[a-zA-Z_][a-zA-Z0-9_]*(\\\\[a-zA-Z_][a-zA-Z0-9_]*)*$@';
+
 /**
  * @param string $constant
  *
  * @return string
  */
- function resolveConstant(string $constant) : string
- {
-  if (defined($constant)) 
+function resolveConstant(string $constant) : string
+{
+  if ($constant === 'SECRETS_FILE')
+    $constant = 'otra\\tools\\secrets\\' . $constant;
+  
+  if (defined($constant))
   {
     $value = constant($constant);
 
@@ -20,7 +24,7 @@ const RESOLVE_CONST_PATTERN = '@^[a-zA-Z_][a-zA-Z0-9_]*(\\\\[a-zA-Z_][a-zA-Z0-9_
     return $value;
   }
 
-  return $constant;
+  return $constant . '.\'';
 }
 
 /**
@@ -71,23 +75,18 @@ function resolveInclusionPath(string $expression): string
     {
       // If the part is a string literal (enclosed in quotes), add it without the quotes
       $result .= $matches[2];
-    }
-    elseif (preg_match(RESOLVE_CONST_PATTERN, $requirePart))
+    } elseif (preg_match(RESOLVE_CONST_PATTERN, $requirePart))
     {
-      $result .= (defined($requirePart))
-        // If the part is a defined constant, replace it with its value
-        ? resolveConstant($requirePart)
-        : $requirePart . '.\'';
-    }
-    elseif (preg_match('/^(\w+)\(([^)]+)\)$/', $requirePart, $matches))
+      // If the part is a defined constant, replace it with its value
+      $result .= resolveConstant($requirePart);
+    } elseif (preg_match('/^(\w+)\(([^)]+)\)$/', $requirePart, $matches))
     {
       // If the part is a function call (like ucFirst), execute the function if it exists and add its result
       $function = $matches[1];
       $result .= function_exists($function)
         ? $function(trim($matches[2], '\'"'))
         : $requirePart; // If the function doesn't exist, keep the expression as is
-    }
-    else
+    } else
       // If the part is neither a string, nor a constant, nor a function call,
       // treat it as a raw string and keep it as is
       $result .= preg_replace("/^.*?'([^']+)'.*$/", '$1', $requirePart);

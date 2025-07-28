@@ -63,7 +63,7 @@ function hasSyntaxErrors(string $phpFile) : bool
  * Puts the final contents into a temporary file.
  * Checks syntax errors.
  * If all was ok, it retrieves the contents of the temporary file in the real final file.
- * Then it checks namespaces errors.
+ * Then it checks namespace errors.
  * If all was ok, it deletes the temporary file.
  *
  * @throws OtraException
@@ -75,7 +75,7 @@ function contentToFile(string $content, string $outputFile) : void
 
   echo PHP_EOL, CLI_INFO, 'FINAL CHECKINGS => ';
   /* Do not suppress the indented lines. They allow testing namespaces problems. We put the file in another directory
-     to see if namespaces errors are declared at the normal place and not at the temporary place */
+     to see if namespace errors are declared at the normal place and not at the temporary place */
   $tempFile = BASE_PATH . 'logs/temporary file.php';
   file_put_contents($tempFile, $content);
 
@@ -293,12 +293,13 @@ function lastAdjustments(
     [
       '@\?>\s*<\?php@', // We stick the PHP files by removing ending and opening PHP tag between files
       '@(namespace\s[\w\\\\]+\s+)(\{((?:[^}{]*|(?2))*)})@', // Only keep blocks like in `namespace thing { my block }`
-      '@\s*namespace [^;]+;\s*@', // We suppress namespaces occurrences in simple cases like  ̀namespace thing;`
+      '@\s*namespace [^;]+;\s*@', // We suppress namespace occurrences in simple cases like  ̀namespace thing;`
       '@\\\\?(PDO(?:Statement)?)@' // We fix PDO and PDOStatement namespaces
     ],
     [
       '',
-      PHP_EOL . '$3' . PHP_EOL, // blank lines to prevent, for example, that `// comment` is stuck to `/** comment */` as it is not valid
+      // blank lines to prevent, for example, that `// comment` is stuck to `/** comment */` as it is not valid
+      PHP_EOL . '$3' . PHP_EOL, 
       PHP_EOL,
       '\\\\$1'
     ],
@@ -317,8 +318,6 @@ function lastAdjustments(
 
   $finalContent = str_replace(
     [
-      // line from src/Controller.php
-      'require CORE_PATH . (\'cli\' === PHP_SAPI ? \'prod\' : $_SERVER[\'APP_ENV\']) . \'/Controller.php\';',
       // line at the top of src/OtraException.php
       'require_once CORE_PATH . \'tools/debug/dump.php\';',
       // line 115 in getDB, Sql class => src/bdd/Sql.php
@@ -339,7 +338,7 @@ function lastAdjustments(
     $finalContent
   );
 
-  // If we have PHP we strip the beginning PHP tag to include it after the PHP code,
+  // If we have PHP, we strip the beginning PHP tag to include it after the PHP code,
   // otherwise we add an ending PHP tag to begin the HTML code.
   // We add the namespace otra\cache\php at the beginning of the file AND we add the security services functions
   // then we delete final ... partial ... use statements taking care of not remove use in words as functions or comments

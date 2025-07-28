@@ -6,11 +6,13 @@ namespace src\console\architecture\createHelloWorld;
 use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
-use function otra\tools\delTree;
-use const otra\cache\php\{APP_ENV, BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, PROD};
-use const otra\console\
-{CLI_BASE, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, ERASE_SEQUENCE, END_COLOR, SUCCESS};
 use const otra\bin\TASK_CLASS_MAP_PATH;
+use const otra\cache\php\{APP_ENV, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT, TEST_PATH};
+use const otra\console\{
+  CLI_BASE, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_TABLE, CLI_WARNING, ERASE_SEQUENCE, END_COLOR,
+  SUCCESS};
+use const otra\config\VERSION;
+use function otra\tools\delTree;
 
 /**
  * /!\ Beware those tests will erase the bundle HelloWorld in cleaning phase!
@@ -32,9 +34,10 @@ class CreateHelloWorldTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     require CORE_PATH . 'tools/deleteTree.php';
+    require TEST_PATH . 'config/AllConfigGood.php';
     /** @var callable $delTree */
 
     if (file_exists(self::HELLO_WORLD_BUNDLE_PATH))
@@ -51,8 +54,11 @@ class CreateHelloWorldTaskTest extends TestCase
       require CORE_PATH . 'tools/deleteTree.php';
 
       /** @var callable $delTree */
-      delTree(self::HELLO_WORLD_BUNDLE_PATH);
-      rmdir(BASE_PATH  .'bundles');
+      if (file_exists(self::HELLO_WORLD_BUNDLE_PATH))
+        delTree(self::HELLO_WORLD_BUNDLE_PATH);
+
+      if (file_exists(BUNDLES_PATH))
+        rmdir(BUNDLES_PATH);
     }
   }
 
@@ -100,9 +106,17 @@ class CreateHelloWorldTaskTest extends TestCase
       CLI_TABLE . self::OTRA_LABEL_BASE_PATH_PLUS . CLI_INFO_HIGHLIGHT . 'cache/php/security/prod/HelloWorld.php' . CLI_BASE .
       self::OTRA_LABEL_UPDATED . SUCCESS .
       CLI_BASE . 'Building the CSS assets...' . END_COLOR . PHP_EOL .
-      CLI_WARNING . 'The production configuration is used for this task.' . END_COLOR . PHP_EOL .
       CLI_BASE . 'Files have been generated' . SUCCESS .
       CLI_BASE . 'CSS assets built' . SUCCESS .
+      CLI_BASE . 'Optimized the assets for production environment...' . END_COLOR . PHP_EOL .
+      'Cleaning the resources cache...' . CLI_SUCCESS . ' OK' . END_COLOR . PHP_EOL .
+      '1 route to process. Processing the route ...' . PHP_EOL . PHP_EOL .
+      CLI_INFO_HIGHLIGHT . str_pad('HelloWorld', 25) . CLI_GRAY . ' ' .
+      '[' . CLI_SUCCESS . 'SCREEN CSS' . CLI_GRAY . '] ' .
+      '[' . CLI_SUCCESS . 'PRINT CSS' . CLI_GRAY . '] ' .
+      '[' . CLI_SUCCESS . 'TEMPLATE' . CLI_GRAY . '] => ' . CLI_SUCCESS . 'OK' . END_COLOR . '[' . CLI_INFO . 
+      sha1('caHelloWorld' . VERSION . 'che') . END_COLOR . ']' . PHP_EOL .
+      CLI_BASE . 'Assets optimized' . SUCCESS .
       'Class mapping finished' . SUCCESS .
       'You can launch this example via the url ' . CLI_INFO_HIGHLIGHT . '/helloworld' . END_COLOR .
       '.' . PHP_EOL . 'You can launch a PHP internal web server by typing ' . CLI_INFO_HIGHLIGHT . 'otra serve' .
@@ -111,18 +125,28 @@ class CreateHelloWorldTaskTest extends TestCase
     );
 
     // launching
-    TasksManager::execute(
-      $tasksClassMap,
-      self::OTRA_TASK_CREATE_HELLO_WORLD,
-      ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
-    );
-
-    // cleaning
-    if (!OTRA_PROJECT)
+    try
     {
-      unlink(BUNDLES_PATH . 'config/Routes.php');
-      array_map(unlink(...), glob(BUNDLES_PATH . 'config/*'));
-      rmdir(BUNDLES_PATH . 'config');
+      TasksManager::execute(
+        $tasksClassMap,
+        self::OTRA_TASK_CREATE_HELLO_WORLD,
+        ['otra.php', self::OTRA_TASK_CREATE_HELLO_WORLD]
+      );
+    } finally
+    {
+      // cleaning
+      if (!OTRA_PROJECT)
+      {
+        unlink(BUNDLES_PATH . 'config/Routes.php');
+        array_map(unlink(...), glob(BUNDLES_PATH . 'config/*'));
+        rmdir(BUNDLES_PATH . 'config');
+
+        if (file_exists(self::HELLO_WORLD_BUNDLE_PATH))
+        {
+          delTree(self::HELLO_WORLD_BUNDLE_PATH);
+          rmdir(BUNDLES_PATH);
+        }
+      }
     }
   }
   /**

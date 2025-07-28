@@ -43,7 +43,9 @@ const
   ],
   CONTENT_SECURITY_POLICY = [
     DEV => CSP_ARRAY,
-    PROD => CSP_ARRAY
+    PROD => CSP_ARRAY,
+    'preprod' => CSP_ARRAY,
+    'test' => CSP_ARRAY
   ],
   // experimental with bad support
   // ('layout-animations', 'legacy-image-formats', 'oversized-images', 'unoptimized-images', 'unsized-media')
@@ -52,7 +54,9 @@ const
       [
         'sync-xhr' => ''
       ],
-    PROD => []
+    PROD => [],
+    'test' => [],
+    'preprod' => []
   ];
 
 if (!function_exists(__NAMESPACE__ . '\\getRandomNonceForCSP'))

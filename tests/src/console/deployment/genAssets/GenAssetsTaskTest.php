@@ -7,10 +7,10 @@ use otra\console\TasksManager;
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
 use const otra\bin\TASK_CLASS_MAP_PATH;
-use const otra\cache\php\BASE_PATH;
+use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CORE_PATH, OTRA_PROJECT};
 use const otra\config\VERSION;
-use const otra\console\
-{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use const otra\console\{CLI_ERROR, CLI_GRAY, CLI_INFO, CLI_INFO_HIGHLIGHT, CLI_SUCCESS, CLI_WARNING, END_COLOR};
+use function otra\tools\delTree;
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -24,11 +24,11 @@ class GenAssetsTaskTest extends TestCase
     ROUTES_PADDING = 25;
 
   private const string
+    HELLO_WORLD_BUNDLE_PATH = BUNDLES_PATH . 'HelloWorld',
     OTRA_BINARY = 'otra.php',
     OTRA_TASK_CREATE_HELLO_WORLD = 'createHelloWorld',
     OTRA_TASK_GEN_ASSETS = 'genAssets',
     OTRA_TASK_INIT = 'init',
-    
     LABEL_SCREEN_CSS = 'SCREEN CSS';
 
   /**
@@ -52,7 +52,8 @@ class GenAssetsTaskTest extends TestCase
   }
 
   /**
-   * @medium
+   * Should be medium not large.
+   * @large
    * @author Lionel Péramo
    * @throws OtraException
    */
@@ -132,10 +133,28 @@ class GenAssetsTaskTest extends TestCase
       END_COLOR . PHP_EOL);
 
     // launching
-    TasksManager::execute(
-      require TASK_CLASS_MAP_PATH,
-      self::OTRA_TASK_GEN_ASSETS,
-      [self::OTRA_BINARY, self::OTRA_TASK_GEN_ASSETS]
-    );
+    try
+    {
+      TasksManager::execute(
+        require TASK_CLASS_MAP_PATH,
+        self::OTRA_TASK_GEN_ASSETS,
+        [self::OTRA_BINARY, self::OTRA_TASK_GEN_ASSETS]
+      );
+    } finally {
+      // cleaning
+      if (!OTRA_PROJECT)
+      {
+        require CORE_PATH . 'tools/deleteTree.php';
+        unlink(BUNDLES_PATH . 'config/Routes.php');
+        array_map(unlink(...), glob(BUNDLES_PATH . 'config/*'));
+        rmdir(BUNDLES_PATH . 'config');
+
+        if (file_exists(self::HELLO_WORLD_BUNDLE_PATH))
+        {
+          delTree(self::HELLO_WORLD_BUNDLE_PATH);
+          rmdir(BUNDLES_PATH);
+        }
+      }
+    }
   }
 }

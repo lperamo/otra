@@ -31,7 +31,7 @@ class DumpTest extends TestCase
   public static function setUpBeforeClass(): void
   {
     parent::setUpBeforeClass();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     require TEST_PATH . 'config/AllConfigGood.php';
     require CORE_PATH . 'tools/getSourceFromFile.php';

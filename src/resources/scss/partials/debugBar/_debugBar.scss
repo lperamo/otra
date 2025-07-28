@@ -4,11 +4,11 @@
 ////
 
 // loading configuration
-@use '../../configuration/devModeFonts';
-@use '../../configuration/themes' as *;
+@use 'configuration/devModeFonts';
+@use 'configuration/themes' as *;
 
 // loading EcoComposer components
-@use '../../components/theming/theming';
+@use 'components/design/theming/theming';
 
 // loading mixins
 @use 'mixins';

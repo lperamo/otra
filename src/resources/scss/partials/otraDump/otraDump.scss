@@ -2,7 +2,7 @@
 @use '../../configuration/themes' as *;
 
 // loading components
-@use '../../components/theming/theming';
+@use 'components/design/theming/theming';
 
 // initializing components
 @include theming.init-themes($themes);
@@ -20,14 +20,6 @@ div.otra-dump {
     )
   );
 
-  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
-    background-image : radial-gradient(#ddd, #fff);
-  }
-
-  @media all and (prefers-color-scheme : dark) {
-    background-color : #333;
-  }
-
   // positioning
   padding : .5rem;
 
@@ -35,6 +27,14 @@ div.otra-dump {
   font-family : 'Courier New', monospace;
   font-size   : $font-variable;
   word-break  : break-all;
+
+  @media all and (prefers-color-scheme : light), all and (prefers-color-scheme : no-preference) {
+    background-image : radial-gradient(#ddd, #fff);
+  }
+
+  @media all and (prefers-color-scheme : dark) {
+    background-color : #333;
+  }
 
   @at-root {
     span.otra-dump--intro {

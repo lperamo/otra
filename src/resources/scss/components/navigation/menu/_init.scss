@@ -1,0 +1,44 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+///
+/// Vertical menu initialization mixin (generic code).
+///
+/// @access public
+////
+@mixin init() {
+  .menu--container {
+    box-sizing      : border-box;
+    height          : 100%; // handles edge case when the menu is in a 'flex' container.
+    list-style-type : none;
+    padding-left    : 0;
+  }
+
+  .menu--container--item {
+    &:not(.menu--has-link) {
+      cursor   : pointer;
+    }
+
+    &:focus-visible {
+      outline : 0;
+    }
+
+    &--paragraph {
+      margin : 0;
+    }
+
+    &--link {
+      display         : inline-block;
+      height          : 100%;
+      text-decoration : none;
+      width           : 100%;
+    }
+
+    &:not(.menu--has-link, .has-submenu),
+    &--link,
+    &--paragraph {
+      box-sizing : border-box;
+    }
+  }
+}

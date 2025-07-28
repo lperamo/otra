@@ -96,7 +96,14 @@ class TemplateStructureActionTest extends TestCase
     self::assertInstanceOf(TemplateStructureAction::class, $templateStructureAction);
     self::assertSame(
       ob_get_clean(),
-      $output,
+      preg_replace(
+        [
+          '@<link rel=stylesheet nonce=[0-9a-z]{64} href=[^.]+.css>@',
+          '@<script nonce=\w{64} src=/src/resources/js/profiler.js></script>@'
+        ],
+        '',
+        $output
+      ),
       'Testing profiler ' . CLI_INFO_HIGHLIGHT . self::FULL_ACTION_NAME . CLI_ERROR . ' page output with ' .
       CLI_INFO_HIGHLIGHT . self::TEST_TEMPLATE . CLI_ERROR . '...'
     );

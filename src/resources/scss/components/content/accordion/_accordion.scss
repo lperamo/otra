@@ -1,0 +1,199 @@
+////
+/// @group Accordion
+/// @since 1.0
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:map';
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+$-defaults : (
+  accordion--arrow--background-image : 'accordion--arrow--background-image',
+  accordion--background-image : 'accordion--background-image',
+  accordion--box-shadow : 'accordion--box-shadow',
+  accordion--color : 'accordion--color',
+  font-size : 2rem * theming.$font-size,
+  margin-bottom : 1rem * theming.$font-size,
+  details-padding : 1rem * theming.$font-size,
+  print : false,
+  shadow : true,
+  summary-padding : 1rem * theming.$font-size,
+  suffix : '',
+  themes :  (
+    light : (
+      default--accordion--arrow--background-image : linear-gradient(90deg, #088, #2e1),
+      default--accordion--background-image : linear-gradient(45deg, transparent, #088, transparent),
+      default--accordion--box-shadow : 0 0 .3rem #444,
+      default--accordion--color : #333
+    ),
+    dark : (
+      default--accordion--arrow--background-image : linear-gradient(90deg, #aab, #457),
+      default--accordion--background-image : linear-gradient(45deg, transparent, #57a, transparent),
+      default--accordion--box-shadow : 0 0 .3rem #444,
+      default--accordion--color : #ccc
+    )
+  )
+);
+
+///
+/// Accordion initialization mixin (generic code).
+///
+/// @access public
+///
+@mixin init() {
+  @keyframes accordion-open {
+    0% {
+      opacity : 0;
+      height  : 0;
+    }
+
+    30% {
+      opacity : 1;
+    }
+
+    100% {
+      opacity : 1;
+      height  : 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion : no-preference) {
+    [class^=accordion]:not([open]) > .accordion--bk {
+      animation            : none;
+    }
+
+    [class^=accordion][open] > .accordion--bk {
+      animation : accordion-open .6s ease-in-out;
+    }
+  }
+}
+
+///
+/// Main mixin that creates a themed accordion using `details` and `summary` markups
+///
+/// @access public
+/// @param  {array} $-options ()
+///
+@mixin create($-options : ()) {
+  $-themeUsed : map.has-key($-options, 'themes');
+  $-options : map.deep-merge($-defaults, $-options); // deep-merge is needed to ensure default theme variables are kept
+
+  // extracting variables...
+  // Suffix to allow different configurations for the same kind of component
+  $-suffix : map.get($-options, 'suffix');
+  $-font-size : map.get($-options, 'font-size');
+  $-details-padding : map.get($-options, 'details-padding');
+  $-print : map.get($-options, 'print');
+  $-shadow : map.get($-options, 'shadow');
+  $-summary-padding : map.get($-options, 'summary-padding');
+
+  // theme variables
+  $-accordion--color : map.get($-options, 'accordion--color');
+  $-accordion--box-shadow : map.get($-options, 'accordion--box-shadow');
+
+  @include theming.set-actual-component('accordion');
+  @include theming.add-themes(map.get($-options, 'themes'));
+
+  details.accordion#{$-suffix} {
+    // appearance
+    @include theming.to-theme(
+      (#{&} : ('color', $-accordion--color)),
+      $-suffix,
+      $-themeUsed,
+      $-print
+    );
+
+    @if $-font-size {
+      font-size : $-font-size;
+    }
+
+    // positioning
+    align-self     : center;
+    display        : flex;
+    flex-direction : column;
+    margin         : 0 auto map.get($-options, 'margin-bottom');
+
+    &:not([open]) {
+      & > summary.accordion#{$-suffix}::before {
+        content : '▶';
+      }
+    }
+
+    @if $-details-padding or $-shadow {
+      .accordion#{$-suffix}--block {
+        @if $-details-padding {
+          padding : $-details-padding;
+        }
+
+        @if $-shadow {
+          @if $-accordion--box-shadow {
+            @include theming.to-theme(
+              (#{&} : ('box-shadow', $-accordion--box-shadow)),
+              $-suffix,
+              $-themeUsed,
+              $-print
+            );
+          }
+
+          margin : 0 .1rem;
+        }
+      }
+    }
+
+    &,
+    summary.accordion#{$-suffix} {
+      box-sizing : border-box;
+    }
+
+    &[open] > summary.accordion#{$-suffix}::before {
+      content : '▼';
+    }
+
+    @at-root summary.accordion#{$-suffix} {
+      // appearance
+      @include theming.to-theme(
+        (#{&} : ('background-image', map.get($-options, 'accordion--background-image'))),
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      cursor          : pointer;
+      list-style-type : none;
+
+      // positioning
+      position : relative;
+      padding  : $-summary-padding $-summary-padding $-summary-padding $-summary-padding * 2 + $-font-size;
+      outline  : 0;
+
+      &::-webkit-details-marker {
+        display : none;
+      }
+
+      // the arrow
+      &::before {
+        // appearance
+        @include theming.to-theme(
+          (#{&} : ('background-image', map.get($-options, 'accordion--arrow--background-image'))),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+
+        background-clip : text;
+        -webkit-text-fill-color : transparent;
+
+        // positioning
+        display         : inline-block;
+        left            : 0;
+        position        : absolute;
+        top             : 50%;
+        translate       : $-summary-padding -50%;
+        transform-style : preserve-3d; // fix needed (at least) for Firefox
+      }
+    }
+  }
+}

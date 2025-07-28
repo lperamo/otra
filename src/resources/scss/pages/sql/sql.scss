@@ -3,14 +3,14 @@
 @use '../../configuration/themes' as *;
 
 // loading mixins
-@use '../../partials/debugBar/mixins';
+@use 'partials/debugBar/mixins';
 
 // loading EcoComposer components
-@use '../../components/styledButtons/ripple';
-@use '../../components/theming/theming';
+@use 'components/form/styledButtons/ripple';
+@use 'components/design/theming/theming';
 
 // loading partials
-@use '../../partials/profiler/index';
+@use 'partials/profiler/index';
 
 // configuring components
 @include theming.init-themes($themes);
@@ -29,6 +29,7 @@
 
   // text
   font-size  : 1.6rem;
+
   // word-break is not supported by IE!
   @supports (word-break: break-word) {
     word-break : break-word;
@@ -96,9 +97,9 @@
         }
 
         &--file {
-          @include mixins.glowingRed();
-
           word-break : break-all;
+
+          @include mixins.glowingRed();
         }
 
         &--line {

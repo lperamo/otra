@@ -24,7 +24,7 @@ class HelpTaskTest extends TestCase
   public function testHelpHelp() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     // testing
     $this->expectOutputString(

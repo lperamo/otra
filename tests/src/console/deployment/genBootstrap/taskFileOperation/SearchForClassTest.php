@@ -5,9 +5,9 @@ namespace src\console\deployment\genBootstrap\taskFileOperation;
 
 use otra\OtraException;
 use PHPUnit\Framework\TestCase;
-use function otra\console\deployment\genBootstrap\searchForClass;
 use const otra\cache\php\{CONSOLE_PATH,CORE_PATH};
 use const otra\console\{CLI_INFO, CLI_WARNING, END_COLOR};
+use function otra\console\deployment\genBootstrap\searchForClass;
 
 /**
  * It fixes issues like when AllConfig is not loaded while it should be
@@ -24,7 +24,8 @@ class SearchForClassTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
-    require CONSOLE_PATH . 'deployment/genBootstrap/taskFileOperation.php';
+    define('otra\\console\\deployment\\genBootstrap\\NAMESPACE_SEPARATOR', '\\');
+    require CONSOLE_PATH . 'deployment/genBootstrap/searchForClass.php';
   }
 
   /**
@@ -88,7 +89,8 @@ class SearchForClassTest extends TestCase
     self::assertFalse($classFound, self::LABEL_TESTING_CLASS_FOUND);
     self::assertSame(
       CLI_WARNING . 'Notice : Please check if you use a class ' . CLI_INFO . self::TEST_CLASS . CLI_WARNING .
-      ' in a use statement but this file seems to be not included ! Maybe the file name is only in a comment though.' .
+      ' in a use statement. This file seems to be not included! Found here:' . PHP_EOL .
+      CLI_INFO . 'namespace test;class TestExtendsControllerNoNamespace extends Controller' .
       END_COLOR . PHP_EOL,
       ob_get_clean(),
       'Testing searchForClass output...'

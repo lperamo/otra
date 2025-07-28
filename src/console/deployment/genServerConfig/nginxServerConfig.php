@@ -204,7 +204,7 @@ $content = handlesHTTPSRedirection() .
   '{' . PHP_EOL .
   SPACE_INDENT . 'listen 443 ssl http2;' . PHP_EOL .
   SPACE_INDENT . 'listen [::]:443 ssl http2;' . PHP_EOL .
-  SPACE_INDENT . 'set $rootPath ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] . ';' . PHP_EOL .
+  SPACE_INDENT . 'set $rootPath ' . AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_FOLDER_KEY] . ';' . PHP_EOL .
   SPACE_INDENT . 'index index' . (GEN_SERVER_CONFIG_ENVIRONMENT === DEV ? 'Dev' : '') . '.php;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . '# Updates the server_name if needed' . PHP_EOL .
@@ -214,9 +214,9 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   SPACE_INDENT . 'root $rootPath/web;' . PHP_EOL .
   PHP_EOL .
-  SPACE_INDENT . 'ssl_certificate ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
+  SPACE_INDENT . 'ssl_certificate ' . AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_FOLDER_KEY] .
   'tmp/certs/server_crt.pem;' . PHP_EOL .
-  SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::$deployment[GEN_SERVER_CONFIG_FOLDER_KEY] .
+  SPACE_INDENT . 'ssl_certificate_key ' . AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_FOLDER_KEY] .
   'tmp/certs/server_key.pem;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . 'expires $expires;' . PHP_EOL .
@@ -237,8 +237,8 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   SPACE_INDENT . '# Prevents hotlinking (others that steal our bandwidth and assets).' . PHP_EOL .
   SPACE_INDENT . 'valid_referers none blocked ~.google. ~.bing. ~.yahoo. ' .
-  AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .
-  AllConfig::$deployment[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
+  AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] . ' *.' .
+  AllConfig::${$_SERVER['APP_SCOPE']}[GEN_SERVER_CONFIG_DOMAIN_NAME_KEY] .
   ' localhost;' . PHP_EOL .
   PHP_EOL .
   SPACE_INDENT . 'if ($uri ~ "^/$")' . PHP_EOL .
@@ -258,7 +258,7 @@ $content = handlesHTTPSRedirection() .
   PHP_EOL .
   SPACE_INDENT . '# Forces static compression (for already compressed files)' . PHP_EOL .
   SPACE_INDENT . 'brotli on;' . PHP_EOL .
-  SPACE_INDENT . 'brotli_comp_level 7' . PHP_EOL .
+  SPACE_INDENT . 'brotli_comp_level 7;' . PHP_EOL .
   SPACE_INDENT . 'brotli_static always;' . PHP_EOL .
   SPACE_INDENT . 'gzip off;' . PHP_EOL .
   PHP_EOL .

@@ -36,10 +36,10 @@ const SPECIAL_CLASSES = [
  *    static ?: string[]
  *  },
  *  template: array
- * }               $filesToConcat Files to parse after have parsed this one
- * @param string[] $parsedFiles   Remaining files to concatenate
- * @param string   $chunk         Original chunk (useful for the external library class warning)
- * @param string[] $parsedClasses Classes already used. It allows resolving name conflicts.
+ * }               $filesToConcat    Files to parse after have parsed this one
+ * @param string[] $parsedFiles      Remaining files to concatenate
+ * @param string   $chunk            Original chunk (useful for the external library class warning)
+ * @param string[] $parsedClasses    Classes already used. It helps to resolve name conflicts.
  * @param string   $lastClassSegment In `my\super\class2` it will be `class2` 
  */
 function analyzeUseToken(
@@ -80,7 +80,7 @@ function analyzeUseToken(
       // Handles cache/php namespaces and otra namespaces
       if (!str_starts_with($trimmedClass, $cacheNamespace))
       {
-        // It can be a SwiftMailer class for example.
+        // It could, for example, be a SwiftMailer class
         if (VERBOSE > 0 && !isset(SPECIAL_CLASSES[$chunk]) && str_contains($trimmedClass, 'vendor') && !str_contains($chunk, '//'))
           echo CLI_INFO_HIGHLIGHT, 'EXTERNAL LIBRARY CLASS : ' . $chunk, END_COLOR, PHP_EOL;
       } elseif ($trimmedClass === $cacheNamespace . '\\BlocksSystem')

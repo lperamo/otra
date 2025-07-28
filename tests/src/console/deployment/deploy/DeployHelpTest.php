@@ -46,6 +46,17 @@ class DeployHelpTest extends TestCase
       '   + ' . str_pad('verbose', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
       CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
       ') ' . CLI_INFO . 'If set to 1 => we print all the warnings during the production php files generation' . PHP_EOL .
+      CLI_INFO_HIGHLIGHT .
+      '   + ' . str_pad('js-level-compilation', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'Optimization level for Google Closure Compiler' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '0 for WHITESPACE_ONLY' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '1 for SIMPLE_OPTIMIZATIONS (default)' . PHP_EOL .
+      STRING_PAD_FOR_OPTION_FORMATTING . '2 for ADVANCED_OPTIMIZATIONS' . PHP_EOL .
+      CLI_INFO_HIGHLIGHT .
+      '   + ' . str_pad('environment', TasksManager::PAD_LENGTH_FOR_TASK_OPTION_FORMATTING) .
+      CLI_GRAY . ': ' . CLI_INFO_HIGHLIGHT . '(' . TasksManager::OPTIONAL_PARAMETER .
+      ') ' . CLI_INFO . 'Where should we deploy? Defaults to ' . CLI_INFO_HIGHLIGHT . 'prod' . CLI_INFO . '.' . PHP_EOL .
       END_COLOR
     );
 

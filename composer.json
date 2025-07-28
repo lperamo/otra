@@ -34,6 +34,7 @@
     "ext-inotify": "*",
     "ext-intl" : "*",
     "ext-pdo_mysql": "*",
+    "ext-xdebug": "*",
     "rector/rector": "*"
   },
   "suggest": {

@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @author Lionel Péramo */
 namespace otra\config;
 
-use const otra\cache\php\BUNDLES_PATH;
-use const otra\cache\php\CACHE_PATH;
 use const otra\cache\php\COMPILE_MODE_MODIFY;
+use const otra\cache\php\{BUNDLES_PATH, CACHE_PATH, CORE_PATH, DEV};
+use function otra\tools\secrets\getEncryptionKeyFromTPMDaemon;
+use function otra\tools\secrets\getSecrets;
 
 define('otra\\cache\\php\\CACHE_TIME', 300); // 5 minutes(5*60)
 define('otra\\cache\\php\\COMPILE_MODE_MODIFY', 0);
@@ -24,16 +25,17 @@ abstract class AllConfig
 //    $compileMode = COMPILE_MODE_MODIFY;
   public static bool
     $debug = true,
-    $cache = false;
+    $cache = false,
+    $gcc = true;
   public static string
-    /* To not make new AllConfig::foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this case
-    (if we not use AllConfig::foo it will not load AllConfig even if it's in the use statement so the "defines" aren't
-    accessible ) */
+    /* To not make new AllConfig::foo before calling CACHE_PATH, use directly AllConfig::$cachePath in this
+    case
+    (if we not use AllConfig::foo it will not load AllConfig even if it's in the use statement so the "defines" aren't accessible) */
     $cachePath = CACHE_PATH,
     $defaultConn = '', // mandatory to modify it later if needed
     $nodeBinariesPath = '/your/path/to/nodeBinFolder';  // mandatory to modify it later if needed
   public static array
-    $dbConnections = [],// mandatory to modify it later if needed
+    $local = [],// mandatory to modify it later if needed
     $debugConfig = [
       'autoLaunch' => true,
       'barPosition' => 'bottom',
@@ -44,3 +46,10 @@ abstract class AllConfig
     $taskFolders = [], // mandatory to modify it later if needed
     $sassLoadPaths = [];
 }
+
+require_once CORE_PATH . 'tools/secrets/getEncryptionKeyFromTPM.php';
+require_once CORE_PATH . 'tools/secrets/getEncryptionKeyFromTPMDaemon.php';
+require_once CORE_PATH . 'tools/secrets/getSecrets.php';
+$secrets = (false && file_exists(CACHE_PATH . 'php/' . DEV . 'Secrets.php'))
+  ? getSecrets(getEncryptionKeyFromTPMDaemon())
+  : [];

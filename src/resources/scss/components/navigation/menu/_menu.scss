@@ -1,0 +1,465 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading sass modules
+@use 'sass:map';
+@use 'sass:list';
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+// load menu defaults values - How to keep it private?
+@use 'defaults' as *;
+
+// loading component mixins
+@forward 'init';
+
+// Menu mixins - How to keep them private?
+@use 'handleThemedFeature' as *;
+@use 'menuStates' as *;
+@use 'submenus' as *;
+
+///
+/// Main mixin that creates vertical menus.
+///
+/// @access public
+/// @param  {array} $-options ()
+///
+@mixin create($-options : ()) {
+  $-themeUsed : map.has-key($-options, 'themes');
+  $-options   : map.merge($defaults, $-options);
+
+  // extracting variables...
+  $-border-radius                        : map.get($-options, 'border-radius');
+  $-horizontal                           : map.get($-options, 'horizontal');
+  $-item--border-radius                  : map.get($-options, 'item--border-radius');
+  $-menu--element--animated-border-width : map.get($-options, 'menu--element--animated-border-width');
+  $-margin-top                           : map.get($-options, 'margin-top');
+  $-margin-bottom                        : map.get($-options, 'margin-bottom');
+  $-padding                              : map.get($-options, 'padding');
+  $-print                                : map.get($-options, 'print');
+  $-submenus                             : map.get($-options, 'submenus');
+  $-suffix                               : map.get($-options, 'suffix');
+  $-width                                : map.get($-options, 'width');
+
+  // via themes
+  // menu
+  $-menu--background-color               : map.get($-options, 'menu--background-color');
+  $-menu--background-image               : map.get($-options, 'menu--background-image');
+  $-menu--border                         : map.get($-options, 'menu--border');
+  $menu--element--animated-border        : map.get($-options, 'menu--element--animated-border');
+  $-menu--element--animated-border-color : map.get($-options, 'menu--element--animated-border-color');
+  $-menu--element--border                : map.get($-options, 'menu--element--border');
+  $-menu--element--border-color          : map.get($-options, 'menu--element--border-color');
+  $-menu--element--border-style          : map.get($-options, 'menu--element--border-style');
+
+  // idle
+  $-menu--element--background-color : map.get($-options, 'menu--element--background-color');
+  $-menu--element--background-image : map.get($-options, 'menu--element--background-image');
+  $-menu--element--color            : map.get($-options, 'menu--element--color');
+
+  // active
+  $-menu--element--active--background-color : map.get($-options, 'menu--element--active--background-color');
+  $-menu--element--active--background-image : map.get($-options, 'menu--element--active--background-image');
+  $-menu--element--active--color            : map.get($-options, 'menu--element--active--color');
+
+  // focus
+  $-menu--element--focus--background-color : map.get($-options, 'menu--element--focus--background-color');
+  $-menu--element--focus--background-image : map.get($-options, 'menu--element--focus--background-image');
+  $-menu--element--focus--color            : map.get($-options, 'menu--element--focus--color');
+
+  // focus-visible
+  $-menu--element--focus-visible--box-shadow : map.get($-options, 'menu--element--focus-visible--box-shadow');
+
+  // hover
+  $-menu--element--hover--background-color : map.get($-options, 'menu--element--hover--background-color');
+  $-menu--element--hover--background-image : map.get($-options, 'menu--element--hover--background-image');
+  $-menu--element--hover--color            : map.get($-options, 'menu--element--hover--color');
+
+  // visited
+  $-menu--element--visited--background-color : map.get($-options, 'menu--element--visited--background-color');
+  $-menu--element--visited--background-image : map.get($-options, 'menu--element--visited--background-image');
+  $-menu--element--link--visited--color      : map.get($-options, 'menu--element--link--visited--color');
+
+  // font
+  $-menu--font : map.get($-options, 'menu--font');
+
+  // submenu
+  $-submenu--background-color      : map.get($-options, 'submenu--background-color');
+  $-submenu--background-image      : map.get($-options, 'submenu--background-image');
+  $-submenu--border                : map.get($-options, 'submenu--border');
+  $-submenu--element--border       : map.get($-options, 'submenu--element--border');
+  $-submenu--element--border-color : map.get($-options, 'submenu--element--border-color');
+  $-submenu--element--border-style : map.get($-options, 'submenu--element--border-style');
+
+  // idle
+  $-submenu--element--background-color : map.get($-options, 'submenu--element--background-color');
+  $-submenu--element--background-image : map.get($-options, 'submenu--element--background-image');
+  $-submenu--element--color            : map.get($-options, 'submenu--element--color');
+
+  // active
+  $-submenu--element--active--background-color : map.get($-options, 'submenu--element--active--background-color');
+  $-submenu--element--active--background-image : map.get($-options, 'submenu--element--active--background-image');
+  $-submenu--element--active--color            : map.get($-options, 'submenu--element--active--color');
+
+  // focus
+  $-submenu--element--focus--background-color : map.get($-options, 'submenu--element--focus--background-color');
+  $-submenu--element--focus--background-image : map.get($-options, 'submenu--element--focus--background-image');
+  $-submenu--element--focus--color            : map.get($-options, 'submenu--element--focus--color');
+
+  // hover
+  $-submenu--element--hover--background-color : map.get($-options, 'submenu--element--hover--background-color');
+  $-submenu--element--hover--background-image : map.get($-options, 'submenu--element--hover--background-image');
+  $-submenu--element--hover--color            : map.get($-options, 'submenu--element--hover--color');
+
+  // visited
+  $-submenu--element--visited--background-color : map.get($-options, 'submenu--element--visited--background-color');
+  $-submenu--element--visited--background-image : map.get($-options, 'submenu--element--visited--background-image');
+  $-submenu--element--link--visited--color      : map.get($-options, 'submenu--element--link--visited--color');
+
+  @include theming.set-actual-component('menu');
+  @include theming.add-themes(map.get($-options, 'themes'));
+
+  .menu#{$-suffix} {
+    &.menu--container {
+      @if $menu--element--animated-border {
+        &:not(.menu--container .menu--container) {
+          position : relative;
+        }
+      }
+
+      @if $-menu--background-color {
+        &:not(.menu--container--item:active .menu--container) {
+          @include handle-themed-feature('background-color', $-menu--background-color, $-suffix, $-themeUsed, $-print);
+        }
+      }
+
+      @if $-menu--background-image {
+        &:not(.menu--container--item:active .menu--container) {
+          @include handle-themed-feature('background-image', $-menu--background-image, $-suffix, $-themeUsed, $-print);
+        }
+      }
+
+      @if $-menu--border {
+        @include theming.to-theme(
+          (#{&} : ('border', $-menu--border)),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+
+      @include handle-themed-feature('font', $-menu--font, $-suffix, $-themeUsed, $-print);
+
+      @if $-width {
+        width : $-width;
+      }
+
+      @if $-margin-bottom and $-margin-top {
+        margin-block : 0;
+      } @else {
+        @if $-margin-top {
+          margin-top : 0;
+        }
+
+        @if $-margin-bottom {
+          margin-bottom : 0;
+        }
+      }
+
+      @if $-horizontal {
+        display: flex;
+      }
+
+      @if $-border-radius {
+        & {
+          border-radius : $-border-radius;
+        }
+      }
+
+      @if $-submenus or $menu--element--animated-border {
+        @at-root .menu#{$-suffix}.menu--container--item {
+          position : relative; // to position submenus and the animated menu border
+        }
+      }
+
+      @if not $-horizontal and $menu--element--animated-border {
+        @at-root .menu#{$-suffix}.menu--container--item {
+          @media (width >= 1001px) {
+            &::before {
+              $-theme--menu--element--animated-border-color : $-menu--element--animated-border-color;
+
+              @media (prefers-color-scheme : light), (prefers-color-scheme : no-preference) {
+                background-color :
+                  if(
+                    $-themeUsed,
+                    map.get(theming.$themes, 'light', $-theme--menu--element--animated-border-color),
+                    map.get($defaults, 'themes', 'light', 'default--menu--element--animated-border-color')
+                  );
+              }
+
+              @if not $-print {
+                @media (prefers-color-scheme : dark) {
+                  background-color :
+                    if(
+                        $-themeUsed,
+                        map.get(theming.$themes, 'dark', $-theme--menu--element--animated-border-color),
+                        map.get($defaults, 'themes', 'dark', 'default--menu--element--animated-border-color')
+                    );
+                }
+              }
+
+              content     : '\00a0';
+              height      : 100%;
+              left        : 0;
+              position    : absolute;
+              top         : 0;
+              transition  : scale .2s ease-out;
+              width       : $-menu--element--animated-border-width;
+              will-change : scale;
+            }
+
+            &:not(:hover, :focus, :active, &-active)::before {
+              scale : 0;
+            }
+
+            &:hover,
+            &:focus,
+            &:active,
+            &-active {
+              &::before {
+                scale : 1;
+              }
+            }
+          }
+
+          @media (width <= 1000px) {
+            &::before {
+              pointer-events : none;
+            }
+
+            @at-root .menu--container--item--link {
+              white-space : nowrap;
+            }
+          }
+        }
+      }
+
+      @if $-submenus {
+        @include submenus(
+            $-border-radius,
+            $-item--border-radius,
+            $-menu--element--background-color,
+            $-submenu--background-color,
+            $-submenu--background-image,
+            $-submenu--element--background-color,
+            $-submenu--element--background-image,
+            $-submenu--element--active--background-color,
+            $-submenu--element--active--background-image,
+            $-submenu--element--active--color,
+            $-submenu--element--focus--background-color,
+            $-submenu--element--focus--background-image,
+            $-submenu--element--focus--color,
+            $-submenu--element--hover--background-color,
+            $-submenu--element--hover--background-image,
+            $-submenu--element--hover--color,
+            $-submenu--element--link--visited--color,
+            $-submenu--element--visited--background-color,
+            $-submenu--element--visited--background-image,
+            $-suffix,
+            $-themeUsed,
+            $-print
+        );
+      }
+    }
+
+    &.menu--container--item {
+      line-height : 2.3rem * theming.$font-size;
+
+      $-menuContainerButNotActive : ':not(:active,' + #{&} + '-active,:hover,:focus)';
+
+      @include handle-themed-feature(
+        'background-color',
+        $-menu--element--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        $-menuContainerButNotActive
+      );
+      @include handle-themed-feature(
+        'background-image',
+        $-menu--element--background-image,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        $-menuContainerButNotActive
+      );
+
+      @if $-menu--element--border {
+        @if $-menu--element--border-style {
+          @include theming.to-theme(
+            (#{&} : ('border-style', $-menu--element--border-style)),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+
+        @if $-menu--element--border-color {
+          @include theming.to-theme(
+            (#{&} : ('border-color', $-menu--element--border-color)),
+            $-suffix,
+            $-themeUsed,
+            $-print
+          );
+        }
+
+        @if $-border-radius {
+          @if $-horizontal {
+            &:not(:active.has-submenu, :focus.has-submenu, :hover.has-submenu):first-child {
+              border-radius : .5rem * theming.$font-size 0 0 .5rem * theming.$font-size * theming.$font-size;
+            }
+
+            &:not(:active.has-submenu, :focus.has-submenu, :hover.has-submenu):last-child {
+              border-radius :
+                0 .5rem * theming.$font-size * theming.$font-size
+                .5rem * theming.$font-size * theming.$font-size 0;
+            }
+          } @else {
+            @if not $-submenus {
+              &:first-child {
+                border-radius : 0 .5rem * theming.$font-size * theming.$font-size 0 0;
+              }
+
+              &:last-child {
+                border-radius : 0 0 .5rem * theming.$font-size * theming.$font-size 0;
+              }
+            } @else {
+              &:not(:active.has-submenu, :focus.has-submenu, :hover.has-submenu):first-child:not([aria-expanded] > .menu--container--item:first-child) {
+                border-radius : 0 .5rem * theming.$font-size * theming.$font-size 0 0;
+              }
+
+              &:not(:active.has-submenu, :focus.has-submenu, :hover.has-submenu):last-child:not([aria-expanded] > .menu--container--item:last-child) {
+                border-radius : 0 0 .5rem * theming.$font-size * theming.$font-size 0;
+              }
+            }
+          }
+        }
+
+        &:not(:last-child) {
+          @if $-horizontal {
+            border-width : 0 .1rem * theming.$font-size * theming.$font-size 0 0;
+          } @else {
+            border-width : 0 0 .1rem * theming.$font-size * theming.$font-size 0;
+          }
+        }
+
+        &:last-child {
+          border-width : 0;
+        }
+      }
+
+      @if $-menu--element--color {
+        $notSelector : ':not(:focus, :hover, :active, .menu--container--item-active';
+
+        @include theming.to-theme(
+          (
+            #{&} + $notSelector + ', .menu--has-link:link),' +
+            #{&} + $notSelector + ').menu--has-link > .menu--container--item--link' : ('color', $-menu--element--color)
+          ),
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+
+      @if map.get($-options, 'block--active-element') {
+        &-active:not(.has-submenu) {
+          pointer-events : none;
+        }
+      }
+
+      &:focus-visible {
+        @include handle-themed-feature(
+          'box-shadow',
+          $-menu--element--focus-visible--box-shadow,
+          $-suffix,
+          $-themeUsed,
+          $-print
+        );
+      }
+
+      // active
+      @include menu-state(
+        'active:not([aria-expanded] > .menu--container--item),&-active:not([aria-expanded] > .menu--container--item)',
+        $-menu--element--active--background-color,
+        $-menu--element--active--background-image,
+        $-menu--element--active--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // focus
+      @include menu-state(
+        'focus:not([aria-expanded] > .menu--container--item,:active, :hover)',
+        $-menu--element--focus--background-color,
+        $-menu--element--focus--background-image,
+        $-menu--element--focus--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // hover
+      @include menu-state(
+        'hover:not([aria-expanded] > .menu--container--item,:active, .menu--container--item-active)',
+        $-menu--element--hover--background-color,
+        $-menu--element--hover--background-image,
+        $-menu--element--hover--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // visited
+      @include handle-themed-feature(
+        'background-color',
+        $-menu--element--visited--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        '>a:visited'
+      );
+      @include handle-themed-feature(
+        'background-image',
+        $-menu--element--visited--background-image,
+        $-suffix,
+        $-themeUsed,
+          $-print,
+        '>a:visited'
+      );
+      @include handle-themed-feature(
+        'color',
+        $-menu--element--link--visited--color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        '>a:visited'
+      );
+
+      @if $-padding {
+        @at-root .menu#{$-suffix}.menu--container--item {
+          &:not(.menu--has-link, .has-submenu),
+          &--link,
+          &--paragraph {
+            padding : $-padding;
+          }
+        }
+      }
+    }
+  }
+}

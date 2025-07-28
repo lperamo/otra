@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace otra\console\deployment\genBootstrap;
 use otra\OtraException;
-use const otra\cache\php\{BASE_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH};
+use const otra\cache\php\{APP_ENV, BASE_PATH, CACHE_PATH, CONSOLE_PATH, CORE_PATH};
 use const otra\console\{CLI_WARNING, END_COLOR};
 /**
  * @var int $actualId
@@ -119,17 +119,20 @@ foreach ($entries as $inclusionMethod => $fileEntries)
         continue;
       }
 
-      // The file CORE_PATH . templating/blocks.php needs an alias for CORE_PATH . MasterController.php so we have
+      // The file `CORE_PATH . templating/blocks.php` needs an alias for `CORE_PATH . MasterController.php` so we have
       // to handle that case
       if ($tempFile === CACHE_PATH . 'php/MasterController.php')
         $tempFile = CORE_PATH . 'MasterController.php';
+
+      if ($tempFile === 'otra\tools\secrets\SECRETS_FILE.\'\'')
+        $tempFile = CACHE_PATH . 'php/' . $_SERVER[APP_ENV] . 'Secrets.php';
     }
 
     $nextContentToAdd = file_get_contents($tempFile);
 
     // update the current name as it is used for debugging like in assembleFiles::getDependenciesFileInfo()
     $taskData[0]['filename'] = $tempFile;
-    
+
     if ($fileType === TYPE_VALUE_PHP)
       $nextContentToAdd .= PHP_END_TAG_STRING;
 
@@ -205,7 +208,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
         // if the inclusion statement has not already been removed (because already loaded via another way)
         if ($requirePosition !== false)
         {
-          /* if the file has contents that begin by a return statement and strict type declaration, then we apply a
+          /* if the file has contents that begin with a return statement and strict type declaration, then we apply a
              particular process*/
           if ($isReturn)
           {
@@ -224,7 +227,7 @@ foreach ($entries as $inclusionMethod => $fileEntries)
             ];
           } else
           {
-            // if 'extends' key is set, it is always true
+            // if the key 'extends' is set, it is always true
             if (isset($nextFileOrInfo['extends']))
             {
               $contentOutside = [];

@@ -7,6 +7,7 @@ namespace otra\tools;
  */
 
 use Exception;
+use otra\cache\php\Logger;
 use otra\OtraException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -19,7 +20,7 @@ if (!function_exists(__NAMESPACE__ . '\\cleanFileAndFolders'))
   /**
    * Removes all files and folders specified in the array.
    *
-   * @param string[] $fileOrFolders
+   * @param list<string> $fileOrFolders
    *
    * @throws OtraException If we cannot remove a file or a folder
    */
@@ -45,6 +46,13 @@ if (!function_exists(__NAMESPACE__ . '\\cleanFileAndFolders'))
             if (!$method($realPath))
             {
               require CORE_PATH . 'tools/files/returnLegiblePath.php';
+
+              // like my-user www-data:www-data
+              Logger::lg(
+                substr(sprintf('%o', fileperms($realPath)), -4) . ' ' .
+                posix_getpwuid(posix_geteuid())['name'] . ':' . posix_getgrgid(posix_getegid())['name']
+              );
+
               throw new OtraException(
                 'Cannot remove the ' .
                 ($method === 'rmdir' ? 'folder ' : 'file ') . returnLegiblePath($realPath) . '.',
@@ -52,6 +60,12 @@ if (!function_exists(__NAMESPACE__ . '\\cleanFileAndFolders'))
               );
             }
           }
+
+          unset($iterator, $fileObject);
+
+          // Force garbage collection so PHP closes all internal handles
+          // I do that because I have sometimes remaining files like .fuse_hidden0001255100000006 
+          gc_collect_cycles();
 
           $exceptionMessage = 'Cannot remove the folder \'' . $folder . '\'.';
 

@@ -20,7 +20,6 @@ namespace otra\console\architecture\createHelloWorld
 
   use JsonException;
   use otra\OtraException;
-  use function otra\console\deployment\buildDev\buildDev;
   use const otra\cache\php\{BASE_PATH, BUNDLES_PATH, CONSOLE_PATH, CORE_PATH, DIR_SEPARATOR};
   use const otra\console\
   {
@@ -35,6 +34,8 @@ namespace otra\console\architecture\createHelloWorld
     SUCCESS};
   use const otra\console\architecture\constants\
   {ARG_BUNDLE_NAME, ARG_CONTROLLER_NAME, ARG_FORCE, ARG_MODULE_NAME, ARG_INTERACTIVE};
+  use function otra\console\deployment\buildDev\buildDev;
+  use function otra\console\deployment\genAssets\genAssets;
   use function otra\console\architecture\
   {actionHandling, checkBooleanArgument, createController\checkControllerExistence, createModule\checkModuleExistence};
   use function otra\console\deployment\genClassMap\genClassMap;
@@ -44,6 +45,13 @@ namespace otra\console\architecture\createHelloWorld
   const
     ARG_ACTION_NAME = 5,
     ARCHITECTURE_FOLDER = CONSOLE_PATH . 'architecture/',
+    BUILD_DEV_GCC_FALSE = 'false',  
+    BUILD_DEV_SCSS = 1,
+    BUILD_DEV_SILENT = 0,
+    BUILD_DEV_SCOPE_PROJECT = 0,
+    ROUTE = 'HelloWorld',
+    GEN_ASSETS_HTML_CSS = 3,
+    GEN_ASSETS_SIMPLE_OPTIMIZATIONS = 1,
     HELLO_WORLD_STARTER_FOLDER = ARCHITECTURE_FOLDER . 'starters/helloWorld/',
     HELLO_WORLD_IMAGES_PATH = HELLO_WORLD_STARTER_FOLDER . 'img/',
     HELLO_WORLD_STARTER_SCSS_FOLDER = HELLO_WORLD_STARTER_FOLDER . 'scss/',
@@ -201,11 +209,24 @@ namespace otra\console\architecture\createHelloWorld
     echo CLI_BASE, 'Building the CSS assets...', END_COLOR, PHP_EOL;
     require CORE_PATH . 'tools/cli.php';
     require CONSOLE_PATH . 'deployment/buildDev/buildDevTask.php';
-    buildDev(['bin/otra.php', 'buildDev', 0, 1]);
+    buildDev([
+      'bin/otra.php',
+      'buildDev',
+      BUILD_DEV_SILENT,
+      BUILD_DEV_SCSS,
+      BUILD_DEV_GCC_FALSE,
+      BUILD_DEV_SCOPE_PROJECT,
+      ROUTE
+    ]);
     echo CLI_BASE, 'CSS assets built', SUCCESS;
 
+    echo CLI_BASE, 'Optimized the assets for production environment...', END_COLOR, PHP_EOL;
+    require CONSOLE_PATH . 'deployment/genAssets/genAssetsTask.php';
+    genAssets(['bin/otra.php', 'genAssets', GEN_ASSETS_HTML_CSS, GEN_ASSETS_SIMPLE_OPTIMIZATIONS, ROUTE]);
+    echo CLI_BASE, 'Assets optimized', SUCCESS;
+
     /* We update the class mapping since we have one action more.
-     * Maybe we have launched this task with no class map and then the VERBOSE constant has already been defined during the
+     * Maybe we have launched this task with no class map, and then the VERBOSE constant has already been defined during the
      * class map generation task.
     */
     if (!defined(__NAMESPACE__ . '\\VERBOSE'))

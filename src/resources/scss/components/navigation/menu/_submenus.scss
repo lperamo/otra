@@ -1,0 +1,231 @@
+////
+/// @group Menu
+/// @since 2.2
+/// @author Lionel Péramo
+////
+
+// loading theming component
+@use 'components/design/theming/theming';
+
+// Menu mixin
+@use 'handleThemedFeature' as *;
+@use 'menuStates' as *;
+
+///
+/// Mixin that creates menu element states for the vertical menu.
+///
+/// @access private
+/// @param  {string} $-border-radius                               -
+/// @param  {string} $-item--border-radius                         -
+/// @param  {string} $-menu--element--background-color             - Theme variable...
+/// @param  {string} $-submenu--background-color                   - Theme variable...
+/// @param  {string} $-submenu--background-image                   - Theme variable...
+/// @param  {string} $-submenu--element--background-color          - Theme variable...
+/// @param  {string} $-submenu--element--background-image          - Theme variable...
+/// @param  {string} $-submenu--element--active--background-color  - Theme variable...
+/// @param  {string} $-submenu--element--active--background-image  - Theme variable...
+/// @param  {string} $-submenu--element--active--color             - Theme variable...
+/// @param  {string} $-submenu--element--focus--background-color   - Theme variable...
+/// @param  {string} $-submenu--element--focus--background-image   - Theme variable...
+/// @param  {string} $-submenu--element--focus--color              - Theme variable...
+/// @param  {string} $-submenu--element--hover--background-color   - Theme variable...
+/// @param  {string} $-submenu--element--hover--background-image   - Theme variable...
+/// @param  {string} $-submenu--element--hover--color              - Theme variable...
+/// @param  {string} $-submenu--element--link--visited--color      - Theme variable...
+/// @param  {string} $-submenu--element--visited--background-color - Theme variable...
+/// @param  {string} $-submenu--element--visited--background-image - Theme variable...
+/// @param  {string} suffix                                        - Suffix put after all the selectors
+/// @param  {bool}   theme-used                                    - Are we using a theme?
+/// @param  {bool}   print                                         - Do we need a print stylesheet?
+///
+@mixin submenus(
+  $-border-radius,
+  $-item--border-radius,
+  $-menu--element--background-color,
+  $-submenu--background-color,
+  $-submenu--background-image,
+  $-submenu--element--background-color,
+  $-submenu--element--background-image,
+  $-submenu--element--active--background-color,
+  $-submenu--element--active--background-image,
+  $-submenu--element--active--color,
+  $-submenu--element--focus--background-color,
+  $-submenu--element--focus--background-image,
+  $-submenu--element--focus--color,
+  $-submenu--element--hover--background-color,
+  $-submenu--element--hover--background-image,
+  $-submenu--element--hover--color,
+  $-submenu--element--link--visited--color,
+  $-submenu--element--visited--background-color,
+  $-submenu--element--visited--background-image,
+  $-suffix,
+  $-themeUsed,
+  $-print
+) {
+  @if $-submenu--background-color {
+    $-submenuContainerButNotActive : ':not(:active, .menu--container--active,:hover,:focus)';
+
+    @at-root .menu#{$-suffix}.menu--container[aria-expanded] .menu--container--item {
+      @include handle-themed-feature(
+        'background-color',
+        $-submenu--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        $-submenuContainerButNotActive
+      );
+    }
+  }
+
+  @if $-submenu--background-image {
+    @at-root .menu--container--item .menu--container {
+      @include handle-themed-feature('background-image', $-submenu--background-image, $-suffix, $-themeUsed, $-print);
+    }
+  }
+
+  @if $-border-radius {
+    @at-root .menu#{$-suffix} {
+      &.has-submenu {
+        &:active,
+        &:hover,
+        &:focus {
+          border-radius : 0;
+        }
+      }
+
+      @if $-item--border-radius != null and $-item--border-radius != $-border-radius {
+        &[aria-expanded] > .menu--container--item:first-child {
+          border-radius : $-item--border-radius;
+        }
+      }
+    }
+  }
+
+  // Hides menu items if their parent is not active, focused, or hovered
+  &--item:not(:active,:hover,:focus) {
+    & > .menu--container:not(
+    [aria-hidden='false'],
+    .menu--container--item:active > .menu--container,
+    .menu--container--item:hover > .menu--container,
+    .menu--container--item:focus > .menu--container) {
+      @media (prefers-reduced-motion : no-preference) {
+        opacity        : 0;
+        pointer-events : none;
+      }
+
+      @media (prefers-reduced-motion : reduce) {
+        display : none;
+      }
+    }
+  }
+
+  .menu--container {
+    left     : 100%;
+    position : absolute;
+    top      : 0;
+    z-index  : 2; // prevents submenus from being hidden behind other components (2 because pie charts use z-index)
+
+    @media (prefers-reduced-motion : no-preference) {
+      transition : opacity .3s ease-in-out;
+    }
+
+    & .menu--container::before {
+      @include handle-themed-feature(
+        'background-color',
+        $-submenu--element--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+    }
+
+    &::before {
+      // positioning
+      position : absolute;
+      top      : 1rem * theming.$font-size * theming.$font-size;
+      left     : -1.6rem * theming.$font-size;
+
+      // text
+      @include handle-themed-feature(
+        'background-color',
+        $-submenu--element--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+      @include handle-themed-feature(
+        'background-image',
+        $-submenu--element--background-image,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      content                 : '◄';
+      font-size               : 2rem * theming.$font-size;
+      -webkit-background-clip : text;
+      -webkit-text-fill-color : transparent;
+    }
+
+    @at-root .menu#{$-suffix}.menu--container[aria-expanded] > .menu--container--item {
+      // active
+      @include menu-state(
+        'active,&-active',
+        $-submenu--element--active--background-color,
+        $-submenu--element--active--background-image,
+        $-submenu--element--active--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // focus
+      @include menu-state(
+        'focus:not(:active, .menu--container--item-active):not(:hover)',
+        $-submenu--element--focus--background-color,
+        $-submenu--element--focus--background-image,
+        $-submenu--element--focus--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // hover
+      @include menu-state(
+        'hover:not(:active, .menu--container--item-active)',
+        $-submenu--element--hover--background-color,
+        $-submenu--element--hover--background-image,
+        $-submenu--element--hover--color,
+        $-suffix,
+        $-themeUsed,
+        $-print
+      );
+
+      // visited
+      @include handle-themed-feature(
+        'background-color',
+        $-submenu--element--visited--background-color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        '>a:visited'
+      );
+      @include handle-themed-feature(
+        'background-image',
+        $-submenu--element--visited--background-image,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        '>a:visited'
+      );
+      @include handle-themed-feature(
+        'color',
+        $-submenu--element--link--visited--color,
+        $-suffix,
+        $-themeUsed,
+        $-print,
+        '>a:visited'
+      );
+    }
+  }
+}

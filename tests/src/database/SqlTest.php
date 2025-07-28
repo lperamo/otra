@@ -30,7 +30,8 @@ class SqlTest extends TestCase
   protected function setUp() : void
   {
     parent::setUp();
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
+    $_SERVER['APP_SCOPE'] = 'local';
   }
 
   protected function tearDown(): void
@@ -40,7 +41,7 @@ class SqlTest extends TestCase
     if (isset($_SESSION['bootstrap']))
       unset($_SESSION['bootstrap']);
 
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
 
     try
     {
@@ -113,7 +114,6 @@ class SqlTest extends TestCase
     // context
     require self::TEST_CONFIG_PATH;
     require self::TEST_CONFIG_GOOD_PATH;
-
 
     // launching task
     $sqlInstance = Sql::getDb(null, false);

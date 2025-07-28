@@ -28,10 +28,13 @@ if (!function_exists(__NAMESPACE__ . '\\getOtraCommitNumber'))
         512,
         JSON_THROW_ON_ERROR
       )['packages'];
-      $commitNumber = $installedComposerPackages[array_search(
+      $commit = $installedComposerPackages[array_search(
         'otra/otra',
         array_column($installedComposerPackages, 'name')
-      )]['source']['reference'];
+      )];
+      $commitNumber = isset($commit['source'])
+        ? $commit['source']['reference']
+        : $commit['dist']['reference'];
 
       return $short ? substr($commitNumber, 0, 8) : $commitNumber;
     } elseif (php_sapi_name() !== 'cli') {

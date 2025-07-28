@@ -39,6 +39,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
   protected function setUp(): void
   {
     parent::setUp();
+    $_SERVER['APP_SCOPE'] = 'local';
     require CORE_PATH . 'tools/deleteTree.php';
 
     if (file_exists(self::MIGRATIONS_FOLDER))
@@ -65,8 +66,8 @@ class SqlMigrationGenerateTaskTest extends TestCase
   private function loadConfig() : void
   {
     require self::TEST_CONFIG_GOOD_PATH;
-    AllConfig::$dbConnections['test']['login'] = $_SERVER['TEST_LOGIN'];
-    AllConfig::$dbConnections['test']['password'] = $_SERVER['TEST_PASSWORD'];
+    AllConfig::$local['db']['test']['login'] = $_SERVER['TEST_LOGIN'];
+    AllConfig::$local['db']['test']['password'] = $_SERVER['TEST_PASSWORD'];
     self::$database = Sql::getDb(self::DATABASE_CONNECTION, false);
     self::$database->query('CREATE DATABASE IF NOT EXISTS testDB;');
   }
@@ -101,7 +102,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
   public function testNoMigrationsFolder() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
 
     // launching task
@@ -129,7 +130,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
   public function testFirstMigrationFile() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
     mkdir(self::MIGRATIONS_FOLDER, 0755);
 
@@ -157,7 +158,7 @@ class SqlMigrationGenerateTaskTest extends TestCase
   public function testSecondMigrationFile() : void
   {
     // context
-    $_SERVER[APP_ENV] = PROD;
+    $_SERVER[APP_ENV] = 'test';
     $this->loadConfig();
     mkdir(self::MIGRATIONS_FOLDER, 0755);
     touch(self::MIGRATIONS_VERSION_ZERO);

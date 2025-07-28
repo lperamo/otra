@@ -5,11 +5,8 @@ namespace otra\console\deployment\genWatcher;
 use otra\config\AllConfig;
 use otra\OtraException;
 use ReflectionException;
-use const otra\cache\php\CACHE_PATH;
-use const otra\cache\php\CONSOLE_PATH;
-use const otra\console\
-{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
-
+use const otra\cache\php\{CACHE_PATH, CONSOLE_PATH, CORE_PATH};
+use const otra\console\{CLI_ERROR, CLI_INFO, CLI_INFO_HIGHLIGHT, END_COLOR, ERASE_SEQUENCE, SUCCESS};
 use function otra\console\convertLongArrayToShort;
 use function otra\console\deployment\getPathInformations;
 use function otra\tools\files\returnLegiblePath2;
@@ -76,7 +73,7 @@ function getCssPathFromImport(
   // $importPath like ../../configuration
   // $importedStylesheetFound like ../../configuration/generic
   // $importedFileBaseName like generic.scss
-  // $resourcesPath like /media/data/web/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/table/
+  // $resourcesPath like /media/data/web/perso/components/bundles/Ecocomposer/frontend/resources/scss/pages/tableFirstDesign/
 
   // The imported file can have the extension, but it is not mandatory
   if (!str_contains($importedFileBaseName, '.'))
@@ -95,7 +92,9 @@ function getCssPathFromImport(
   // Checks for loadPaths
   if ($newResourceToAnalyze === false && $sassLoadPathCheck === false)
   {
-    foreach (AllConfig::$sassLoadPaths as $sassLoadPath)
+    $sassLoadPaths = array_merge([CORE_PATH . 'resources/scss/'], AllConfig::$sassLoadPaths);
+
+    foreach ($sassLoadPaths as $sassLoadPath)
     {
       [$newResourceToAnalyze, $absoluteImportPathWithDots, $absoluteImportPathWithDotsAlt] =
         getCssPathFromImport($importedSass, $dotExtension, $resourcesPath, $sassLoadPath);

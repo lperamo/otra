@@ -29,6 +29,9 @@ class GenerateTaskMetadataTaskTest extends TestCase
    */
   public function testGenerateTaskMetadata() : void
   {
+    // context
+    $_SERVER['APP_SCOPE'] = 'local';
+
     // launching
     TasksManager::execute(
       require TASK_CLASS_MAP_PATH,

@@ -79,17 +79,17 @@ function loadAndSaveResources(
   ob_start();
   loadResource($resources, $routeChunks, 'app_' . $assetType, 'bundles/');
   loadResource($resources, $routeChunks, 'bundle_' . $assetType, $bundlePath, '');
-  loadResource(
-    $resources,
-    $routeChunks,
-    'core_' . $assetType,
-    CORE_PATH,
-    ''
-  );
+  loadResource($resources, $routeChunks, 'core_' . $assetType, CORE_PATH, '');
   loadResource(
     $resources,
     $routeChunks,
     'module_' . $assetType,
+    $bundlePath . $routeChunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
+  );
+  loadResource(
+    $resources,
+    $routeChunks,
+    'print_' . $assetType,
     $bundlePath . $routeChunks[Routes::ROUTES_CHUNKS_MODULE] . DIR_SEPARATOR
   );
 
@@ -167,15 +167,6 @@ function loadResource(array $resources, array $chunks, string $key, string $bund
     }
 
     echo $content;
-    /** Workaround for Google Closure Compiler, version 'v20170218' built on 2017-02-23 11:19, that do not put a line
-     *  feed after source map declaration like
-     *  //# sourceMappingURL=modules.js.map
-     *  So, the last letter is 'p' and not a line feed.
-     *  Then we have to put ourselves the line feed!
-     **/
-
-    if ($content[-1] === 'p')
-      echo PHP_EOL;
   }
 }
 
@@ -193,10 +184,16 @@ function genAssets(array $argumentsVector) : void
     throw new OtraException(code: 1, exit: true);
   }
 
+  if (!file_exists(BUNDLES_PATH . 'config/Routes.php'))
+  {
+    echo CLI_ERROR, 'There are no routes!', END_COLOR, PHP_EOL;
+    throw new OtraException(code: 1, exit: true);
+  }
+
   require_once BASE_PATH . 'config/AllConfig.php';
   // require_once needed 'cause of the case of 'deploy' task that already launched the routes.
   require_once BASE_PATH . 'config/Routes.php';
-  require CORE_PATH . 'tools/compression.php';
+  require_once CORE_PATH . 'tools/compression.php';
 
   define(
     __NAMESPACE__ . '\\JS_LEVEL_COMPILATION',
@@ -216,21 +213,15 @@ function genAssets(array $argumentsVector) : void
     throw new OtraException(code: 1, exit: true);
   }
 
-  define(
-    __NAMESPACE__ . '\\ASSETS_MASK',
-    (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31
-  ); // 31 = default to all assets
-
-  define('GEN_ASSETS_TEMPLATE', ASSETS_MASK & GEN_ASSETS_MASK_TEMPLATE);
-  define('GEN_ASSETS_CSS', (ASSETS_MASK & GEN_ASSETS_MASK_CSS) >> 1);
-  define('GEN_ASSETS_JS', (ASSETS_MASK & GEN_ASSETS_MASK_JS) >> 2);
-  define('GEN_ASSETS_MANIFEST', (ASSETS_MASK & GEN_ASSETS_MASK_MANIFEST) >> 3);
-  define('GEN_ASSETS_SVG', (ASSETS_MASK & GEN_ASSETS_MASK_SVG) >> 4);
+  $assetsMask = (isset($argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK])) ? $argumentsVector[GEN_ASSETS_ARG_ASSETS_MASK] + 0 : 31; 
+  $assetsTemplate = $assetsMask & GEN_ASSETS_MASK_TEMPLATE;
+  $assetsCss = ($assetsMask & GEN_ASSETS_MASK_CSS) >> 1;
+  $assetsJs = ($assetsMask & GEN_ASSETS_MASK_JS) >> 2;
 
   // If we only need the manifest or the SVGs, skips the assets' generation loop
   if (
     !in_array(
-      ASSETS_MASK,
+      $assetsMask,
       [GEN_ASSETS_MASK_MANIFEST, GEN_ASSETS_MASK_SVG, GEN_ASSETS_MASK_MANIFEST | GEN_ASSETS_MASK_SVG]
     )
   )
@@ -254,25 +245,25 @@ function genAssets(array $argumentsVector) : void
        ******* specific to the route passed in parameter ******/
       $shaName = sha1('ca' . $theRoute . VERSION . 'che');
 
-      if (GEN_ASSETS_TEMPLATE !== 0)
+      if ($assetsTemplate !== 0)
         unlinkResourceFile('tpl/', $shaName);
 
-      if (GEN_ASSETS_CSS !== 0)
+      if ($assetsCss !== 0)
         unlinkResourceFile('css/', $shaName);
 
-      if (GEN_ASSETS_JS !== 0)
+      if ($assetsJs !== 0)
         unlinkResourceFile('js/', $shaName);
     } else
     {
       echo PHP_EOL, 'Cleaning the resources cache...';
 
-      if (GEN_ASSETS_TEMPLATE !== 0)
+      if ($assetsTemplate !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'tpl/*'));
 
-      if (GEN_ASSETS_CSS !== 0)
+      if ($assetsCss !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'css/*'));
 
-      if (GEN_ASSETS_JS !== 0)
+      if ($assetsJs !== 0)
         array_map(OTRA_UNLINK_CALLBACK, glob(CACHE_PATH . 'js/*'));
     }
 
@@ -321,7 +312,7 @@ function genAssets(array $argumentsVector) : void
       $noErrors = true;
 
       /***** CSS - GENERATES THE COMPRESSED CSS FILES (IF ASKED AND IF NEEDED TO) *****/
-      if (GEN_ASSETS_CSS !== 0)
+      if ($assetsCss !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'css'))
         {
@@ -364,7 +355,7 @@ function genAssets(array $argumentsVector) : void
       }
 
       /***** JS - GENERATES THE COMPRESSED JS FILES (IF ASKED AND IF NEEDED TO) *****/
-      if (GEN_ASSETS_JS !== 0)
+      if ($assetsJs !== 0)
       {
         if (str_contains(implode(array_keys($resources)), 'js'))
         {
@@ -399,7 +390,7 @@ function genAssets(array $argumentsVector) : void
       }
 
       /***** TEMPLATE - GENERATES THE COMPRESSED TEMPLATE FILES IF THE ROUTE IS STATIC *****/
-      if (GEN_ASSETS_TEMPLATE !== 0)
+      if ($assetsTemplate !== 0)
       {
         if (!isset($resources['template']) || !$resources['template'])
           echo status('NO TEMPLATE', OTRA_CLI_INFO_STRING); // no static template
@@ -432,7 +423,7 @@ function genAssets(array $argumentsVector) : void
     }
   }
 
-  if (GEN_ASSETS_MANIFEST !== 0)
+  if (($assetsMask & GEN_ASSETS_MASK_MANIFEST) >> 3 !== 0)
   {
     $jsonManifestPath = BASE_PATH . 'web/devManifest.json';
 
@@ -457,7 +448,7 @@ function genAssets(array $argumentsVector) : void
     }
   }
 
-  if (GEN_ASSETS_SVG !== 0)
+  if (($assetsMask & GEN_ASSETS_MASK_SVG) >> 4 !== 0)
   {
     define(__NAMESPACE__ . '\\FOLDER_TO_CHECK_FOR_SVGS', BASE_PATH . 'web/images');
     echo 'Checking for uncompressed SVGs in the folder ', CLI_INFO_HIGHLIGHT, FOLDER_TO_CHECK_FOR_SVGS, END_COLOR, ' ...',
