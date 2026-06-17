@@ -28,7 +28,7 @@
     "ext-zend-opcache": "*",
     "ext-zlib": "*",
     "php": ">=8.4.0",
-    "symfony/yaml": "6.1.*"
+    "symfony/yaml": "6.1.* || 6.4.*"
   },
   "require-dev": {
     "ext-inotify": "*",
